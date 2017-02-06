@@ -1,0 +1,19 @@
+﻿<Application x:Class="ES.Login.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:helpers="clr-namespace:ES.Business.Helpers;assembly=ES.Business"
+             xmlns:cultures1="clr-namespace:ES.Common.Cultures;assembly=ES.Common" ShutdownMode="OnExplicitShutdown"
+             DispatcherUnhandledException="Application_DispatcherUnhandledException" Startup="Application_Startup" StartupUri="App.xaml">
+    <Application.Resources>
+        
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/ResourceLibrary;component/Resources/Resources.xaml"/>
+            </ResourceDictionary.MergedDictionaries><ObjectDataProvider x:Key="CultureResources" ObjectType="{x:Type cultures1:CultureResources}"/>
+        <ObjectDataProvider x:Key="Session" ObjectType="{x:Type helpers:Session}"/>
+        </ResourceDictionary>
+        
+    </Application.Resources>
+    
+    
+</Application>
