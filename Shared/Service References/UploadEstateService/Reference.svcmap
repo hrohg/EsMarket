@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="f4f69566-c22a-44e8-a9c8-b6f4455d8049" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:3239/UploadService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="UploadService3.xsd" MetadataType="Schema" ID="837f464e-254f-44b5-a2d1-f0e8b0a4808d" SourceId="1" SourceUrl="http://localhost:3239/UploadService.svc?xsd=xsd3" />
+    <MetadataFile FileName="UploadService2.xsd" MetadataType="Schema" ID="33b33a44-a23b-41b2-becb-9cc3acbe539a" SourceId="1" SourceUrl="http://localhost:3239/UploadService.svc?xsd=xsd1" />
+    <MetadataFile FileName="UploadService.disco" MetadataType="Disco" ID="54e5db57-fe1b-4730-8bc1-7f071e6ad31d" SourceId="1" SourceUrl="http://localhost:3239/UploadService.svc?disco" />
+    <MetadataFile FileName="UploadService.wsdl" MetadataType="Wsdl" ID="37513186-4ff0-494e-a708-8d81f8751b70" SourceId="1" SourceUrl="http://localhost:3239/UploadService.svc?wsdl" />
+    <MetadataFile FileName="UploadService1.xsd" MetadataType="Schema" ID="bdc6860c-dec9-4e6b-a462-6c55a50426c1" SourceId="1" SourceUrl="http://localhost:3239/UploadService.svc?xsd=xsd2" />
+    <MetadataFile FileName="UploadService.xsd" MetadataType="Schema" ID="38ce56d5-cb88-4821-8db4-87a54a6b58bb" SourceId="1" SourceUrl="http://localhost:3239/UploadService.svc?xsd=xsd0" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

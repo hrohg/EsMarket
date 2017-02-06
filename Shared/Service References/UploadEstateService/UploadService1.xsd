@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Realtor.DTO" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Realtor.DTO" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="EstateDto">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AddDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="AdditionalInformation" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="AptNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="BuildingFloorsCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="BuildingTypeName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Canalisation" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="CityName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Code" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CurrencyName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Electricity" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="EstateTypeName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ExchangeWith" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Floor" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="GarageTypeID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="GardenSquare" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="HasEuroWindows" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="HasGarage" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="HasPadval" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Height" nillable="true" type="xs:float" />
+      <xs:element minOccurs="0" name="HomeNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IDInRealtorApp" type="xs:int" />
+      <xs:element minOccurs="0" name="IsExchangePossible" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsHasCanalisationPosibility" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsHasDrinkWater" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsHasElectricityPosibility" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsHasExpandingPosibility" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsHasGarden" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsHasGas" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsHasGasPosibility" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsHasVoroqmanJur" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsInNewBuilding" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsOutDoorFromSteel" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsWoterAlways" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="LastModifiedDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="OfficePlaceTypeID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="OperationalSignificanceName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="OrderTypeName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PadvalSquare" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Phone1" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Phone2" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PlaceName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Price" nillable="true" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PriceInAMD" nillable="true" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PricePerDay" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="PriceTypeID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="ProjectName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Rating" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="RegionName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RemontName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RoofingName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RoomCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Seller" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SignificanceOfTheUseName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Square" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="StateName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="StreetName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EstateDto" nillable="true" type="tns:EstateDto" />
+</xs:schema>

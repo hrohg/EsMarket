@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EC37832A-A5EE-41B9-BFAF-1929A7E43755}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Shared</RootNamespace>
+    <AssemblyName>Shared</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Toolkit.WPF">
+      <HintPath>..\packages\Toolkit.WPF.1.0.5752.30721\lib\net40\Toolkit.WPF.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Converters\ConverterExtension.cs" />
+    <Compile Include="Converters\Converters.cs" />
+    <Compile Include="Converters\IValu.cs" />
+    <Compile Include="Helpers\CalculationHelper.cs" />
+    <Compile Include="Helpers\Cryptography.cs" />
+    <Compile Include="Helpers\DataGridExcelTools.cs" />
+    <Compile Include="Helpers\DataManager.cs" />
+    <Compile Include="Helpers\DataManagerBase.cs" />
+    <Compile Include="Helpers\Enumerations.cs" />
+    <Compile Include="Helpers\ExportManager.cs" />
+    <Compile Include="Helpers\ExtensionMethods.cs" />
+    <Compile Include="Helpers\ImageHelper.cs" />
+    <Compile Include="Helpers\MailSender.cs" />
+    <Compile Include="Helpers\ServiceExecutionContext.cs" />
+    <Compile Include="Helpers\VisualTreeHelperEx.cs" />
+    <Compile Include="Helpers\WCFClient.cs" />
+    <Compile Include="Implementations\Window.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CustomControls\CustomControls.csproj">
+      <Project>{FC8CCD6D-7A06-43A1-BDE5-2024A408DE1D}</Project>
+      <Name>CustomControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ES.Common\ES.Common.csproj">
+      <Project>{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}</Project>
+      <Name>ES.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ES.DataAccess\ES.DataAccess.csproj">
+      <Project>{a425b85d-c3eb-4bcc-b307-17daaee9237d}</Project>
+      <Name>ES.DataAccess</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Properties\DataSources\RealEstate.DataAccess.City.datasource" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Application.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\checked.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Application.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\close.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\database.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\backup.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Restore.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\DPanelExtend.png" />
+    <Resource Include="Images\DPanelShrink.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\CancelRound.png" />
+    <Resource Include="Images\OkRound.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ok.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\setting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ClearSearch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\excel.png" />
+    <Resource Include="Images\Print.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\video.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pause.png" />
+    <Resource Include="Images\play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\stop.png" />
+    <Resource Include="Images\volume.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\map1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\DownTriangleIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\furniture.png" />
+    <Resource Include="Images\gas.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\washer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\garage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\photo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\add.png" />
+    <Resource Include="Images\edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Upload.ico" />
+    <Resource Include="Images\WeightScale.ico" />
+    <Resource Include="Images\WindowsLogOff.png" />
+    <Resource Include="Images\podval.png" />
+    <Resource Include="Images\back.png" />
+    <Resource Include="Images\next.png" />
+    <Resource Include="Images\DownL.png" />
+    <Resource Include="Images\UpL.png" />
+    <Resource Include="Images\BgAbstract.jpg" />
+    <Resource Include="Images\cart.png" />
+    <Resource Include="Images\GoToShop.png" />
+    <Content Include="Images\Application.jpg" />
+    <Resource Include="Images\ChangePassword.png" />
+    <Resource Include="Images\Edit.ico" />
+    <Resource Include="Images\user.png" />
+    <Resource Include="Images\Invoice.ico" />
+    <Resource Include="Images\service.ico" />
+    <Resource Include="Images\Calc.png" />
+    <Resource Include="Images\Cash-register.png" />
+    <Resource Include="Images\Settings.ico" />
+    <Resource Include="Images\plus.ico" />
+    <Resource Include="Images\copy.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\cut.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\paste.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\PrintPreview120.png" />
+    <Resource Include="Images\edit_find_replace.png" />
+    <Resource Include="Images\light_bulb_help.png" />
+    <Resource Include="Images\edit_recherch.png" />
+    <Resource Include="Images\review.png" />
+    <Resource Include="Images\Cart.ico" />
+    <Resource Include="Images\Data.ico" />
+    <Resource Include="Images\Help.ico" />
+    <Resource Include="Images\Safe.ico" />
+    <Resource Include="Images\UserSettings.ico" />
+    <Resource Include="Images\CashDesk.ico" />
+    <Resource Include="Images\shopping_cart.ico" />
+    <Resource Include="Images\Download.ico" />
+    <Resource Include="Images\Server\CloudServer.ico" />
+    <Resource Include="Images\Server\LocalServer.ico" />
+    <Resource Include="Images\Server\ServerWarning.ico" />
+    <Resource Include="Images\Server\Server_Offline_Dark.png" />
+    <Resource Include="Images\Server\Server_Offline_Light.png" />
+    <Resource Include="Images\Server\Server_Online_Dark.png" />
+    <Resource Include="Images\Server\Server_Online_Light.png" />
+    <Resource Include="Images\CashRegister_Dark.png" />
+    <Resource Include="Images\CashRegister_Light.png" />
+    <Resource Include="Images\Messages_Dark.png" />
+    <Resource Include="Images\Messages_Light.png" />
+    <Resource Include="Images\Refresh_Dark.png" />
+    <Resource Include="Images\Refresh_Light.png" />
+    <Resource Include="Images\User_24x24_Dark.png" />
+    <Content Include="Images\water.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
