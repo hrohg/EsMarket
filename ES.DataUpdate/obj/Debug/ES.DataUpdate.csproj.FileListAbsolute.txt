@@ -1,0 +1,11 @@
+D:\MyProjects\ES\ES Market\ES.DataUpdate\bin\Debug\ESL.DataUpdate.dll
+D:\MyProjects\ES\ES Market\ES.DataUpdate\bin\Debug\ESL.DataUpdate.pdb
+D:\MyProjects\ES\ES Market\ES.DataUpdate\bin\Debug\EntityFramework.dll
+D:\MyProjects\ES\ES Market\ES.DataUpdate\bin\Debug\ES.DataAccess.dll
+D:\MyProjects\ES\ES Market\ES.DataUpdate\bin\Debug\ES.DataAccess.pdb
+D:\MyProjects\ES\ES Market\ES.DataUpdate\bin\Debug\EntityFramework.xml
+D:\MyProjects\ES\ES Market\ES.DataUpdate\obj\Debug\ES.DataUpdate.csprojResolveAssemblyReference.cache
+D:\MyProjects\ES\ES Market\ES.DataUpdate\obj\Debug\ESL.DataUpdate.dll
+D:\MyProjects\ES\ES Market\ES.DataUpdate\obj\Debug\ESL.DataUpdate.pdb
+D:\MyProjects\ES\ES Market\ES.DataUpdate\bin\Debug\EntityFramework.SqlServer.dll
+D:\MyProjects\ES\ES Market\ES.DataUpdate\bin\Debug\EntityFramework.SqlServer.xml
