@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{43CED733-9E89-4270-B5AB-893846F9826D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ES.Business</RootNamespace>
+    <AssemblyName>ES.Business</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CashReg">
+      <HintPath>..\Bin\CashReg.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Toolkit.WPF">
+      <HintPath>..\packages\Toolkit.WPF.1.0.5752.30721\lib\net40\Toolkit.WPF.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DataUtilities\ConnectionContext.cs" />
+    <Compile Include="DataUtilities\DataTranslator.cs" />
+    <Compile Include="DataUtilities\Disposable.cs" />
+    <Compile Include="DataUtilities\Exceptions\DbIncompatibleTypeException.cs" />
+    <Compile Include="DataUtilities\Exceptions\InvalidConnectionException.cs" />
+    <Compile Include="DataUtilities\Interfaces.cs" />
+    <Compile Include="DataUtilities\SQLConnectionFactory.cs" />
+    <Compile Include="ExcelManager\ExcelDataContent.cs" />
+    <Compile Include="ExcelManager\ExcelExportManager.cs" />
+    <Compile Include="ExcelManager\ExcelImportManager.cs" />
+    <Compile Include="Helpers\BarCodeGenerator.cs" />
+    <Compile Include="Helpers\BaseClasses.cs" />
+    <Compile Include="Helpers\BaseManager.cs" />
+    <Compile Include="Helpers\EditManager.cs" />
+    <Compile Include="Helpers\ESLSettingsManager.cs" />
+    <Compile Include="Helpers\SelectItems.xaml.cs">
+      <DependentUpon>SelectItems.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\SelectItemsByCheck.xaml.cs">
+      <DependentUpon>SelectItemsByCheck.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Managers\AccountingRecordsManager.cs" />
+    <Compile Include="Managers\ApplicationManager.cs" />
+    <Compile Include="Managers\CashDeskManager.cs" />
+    <Compile Include="Managers\LocalManager.cs" />
+    <Compile Include="Managers\DatabaseManager.cs" />
+    <Compile Include="Managers\DefaultsManager.cs" />
+    <Compile Include="Managers\EslUpdateManager.cs" />
+    <Compile Include="Managers\ExecuteManager.cs" />
+    <Compile Include="Managers\ExportManager.cs" />
+    <Compile Include="Managers\InvoicesManager.cs" />
+    <Compile Include="Managers\MessageManager.cs" />
+    <Compile Include="Managers\PartnersManager.cs" />
+    <Compile Include="Helpers\SelectItemsManager.cs" />
+    <Compile Include="Managers\StockManager.cs" />
+    <Compile Include="Managers\StockTakeManager.cs" />
+    <Compile Include="Models\AccountingPlanRecordsModel.cs" />
+    <Compile Include="Models\AccountingRecordsModel.cs" />
+    <Compile Include="Models\ApplicationModel.cs" />
+    <Compile Include="Models\DefaultConfigModel.cs" />
+    <Compile Include="Models\ECRModel.cs" />
+    <Compile Include="Models\FinanceReportModel.cs" />
+    <Compile Include="Models\ProductModel.cs" />
+    <Compile Include="Models\ProductOrderItemsModel.cs" />
+    <Compile Include="Models\ProductOrderModel.cs" />
+    <Compile Include="FileManager\OpenExcelFile.cs" />
+    <Compile Include="Helpers\DataTranslator.cs" />
+    <Compile Include="Helpers\Session.cs" />
+    <Compile Include="Managers\MembersManager.cs" />
+    <Compile Include="Managers\ProductsManager.cs" />
+    <Compile Include="Managers\UsersManager.cs" />
+    <Compile Include="Models\ServicesModel.cs" />
+    <Compile Include="Models\StockTakeModel.cs" />
+    <Compile Include="Models\SubAccountingPlanModel.cs" />
+    <Compile Include="Models\WeigherModel.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ES.Common\ES.Common.csproj">
+      <Project>{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}</Project>
+      <Name>ES.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ES.DataAccess\ES.DataAccess.csproj">
+      <Project>{a425b85d-c3eb-4bcc-b307-17daaee9237d}</Project>
+      <Name>ES.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ES.Data\ES.Data.csproj">
+      <Project>{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}</Project>
+      <Name>ES.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HG.Tools\HG.Tools.csproj">
+      <Project>{EE29FF43-0A4A-4322-89DD-847DC11F2359}</Project>
+      <Name>HG.Tools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Shared\Shared.csproj">
+      <Project>{ec37832a-a5ee-41b9-bfaf-1929a7e43755}</Project>
+      <Name>Shared</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\" />
+    <Folder Include="UIHelper\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Helpers\SelectItems.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Helpers\SelectItemsByCheck.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
