@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ImageUploadService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost:7777/ImageUploadService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:7777/ImageUploadService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:7777/ImageUploadService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Realtor.DTO" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IImageUpload_CreateStream_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateStream" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_CreateStream_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateStreamResponse" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_GetStreamLength_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetStreamLength" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_GetStreamLength_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetStreamLengthResponse" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_ReadFromStream_InputMessage">
+    <wsdl:part name="parameters" element="tns:ReadFromStream" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_ReadFromStream_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ReadFromStreamResponse" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_WriteToStream_InputMessage">
+    <wsdl:part name="parameters" element="tns:WriteToStream" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_WriteToStream_OutputMessage">
+    <wsdl:part name="parameters" element="tns:WriteToStreamResponse" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_CloseStream_InputMessage">
+    <wsdl:part name="parameters" element="tns:CloseStream" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_CloseStream_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CloseStreamResponse" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_DisposeStream_InputMessage">
+    <wsdl:part name="parameters" element="tns:DisposeStream" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_DisposeStream_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DisposeStreamResponse" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_ReadBlob_InputMessage">
+    <wsdl:part name="parameters" element="tns:ReadBlob" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_ReadBlob_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ReadBlobResponse" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_WriteBlob_InputMessage">
+    <wsdl:part name="parameters" element="tns:WriteBlob" />
+  </wsdl:message>
+  <wsdl:message name="IImageUpload_WriteBlob_OutputMessage">
+    <wsdl:part name="parameters" element="tns:WriteBlobResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IImageUpload">
+    <wsdl:operation name="CreateStream">
+      <wsdl:input wsaw:Action="http://tempuri.org/IStreamService/CreateStream" message="tns:IImageUpload_CreateStream_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IStreamService/CreateStreamResponse" message="tns:IImageUpload_CreateStream_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStreamLength">
+      <wsdl:input wsaw:Action="http://tempuri.org/IStreamService/GetStreamLength" message="tns:IImageUpload_GetStreamLength_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IStreamService/GetStreamLengthResponse" message="tns:IImageUpload_GetStreamLength_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ReadFromStream">
+      <wsdl:input wsaw:Action="http://tempuri.org/IStreamService/ReadFromStream" message="tns:IImageUpload_ReadFromStream_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IStreamService/ReadFromStreamResponse" message="tns:IImageUpload_ReadFromStream_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="WriteToStream">
+      <wsdl:input wsaw:Action="http://tempuri.org/IStreamService/WriteToStream" message="tns:IImageUpload_WriteToStream_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IStreamService/WriteToStreamResponse" message="tns:IImageUpload_WriteToStream_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CloseStream">
+      <wsdl:input wsaw:Action="http://tempuri.org/IStreamService/CloseStream" message="tns:IImageUpload_CloseStream_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IStreamService/CloseStreamResponse" message="tns:IImageUpload_CloseStream_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DisposeStream">
+      <wsdl:input wsaw:Action="http://tempuri.org/IStreamService/DisposeStream" message="tns:IImageUpload_DisposeStream_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IStreamService/DisposeStreamResponse" message="tns:IImageUpload_DisposeStream_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ReadBlob">
+      <wsdl:input wsaw:Action="http://tempuri.org/IImageUpload/ReadBlob" message="tns:IImageUpload_ReadBlob_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IImageUpload/ReadBlobResponse" message="tns:IImageUpload_ReadBlob_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="WriteBlob">
+      <wsdl:input wsaw:Action="http://tempuri.org/IImageUpload/WriteBlob" message="tns:IImageUpload_WriteBlob_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IImageUpload/WriteBlobResponse" message="tns:IImageUpload_WriteBlob_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IImageUpload" type="tns:IImageUpload">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="CreateStream">
+      <soap:operation soapAction="http://tempuri.org/IStreamService/CreateStream" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStreamLength">
+      <soap:operation soapAction="http://tempuri.org/IStreamService/GetStreamLength" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReadFromStream">
+      <soap:operation soapAction="http://tempuri.org/IStreamService/ReadFromStream" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WriteToStream">
+      <soap:operation soapAction="http://tempuri.org/IStreamService/WriteToStream" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CloseStream">
+      <soap:operation soapAction="http://tempuri.org/IStreamService/CloseStream" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DisposeStream">
+      <soap:operation soapAction="http://tempuri.org/IStreamService/DisposeStream" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ReadBlob">
+      <soap:operation soapAction="http://tempuri.org/IImageUpload/ReadBlob" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="WriteBlob">
+      <soap:operation soapAction="http://tempuri.org/IImageUpload/WriteBlob" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ImageUploadService">
+    <wsdl:port name="BasicHttpBinding_IImageUpload" binding="tns:BasicHttpBinding_IImageUpload">
+      <soap:address location="http://localhost:7777/ImageUploadService.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

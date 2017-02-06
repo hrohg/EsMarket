@@ -1,0 +1,47 @@
+﻿<Window x:Class="UserControls.Controls.EsExceptionBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Name="ExceptionBox" ShowInTaskbar="True" SizeToContent="Height" MaxWidth="520" MaxHeight="420"
+    WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowState="Normal" BorderThickness="1" 
+        KeyUp="ExceptionBox_KeyUp"
+        Title="Ծրագրային սխալ">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition MinHeight="20"/>
+            <RowDefinition MinHeight="40"/>
+            <RowDefinition MinHeight="40"/>
+            <RowDefinition Height="Auto"/>
+
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Border Background="{DynamicResource PanelLightBrush}"  Height="20" VerticalAlignment="Top"
+                Grid.ColumnSpan="2" HorizontalAlignment="Stretch">
+            <TextBlock x:Name="txbTitle"
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"/>
+        </Border>
+        <TextBlock Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" x:Name="tbErrorMessage" 
+                 HorizontalAlignment="Stretch" TextWrapping="Wrap"                   
+                 FontSize="12" VerticalAlignment="Center" ForceCursor="False" TextAlignment="Center"
+                 Text="{Binding ElementName=ExceptionBox,Path=ExceptionText}" />
+        <StackPanel Margin="3" VerticalAlignment="Bottom" HorizontalAlignment="Right" Grid.Row="2" Grid.Column="1"  Orientation="Horizontal">
+
+            <Button x:Name="btDetails" Margin="3" Height="25" Content="Մանրամասն" HorizontalAlignment="Right" 
+                    Click="btDetails_Click" />
+            <Button x:Name="btnSendReport" Margin="3" Content="Տեղեկացնել" Height="25" Click="btnSendErrorReport" IsDefault="True"/>
+
+        </StackPanel>
+        <Button VerticalAlignment="Bottom" x:Name="btOK" Grid.Row="2" Margin="5,3,3,5" HorizontalAlignment="Left" Height="25" Click="btOK_Click" Content="Ok"/>
+		<ScrollViewer x:Name="scroll" Visibility="Collapsed" Margin="10" Grid.Row="3" Grid.ColumnSpan="2" MaxHeight="300" MaxWidth="400" VerticalScrollBarVisibility="Visible" >
+            <TextBlock  x:Name="tbErrorMessageDetail"  
+                  HorizontalAlignment="Stretch" Margin="3" TextWrapping="Wrap" TextAlignment="Justify" 
+                 FontSize="12" VerticalAlignment="Stretch" ForceCursor="False" 
+                 Text="" />
+        </ScrollViewer>
+        
+        
+    </Grid>
+</Window>

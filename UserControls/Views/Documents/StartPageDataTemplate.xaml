@@ -1,0 +1,84 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:viewModels="clr-namespace:UserControls.ViewModels">
+
+    <Style x:Key="SeparatorStyle"
+           TargetType="{x:Type Border}">
+        <Setter Property="BorderThickness" Value="1,0,0,0"/>
+        <Setter Property="BorderBrush" Value="#FFC5C5C5"/>
+        <Setter Property="Margin" Value="10,0,10,0"/>
+        <Setter Property="Width" Value="2"/>
+        <Setter Property="Background" Value="White"/>
+    </Style>
+    
+    <DataTemplate DataType="{x:Type viewModels:StartPageViewModel}">
+        <Grid>
+            <Grid.Resources>
+                <Style x:Key="HeaderStyle" TargetType="{x:Type TextBlock}">
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                </Style>
+                <Style x:Key="LinkStyle" TargetType="{x:Type TextBlock}">
+                    <Setter Property="FontSize" Value="12"/>
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="#FFC5C5C5"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="Փաստաթղթեր" Style="{StaticResource HeaderStyle}"/>
+                </StackPanel>
+                <Border Grid.Column="2" Style="{StaticResource SeparatorStyle}" Margin="0 10"/>
+                <StackPanel Grid.Column="3">
+                    <TextBlock Text="Դրամարկղ" Style="{StaticResource HeaderStyle}"/>
+                </StackPanel>
+                <Border Grid.Column="4" Style="{StaticResource SeparatorStyle}" Margin="0 10"/>
+                <StackPanel Grid.Column="5">
+                    <TextBlock Text="Տվյալներ" Style="{StaticResource HeaderStyle}"/>
+                </StackPanel>
+                <Border Grid.Column="6" Style="{StaticResource SeparatorStyle}" Margin="0 10"/>
+                <Grid Grid.Column="7">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="Վերլուծություններ" Style="{StaticResource HeaderStyle}"/>
+                    <StackPanel Grid.Row="1" Margin="15">
+                        <TextBlock Margin="0 4 0 0">
+                                                <Hyperlink TextDecorations="None" Command="{Binding QueryCommand}" CommandParameter="">
+                                                    <TextBlock Text="Վերլուծություններ" Style="{StaticResource LinkStyle}"/>
+                                                    </Hyperlink>
+                                                </TextBlock>
+                        <TextBlock Margin="0 4 0 0">
+                                                    <Hyperlink TextDecorations="None" Command="{Binding QueryCommand}" CommandParameter="">
+                                                        <TextBlock Text="Համառոտ վերլուծություններ" Style="{StaticResource LinkStyle}"/>
+                                                        </Hyperlink>
+                                                </TextBlock>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

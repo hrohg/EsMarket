@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:invoices="clr-namespace:UserControls.ViewModels.Invoices"
+                    xmlns:customControls="clr-namespace:UserControls.Views.CustomControls"
+                    xmlns:views="clr-namespace:UserControls.Views">
+
+    <DataTemplate DataType="{x:Type invoices:SaleInvoiceViewModel}">
+        <customControls:SaleUctrl/>
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type invoices:PurchaseInvoiceViewModel}">
+        <views:PurchaseUctrl/>
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type invoices:InternalWaybillInvoiceModel}">
+        <views:UctrlMoveingInvoice/>
+    </DataTemplate>
+    
+     <DataTemplate DataType="{x:Type invoices:InventoryWriteOffViewModel}">
+        <views:InventoryWriteOffUctrl/>
+    </DataTemplate>
+</ResourceDictionary>

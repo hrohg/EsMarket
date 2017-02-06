@@ -1,0 +1,17 @@
+﻿<Window x:Class="UserControls.SelectCount"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SelectCount" SizeToContent="WidthAndHeight" ResizeMode="NoResize" WindowStartupLocation="CenterScreen"  KeyDown="Window_KeyDown">
+<StackPanel Margin="10" HorizontalAlignment="Center">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <Label Content="Քանակ"/>
+        <TextBox Name="TxtCount" Width="70" Text="{Binding Path=Count, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">        
+            <Label Content="Առկա է"/>
+        <TextBox Width="70" Text="{Binding Path=MaxCount, StringFormat = '###,###.###'}" HorizontalContentAlignment="Right" IsReadOnly="True"/>
+        </StackPanel>
+    <TextBlock Text="{Binding Path=Description}"></TextBlock>
+   <Button Content="Հաստատել" Width="80" Click="BtnAccept_Click"/>
+</StackPanel>
+</Window>

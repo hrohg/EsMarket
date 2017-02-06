@@ -1,0 +1,312 @@
+﻿<UserControl x:Class="UserControls.Editors.EditProducts.Views.EditProductUctrl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             xmlns:views="clr-namespace:UserControls.Views"
+             xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
+             xmlns:enumerations="clr-namespace:ES.Common.Enumerations;assembly=ES.Common">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0"  Margin="5,5,5,0">
+                <Menu Margin="3" Visibility="Collapsed">
+                    <MenuItem Header="Տվյալներ" Margin="3" IsEnabled="False">
+                        <MenuItem Header="Ներմուծել" Margin="3">
+                            <MenuItem Header="Excel" Name="MiImportFromExcel" Margin="3"></MenuItem>
+                        </MenuItem>
+                        <MenuItem Header="Արտահանել" Margin="3">
+                            <MenuItem Header="Excel" Name="MiExportToExcel"></MenuItem>
+                        </MenuItem>
+                    </MenuItem>
+                </Menu>
+                <DockPanel></DockPanel>
+                <StackPanel  Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="3" Visibility="Collapsed">
+                    <Label Content="Նույնականացման համար" HorizontalContentAlignment="Right"/>
+                    <TextBox Name="TxtId" Text="{Binding Product.Id}" Width="250" IsReadOnly="True" />
+                </StackPanel>
+                <TabControl MinHeight="100">
+                    <TabItem Header="Հիմնական">
+                        <Grid Margin="3">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Border Grid.Row="0" Margin="0 1" BorderThickness=".5" BorderBrush="LightSkyBlue" Padding="2">
+                                <Grid Margin="0 1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+
+                                    <Label Content="Կոդ" Grid.Column="0" Grid.Row="0" HorizontalContentAlignment="Right"/>
+                                    <TextBox Grid.Column="1" Grid.Row="0" x:Name="TextBoxCode" Text="{Binding Path=Product.Code, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="auto"  TabIndex="1">
+                                        <TextBox.InputBindings>
+                                            <KeyBinding Key="Enter" Command="{Binding GetProductCommand}" CommandParameter="{Binding ElementName=TextBoxCode, Path=Text}"/>
+                                        </TextBox.InputBindings>
+                                    </TextBox>
+                                    <Label Content="Անվանում" Grid.Column="2" Grid.Row="0" HorizontalContentAlignment="Right"/>
+                                    <TextBox Grid.Column="3" Grid.Row="0" Text="{Binding Product.Description, UpdateSourceTrigger=PropertyChanged}" Width="Auto" MinWidth="300" TabIndex="2"/>
+
+                                    <Label Grid.Column="0" Grid.Row="1" Content="Բարկոդ"  HorizontalContentAlignment="Right" VerticalAlignment="Top" Margin="0 1"/>
+                                    <TextBox Grid.Column="1" Grid.Row="1" x:Name="TextBoxBarcode" 
+                           Text="{Binding Product.Barcode, UpdateSourceTrigger=PropertyChanged}" 
+                           Width="Auto" VerticalAlignment="Top" Height="26" 
+                           TabIndex="4" Margin="0 1"
+     HorizontalContentAlignment="Center" 
+                                             VerticalContentAlignment="Center">
+                                        <TextBox.InputBindings>
+                                            <KeyBinding Key="Enter" Command="{Binding GenerateBarcodeCommand}" CommandParameter="{Binding ElementName=TextBoxBarcode, Path=Text}"/>
+                                            <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding GenerateBarcodeCommand}" CommandParameter="{Binding ElementName=TextBoxBarcode, Path=Text}"/>
+                                        </TextBox.InputBindings>
+                                    </TextBox>
+                                    <TextBlock Grid.Column="2" Grid.Row="1" Text="ԱՏԳ կոդ" ToolTip="Արտաքին տնտեսական գործունեության կոդ"  HorizontalAlignment="Right" Margin="0 1"/>
+                                    <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal">
+                                        <TextBox Grid.Column="3" Grid.Row="1" Text="{Binding Product.HcdCs, UpdateSourceTrigger=PropertyChanged}" Width="150" HorizontalAlignment="Left" Margin="0 1"/>
+                                        <Label Grid.Column="4" Grid.Row="0"  Content="Չափման միավոր" HorizontalContentAlignment="Right" Margin="0 1"/>
+                                        <StackPanel Grid.Column="5" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBox Name="TxtMu" Text="{Binding Product.Mu, UpdateSourceTrigger=PropertyChanged}" Width="100"  Margin="0 1" TabIndex="3" HorizontalAlignment="Left"/>
+                                            <CheckBox IsChecked="{Binding Product.IsWeight}" Content="Քաշային" Margin="10 0" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Row="1" Margin="0 1" BorderThickness=".5" BorderBrush="LightSkyBlue" Padding="2">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Margin="0 1" HorizontalAlignment="Right">
+                                        <TextBlock Text="Ինքնարժեք" />
+                                        <TextBox Name="TxtCostPrice" Text="{Binding Product.CostPrice, UpdateSourceTrigger=PropertyChanged, StringFormat='######.##', TargetNullValue=''}" Width="80" TabIndex="6" HorizontalContentAlignment="Right"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0 1">
+                                        <Label Content="Վաճառքի տոկոս" HorizontalContentAlignment="Right" Width="120"/>
+                                        <TextBox Text="{Binding Product.ProfitPercent, UpdateSourceTrigger=PropertyChanged, StringFormat='###,###.##', TargetNullValue=''}" Width="50" TabIndex="7" HorizontalContentAlignment="Right"/>
+                                        <Label Content="Վաճառքի գին" HorizontalContentAlignment="Right" Width="120"/>
+                                        <TextBox Name="TxtPrice" Text="{Binding Path = Product.Price, UpdateSourceTrigger=PropertyChanged,StringFormat='###,###.##', TargetNullValue='', Mode=TwoWay}" Width="80" TabIndex="7" HorizontalContentAlignment="Right"/>
+                                        <Label Content="Զեղչ %" HorizontalContentAlignment="Right" Width="70"/>
+                                        <TextBox Name="TxtDiscount" Text="{Binding Product.Discount, UpdateSourceTrigger=PropertyChanged, StringFormat='###,###.##', TargetNullValue=''}" Width="50" TabIndex="8" HorizontalContentAlignment="Right" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0 1">
+                                        <Label Content="Մեծածախ տոկոս" HorizontalContentAlignment="Right" Width="120"/>
+                                        <TextBox Text="{Binding Product.DealerProfitPercent, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat='###,###.##'}" Width="50" TabIndex="8" HorizontalContentAlignment="Right"/>
+
+                                        <Label Content="Մեծածախ գին" HorizontalContentAlignment="Right" Width="120"/>
+                                        <TextBox Name="TxtDealerPrice" Text="{Binding Product.DealerPrice, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat='###,###.##'}" Width="80" TabIndex="9" HorizontalContentAlignment="Right" />
+                                        <Label Content="Զեղչ %" HorizontalContentAlignment="Right" Width="70"/>
+                                        <TextBox Name="TxtDealerDiscount" Text="{Binding Product.DealerDiscount, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat='###,###.##'}" Width="50" TabIndex="10" HorizontalContentAlignment="Right" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Ապրանքատեսակ">
+                        <Border Grid.Row="0" Margin="0 1" BorderThickness=".5" BorderBrush="LightSkyBlue" Padding="2">
+                            <StackPanel>
+                                <StackPanel Orientation ="Horizontal">
+                                    <Label Content="Բրենդ" VerticalAlignment="Top"  HorizontalContentAlignment="Right"/>
+                                    <ComboBox Name="CmbBrand"  Width="Auto"  MinWidth="200" VerticalAlignment="Top"
+    DisplayMemberPath="BrandName"
+    SelectedValuePath="Id"
+    SelectedItem="{Binding Path=Product.Brand, UpdateSourceTrigger=PropertyChanged}"
+    SelectedValue="{Binding Path=Product.BrandId, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10" TabIndex="14" />
+
+
+                                </StackPanel>
+                                <ItemsControl ItemsSource="{Binding Categories}">
+                                    <ItemsControl.Template>
+                                        <ControlTemplate>
+                                            <CheckBox Content="{Binding Description}" IsChecked="True"/>
+                                        </ControlTemplate>
+                                    </ItemsControl.Template>
+                                </ItemsControl>
+                                <Button Content="Խմբագրել" Command="{Binding}" HorizontalAlignment="Right"/>
+                            </StackPanel>
+                        </Border>
+                    </TabItem>
+                    <TabItem Header="Ապրանքային խումբ">
+                        <Border Grid.Row="0" Margin="0 1" BorderThickness=".5" BorderBrush="LightSkyBlue" Padding="2">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBox x:Name="Part_TextBox" Text="{Binding ProductGroupDescription}" Height="Auto" VerticalContentAlignment="Top" TextWrapping="Wrap">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Enter" Command="{Binding AddProductGroupCommand}" CommandParameter="{Binding Path = Text, ElementName=Part_TextBox}"/>
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                            </Grid>
+                        </Border>
+                    </TabItem>
+                    <TabItem Header="Լրացուցիչ">
+                        <Border Grid.Row="0" Margin="0 1" BorderThickness=".5" BorderBrush="LightSkyBlue" Padding="2">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Grid.Column="0" Content="Մինիմալ քանակ" HorizontalContentAlignment="Right" Width="120" IsTabStop ="False" TabIndex="9"/>
+                                <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0 1">
+                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Product.MinQuantity, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat='###,###.##'}" Width="80" TabIndex="6" HorizontalContentAlignment="Right"/>
+                                    <TextBlock  Text="Պիտանելիության ժամկետ (օր)" HorizontalAlignment="Right" TextWrapping="Wrap" />
+                                    <TextBox  Text="{Binding Product.ExpiryDays, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat='### ###'}" TabIndex="11" Width="50" HorizontalContentAlignment="Right" HorizontalAlignment="Left"/>
+                                </StackPanel>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Նշումներ" HorizontalAlignment="Right"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" Name="TxtNotes" Text="{Binding Product.Note, UpdateSourceTrigger=PropertyChanged}" Height="50" AcceptsReturn="True" TextWrapping="Wrap" TabIndex="5"/>
+                            </Grid>
+                        </Border>
+                    </TabItem>
+                </TabControl>
+                <Separator Width="Auto" Margin="5"/>
+
+                <Separator Width="Auto" Margin="5"/>
+                <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="1">
+                    <CheckBox IsChecked="{Binding IsGetProductFromEsServer}" Content="Բեռնել անհայտ ապրանքները սերվերից" Margin="3 10" VerticalAlignment="Center"/>
+                    <Menu Margin="3" Height="24" TabIndex="15">
+                        <MenuItem Header="{Binding Product.EditProductStage}" Command="{Binding EditCommand}" Margin="1"/>
+                        <MenuItem Header="Մաքրել" Command="{Binding NewCommand}"/>
+                        <MenuItem Header="Դիտել">
+                            <MenuItem Header="Դիտել ակտիվները" Command="{Binding GetProductsCommand}" CommandParameter="{x:Static enumerations:ProductViewType.ByActive}"/>
+                            <MenuItem Header="Դիտել պասիվները" Command="{Binding GetProductsCommand}" CommandParameter="{x:Static enumerations:ProductViewType.ByPasive}"/>
+                            <MenuItem Header="Դիտել 0-յականները" Command="{Binding GetProductsCommand}" CommandParameter="{x:Static enumerations:ProductViewType.ByEmpty}"/>
+                            <Separator/>
+                            <MenuItem Header="Դիտել ըստ քաշայինների"  Command="{Binding GetProductsCommand}" CommandParameter="{x:Static enumerations:ProductViewType.WeigthsOnly}"/>
+                            <MenuItem Header="Դիտել ըստ բրենդների"  Command="{Binding GetProductsCommand}" CommandParameter="{x:Static enumerations:ProductViewType.ByBrands}"/>
+                            <MenuItem Header="Դիտել ըստ ապրանքատեսակների"  Command="{Binding GetProductsCommand}" CommandParameter="{x:Static enumerations:ProductViewType.ByActivity}"/>
+                            <Separator/>
+                            <MenuItem Header="Դիտել բոլորը"  Command="{Binding GetProductsCommand}" CommandParameter="{x:Static enumerations:ProductViewType.All}"/>
+                        </MenuItem>
+                        <MenuItem Header="..." Margin="1">
+                            <MenuItem Header="Պատճենել" Command="{Binding ProductCopyCommand}">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Copy.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Պատկերել" Command="{Binding ProductPastCommand}">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Paste.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{Binding ChangeProductActivityDescription}" Command="{Binding ChangeProductEnabledCommand}"/>
+                            <Separator/>
+                            <MenuItem Header="Ներբեռնել Excel ֆայլից" Command="{Binding ImportProductsCommand}"/>
+                            <Separator/>
+                            <MenuItem Header="Տպել Բարկոդ" Command="{Binding PrintBarcodeCommand}" CommandParameter="False">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Տպել Բարկոդ (մեծ)" Command="{Binding PrintBarcodeLargeCommand}" CommandParameter="False">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Տպել Բարկոդ (Դիտել)" Command="{Binding PrintBarcodeCommand}" CommandParameter="True">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/PrintPreview120.png" SnapsToDevicePixels="True"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Տպել Բարկոդ մեծ (Դիտել)" Command="{Binding PrintBarcodeLargeCommand}" CommandParameter="True">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/PrintPreview120.png" SnapsToDevicePixels="True"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Թարմացնել կշեռքների տվյալները" Command="{Binding}" CommandParameter="" IsEnabled="False">
+                                <!--<MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/PrintPreview120.png" SnapsToDevicePixels="True"/>
+                            </MenuItem.Icon>-->
+                            </MenuItem>
+                            <MenuItem Header="Կոդի փոփոխում" Command="{Binding ChangeProductCodeCommand}"/>
+                            <Separator/>
+                        </MenuItem>
+                    </Menu>
+                </StackPanel>
+                <Separator Width="Auto" Margin="5"/>
+                <DockPanel Margin="1" LastChildFill="True" >
+                    <Label Content="Որոնում" HorizontalContentAlignment="Right"/>
+                    <TextBox DockPanel.Dock="Bottom" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+            </StackPanel>
+            <extendedControls:ExtendedDataGrid x:Name="DgProducts" Grid.Row="1" Margin="10" ItemsSource="{Binding Path=Products}" AutoGenerateColumns="False"
+                                   SelectedItem="{Binding Path = Product}"
+          CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="True" CanUserResizeRows="False" VerticalContentAlignment="Stretch" Foreground="Blue">
+                <DataGrid.Columns>
+                    <DataGridComboBoxColumn DisplayMemberPath="BrandName" SelectedValuePath="Id"
+                        SelectedValueBinding="{Binding Path=BrandId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItemBinding="{Binding Path=Brand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Header="Brand" Width="Auto"/>
+                    <DataGridTextColumn Binding="{Binding Path=Code}" Header="Կոդ" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=Barcode}" Header="Բարկոդ" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=Description}" Header="Անվանում" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=Mu}" Header="ՉՄ" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTemplateColumn  Header="Առկա քանակ" Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=ExistingQuantity, StringFormat='###,##0.###'}" Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Կարգավիճակ" Width="Auto" IsReadOnly="True" CanUserSort="True" SortMemberPath="State">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=State}" Foreground="{Binding ProductStateHighlighthing, Mode=OneWay}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Binding="{Binding Path=CostPrice, StringFormat='###,###.##'}" Header="Ինքնարժեք" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=DealerProfitPercent, StringFormat='###,###.##'}" Header="Մեծածախ տոկոս" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=DealerPrice, StringFormat='###,###.##'}" Header="Մեծածախ գին" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=DealerDiscount, StringFormat='###,###.##'}" Header="Մեծածախ զեղչ" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=ProfitPercent, StringFormat='###,###.##'}" Header="Մանրածախ տոկոս" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=Price, StringFormat='###,###.##'}" Header="Մանրածախ գին" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=Discount, StringFormat='###,###.##'}" Header="Զեղչ" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=Note}" Header="Նշումներ" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTemplateColumn Header="Edit" Visibility="Collapsed">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Width="50" Margin="1" Command="{Binding Path=DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding Id}" Content="Հեռացնել" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </extendedControls:ExtendedDataGrid>
+        </Grid>
+        <views:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
+    </Grid>
+</UserControl>

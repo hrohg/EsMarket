@@ -1,0 +1,36 @@
+﻿<Window x:Class="UserControls.ImageViewer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:FluidControls="clr-namespace:FluidKit.Controls;assembly=FluidKit" 
+        xmlns:DataAccess="clr-namespace:RealEstate.DataAccess;assembly=RealEstate.DataAccess" WindowState="Maximized" WindowStyle="ToolWindow" 
+        x:Name="imageViewer" ShowInTaskbar="True"  Foreground="Black"
+        Icon="pack://application:,,,/Shared;component/Images/Application.png" WindowStartupLocation="CenterScreen" KeyUp="imageViewer_KeyUp">
+    <Window.Resources>
+
+    </Window.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Auto">
+        <Grid Height="Auto" Width="Auto">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <ItemsControl ItemsSource="{Binding Path=Images, ElementName=imageViewer}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding}" Margin="4" Height="Auto"  MaxHeight="1000" MaxWidth="750">
+                            <Image.ContextMenu>
+                                <ContextMenu x:Name="cmnu">
+                                    <MenuItem x:Name="mnuOpenFolder" Header="{Binding Source={StaticResource CultureResources},Path=[OpenContainingFolder]}" 
+                                              Click="mnuOpenFolder_Click" Tag="{Binding}"/>
+                                    <MenuItem x:Name="mnuCopyImagesTo" Header="{Binding Source={StaticResource CultureResources},Path=[SavePhotosPPP]}" 
+                                              Click="mnuSaveImages" Tag="{Binding}"/>
+                                </ContextMenu>
+                            </Image.ContextMenu>
+                        </Image>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+			<Button x:Name="btnOK" Content="{Binding Source={StaticResource CultureResources},Path=[Close]}" Grid.Row="1" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" Click="btnOK_Click"/>
+        </Grid>
+    </ScrollViewer>
+</Window>

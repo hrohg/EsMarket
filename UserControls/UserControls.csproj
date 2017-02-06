@@ -1,0 +1,536 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FB4CAC1B-F794-454C-AB58-908E3C679685}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>UserControls</RootNamespace>
+    <AssemblyName>UserControls</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CashReg, Version=0.0.0.4, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Bin\CashReg.dll</HintPath>
+    </Reference>
+    <Reference Include="ReachFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Printing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Barcodes\Ean13BarcodeControl.cs" />
+    <Compile Include="Barcodes\UctrlBarcodeLargeWithText.xaml.cs">
+      <DependentUpon>UctrlBarcodeLargeWithText.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Barcodes\UctrlBarcodeWithText.xaml.cs">
+      <DependentUpon>UctrlBarcodeWithText.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Barcodes\UctrlBarcodeX.xaml.cs">
+      <DependentUpon>UctrlBarcodeX.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Barcodes\ViewModels\BarcodeViewModel.cs" />
+    <Compile Include="Commands\AccountingRecordsCommands.cs" />
+    <Compile Include="Commands\EsUserChangeCommand.cs" />
+    <Compile Include="Commands\InvoiceCommands.cs" />
+    <Compile Include="Commands\PartnerCommands.cs" />
+    <Compile Include="Commands\ProductCommand.cs" />
+    <Compile Include="Commands\ProductOrderCommands.cs" />
+    <Compile Include="Commands\ServicesCommands.cs" />
+    <Compile Include="Commands\SettingsCommands.cs" />
+    <Compile Include="Commands\StockTakingCommands.cs" />
+    <Compile Include="ControlPanel\Controls\CtrlAccountingRecords.xaml.cs">
+      <DependentUpon>CtrlAccountingRecords.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ControlPanel\Controls\CtrlMultipleAccountingRecords.xaml.cs">
+      <DependentUpon>CtrlMultipleAccountingRecords.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ControlPanel\Controls\CtrlSingleAccountingRecords.xaml.cs">
+      <DependentUpon>CtrlSingleAccountingRecords.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ControlPanel\Controls\EditItems.xaml.cs">
+      <DependentUpon>EditItems.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ControlPanel\Controls\ExtendedControls\ExtendedDataGrid.cs" />
+    <Compile Include="ControlPanel\Controls\InputBox.xaml.cs">
+      <DependentUpon>InputBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ControlPanel\Controls\SelectCount.xaml.cs">
+      <DependentUpon>SelectCount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ControlPanel\Controls\SelectDateIntermediate.xaml.cs">
+      <DependentUpon>SelectDateIntermediate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ControlPanel\Controls\SelectItems.xaml.cs">
+      <DependentUpon>SelectItems.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ControlPanel\Controls\SelectManager.cs" />
+    <Compile Include="Controls\Popup\DraggablePopup.cs" />
+    <Compile Include="Converters\CommandParameterConverter.cs" />
+    <Compile Include="Converters\InverseVisibilityConverter.cs" />
+    <Compile Include="Converters\MessageColorConverter.cs" />
+    <Compile Include="Editors\EditProducts\Views\EditProductUctrl.xaml.cs">
+      <DependentUpon>EditProductUctrl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GlipFactory.cs" />
+    <Compile Include="Helpers\ECRManager.cs" />
+    <Compile Include="Helpers\ftp.cs" />
+    <Compile Include="Helpers\ftplib.cs" />
+    <Compile Include="Helpers\PrintManager.cs" />
+    <Compile Include="Helpers\SelectItemsManager.cs" />
+    <Compile Include="Helpers\ToolsManager.cs" />
+    <Compile Include="Interfaces\IInvoiceViewModel.cs" />
+    <Compile Include="Interfaces\ITabItem.cs" />
+    <Compile Include="ViewModels\AccountingPlanViewModel.cs" />
+    <Compile Include="ViewModels\AccountingRecordsViewModel.cs" />
+    <Compile Include="ViewModels\EsUserViewModel.cs" />
+    <Compile Include="ViewModels\Logs\LogViewModel.cs" />
+    <Compile Include="ViewModels\ProductItemsViewModel.cs" />
+    <Compile Include="ViewModels\ReportViewModel.cs" />
+    <Compile Include="ViewModels\SaleProductsViewModel.cs" />
+    <Compile Include="ViewModels\ServerViewModel.cs" />
+    <Compile Include="ViewModels\ServicesViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\TabItemViewModel.cs" />
+    <Compile Include="ViewModels\Tools\ProductItemsToolsViewModel.cs" />
+    <Compile Include="Views\InventoryWriteOffUctrl.xaml.cs">
+      <DependentUpon>InventoryWriteOffUctrl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProductOrderUctrl.xaml.cs">
+      <DependentUpon>ProductOrderUctrl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PurchaseUctrl.xaml.cs">
+      <DependentUpon>PurchaseUctrl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\StockTakingUctrl.xaml.cs">
+      <DependentUpon>StockTakingUctrl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UctrlMoveingInvoice.xaml.cs">
+      <DependentUpon>UctrlMoveingInvoice.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UctrlViewTable.xaml.cs">
+      <DependentUpon>UctrlViewTable.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CustomControls\UIListView.xaml.cs">
+      <DependentUpon>UIListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="InputBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InputBox.Designer.cs">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InputPassword.xaml.cs">
+      <DependentUpon>InputPassword.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PasswordForRestore.xaml.cs">
+      <DependentUpon>PasswordForRestore.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SelectCount.xaml.cs">
+      <DependentUpon>SelectCount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SelectItemsByCheck.xaml.cs">
+      <DependentUpon>SelectItemsByCheck.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SelectItems.xaml.cs">
+      <DependentUpon>SelectItems.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Selectors\ViewModel\SelectTreeViewItemsViewModel.cs" />
+    <Compile Include="Selectors\Views\TreeViewSelectorWindow.xaml.cs">
+      <DependentUpon>TreeViewSelectorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ImageUploadService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Session.cs" />
+    <Compile Include="ViewModels\Invoices\DebitInvoiceViewModel.cs" />
+    <Compile Include="ViewModels\InternalWaybillViewModel.cs" />
+    <Compile Include="ViewModels\Invoices\InternalWaybillViewModel.cs" />
+    <Compile Include="ViewModels\Invoices\InvoicesViewModel.cs" />
+    <Compile Include="ViewModels\Invoices\InvoiceViewModel.cs" />
+    <Compile Include="ViewModels\Invoices\PurchaseInvoiceViewModel.cs" />
+    <Compile Include="ViewModels\Invoices\SaleInvoiceViewModel.cs" />
+    <Compile Include="ViewModels\LibraryViewModel.cs" />
+    <Compile Include="ViewModels\Partners\PartnerViewModel.cs" />
+    <Compile Include="ViewModels\Products\ProductOrderViewModel.cs" />
+    <Compile Include="ViewModels\Products\ProductViewModel.cs" />
+    <Compile Include="ViewModels\StartPageViewModel.cs" />
+    <Compile Include="ViewModels\StockTakeings\StockTakeViewModel.cs" />
+    <Compile Include="ViewModels\TableViewModel.cs" />
+    <Compile Include="Views\PrintPreview\PrintPreviewViewModel.cs" />
+    <Compile Include="Views\PrintPreview\Views\UiPrintPreview.xaml.cs">
+      <DependentUpon>UiPrintPreview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReceiptTickets\ReceiptTicketViewModel.cs" />
+    <Compile Include="Views\ReceiptTickets\Views\InvoicePreview.xaml.cs">
+      <DependentUpon>InvoicePreview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReceiptTickets\Views\MoveInvoiceView.xaml.cs">
+      <DependentUpon>MoveInvoiceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReceiptTickets\Views\PurchaseInvoiceLargeView.xaml.cs">
+      <DependentUpon>PurchaseInvoiceLargeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReceiptTickets\Views\ReceiptTicketSmall.xaml.cs">
+      <DependentUpon>ReceiptTicketSmall.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ReceiptTickets\Views\SaleInvoiceView.xaml.cs">
+      <DependentUpon>SaleInvoiceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CustomControls\SaleUctrl.xaml.cs">
+      <DependentUpon>SaleUctrl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WaitingCover.xaml.cs">
+      <DependentUpon>WaitingCover.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Barcodes\UctrlBarcodeLargeWithText.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Barcodes\UctrlBarcodeWithText.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Barcodes\UctrlBarcodeX.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ControlPanel\Controls\CtrlAccountingRecords.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ControlPanel\Controls\CtrlMultipleAccountingRecords.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ControlPanel\Controls\CtrlSingleAccountingRecords.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ControlPanel\Controls\EditItems.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ControlPanel\Controls\InputBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ControlPanel\Controls\SelectCount.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ControlPanel\Controls\SelectDateIntermediate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ControlPanel\Controls\SelectItems.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\CustomExceptionBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Editors\EditProducts\Views\EditProductUctrl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Editors\EditProducts\Views\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\InventoryWriteOffUctrl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Logs\LogsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ProductOrderUctrl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PurchaseUctrl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\StockTakingUctrl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Tools\ProductItemsTools.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UctrlMoveingInvoice.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\UctrlViewTable.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CustomControls\UIListView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="InputPassword.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="PasswordForRestore.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SelectCount.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SelectItemsByCheck.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SelectItems.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Selectors\Views\TreeViewSelectorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Documents\InvoiceTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Documents\StartPageDataTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PrintPreview\Views\UiPrintPreview.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ReceiptTickets\Views\InvoicePreview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReceiptTickets\Views\MoveInvoiceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReceiptTickets\Views\PurchaseInvoiceLargeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ReceiptTickets\Views\ReceiptTicketSmall.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ReceiptTickets\Views\SaleInvoiceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CustomControls\SaleUctrl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\WaitingCover.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\CustomExceptionBox.xaml.cs">
+      <DependentUpon>CustomExceptionBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="InputBox.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\DataSources\Realtor.DTO.ImageDto.datasource" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+    <None Include="Service References\ImageUploadService\ImageUploadService.wsdl" />
+    <None Include="Service References\ImageUploadService\ImageUploadService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ImageUploadService\ImageUploadService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ImageUploadService\ImageUploadService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ImageUploadService\UserControls.ImageUploadService.ImageDto1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Es.Business\ES.Business.csproj">
+      <Project>{43ced733-9e89-4270-b5ab-893846f9826d}</Project>
+      <Name>ES.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ES.Common\ES.Common.csproj">
+      <Project>{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}</Project>
+      <Name>ES.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ES.DataAccess\ES.DataAccess.csproj">
+      <Project>{A425B85D-C3EB-4BCC-B307-17DAAEE9237D}</Project>
+      <Name>ES.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ES.Data\ES.Data.csproj">
+      <Project>{ce538c7e-ffee-4b16-a6e6-8b6e64f43e0f}</Project>
+      <Name>ES.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Shared\Shared.csproj">
+      <Project>{ec37832a-a5ee-41b9-bfaf-1929a7e43755}</Project>
+      <Name>Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Xceed.Wpf.AvalonDock\Xceed.Wpf.AvalonDock.csproj">
+      <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
+      <Name>Xceed.Wpf.AvalonDock</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Zen.Barcode\Zen.Barcode.csproj">
+      <Project>{7f497e2d-106f-46f1-b80f-bba14241a9cf}</Project>
+      <Name>Zen.Barcode</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ImageUploadService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\ImageUploadService\configuration.svcinfo" />
+    <None Include="Service References\ImageUploadService\configuration91.svcinfo" />
+    <None Include="Service References\ImageUploadService\ImageUploadService.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\ImageUploadService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Editors\EditPartners\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

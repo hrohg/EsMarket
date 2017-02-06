@@ -1,0 +1,92 @@
+﻿<UserControl x:Class="UserControls.Views.ReceiptTickets.Views.MoveInvoiceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" Width="750">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="Bool2VisibilityConverter"/>
+  </UserControl.Resources>
+  <Grid Margin="25">
+     <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <StackPanel Grid.Row="0">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+        <TextBlock Text="Կտրոն։ " />
+        <TextBlock Text="{Binding Invoice.InvoiceNumber}" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="Ամսաթիվ։ " />
+        <TextBlock Text="{Binding Date}" />
+      </StackPanel>
+      <TextBlock Text="{Binding MemberName}" />
+      <TextBlock Text="{Binding MemberAddress}" />
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="Հաստատեց։ " />
+        <TextBlock Text="{Binding Invoice.Approver}" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="Մատակարար։ " />
+        <TextBlock Text="{Binding FromStock.Name}" />
+      </StackPanel>
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="Բաժին։ " />
+        <TextBlock Text="{Binding ToStock.Name}" />
+      </StackPanel>
+    </StackPanel>
+    <extendedControls:ExtendedDataGrid Grid.Row="1" x:Name="PartDataGrid" 
+                                       ItemsSource="{Binding InvoiceItems}" SelectedItem="{Binding SelectedInvoiceItem}" 
+                                       VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled"
+              VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="12" >
+            <extendedControls:ExtendedDataGrid.Resources>
+        <Style x:Key="CellRightAlign">
+          <Setter Property="Control.HorizontalAlignment" Value="Right" />
+        </Style>
+      </extendedControls:ExtendedDataGrid.Resources>
+            <extendedControls:ExtendedDataGrid.Columns>
+        <DataGridTextColumn Header="ՀՀ" Binding="{Binding Index, Mode=OneWay}" Width="Auto"/> 
+        <DataGridTextColumn Header="Կոդ" Binding="{Binding Code, Mode=OneWay}" Width="Auto"/>
+        <DataGridTextColumn Header="Անվանում" Binding="{Binding Description, Mode=OneWay}" Width="1*" />
+        <DataGridTextColumn Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" Width="Auto" />
+        <DataGridTextColumn Header="Քանակ"
+                            Binding="{Binding Path=Quantity, StringFormat=N3, Mode=OneWay}"
+                            CellStyle="{StaticResource CellRightAlign}"
+                            Width="Auto"/>
+        <DataGridTextColumn Header="Գին" Binding="{Binding Path=Product.Price, Mode=OneWay, StringFormat='# ###.##'}" CellStyle="{StaticResource CellRightAlign}" Width="Auto"/>
+        <DataGridTextColumn Header="Գումար" Binding="{Binding Path=Amount, Mode=OneWay, StringFormat='# ###.##'}" CellStyle="{StaticResource CellRightAlign}" Width="Auto"/>
+        <DataGridTextColumn Header="Նշումներ" CellStyle="{StaticResource CellRightAlign}" Width="150"/>
+      </extendedControls:ExtendedDataGrid.Columns>
+    </extendedControls:ExtendedDataGrid>
+    <StackPanel Grid.Row="2">
+      <TextBlock Text="ՎՃԱՐՈՒՄ" HorizontalAlignment="Center"/>
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Column="0" Grid.Row="0" Text="Ընդամենը։" HorizontalAlignment="Right" />
+        <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Invoice.Total, StringFormat='# ###'}" HorizontalAlignment="Right"  />
+      </Grid>
+      <Separator/>
+      <Grid>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+          <TextBlock Text="Հանձնեց"/>
+          <TextBlock Text="{Binding FromStock.Storekeeper.FullName}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+          <TextBlock Text="Ընդունեց"/>
+          <TextBlock Text="{Binding ToStock.Storekeeper.FullName}"/>
+        </StackPanel>
+      </Grid>
+      <TextBlock Text="{Binding Footer}" HorizontalAlignment="Center" Margin="0 5"/>
+    </StackPanel>
+  </Grid>
+</UserControl>
