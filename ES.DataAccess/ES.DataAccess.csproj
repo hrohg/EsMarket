@@ -1,0 +1,295 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A425B85D-C3EB-4BCC-B307-17DAAEE9237D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ES.DataAccess</RootNamespace>
+    <AssemblyName>ES.DataAccess</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net40\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Realtor\Realtor\Binaries\Microsoft.SqlServer.ConnectionInfo.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Binaries\Microsoft.SqlServer.Management.Sdk.Sfc.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Smo, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Binaries\Microsoft.SqlServer.Smo.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.SmoExtended, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Binaries\Microsoft.SqlServer.SmoExtended.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.SqlEnum, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Binaries\Microsoft.SqlServer.SqlEnum.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DataUtilities\ConnectionContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DataUtilities\DataTranslator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DataUtilities\Disposable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DataUtilities\Exceptions\DbIncompatibleTypeException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DataUtilities\Exceptions\InvalidConnectionException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DataUtilities\Interfaces.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DataUtilities\SQLConnectionFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Helpers\AppSettings.cs" />
+    <Compile Include="Helpers\DatabaseTools.cs" />
+    <Compile Include="Helpers\ManagersBase.cs" />
+    <Compile Include="Helpers\ObjectQueryExtensions.cs" />
+    <Compile Include="Interfaces\IDemandEstateDisplayData.cs" />
+    <Compile Include="Managers\BaseManager.cs" />
+    <Compile Include="Models\AccountingPlan.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AccountingRecords.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AccountsReceivable.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Brands.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CashDesk.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Categories.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EsDefaults.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EsInvoiceTypes.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EsMembers.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EsMembersAccounts.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EsPartnersTypes.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ESSharedProducts.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EsStock.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EsStockDBModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EsStockDBModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EsStockDBModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EsStockDBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EsStockDBModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EsStockDBModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EsStockDbServerModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EsStockDbServerModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EsStockDbServerModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EsStockDbServerModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EsStockDbServerModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ESUserRoles.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EsUsers.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\EsUsersInRole.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\InvoiceItems.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Invoices.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MembersBrands.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MembersRoles.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MemberUsersRoles.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ParsalModels.cs" />
+    <Compile Include="Models\Partners.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductCategories.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductGroup.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductItems.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductOrder.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductOrderItems.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Products.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SaleInCash.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\StockTake.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\StockTakeItems.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SubAccountingPlan.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
+    <EntityDeploy Include="Models\EsStockDbServerModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>EsStockDbServerModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <EntityDeploy Include="Models\EsStockDBModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>EsStockDBModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Models\EsStockDBModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>EsStockDBModel.edmx</DependentUpon>
+      <LastGenOutput>EsStockDBModel.Context.cs</LastGenOutput>
+    </None>
+    <None Include="Models\EsStockDBModel.edmx.diagram">
+      <DependentUpon>EsStockDBModel.edmx</DependentUpon>
+    </None>
+    <None Include="Models\EsStockDBModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>EsStockDBModel.edmx</DependentUpon>
+      <LastGenOutput>EsStockDBModel.cs</LastGenOutput>
+    </None>
+    <None Include="Models\EsStockDbServerModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>EsStockDbServerModel.edmx</DependentUpon>
+      <LastGenOutput>EsStockDbServerModel.Context.cs</LastGenOutput>
+    </None>
+    <None Include="Models\EsStockDbServerModel.edmx.diagram">
+      <DependentUpon>EsStockDbServerModel.edmx</DependentUpon>
+    </None>
+    <None Include="Models\EsStockDbServerModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>EsStockDbServerModel.edmx</DependentUpon>
+      <LastGenOutput>EsStockDbServerModel.cs</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
