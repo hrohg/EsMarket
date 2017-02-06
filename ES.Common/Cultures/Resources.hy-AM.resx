@@ -1,0 +1,1689 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutProgramPPP" xml:space="preserve">
+    <value>Ծրագրի մասին...</value>
+  </data>
+  <data name="ActivationDate" xml:space="preserve">
+    <value>Ակտիվացման ժամկետ</value>
+  </data>
+  <data name="AddEditDemand" xml:space="preserve">
+    <value>Ավելացնել/Փոփոխել Գնորդ</value>
+  </data>
+  <data name="AddEditEstate" xml:space="preserve">
+    <value>Ավելացնել/Փոփոխել Հայտ</value>
+  </data>
+  <data name="AddUserPPP" xml:space="preserve">
+    <value>Ավելացնել Օգտագործող...</value>
+  </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Ադմինիստրատոր</value>
+  </data>
+  <data name="AdvancedSearch" xml:space="preserve">
+    <value>Ընդլայնված Որոնում</value>
+  </data>
+  <data name="AllUsersPPP" xml:space="preserve">
+    <value>Բոլոր Օգտագործողները...</value>
+  </data>
+  <data name="Apartment" xml:space="preserve">
+    <value>Բնակարան</value>
+  </data>
+  <data name="ArchiveCreatedSuccessfully" xml:space="preserve">
+    <value>Արխիվը հաջողությամբ ստեղծվեց</value>
+  </data>
+  <data name="ArchiveError" xml:space="preserve">
+    <value>Արխիվացման սխալ</value>
+  </data>
+  <data name="ArchiveIsNotCompletedTryLater" xml:space="preserve">
+    <value>Արխիվացումը չի կատարվել, խնդրում ենք փորձել քիչ ուշ</value>
+  </data>
+  <data name="ArchiveRestored" xml:space="preserve">
+    <value>Արխիվը վերականգնված է</value>
+  </data>
+  <data name="AreYouSureYouWantToDeleteThisEstate" xml:space="preserve">
+    <value>Դուք համոզված եք, որ ուզում եք ջնջել այս առաջարկը ?</value>
+  </data>
+  <data name="ArmeniaMap" xml:space="preserve">
+    <value>Հայաստանի Քարտեզ</value>
+  </data>
+  <data name="Broker" xml:space="preserve">
+    <value>Գործակալ</value>
+  </data>
+  <data name="BuildingProject" xml:space="preserve">
+    <value>Շենքի Նախագիծ</value>
+  </data>
+  <data name="BuildingProjects" xml:space="preserve">
+    <value>Շենքերի Նախագծեր</value>
+  </data>
+  <data name="BuildingProjectsPPP" xml:space="preserve">
+    <value>Շենքերի Նախագծեր...</value>
+  </data>
+  <data name="BuildingStructuresPPP" xml:space="preserve">
+    <value>Շենքերի Կառուցվածքները...</value>
+  </data>
+  <data name="BuildingType" xml:space="preserve">
+    <value>Շենքի Տեսակ</value>
+  </data>
+  <data name="BuildingTypes" xml:space="preserve">
+    <value>Շենքերի Տեսակները</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Հրաժարվել</value>
+  </data>
+  <data name="Cities" xml:space="preserve">
+    <value>Քաղաքներ</value>
+  </data>
+  <data name="CitiesPPP" xml:space="preserve">
+    <value>Քաղաքներ...</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Քաղաք</value>
+  </data>
+  <data name="CityP" xml:space="preserve">
+    <value>Քաղաք:</value>
+  </data>
+  <data name="ClientsCountP" xml:space="preserve">
+    <value>Գնորդների քանակը:</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Փակել</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Կոդ</value>
+  </data>
+  <data name="CodeEnteredExpirationDateX" xml:space="preserve">
+    <value>Կոդը ընդունված է, Ձեր օգտագործման ժամկենտ է` {0}</value>
+  </data>
+  <data name="CodeInputed" xml:space="preserve">
+    <value>Կոդը ընդունված է</value>
+  </data>
+  <data name="CodeP" xml:space="preserve">
+    <value>Կոդ:</value>
+  </data>
+  <data name="CommandIsNotCompletedSuccessfully" xml:space="preserve">
+    <value>Ձեր հրամանը չի կատարվել, խնդրում ենք փորձել քիչ ուշ</value>
+  </data>
+  <data name="ComputerDateIsIncorrect" xml:space="preserve">
+    <value>Ներողություն, համակարգչի ժամացույցը սխալ է, խնդրում ենք ուղղել այն նախքան ծրագիրը բացելը</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Հաստատեք ջնջումը</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Կրկնեք Ծածկագիրը:</value>
+  </data>
+  <data name="ConfirmRestore" xml:space="preserve">
+    <value>Հաստատեք վերականգնումը</value>
+  </data>
+  <data name="CreateArchive" xml:space="preserve">
+    <value>Ստեղծել Արխիվ</value>
+  </data>
+  <data name="CurrenciesPPP" xml:space="preserve">
+    <value>Արժույթներ...</value>
+  </data>
+  <data name="Currency" xml:space="preserve">
+    <value>Արժույթ</value>
+  </data>
+  <data name="DatabaseManagement" xml:space="preserve">
+    <value>Բազայի կառավարում</value>
+  </data>
+  <data name="DataSavedSuccessfully" xml:space="preserve">
+    <value>Տվյալները հաջողությամբ պահպանվեցին</value>
+  </data>
+  <data name="DateExpiredOnXDaysY" xml:space="preserve">
+    <value>Ծրագրի օգտագործման ժամկետին մնացել է {0} օր, կոդի հաջորդ մուտքագրումը պետք է կատարել {1:dd.MM.yyyy}-ին</value>
+  </data>
+  <data name="DateIsExpairedInputNewCode" xml:space="preserve">
+    <value>Ծրագրի օգտագործման ժամկետն ավարտվել է, մուտքագրեք նոր կոդ</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Ջնջել</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Ջնջված է</value>
+  </data>
+  <data name="Demands" xml:space="preserve">
+    <value>Գնորդներ</value>
+  </data>
+  <data name="Dictionaries" xml:space="preserve">
+    <value>Բազային Տվյալներ</value>
+  </data>
+  <data name="DoneDealings" xml:space="preserve">
+    <value>Կատարված Գործարքներ</value>
+  </data>
+  <data name="Earth_place" xml:space="preserve">
+    <value>Հողատարածք</value>
+  </data>
+  <data name="EnterCode" xml:space="preserve">
+    <value>Մուտքագրել կոդը</value>
+  </data>
+  <data name="EnteredCodeIsNotValid" xml:space="preserve">
+    <value>Մուտքագրված կոդը սխալ է</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Սխալ</value>
+  </data>
+  <data name="EstateDeletedSuccessfully" xml:space="preserve">
+    <value>Առաջարկը հաջողույամբ ջնջվեց</value>
+  </data>
+  <data name="Estates" xml:space="preserve">
+    <value>Հայտեր</value>
+  </data>
+  <data name="EstatesCountP" xml:space="preserve">
+    <value>Հայտերի քանակը:</value>
+  </data>
+  <data name="EstateTypeP" xml:space="preserve">
+    <value>Գույքի տեսակ:</value>
+  </data>
+  <data name="EstateTypes" xml:space="preserve">
+    <value>Գույքի տեսակներ</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>Փակել</value>
+  </data>
+  <data name="FamilyP" xml:space="preserve">
+    <value>Ազգանուն:</value>
+  </data>
+  <data name="FavoriteEstates" xml:space="preserve">
+    <value>Ընտրված Հայտեր</value>
+  </data>
+  <data name="ForConstruction" xml:space="preserve">
+    <value>Շինարարության համար</value>
+  </data>
+  <data name="FromSteel" xml:space="preserve">
+    <value>Երկաթե</value>
+  </data>
+  <data name="FromStone" xml:space="preserve">
+    <value>Քարե</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Օգնություն</value>
+  </data>
+  <data name="House" xml:space="preserve">
+    <value>Առանձնատուն</value>
+  </data>
+  <data name="IncorrectExpirationDateCode" xml:space="preserve">
+    <value>Կոդը սխալ է</value>
+  </data>
+  <data name="IncorrectParams" xml:space="preserve">
+    <value>Գտնվել են սխալ պարամետրեր, խնդրում ենք դիմել ադմինիստրատորին</value>
+  </data>
+  <data name="Industrial" xml:space="preserve">
+    <value>Արտադրական</value>
+  </data>
+  <data name="IndustrialEstate" xml:space="preserve">
+    <value>Արտադրական</value>
+  </data>
+  <data name="InputCode" xml:space="preserve">
+    <value>Մուտքագրեք կոդը</value>
+  </data>
+  <data name="InputCurCode" xml:space="preserve">
+    <value>Մուտքագրել հերթական կոդը</value>
+  </data>
+  <data name="InputName" xml:space="preserve">
+    <value>Մուտքագրել անունը</value>
+  </data>
+  <data name="InputPassword" xml:space="preserve">
+    <value>Մուտքագրեք ծածկագիրը</value>
+  </data>
+  <data name="InputPasswordForRestore" xml:space="preserve">
+    <value>Մուտքագրեք ծածկագիր արխիվը վերականգնելու համար</value>
+  </data>
+  <data name="InputUsername" xml:space="preserve">
+    <value>Մուտքագրել անունը</value>
+  </data>
+  <data name="ItsNotAValidCopyOfRealtor" xml:space="preserve">
+    <value>Ներողություն, սա ծրագրի սխալ կրկնօրինակն է. Realtor Ծրագրի մասին առավել մանրամասն կարող եք տեղեկանալ այցելելով` http://www.kostandyan.com</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Մուտք</value>
+  </data>
+  <data name="MainErrorTitle" xml:space="preserve">
+    <value>Ներողություն, տեղի է ունեցել սխալ. Ծրագիրը կփակվի, խնդրում ենք սխալի մասին ինֆորմացիան ուղարկել, ծրագիրը բարելավելու համար.</value>
+  </data>
+  <data name="MyClientsCount" xml:space="preserve">
+    <value>Իմ գնորդների քանակը:</value>
+  </data>
+  <data name="NameP" xml:space="preserve">
+    <value>Անուն:</value>
+  </data>
+  <data name="NearHome" xml:space="preserve">
+    <value>Տնամերձ</value>
+  </data>
+  <data name="Office_place" xml:space="preserve">
+    <value>Կոմերցիոն </value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>Ընդունել</value>
+  </data>
+  <data name="OperationalSignificances" xml:space="preserve">
+    <value>Գործառնական նշանակություններ</value>
+  </data>
+  <data name="OperationalSignificancesPPP" xml:space="preserve">
+    <value>Գործառնական նշանակություններ...</value>
+  </data>
+  <data name="OrderTypes" xml:space="preserve">
+    <value>Գործարքի տեսակներ</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Ծածկագիր</value>
+  </data>
+  <data name="PasswordCanNotBeEmpty" xml:space="preserve">
+    <value>Ծածկագիրը չի կարող լինել դատարկ</value>
+  </data>
+  <data name="PasswordError" xml:space="preserve">
+    <value>Ծածկագրի սխալ</value>
+  </data>
+  <data name="PasswordIsIncorrect" xml:space="preserve">
+    <value>Ծածկագիրը սխալ է</value>
+  </data>
+  <data name="PasswordP" xml:space="preserve">
+    <value>Ծածկագիր:</value>
+  </data>
+  <data name="PleaseInputPassword" xml:space="preserve">
+    <value>Խնդրում ենք մուտքագրել ծածկագիրը !</value>
+  </data>
+  <data name="PleaseInputUsername" xml:space="preserve">
+    <value>Խնդրում ենք մուտքագրել անունը !</value>
+  </data>
+  <data name="PleaseSelectCity" xml:space="preserve">
+    <value>Խնդրում ենք ընտրել քաղաքը!</value>
+  </data>
+  <data name="PleaseSelectOperationalSignificance" xml:space="preserve">
+    <value>Խնդրում ենք ընտրել Օգտագործման նպատակը!</value>
+  </data>
+  <data name="PleaseSelectUserType" xml:space="preserve">
+    <value>Խնդրում ենք ընտրել օգտագործողի տեսակը !</value>
+  </data>
+  <data name="ProductionArea" xml:space="preserve">
+    <value>Արտադրական</value>
+  </data>
+  <data name="Realtor" xml:space="preserve">
+    <value>Ռիելթոր</value>
+  </data>
+  <data name="RealtorIsOpenAndWillBeClose" xml:space="preserve">
+    <value>Ռիելթոր ծրագիրը բացված է, արխիվը վերականգնելուց առաջ այն կփակվի: Դուք համոզված եք, որ ուզում եք վերականգնել արխիվը ?</value>
+  </data>
+  <data name="RefreshData" xml:space="preserve">
+    <value>Թարմացնել Տվյալները</value>
+  </data>
+  <data name="Region" xml:space="preserve">
+    <value>Համայնք</value>
+  </data>
+  <data name="Regions" xml:space="preserve">
+    <value>Համայնքներ</value>
+  </data>
+  <data name="RegionsPPP" xml:space="preserve">
+    <value>Համայնքներ...</value>
+  </data>
+  <data name="RentedEstates" xml:space="preserve">
+    <value>Վարձակալված Գույք</value>
+  </data>
+  <data name="RestoreArchive" xml:space="preserve">
+    <value>Վերականգնել Արխիվը</value>
+  </data>
+  <data name="RestoreNotCompletedTryLater" xml:space="preserve">
+    <value>Վերականգնումը չի կատարվել, խնդրում ենք փորձել քիչ ուշ</value>
+  </data>
+  <data name="RestoreWillDeleteAnyChanges" xml:space="preserve">
+    <value>Արխիվի վերականգնումը կջնջի բոլոր այն փոփոխությունները, որոնք կատարվել են արխիվի ստեղծումից հետո. Դուք համոզված եք, որ ուզում եք վերականգնել արխիվը ?</value>
+  </data>
+  <data name="RoofingsPPP" xml:space="preserve">
+    <value>Ծածկեր...</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Պահպանել</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Որոնում</value>
+  </data>
+  <data name="SelectAll" xml:space="preserve">
+    <value>Ընտրել բոլորը</value>
+  </data>
+  <data name="SelectArchive" xml:space="preserve">
+    <value>Ընտրեք Արխիվ</value>
+  </data>
+  <data name="SelectCity" xml:space="preserve">
+    <value>Ընտրեք քաղաքը</value>
+  </data>
+  <data name="SelectFile" xml:space="preserve">
+    <value>Ընտրել ֆայլ</value>
+  </data>
+  <data name="SelectOperationalSignificance" xml:space="preserve">
+    <value>Ընտրեք Օգտագործման նպատակը</value>
+  </data>
+  <data name="SendErrorMessage" xml:space="preserve">
+    <value>Ներողություն, տեղի է ունեցել սխալ. Ծրագիրը կփակվի, խնդրում ենք սխալի մասին ինֆորմացիան ուղարկել, ծրագիրը բարելավելու համար.</value>
+  </data>
+  <data name="ServiceArea" xml:space="preserve">
+    <value>Սպասարկման</value>
+  </data>
+  <data name="ShoppingArea" xml:space="preserve">
+    <value>Առևտրային</value>
+  </data>
+  <data name="SignificanceOfTheUsesP" xml:space="preserve">
+    <value>Օգտագործման Նպատակ:</value>
+  </data>
+  <data name="SignificanceOfTheUsesPPP" xml:space="preserve">
+    <value>Օգտագործման Նպատակներ...</value>
+  </data>
+  <data name="SimpleSearch" xml:space="preserve">
+    <value>Պարզ Որոնում</value>
+  </data>
+  <data name="Society" xml:space="preserve">
+    <value>Հասարակական</value>
+  </data>
+  <data name="SoldEstates" xml:space="preserve">
+    <value>Վաճառված Գույք</value>
+  </data>
+  <data name="StateP" xml:space="preserve">
+    <value>Մարզ:</value>
+  </data>
+  <data name="StateRegionsP" xml:space="preserve">
+    <value>Մարզ:</value>
+  </data>
+  <data name="StateRegionsPPP" xml:space="preserve">
+    <value>Մարզեր...</value>
+  </data>
+  <data name="States" xml:space="preserve">
+    <value>Մարզեր</value>
+  </data>
+  <data name="StreetsPPP" xml:space="preserve">
+    <value>Փողոցներ...</value>
+  </data>
+  <data name="Telephone1P" xml:space="preserve">
+    <value>Հեռախոս 1:</value>
+  </data>
+  <data name="Telephone2P" xml:space="preserve">
+    <value>Հեռախոս 2:</value>
+  </data>
+  <data name="UnderGround" xml:space="preserve">
+    <value>Ստորգետնյա</value>
+  </data>
+  <data name="UpdateError" xml:space="preserve">
+    <value>Սխալ</value>
+  </data>
+  <data name="UserDataNotSaved" xml:space="preserve">
+    <value>Օգտագործողի տվյալները չեն պահպանվել, խնդրում ենք փորձել քիչ ուշ</value>
+  </data>
+  <data name="UserDetails" xml:space="preserve">
+    <value>Օգտագործողի տվյալները</value>
+  </data>
+  <data name="UserNameExist" xml:space="preserve">
+    <value>Անունը արդեն գոյություն ունի, խնդրում ենք մուտքագրել այլ անուն!</value>
+  </data>
+  <data name="UserNameLoginFormP" xml:space="preserve">
+    <value>Անուն:</value>
+  </data>
+  <data name="UserNameOrPasswordIncorrect" xml:space="preserve">
+    <value>Անունը կամ ծածկագիրը սխալ է</value>
+  </data>
+  <data name="UsernameP" xml:space="preserve">
+    <value>Անուն (մուտք):</value>
+  </data>
+  <data name="UserP" xml:space="preserve">
+    <value>Օգտագործող:</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Օգտագործողներ</value>
+  </data>
+  <data name="UserType" xml:space="preserve">
+    <value>Օգտագործողի տեսակը</value>
+  </data>
+  <data name="UserTypeP" xml:space="preserve">
+    <value>Օգտագործողի տեսակը:</value>
+  </data>
+  <data name="ValueInAMD" xml:space="preserve">
+    <value>Արժեքը դրամով</value>
+  </data>
+  <data name="WithoutPassYouCanNotRestore" xml:space="preserve">
+    <value>ՈՒշադրություն: Առանց այս ծածկագրի դուք չեք կարող վերականգնել արխիվը</value>
+  </data>
+  <data name="WithThisToosCanWorkOnlyAdmins" xml:space="preserve">
+    <value>Ներողություն, այս ծրագրով կարող են աշխատել միայն ադմինիստրատորները, Ծրագիրը կփակվի</value>
+  </data>
+  <data name="WrongFileOrFileIsCorrupted" xml:space="preserve">
+    <value>Դուք ընտրել եք սխալ ֆայլ կամ ֆայլը վնասված է</value>
+  </data>
+  <data name="YerevanMap" xml:space="preserve">
+    <value>Երևանի Քարտեզ</value>
+  </data>
+  <data name="YouCanNotDeleteThisCurrency" xml:space="preserve">
+    <value>Դուք չեք կարող ջնջել այս արժույթը</value>
+  </data>
+  <data name="Аgricultural" xml:space="preserve">
+    <value>Գյուղատնտեսական</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Հասցե</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>Բոլորը</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Մաքրել</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Փոփոխել</value>
+  </data>
+  <data name="EstateType" xml:space="preserve">
+    <value>Գույքի տեսակ</value>
+  </data>
+  <data name="FilterList" xml:space="preserve">
+    <value>Ֆիլտրել ցուցակը</value>
+  </data>
+  <data name="IntervalEndP" xml:space="preserve">
+    <value>Ժամանակահատված Մինչև:</value>
+  </data>
+  <data name="IntervalP" xml:space="preserve">
+    <value>Ժամանակահատված:</value>
+  </data>
+  <data name="IntervalStartP" xml:space="preserve">
+    <value>Ժամանակահատված Սկսած:</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Բացել</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Գին</value>
+  </data>
+  <data name="PriceP" xml:space="preserve">
+    <value>Գին:</value>
+  </data>
+  <data name="PricePerDayP" xml:space="preserve">
+    <value>Գին (Օր.):</value>
+  </data>
+  <data name="RegionP" xml:space="preserve">
+    <value>Համայնք:</value>
+  </data>
+  <data name="RemontType" xml:space="preserve">
+    <value>Վերանորոգում</value>
+  </data>
+  <data name="RemontTypes" xml:space="preserve">
+    <value>Վերանորոգում</value>
+  </data>
+  <data name="ReturnToEstatesList" xml:space="preserve">
+    <value>Վերադարձնել Առաջարկների Ցուցակ</value>
+  </data>
+  <data name="Roofing" xml:space="preserve">
+    <value>Ծածկ</value>
+  </data>
+  <data name="Sold" xml:space="preserve">
+    <value>Վաճառվել է</value>
+  </data>
+  <data name="PleaseSelectStateRegion" xml:space="preserve">
+    <value>Խնդրում ենք ընտրել համայնքը</value>
+  </data>
+  <data name="SelectRegion" xml:space="preserve">
+    <value>Ընտրել համայնքը</value>
+  </data>
+  <data name="SignificanceOfTheUse" xml:space="preserve">
+    <value>Օգտագործման Նպատակ</value>
+  </data>
+  <data name="SignificanceOfTheUses" xml:space="preserve">
+    <value>Օգտագործման Նպատակներ</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>Մարզ</value>
+  </data>
+  <data name="Street" xml:space="preserve">
+    <value>Փողոց</value>
+  </data>
+  <data name="StreetP" xml:space="preserve">
+    <value>Փողոց:</value>
+  </data>
+  <data name="Streets" xml:space="preserve">
+    <value>Փողոցներ</value>
+  </data>
+  <data name="YouCanNotDeleteX" xml:space="preserve">
+    <value>Դուք չեք կարող ջնջել {0}ը</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Ավելացնել</value>
+  </data>
+  <data name="AdditionalDataP" xml:space="preserve">
+    <value>Լրացուցիչ տվյալներ:</value>
+  </data>
+  <data name="AdditionalDetails" xml:space="preserve">
+    <value>Լրացուցիչ տվյալներ</value>
+  </data>
+  <data name="AddPhoto" xml:space="preserve">
+    <value>Ավելացնել նկարներ</value>
+  </data>
+  <data name="AddressP" xml:space="preserve">
+    <value>Հասցե:</value>
+  </data>
+  <data name="AddUser" xml:space="preserve">
+    <value>Ավելացնել Օգտագործող</value>
+  </data>
+  <data name="AddVideo" xml:space="preserve">
+    <value>Ավելացնել Տեսանյութեր</value>
+  </data>
+  <data name="AlwaysWater" xml:space="preserve">
+    <value>Մշտական ջուր</value>
+  </data>
+  <data name="AndConvenientFor" xml:space="preserve">
+    <value>Հարմար է նաև</value>
+  </data>
+  <data name="Antena" xml:space="preserve">
+    <value>Արբանյակային ալեհավաք</value>
+  </data>
+  <data name="Apt" xml:space="preserve">
+    <value>Տուն</value>
+  </data>
+  <data name="AptP" xml:space="preserve">
+    <value>Բն.</value>
+  </data>
+  <data name="Arevkox" xml:space="preserve">
+    <value>Արևկող</value>
+  </data>
+  <data name="AreYouSureYouWontToDeleteXDetails" xml:space="preserve">
+    <value>Դուք համոզված եք, որ ուզում եք ջնջել {0}ի տվյալները</value>
+  </data>
+  <data name="Ariston" xml:space="preserve">
+    <value>Արիստոն</value>
+  </data>
+  <data name="Bed" xml:space="preserve">
+    <value>Անկողին</value>
+  </data>
+  <data name="BrokerP" xml:space="preserve">
+    <value>Գործակալ:</value>
+  </data>
+  <data name="Building" xml:space="preserve">
+    <value>Շենք</value>
+  </data>
+  <data name="BuildingFloors" xml:space="preserve">
+    <value>Հարկայնություն:</value>
+  </data>
+  <data name="Buy" xml:space="preserve">
+    <value>Գնում</value>
+  </data>
+  <data name="Canalisation" xml:space="preserve">
+    <value>Կոյուղի</value>
+  </data>
+  <data name="ClientShowMode" xml:space="preserve">
+    <value>գնորդներին ցուցադրման ռեժիմը</value>
+  </data>
+  <data name="CloseBalcony" xml:space="preserve">
+    <value>Փակ պատշգամբ</value>
+  </data>
+  <data name="Conditioner" xml:space="preserve">
+    <value>Կոնդիցիոներ</value>
+  </data>
+  <data name="ContactDetails" xml:space="preserve">
+    <value>Կոնտակտային տվյալներ</value>
+  </data>
+  <data name="ConvenientFor" xml:space="preserve">
+    <value>Հարմար է</value>
+  </data>
+  <data name="DaylyPosibility" xml:space="preserve">
+    <value>Հնարավոր է օրավարձով:</value>
+  </data>
+  <data name="DemandNotSaved" xml:space="preserve">
+    <value>Գնորդի տվյալները չեն պահպանվել, խնդրում ենք փորձել քիչ ուշ</value>
+  </data>
+  <data name="DemandSuccessfullySaved" xml:space="preserve">
+    <value>Գնորդի տվյալները հաջողությամբ պահպանվեցին</value>
+  </data>
+  <data name="DVD" xml:space="preserve">
+    <value>DVD</value>
+  </data>
+  <data name="EarthPlaceSquareP" xml:space="preserve">
+    <value>Հողատարածքի մակերեսը:</value>
+  </data>
+  <data name="Electicity" xml:space="preserve">
+    <value>Էլ. հոսանք</value>
+  </data>
+  <data name="ElitarBuilding" xml:space="preserve">
+    <value>Էլիտար շենք</value>
+  </data>
+  <data name="Empty" xml:space="preserve">
+    <value>Դատարկ</value>
+  </data>
+  <data name="ErrorInSaveFile" xml:space="preserve">
+    <value>Ֆայլի պահպանման ժամանակ տեղի է ունեցել սխալ</value>
+  </data>
+  <data name="EuroWindows" xml:space="preserve">
+    <value>Եվրո պատուհաններ</value>
+  </data>
+  <data name="ExchangePosible" xml:space="preserve">
+    <value>Հնարավոր է փոխանակում</value>
+  </data>
+  <data name="ExchangeWithWhat" xml:space="preserve">
+    <value>Փոխանակման առարկան:</value>
+  </data>
+  <data name="ExpandPosibility" xml:space="preserve">
+    <value>Ընդլայնման հնարավորություն</value>
+  </data>
+  <data name="Family" xml:space="preserve">
+    <value>Ազգանուն</value>
+  </data>
+  <data name="FirstLine" xml:space="preserve">
+    <value>1-ին գիծ</value>
+  </data>
+  <data name="FloorP" xml:space="preserve">
+    <value>Հարկ:</value>
+  </data>
+  <data name="FrontBalcony" xml:space="preserve">
+    <value>Շքապատշգամբ</value>
+  </data>
+  <data name="Furniture" xml:space="preserve">
+    <value>Կահույք</value>
+  </data>
+  <data name="Garage" xml:space="preserve">
+    <value>Ավտոտնակ</value>
+  </data>
+  <data name="GarageTypeP" xml:space="preserve">
+    <value>Ավտոտնակի տեսակը:</value>
+  </data>
+  <data name="Gas" xml:space="preserve">
+    <value>Գազ</value>
+  </data>
+  <data name="GasPosibility" xml:space="preserve">
+    <value>Գազի հնարավորություն</value>
+  </data>
+  <data name="GasVararan" xml:space="preserve">
+    <value>Գազով ջրատաքացուցիչ</value>
+  </data>
+  <data name="Gate" xml:space="preserve">
+    <value>Դարպաս</value>
+  </data>
+  <data name="Geiser" xml:space="preserve">
+    <value>Գեյզեր</value>
+  </data>
+  <data name="HeatingFloor" xml:space="preserve">
+    <value>Տաքացվող հատակ</value>
+  </data>
+  <data name="HeightP" xml:space="preserve">
+    <value>Բարձրություն:</value>
+  </data>
+  <data name="HomeEarthPlace" xml:space="preserve">
+    <value>Հողատարածք</value>
+  </data>
+  <data name="InformationSourceP" xml:space="preserve">
+    <value>Ինֆորմացիայի աղբյուր:</value>
+  </data>
+  <data name="InputError" xml:space="preserve">
+    <value>Տվյալների լրացման սխալ</value>
+  </data>
+  <data name="Internet" xml:space="preserve">
+    <value>Ինտերնետ</value>
+  </data>
+  <data name="Jakuzi" xml:space="preserve">
+    <value>Ջակուզի</value>
+  </data>
+  <data name="Kitchen" xml:space="preserve">
+    <value>Խոհանոց</value>
+  </data>
+  <data name="MainData" xml:space="preserve">
+    <value>Հիմնական տվյալներ</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Անուն</value>
+  </data>
+  <data name="NewBuilding" xml:space="preserve">
+    <value>Նորակառույց</value>
+  </data>
+  <data name="Nisha" xml:space="preserve">
+    <value>Նիշա</value>
+  </data>
+  <data name="NullableFloor" xml:space="preserve">
+    <value>0-ական հարթություն</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>Անջատել</value>
+  </data>
+  <data name="OfficeRoom" xml:space="preserve">
+    <value>Աշխատասենյակ</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>Միացնել</value>
+  </data>
+  <data name="OpenBalcony" xml:space="preserve">
+    <value>Բաց պատշգամբ</value>
+  </data>
+  <data name="OtherDetails" xml:space="preserve">
+    <value>Այլ տվյալներ</value>
+  </data>
+  <data name="Parisp" xml:space="preserve">
+    <value>Պարիսպ</value>
+  </data>
+  <data name="Parking" xml:space="preserve">
+    <value>Ավտոկայանատեղ</value>
+  </data>
+  <data name="Photos" xml:space="preserve">
+    <value>Նկարներ</value>
+  </data>
+  <data name="PlaceNameP" xml:space="preserve">
+    <value>Գտնվելու վայրը:</value>
+  </data>
+  <data name="PlaceOnMap" xml:space="preserve">
+    <value>Տեղը քարտեզի վրա</value>
+  </data>
+  <data name="PlaceTypeP" xml:space="preserve">
+    <value>Առևտրային տարածքի տեսակը:</value>
+  </data>
+  <data name="PlayRoom" xml:space="preserve">
+    <value>Խաղասրահ</value>
+  </data>
+  <data name="PleaseFillTheFollowingFieldsX" xml:space="preserve">
+    <value>Խնդրում ենք լրացնել հետևյալ դաշտերը\n{0}</value>
+  </data>
+  <data name="PleaseSelectArchiveFile" xml:space="preserve">
+    <value>Խնդրում ենք ընտրել արխիվի ֆայլ</value>
+  </data>
+  <data name="Podval" xml:space="preserve">
+    <value>Նկուղ</value>
+  </data>
+  <data name="PodvalSquareP" xml:space="preserve">
+    <value>Նկուղի մակերեսը:</value>
+  </data>
+  <data name="Pool" xml:space="preserve">
+    <value>Լողավազան</value>
+  </data>
+  <data name="PriceForDayP" xml:space="preserve">
+    <value>Գինը (1 օրվա համար):</value>
+  </data>
+  <data name="ProjectP" xml:space="preserve">
+    <value>Նախագիծ:</value>
+  </data>
+  <data name="RatingP" xml:space="preserve">
+    <value>Վարկանիշ:</value>
+  </data>
+  <data name="Refrigerator" xml:space="preserve">
+    <value>Սառնարան</value>
+  </data>
+  <data name="Rent" xml:space="preserve">
+    <value>Վարձակալում</value>
+  </data>
+  <data name="RoofingP" xml:space="preserve">
+    <value>Ծածկ:</value>
+  </data>
+  <data name="RoomCountP" xml:space="preserve">
+    <value>Սենյակների քանակ:</value>
+  </data>
+  <data name="SecuritySystem" xml:space="preserve">
+    <value>Անվտանգության համակարգ</value>
+  </data>
+  <data name="Service" xml:space="preserve">
+    <value>Սպասք</value>
+  </data>
+  <data name="SquareP" xml:space="preserve">
+    <value>Մակերես:</value>
+  </data>
+  <data name="StateRegions" xml:space="preserve">
+    <value>Մարզեր</value>
+  </data>
+  <data name="SteelDoor" xml:space="preserve">
+    <value>Երկաթե դուռ</value>
+  </data>
+  <data name="Technique" xml:space="preserve">
+    <value>Տեխնիկա</value>
+  </data>
+  <data name="TheBuildingTypeP" xml:space="preserve">
+    <value>Կառուցվածքը:</value>
+  </data>
+  <data name="TheEstateType" xml:space="preserve">
+    <value>Գույքի տեսակը</value>
+  </data>
+  <data name="TheEstateTypeP" xml:space="preserve">
+    <value>Գույքի տեսակը:</value>
+  </data>
+  <data name="TheOperationalSignificancesP" xml:space="preserve">
+    <value>Գործառնական նշանակությունը:</value>
+  </data>
+  <data name="TheOrderType" xml:space="preserve">
+    <value>Գործարքի տեսակը</value>
+  </data>
+  <data name="TheOrderTypeP" xml:space="preserve">
+    <value>Գործարքի տեսակը:</value>
+  </data>
+  <data name="TheUsingP" xml:space="preserve">
+    <value>Օգտագործման նպատակը:</value>
+  </data>
+  <data name="ThreePhaseElectricity" xml:space="preserve">
+    <value>Եռաֆազ հոսանք</value>
+  </data>
+  <data name="toP" xml:space="preserve">
+    <value>մինչև:</value>
+  </data>
+  <data name="Trees" xml:space="preserve">
+    <value>Պտղ. ծառեր</value>
+  </data>
+  <data name="TV" xml:space="preserve">
+    <value>Հեռուստացույց</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Տեսակ</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>Անհայտ սխալ</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Անուն (մուտք)</value>
+  </data>
+  <data name="Videos" xml:space="preserve">
+    <value>Տեսանյութեր</value>
+  </data>
+  <data name="VijakP" xml:space="preserve">
+    <value>Վիճակ:</value>
+  </data>
+  <data name="VorogmanJur" xml:space="preserve">
+    <value>Ոռոգման ջուր</value>
+  </data>
+  <data name="WarmingSystem" xml:space="preserve">
+    <value>Ջեռուցման համակարգ</value>
+  </data>
+  <data name="WarmWater" xml:space="preserve">
+    <value>Տաք ջուր</value>
+  </data>
+  <data name="Washer" xml:space="preserve">
+    <value>Լվացքի մեքենա</value>
+  </data>
+  <data name="WaterContainer" xml:space="preserve">
+    <value>Ջրի բաք</value>
+  </data>
+  <data name="WC" xml:space="preserve">
+    <value>Սանհանգույց</value>
+  </data>
+  <data name="Xordanoc" xml:space="preserve">
+    <value>Խորդանոց</value>
+  </data>
+  <data name="YouCanNotDeleteAdmin" xml:space="preserve">
+    <value>Դուք չեք կարող ջնջել Admin-ին</value>
+  </data>
+  <data name="Added" xml:space="preserve">
+    <value>Ավելացվել է</value>
+  </data>
+  <data name="AdditData" xml:space="preserve">
+    <value>Լր. Տվյալներ</value>
+  </data>
+  <data name="AreYouSureYouWantToDeleteThisDemand" xml:space="preserve">
+    <value>Դուք համոզված եք, որ ուզում եք ջնջել այս պահանջարկը?</value>
+  </data>
+  <data name="CanNotDeleteXDemandY" xml:space="preserve">
+    <value>Չհաջողվեց ջնջել {0} պահանջարկ{1}</value>
+  </data>
+  <data name="Client" xml:space="preserve">
+    <value>Գնորդ</value>
+  </data>
+  <data name="CodeDuplicate" xml:space="preserve">
+    <value>Կոդի կրկնություն</value>
+  </data>
+  <data name="DetailyPPP" xml:space="preserve">
+    <value>Մանրամասն...</value>
+  </data>
+  <data name="EstateDuplicate" xml:space="preserve">
+    <value>Հայտի կրկնություն</value>
+  </data>
+  <data name="EstateExistYouWantToAdd" xml:space="preserve">
+    <value>Ձեր ավելացված հայտը արդեն կա առաջարկներում: Դուք ուզում եք ևս մեկ հայտ ավելացնել ?</value>
+  </data>
+  <data name="EstateNotSaved" xml:space="preserve">
+    <value>Հայտը չի պահպանվել, խնդրում ենք փորձել քիչ ուշ</value>
+  </data>
+  <data name="EstateSuccessfullySaved" xml:space="preserve">
+    <value>Հայտը հաջողությամբ պահպանվեց</value>
+  </data>
+  <data name="EstateWithSameCodeExist" xml:space="preserve">
+    <value>Այս կոդով հայտ արդեն մուտքագրված է, խնդրում ենք մուտքագրել այլ կոդ</value>
+  </data>
+  <data name="NotSpecified" xml:space="preserve">
+    <value>Չի նշված</value>
+  </data>
+  <data name="OrdType" xml:space="preserve">
+    <value>Գնում/Վարձ.</value>
+  </data>
+  <data name="PhotosNotSaved" xml:space="preserve">
+    <value>Նկարները չեն պահպանվել, խնդրում ենք փորձել քիչ ուշ</value>
+  </data>
+  <data name="Room" xml:space="preserve">
+    <value>Սենյակ</value>
+  </data>
+  <data name="s" xml:space="preserve">
+    <value>ներ</value>
+  </data>
+  <data name="SelectEstates" xml:space="preserve">
+    <value>Ընտրել Առաջարկներ</value>
+  </data>
+  <data name="SelectPhotos" xml:space="preserve">
+    <value>Ընտրեք Նկարներ</value>
+  </data>
+  <data name="SelectVideos" xml:space="preserve">
+    <value>Ընտրեք Տեսանյութեր</value>
+  </data>
+  <data name="SendError" xml:space="preserve">
+    <value>ՈՒղարկել սխալը</value>
+  </data>
+  <data name="Square" xml:space="preserve">
+    <value>Մակերես</value>
+  </data>
+  <data name="StateOrRegion" xml:space="preserve">
+    <value>Մարզ/Համայնք</value>
+  </data>
+  <data name="Updated" xml:space="preserve">
+    <value>Փոփոխվել է</value>
+  </data>
+  <data name="XPhotoYNotSaved" xml:space="preserve">
+    <value>{0} նկար{1} չ{2} պահպանվել, խնդրում ենք փորձել քիչ ուշ</value>
+  </data>
+  <data name="XVideoYNotSaved" xml:space="preserve">
+    <value>{0} տեսանյութ{1} չ{2} պահպանվել, խնդրում ենք փորձել քիչ ուշ</value>
+  </data>
+  <data name="BuildingFloor" xml:space="preserve">
+    <value>Հարկայնություն</value>
+  </data>
+  <data name="ClientsForEstates" xml:space="preserve">
+    <value>Հայտին համապատասխան գնորդներ</value>
+  </data>
+  <data name="Estate" xml:space="preserve">
+    <value>Հայտ</value>
+  </data>
+  <data name="EstatesOrClients" xml:space="preserve">
+    <value>Առաջարկ/Պահանջարկ</value>
+  </data>
+  <data name="Floor" xml:space="preserve">
+    <value>Հարկ</value>
+  </data>
+  <data name="Map" xml:space="preserve">
+    <value>Քարտեզ</value>
+  </data>
+  <data name="Pahanjark" xml:space="preserve">
+    <value>Պահանջարկ</value>
+  </data>
+  <data name="PlaceV" xml:space="preserve">
+    <value>Վայրը</value>
+  </data>
+  <data name="Rating" xml:space="preserve">
+    <value>Վարկանիշ</value>
+  </data>
+  <data name="SellOrRent" xml:space="preserve">
+    <value>Վաճ./Վարձ.</value>
+  </data>
+  <data name="Seller" xml:space="preserve">
+    <value>Վաճառող</value>
+  </data>
+  <data name="AddressFull" xml:space="preserve">
+    <value>Հասցե(լրիվ)</value>
+  </data>
+  <data name="AddToFavoriteEstates" xml:space="preserve">
+    <value>Ավելացնել Ընտրված Հայտերում</value>
+  </data>
+  <data name="Count" xml:space="preserve">
+    <value>Քանակը - </value>
+  </data>
+  <data name="EarthPlaceSquare" xml:space="preserve">
+    <value>Հողատարածքի մակերեսը</value>
+  </data>
+  <data name="ElectricityPosibility" xml:space="preserve">
+    <value>Հոսանքի հնարավորություն</value>
+  </data>
+  <data name="ErrorInSavePlaceCheckInternet" xml:space="preserve">
+    <value>Ներողություն, տեղը պահպանելու ժամանակ տեղի է ունեցել սխալ, խնդրում ենք ստուգել ինտերնետի արագությունն ու առկայությունը կամ փորձել քիչ ուշ</value>
+  </data>
+  <data name="ExchangePosibleP" xml:space="preserve">
+    <value>Հնարավոր է փոխանակում:</value>
+  </data>
+  <data name="FolderToSaveImages" xml:space="preserve">
+    <value>Նկարները պահելու թղթապանակը</value>
+  </data>
+  <data name="for" xml:space="preserve">
+    <value>համար</value>
+  </data>
+  <data name="GarageType" xml:space="preserve">
+    <value>Ավտոտնակի տեսակը</value>
+  </data>
+  <data name="Height" xml:space="preserve">
+    <value>Բարձրություն</value>
+  </data>
+  <data name="InformationSource" xml:space="preserve">
+    <value>Ինֆորմացիայի աղբյուր</value>
+  </data>
+  <data name="InfSource" xml:space="preserve">
+    <value>Ինֆ-ի աղբյուր</value>
+  </data>
+  <data name="MarkRented" xml:space="preserve">
+    <value>Նշել Վարձակալված</value>
+  </data>
+  <data name="MarkSold" xml:space="preserve">
+    <value>Նշել Վաճառված</value>
+  </data>
+  <data name="OpenContainingFolder" xml:space="preserve">
+    <value>Բացել Պարունակող Թղթապանակը</value>
+  </data>
+  <data name="PleaseCorrectlyFillFields" xml:space="preserve">
+    <value>Խնդրում ենք ճիշտ լրացնել դաշտերը</value>
+  </data>
+  <data name="PodvalSquare" xml:space="preserve">
+    <value>Նկուղի մակերեսը</value>
+  </data>
+  <data name="PricePerDay" xml:space="preserve">
+    <value>Գին (Օր.)</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Տպել</value>
+  </data>
+  <data name="RemoveFromThisList" xml:space="preserve">
+    <value>Հանել այս ցուցակից</value>
+  </data>
+  <data name="RentingP" xml:space="preserve">
+    <value>Վարձակալվում է:</value>
+  </data>
+  <data name="Rooms" xml:space="preserve">
+    <value>Սենյակներ</value>
+  </data>
+  <data name="SaveAsFile" xml:space="preserve">
+    <value>Պահպանել որպես ֆայլ</value>
+  </data>
+  <data name="SavePhotosPPP" xml:space="preserve">
+    <value>Պահպանել Նկարները...</value>
+  </data>
+  <data name="SearchCriteria" xml:space="preserve">
+    <value>Որոնման պարամետրերը</value>
+  </data>
+  <data name="SelectClients" xml:space="preserve">
+    <value>Ընտրել Գնորդներ</value>
+  </data>
+  <data name="SellOrRentP" xml:space="preserve">
+    <value>Վաճ./Վարձ.:</value>
+  </data>
+  <data name="SellerContacts" xml:space="preserve">
+    <value>Վաճառողի կոնտակտները:</value>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>Ցույց տալ բոլորը</value>
+  </data>
+  <data name="TelephoneP" xml:space="preserve">
+    <value>Հեռախոս:</value>
+  </data>
+  <data name="TheBuildingType" xml:space="preserve">
+    <value>Շենքի Տեսակը</value>
+  </data>
+  <data name="TheFloor" xml:space="preserve">
+    <value>Հարկը</value>
+  </data>
+  <data name="TheProject" xml:space="preserve">
+    <value>Նախագիծը</value>
+  </data>
+  <data name="TheRoomState" xml:space="preserve">
+    <value>Վիճակը</value>
+  </data>
+  <data name="TheSquare" xml:space="preserve">
+    <value>Մակերեսը</value>
+  </data>
+  <data name="YouAreNotConnectedToTheInternet" xml:space="preserve">
+    <value>Ձեր համակարգիչը միացած չէ ինտերնետին, խնդրում ենք այս պատուհանը բացելուց առաջ միանալ ինտերնետին: Պատուհանը կփակվի:</value>
+  </data>
+  <data name="YourChangesSuccessfullySaved" xml:space="preserve">
+    <value>Ձեր փոփոխությունները հաջողությամբ պահպանվել են</value>
+  </data>
+  <data name="EstateTypeOrOrderType" xml:space="preserve">
+    <value>Գույքի տեսակ / Գործարքի տեսակ</value>
+  </data>
+  <data name="OrderType" xml:space="preserve">
+    <value>Գործարքի տեսակ</value>
+  </data>
+  <data name="PlaceP" xml:space="preserve">
+    <value>Վայրը:</value>
+  </data>
+  <data name="SellDate" xml:space="preserve">
+    <value>Վաճառման ամսաթիվ:</value>
+  </data>
+  <data name="StateOrProject" xml:space="preserve">
+    <value>Վիճակ / Նախագիծ</value>
+  </data>
+  <data name="StateOrStreet" xml:space="preserve">
+    <value>Համայնք / Փողոց</value>
+  </data>
+  <data name="aptShort" xml:space="preserve">
+    <value>բն</value>
+  </data>
+  <data name="bld" xml:space="preserve">
+    <value>շ</value>
+  </data>
+  <data name="FloorIntervalIsNotCorrect" xml:space="preserve">
+    <value>Հարկի սահմանը լրացված է սխալ</value>
+  </data>
+  <data name="InputPhoneNumber" xml:space="preserve">
+    <value>Մուտքագրեք հեռախոսահամարը</value>
+  </data>
+  <data name="PriceIntervalIsNotCorrect" xml:space="preserve">
+    <value>Գնային սահմանը լրացված է սխալ</value>
+  </data>
+  <data name="RoomsCountIsNotCorrect" xml:space="preserve">
+    <value>Սենյակների քանակի սահմանը լրացված է սխալ</value>
+  </data>
+  <data name="SelectEstateType" xml:space="preserve">
+    <value>Ընտրեք գույքի տեսակը</value>
+  </data>
+  <data name="SelectOrderType" xml:space="preserve">
+    <value>Ընտրեք գործարքի տեսակը</value>
+  </data>
+  <data name="SellerPhone" xml:space="preserve">
+    <value>Վաճառողի հեռախոսահամարը</value>
+  </data>
+  <data name="TheBuildingFloors" xml:space="preserve">
+    <value>Հարկայնությունը</value>
+  </data>
+  <data name="TheCurrency" xml:space="preserve">
+    <value>Արժույթը</value>
+  </data>
+  <data name="TheRoomsCount" xml:space="preserve">
+    <value>Սենյակների քանակը</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Լեզու</value>
+  </data>
+  <data name="LanguageP" xml:space="preserve">
+    <value>Լեզու:</value>
+  </data>
+  <data name="PleaseSelectRegion" xml:space="preserve">
+    <value>Խնդրում ենք ընտրեք մարզը!</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value>Ընտրեք մարզը</value>
+  </data>
+  <data name="YouCanNotDeleteXCity" xml:space="preserve">
+    <value>Դուք չեք կարող ջնջել {0} քաղաքը</value>
+  </data>
+  <data name="Domophone" xml:space="preserve">
+    <value>Դոմոֆոն</value>
+  </data>
+  <data name="Lift" xml:space="preserve">
+    <value>Վերելակ</value>
+  </data>
+  <data name="LodgeBalcony" xml:space="preserve">
+    <value>Լոջա</value>
+  </data>
+  <data name="NotPopulated" xml:space="preserve">
+    <value>Չբնակեցված</value>
+  </data>
+  <data name="SeparateRooms" xml:space="preserve">
+    <value>Առանձին սենյակներ</value>
+  </data>
+  <data name="LiveSquare" xml:space="preserve">
+    <value>Բնակելի մակերես</value>
+  </data>
+  <data name="LiveSquareP" xml:space="preserve">
+    <value>Բնակելի:</value>
+  </data>
+  <data name="MakedRoomsP" xml:space="preserve">
+    <value>Դարձրած:</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Կարգավիճակ</value>
+  </data>
+  <data name="StatusP" xml:space="preserve">
+    <value>Կարգավիճակ:</value>
+  </data>
+  <data name="Attention" xml:space="preserve">
+    <value>ՈՒշադրություն</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>Նշումներ</value>
+  </data>
+  <data name="CommentP" xml:space="preserve">
+    <value>Նշումներ:</value>
+  </data>
+  <data name="Numbers" xml:space="preserve">
+    <value>Համարներ</value>
+  </data>
+  <data name="NumbersP" xml:space="preserve">
+    <value>Համարներ:</value>
+  </data>
+  <data name="OtherBrokersList" xml:space="preserve">
+    <value>Այլ գործակալների ցուցակ</value>
+  </data>
+  <data name="PleaseInputName" xml:space="preserve">
+    <value>Խնդրում ենք մուտքագրել անունը !</value>
+  </data>
+  <data name="PleaseInputNumbers" xml:space="preserve">
+    <value>Խնդրում ենք մուտքագրել համար(ներ)</value>
+  </data>
+  <data name="PleaseSelectItemFirst" xml:space="preserve">
+    <value>Խնդրում ենք ընտրել գրառումը</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>Համար</value>
+  </data>
+  <data name="RemontTypesPPP" xml:space="preserve">
+    <value>Վերանորոգում...</value>
+  </data>
+  <data name="EstatesShowedClients" xml:space="preserve">
+    <value>Գնորդներին ցուցադրված գույքերը</value>
+  </data>
+  <data name="ShowClient" xml:space="preserve">
+    <value>Ցուցադրել գնորդին</value>
+  </data>
+  <data name="CanNotAddShowInfo" xml:space="preserve">
+    <value>Ցուցադրման մասին տեղեկությունը չի պահպանվել, խնդրում ենք փորձել քիչ ուշ</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Ընտրել</value>
+  </data>
+  <data name="SuccessfullyAddedShowInfo" xml:space="preserve">
+    <value>Ցուցադրման մասին տեղեկությունը հաջողությամբ պահպանվեց</value>
+  </data>
+  <data name="PleaseSelectDemand" xml:space="preserve">
+    <value>Խնդրում ենք ընտրել գնորդ</value>
+  </data>
+  <data name="PleaseSelectEstate" xml:space="preserve">
+    <value>Խնդրում ենք ընտրել հայտը</value>
+  </data>
+  <data name="SelectDemand" xml:space="preserve">
+    <value>Ընտրել գնորդ</value>
+  </data>
+  <data name="SelectEstate" xml:space="preserve">
+    <value>Ընտրեք հայտ</value>
+  </data>
+  <data name="ShowEstate" xml:space="preserve">
+    <value>Ընտրել ցուցադրված գույքը</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Ամսաթիվ</value>
+  </data>
+  <data name="DateP" xml:space="preserve">
+    <value>Ամսաթիվ:</value>
+  </data>
+  <data name="PleaseSelectDate" xml:space="preserve">
+    <value>Խնդրում ենք ընտրել ամսաթիվը</value>
+  </data>
+  <data name="SelectDate" xml:space="preserve">
+    <value>Ընտրեք ամսաթիվը</value>
+  </data>
+  <data name="CheckForUpdates" xml:space="preserve">
+    <value>Ստուգել թարմացումը</value>
+  </data>
+  <data name="ConfirmUpdate" xml:space="preserve">
+    <value>Հաստատեք թարմացումը</value>
+  </data>
+  <data name="RealtorUpdate" xml:space="preserve">
+    <value>Ռիելթոր Ծրագրի Թարմացում</value>
+  </data>
+  <data name="RealtorWillBeCloseForInstallingUpdates" xml:space="preserve">
+    <value>Ռիելթորը կփակվի թարմացումները տեղադրելու համար: Դուք համոզված եք, որ ուզում եք տեղադրել թարմացումները?</value>
+  </data>
+  <data name="YouAreNotConnectedToTheInternetConnectForUpdate" xml:space="preserve">
+    <value>Ձեր համակարգիչը միացված չէ ինտերնետին: Թարմացումը ստուգելու համար անհրաժեշտ է միանալ ինտերնետին</value>
+  </data>
+  <data name="NewUpdatesAreAvailable" xml:space="preserve">
+    <value>Կան նոր թարմացումներ</value>
+  </data>
+  <data name="RealtorIsUpToDate" xml:space="preserve">
+    <value>Տեղադրված է ծրագրի վերջին տարբերակը</value>
+  </data>
+  <data name="UnableToCheckingUpdates" xml:space="preserve">
+    <value>Ստուգումը չի կատարվել</value>
+  </data>
+  <data name="LandFrontP" xml:space="preserve">
+    <value>Հողի ճակատ:</value>
+  </data>
+  <data name="and" xml:space="preserve">
+    <value>և</value>
+  </data>
+  <data name="LandFront" xml:space="preserve">
+    <value>Հողի ճակատ</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>Սկսած</value>
+  </data>
+  <data name="To" xml:space="preserve">
+    <value>Մինչև</value>
+  </data>
+  <data name="AreYouSureYouWantToDeleteRentInfo" xml:space="preserve">
+    <value>Դուք համոզված եք, որ ուզում եք ջնջել վարձակալման մասին նշված տվյալը ?</value>
+  </data>
+  <data name="AllowBrokersToAddData" xml:space="preserve">
+    <value>Թույլատրել գործակալներին ավելացնել տվյալներ:</value>
+  </data>
+  <data name="RatingFromCanNotBeGreaterThenRatingTo" xml:space="preserve">
+    <value>Վարկանիշի արժեքները մուտքագրված են սխալ</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Պարամետրեր</value>
+  </data>
+  <data name="ShowBeforeEndDays" xml:space="preserve">
+    <value>Վարձակալված գույքը ազատվելուց շուտ ցուցադրելու օրերի քանակը:</value>
+  </data>
+  <data name="CeilingRepaired" xml:space="preserve">
+    <value>Վերանորոգված տանիք</value>
+  </data>
+  <data name="ElectricityCablesChanged" xml:space="preserve">
+    <value>Փոխված էլեկտրալարեր</value>
+  </data>
+  <data name="PipesChanged" xml:space="preserve">
+    <value>Փոխված խողովակներ</value>
+  </data>
+  <data name="ColumnsCountMustBeLessThenEqual10" xml:space="preserve">
+    <value>Տվյալների քանակը պետք է լինի առավելագույնը 11</value>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>Տվյալներ</value>
+  </data>
+  <data name="PrintColumns" xml:space="preserve">
+    <value>Տվյալներ տպելու համար</value>
+  </data>
+  <data name="Images" xml:space="preserve">
+    <value>Նկարներ</value>
+  </data>
+  <data name="TntBalcony" xml:space="preserve">
+    <value>Տնտեսական պատշգամբ</value>
+  </data>
+  <data name="ByAgency" xml:space="preserve">
+    <value>Ըստ գործակալության</value>
+  </data>
+  <data name="ByBroker" xml:space="preserve">
+    <value>Ըստ գործակալի</value>
+  </data>
+  <data name="AddedClientsCountP" xml:space="preserve">
+    <value>Ավելացված գնորդների քանակը:</value>
+  </data>
+  <data name="AddedEstatesCountP" xml:space="preserve">
+    <value>Ավելացված հայտերի քանակը:</value>
+  </data>
+  <data name="AllClientsCountP" xml:space="preserve">
+    <value>Ընդհանուր գնորդների քանակը:</value>
+  </data>
+  <data name="AllEstatesCountP" xml:space="preserve">
+    <value>Ընդհանուր հայտերի քանակը:</value>
+  </data>
+  <data name="ArendedEstatesCountP" xml:space="preserve">
+    <value>Վարձակալված գույքերի քանակը:</value>
+  </data>
+  <data name="ShowedClientsCountP" xml:space="preserve">
+    <value>Քանի գնորդի է ցուցադրվել:</value>
+  </data>
+  <data name="ShowedEstatesCountP" xml:space="preserve">
+    <value>Քանի հայտ է ցուցադրվել:</value>
+  </data>
+  <data name="SoldEstatesCountP" xml:space="preserve">
+    <value>Վաճառված գույքերի քանակը:</value>
+  </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>Վիճակագրություն</value>
+  </data>
+  <data name="StatisticType" xml:space="preserve">
+    <value>Վիճակագրության տիպ</value>
+  </data>
+  <data name="StatisticTypeP" xml:space="preserve">
+    <value>Վիճակագրության տիպ:</value>
+  </data>
+  <data name="UpdatedClientsCountP" xml:space="preserve">
+    <value>Փոփոխված գնորդների քանակը:</value>
+  </data>
+  <data name="UpdatedEstatesCountP" xml:space="preserve">
+    <value>Փոփոխված հայտերի քանակը:</value>
+  </data>
+  <data name="ShowReportByBrokers" xml:space="preserve">
+    <value>Ցուցադրել տվյալները ըստ գործակալների</value>
+  </data>
+  <data name="Director" xml:space="preserve">
+    <value>Տնօրեն</value>
+  </data>
+  <data name="ShowAllData" xml:space="preserve">
+    <value>Ցուցադրել բոլոր տվյալները</value>
+  </data>
+  <data name="ShowOnlyMyData" xml:space="preserve">
+    <value>Ցուցադրել միայն իմ տվյալները</value>
+  </data>
+  <data name="ItemsPerPageP" xml:space="preserve">
+    <value>Տվյալների քանակը 1 էջում:</value>
+  </data>
+  <data name="Check" xml:space="preserve">
+    <value>Ստուգել</value>
+  </data>
+  <data name="CheckAddress" xml:space="preserve">
+    <value>Ստուգել հասցեն</value>
+  </data>
+  <data name="PrintSelected" xml:space="preserve">
+    <value>Տպել նշվածները</value>
+  </data>
+  <data name="TelephoneOrNameP" xml:space="preserve">
+    <value>Հեռախոս/Անուն:</value>
+  </data>
+  <data name="ApplicationIsRunningInOfflineMode" xml:space="preserve">
+    <value>Ծրագիրը աշխատում է Offline ռեժիմով</value>
+  </data>
+  <data name="CheckForDataUpdates" xml:space="preserve">
+    <value>Թարմացնել բազային տվյալները</value>
+  </data>
+  <data name="Updating" xml:space="preserve">
+    <value>Թարմացվում է</value>
+  </data>
+  <data name="LandNumber" xml:space="preserve">
+    <value>Հողի համար</value>
+  </data>
+  <data name="LandNumberP" xml:space="preserve">
+    <value>Հողի համար:</value>
+  </data>
+  <data name="Dishwasher" xml:space="preserve">
+    <value>Սպասք լվանալու մեքենա</value>
+  </data>
+  <data name="EuroDesign" xml:space="preserve">
+    <value>Եվրոդիզայն</value>
+  </data>
+  <data name="Metlax" xml:space="preserve">
+    <value>Մետլախ</value>
+  </data>
+  <data name="Tile" xml:space="preserve">
+    <value>Սալիկ</value>
+  </data>
+  <data name="Sauna" xml:space="preserve">
+    <value>Սաունա</value>
+  </data>
+  <data name="CheckForSiteDataUpdates" xml:space="preserve">
+    <value>Թարմացնել կայքի բազային տվյալները</value>
+  </data>
+  <data name="GasHeater" xml:space="preserve">
+    <value>Գազի վառարան</value>
+  </data>
+  <data name="AdditDetailsForSiteP" xml:space="preserve">
+    <value>Լրացուցիչ տվյալներ (կայքի համար):</value>
+  </data>
+  <data name="PlaceNameForSiteP" xml:space="preserve">
+    <value>Գտնվելու վայրը (կայքի համար):</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Կրկնօրինակել</value>
+  </data>
+  <data name="ShowOpenAddressToBrokers" xml:space="preserve">
+    <value>Ցուցադրել գործակալներին բաց հասցեն</value>
+  </data>
+  <data name="CommercialConvenients" xml:space="preserve">
+    <value>Կոմերցիոն գույքի հարմարություն</value>
+  </data>
+  <data name="CommercialConvenientsPPP" xml:space="preserve">
+    <value>Կոմերցիոն գույք...</value>
+  </data>
+  <data name="DaylyRent" xml:space="preserve">
+    <value>Օրավարձ</value>
+  </data>
+  <data name="DeletedEstates" xml:space="preserve">
+    <value>Ջնջված հայտեր</value>
+  </data>
+  <data name="DeleteDate" xml:space="preserve">
+    <value>Ջնջման ամսաթիվ</value>
+  </data>
+  <data name="AllowBrokersToPrintEstates" xml:space="preserve">
+    <value>Թույլատրել գործակալներին տպել հայտեր</value>
+  </data>
+  <data name="TheseEstatesAreFree" xml:space="preserve">
+    <value>Հետևյալ հայտերը ազատվել են վարձակալությունից</value>
+  </data>
+  <data name="WithPhoto" xml:space="preserve">
+    <value>Նկար</value>
+  </data>
+  <data name="Countries" xml:space="preserve">
+    <value>Երկրներ</value>
+  </data>
+  <data name="CleanImages" xml:space="preserve">
+    <value>Մաքրել նկարները</value>
+  </data>
+  <data name="RealtorWillBeClose" xml:space="preserve">
+    <value>Ռիելթորը կփակվի նկարների թղթապանակը մաքրելու համար: Դուք համոզված եք, որ ուզում եք շարունակել ?</value>
+  </data>
+  <data name="CountriesPPP" xml:space="preserve">
+    <value>Երկրներ...</value>
+  </data>
+  <data name="CountryP" xml:space="preserve">
+    <value>Երկիր:</value>
+  </data>
+  <data name="Overseas" xml:space="preserve">
+    <value>Արտասահմանյան</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Երկիր</value>
+  </data>
+  <data name="OverseasEstate" xml:space="preserve">
+    <value>Արտասահմանյան գույք</value>
+  </data>
+  <data name="DeletedClients" xml:space="preserve">
+    <value>Ջնջված գնորդներ</value>
+  </data>
+  <data name="EmailP" xml:space="preserve">
+    <value>Էլ. Հասցե:</value>
+  </data>
+  <data name="ReturnToDemandsList" xml:space="preserve">
+    <value>Վերադարձնել Գնորդների Ցուցակ</value>
+  </data>
+  <data name="DataSaveError" xml:space="preserve">
+    <value>Տվյալները պահպանելու ժամանակ տեղի է ունեցել սխալ, խնդրում ենք փորձել քիչ ուշ</value>
+  </data>
+  <data name="OfferedEstates" xml:space="preserve">
+    <value>Առաջարկված գույքերը</value>
+  </data>
+  <data name="ShowedEstates" xml:space="preserve">
+    <value>Ցուցադրված գույքերը</value>
+  </data>
+  <data name="SuggestClient" xml:space="preserve">
+    <value>Առաջարկել գնորդին</value>
+  </data>
+  <data name="FavoriteClients" xml:space="preserve">
+    <value>Ընտրված գնորդներ</value>
+  </data>
+  <data name="AddComment" xml:space="preserve">
+    <value>Ավելացնել նշում</value>
+  </data>
+  <data name="AddToFavoriteClients" xml:space="preserve">
+    <value>Ավելացնել ընտրված գնորդներին</value>
+  </data>
+  <data name="FavoriteEstatesAndClients" xml:space="preserve">
+    <value>Ընտրված հայտեր / գնորդներ</value>
+  </data>
+</root>
