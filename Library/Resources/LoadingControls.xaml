@@ -1,0 +1,26 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ControlTemplate x:Key="LoadingControlSmall">
+        <Grid x:Name="Grid" Visibility="Collapsed" Opacity="0.5">
+            <Grid.InputBindings>
+                <KeyBinding Key="Escape" Command="{Binding BreakCommand}"/>
+            </Grid.InputBindings>
+            <Border Background="#F4F5F7" Opacity="0.7">
+            </Border>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border x:Name="Border" Grid.Column="0">
+                    <ProgressBar IsIndeterminate="True" Background="#F4F5F7" Opacity="1" Width="{Binding ElementName=Border, Path=ActualWidth}" VerticalAlignment="Center" HorizontalAlignment="Center" Height="30"/>
+                </Border>
+            </Grid>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding IsLoading}" Value="true">
+                <Setter TargetName="Grid" Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+</ResourceDictionary>
