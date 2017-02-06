@@ -1,0 +1,33 @@
+﻿<Window x:Class="DatabaseManagement.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Icon="pack://application:,,,/Shared;component/Images/database.png"
+        Title="{Binding Source={StaticResource CultureResources},Path=[DatabaseManagement]}" Height="350" Width="525" WindowStyle="SingleBorderWindow" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+    <Grid Margin="3" >
+        <Border Background="AliceBlue" BorderBrush="LightBlue" CornerRadius="3">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="10"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="btnCreateBackup" Click="btnCreateBackup_Click" Height="150" Width="150" Grid.Row="1">
+                    <StackPanel>
+                        <Image Source="pack://application:,,,/Shared;component/Images/backup.png"  Width="100" Height="100"/>
+						<TextBlock Text="{Binding Source={StaticResource CultureResources},Path=[CreateArchive]}" HorizontalAlignment="Center" Margin="0,10,0,0" FontSize="12" FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
+				
+                <Button x:Name="btnRestoreBackup" Click="btnRestoreBackup_Click" Width="150" Height="150" Grid.Column="1" Grid.Row="1">
+                    <StackPanel>
+                        <Image Source="pack://application:,,,/Shared;component/Images/Restore.png"  Width="100" Height="100"/>
+						<TextBlock Text="{Binding Source={StaticResource CultureResources},Path=[RestoreArchive]}" HorizontalAlignment="Center" Margin="0,10,0,0" FontSize="12" FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
