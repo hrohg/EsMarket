@@ -1,0 +1,113 @@
+﻿<UserControl x:Class="ES.Shop.Views.ViewProductsUctrl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data"
+             xmlns:views="clr-namespace:UserControls.Views;assembly=UserControls"
+             xmlns:viewModels="clr-namespace:UserControls.ViewModels;assembly=UserControls"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+    </UserControl.Resources>
+  <Grid>
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <TextBox Grid.Row="1" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="25" FontSize="15" VerticalContentAlignment="Center" Width="Auto" BorderThickness="1" BorderBrush="Black"/>
+      <Button Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" IsTabStop="False">
+        <Image Height="20" Width="20" Source="pack://application:,,,/Shared;component/Images/Search.png"/>
+      </Button>
+      <ContentControl Grid.Row="2" Content="{Binding}">
+        <ContentControl.Resources>
+                    <DataTemplate DataType="{x:Type viewModels:ProductItemsViewModel}">
+
+            <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+              <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Կոդ" CanUserSort="True" SortMemberPath="Code">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                      <TextBlock Text="{Binding Code}"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" SortMemberPath="Description">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                      <TextBlock Text="{Binding Description}"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="ՉՄ" CanUserSort="True" SortMemberPath="Mu">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                      <TextBlock Text="{Binding Mu}" HorizontalAlignment="Center"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Մին քանակ" CanUserSort="True" SortMemberPath="MinQuantity">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                      <TextBlock Text="{Binding Product.MinQuantity, StringFormat='# ##0.##'}" HorizontalAlignment="Right"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Մնացորդ" CanUserSort="True" SortMemberPath="ExistingQuantity">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                      <TextBlock Text="{Binding ExistingQuantity, StringFormat='# ##0.##'}" HorizontalAlignment="Right"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Գին" CanUserSort="True" SortMemberPath="Price">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                      <TextBlock Text="{Binding Product.Price, StringFormat='# ##0.##'}" FontStyle="Italic" HorizontalAlignment="Right"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Գումար" CanUserSort="True" SortMemberPath="Amount">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                      <TextBlock Text="{Binding Amount, StringFormat='# ##0.##'}" FontStyle="Italic" HorizontalAlignment="Right"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Նշումներ">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                      <TextBlock Text="{Binding Note}"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+              </DataGrid.Columns>
+            </DataGrid>
+          </DataTemplate>
+        </ContentControl.Resources>
+      </ContentControl>
+      <StackPanel Grid.Row="3" HorizontalAlignment="Right" Orientation="Horizontal" Margin="3">
+        <TextBlock Text="Տեսականի" Margin="3 0"/>
+        <TextBlock Text="{Binding Count, StringFormat='# ##0'}" Margin="3 0" Foreground="Blue"/>
+        <TextBlock Text="Քանակ" Margin="3 0"/>
+        <TextBlock Text="{Binding Quantity, StringFormat='# ##0.##'}" Margin="3 0" Foreground="Blue"/>
+        <TextBlock Text="Ինքնարժեք" Margin="3 0"/>
+        <TextBlock Text="{Binding CostPrice, StringFormat='# ##0.##'}" Margin="3 0" Foreground="Blue"/>
+        <TextBlock Text="Վսճառքի գին" Margin="3 0"/>
+        <TextBlock Text="{Binding Price, StringFormat='# ##0.##'}" Margin="3 0" Foreground="Blue"/>
+      </StackPanel>
+      <StackPanel Grid.Row="4" HorizontalAlignment="Right" Orientation="Horizontal" Margin="1">
+        <Button Content="Թարմացնել" Width="80" Command="{Binding UpdateCommand}"/>
+        <Button Content="Արտահանել" Margin="1" Width="80" Command="{Binding ExportCommand}"/>
+        <Button Content ="Տպել" Width="80" Command="{Binding PrintCommand}"/>
+      </StackPanel>
+    </Grid>
+    <views:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"/>
+  </Grid>
+</UserControl>

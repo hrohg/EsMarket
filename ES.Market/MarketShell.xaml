@@ -1,0 +1,1064 @@
+﻿<Window x:Class="ES.Market.MarketShell"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:helper="clr-namespace:CashReg.Helper;assembly=CashReg"
+        xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:converters="clr-namespace:UserControls.Converters;assembly=UserControls"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:enumerations1="clr-namespace:ES.Common.Enumerations;assembly=ES.Common"
+        xmlns:managers1="clr-namespace:ES.Business.Managers;assembly=ES.Business"
+        xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
+        xmlns:controls="clr-namespace:Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls;assembly=Xceed.Wpf.AvalonDock"
+        xmlns:behaviors1="clr-namespace:Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Behaviors;assembly=Xceed.Wpf.AvalonDock"
+        xmlns:helpers="clr-namespace:Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Helpers;assembly=Xceed.Wpf.AvalonDock"
+        Name="WinShop" Title="ES Logistics - Վաճառք" MinHeight="600" MinWidth="800" Closing="WinShop_Closing" Closed="WinShop_Closed"
+        WindowState="Maximized" WindowStartupLocation="CenterScreen"
+        Icon="pack://application:,,,/Shared;component/Images/shopping_cart.Ico">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+            </ResourceDictionary.MergedDictionaries>
+            <converters:GetInvocieParameterConverter x:Key="GetInvocieParameterConverter"/>
+            <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <SolidColorBrush x:Key="DefaultBackground" Color="#19C8FA"/>
+            <SolidColorBrush x:Key="TabBackground" Color="#F5F5F5"/>
+            <SolidColorBrush x:Key="StatusBarBackground" Color="#DC6E0A"/>
+            <Style x:Key="VerticalSeparatorStyle"
+                   TargetType="{x:Type Separator}"
+                   BasedOn="{StaticResource {x:Type Separator}}">
+                <Setter Property="LayoutTransform">
+                    <Setter.Value>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <TransformCollection>
+                                    <RotateTransform Angle="90"/>
+                                </TransformCollection>
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+        </ResourceDictionary>
+    </Window.Resources>
+    <i:Interaction.Behaviors>
+        <behaviors:EventToCommandBehavior Command="{Binding Path=KeyPressedCommand}" Event="KeyDown" PassArguments="True"/>
+    </i:Interaction.Behaviors>
+
+    <Grid Background="{StaticResource DefaultBackground}">
+
+        <Grid.Resources>
+
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Menu Grid.Column="1" Margin="1 0" VerticalAlignment="Top" Name="MenuShop" FontSize="11" Height="20">
+                <MenuItem Name="MiAdmin" Header="Admin"  IsEnabled="True" Visibility="Collapsed">
+                    <MenuItem.Icon>
+                        <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Safe.ico"/>
+                    </MenuItem.Icon>
+                    <MenuItem Header="Կազմակերպությունների խմբագրում" Margin="3" Click="MiManageMembers_Click"></MenuItem>
+                    <MenuItem Header="Օգտագործողների խմբագրում" Margin="3" Click="MiManageUsers_Click"></MenuItem>
+                    <MenuItem Header="Հատուկ գործողություն" Margin="3" Click="MiExecute_Click"></MenuItem>
+                    <MenuItem Header="Ապրանքների բեռնում" Margin="3" Command="{Binding ImportProductsCommand}"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="Օգտագործող" >
+                    <MenuItem.Icon>
+                        <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/UserSettings.ico"/>
+                    </MenuItem.Icon>
+                    <MenuItem Name="MiChangePassword" Header="Գաղտնաբառի փոփոխում" Click="MiChangePassword_Click">
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/ChangePassword.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Name="MiLogoff" Header="_Logoff _F9" Click="MiLogoff_Click">
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/WindowsLogOff.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Փաստաթղթեր">
+                    <MenuItem.Icon>
+                        <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
+                    </MenuItem.Icon>
+                    <MenuItem Header="Վաճառքի ապրանքագիր" Margin="3">
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Նոր ապրանքագիր F2" Margin="3" Command="{Binding GetInvoicesCommand}">
+                            <MenuItem.Icon>
+                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_recherch.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.SaleInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.New}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                        </MenuItem>
+                        <MenuItem Header="Չհաստատված ապրանքագրեր" Margin="3" Command="{Binding GetInvoicesCommand}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                            </MenuItem.Icon>
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.SaleInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                        </MenuItem>
+                        <MenuItem Header="Ապրանքագրեր" Margin="3" Command="{Binding GetInvoicesCommand}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.SaleInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Approved}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                        </MenuItem>
+                        <MenuItem Header="Դիտել վերջին 100 ապրանքագրերը" Margin="3" Command="{Binding GetInvoicesCommand}" >
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.SaleInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Approved}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.SmallCount}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Name="MiPurchaseInvoices" Header="Գնման ապրանքագիր" Margin="3"  IsEnabled="False">
+                        <MenuItem.Icon>
+                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Նոր ապրանքագիր F3" Margin="3" Command="{Binding GetInvoicesCommand}">
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.PurchaseInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.New}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit_recherch.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Չհաստատված ապրանքագրեր" Margin="3" Command="{Binding GetInvoicesCommand}">
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.PurchaseInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Ապրանքագրեր" Margin="3" Command="{Binding GetInvoicesCommand}">
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.PurchaseInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Approved}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Դիտել վերջին 100 ապրանքագրերը" Margin="3" Command="{Binding GetInvoicesCommand}">
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.PurchaseInvoice}"  Mode="OneWay" />
+                                    <Binding Source="{x:Static managers1:InvoiceState.Approved}" Mode="OneWay" />
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.SmallCount}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Name="MiMoveingInvoices" Header="Տեղափոխման ապրանքագիր" Margin="3" IsEnabled="False">
+                        <MenuItem.Icon>
+                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Նոր ապրանքագիր F4" Margin="3" Command="{Binding GetInvoicesCommand}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit_recherch.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.MoveInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.New}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                        </MenuItem>
+                        <MenuItem Header="Չհաստատված ապրանքագրեր" Margin="3" Command="{Binding GetInvoicesCommand}" >
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.MoveInvoice}"  Mode="OneWay" />
+                                    <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay" />
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Ապրանքագրեր" Margin="3" Command="{Binding GetInvoicesCommand}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.MoveInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Approved}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                        </MenuItem>
+                        <MenuItem Header="Դիտել վերջին 100 ապրանքագրերը" Margin="3" Command="{Binding GetInvoicesCommand}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.MoveInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Approved}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.SmallCount}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                        </MenuItem>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Name="MiStatements" Header="Ակտեր" Margin="3">
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Դուրս գրման ակտ" Margin="3" Command="{Binding GetInvoicesCommand}">
+                            <MenuItem.Icon>
+                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_recherch.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.InventoryWriteOff}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.New}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                        </MenuItem>
+                        <MenuItem Header="Մուտքագրման ակտ" Margin="3" Command="{Binding}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit_recherch.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.SaleInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                        </MenuItem>
+                        <MenuItem Header="Ակտեր" Margin="3" Command="{Binding GetInvoicesCommand}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.InventoryWriteOff}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.All}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                        </MenuItem>
+                        <MenuItem Header="Դիտել վերջին 100 ակտերը" Margin="3" Command="{Binding GetInvoicesCommand}" >
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.InventoryWriteOff}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.All}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.SmallCount}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Ծառայություններ" Margin="3">
+                        <MenuItem.Icon>
+                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Դրամարկղ" Margin="0,1">
+                    <MenuItem.Icon>
+                        <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/CashDesk.ico"/>
+                    </MenuItem.Icon>
+                    <MenuItem Header="Մնացորդ" Command="{Binding GetChashDesksInfoCommand}" Margin="3"/>
+                    <Separator Margin="3"/>
+                    <MenuItem Header="Պատվիրատու" Margin="3">
+                        <MenuItem Header="221 Դեբիտորական պարտքի մարում" Margin="3" Click="MiRepaymentOfReceivable_Click"/>
+                        <Separator Margin="3"/>
+                        <MenuItem Header="Դեբիտորական պարտքեր (մանրամասն)"  Click="MiDebitViewDetile_Click" Margin="3"/>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Name="MiAccounting" Header="Հաշիվ" Margin="1" Visibility="Collapsed">
+                        <MenuItem.Icon>
+                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Cash-register.png"></Image>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Վերծանում" >
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem Header="Հաշվային պլան" Click="MiViewAccountingPlan_Click" Margin="3"/>
+                            <Separator Margin="3"/>
+                        </MenuItem>
+                        <Separator Margin="3"/>
+                        <MenuItem Header="Դեբիտորական, կրեդիտորական պարտքերի դիտում">
+                            <MenuItem Header="Ըստ պատվիրատուների" Click="MiDebitByPartners_Click"></MenuItem>
+                            <MenuItem Header="Մանրամասն" Click ="MiDebitDetile_Click"></MenuItem>
+                            <MenuItem Header="Դեբիտորական պարտքի մարում ըստ պատվիրատուների" Click ="MiAccountingRepaymentDetile_Click"></MenuItem>
+                        </MenuItem>
+                        <Separator Margin="3"/>
+                        <MenuItem Header="1 Ոչ ընթացիկ ակտիվներ"></MenuItem>
+                        <MenuItem Header="2 Ընթացիկ ակտիվներ">
+                            <MenuItem Header="221 Դեբիտորական պարտքի մարում" Margin="3" Click="MiRepaymentOfReceivable_Click"/>
+                            <MenuItem Header="251 Գումարի փոխանցում դրամարկղում" Margin="3" Click="MiTransferIntoCashDesk_Click"/>
+                        </MenuItem>
+                        <MenuItem Header="3 Սեփական կապիտալ">
+                            <MenuItem Header="311 Կանոնադրական կապիտալի համալրում" Click="MiAddEquityBase_Click"/>
+                        </MenuItem>
+                        <MenuItem Header="4 Ոչ ընթացիկ պարտավորություններ"></MenuItem>
+                        <MenuItem Header="5 Ընթացիկ պարտավորություններ">
+                            <MenuItem Header="521 Կրեդիտորական պարտքերի մարում" Margin="3" Click="MiRepaymentOfDebts_Click"/>
+                            <MenuItem Header="523 Ստացված կանխավճարներ" Margin="3" Click="MiReceivedInAdvance_Click"/>
+                        </MenuItem>
+                        <MenuItem Header="6 Եկամուտներ"></MenuItem>
+                        <MenuItem Header="7 Ծախսեր">
+                            <MenuItem Header="712 Իրացման ծախսեր" Margin="3" Click="MiCostOfSales_Click" >
+                                <MenuItem Header="Աշխատավարձ" Margin="3" Click="MiCostOfSales_Salary_Click" />
+                            </MenuItem>
+                            <MenuItem Header="713 Վարչական ծախսեր" Margin="3" />
+                            <MenuItem Header="714 Գործառնական այլ ծախսեր" Margin="3" />
+                        </MenuItem>
+                        <MenuItem Header="8 Կառավարչական հաշվառման հաշիվներ"></MenuItem>
+                        <MenuItem Header="9 Արտահաշվեկշռային հաշիվներ"></MenuItem>
+                        <Separator Margin="3"/>
+                        <MenuItem Header="Հաշվային պլան (դիտում)" Click="MiAccountingPlan_Click"></MenuItem>
+                        <Separator/>
+                        <MenuItem Name="MiAction" Header="Գործարք" Margin="3" Visibility="Collapsed">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Edit.ico"></Image>
+                            </MenuItem.Icon>
+                            <MenuItem Header="Ֆիքսված գործարք" Margin="3" Click="MiSingleAccountingRecords_Click" />
+                            <MenuItem Header="Բազմակի գործարքներ" Margin="3" Click="MiMultipleAccountingRecords_Click" />
+                            <Separator />
+                            <MenuItem Header="Իրացման ծախսեր" Margin="3" Click="MiCostOfSales_Click" />
+
+                            <MenuItem Header="Ծախսեր">
+                                <MenuItem Header="Իրացման ծախսեր" Margin="3" Click="MiCostOfSales_Click" />
+                                <MenuItem Header="Վարչական ծախսեր" Margin="3" />
+                                <MenuItem Header="Գործառնական այլ ծախսեր" Margin="3" />
+                            </MenuItem>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="ՀԴՄ" Visibility="{Binding IsEcrAcivated, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/CashDesk.ico"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Վերադարձի կտրոնի տպում" Command="{Binding ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.PrintReturnTicket}"/>
+                        <MenuItem Header="Վերջին կտրոնի կրկնօրինակի տպում" Command="{Binding ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.PrintLatestTicket}"/>
+                        <MenuItem Header="Կանխիկ մուտք" Command="{Binding ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.CashIn}"/>
+                        <MenuItem Header="Կանխիկ ելք" Command="{Binding ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.CashWithdrawal}"/>
+                        <Separator/>
+                        <MenuItem Header="ՀԴՄ հաշվետվության տպում (X)" Command="{Binding ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.PrintReportX}"/>
+                        <MenuItem Header="ՀԴՄ հաշվետվության տպում (Z)" Command="{Binding ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.PrintReportZ}"/>
+                        <Separator/>
+                        <MenuItem Header="Կապի ստուգում" Command="{Binding ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.CheckConnection}"/>
+                        <MenuItem Header="ՀԴՄ Օպերատորի մուտքի ստուգում" Command="{Binding ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.OperatorLogin}"/>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Տվյալներ">
+                    <MenuItem.Icon>
+                        <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Data.ico"/>
+                    </MenuItem.Icon>
+                    <MenuItem Header="Խմբագրում" Margin="3">
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Edit.ico"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Ապրանքների խմբագրում" Margin="3" Command="{Binding ManageProductsCommand}">
+                            <MenuItem.Icon>
+                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Edit.ico"></Image>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Name="MiManageServices" Header="Ծառայությունների խմբագրում" Margin="3" Visibility="Collapsed" Click="MiManageServices_Click" IsEnabled="False">
+                            <MenuItem.Icon>
+                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Edit.ico"></Image>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <MenuItem Header="Պատվիրատուների խմբագրում" Margin="3" Command="{Binding ManageParnersCommand}">
+                            <MenuItem.Icon>
+                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/user.png"></Image>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Name="MiManageUsers" Header="Օգտագործողների խմբագրում" Margin="3" Click="MiEditUsers_Click" IsEnabled="False" Visibility="Collapsed"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Name="MiView" Header="Դիտում">
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Ապրանքաշրջանառություն" Margin="3" Command="{Binding GetProductsHistoryCommand}" />
+                        <MenuItem Header="Գնացուցակ" Margin="3" Click ="MiViewPriceList_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Ապրանքագրերի դիտում" Margin="3">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Edit.ico"></Image>
+                            </MenuItem.Icon>
+                            <MenuItem Header="Վաճառքի ապրանքագրեր" Margin="3" Click="MiViewSaleInvoices_Click">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"></Image>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Չհաստատված տեղափոխման ապրանքագրեր" Margin="3" Click="MiViewUnacceptedMoveInvoices_Click">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"></Image>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Տեղափոխման ապրանքագրեր" Margin="3" Click="MiViewMoveInvoices_Click">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"></Image>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Չհաստատված գնման ապրանքագրեր" Margin="3" Click="MiViewUnacceptedPurchaseInvoices_Click">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"></Image>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Գնման ապրանքագրեր" Margin="3" Click="MiViewPurchaseInvoices_Click">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"></Image>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                        <MenuItem Header="Ապրանքների դիտում">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                            </MenuItem.Icon>
+                            <MenuItem Header="Ապրանքների դիտում ըստ պահեստների" Command="{Binding ViewProductsByStockCommand}"/>
+
+                        </MenuItem>
+                        <Separator/>
+                        <MenuItem Header="Վաճառք" Command="{Binding SaleProductsCommand}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Տեղափոխություն">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                            </MenuItem.Icon>
+                            <MenuItem Header="Դիտում" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.None}">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Ըստ բաժիննների" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByStock}">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Դիտում մանրամասն" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByDetiles}">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Name="MiProductOrder" Header="Պատվեր">
+                        <MenuItem Name="MiProductOrderByMinQuantity" Header="Ըստ մնացորդի" Click="MiProductOrderByMinQuantity_Click"></MenuItem>
+                        <MenuItem Name="MiProductOrderByProviders" Header="Դասակարգում ըստ մատակարարների" Click="MiProductOrderByProviders_Click" Visibility="Collapsed"></MenuItem>
+                        <MenuItem Name="MiProductOrderByBrands" Header="Ըստ ապրանքատեսակների"   Click="MiProductOrderByBrands_Click" Visibility="Collapsed"></MenuItem>
+                        <MenuItem Header="Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն)" Command="{Binding ProductOrderCommand}"></MenuItem>
+                    </MenuItem>
+
+                    <Separator/>
+                    <MenuItem Header="Գույքագրում" Name="MiStockTaking">
+                        <MenuItem Header="Նոր գույքագրման ստեղծում" Command="{Binding StockTakingCommand}" CommandParameter="{x:Static enumerations1:ProjectCreationEnum.New}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Չփակված գույքաքրման խմբագրում" Command="{Binding StockTakingCommand}" CommandParameter="{x:Static enumerations1:ProjectCreationEnum.Edit}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Գույքագրման դիտում" Name="MiViewStockTaking" Command="{Binding StockTakingCommand}" CommandParameter="{Binding ProjectCreationEnum.View}" Click="MiViewStockTaking_OnClick">
+
+                        </MenuItem>
+                        <MenuItem Header="Վերջին գույքագրման դիտում" Name="MiViewLastStockTaking" Command="{Binding StockTakingCommand}" CommandParameter="{Binding ProjectCreationEnum.ViewLast}" Click="MiViewLastStockTaking_OnClick">
+
+                        </MenuItem>
+                        <MenuItem Header="Տվյալների դուրսգրում" Command="{Binding WriteOffProductsCommand}">
+                        </MenuItem>
+                        <MenuItem Header="Պակասորդի դուրսգրում" Command="{Binding WriteOffStockTakingCommand}">
+                        </MenuItem>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Ներմուծել" IsEnabled="False">
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Ապրանքագիր Excel" Name="MiImportFromExcel" Click="MiImportInvoiceFromExcel_Click">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Արտահանել" >
+                        <MenuItem.Icon>
+                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Upload.ico"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Ապրանքագիր Excel" Name="MiExportToExcel" IsEnabled="False"></MenuItem>
+                        <Separator/>
+                        <MenuItem Header="Կշեռք">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/WeightScale.ico"/>
+                            </MenuItem.Icon>
+                            <MenuItem Header="Արտահանել (Штрих-М կշեռք)" Command="{Binding ExportProductsForScaleCommand}" CommandParameter="{x:Static enumerations1:ExportForScale.ShtrixM}">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Upload.ico"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Արտահանել (Штрих-К կշեռք)" Command="{Binding ExportProductsForScaleCommand}" CommandParameter="{x:Static enumerations1:ExportForScale.ShtrixK}">
+                                <MenuItem.Icon>
+                                    <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Upload.ico"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <Separator/>
+                            <MenuItem Header="Արտահանել" Command="{Binding ExportProductsForScaleCommand}" CommandParameter="{x:Static enumerations1:ExportForScale.Custom}">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Upload.ico"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Արտահանել բոլորը" Command="{Binding ExportProductsForScaleCommand}" CommandParameter="{x:Static enumerations1:ExportForScale.All}">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Upload.ico"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Արտահանել միայն քաշայինները" Command="{Binding ExportProductsForScaleCommand}" CommandParameter="{x:Static enumerations1:ExportForScale.WaightsOnly}">
+                                <MenuItem.Icon>
+                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Upload.ico"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Name="MiFinanceReport" Header="Համառոտ վերլուծություններ" Command="{Binding ShortReportCommand}" Visibility="Collapsed">
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Name="MiReport" Header="Վերլուծություններ" Click="MiViewReport_Click" Visibility="Collapsed">
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Name="MiReleate" Header="Օգնություն">
+                    <MenuItem.Icon>
+                        <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Help.ico" />
+                    </MenuItem.Icon>
+                    <MenuItem Header="Լրացուցիչ">
+                        <MenuItem.Icon>
+                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Ստեղծել տեղափոխման հաշիվ v0.1" Click="MiCreateAccountantDocument_Click" />
+                        <MenuItem Header="Տպել ՀԴՄ կտրոն Excel ֆայլից" Command="{Binding ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.PrintReceiptTicket}" Visibility="Collapsed">
+                            <MenuItem.Icon>
+                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/CashRegister_Dark.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <Separator/>
+
+                        <Separator Margin="3"/>
+                        <MenuItem Header="Տպել ապրանքագրի նմուշ" Margin="3" Command="{Binding PrintSampleInvoiceCommand}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Ծրագրի մասին" Margin="3">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/light_bulb_help.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Հաշվիչ" Margin="3" Command="{Binding OpenCarculatorCommand}">
+                        <MenuItem.Icon>
+                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Calc.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Տպել" Margin="3">
+                        <MenuItem Header="Տպել գնապիտակ S" Margin="3" Click ="MiPrintBarcode_Click">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Տպել գնապիտակ L" Margin="3" Command="{Binding PrintBarcodeLCommand}" CommandParameter="True">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+            <Menu Grid.Column="2" VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="0" Height="20"
+      Visibility="{Binding IsManageRule, Converter ={StaticResource BoolToVisibilityConverter}}">
+                <MenuItem Name="MiControlPanel"  VerticalAlignment="Stretch" VerticalContentAlignment="Center" Height="20" Margin="0">
+                    <MenuItem.Header>
+                        <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Settings.ico"/>
+                    </MenuItem.Header>
+
+
+                    <MenuItem Name="MiAdvancedSettings" Header="Ընդհանուր դրույթներ" Visibility="Collapsed">
+                        <MenuItem Header="Բրենդների խմբագրում" Click="MiManageBrands_Click"></MenuItem>
+                        <MenuItem Header="Ապրանքների տվյալների համաժամանակեցում" Command="{Binding SyncronizeProductsCommand}"
+          Visibility="{Binding IsManageRule, Converter ={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Name="MiAdministratorSettings" Header="Ադմինիստրատիվ դրույթներ" Visibility="Collapsed">
+                        <MenuItem Name="MiBackupData" Header="Տվյալների բազայի արխիվացում" Click="MiBackupData_Click"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Հաշվառման դրույթներ" >
+                        <MenuItem Header="Հաշվային պլանի խմբագրում" Click="MiManageSubAccountingPlans_Click"
+          Visibility="{Binding IsManageRule, Converter ={StaticResource BoolToVisibilityConverter}}"></MenuItem>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Սերվերի կարգավորումներ" Visibility="{Binding IsAdminOrDirectorRule, Converter ={StaticResource BoolToVisibilityConverter}}">
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Data.ico"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Սերվերի բազային տվյալների համաժամանակեցում" Command="{Binding SyncronizeServerDataCommand}"
+          CommandParameter="{x:Static managers1:SyncronizeServersMode.SyncronizeBaseData}"
+          Visibility="{Binding IsAdminOrDirectorRule, Converter ={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Սերվերից բազային տվյաների բեռնում" Command="{Binding SyncronizeServerDataCommand}"
+          CommandParameter="{x:Static managers1:SyncronizeServersMode.DownloadBaseData}"
+          Visibility="{Binding IsAdminOrDirectorRule, Converter ={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <Separator/>
+                        <MenuItem Header="Օգտագործողի տվյալների համաժամանակեցում" Command="{Binding SyncronizeServerDataCommand}"
+          CommandParameter="{x:Static managers1:SyncronizeServersMode.DownloadUserData}"
+          Visibility="{Binding IsAdminOrDirectorRule, Converter ={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Տվյալների բազայի ինտեգրում" Command="{Binding SyncronizeServerDataCommand}"
+          CommandParameter="{x:Static managers1:SyncronizeServersMode.DownloadMemberData}"
+  Visibility="{Binding IsAdminRule, Converter ={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Սերվերի խմբագրում" Command="{Binding ChangeServerSettingsCommand}" Visibility="{Binding IsAdminRule, Converter ={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Data.ico"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Սերվերի հեռացում" Command="{Binding RemoveServerSettingsCommand}" Visibility="{Binding IsAdminRule, Converter ={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Data.ico"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Օգտագործողների խմբագրում" Command="{Binding EditUsersCommand}" Visibility="{Binding IsAdminOrDirectorRule, Converter = {StaticResource BoolToVisibilityConverter}}">
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/user.png"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Հիմնական կարգավորումներ" Command="{Binding ChangeSettingsCommand}" Visibility="{Binding IsAdminOrDirectorRule, Converter = {StaticResource BoolToVisibilityConverter}}">
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Settings.ico"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TabControl Grid.Column="1" Grid.Row="0"  Width="Auto"  Name="TabShop" ItemContainerStyle="{StaticResource TabItemBaseStyle}" Visibility="Collapsed"
+                        Background="{StaticResource TabBackground}" ContentTemplate="{StaticResource TabContentTemplate}"/>
+
+            <controls:ExtendedDockingManager Grid.Column="1" Grid.Row="0"  Width="Auto" 
+                                            DocumentsSource="{Binding Documents}"
+                                            AnchorablesSource="{Binding Tools}"
+                                            AllowMixedOrientation="True"
+                                             behaviors1:AvalonDockLayoutSerializer.LoadLayoutCommand="{Binding ADLayout.LoadLayoutCommand}"
+                                 behaviors1:AvalonDockLayoutSerializer.SaveLayoutCommand="{Binding ADLayout.SaveLayoutCommand}">
+                <controls:ExtendedDockingManager.Resources>
+                    <Style x:Key="DefaultCloseButtonStyle" TargetType="{x:Type Button}">
+                        <Setter Property="Margin" Value="8 0"/>
+                        <Setter Property="Foreground" Value="#B1B1B1"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="Command" Value="{Binding CloseCommand}"/>
+                        <!--<Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabItem}}"/>-->
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border Background="{TemplateBinding Background}" VerticalAlignment="Center">
+                                        <Grid>
+                                            <Path x:Name="Path" Data="M 0 0 L 8 8 M 0 8 L 8 0" Stroke="{TemplateBinding Foreground}" StrokeThickness="1" Stretch="None" />
+                                            <ContentPresenter />
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Foreground" Value="#EE8801"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Foreground" Value="#DD5801"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style TargetType="{x:Type xcad:LayoutDocumentTabItem}" BasedOn="{StaticResource {x:Type xcad:LayoutDocumentTabItem}}">
+                        <Setter Property="ToolTip" Value="{Binding Description}"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Border CornerRadius="3 3 0 0" BorderThickness="1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Control Grid.Column="0" Template="{DynamicResource LoadingControlSmall}"/>
+                                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Title}"/>
+                                                <TextBlock Text="*" Foreground="Red" Visibility="{Binding IsModified, Converter={StaticResource BoolToVisibility}}"/>
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Style="{StaticResource DefaultCloseButtonStyle}"/>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </controls:ExtendedDockingManager.Resources>
+
+                <controls:ExtendedDockingManager.LayoutUpdateStrategy>
+                    <helpers:LayoutUpdateStrategy />
+                </controls:ExtendedDockingManager.LayoutUpdateStrategy>
+
+                <xcad:DockingManager.LayoutItemContainerStyleSelector>
+                    <helpers:AutobinderLayoutSelector>
+                        <helpers:AutobinderLayoutSelector.DocumentStyle>
+                            <Style TargetType="{x:Type xcad:LayoutItem}">
+                                <Setter Property="Title" Value="{Binding Model.Title}" />
+                            </Style>
+                        </helpers:AutobinderLayoutSelector.DocumentStyle>
+                        <helpers:AutobinderLayoutSelector.ToolStyle>
+                            <Style TargetType="{x:Type xcad:LayoutItem}">
+                                <Setter Property="Title" Value="{Binding Model.Title}" />
+                                <Setter Property="IconSource" Value="{Binding Model.IconSource}"/>
+                            </Style>
+                        </helpers:AutobinderLayoutSelector.ToolStyle>
+                    </helpers:AutobinderLayoutSelector>
+                </xcad:DockingManager.LayoutItemContainerStyleSelector>
+                <xcad:DockingManager.LayoutItemTemplateSelector>
+                    <helpers:AutobinderTemplateSelector>
+                        <!--<helpers:AutobinderTemplateSelector.DocumentTemplate>
+                            <DataTemplate>
+                                <ContentControl cal:View.Model="{Binding . }" IsTabStop="False" />
+                            </DataTemplate>
+                        </helpers:AutobinderTemplateSelector.DocumentTemplate>-->
+                        <!--<helpers:AutobinderTemplateSelector.ToolTemplate>
+                            <DataTemplate>
+                                <ContentControl cal:View.Model="{Binding . }" IsTabStop="False"  />
+                            </DataTemplate>
+                        </helpers:AutobinderTemplateSelector.ToolTemplate>-->
+                    </helpers:AutobinderTemplateSelector>
+                </xcad:DockingManager.LayoutItemTemplateSelector>
+
+                <controls:ExtendedDockingManager.LayoutItemContainerStyle>
+                    <Style TargetType="{x:Type xcad:LayoutItem}">
+                        <Setter Property="Title" Value="{Binding Model.Title}" />
+                        <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
+                        <Setter Property="CanClose" Value="{Binding Model.CanClose}" />
+                        <Setter Property="CanFloat" Value="{Binding Model.CanFloat}"/>
+                        <Setter Property="IsSelected" Value="{Binding Model.IsSelected}" />
+                        <Setter Property="IsActive" Value="{Binding Model.IsActive}"/>
+                    </Style>
+
+                </controls:ExtendedDockingManager.LayoutItemContainerStyle>
+
+                <!--<xcad:DockingManager.Theme>-->
+                <!--<xcad:MetroTheme />-->
+                <!--</xcad:DockingManager.Theme>-->
+                <!--<controls:ExtendedDockingManager.DocumentHeaderTemplate>
+                    <DataTemplate DataType="{x:Type base:TabViewModel}">
+                        <Border CornerRadius="2 2 0 0">
+                            <StackPanel Orientation="Horizontal">
+
+                                --><!--Show IsReadOnly Icon in document tab if that properties' present and true--><!--
+
+                                <Image Source="/Edi;component/Images/App/DocTab/Lock-icon.png" Margin="3,0,0,0" VerticalAlignment="Center">
+
+                                    <Image.Visibility>
+                                        <PriorityBinding FallbackValue="Collapsed" >
+                                            <Binding Path="Content.IsReadOnly" Mode="OneWay" Converter="{StaticResource BoolToVisibilityConverter}" />
+                                        </PriorityBinding>
+                                    </Image.Visibility>
+                                    <Image.ToolTip>
+                                        <PriorityBinding FallbackValue="">
+                                            <Binding Path="Content.IsReadOnlyReason" Mode="OneWay" />
+                                        </PriorityBinding>
+                                    </Image.ToolTip>
+
+                                </Image>
+                                <TextBlock Text="{Binding Model.Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                <TextBlock Text="*" Visibility="{Binding IsModified, Converter= {StaticResource BoolToVisibilityConverter}}"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </controls:ExtendedDockingManager.DocumentHeaderTemplate>
+                <controls:ExtendedDockingManager.AnchorableHeaderTemplate>
+                    <DataTemplate DataType="{x:Type base:TabViewModel}">
+                        <Border CornerRadius="2 2 0 0">
+                            <StackPanel Orientation="Horizontal">
+
+                                --><!--Show IsReadOnly Icon in document tab if that properties' present and true--><!--
+
+                                <Image Source="/Edi;component/Images/App/DocTab/Lock-icon.png" Margin="3,0,0,0" VerticalAlignment="Center">
+
+                                    <Image.Visibility>
+                                        <PriorityBinding FallbackValue="Collapsed" >
+                                            <Binding Path="Content.IsReadOnly" Mode="OneWay" Converter="{StaticResource BoolToVisibilityConverter}" />
+                                        </PriorityBinding>
+                                    </Image.Visibility>
+                                    <Image.ToolTip>
+                                        <PriorityBinding FallbackValue="">
+                                            <Binding Path="Content.IsReadOnlyReason" Mode="OneWay" />
+                                        </PriorityBinding>
+                                    </Image.ToolTip>
+                                </Image>
+                                <TextBlock Text="{Binding Model.Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </controls:ExtendedDockingManager.AnchorableHeaderTemplate>-->
+                <!--<controls:ExtendedDockingManager.LayoutItemTemplateSelector>
+                    <controls:PanesTemplateSelector>
+                        <controls:PanesTemplateSelector.TabViewTemplate>
+                            
+                        </controls:PanesTemplateSelector.TabViewTemplate>
+                    </controls:PanesTemplateSelector>
+                </controls:ExtendedDockingManager.LayoutItemTemplateSelector>-->
+
+                <!--<controls:ExtendedDocingManager.LayoutItemContainerStyleSelector>
+                    <controls:PanesStyleSelector>
+                        <controls:PanesStyleSelector.TabStyle>
+                            <Style TargetType="{x:Type xcad:LayoutItem}">
+                                <Setter Property="Title" Value="{Binding Model.Title}" />
+                                <Setter Property="ToolTip" Value="{Binding Model.Title}" />
+                                <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
+                                <Setter Property="ContentId" Value="{Binding Model.ContentId}" />
+                            </Style>
+                        </controls:PanesStyleSelector.TabStyle>
+                    </controls:PanesStyleSelector>
+
+                </controls:ExtendedDocingManager.LayoutItemContainerStyleSelector>-->
+
+
+                <!--<controls:ExtendedLayoutRoot>
+                    <controls:ExtendedLayoutRoot.LeftSide>
+                        <xcad:LayoutAnchorSide>
+                            <xcad:LayoutAnchorGroup>
+                                <xcad:LayoutAnchorGroup.Children>
+                                    <xcad:LayoutAnchorable CanAutoHide="True" CanHide="True" CanFloat="True" CanClose="True">
+                                        <ItemsControl ItemsSource="Tools"/>
+                                    </xcad:LayoutAnchorable>
+                                </xcad:LayoutAnchorGroup.Children>
+                            </xcad:LayoutAnchorGroup>
+                        </xcad:LayoutAnchorSide>
+                    </controls:ExtendedLayoutRoot.LeftSide>
+                    <controls:ExtendedLayoutRoot.BottomSide>
+                        <xcad:LayoutAnchorSide>
+                            <xcad:LayoutAnchorGroup>
+                                <xcad:LayoutAnchorGroup.Children>
+                                    <xcad:LayoutAnchorable CanAutoHide="True" CanHide="True" CanFloat="True" CanClose="True">
+                                        <ItemsControl ItemsSource="Tools"/>
+                                    </xcad:LayoutAnchorable>
+                                </xcad:LayoutAnchorGroup.Children>
+                            </xcad:LayoutAnchorGroup>
+                        </xcad:LayoutAnchorSide>
+                    </controls:ExtendedLayoutRoot.BottomSide>
+
+                    <controls:ExtendedLayoutPanel Orientation="Vertical">
+                        <controls:ExtendedLayoutDocumentPane/>
+                        <controls:ExtendedLayoutAnchorablePane Name="ToolsPane" DockHeight="150">
+                        </controls:ExtendedLayoutAnchorablePane>
+                    </controls:ExtendedLayoutPanel>
+                </controls:ExtendedLayoutRoot>-->
+
+                <xcad:LayoutRoot>
+                    <xcad:LayoutPanel Orientation="Horizontal">
+                        <xcad:LayoutDocumentPane/>
+                        <!--<xcad:LayoutAnchorablePane  Name="ToolsPane"  DockWidth="240"/>-->
+                    </xcad:LayoutPanel>
+                    </xcad:LayoutRoot>
+                
+            </controls:ExtendedDockingManager>
+            <Grid Grid.Column="0" Grid.Row="0">
+                <Expander x:Name="LeftPanel" ExpandDirection="Left" Visibility="Collapsed">
+                    <Border x:Name="LeftPanel_Border"  Width="250"></Border>
+                </Expander>
+            </Grid>
+        </Grid>
+        <Border Grid.Row="2" Background="{StaticResource StatusBarBackground}" Height="30">
+            <Border.Resources>
+                <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
+                    <Setter Property="Foreground" Value="White"/>
+                </Style>
+            </Border.Resources>
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Image Height="24" Width="24" Margin="5 0" VerticalAlignment="Center" Source="pack://application:,,,/Shared;component/Images/User_24x24_Dark.png" ToolTip="{Binding User.FullName}"/>
+                    <Image Height="24" Width="24" Margin="5 0" VerticalAlignment="Center" Source="{Binding ServerPath}" ToolTip="{Binding ServerDescription}"/>
+                </StackPanel>
+                <Grid Grid.Column="1">
+                    <Border Background="White" Opacity=".3" Margin="34 0 0 0"/>
+                    <Image  Height="24" Width="24" Margin="5 0"
+        VerticalAlignment="Center" Source="pack://application:,,,/Shared;component/Images/Messages_Light.png" ToolTip="Ստացված հաղորդագրություններ" HorizontalAlignment="Left"/>
+                    <Separator Style="{StaticResource VerticalSeparatorStyle}" Margin="0 0 0 0" HorizontalAlignment="Left"/>
+                    <ScrollViewer  HorizontalAlignment="Stretch" Margin="34 0 0 0">
+                        <ItemsControl ItemsSource="{Binding Messages}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <Image Source="" Margin="5 0"/>
+                                        <TextBlock Text="{Binding Path = Date}" Margin="5 0" Foreground="{Binding Path = MessageForeground}" />
+                                        <TextBlock Text="{Binding Path = Message}" Margin="5 0" Foreground="{Binding Path = MessageForeground}" AllowDrop="True"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+                <ProgressBar Grid.Column="2" IsIndeterminate="True" Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}" ToolTip="{Binding ProcessDescription}" Background="#F5F5F5" Margin="3"/>
+                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="5 0">
+                    <!--<CheckBox IsChecked="{Binding IsEcrActivated}" Margin="5 0" VerticalAlignment="Center" IsEnabled="False" ToolTip="{Binding EcrStatus}">
+            <CheckBox.Content>
+              <TextBlock Text="ՀԴՄ կարգավիճակ"/>
+            </CheckBox.Content>
+            <CheckBox.Triggers>
+
+            </CheckBox.Triggers>
+          </CheckBox>-->
+                    <ToggleButton IsChecked="{Binding IsEcrActivated}" Margin="5 0">
+                        <ToggleButton.Template>
+                            <ControlTemplate>
+                                <Image x:Name="Image" Height="24" Width="24" Source="pack://application:,,,/Shared;component/Images/CashRegister_Dark.png" ToolTip="ՀԴՄ պասիվ է"/>
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsEcrActivated}" Value="True">
+                                        <Setter TargetName="Image" Property="ToolTip" Value="ՀԴՄ ակտիվ է"/>
+                                        <Setter TargetName="Image" Property="Source" Value="pack://application:,,,/Shared;component/Images/CashRegister_Light.png"/>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </ToggleButton.Template>
+                    </ToggleButton>
+
+                    <Button Margin="5 0" Command="{Binding RefreshCashCommand}" Background="Transparent" BorderThickness="0" ToolTip="Թարմացնել" ClickMode="Press">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Image x:Name="Image" Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Refresh_Dark.png"/>
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Path=IsPressed, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}" Value="True">
+                                        <Setter TargetName="Image" Property="Source" Value="pack://application:,,,/Shared;component/Images/Refresh_Light.png"/>
+                                    </DataTrigger>
+                                    <Trigger SourceName="Image" Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Image" Property="Source" Value="pack://application:,,,/Shared;component/Images/Refresh_Light.png"/>
+                                    </Trigger>
+                                    <DataTrigger Binding="{Binding IsCashUpdateing}" Value="True">
+                                        <Setter TargetName="Image" Property="Source" Value="pack://application:,,,/Shared;component/Images/Refresh_Light.png"/>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}" BasedOn="{x:Null}"/>
+                        </Button.Style>
+                    </Button>
+                    <ToggleButton IsChecked="{Binding IsLocalMode}" Margin="5 0">
+                        <ToggleButton.Template>
+                            <ControlTemplate>
+                                <Image x:Name="Image" Height="24" Width="24" Source="pack://application:,,,/Shared;component/Images/Server/Server_Online_Light.png" ToolTip="Առցանց ռեժիմ"/>
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsLocalMode}" Value="True">
+                                        <Setter TargetName="Image" Property="Source" Value="pack://application:,,,/Shared;component/Images/Server/Server_Offline_Dark.png"/>
+                                        <Setter TargetName="Image" Property="ToolTip" Value="Լոկալ ռեժիմ"/>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </ToggleButton.Template>
+                    </ToggleButton>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

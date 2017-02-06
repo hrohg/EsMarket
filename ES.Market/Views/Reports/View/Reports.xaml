@@ -1,0 +1,88 @@
+﻿<Window x:Class="ES.Market.Views.Reports.View.DataReports"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:UserControls.Views;assembly=UserControls"
+        xmlns:enumerations1="clr-namespace:ES.Common.Enumerations;assembly=ES.Common"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        Title="Reports" Height="300" Width="300">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    </Window.Resources>
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition  Height="Auto"/>
+                <RowDefinition  Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Menu Grid.Row ="0">
+                <MenuItem Header="Վաճառք" Name="MiSale" Visibility="Collapsed">
+                    <MenuItem Header="Դիտում" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.None}"></MenuItem>
+                    <MenuItem Header="Վաճառքի մանրամասն վերլուծություն" Click="MiViewSaleReportDetile_Click"></MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Դիտել ըստ">
+                        <MenuItem Header="Բաժինների" Click="MiViewSaleReportByStocks_Click"></MenuItem>
+                        <MenuItem Header="Բաժինների (մանրամասն)" Click="MiViewSaleReportDetileByStocks_Click"></MenuItem>
+                        <MenuItem Header="Պատվիրատուների" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartner}"/>
+                        <MenuItem Header="Պատվիրատուների (ըստ խմբերի)" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartnerType}"/>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Տեղափոխություն">
+                    <MenuItem.Icon>
+                        <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                    </MenuItem.Icon>
+                    <MenuItem Header="Դիտում" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.None}">
+                        <MenuItem.Icon>
+                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Ըստ բաժիննների" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByStock}">
+                        <MenuItem.Icon>
+                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Դիտում մանրամասն" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByDetiles}">
+                        <MenuItem.Icon>
+                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Գնում" IsEnabled="False">
+                    <MenuItem.Icon>
+                        <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                    </MenuItem.Icon>
+                    <MenuItem Header="Դիտում" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.None}">
+                        <MenuItem.Icon>
+                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Ըստ բաժիննների" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByStock}">
+                        <MenuItem.Icon>
+                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Դիտում մանրամասն" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByDetiles}">
+                        <MenuItem.Icon>
+                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Ապրանքներ" Name="MiProducts" Visibility="Collapsed">
+                    <MenuItem Header="Ապրանքների գնում ըստ մատակարարների" Click="MiViewProductReportByProviders_OnClick"></MenuItem>
+                </MenuItem>
+            </Menu>
+            <TabControl Grid.Row="1" Margin="10" Width="Auto"  
+                        Name="TabReport" 
+                        ItemContainerStyle="{StaticResource TabItemBaseStyle}" 
+                        Background="{StaticResource TabBackground}" 
+                        ContentTemplate="{StaticResource TabContentTemplate}"/>
+            <StackPanel Grid.Row="4" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">
+                <Button Content="Փակել" Click="BtnClose_Click"/>
+            </StackPanel>
+        </Grid>
+        <views:WaitingCover Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibility}}" />
+    </Grid>
+</Window>

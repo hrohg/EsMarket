@@ -1,0 +1,27 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        
+        xmlns:MDI="clr-namespace:WPF.MDI;assembly=WPF.MDI" x:Class="ES.Shop.WinUsersManager"
+        x:Name="WindowUsersManager"
+        
+        WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        Title="UsersManager" Height="300" Width="300">
+
+    <Grid>
+
+
+        <MDI:MdiContainer x:Name="designerContainer" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="3,124,0,0">
+            <!--<MDI:MdiChild Title="{Binding Path=ProcessMetadata.Name, Mode=TwoWay, ElementName=mainWindow}" WindowState="Normal" x:Name="mdiChild1" 
+										  Closed="designerContainer_Closed" NotifyParent="mdiChild_NotifyParent">
+								<ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+									<s:DesignerCanvas x:Name="MyDesigner1" Background="{StaticResource WindowBackgroundBrush}"
+								                      FocusVisualStyle="{x:Null}" ProcessExplorer="{Binding ElementName=procExplorer}"
+													  ProcessMetadata="{Binding ElementName=mainWindow, Path=ProcessMetadata}"
+								                      NotifyPropertyPanel="MyDesigner_NotifyPropertyPanel" />
+								</ScrollViewer>
+							</MDI:MdiChild>-->
+        </MDI:MdiContainer>
+
+    </Grid>
+</Window>

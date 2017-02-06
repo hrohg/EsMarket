@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="ES.Shop.Controls.UCtrlInvoiceViewRus"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600">
+    <Grid>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Label Content='ООО "Терморос-Ар"' VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+            <StackPanel HorizontalAlignment="Right">
+                <Label Content="Унифицированная форма № Торг-13"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Label Content=""/>
+                    <TextBox Text="КОД" Width="100" HorizontalContentAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Label Content="Фирма по ОКЫД"/>
+                    <TextBox Text="0330213" Width="100" HorizontalContentAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Label Content="по ОКЫД"/>
+                    <TextBox Text="" Width="100" HorizontalContentAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Label Content="Вид деятельности по ОКДП"/>
+                    <TextBox Text="" Width="100" HorizontalContentAlignment="Center" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Label Content="Вид операции"/>
+                    <TextBox Text="" Width="100" HorizontalContentAlignment="Center"/>
+                </StackPanel>
+               
+            </StackPanel></StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

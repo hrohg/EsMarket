@@ -1,0 +1,41 @@
+﻿<Window x:Class="ES.Shop.Edit.WinEditSubAccountinPlans"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="WinEditSubAccountinPlans" Height="435" Width="447" WindowStartupLocation="CenterScreen">
+    <DockPanel Height="Auto" VerticalAlignment="Stretch" LastChildFill="True" >
+        <Grid VerticalAlignment="Stretch" Height="Auto">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Grid.Column="1" Margin="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Height="24" VerticalContentAlignment="Center" Text="{Binding SubAccountingPlan.Name}"/>
+                <Button Grid.Column="1" Margin="3" Height="24" Command="{Binding EditSubAccountingPlanCommand}">
+                    <Image Source="{Binding EditButtonImagePath}"/>
+                </Button>
+            </Grid>
+            <ListView Grid.Row="1" Grid.Column="0" Margin="3" ItemsSource="{Binding AccountingPlans}" SelectedValuePath="Id" SelectedValue="{Binding AccountingPlan}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Description}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <ListView Grid.Row="1" Grid.Column="1" Margin="1" ItemsSource="{Binding SubAccountingPlans}" SelectedValuePath="Id" SelectedValue="{Binding SubAccountingPlanId}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </DockPanel>
+</Window>

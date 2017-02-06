@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="ES.Shop.Controls.UctrlChartLine"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=DotNetProjects.DataVisualization.Toolkit"
+             xmlns:compatible="clr-namespace:System.Windows.Controls.DataVisualization.Charting.Compatible;assembly=DotNetProjects.DataVisualization.Toolkit">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Label Content="Ըստ"/>
+            <ComboBox Name="CmbBy" DisplayMemberPath="Value" SelectedValuePath="Key" SelectionChanged="CmbBy_SelectionChanged" HorizontalAlignment="Right"/>
+        </StackPanel>
+        <chartingToolkit:Chart Grid.Row="1" Name="ChartLine">
+            <compatible:LineSeries Name="LineChart" DependentValuePath="Value" 
+		IndependentValuePath="Key" ItemsSource="{Binding Mode=OneWay}" 
+		IsSelectionEnabled="True" />
+        </chartingToolkit:Chart>
+    </Grid>
+
+</UserControl>

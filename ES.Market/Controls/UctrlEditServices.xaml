@@ -1,0 +1,92 @@
+﻿<UserControl x:Class="ES.Shop.Controls.UctrlEditServices"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls;assembly=UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Margin ="1">
+            <Grid Margin ="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Label Content="Ծառայության կոդ" HorizontalContentAlignment="Right" Width="150"/>
+                    <TextBox Width="100" Text="{Binding Service.Code, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Height="28"/>
+                </StackPanel>
+                <DockPanel Grid.Column="1">
+                <Label Content="Անվանում" Width="100" HorizontalContentAlignment="Right"/>
+                <TextBox Text="{Binding Service.Description, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Height="28"/></DockPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Label Content="Չափման միավոր" Width="150" HorizontalContentAlignment="Right"/>
+                    <TextBox Text="{Binding Service.Mu}" Width="100" VerticalContentAlignment="Center" Height="28"/>
+                </StackPanel>
+            </Grid>
+
+            <DockPanel Margin ="1">
+                <Label Content="Նշումներ" HorizontalContentAlignment="Right" Width="150"/>
+                <TextBox Height="50" Text="{Binding Service.Note}"/>
+            </DockPanel>
+            <StackPanel Orientation="Horizontal" Margin ="1">
+                <Label Content="Ինքնարժեք" HorizontalContentAlignment="Right" Width="150"/>
+                <TextBox Width="50" HorizontalContentAlignment="Right" Text="{Binding Service.CostPrice, StringFormat='#,###.###'}" VerticalContentAlignment="Center"/>
+                <Label Content="Մեծածախ տոկոս" HorizontalContentAlignment="Right" Width="150"/>
+                <TextBox Width="50" HorizontalContentAlignment="Right" Text="{Binding Service.DealerPercentage, StringFormat='#,###.##'}" VerticalContentAlignment="Center"/>
+                <Label Content="Մեծածախ գին" HorizontalContentAlignment="Right" Width="150"/>
+                <TextBox Width="50" HorizontalContentAlignment="Right" Text="{Binding Service.DealerPrice, StringFormat='#,###.###'}" VerticalContentAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin ="1">
+                <Label Content="Զեղչ" HorizontalContentAlignment="Right" Width="150" />
+                <TextBox Width="50" HorizontalContentAlignment="Right" Text="{Binding Service.Discount, StringFormat='#,###.##'}" VerticalContentAlignment="Center"/>
+                <Label Content="Մանրածախ տոկոս" HorizontalContentAlignment="Right" Width="150"/>
+                <TextBox Width="50" HorizontalContentAlignment="Right" Text="{Binding Service.PricePercentage, StringFormat='#,###.##'}" VerticalContentAlignment="Center"/>
+                <Label Content="Մանրածախ գին" HorizontalContentAlignment="Right" Width="150"/>
+                <TextBox Width="50" HorizontalContentAlignment="Right" Text="{Binding Service.Price, StringFormat='#,###.###'}" VerticalContentAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="3">
+                <Button Content="Նոր" Command="{Binding NewServiceCommad}" Width="80" />
+                <Button Content="{Binding EditButtonContent}" Command="{Binding EditServiceCommand}" Width="80" />
+            </StackPanel>
+            <Separator/>
+            <DockPanel Margin="10">
+                <Label Content="Ֆիլտրել" />
+                <TextBox Text="{Binding FilterText}" />
+            </DockPanel>
+            <Separator/>
+        </StackPanel>
+        <extendedControls:ExtendedDataGrid Grid.Row="1" x:Name="DgInvoiceItems"   ItemsSource="{Binding Services}" SelectedItem="{Binding SelectedService}" VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="14" >
+            <DataGrid.Resources>
+                <Style x:Key="CellRightAlign">
+                    <Setter Property="Control.HorizontalAlignment" Value="Right" />
+                </Style>
+                <ContextMenu x:Key="RowMenu">
+                    <MenuItem Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemoveServiceCommand}" CommandParameter="{Binding InvoiceItem.Id}" Header="Հեռացնել"/>
+                </ContextMenu>
+            </DataGrid.Resources>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="ContextMenu" Value="{StaticResource RowMenu}"/>
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" />
+                <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
+                <DataGridTextColumn IsReadOnly="True" Header="Ինքնարժեք" Binding="{Binding CostPrice}" CellStyle="{StaticResource CellRightAlign}"/>
+                <DataGridTextColumn IsReadOnly="False" Header="Մեծածախ գին" Binding="{Binding Path=DealerPrice, StringFormat=N3}" CellStyle="{StaticResource CellRightAlign}" />
+                <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Path=Price, StringFormat=N3}" CellStyle="{StaticResource CellRightAlign}" />
+                <DataGridTextColumn IsReadOnly="True" Header="Զեղչ" Binding="{Binding Path=Discount}" CellStyle="{StaticResource CellRightAlign}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
+            </DataGrid.Columns>
+        </extendedControls:ExtendedDataGrid>
+
+    </Grid>
+</UserControl>
