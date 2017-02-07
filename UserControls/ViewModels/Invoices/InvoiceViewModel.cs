@@ -35,7 +35,7 @@ using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Invoices
 {
-    public class InvoiceViewModel :DocumentViewModel, IInvoiceViewModel, ITabItem
+    public class InvoiceViewModel : DocumentViewModel, IInvoiceViewModel, ITabItem
     {
         /// <summary>
         /// Initalize a new instance of the ProductViewModel class.
@@ -484,7 +484,7 @@ namespace UserControls.ViewModels.Invoices
 
         private bool CanCleanInvoiceItems(object o)
         {
-            return Invoice!=null && Invoice.ApproveDate==null && InvoiceItems != null && InvoiceItems.Any() ;
+            return Invoice != null && Invoice.ApproveDate == null && InvoiceItems != null && InvoiceItems.Any();
         }
 
         private void OnCleanInvoiceItems(object o)
@@ -599,7 +599,29 @@ namespace UserControls.ViewModels.Invoices
             };
         }
 
-
+        protected virtual void CreateNewInvoiceItem(ProductItemModel productItem)
+        {
+            if (!IsActive || productItem == null || productItem.Product == null) return;
+            InvoiceItem = new InvoiceItemsModel
+            {
+                Product = productItem.Product,
+                ProductItemId = productItem.Id != Guid.Empty ? productItem.Id : (Guid?)null,
+                ProductId = productItem.ProductId,
+                //ExpiryDate = product.ExpiryDays != null ? DateTime.Today.AddDays((int)product.ExpiryDays) : (DateTime?)null;
+                Code = productItem.Product.Code,
+                Description = productItem.Product.Description,
+                Mu = productItem.Product.Mu,
+                Price = productItem.Product.CostPrice,
+                Discount = productItem.Product.Discount,
+                Note = productItem.Product.Note
+            };
+            //OnPropertyChanged(IsExpiringProperty);
+        }
+        public void OnSetProductItem(ProductItemModel productItem)
+        {
+            CreateNewInvoiceItem(productItem);
+            OnAddInvoiceItem(InvoiceItem);
+        }
         public virtual void SetInvoiceItem(string code)
         {
             if (string.IsNullOrEmpty(code)) { return; }

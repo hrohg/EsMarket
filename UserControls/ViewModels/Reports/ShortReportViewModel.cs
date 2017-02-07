@@ -38,8 +38,7 @@ namespace UserControls.ViewModels.Reports
         #region External properties
         public string Title { get; set; }
         public string Description { get; set; }
-        public bool IsModified { get; set; }
-
+        
         public List<InvoiceModel> Invoices
         {
             get { return _invoices; }

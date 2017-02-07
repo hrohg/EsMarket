@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:tools="clr-namespace:UserControls.ViewModels.Tools">
-    
+
     <DataTemplate DataType="{x:Type tools:ProductItemsToolsViewModel}">
         <Grid>
             <Grid.RowDefinitions>
@@ -23,16 +23,18 @@
                     <!--<MouseBinding MouseAction="LeftDoubleClick" Gesture="LeftDoubleClick" Command="{Binding SelectItemCommand}" CommandParameter="{Binding Path=SelectedItem}"/>-->
                 </ListView.InputBindings>
 
-                <ListView.Resources>
+                <ListView.ItemTemplate>
                     <DataTemplate DataType="{x:Type tools:CustomItem}">
                         <Border>
                             <Border.InputBindings>
-                                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=SelectItemCommand}"/>
+                                <MouseBinding MouseAction="LeftDoubleClick" 
+                                              Command="{Binding Path= DataContext.SelectItemCommand, ElementName=ListView}" 
+                                              CommandParameter="{Binding Value}"/>
                             </Border.InputBindings>
                             <TextBlock Text="{Binding Description}"/>
                         </Border>
                     </DataTemplate>
-                </ListView.Resources>
+                </ListView.ItemTemplate>
             </ListView>
         </Grid>
     </DataTemplate>

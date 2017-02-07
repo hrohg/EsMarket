@@ -48,21 +48,23 @@ namespace UserControls.ViewModels.Tools
             CanFloat = true;
             AnchorSide = AnchorSide.Left;
             UpdateProducts();
-            SelectItemCommand = new RelayCommand<CustomItem>(OnSelectItem);
+            SelectItemCommand = new RelayCommand<Guid>(OnSelectItem);
         }
 
         private void UpdateProducts()
         {
             _products = ApplicationManager.CashManager.Products.OrderBy(s => s.Description).ToList();
-            Items = _products.Select(p => new CustomItem(p.Id, string.Format("{0} ({1} {2})", p.Description, p.Code, p.Price))).ToList();
+            Items = _products.Select(p => new CustomItem(p.Id, string.Format("{0} {1} {2}", p.Code, p.Description, p.Price))).ToList();
         }
 
-        private void OnSelectItem(CustomItem item)
+        private void OnSelectItem(Guid id)
         {
+            var product = _products.FirstOrDefault(s => s.Id == SelectedItem.Value);
+            if(product==null) return;
             var handle = OnProductItemSelected;
             if (handle != null)
             {
-                handle(null);
+                handle(new ProductItemModel {Id = Guid.Empty, Product = product, ProductId = product.Id});
             }
         }
         #endregion Internal methods

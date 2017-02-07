@@ -245,8 +245,10 @@ namespace ES.Market.ViewModels
             {
                 vm.OnClosed += OnRemoveDocument;
             }
-            Documents.Add(vm);
             vm.IsActive = true;
+            vm.IsSelected = true;
+            Documents.Add(vm);
+            
         }
 
         private void OnRemoveDocument(PaneViewModel vm)
@@ -1018,7 +1020,7 @@ namespace ES.Market.ViewModels
                 if(_productItemsToolsViewModel==null)
                     _productItemsToolsViewModel = new ProductItemsToolsViewModel();
                 if (model is InvoiceViewModel)
-                    _productItemsToolsViewModel.OnProductItemSelected += ((InvoiceViewModel) model).OnAddInvoiceItem;
+                    _productItemsToolsViewModel.OnProductItemSelected += ((InvoiceViewModel)model).OnSetProductItem;
                 OnCreateProductItemsTools(_productItemsToolsViewModel);
             }
             int nextTab;

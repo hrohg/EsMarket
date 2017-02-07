@@ -210,7 +210,7 @@ namespace UserControls.Helpers
         {
             var productItems = new ProductsManager().GetProductItemsFromStocks(stockId,memberId);
             if (productItems == null || productItems.Count == 0) { return new List<InvoiceItemsModel>(); }
-            var ui = new SelectItemsByCheck(productItems.Select(pi => new ProductToSelectByCheck(pi.Id, pi.Product.Code, pi.Product.Description, pi.Quantity)).ToList(), selectMultiple);
+            var ui = new SelectItemsByCheck(productItems.Select(pi => new ProductToSelectByCheck((Guid)pi.Id, pi.Product.Code, pi.Product.Description, pi.Quantity)).ToList(), selectMultiple);
             ui.ShowDialog();
             if (ui.DialogResult == null || ui.DialogResult == false)
             {

@@ -20,6 +20,7 @@ namespace ES.Data.Models
         private const string ReservedByIdProperty = "ReservedById";
         private const string MemberIdProperty = "MemberId";
         #endregion
+
         #region Product item model private properties
         private Guid _id;
         private Guid _productId;
@@ -34,6 +35,7 @@ namespace ES.Data.Models
         private long? _reservedById;
         private long _memberId;
         #endregion
+
         #region Product item model public properties
         public Guid Id {get { return _id; } set { _id = value; OnPropertyChanged(IdProperty); }}
         public Guid ProductId { get { return _productId; } set { _productId = value; OnPropertyChanged(ProductIdProperty); }}
