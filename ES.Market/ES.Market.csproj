@@ -111,9 +111,6 @@
     <Compile Include="Controls\UctrlLibraryBrowser.xaml.cs">
       <DependentUpon>UctrlLibraryBrowser.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\UctrlMyTime.xaml.cs">
-      <DependentUpon>UctrlMyTime.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\UctrlSettings.xaml.cs">
       <DependentUpon>UctrlSettings.xaml</DependentUpon>
     </Compile>
@@ -183,10 +180,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\UctrlLibraryBrowser.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\UctrlMyTime.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

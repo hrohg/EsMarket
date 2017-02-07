@@ -5,8 +5,8 @@ namespace ES.Common.Enumerations
 {
 	public enum ReportTypes
 	{
-		ByAgency = 1,
-		ByBroker
+		ShortReport,
+		Report
 	}
 
 	public class ReportTypeEntity

@@ -746,14 +746,8 @@ namespace ES.Market
             LoadPackingListTab((long)InvoiceType.PurchaseInvoice);
         }
 
-        private void MiViewReport_Click(object sender, EventArgs e)
-        {
-            var ui = new DataReports(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
-            ui.DataContext = new ReportsViewModel(ui);
-            ui.Show();
-        }
-
         #endregion
+
         #region Edit
         protected void MiManageServices_Click(object sender, EventArgs e)
         {
@@ -767,6 +761,7 @@ namespace ES.Market
             TabShop.SelectedIndex = nextTab;
         }
         #endregion
+
         #region Control Panel
         #region Releate
         private void MiViewStockTaking_OnClick(object sender, EventArgs e)
@@ -851,6 +846,7 @@ namespace ES.Market
             new WinEditSubAccountinPlans().Show();
         }
         #endregion
+
         #region Releate
         #region PriceList
 

@@ -19,10 +19,14 @@ using ES.Business.Models;
 using ES.Common;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
+using ES.Common.Interfaces;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
 using ES.DataAccess.Models;
+using ES.Market.Controls;
+using ES.Market.Views;
+using ES.Market.Views.Reports.View;
 using ES.Shop.Commands;
 using ES.Shop.Config;
 using ES.Shop.Controls;
@@ -39,10 +43,12 @@ using UserControls.Editors.EditProducts.Views;
 using UserControls.Helpers;
 using UserControls.Interfaces;
 using UserControls.ViewModels;
+using UserControls.ViewModels.Documents;
 using UserControls.ViewModels.Invoices;
 using UserControls.ViewModels.Logs;
 using UserControls.ViewModels.Partners;
 using UserControls.ViewModels.Products;
+using UserControls.ViewModels.Reports;
 using UserControls.ViewModels.StockTakeings;
 using UserControls.ViewModels.Tools;
 using UserControls.Views;
@@ -57,7 +63,7 @@ using UserControl = System.Windows.Controls.UserControl;
 
 namespace ES.Market.ViewModels
 {
-    public class ShellViewModel : INotifyPropertyChanged
+    public class ShellViewModel : IShellViewModel
     {
         #region Internal fields
         private const string UserProperty = "User";
@@ -67,6 +73,7 @@ namespace ES.Market.ViewModels
         private const string PrintCashReceiptProperty = "PrintCashReceipt";
         private const string MessagesProperty = "Messages";
         private const string MessageProperty = "Message";
+        private ProductItemsToolsViewModel _productItemsToolsViewModel;
         #endregion
 
         #region Internal properties
@@ -86,8 +93,8 @@ namespace ES.Market.ViewModels
         #region External properties
 
         #region Avalon dock
-        public ObservableCollection<PaneViewModel> Documents { get; set; }
-        public ObservableCollection<PaneViewModel> Tools { get; set; }
+        public ObservableCollection<DocumentViewModel> Documents { get; set; }
+        public ObservableCollection<ToolsViewModel> Tools { get; set; }
         #endregion Avalon dock
 
         public EsUserModel User { get { return _user; } set { _user = value; OnPropertyChanged(UserProperty); } }
@@ -170,11 +177,11 @@ namespace ES.Market.ViewModels
         {
             InitializeCommands();
             var appManager = new ApplicationManager();
-            Documents = new ObservableCollection<PaneViewModel>();
-            Documents.Add(new StartPageViewModel());
+            Documents = new ObservableCollection<DocumentViewModel>();
+            AddDocument(new StartPageViewModel(this));
             _logs = new LogViewModel();
             ApplicationManager.MessageManager.NewMessageReceived += _logs.AddLog;
-            Tools = new ObservableCollection<PaneViewModel>();
+            Tools = new ObservableCollection<ToolsViewModel>();
             Tools.Add(_logs);
         }
         private void InitializeCommands()
@@ -190,6 +197,7 @@ namespace ES.Market.ViewModels
             GetInvoicesCommand = new RelayCommand(OnGetInvoices);
             WriteOffProductsCommand = new RelayCommand(OnWriteOffProducts);
             WriteOffStockTakingCommand = new RelayCommand(OnWriteOffStockTaking);
+            GetReportCommand = new RelayCommand<ReportTypes>(OnGetReport);
             //Settings
             EditUsersCommand = new RelayCommand(OnEditUsers);
 
@@ -229,6 +237,23 @@ namespace ES.Market.ViewModels
             }
             var tabControl = new UctrlViewTable { DataContext = viewModel };
             AddTabControl(tabControl, viewModel);
+        }
+
+        private void AddDocument(DocumentViewModel vm)
+        {
+            if (vm.IsClosable)
+            {
+                vm.OnClosed += OnRemoveDocument;
+            }
+            Documents.Add(vm);
+            vm.IsActive = true;
+        }
+
+        private void OnRemoveDocument(PaneViewModel vm)
+        {
+            if (vm == null) return;
+            vm.OnClosed -= OnRemoveDocument;
+            Documents.Remove((DocumentViewModel)vm);
         }
 
         #region Base
@@ -495,7 +520,7 @@ namespace ES.Market.ViewModels
         #endregion
 
         #region Documents
-        private void OnGetInvoices(object o)
+        public void OnGetInvoices(object o)
         {
             var tuple = o as Tuple<InvoiceType, InvoiceState, MaxInvocieCount>;
             if (tuple != null)
@@ -694,16 +719,25 @@ namespace ES.Market.ViewModels
                         IsLoading = false;
                         return;
                     }
-                    if (ecrServer.PrintReceiptFromExcelFile(filePath))
+                    try
                     {
-                        IsLoading = false;
-                        ApplicationManager.MessageManager.OnNewMessage(new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success));
+                        if (ecrServer.PrintReceiptFromExcelFile(filePath))
+                        {
+                            IsLoading = false;
+                            ApplicationManager.MessageManager.OnNewMessage(new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success));
+                        }
+                        else
+                        {
+                            IsLoading = false;
+                            ApplicationManager.MessageManager.OnNewMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումն ընդհատվել է: {1} ({0})", ecrServer.ActionCode, ecrServer.ActionDescription), MessageModel.MessageTypeEnum.Warning));
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        IsLoading = false;
-                        ApplicationManager.MessageManager.OnNewMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումն ընդհատվել է: {1} ({0})", ecrServer.ActionCode, ecrServer.ActionDescription), MessageModel.MessageTypeEnum.Warning));
+
+                        throw;
                     }
+
                     ConfigSettings.SetConfig("EcrExcelFilePath", Path.GetDirectoryName(filePath));
                     break;
                 case EcrExecuiteActions.ManageHeaderAndFooter:
@@ -817,7 +851,7 @@ namespace ES.Market.ViewModels
             var stock = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.GetEsMember.Id)).FirstOrDefault();
             if (stock == null) return;
             var existingProducts = ProductsManager.GetProductItemsByStock(stock.Id, ApplicationManager.GetEsMember.Id);
-            CreateWriteOffInvoice(existingProducts.Select(s=>new Tuple<string, decimal>(s.Product.Code, s.Quantity)).ToList(), stock.Id);
+            CreateWriteOffInvoice(existingProducts.Select(s => new Tuple<string, decimal>(s.Product.Code, s.Quantity)).ToList(), stock.Id);
         }
 
         private void CreateWriteOffInvoice(List<Tuple<string, decimal>> items, long? stockId, string notes = null)
@@ -844,15 +878,15 @@ namespace ES.Market.ViewModels
                 vm.InvoiceItems.Add(vm.InvoiceItem);
                 vm.InvoiceItem = new InvoiceItemsModel();
             }
-            Documents.Add(vm);
+            AddDocument(vm);
             AddTabControl(new InventoryWriteOffUctrl(), vm);
         }
         private void OnWriteOffStockTaking(object o)
         {
             var stockTake = GetOpeningStockTake();
-            if(stockTake==null) return;
+            if (stockTake == null) return;
             var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id, ApplicationManager.GetEsMember.Id);
-            CreateWriteOffInvoice(stockTakeItems.Where(s=>s.Balance<0).Select(s=>new Tuple<string, decimal>(s.CodeOrBarcode, -s.Balance ?? 0)).ToList(), 
+            CreateWriteOffInvoice(stockTakeItems.Where(s => s.Balance < 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, -s.Balance ?? 0)).ToList(),
                 stockTake.StockId,
                 string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
         }
@@ -861,9 +895,22 @@ namespace ES.Market.ViewModels
 
         #region View
 
-        private void OnShortReport(object o)
+        public void OnGetReport(ReportTypes type)
         {
-            AddTabControl(new FinanceReportUctrl(), new InvoicesViewModel());
+            switch (type)
+            {
+                case ReportTypes.ShortReport:
+                    AddDocument(new ShortReportViewModel());
+                    break;
+                case ReportTypes.Report:
+                    var ui = new DataReports(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+                    ui.DataContext = new ReportsViewModel(ui);
+                    ui.Show();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("o", type, null);
+            }
+
         }
 
         private void OnViewProductsByStock(object o)
@@ -911,7 +958,6 @@ namespace ES.Market.ViewModels
         }
 
         #endregion
-
 
         private void CreateLibraryBrowser()
         {
@@ -965,12 +1011,15 @@ namespace ES.Market.ViewModels
 
         private void CreateNewControl(object model)
         {
-            
-            if (model is PaneViewModel)
+            if (model is DocumentViewModel)
             {
-                Documents.Add((PaneViewModel)model);
+                AddDocument((DocumentViewModel)model);
                 ((PaneViewModel)model).IsActive = true;
-                OnCreateProductItemsTools(model);
+                if(_productItemsToolsViewModel==null)
+                    _productItemsToolsViewModel = new ProductItemsToolsViewModel();
+                if (model is InvoiceViewModel)
+                    _productItemsToolsViewModel.OnProductItemSelected += ((InvoiceViewModel) model).OnAddInvoiceItem;
+                OnCreateProductItemsTools(_productItemsToolsViewModel);
             }
             int nextTab;
             var tabShop = _parentTabControl.FindChild<TabControl>();
@@ -1043,6 +1092,19 @@ namespace ES.Market.ViewModels
             }
         }
 
+        private void AddTools(ToolsViewModel vm, bool allowDoublicate = true)
+        {
+            if (allowDoublicate || Tools.All(s => s.Title != vm.Title))
+            {
+                Tools.Add(vm);
+            }
+            else
+            {
+                vm = Tools.First(s => s.Title != vm.Title);
+            }
+            vm.IsActive = true;
+        }
+
         private void CreateNewControl(List<object> models)
         {
             foreach (var model in models)
@@ -1050,13 +1112,15 @@ namespace ES.Market.ViewModels
                 CreateNewControl(model);
             }
         }
-        protected void OnCreateProductItemsTools(object o)
+
+        protected void OnCreateProductItemsTools(ProductItemsToolsViewModel vm)
         {
             if (!Tools.Any(t => t is ProductItemsToolsViewModel))
             {
-                Tools.Add(new ProductItemsToolsViewModel());
+                Tools.Add(vm);
             }
         }
+
         private bool CanGetStockTaking(object o)
         {
             var projectMode = o as ProjectCreationEnum?;
@@ -1112,17 +1176,17 @@ namespace ES.Market.ViewModels
         private StockTakeModel GetOpeningStockTake()
         {
             var openingStockTaking = StockTakeManager.GetOpeningStockTakes(_member.Id);
-                    if (openingStockTaking == null || openingStockTaking.Count == 0)
-                    {
-                        ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Բաց գույքագրում առկա չէ։", MessageModel.MessageTypeEnum.Warning));
-                        return null;
-                    }
-                    var selectItemId = SelectManager.GetSelectedItem(openingStockTaking.OrderByDescending(s => s.CreateDate).Select(s => new ItemsToSelect
-                    {
-                        DisplayName = s.StockTakeName + " " + s.CreateDate,
-                        SelectedValue = s.Id
-                    }).ToList(), false).Select(s => (Guid)s.SelectedValue).FirstOrDefault();
-                    return openingStockTaking.FirstOrDefault(s => s.Id == selectItemId); 
+            if (openingStockTaking == null || openingStockTaking.Count == 0)
+            {
+                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Բաց գույքագրում առկա չէ։", MessageModel.MessageTypeEnum.Warning));
+                return null;
+            }
+            var selectItemId = SelectManager.GetSelectedItem(openingStockTaking.OrderByDescending(s => s.CreateDate).Select(s => new ItemsToSelect
+            {
+                DisplayName = s.StockTakeName + " " + s.CreateDate,
+                SelectedValue = s.Id
+            }).ToList(), false).Select(s => (Guid)s.SelectedValue).FirstOrDefault();
+            return openingStockTaking.FirstOrDefault(s => s.Id == selectItemId);
         }
 
         private void OnChangeServerSettings(object o)
@@ -1181,8 +1245,6 @@ namespace ES.Market.ViewModels
 
         #region External methods
 
-
-
         public void ExportProductsForScale(object o)
         {
             if (!(o is ExportForScale)) return;
@@ -1219,8 +1281,9 @@ namespace ES.Market.ViewModels
             {
                 return;
             }
-            ITabItem vm = new SettingsViewModel(_member.Id);
-            AddTabControl(new UctrlSettings(), vm);
+            var vm = new SettingsViewModel(_member.Id);
+            AddDocument(vm);
+            //AddTabControl(new UctrlSettings(), vm);
         }
 
         /// <summary>
@@ -1299,28 +1362,37 @@ namespace ES.Market.ViewModels
         {
             AddTabControl(new UctrlManageUsers(), new ManageUsersViewModel());
         }
+
         #endregion
 
         #region ICommands
 
         #region Base
+
         public ICommand KeyPressedCommand { get; private set; }
+
         #endregion Base
 
         #region Admin
+
         public ICommand ImportProductsCommand { get; private set; }
+
         public ICommand ExecuteEcrActionCommand
         {
             get { return new RelayCommand(OnExecuteEcrAction, CanExecuteEcrAction); }
         }
+
         #endregion Admin
 
         #region Documents
+
         public ICommand GetInvoicesCommand { get; private set; }
         public ICommand WriteOffProductsCommand { get; private set; }
+
         #endregion Documents
 
         #region CashDesk
+
         public ICommand GetChashDesksInfoCommand
         {
             get { return new RelayCommand(OnGetCashDeskInfo); }
@@ -1330,10 +1402,7 @@ namespace ES.Market.ViewModels
 
         #region Data
 
-        public ICommand ShortReportCommand
-        {
-            get { return new RelayCommand(OnShortReport); }
-        }
+        public ICommand GetReportCommand { get; private set; }
 
         public ICommand GetProductsHistoryCommand
         {
@@ -1341,9 +1410,13 @@ namespace ES.Market.ViewModels
         }
 
         public ICommand ViewInternalWayBillCommands { get; set; }
+
         #region Stock Take
+
         public ICommand WriteOffStockTakingCommand { get; private set; }
+
         #endregion Stock Take
+
         #endregion
 
         /// <summary>
@@ -1364,7 +1437,6 @@ namespace ES.Market.ViewModels
         /// <summary>
         /// Data
         /// </summary>
-
         public ICommand ProductOrderCommand
         {
             get { return new RelayCommand(OnGetProductOrder, CanGetProductOrder); }
@@ -1390,6 +1462,7 @@ namespace ES.Market.ViewModels
         }
 
         #region Help
+
         public ICommand OpenCarculatorCommand
         {
             get { return new OpenCarculatorCommand(); }
@@ -1399,9 +1472,11 @@ namespace ES.Market.ViewModels
         {
             get { return new PrintSampleInvoiceCommand(); }
         }
+
         #endregion Help
 
         #region Settings
+
         public ICommand ChangeSettingsCommand
         {
             get { return new ChangeSettingsCommand(this); }
@@ -1436,7 +1511,9 @@ namespace ES.Market.ViewModels
         {
             get { return new RelayCommand(OnSyncronizeProducts); }
         }
+
         public ICommand EditUsersCommand { get; private set; }
+
         #endregion Settings
 
         #endregion Commands

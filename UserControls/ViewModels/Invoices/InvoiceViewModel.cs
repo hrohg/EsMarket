@@ -35,7 +35,7 @@ using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Invoices
 {
-    public class InvoiceViewModel :PaneViewModel, IInvoiceViewModel, ITabItem
+    public class InvoiceViewModel :DocumentViewModel, IInvoiceViewModel, ITabItem
     {
         /// <summary>
         /// Initalize a new instance of the ProductViewModel class.
@@ -295,6 +295,7 @@ namespace UserControls.ViewModels.Invoices
         private void Initialize()
         {
             Title = "Ապրանքագիր";
+            IsClosable = true;
             SaleBySingle = ApplicationManager.BuyBySingle;
             BuyBySingle = ApplicationManager.BuyBySingle;
             SetModels();
@@ -520,16 +521,17 @@ namespace UserControls.ViewModels.Invoices
                 if (MessageBox.Show("Ապրանքագիրը հաստատված չէ։ Դու՞ք իսկապես ցանկանում եք փակել այն։", "Զգուշացում", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 { return; }
             }
-            var tabControl = o as TabControl;
-            var tabitem = tabControl != null ? tabControl.SelectedItem as TabItem : o as TabItem;
-            if (tabControl == null && tabitem != null)
-            {
-                tabControl = (TabControl)tabitem.Parent;
-            }
-            if (tabitem != null)
-            {
-                tabControl.Items.Remove(tabitem);
-            }
+            //var tabControl = o as TabControl;
+            //var tabitem = tabControl != null ? tabControl.SelectedItem as TabItem : o as TabItem;
+            //if (tabControl == null && tabitem != null)
+            //{
+            //    tabControl = (TabControl)tabitem.Parent;
+            //}
+            //if (tabitem != null)
+            //{
+            //    tabControl.Items.Remove(tabitem);
+            //}
+            base.OnClose(this);
         }
         public InvoiceItemsModel GetInvoiceItem(string code)
         {

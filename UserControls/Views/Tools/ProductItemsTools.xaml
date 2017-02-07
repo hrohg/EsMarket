@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:tools="clr-namespace:UserControls.ViewModels.Tools">
+    
     <DataTemplate DataType="{x:Type tools:ProductItemsToolsViewModel}">
         <Grid>
             <Grid.RowDefinitions>
@@ -12,7 +13,27 @@
             <Button VerticalAlignment="Top" Grid.Row="0" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" IsTabStop="False">
                 <Image Height="20" Width="20" Source="pack://application:,,,/Shared;component/Images/Search.png"></Image>
             </Button>
-            <ListView Grid.Row="1" ItemsSource="{Binding Items}" DisplayMemberPath="Description" SelectedValuePath="Value" VerticalAlignment="Stretch"/>
+            <ListView Grid.Row="1" x:Name="ListView" ItemsSource="{Binding Items}" 
+                      DisplayMemberPath="Description" 
+                      SelectedValuePath="Value"
+                      SelectedItem="{Binding SelectedItem}"
+                      VerticalAlignment="Stretch">
+                <ListView.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding SelectItemCommand}" CommandParameter="{Binding ElementName=ListView, Path=SelectedValue}"/>
+                    <!--<MouseBinding MouseAction="LeftDoubleClick" Gesture="LeftDoubleClick" Command="{Binding SelectItemCommand}" CommandParameter="{Binding Path=SelectedItem}"/>-->
+                </ListView.InputBindings>
+
+                <ListView.Resources>
+                    <DataTemplate DataType="{x:Type tools:CustomItem}">
+                        <Border>
+                            <Border.InputBindings>
+                                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=SelectItemCommand}"/>
+                            </Border.InputBindings>
+                            <TextBlock Text="{Binding Description}"/>
+                        </Border>
+                    </DataTemplate>
+                </ListView.Resources>
+            </ListView>
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

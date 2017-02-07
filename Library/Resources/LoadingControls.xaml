@@ -18,7 +18,7 @@
             </Grid>
         </Grid>
         <ControlTemplate.Triggers>
-            <DataTrigger Binding="{Binding IsLoading}" Value="true">
+            <DataTrigger Binding="{Binding Content.IsLoading}" Value="true">
                 <Setter TargetName="Grid" Property="Visibility" Value="Visible"/>
             </DataTrigger>
         </ControlTemplate.Triggers>

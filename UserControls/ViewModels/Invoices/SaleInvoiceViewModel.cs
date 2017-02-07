@@ -177,6 +177,7 @@ namespace UserControls.ViewModels.Invoices
             ConfigSettings.SetConfig("ImportingFilePath", Path.GetDirectoryName(filePath));
             ProductModel product;
             var invoice = ExcelImportManager.ImportSaleInvoice(filePath);
+            if(invoice==null) return;
             var invoiceItems = invoice.Item2;
             foreach (var item in invoiceItems)
             {

@@ -4,9 +4,14 @@
         xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:behaviors1="clr-namespace:ES.Login.Behaviors"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
         Title="Մուտք ES համակարգ" Height="280" Width="600" 
         ResizeMode="NoResize" WindowStartupLocation="CenterScreen" KeyDown="Window_KeyDown"
         Icon="pack://application:,,,/Shared;component/Images/Cart.png">
+    <Window.Resources>
+        <system:Boolean x:Key="True">True</system:Boolean>
+        <system:Boolean x:Key="False">False</system:Boolean>
+    </Window.Resources>
     <i:Interaction.Behaviors>
         <behaviors:EventToCommandBehavior Command="{Binding CloseCommand}" Event="Closing"/>
         <behaviors1:FocusNextElementBehaviors />
@@ -51,7 +56,7 @@
                 </PasswordBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock Name="LblErrorMessage" Foreground="Red" FontWeight="Bold"  Text="{Binding LoginMessage}" TextWrapping="Wrap" Visibility="Hidden"/>
+                <TextBlock Name="LblErrorMessage" Foreground="Red" FontWeight="Bold"  Text="{Binding LoginMessage}" TextWrapping="Wrap"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="100,5,30,0" >
                 <Button Content="Մուտք" Width="75" TabIndex="2" Command="{Binding LoginCommnd}" IsTabStop="True"/>

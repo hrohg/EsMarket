@@ -14,13 +14,12 @@ using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common;
 using ES.Common.Helpers;
-using ES.Common;
+using ES.Common.ViewModels.Base;
 using UserControls.Commands;
-using UserControls.Interfaces;
 
 namespace UserControls.ViewModels
 {
-    public class SettingsViewModel : ITabItem
+    public class SettingsViewModel : DocumentViewModel
     {
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;

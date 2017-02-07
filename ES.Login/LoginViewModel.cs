@@ -81,7 +81,7 @@ namespace ES.Login
         #endregion Password
 
         #region Login Message
-        private string _loginMessage = "Մուտքային սխալ տվյալներ";
+        private string _loginMessage;
         public string LoginMessage
         {
             get { return _loginMessage; }
@@ -139,7 +139,7 @@ namespace ES.Login
         private void OnClose(bool? o)
         {
             var handler = OnClosed;
-            if (handler != null) handler(o ?? false);
+            if (handler != null) handler(o ?? true);
         }
 
         private void OnTryLogin()
@@ -154,8 +154,9 @@ namespace ES.Login
                 if (handler != null) handler(true);
                 return;
             }
-
-            var user = ApplicationManager.SetEsUser = UsersManager.VerifyLogin(Login, Password);
+            var password = Password;
+            Password = new SecureString();
+            var user = ApplicationManager.SetEsUser = UsersManager.VerifyLogin(Login, password);
             var loginedHandler = OnLogined;
             if (loginedHandler == null)
             {

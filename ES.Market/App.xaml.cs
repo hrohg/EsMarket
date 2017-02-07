@@ -176,10 +176,10 @@ namespace ES.Market
 
         private void OnTryLogin()
         {
-            if (LoginWindow.ShowDialog() != null) ;
-            var shellVm = new ShellViewModel(null);
-            var market = new MarketShell(shellVm, LoginWindow);
-            market.ShowDialog(); return;
+            if (LoginWindow.ShowDialog() != null)
+            {
+
+            }
 
             return;
             var xml = new XmlManager();
@@ -197,8 +197,11 @@ namespace ES.Market
         }
         private void OnClosed(bool isterminated)
         {
-            LoginWindow.Close();
-            Current.Shutdown();
+            if (isterminated)
+            {
+                LoginWindow.Close();
+                Current.Shutdown();
+            }
         }
 
         private void OnLogined(EsUserModel esuser)
@@ -208,8 +211,9 @@ namespace ES.Market
                 LoginWindow.ShowDialog();
             }
             else
-            { 
+            {
                 _splash.Show(true);
+
                 var members = MembersManager.GetMembersByUser(esuser.UserId);
                 members = UserControls.Helpers.SelectItemsManager.SelectEsMembers(members, false);
                 if (members == null || members.Count == 0)
@@ -218,7 +222,7 @@ namespace ES.Market
                     LoginWindow.ShowDialog();
                     return;
                 }
-               
+
                 var member = ApplicationManager.SetEsMember = members.Single();
                 var xml = new XmlManager();
                 ApplicationManager.GetThisDesk = CashDeskManager.GetCashDesk(xml.GetItemsByControl(XmlTagItems.SaleCashDesks).Select(s => HgConvert.ToGuid(s.Value)).SingleOrDefault(), member.Id);

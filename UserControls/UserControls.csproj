@@ -132,6 +132,9 @@
     </Compile>
     <Compile Include="ControlPanel\Controls\SelectManager.cs" />
     <Compile Include="Controls\Popup\DraggablePopup.cs" />
+    <Compile Include="Controls\UctrlMyTime.xaml.cs">
+      <DependentUpon>UctrlMyTime.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\CommandParameterConverter.cs" />
     <Compile Include="Converters\InverseVisibilityConverter.cs" />
     <Compile Include="Converters\MessageColorConverter.cs" />
@@ -149,6 +152,7 @@
     <Compile Include="Interfaces\ITabItem.cs" />
     <Compile Include="ViewModels\AccountingPlanViewModel.cs" />
     <Compile Include="ViewModels\AccountingRecordsViewModel.cs" />
+    <Compile Include="ViewModels\Documents\StartPageViewModel.cs" />
     <Compile Include="ViewModels\EsUserViewModel.cs" />
     <Compile Include="ViewModels\Logs\LogViewModel.cs" />
     <Compile Include="ViewModels\ProductItemsViewModel.cs" />
@@ -214,7 +218,7 @@
     <Compile Include="ViewModels\Invoices\DebitInvoiceViewModel.cs" />
     <Compile Include="ViewModels\InternalWaybillViewModel.cs" />
     <Compile Include="ViewModels\Invoices\InternalWaybillViewModel.cs" />
-    <Compile Include="ViewModels\Invoices\InvoicesViewModel.cs" />
+    <Compile Include="ViewModels\Reports\ShortReportViewModel.cs" />
     <Compile Include="ViewModels\Invoices\InvoiceViewModel.cs" />
     <Compile Include="ViewModels\Invoices\PurchaseInvoiceViewModel.cs" />
     <Compile Include="ViewModels\Invoices\SaleInvoiceViewModel.cs" />
@@ -222,7 +226,6 @@
     <Compile Include="ViewModels\Partners\PartnerViewModel.cs" />
     <Compile Include="ViewModels\Products\ProductOrderViewModel.cs" />
     <Compile Include="ViewModels\Products\ProductViewModel.cs" />
-    <Compile Include="ViewModels\StartPageViewModel.cs" />
     <Compile Include="ViewModels\StockTakeings\StockTakeViewModel.cs" />
     <Compile Include="ViewModels\TableViewModel.cs" />
     <Compile Include="Views\PrintPreview\PrintPreviewViewModel.cs" />
@@ -302,11 +305,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\UctrlMyTime.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Editors\EditProducts\Views\EditProductUctrl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Editors\EditProducts\Views\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Documents\SettingsTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -329,6 +340,10 @@
     <Page Include="Views\PurchaseUctrl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Reports\ShortReportTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\StockTakingUctrl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -378,7 +393,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Documents\StartPageDataTemplate.xaml">
+    <Page Include="Views\Documents\StartPageTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

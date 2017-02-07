@@ -5,7 +5,7 @@ using Xceed.Wpf.AvalonDock.Layout;
 
 namespace UserControls.ViewModels.Logs
 {
-    public class LogViewModel : PaneViewModel
+    public class LogViewModel : ToolsViewModel
     {
         #region Internal properties
         #endregion Internal properties

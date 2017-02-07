@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ES.Shop.Controls
+namespace ES.Market.Controls
 {
     /// <summary>
     /// Interaction logic for Settings.xaml

@@ -17,7 +17,10 @@ namespace ES.Login.Behaviors
         public SecureString Password
         {
             get { return (SecureString) GetValue(PasswordProperty); }
-            set { SetValue(PasswordProperty, value); }
+            set
+            {
+                SetValue(PasswordProperty, value);
+            }
         }
 
         public static readonly DependencyProperty PasswordProperty =

@@ -1,16 +1,17 @@
 ﻿using System.Windows.Input;
 using System.Windows.Media;
 using ES.Common.Helpers;
-using Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Helpers;
-using Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Interfaces;
 
 namespace ES.Common.ViewModels.Base
 {
-    public class PaneViewModel : ViewModelBase, IExtendedAnchorableBase
+    public class PaneViewModel : ViewModelBase
     {
+        public delegate void CloseModel(PaneViewModel vm);
+
+        public event CloseModel OnClosed;
 
         #region External properties
-
+        
         #region Title
         private string _title;
         public virtual string Title
@@ -63,11 +64,24 @@ namespace ES.Common.ViewModels.Base
         }
         #endregion CanFloat
 
+        #region IsModified
+        private bool _isModified;
+        public bool IsModified
+        {
+            get { return _isModified; }
+            set
+            {
+                _isModified = value;
+                RaisePropertyChanged("IsModified");
+            }
+        }
+        #endregion IsModified
+
         #region Closable
 
         private bool _isClosable;
 
-        public virtual bool IsClosable
+        public bool IsClosable
         {
             get { return _isClosable; }
             set
@@ -75,6 +89,7 @@ namespace ES.Common.ViewModels.Base
                 if (value != _isClosable)
                 {
                     _isClosable = value;
+                    RaisePropertyChanged("IsClosable");
                     RaisePropertyChanged("CanClose");
                 }
             }
@@ -159,9 +174,10 @@ namespace ES.Common.ViewModels.Base
         {
             return IsClosable;
         }
-        private void OnClose(object o)
+        protected void OnClose(object o)
         {
-            
+            var handle = OnClosed;
+            if (handle != null) handle(this);
         }
         #endregion Internal methods
 
@@ -172,8 +188,5 @@ namespace ES.Common.ViewModels.Base
         public virtual ICommand CloseCommand { get; private set; }
         public virtual ICommand CloseButThisCommand { get; private set; }
         #endregion Commands
-
-
-        public Xceed.Wpf.AvalonDock.Layout.AnchorSide AnchorSide { get; set; }
     }
 }

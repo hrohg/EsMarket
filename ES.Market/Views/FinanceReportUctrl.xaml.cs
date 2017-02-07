@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ES.Shop.Views
+namespace ES.Market.Views
 {
     /// <summary>
     /// Interaction logic for FinanceUctrl.xaml
