@@ -1,0 +1,167 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:managers="clr-namespace:ES.Business.Managers;assembly=ES.Business"
+                    xmlns:converters="clr-namespace:UserControls.Converters"
+                    xmlns:documents="clr-namespace:UserControls.ViewModels.Documents"
+                    xmlns:enumerations="clr-namespace:ES.Common.Enumerations;assembly=ES.Common">
+
+    <converters:GetInvocieParameterConverter x:Key="GetInvocieParameterConverter"/>
+
+    <Style x:Key="SeparatorStyle"
+           TargetType="{x:Type Border}">
+        <Setter Property="BorderThickness" Value="1,0,0,0"/>
+        <Setter Property="BorderBrush" Value="#FFC5C5C5"/>
+        <Setter Property="Margin" Value="10,0,10,0"/>
+        <Setter Property="Width" Value="2"/>
+        <Setter Property="Background" Value="White"/>
+    </Style>
+
+    <DataTemplate DataType="{x:Type documents:StartPageViewModel}">
+        <Grid>
+            <Grid.Resources>
+                <Style x:Key="HeaderStyle" TargetType="{x:Type TextBlock}">
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                </Style>
+                <Style x:Key="LinkStyle" TargetType="{x:Type TextBlock}">
+                    <Setter Property="FontSize" Value="12"/>
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="#FFC5C5C5"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="Փաստաթղթեր" Style="{StaticResource HeaderStyle}"/>
+                    <StackPanel Grid.Row="1"  Margin="15">
+                        <TextBlock Margin="0 4 0 0">
+                        <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
+                                <Hyperlink.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                        <Binding Source="{x:Static managers:InvoiceType.SaleInvoice}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:InvoiceState.New}" Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:MaxInvocieCount.All}" Mode="OneWay"/>
+                                    </MultiBinding>
+                                </Hyperlink.CommandParameter>
+                            <TextBlock Text="Վաճառքի ապրանքագիր F2" Style="{StaticResource LinkStyle}"/>
+                            </Hyperlink>
+                    </TextBlock>
+                        <TextBlock Margin="0 4 0 0">
+                        <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
+                                <Hyperlink.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                        <Binding Source="{x:Static managers:InvoiceType.PurchaseInvoice}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:InvoiceState.New}" Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:MaxInvocieCount.All}" Mode="OneWay"/>
+                                    </MultiBinding>
+                                </Hyperlink.CommandParameter>
+                            <TextBlock Text="Գնման ապրանքագիր F3" Style="{StaticResource LinkStyle}"/>
+                            </Hyperlink>
+                    </TextBlock>
+                        <TextBlock Margin="0 4 0 0">
+                        <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
+                                <Hyperlink.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                        <Binding Source="{x:Static managers:InvoiceType.MoveInvoice}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:InvoiceState.New}" Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:MaxInvocieCount.All}" Mode="OneWay"/>
+                                    </MultiBinding>
+                                </Hyperlink.CommandParameter>
+                            <TextBlock Text="Տեղափոխման ապրանքագիր" Style="{StaticResource LinkStyle}"/>
+                            </Hyperlink>
+                    </TextBlock>
+                        <TextBlock Margin="0 4 0 0">
+                        <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
+                                <Hyperlink.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                        <Binding Source="{x:Static managers:InvoiceType.InventoryWriteOff}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:InvoiceState.New}" Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:MaxInvocieCount.All}" Mode="OneWay"/>
+                                    </MultiBinding>
+                                </Hyperlink.CommandParameter>
+                            <TextBlock Text="Դուրսգրման ակտ" Style="{StaticResource LinkStyle}"/>
+                            </Hyperlink>
+                    </TextBlock>
+                        <TextBlock Margin="0 4 0 0">
+                        <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
+                                <Hyperlink.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                        <Binding Source="{x:Static managers:InvoiceType.Statement}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:InvoiceState.New}" Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:MaxInvocieCount.All}" Mode="OneWay"/>
+                                    </MultiBinding>
+                                </Hyperlink.CommandParameter>
+                            <TextBlock Text="Ետ վերադարձ" Style="{StaticResource LinkStyle}"/>
+                            </Hyperlink>
+                    </TextBlock>
+                        <TextBlock Margin="0 4 0 0">
+                        <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
+                                <Hyperlink.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                        <Binding Source="{x:Static managers:InvoiceType.Statement}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:InvoiceState.New}" Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:MaxInvocieCount.All}" Mode="OneWay"/>
+                                    </MultiBinding>
+                                </Hyperlink.CommandParameter>
+                            <TextBlock Text="Վերադարձ մատակարարին" Style="{StaticResource LinkStyle}"/>
+                            </Hyperlink>
+                    </TextBlock>
+                    </StackPanel>
+                </Grid>
+                <Border Grid.Column="2" Style="{StaticResource SeparatorStyle}" Margin="0 10"/>
+                <StackPanel Grid.Column="3">
+                    <TextBlock Text="Դրամարկղ" Style="{StaticResource HeaderStyle}"/>
+                </StackPanel>
+                <Border Grid.Column="4" Style="{StaticResource SeparatorStyle}" Margin="0 10"/>
+                <StackPanel Grid.Column="5">
+                    <TextBlock Text="Տվյալներ" Style="{StaticResource HeaderStyle}"/>
+                </StackPanel>
+                <Border Grid.Column="6" Style="{StaticResource SeparatorStyle}" Margin="0 10"/>
+                <Grid Grid.Column="7">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="Վերլուծություններ" Style="{StaticResource HeaderStyle}"/>
+                    <StackPanel Grid.Row="1" Margin="15">
+                        <TextBlock Margin="0 4 0 0">
+                                                <Hyperlink TextDecorations="None" Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations:ReportTypes.Report}">
+                                                    <TextBlock Text="Վերլուծություններ" Style="{StaticResource LinkStyle}"/>
+                                                    </Hyperlink>
+                                                </TextBlock>
+                        <TextBlock Margin="0 4 0 0">
+                                                    <Hyperlink TextDecorations="None" Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations:ReportTypes.ShortReport}">
+                                                        <TextBlock Text="Համառոտ վերլուծություններ" Style="{StaticResource LinkStyle}"/>
+                                                        </Hyperlink>
+                                                </TextBlock>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>
