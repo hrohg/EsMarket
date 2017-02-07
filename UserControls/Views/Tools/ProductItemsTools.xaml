@@ -9,10 +9,11 @@
                 <RowDefinition />
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBox VerticalAlignment="Top" Grid.Row="0"  HorizontalAlignment="Stretch" Height="25" FontSize="15" VerticalContentAlignment="Center" Width="Auto" BorderThickness="1" BorderBrush="Black"/>
-            <Button VerticalAlignment="Top" Grid.Row="0" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" IsTabStop="False">
+            <TextBox VerticalAlignment="Top" Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Stretch" Height="25" FontSize="15" VerticalContentAlignment="Center" Width="Auto" BorderThickness="1" BorderBrush="Black"/>
+            <!--todo-->
+            <!--<Button VerticalAlignment="Top" Grid.Row="0" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" IsTabStop="False">
                 <Image Height="20" Width="20" Source="pack://application:,,,/Shared;component/Images/Search.png"></Image>
-            </Button>
+            </Button>-->
             <ListView Grid.Row="1" x:Name="ListView" ItemsSource="{Binding Items}" 
                       DisplayMemberPath="Description" 
                       SelectedValuePath="Value"

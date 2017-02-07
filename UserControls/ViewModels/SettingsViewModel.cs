@@ -311,11 +311,8 @@ namespace UserControls.ViewModels
             td.Start();
         }
         #endregion
+
         #region Public methods
-        public void OnClose(object o)
-        {
-            ApplicationManager.OnTabItemClose(o);
-        }
         public bool CanSetSaleFromStock()
         {
             return (Stocks != null && Stocks.Count > 0);
@@ -397,7 +394,6 @@ namespace UserControls.ViewModels
         #endregion
 
         #region ICommands
-        public ICommand CloseCommand { get { return new RelayCommand(OnClose); } }
         public ICommand SetSaleFromStockCommand { get; private set; }
         public ICommand SetCashDeskCommand { get; private set; }
         public ICommand SetDefaultSettingsCommand { get { return new RelayCommand(OnSetDefaultSettings, CanSetDefaultSettings); } }

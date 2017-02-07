@@ -113,7 +113,7 @@ namespace UserControls.ViewModels.Invoices
             var exCount = ProductsManager.GetProductItemCount(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList(), Member.Id);
             if (exCount == 0)
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Անբավարար միջոցներ: Տվյալ ապրանքատեսակից առկա չէ:", MessageModel.MessageTypeEnum.Warning));
+                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, string.Format("Անբավարար միջոցներ: Կոդ: {0} Տվյալ ապրանքատեսակից բավարար քանակ առկա չէ:", InvoiceItem.Code), MessageModel.MessageTypeEnum.Warning));
                 return false;
             }
             if (InvoiceItem.Quantity == null || InvoiceItem.Quantity == 0)

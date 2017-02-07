@@ -134,7 +134,7 @@ namespace ES.Shop.Commands
         }
         public void Execute(object parameter)
         {
-            _viewModel.OnChangeSettings();
+            _viewModel.OnManageSettings();
         }
     }
 #endregion

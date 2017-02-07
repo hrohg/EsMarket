@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
@@ -27,8 +28,54 @@ namespace UserControls.ViewModels.Tools
         #endregion Internal properties
 
         #region External properties
-        public List<CustomItem> Items { get; private set; }
+
+        #region Filter
+
+        private Timer _timer;
+        private string _filter;
+        public string Filter
+        {
+            get { return _filter ?? string.Empty; }
+            set
+            {
+                _filter = value.ToLower();
+                RaisePropertyChanged("Filter");
+                DisposeTimer();
+                _timer = new Timer(TimerElapsed, null, 300, 300);
+            }
+        }
+        private void TimerElapsed(object obj)
+        {
+            RaisePropertyChanged("Items");
+            DisposeTimer();
+        }
+        private void DisposeTimer()
+        {
+            if (_timer != null)
+            {
+                _timer.Dispose();
+                _timer = null;
+            }
+        }
+        #endregion Filter
+
+        #region Items
+
+        private List<CustomItem> _items;
+
+        public List<CustomItem> Items
+        {
+            get { return _items.Where(s=>s.Description.ToLower().Contains(Filter)).ToList(); }
+            private set
+            {
+                _items = value;
+                RaisePropertyChanged("Items");
+            }
+        }
+        #endregion Items
+
         public CustomItem SelectedItem { get; set; }
+
         #endregion External proeprties
 
         #region Constructors
@@ -60,11 +107,11 @@ namespace UserControls.ViewModels.Tools
         private void OnSelectItem(Guid id)
         {
             var product = _products.FirstOrDefault(s => s.Id == SelectedItem.Value);
-            if(product==null) return;
+            if (product == null) return;
             var handle = OnProductItemSelected;
             if (handle != null)
             {
-                handle(new ProductItemModel {Id = Guid.Empty, Product = product, ProductId = product.Id});
+                handle(new ProductItemModel { Id = Guid.Empty, Product = product, ProductId = product.Id });
             }
         }
         #endregion Internal methods

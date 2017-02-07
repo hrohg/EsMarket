@@ -45,6 +45,7 @@ namespace ES.Business.Models
                 _message = value;
             }
         }
+
         public MessageTypeEnum MessageType { get; set; }
 
         public Brush MessageForeground

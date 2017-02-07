@@ -8,5 +8,10 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls
 {
     public class ExtendedLayoutAnchorablePane : LayoutAnchorablePane
     {
+        public ExtendedLayoutAnchorablePane()
+        {
+            DockMinWidth = 200;
+            DockMinHeight = 150;
+        }
     }
 }

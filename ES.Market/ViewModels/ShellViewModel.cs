@@ -87,7 +87,7 @@ namespace ES.Market.ViewModels
         private UctrlLibraryBrowser _libraryBrowser;
         private bool _isLoading;
         private bool _isCashUpdateing;
-        private LogViewModel _logs;
+        public LogViewModel LogViewModel { get; private set; }
         #endregion
 
         #region External properties
@@ -179,10 +179,10 @@ namespace ES.Market.ViewModels
             var appManager = new ApplicationManager();
             Documents = new ObservableCollection<DocumentViewModel>();
             AddDocument(new StartPageViewModel(this));
-            _logs = new LogViewModel();
-            ApplicationManager.MessageManager.NewMessageReceived += _logs.AddLog;
+            LogViewModel = new LogViewModel();
+            ApplicationManager.MessageManager.NewMessageReceived += LogViewModel.AddLog;
             Tools = new ObservableCollection<ToolsViewModel>();
-            Tools.Add(_logs);
+            Tools.Add(LogViewModel);
         }
         private void InitializeCommands()
         {
@@ -238,7 +238,23 @@ namespace ES.Market.ViewModels
             var tabControl = new UctrlViewTable { DataContext = viewModel };
             AddTabControl(tabControl, viewModel);
         }
-
+        
+        #region Add remove documents
+        private void AddDocument<T>(DocumentViewModel vm, bool allowDoublicate = true)
+        {
+            if (!allowDoublicate)
+            {
+                var exDocument = Documents.FirstOrDefault(s => s is T);
+                if (exDocument != null)
+                {
+                    //todo
+                    exDocument.IsActive = true;
+                    exDocument.IsSelected = true;
+                    return;
+                }
+            }
+            AddDocument(vm);
+        }
         private void AddDocument(DocumentViewModel vm)
         {
             if (vm.IsClosable)
@@ -248,15 +264,14 @@ namespace ES.Market.ViewModels
             vm.IsActive = true;
             vm.IsSelected = true;
             Documents.Add(vm);
-            
         }
-
         private void OnRemoveDocument(PaneViewModel vm)
         {
             if (vm == null) return;
             vm.OnClosed -= OnRemoveDocument;
             Documents.Remove((DocumentViewModel)vm);
         }
+        #endregion Add remove documents
 
         #region Base
 
@@ -1017,7 +1032,7 @@ namespace ES.Market.ViewModels
             {
                 AddDocument((DocumentViewModel)model);
                 ((PaneViewModel)model).IsActive = true;
-                if(_productItemsToolsViewModel==null)
+                if (_productItemsToolsViewModel == null)
                     _productItemsToolsViewModel = new ProductItemsToolsViewModel();
                 if (model is InvoiceViewModel)
                     _productItemsToolsViewModel.OnProductItemSelected += ((InvoiceViewModel)model).OnSetProductItem;
@@ -1276,16 +1291,10 @@ namespace ES.Market.ViewModels
         /// Settings
         /// </summary>
         /// <returns></returns>
-        public void OnChangeSettings()
+        public void OnManageSettings()
         {
-            var tabShop = _parentTabControl.FindChild<TabControl>();
-            if (tabShop == null)
-            {
-                return;
-            }
             var vm = new SettingsViewModel(_member.Id);
-            AddDocument(vm);
-            //AddTabControl(new UctrlSettings(), vm);
+            AddDocument<SettingsViewModel>(vm, false);
         }
 
         /// <summary>

@@ -514,7 +514,7 @@ namespace UserControls.ViewModels.Invoices
             }
             return 0;
         }
-        public void OnClose(object o)
+        protected override void OnClose(object o)
         {
             if (Invoice.ApproveDate == null && InvoiceItems.Count > 0)
             {
@@ -928,13 +928,11 @@ namespace UserControls.ViewModels.Invoices
         public ICommand AddItemsFromMoveInvoiceCommand { get; private set; }
         public ICommand AddItemsFromStocksCommand { get; private set; }
         public ICommand ApproveInvoiceAndCloseCommand { get; private set; }
-        public ICommand CloseCommand { get { return new RelayCommand(OnClose); } }
         public ICommand PrintInvoiceCommand { get; private set; }
         public ICommand GetProductCommand { get { return new RelayCommand(OnGetProduct); } }
         public ICommand CleanInvoiceIemsCommand { get; private set; }
         #endregion
-
-
+        
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)

@@ -160,7 +160,9 @@ namespace ES.Common.ViewModels.Base
 
         #region Contructors
         public PaneViewModel()
-        { }
+        {
+            Initialize();
+        }
         #endregion Constructors
 
         #region Internal methods
@@ -170,12 +172,13 @@ namespace ES.Common.ViewModels.Base
             CloseCommand = new RelayCommand(OnClose, CanClose);
         }
 
-        private bool CanClose(object o)
+        protected virtual bool CanClose(object o)
         {
             return IsClosable;
         }
-        protected void OnClose(object o)
+        protected virtual void OnClose(object o)
         {
+            if(!CanClose(o)) return;
             var handle = OnClosed;
             if (handle != null) handle(this);
         }

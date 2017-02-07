@@ -720,6 +720,25 @@
             </Menu>
         </Grid>
         <Grid Grid.Row="1">
+            <Grid.Resources>
+                <ControlTemplate x:Key="AnchorTemplate" TargetType="{x:Type xcad:LayoutAnchorControl}">
+                    <controls:ExtendedLayoutBorder
+                            x:Name="Border"
+                            IsShowAnchorOnMouseOver="False"
+                            Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type xcad:LayoutAnchorControl}}, Path=Model.IsLayoutVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                            LayoutAnchorControl="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type xcad:LayoutAnchorControl}}}"
+                            BorderThickness="0" 
+                            Background="Transparent"
+                            CornerRadius="0"
+                            Margin="0 2 2 2" MinWidth="200"
+                            Padding="2">
+                        <ContentPresenter Content="{Binding Model, RelativeSource={RelativeSource TemplatedParent}}" 
+                              TextBlock.Foreground="#ACB3BC"
+                              ContentTemplate="{Binding AnchorableHeaderTemplate, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type xcad:DockingManager}, Mode=FindAncestor}}"
+                              ContentTemplateSelector="{Binding AnchorableHeaderTemplateSelector, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type xcad:DockingManager}, Mode=FindAncestor}}"/>
+                    </controls:ExtendedLayoutBorder>
+                </ControlTemplate>
+            </Grid.Resources>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -735,11 +754,12 @@
             <controls:ExtendedDockingManager Grid.Column="1" Grid.Row="0"  Width="Auto" 
                                             DocumentsSource="{Binding Documents}"
                                             AnchorablesSource="{Binding Tools}"
+                                            AnchorTemplate="{StaticResource AnchorTemplate}"
                                             AllowMixedOrientation="True"
-                                             behaviors1:AvalonDockLayoutSerializer.LoadLayoutCommand="{Binding ADLayout.LoadLayoutCommand}"
-                                 behaviors1:AvalonDockLayoutSerializer.SaveLayoutCommand="{Binding ADLayout.SaveLayoutCommand}">
+                                            behaviors1:AvalonDockLayoutSerializer.LoadLayoutCommand="{Binding ADLayout.LoadLayoutCommand}"
+                                            behaviors1:AvalonDockLayoutSerializer.SaveLayoutCommand="{Binding ADLayout.SaveLayoutCommand}">
                 <controls:ExtendedDockingManager.Resources>
-                    
+
                     <Style x:Key="DefaultCloseButtonStyle" TargetType="{x:Type Button}">
                         <Setter Property="Margin" Value="4 0"/>
                         <Setter Property="Foreground" Value="#B1B1B1"/>
@@ -801,6 +821,9 @@
                             </Setter.Value>
                         </Setter>
                     </Style>
+
+                    
+
                 </controls:ExtendedDockingManager.Resources>
 
                 <controls:ExtendedDockingManager.LayoutUpdateStrategy>
@@ -857,7 +880,9 @@
                         <Border CornerRadius="2 2 0 0">
                             <StackPanel Orientation="Horizontal">
 
-                                --><!--Show IsReadOnly Icon in document tab if that properties' present and true--><!--
+                                -->
+                <!--Show IsReadOnly Icon in document tab if that properties' present and true-->
+                <!--
 
                                 <Image Source="/Edi;component/Images/App/DocTab/Lock-icon.png" Margin="3,0,0,0" VerticalAlignment="Center">
 
@@ -884,7 +909,9 @@
                         <Border CornerRadius="2 2 0 0">
                             <StackPanel Orientation="Horizontal">
 
-                                --><!--Show IsReadOnly Icon in document tab if that properties' present and true--><!--
+                                -->
+                <!--Show IsReadOnly Icon in document tab if that properties' present and true-->
+                <!--
 
                                 <Image Source="/Edi;component/Images/App/DocTab/Lock-icon.png" Margin="3,0,0,0" VerticalAlignment="Center">
 
@@ -963,9 +990,19 @@
                         <xcad:LayoutDocumentPane/>
                         <!--<xcad:LayoutAnchorablePane  Name="ToolsPane"  DockWidth="240"/>-->
                     </xcad:LayoutPanel>
-                    </xcad:LayoutRoot>
-                
+                    <!--<xcad:LayoutRoot.LeftSide>
+                        <xcad:LayoutAnchorSide>
+                            <xcad:LayoutAnchorGroup>
+                                <controls:ExtendedLayoutAnchorable>
+                                    <xcad:LayoutAnchorablePane></xcad:LayoutAnchorablePane>
+                                </controls:ExtendedLayoutAnchorable>
+                            </xcad:LayoutAnchorGroup>
+                        </xcad:LayoutAnchorSide>
+                    </xcad:LayoutRoot.LeftSide>-->
+                </xcad:LayoutRoot>
+
             </controls:ExtendedDockingManager>
+            
             <Grid Grid.Column="0" Grid.Row="0">
                 <Expander x:Name="LeftPanel" ExpandDirection="Left" Visibility="Collapsed">
                     <Border x:Name="LeftPanel_Border"  Width="250"></Border>
@@ -990,23 +1027,7 @@
                     <Image Height="24" Width="24" Margin="5 0" VerticalAlignment="Center" Source="{Binding ServerPath}" ToolTip="{Binding ServerDescription}"/>
                 </StackPanel>
                 <Grid Grid.Column="1">
-                    <Border Background="White" Opacity=".3" Margin="34 0 0 0"/>
-                    <Image  Height="24" Width="24" Margin="5 0"
-        VerticalAlignment="Center" Source="pack://application:,,,/Shared;component/Images/Messages_Light.png" ToolTip="Ստացված հաղորդագրություններ" HorizontalAlignment="Left"/>
-                    <Separator Style="{StaticResource VerticalSeparatorStyle}" Margin="0 0 0 0" HorizontalAlignment="Left"/>
-                    <ScrollViewer  HorizontalAlignment="Stretch" Margin="34 0 0 0">
-                        <ItemsControl ItemsSource="{Binding Messages}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                        <Image Source="" Margin="5 0"/>
-                                        <TextBlock Text="{Binding Path = Date}" Margin="5 0" Foreground="{Binding Path = MessageForeground}" />
-                                        <TextBlock Text="{Binding Path = Message}" Margin="5 0" Foreground="{Binding Path = MessageForeground}" AllowDrop="True"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                    <TextBlock Text="{Binding LogViewModel.CurrentLog.Message}" Foreground="Black"/>
                 </Grid>
                 <ProgressBar Grid.Column="2" IsIndeterminate="True" Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}" ToolTip="{Binding ProcessDescription}" Background="#F5F5F5" Margin="3"/>
                 <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="5 0">

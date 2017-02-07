@@ -23,7 +23,7 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Helpers
             if (destinationContainer != null &&
                 destinationContainer.FindParent<LayoutFloatingWindow>() != null)
                 return false;
-
+            
             var vm = anchorableToShow.Content as IExtendedAnchorableBase;
             if (vm == null) return false;
             LayoutAnchorGroup layoutAnchorGroup = null;

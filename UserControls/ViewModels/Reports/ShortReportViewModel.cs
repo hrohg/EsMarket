@@ -167,16 +167,6 @@ namespace UserControls.ViewModels.Reports
             _tdUpdate.Abort();
             IsLoading = false;
         }
-        private void OnClose(object o)
-        {
-            var tabitem = o as TabItem;
-            if (tabitem != null)
-            {
-                var tabControl = tabitem.Parent as TabControl;
-                if (tabControl == null) return;
-                tabControl.Items.Remove(tabitem);
-            }
-        }
         private void Update()
         {
             IsLoading = true;
@@ -251,7 +241,6 @@ namespace UserControls.ViewModels.Reports
         #region Commands
         public ICommand RefreshCommand { get { return new RelayCommand(OnRefresh); } }
         public ICommand BreakCommand { get { return new RelayCommand(OnBreak); } }
-        public ICommand CloseCommand { get { return new RelayCommand(OnClose); } }
         public ICommand ResetInvoiseCommand { get; private set; }
         #endregion
 

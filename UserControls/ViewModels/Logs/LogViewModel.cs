@@ -8,10 +8,27 @@ namespace UserControls.ViewModels.Logs
     public class LogViewModel : ToolsViewModel
     {
         #region Internal properties
+
         #endregion Internal properties
 
         #region External properties
-        public ObservableCollection<MessageModel> Logs { get; set; } 
+        public ObservableCollection<MessageModel> Logs { get; set; }
+
+        #region Current Log
+        private MessageModel _currentLog;
+        public MessageModel CurrentLog
+        {
+            get { return _currentLog; }
+            private set
+            {
+                if (_currentLog == value) return;
+                _currentLog = value;
+                RaisePropertyChanged("CurrentLog");
+            }
+        }
+
+        #endregion Current Log
+
         #endregion External properties
 
         #region Constructors
@@ -39,6 +56,7 @@ namespace UserControls.ViewModels.Logs
         public void AddLog(MessageModel log)
         {
             Logs.Add(log);
+            CurrentLog = log;
         }
         #endregion External methods
 
