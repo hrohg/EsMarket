@@ -114,7 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CustomControls\CustomControls.csproj">
-      <Project>{FC8CCD6D-7A06-43A1-BDE5-2024A408DE1D}</Project>
+      <Project>{fc8ccd6d-7a06-43a1-bde5-2024a408de1d}</Project>
       <Name>CustomControls</Name>
     </ProjectReference>
     <ProjectReference Include="..\Es.Business\ES.Business.csproj">
