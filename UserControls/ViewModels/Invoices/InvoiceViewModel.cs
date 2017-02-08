@@ -109,9 +109,44 @@ namespace UserControls.ViewModels.Invoices
         /// <summary>
         /// InvoiceViewModel public properties
         /// </summary>
+
         #region InvoiceViewModel External properties
-        public virtual string Description { get; set; }
-        public virtual string Title { get; set; }
+
+        #region Title
+        private string _title;
+
+        private string _description;
+        public virtual string Description
+        {
+            get
+            {
+                return _description ?? (Partner != null ? string.Format("{0} ({1})", Title, Partner.FullName) : Title);
+            }
+            set
+            {
+                if (_description == value) return;
+                _description = value;
+                RaisePropertyChanged("Description");
+            }
+        }
+
+        public virtual string Title
+        {
+            get
+            {
+                return _title;
+            }
+            set
+            {
+                if (_title == value) return;
+                _title = value;
+                RaisePropertyChanged("Title");
+                RaisePropertyChanged("Description");
+            }
+        }
+
+        #endregion Title
+
         public bool IsModified
         {
             get { return _isModified; }
@@ -323,6 +358,10 @@ namespace UserControls.ViewModels.Invoices
             ApproveInvoiceAndCloseCommand = new ApproveCloseInvoiceCommands(this);
 
             PrintInvoiceCommand = new RelayCommand<PrintSizeEnum>(OnPrintInvoice, CanPrintInvoice);
+
+            GetPartnerCommand = new RelayCommand(OnGetPartner);
+            GetProductCommand = new RelayCommand(OnGetProduct);
+
             CleanInvoiceIemsCommand = new RelayCommand(OnCleanInvoiceItems, CanCleanInvoiceItems);
         }
         private void SetModels()
@@ -337,7 +376,7 @@ namespace UserControls.ViewModels.Invoices
         }
         private void SetDefaultPartner()
         {
-            Partner = PartnersManager.GetDefaultParnerByInvoiceType(Invoice.MemberId, Invoice.InvoiceTypeId);
+            Partner = PartnersManager.GetDefaultParnerByInvoiceType(Invoice.MemberId, (InvoiceType)Invoice.InvoiceTypeId);
             var partners = ApplicationManager.CashManager.GetPartners;
             switch (Invoice.InvoiceTypeId)
             {
@@ -423,6 +462,23 @@ namespace UserControls.ViewModels.Invoices
 
         public delegate void ShowProductsPane();
         public event ShowProductsPane ShowProducts;
+        #region Set Partner
+        protected virtual void OnGetPartner(object o)
+        {
+            var partners = o is PartnerType ? PartnersManager.GetPartner(ApplicationManager.GetEsMember.Id, (PartnerType)o) : PartnersManager.GetPartners(ApplicationManager.GetEsMember.Id);
+            if (partners.Count == 0) return;
+            var selectedItems = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName + " " + s.Mobile, SelectedValue = s.Id }).ToList(), false);
+            selectedItems.ShowDialog();
+            if (selectedItems.DialogResult == null || selectedItems.DialogResult != true || selectedItems.SelectedItems == null) return;
+            SetPartner(partners.FirstOrDefault(s => selectedItems.SelectedItems.Select(t => t.SelectedValue).ToList().Contains(s.Id)));
+        }
+
+        public void SetPartner(PartnerModel partner)
+        {
+            Partner = partner;
+            RaisePropertyChanged("Description");
+        }
+        #endregion Set Partner
         protected virtual void OnGetProduct(object o)
         {
             var products = ApplicationManager.CashManager.Products.OrderBy(s => s.Description);
@@ -911,7 +967,7 @@ namespace UserControls.ViewModels.Invoices
         #endregion
         #endregion
 
-        #region Invoice view model commands
+        #region Commands
         public ICommand RemoveInvoiceItemCommand { get; private set; }
         public ICommand AddInvoiceItemCommand { get { return new RelayCommand(OnAddInvoiceItem, CanAddInvoiceItem); } }
         public ICommand SaveInvoiceCommand { get { return new RelayCommand(OnSaveInvoice, CanSaveInvoice); } }
@@ -929,10 +985,12 @@ namespace UserControls.ViewModels.Invoices
         public ICommand AddItemsFromStocksCommand { get; private set; }
         public ICommand ApproveInvoiceAndCloseCommand { get; private set; }
         public ICommand PrintInvoiceCommand { get; private set; }
-        public ICommand GetProductCommand { get { return new RelayCommand(OnGetProduct); } }
+
+        public ICommand GetPartnerCommand { get; private set; }
+        public ICommand GetProductCommand { get; private set; }
         public ICommand CleanInvoiceIemsCommand { get; private set; }
-        #endregion
-        
+        #endregion Commands
+
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)

@@ -37,18 +37,7 @@ namespace UserControls.Views
             DataContext = _viewModel = viewModel ?? new PurchaseInvoiceViewModel(user, _member);
             //if( viewModel==null || viewModel.Partner==null) _viewModel.Partner = MembersManager.GetDefaultParner(_member.Id, (long)MembersManager.PartnersTypes.Provider);
         }
-       
-        #region Methods
-        private void ChoosePartner(long partnerTypeId)
-        {
-            var partners = partnerTypeId != 0 ? PartnersManager.GetPartner(_member.Id, partnerTypeId) : PartnersManager.GetPartners(_member.Id);
-            var selectedItems = new ControlPanel.Controls.SelectItems(partners.Select(s => new ControlPanel.Controls.ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), false);
-            if (selectedItems.ShowDialog() != true || selectedItems.SelectedItems == null) return;
-            _viewModel.Partner = partners.FirstOrDefault(s => selectedItems.SelectedItems.Select(t => t.SelectedValue).ToList().Contains(s.Id));
-            var parentTab = this.Parent as TabItem;
-            if (parentTab != null) parentTab.Header = Description + TxtPartner.Text;
-        }
-        #endregion
+        
         #region Events
         
         private void CtrlInvoice_Loaded(object sender, RoutedEventArgs e)
@@ -79,7 +68,7 @@ namespace UserControls.Views
                         _viewModel.OnSaveInvoice(null);
                         break;
                     case Key.Q:
-                        CmMiChoosePartner_Click(null, null);
+                        
                         break;
                     case Key.X:
                         //_viewModel.OnClose(this.Parent);
@@ -104,11 +93,6 @@ namespace UserControls.Views
             {
                 _viewModel.OnAddInvoiceItem(null);
             }
-        }
-        private void CmMiChoosePartner_Click(object sender, EventArgs e)
-        {
-            var mi = sender as MenuItem;
-            ChoosePartner(mi==null? 0:HgConvert.ToInt64((mi).Tag));
         }
         private void TxtCode_KeyDown(object sender, KeyEventArgs e)
         {

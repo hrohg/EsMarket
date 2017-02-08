@@ -116,17 +116,17 @@ namespace ES.Business.Managers
         {
             return TryGetPartners(ids).Select(Convert).OrderBy(s => s.FullName).ToList();
         }
-        public static PartnerModel GetDefaultPartner(long esMemberId, long partnerTypeId)
+        public static PartnerModel GetDefaultPartner(long esMemberId, PartnerType partnerTypeId)
         {
             return TryGetPartners(esMemberId, partnerTypeId).Select(Convert).FirstOrDefault();
         }
-        public static PartnerModel GetDefaultParnerByInvoiceType(long esMemberId, long invoiceTypeId)
+        public static PartnerModel GetDefaultParnerByInvoiceType(long esMemberId, InvoiceType invoiceTypeId)
         {
             switch (invoiceTypeId)
             {
-                case (long)InvoiceType.SaleInvoice:
+                case InvoiceType.SaleInvoice:
                     return Convert(TryGetPartner(DefaultsManager.GetDefaultValueGuid(DefaultControls.Customer, esMemberId), esMemberId));
-                case (long)InvoiceType.PurchaseInvoice:
+                case InvoiceType.PurchaseInvoice:
                     return Convert(TryGetPartner(DefaultsManager.GetDefaultValueGuid(DefaultControls.Provider, esMemberId), esMemberId));
                 default:
                     return null;
@@ -136,7 +136,7 @@ namespace ES.Business.Managers
         {
             return TryGetPartners(esMemberId).Select(Convert).OrderBy(s => s.FullName).ToList();
         }
-        public static List<PartnerModel> GetPartner(long esMemberId, long partnerTypeId)
+        public static List<PartnerModel> GetPartner(long esMemberId, PartnerType partnerTypeId)
         {
             return TryGetPartners(esMemberId, partnerTypeId).Select(Convert).OrderBy(s => s.FullName).ToList();
         }
@@ -235,7 +235,7 @@ namespace ES.Business.Managers
 
             }
         }
-        private static List<Partners> TryGetPartners(long memberId, long partnerTypeId)
+        private static List<Partners> TryGetPartners(long memberId, PartnerType partnerTypeId)
         {
             using (var db = GetDataContext())
             {
@@ -244,7 +244,7 @@ namespace ES.Business.Managers
                     return db.Partners
                                         .Include(s => s.EsMembers)
                                         .Include(s => s.EsPartnersTypes)
-                                        .Where(s => s.EsMemberId == memberId && s.EsPartnersTypeId == partnerTypeId)
+                                        .Where(s => s.EsMemberId == memberId && s.EsPartnersTypeId == (long)partnerTypeId)
                                         .ToList();
                 }
                 catch (Exception)

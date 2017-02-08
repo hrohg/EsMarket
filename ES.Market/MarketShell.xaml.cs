@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Business.Models;
+using ES.Data.Enumerations;
 using ES.Data.Models;
 using ES.DataAccess.Models;
 using ES.Market.ViewModels;
@@ -432,8 +433,8 @@ namespace ES.Market
                 MessageBox.Show("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
             }
         }
-
-        private PartnerModel SelectPartner(long partnerTypeId = 0)
+        //todo
+        private PartnerModel SelectPartner(PartnerType partnerTypeId = 0)
         {
             var partners = partnerTypeId != 0 ? PartnersManager.GetPartner(ApplicationManager.GetEsMember.Id, partnerTypeId) : PartnersManager.GetPartners(ApplicationManager.GetEsMember.Id);
             if (partners.Count == 0) return null;

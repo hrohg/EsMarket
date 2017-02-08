@@ -5,6 +5,7 @@
          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
          xmlns:filter="clr-namespace:Shared.Helpers;assembly=Shared"
          xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
+         xmlns:enumerations="clr-namespace:ES.Data.Enumerations;assembly=ES.Data"
          MinHeight="450"
          MinWidth="700"
          Width="Auto"
@@ -50,11 +51,12 @@
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0" Name="TxtPartner" FontSize="15" Text="{Binding Partner.Description, Mode=OneWay}" IsReadOnly="True" TabIndex="0" >
                                 <TextBox.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="Ընտրել գործընկեր" Click="CmMiChoosePartner_Click"></MenuItem>
-                                        <MenuItem Header="Ընտրել մատակարար" Click="CmMiChoosePartner_Click" Tag="1"></MenuItem>
-                                        <MenuItem Header="Ընտրել դիլլեր" Click="CmMiChoosePartner_Click" Tag="2"></MenuItem>
-                                        <MenuItem Header="Ընտրել պատվիրատու" Click="CmMiChoosePartner_Click" Tag="3"></MenuItem>
+                                    <ContextMenu>                                        
+                                        <MenuItem Header="Ընտրել պատվիրատու" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Customer}"></MenuItem>
+                                        <MenuItem Header="Ընտրել գործընկեր" Command="{Binding GetPartnerCommand}"></MenuItem>
+                                        <MenuItem Header="Ընտրել մատակարար" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Provider}"></MenuItem>
+                                        <MenuItem Header="Ընտրել դիլլեր" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Dealer}"></MenuItem>
+                                        <MenuItem Header="Ընտրել Մասնաճյուղ" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Branch}"></MenuItem>
                                     </ContextMenu>
                                 </TextBox.ContextMenu>
                             </TextBox>

@@ -23,21 +23,6 @@ namespace UserControls.Views.CustomControls
         private readonly EsUserModel _user;
         private SaleInvoiceViewModel _viewModel {get { return (SaleInvoiceViewModel) DataContext; }}
         #endregion
-        #region Methods
-        //todo
-        private void ChoosePartner(long partnerTypeId)
-        {
-        //    var partners = partnerTypeId != 0 ? PartnersManager.GetPartner(_member.Id, partnerTypeId) : PartnersManager.GetPartners(_member.Id);
-        //    if (partners.Count == 0) return;
-        //    var selectedItems =
-        //        new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName + " " + s.Mobile, SelectedValue = s.Id }).ToList(), false);
-        //    selectedItems.ShowDialog();
-        //    if (selectedItems.DialogResult == null || selectedItems.DialogResult != true || selectedItems.SelectedItems == null) return;
-        //    _viewModel.Partner = partners.FirstOrDefault(s => selectedItems.SelectedItems.Select(t => t.SelectedValue).ToList().Contains(s.Id));
-        //    var parentTab = this.Parent as TabItem;
-        //    if (parentTab != null) parentTab.Header = Description + TxtPartner.Text;
-        }
-        #endregion
         public SaleUctrl()
         {
             InitializeComponent();
@@ -84,7 +69,7 @@ namespace UserControls.Views.CustomControls
                     //    _viewModel.OnSaveInvoice(null);
                     //    break;
                     case Key.Q:
-                        CmMiChoosePartner_Click(null, null);
+                        
                         break;
                     case Key.X:
                         //_viewModel.OnClose(this.Parent);
@@ -110,11 +95,6 @@ namespace UserControls.Views.CustomControls
                 BtnAddItem_Click(sender, e);
                 BtnAddItem.Command.Execute(null);
             }
-        }
-        private void CmMiChoosePartner_Click(object sender, EventArgs e)
-        {
-            var mi = sender as MenuItem;
-            ChoosePartner(mi == null ? 0 : HgConvert.ToInt64((mi).Tag));
         }
         private void TxtCode_KeyDown(object sender, KeyEventArgs e)
         {

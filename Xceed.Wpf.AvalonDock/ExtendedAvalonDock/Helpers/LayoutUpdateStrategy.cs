@@ -23,58 +23,33 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Helpers
             if (destinationContainer != null &&
                 destinationContainer.FindParent<LayoutFloatingWindow>() != null)
                 return false;
-            
+
             var vm = anchorableToShow.Content as IExtendedAnchorableBase;
             if (vm == null) return false;
-            LayoutAnchorGroup layoutAnchorGroup = null;
+            AnchorableShowStrategy showSide;
             
             switch (vm.AnchorSide)
             {
                 case AnchorSide.Top:
-
+                    showSide = AnchorableShowStrategy.Top;
                     break;
-
                 case AnchorSide.Left:
-                    layoutAnchorGroup = layout.LeftSide.Children.FirstOrDefault();
-                    if (layoutAnchorGroup == null)
-                    {
-                        layoutAnchorGroup = new LayoutAnchorGroup();
-                        layout.LeftSide.Children.Add(layoutAnchorGroup);
-                    }
-                    layoutAnchorGroup.Children.Add(anchorableToShow);
-                    break;
+                    showSide = AnchorableShowStrategy.Left;
+                    anchorableToShow.AutoHideWidth = 250;
+                    anchorableToShow.FloatingWidth = 250;
                     
-                case AnchorSide.Bottom:
-                    layoutAnchorGroup = layout.BottomSide.Children.FirstOrDefault();
-                    if (layoutAnchorGroup == null)
-                    {
-                        layoutAnchorGroup = new LayoutAnchorGroup();
-                        layout.BottomSide.Children.Add(layoutAnchorGroup);
-                    }
-                    layoutAnchorGroup.Children.Add(anchorableToShow);
                     break;
-               
+                case AnchorSide.Bottom:
+                    showSide = AnchorableShowStrategy.Bottom;
+                    break;
                 case AnchorSide.Right: 
                               default:
-                    layoutAnchorGroup = layout.RightSide.Children.FirstOrDefault();
-                    if (layoutAnchorGroup == null)
-                    {
-                        layoutAnchorGroup = new LayoutAnchorGroup();
-                        layout.RightSide.Children.Add(layoutAnchorGroup);
-                    }
-                    layoutAnchorGroup.Children.Add(anchorableToShow);
+                    showSide = AnchorableShowStrategy.Right;
                     break;
                     
             }
-            
+            anchorableToShow.AddToLayout(layout.Manager, showSide);
             return true;
-            var toolsPane = layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(d => d.Name == "ToolsPane");
-            if (toolsPane != null)
-            {
-                toolsPane.Children.Add(anchorableToShow);
-                return true;
-            }
-            return false;
         }
 
         public bool BeforeInsertDocument(LayoutRoot layout, LayoutDocument anchorableToShow, ILayoutContainer destinationContainer)

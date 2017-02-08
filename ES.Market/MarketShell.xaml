@@ -822,7 +822,10 @@
                         </Setter>
                     </Style>
 
-                    
+                    <Style TargetType="{x:Type xcad:LayoutAnchorControl}" BasedOn="{StaticResource {x:Type xcad:LayoutAnchorControl}}">
+                        <Setter Property="MinWidth" Value="250"/>
+                        <Setter Property="MinHeight" Value="150"/>
+                    </Style>
 
                 </controls:ExtendedDockingManager.Resources>
 
@@ -990,19 +993,50 @@
                         <xcad:LayoutDocumentPane/>
                         <!--<xcad:LayoutAnchorablePane  Name="ToolsPane"  DockWidth="240"/>-->
                     </xcad:LayoutPanel>
+
                     <!--<xcad:LayoutRoot.LeftSide>
                         <xcad:LayoutAnchorSide>
                             <xcad:LayoutAnchorGroup>
-                                <controls:ExtendedLayoutAnchorable>
-                                    <xcad:LayoutAnchorablePane></xcad:LayoutAnchorablePane>
-                                </controls:ExtendedLayoutAnchorable>
+                                <xcad:LayoutAnchorable>
+                                    
+                                </xcad:LayoutAnchorable>
                             </xcad:LayoutAnchorGroup>
                         </xcad:LayoutAnchorSide>
-                    </xcad:LayoutRoot.LeftSide>-->
+                    </xcad:LayoutRoot.LeftSide>
+
+                    <xcad:LayoutRoot.TopSide>
+                        <xcad:LayoutAnchorSide>
+                            <xcad:LayoutAnchorGroup>
+                                <xcad:LayoutAnchorable>
+                                    <xcad:LayoutAnchorablePane DockWidth="200"/>
+                                </xcad:LayoutAnchorable>
+                            </xcad:LayoutAnchorGroup>
+                        </xcad:LayoutAnchorSide>
+                    </xcad:LayoutRoot.TopSide>
+
+                    <xcad:LayoutRoot.BottomSide>
+                        <xcad:LayoutAnchorSide>
+                            <xcad:LayoutAnchorGroup>
+                                <xcad:LayoutAnchorable>
+                                    
+                                </xcad:LayoutAnchorable>
+                            </xcad:LayoutAnchorGroup>
+                        </xcad:LayoutAnchorSide>
+                    </xcad:LayoutRoot.BottomSide>
+
+                    <xcad:LayoutRoot.RightSide>
+                        <xcad:LayoutAnchorSide>
+                            <xcad:LayoutAnchorGroup>
+                                <xcad:LayoutAnchorable>
+                                    <xcad:LayoutAnchorablePane DockWidth="200"/>
+                                </xcad:LayoutAnchorable>
+                            </xcad:LayoutAnchorGroup>
+                        </xcad:LayoutAnchorSide>
+                    </xcad:LayoutRoot.RightSide>-->
                 </xcad:LayoutRoot>
 
             </controls:ExtendedDockingManager>
-            
+
             <Grid Grid.Column="0" Grid.Row="0">
                 <Expander x:Name="LeftPanel" ExpandDirection="Left" Visibility="Collapsed">
                     <Border x:Name="LeftPanel_Border"  Width="250"></Border>

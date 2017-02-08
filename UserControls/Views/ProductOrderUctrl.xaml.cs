@@ -138,20 +138,6 @@ namespace UserControls.Views
             TxtCode.Focus();
             TxtCode.SelectAll();
         }
-        private void CmMiChoosePartner_Click(object sender, EventArgs e)
-        {
-            ChoosePartner(HgConvert.ToInt64(((MenuItem)sender).Tag));
-        }
-        private void ChoosePartner(long partnerTypeId)
-        {
-            var partners = partnerTypeId!=0? PartnersManager.GetPartner(_member.Id, partnerTypeId):PartnersManager.GetPartners(_member.Id);
-            var selectedItems =
-                new ControlPanel.Controls.SelectItems(partners.Select(s => new ControlPanel.Controls.ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), false);
-            if (selectedItems.ShowDialog() != true || selectedItems.SelectedItems == null) return;
-            _viewModel.Partner = partners.FirstOrDefault(s => selectedItems.SelectedItems.Select(t => t.SelectedValue).ToList().Contains(s.Id));
-            var parentTab = this.Parent as TabItem;
-            if (parentTab != null) parentTab.Header = Description + TxtPartner.Text;
-        }
         private void BtnAccept_Click(object sender, RoutedEventArgs e)
         {
             var tabitem = this.Parent as TabItem;

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
+             xmlns:enumerations="clr-namespace:ES.Data.Enumerations;assembly=ES.Data"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" Loaded="CtrlProductOrder_Loaded" KeyDown="CtrlProductOrder_KeyDown">
 
@@ -35,10 +36,8 @@
                 <TextBox Name="TxtPartner"  Height="35" TextWrapping="Wrap" Text="{Binding Partner.FullName}" BorderBrush="Black" BorderThickness="1" VerticalContentAlignment="Center" Width="550" IsReadOnly="True" TabIndex="0" >
                     <TextBox.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Ընտրել գործընկեր" Click="CmMiChoosePartner_Click"></MenuItem>
-                            <MenuItem Header="Ընտրել մատակարար" Click="CmMiChoosePartner_Click" Tag="1"></MenuItem>
-                            <MenuItem Header="Ընտրել դիլլեր" Click="CmMiChoosePartner_Click" Tag="2"></MenuItem>
-                            <MenuItem Header="Ընտրել պատվիրատու" Click="CmMiChoosePartner_Click" Tag="3"></MenuItem>
+                            <MenuItem Header="Ընտրել գործընկեր" Command="{Binding GetPartnerCommand}"></MenuItem>
+                            <MenuItem Header="Ընտրել մատակարար" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Provider}"></MenuItem>
                         </ContextMenu>
                     </TextBox.ContextMenu>
                 </TextBox>
