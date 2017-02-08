@@ -2,7 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:Shared.Converters;assembly=Shared"
-    xmlns:CustomControls="clr-namespace:RealEstateApp.CustomControls;assembly=CustomControls">
+    xmlns:customControls="clr-namespace:RealEstateApp.CustomControls;assembly=CustomControls">
     
     
     <SolidColorBrush x:Key="GridRowCommonBrush" Color="#e7ebf0" />
@@ -90,7 +90,7 @@
         </Setter>
     </Style>-->
 
-    <Style TargetType="{x:Type CustomControls:DragDockPanel}">
+    <Style TargetType="{x:Type customControls:DragDockPanel}">
         <Setter Property="HeaderTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -104,7 +104,7 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type CustomControls:DragDockPanel}">
+                <ControlTemplate TargetType="{x:Type customControls:DragDockPanel}">
                     <AdornerDecorator ClipToBounds="True">
                         <Grid>
 
