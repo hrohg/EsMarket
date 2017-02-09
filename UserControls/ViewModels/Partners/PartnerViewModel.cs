@@ -7,6 +7,7 @@ using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common.Helpers;
+using ES.Common.ViewModels.Base;
 using ES.Data.Models;
 using ES.DataAccess.Models;
 using UserControls.Commands;
@@ -14,7 +15,7 @@ using UserControls.Interfaces;
 
 namespace UserControls.ViewModels.Partners
 {
-    public class PartnerViewModel:ITabItem
+    public class PartnerViewModel:DocumentViewModel
     {
         #region Properties
         private const string PartnerProperties = "Partner";

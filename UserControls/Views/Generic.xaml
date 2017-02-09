@@ -7,6 +7,9 @@
 
         <ResourceDictionary Source="Reports/ShortReportTemplate.xaml"/>
 
+        <ResourceDictionary Source="Editors/ManageProducts.xaml"/>
+        <ResourceDictionary Source="Editors/ManagePartners.xaml"/>
+
         <ResourceDictionary Source="Logs/LogsView.xaml"/>
         <ResourceDictionary Source="Tools/ProductItemsTools.xaml"/>
     </ResourceDictionary.MergedDictionaries>

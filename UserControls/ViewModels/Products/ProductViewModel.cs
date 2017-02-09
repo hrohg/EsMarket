@@ -38,8 +38,8 @@ namespace UserControls.ViewModels.Products
         #endregion
 
         #region Private properties
-        private long _memberId;
-        private long _userId;
+        private long _memberId{get { return ApplicationManager.GetEsMember.Id; }}
+        private long _userId { get { return ApplicationManager.GetEsUser.UserId; } }
         private ProductModel _product;
         private List<ProductModel> _products;
         private string _filterText;
@@ -129,11 +129,7 @@ namespace UserControls.ViewModels.Products
         #region Constructors
         public ProductViewModel()
         {
-            _memberId = ApplicationManager.GetEsMember.Id;
-            _userId = ApplicationManager.GetEsUser.UserId;
             Initialize();
-            LoadProducts();
-            SetCommands();
         }
         #endregion
 
@@ -142,6 +138,8 @@ namespace UserControls.ViewModels.Products
         private void Initialize()
         {
             Title = "Ապրանքների խմբագրում";
+            LoadProducts();
+            SetCommands();
         }
         private void SetCommands()
         {
@@ -170,25 +168,24 @@ namespace UserControls.ViewModels.Products
         }
         private void LoadProducts()
         {
-
-            new Thread(() =>
-            {
-                IsLoading = true;
-                _products = ApplicationManager.CashManager.Products;
-                var productResidue = ApplicationManager.CashManager.ProductResidues;
-                foreach (var item in _products)
-                {
-                    var product = item;
-                    item.ExistingQuantity = productResidue.Any(pr => pr.ProductId == product.Id) ?
-                        productResidue.Where(pr => pr.ProductId == product.Id).Select(pr => pr.Quantity).First() : 0;
-                }
-                Products = _products.OrderByDescending(s => s.Code).ToList();
-                Product = new ProductModel(_memberId, _userId, true); OnPropertyChanged("Product");
-                IsLoading = false;
-            }).Start();
-
+            new Thread(OnUpdateProducts).Start();
         }
 
+        private void OnUpdateProducts()
+        {
+            IsLoading = true;
+            _products = ApplicationManager.CashManager.Products;
+            var productResidue = ApplicationManager.CashManager.ProductResidues;
+            foreach (var item in _products)
+            {
+                var product = item;
+                item.ExistingQuantity = productResidue.Any(pr => pr.ProductId == product.Id) ?
+                    productResidue.Where(pr => pr.ProductId == product.Id).Select(pr => pr.Quantity).First() : 0;
+            }
+            Products = _products.OrderByDescending(s => s.Code).ToList();
+            Product = new ProductModel(_memberId, _userId, true); OnPropertyChanged("Product");
+            IsLoading = false;
+        }
         private bool IsProductExist()
         {
             return (Products.SingleOrDefault(s => s.Id == Product.Id) != null);

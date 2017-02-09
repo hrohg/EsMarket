@@ -4,8 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using ES.Business.ExcelManager;
 using ES.Business.FileManager;
 using ES.Business.Helpers;
@@ -51,8 +53,6 @@ namespace UserControls.ViewModels.Managers
             set;
         }
 
-        public bool IsModified { get; set; }
-
         public bool IsLoading
         {
             get { return _isLoading; }
@@ -60,7 +60,7 @@ namespace UserControls.ViewModels.Managers
             {
                 if (_isLoading == value) { return; }
                 _isLoading = value;
-                OnPropertyChanged("IsLoading");
+                RaisePropertyChanged("IsLoading");
             }
         }
         public ProductModel Product
@@ -70,9 +70,9 @@ namespace UserControls.ViewModels.Managers
             {
                 if (value == _product) return;
                 _product = ProductsManager.CopyProduct(value);
-                OnPropertyChanged("Product");
-                OnPropertyChanged(ChangeProductActivityDescriptionProperty);
-                OnPropertyChanged(ProductGroupDescriptionProperty);
+                RaisePropertyChanged("Product");
+                RaisePropertyChanged(ChangeProductActivityDescriptionProperty);
+                RaisePropertyChanged(ProductGroupDescriptionProperty);
             }
         }
         public List<ProductModel> Products
@@ -83,7 +83,7 @@ namespace UserControls.ViewModels.Managers
                      _products.Where(s => (s.Code + s.Barcode + s.Description + s.Price + s.CostPrice + s.Note).ToLower().Contains(FilterText)
                          || s.ProductGroups.Any(t => t.Barcode.ToLower().Contains(FilterText.ToLower()))).ToList();
             }
-            set { _products = value; OnPropertyChanged(ProductsProperty); }
+            set { _products = value; RaisePropertyChanged(ProductsProperty); }
         }
 
         public string FilterText
@@ -95,7 +95,7 @@ namespace UserControls.ViewModels.Managers
             set
             {
                 _filterText = value.ToLower();
-                OnPropertyChanged("FilterText");
+                RaisePropertyChanged("FilterText");
                 DisposeTimer();
                 _timer = new Timer(TimerElapsed, null, 300, 300);
             }
@@ -125,7 +125,6 @@ namespace UserControls.ViewModels.Managers
         public ProductManagerViewModel()
         {
             Initialize();
-            LoadProducts();
         }
         #endregion
 
@@ -135,6 +134,7 @@ namespace UserControls.ViewModels.Managers
         {
             Title = "Ապրանքների խմբագրում";
             SetCommands();
+            LoadProducts();
         }
         private void SetCommands()
         {
@@ -154,7 +154,7 @@ namespace UserControls.ViewModels.Managers
 
         private void TimerElapsed(object obj)
         {
-            OnPropertyChanged(ProductsProperty);
+            RaisePropertyChanged(ProductsProperty);
             DisposeTimer();
         }
         private void DisposeTimer()
@@ -167,25 +167,33 @@ namespace UserControls.ViewModels.Managers
         }
         private void LoadProducts()
         {
-
-            new Thread(() =>
-            {
-                IsLoading = true;
-                _products = ApplicationManager.CashManager.Products;
-                var productResidue = ApplicationManager.CashManager.ProductResidues;
-                foreach (var item in _products)
-                {
-                    var product = item;
-                    item.ExistingQuantity = productResidue.Any(pr => pr.ProductId == product.Id) ?
-                        productResidue.Where(pr => pr.ProductId == product.Id).Select(pr => pr.Quantity).First() : 0;
-                }
-                Products = _products.OrderByDescending(s => s.Code).ToList();
-                Product = new ProductModel(_memberId, _userId, true); OnPropertyChanged("Product");
-                IsLoading = false;
-            }).Start();
-
+            new Thread(OnUpdateProducts).Start();
         }
 
+        private void OnUpdateProducts()
+        {
+            IsLoading = true;
+            _productOnBufer = null;
+            _products = ApplicationManager.CashManager.Products;
+            var productResidue = ApplicationManager.CashManager.ProductResidues;
+            foreach (var item in _products)
+            {
+                var product = item;
+                item.ExistingQuantity = productResidue.Any(pr => pr.ProductId == product.Id) ?
+                    productResidue.Where(pr => pr.ProductId == product.Id).Select(pr => pr.Quantity).First() : 0;
+            }
+            if (Application.Current != null)
+            {
+                Application.Current.Dispatcher.BeginInvoke( new Action(() => CompletedUpdate(_products.OrderByDescending(s => s.Code).ToList())));
+            }
+            IsLoading = false;
+        }
+
+        private void CompletedUpdate(List<ProductModel> products)
+        {
+            Products = products;
+            Product = _productOnBufer ?? new ProductModel(_memberId, _userId, true); RaisePropertyChanged("Product");
+        }
         private bool IsProductExist()
         {
             return (Products.SingleOrDefault(s => s.Id == Product.Id) != null);
@@ -195,11 +203,6 @@ namespace UserControls.ViewModels.Managers
         {
             return Products.Count(s => s.Id == Product.Id && s.Code == Product.Code) == 1;
         }
-        private void OnClose(object o)
-        {
-            ApplicationManager.OnTabItemClose(o as TabItem);
-        }
-
         private bool CanGetProduct(object o)
         {
             return !string.IsNullOrEmpty(o as string);
@@ -339,7 +342,7 @@ namespace UserControls.ViewModels.Managers
         }
         public void OnNewProduct(object o)
         {
-            Product = new ProductModel(_memberId, _userId, true); OnPropertyChanged(ProductProperty);
+            Product = new ProductModel(_memberId, _userId, true); RaisePropertyChanged(ProductProperty);
         }
         public void OnEditProduct(object o)
         {
@@ -367,9 +370,9 @@ namespace UserControls.ViewModels.Managers
         public void DeleteProduct(object o)
         {
             ProductsManager.DeleteProduct(Product.Id, _memberId);
-            _products.Remove(Product); OnPropertyChanged(ProductsProperty);
+            _products.Remove(Product); RaisePropertyChanged(ProductsProperty);
             ApplicationManager.CashManager.Products = Products;
-            Product = new ProductModel(_memberId, _userId, true); OnPropertyChanged("Product");
+            Product = new ProductModel(_memberId, _userId, true); RaisePropertyChanged("Product");
         }
         public bool CanChangeProductCode(object o)
         {
@@ -450,7 +453,7 @@ namespace UserControls.ViewModels.Managers
             if (ProductsManager.ChangeProductEnabled(Product.Id, ApplicationManager.GetEsMember.Id))
             {
                 Product.IsEnabled = !Product.IsEnabled;
-                OnPropertyChanged(ProductProperty); OnPropertyChanged(ProductsProperty);
+                RaisePropertyChanged(ProductProperty); RaisePropertyChanged(ProductsProperty);
             }
         }
 
@@ -465,13 +468,18 @@ namespace UserControls.ViewModels.Managers
             {
                 Product.ProductGroups = null;
             }
-            OnPropertyChanged(ProductGroupDescriptionProperty);
+            RaisePropertyChanged(ProductGroupDescriptionProperty);
         }
 
 
         public void SetProduct(ProductModel product)
         {
-            Product = product;
+            if(IsLoading)
+            {_productOnBufer = product;}
+            else
+            {
+                Product = product;
+            }
         }
         #endregion
 
@@ -503,18 +511,6 @@ namespace UserControls.ViewModels.Managers
         public ICommand ChangeProductEnabledCommand { get; private set; }
         public ICommand AddProductGroupCommand { get; private set; }
         public ICommand CloseCommand { get { return new RelayCommand(OnClose); } }
-        #endregion
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
         #endregion
     }
 }
