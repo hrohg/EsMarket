@@ -972,9 +972,9 @@ namespace ES.Market.ViewModels
         }
 
         private void OnManageProducts(object o)
-        { var vm = new ProductManagerViewModel();
+        { 
+            var vm = new ProductManagerViewModel();
             AddDocument(vm);
-            //AddTabControl(new EditProductUctrl(), new ProductViewModel());
         }
         private void OnSetProduct(ProductModel product)
         {
@@ -994,7 +994,7 @@ namespace ES.Market.ViewModels
 
         private void OnManagePartners(object o)
         {
-            AddTabControl(new EditPartnerUctrl(), new PartnerViewModel(_member.Id));
+            AddDocument(new PartnerViewModel(_member.Id));
         }
 
         #endregion
