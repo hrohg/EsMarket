@@ -6,15 +6,25 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBox VerticalAlignment="Top" Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Stretch" Height="25" FontSize="15" VerticalContentAlignment="Center" Width="Auto" BorderThickness="1" BorderBrush="Black"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button VerticalAlignment="Top" Grid.Row="0" 
+                        HorizontalAlignment="Right" 
+                        Background="Transparent" BorderBrush="Transparent"
+                        IsTabStop="False"
+                        Command="{Binding EditProductCommand}">
+                <Image Height="20" Width="20" Source="pack://application:,,,/Shared;component/Images/Edit.ico"/>
+            </Button>
+            </StackPanel>
+            <TextBox VerticalAlignment="Top" Grid.Row="1" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Stretch" Height="25" FontSize="15" VerticalContentAlignment="Center" Width="Auto" BorderThickness="1" BorderBrush="Black"/>
             <!--todo-->
             <!--<Button VerticalAlignment="Top" Grid.Row="0" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" IsTabStop="False">
                 <Image Height="20" Width="20" Source="pack://application:,,,/Shared;component/Images/Search.png"></Image>
             </Button>-->
-            <ListView Grid.Row="1" x:Name="ListView" ItemsSource="{Binding Items}" 
+            <ListView Grid.Row="2" x:Name="ListView" ItemsSource="{Binding Items}" 
                       DisplayMemberPath="Description" 
                       SelectedValuePath="Value"
                       SelectedItem="{Binding SelectedItem}"

@@ -19,6 +19,9 @@ namespace UserControls.ViewModels.Tools
 
         public delegate void OnSelectProductItemDelegate(ProductItemModel productItem);
         public event OnSelectProductItemDelegate OnProductItemSelected;
+
+        public delegate void OnManageProductDelegate(ProductModel product);
+        public event OnManageProductDelegate OnManageProduct;
         #endregion Events
 
         #region Internal proeprties
@@ -96,6 +99,7 @@ namespace UserControls.ViewModels.Tools
             AnchorSide = AnchorSide.Left;
             UpdateProducts();
             SelectItemCommand = new RelayCommand<Guid>(OnSelectItem);
+            EditProductCommand = new RelayCommand(OnManagingProduct, CanManageProduct);
         }
 
         private void UpdateProducts()
@@ -114,10 +118,31 @@ namespace UserControls.ViewModels.Tools
                 handle(new ProductItemModel { Id = Guid.Empty, Product = product, ProductId = product.Id });
             }
         }
+
+        private bool CanManageProduct(object item)
+        {
+            return true;
+            return SelectedItem != null;
+        }
+
+        private void OnManagingProduct(object item)
+        {
+            if(!CanManageProduct(item)) return;
+            var product = _products.SingleOrDefault(s => s.Id == SelectedItem.Value);
+            if(product==null) return;
+            ManageProduct((ProductModel)product);
+
+        }
+        private void ManageProduct(ProductModel product)
+        {
+            var handler = OnManageProduct;
+            if (handler != null) handler(product);
+        }
         #endregion Internal methods
 
         #region Commands
         public ICommand SelectItemCommand { get; private set; }
+        public ICommand EditProductCommand { get; private set; }
         #endregion Commands
     }
 
