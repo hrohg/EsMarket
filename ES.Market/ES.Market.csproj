@@ -126,9 +126,6 @@
     <Compile Include="Views\FinanceReportUctrl.xaml.cs">
       <DependentUpon>FinanceReportUctrl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\UsersManager.xaml.cs">
-      <DependentUpon>UsersManager.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Users\ChangePassword.xaml.cs">
       <DependentUpon>ChangePassword.xaml</DependentUpon>
     </Compile>
@@ -211,10 +208,6 @@
       <DependentUpon>MarketShell.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Controls\UsersManager.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Users\ChangePassword.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -304,10 +297,6 @@
     <ProjectReference Include="..\UserControls\UserControls.csproj">
       <Project>{fb4cac1b-f794-454c-ab58-908e3c679685}</Project>
       <Name>UserControls</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WPF.MDI\WPF.MDI.csproj">
-      <Project>{be1ed569-5e0b-4df0-8964-33ad2aae4c4a}</Project>
-      <Name>WPF.MDI</Name>
     </ProjectReference>
     <ProjectReference Include="..\Xceed.Wpf.AvalonDock\Xceed.Wpf.AvalonDock.csproj">
       <Project>{db81988f-e0f2-45a0-a1fd-8c37f3d35244}</Project>

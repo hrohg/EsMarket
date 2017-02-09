@@ -46,6 +46,7 @@ using UserControls.ViewModels;
 using UserControls.ViewModels.Documents;
 using UserControls.ViewModels.Invoices;
 using UserControls.ViewModels.Logs;
+using UserControls.ViewModels.Managers;
 using UserControls.ViewModels.Partners;
 using UserControls.ViewModels.Products;
 using UserControls.ViewModels.Reports;
@@ -74,6 +75,17 @@ namespace ES.Market.ViewModels
         private const string MessagesProperty = "Messages";
         private const string MessageProperty = "Message";
         private ProductItemsToolsViewModel _productItemsToolsViewModel;
+        private ProductItemsToolsViewModel ProductitemsToolViewModel
+        {
+            get
+            {
+                if (_productItemsToolsViewModel == null)
+                {
+                    _productItemsToolsViewModel = new ProductItemsToolsViewModel();
+                    _productItemsToolsViewModel.OnManageProduct += OnSetProduct;
+                }
+                return _productItemsToolsViewModel;
+            } }
         #endregion
 
         #region Internal properties
@@ -960,10 +972,21 @@ namespace ES.Market.ViewModels
         }
 
         private void OnManageProducts(object o)
-        {
-            AddTabControl(new EditProductUctrl(), new ProductViewModel());
+        { var vm = new ProductManagerViewModel();
+            AddDocument(vm);
+            //AddTabControl(new EditProductUctrl(), new ProductViewModel());
         }
-
+        private void OnSetProduct(ProductModel product)
+        {
+            var vm = Documents.OfType<ProductManagerViewModel>().FirstOrDefault();
+            if (vm == null)
+            {
+                vm = new ProductManagerViewModel();
+                AddDocument(vm);
+            }
+            vm.IsActive = true;
+            vm.SetProduct(product);
+        }
         private bool CanManagePartners(object o)
         {
             return _userRoles.Any(s => s.RoleName == "Manager");
@@ -1032,11 +1055,9 @@ namespace ES.Market.ViewModels
             {
                 AddDocument((DocumentViewModel)model);
                 ((PaneViewModel)model).IsActive = true;
-                if (_productItemsToolsViewModel == null)
-                    _productItemsToolsViewModel = new ProductItemsToolsViewModel();
                 if (model is InvoiceViewModel)
-                    _productItemsToolsViewModel.OnProductItemSelected += ((InvoiceViewModel)model).OnSetProductItem;
-                OnCreateProductItemsTools(_productItemsToolsViewModel);
+                    ProductitemsToolViewModel.OnProductItemSelected += ((InvoiceViewModel)model).OnSetProductItem;
+                OnCreateProductItemsTools(ProductitemsToolViewModel);
             }
             int nextTab;
             var tabShop = _parentTabControl.FindChild<TabControl>();

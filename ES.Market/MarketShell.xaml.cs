@@ -226,7 +226,7 @@ namespace ES.Market
         }
         private void MiEditUsers_Click(object sender, RoutedEventArgs e)
         {
-            new WinUsersManager().Show();
+            //new WinUsersManager().Show();
         }
         private void MiManageUsers_Click(object sender, RoutedEventArgs e)
         {
