@@ -6,6 +6,7 @@
   &lt;Assembly Path="D:\MyProjects\ES\ES Market\Bin\CashReg.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Hrayr\VS Projects\ES\EsLogistics\Bin\CashReg.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
+	<s:Int64 x:Key="/Default/Environment/SearchAndNavigation/DefaultOccurencesGroupingIndex/@EntryValue">1</s:Int64>
 	<s:Boolean x:Key="/Default/Housekeeping/Bookmarks/NumberedBookmarks/=Bookmark5/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/Housekeeping/Bookmarks/NumberedBookmarks/=Bookmark5/Coords/@EntryValue">(Doc Ln 150 Col 106)</s:String>
 	<s:String x:Key="/Default/Housekeeping/Bookmarks/NumberedBookmarks/=Bookmark5/FileId/@EntryValue">05AE8764-EB14-4846-95F9-1677EF72C0FC/d:Views/d:Reports/d:View/f:ProductsHistory.xaml</s:String>
