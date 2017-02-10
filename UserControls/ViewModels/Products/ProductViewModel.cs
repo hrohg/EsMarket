@@ -14,7 +14,6 @@ using ES.Common;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Data.Models;
-using ES.Common;
 using UserControls.Barcodes;
 using UserControls.Barcodes.ViewModels;
 using UserControls.Commands;

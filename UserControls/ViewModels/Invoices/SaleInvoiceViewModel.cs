@@ -86,7 +86,7 @@ namespace UserControls.ViewModels.Invoices
             {
                 item.Price = GetPartnerPrice(item.Product);
             }
-            OnPropertyChanged("InvoiceItems");
+            RaisePropertyChanged("InvoiceItems");
             if (InvoiceItem != null)
             {
                 InvoiceItem.Price = GetPartnerPrice(InvoiceItem.Product);

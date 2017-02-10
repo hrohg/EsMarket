@@ -39,7 +39,7 @@ namespace UserControls.ViewModels.Invoices
                 base.Partner = value;
                 Invoice.ProviderName = value != null ? value.FullName : null;
                 IsModified = true;
-                OnPropertyChanged(PartnerProperty);
+                RaisePropertyChanged(PartnerProperty);
             }
         }
 
