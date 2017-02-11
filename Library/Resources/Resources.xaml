@@ -6,11 +6,11 @@
         <ResourceDictionary Source="TextBoxes.xaml"/>
         <ResourceDictionary Source="LoadingControls.xaml"/>
         <ResourceDictionary Source="Tabs.xaml"/>
-
+        <ResourceDictionary Source="Avalon/AvalonDockStyle.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
     <SolidColorBrush x:Key="OutsideFontColor" Color="#FF9906" />
-    
-    
-    
+
+
+
 </ResourceDictionary>
