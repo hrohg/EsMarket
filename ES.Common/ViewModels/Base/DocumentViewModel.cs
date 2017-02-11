@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace ES.Common.ViewModels.Base
+﻿namespace ES.Common.ViewModels.Base
 {
     public class DocumentViewModel : PaneViewModel
     {
@@ -12,7 +7,25 @@ namespace ES.Common.ViewModels.Base
         #endregion Internal properties
 
         #region External properties
+        #region Description
 
+        private string _description;
+
+        public virtual string Description
+        {
+            get
+            {
+                return _description;
+            }
+            set
+            {
+                if(value==_description) return;
+                _description = value;
+                RaisePropertyChanged("Description");
+            }
+        }
+
+        #endregion Description
         #endregion External properties
 
         #region Constructors

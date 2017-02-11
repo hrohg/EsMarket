@@ -123,7 +123,7 @@ namespace ES.Common.ViewModels.Base
         #region IsSelected
 
         private bool _isSelected = false;
-        public bool IsSelected
+        public virtual bool IsSelected
         {
             get { return _isSelected; }
             set
