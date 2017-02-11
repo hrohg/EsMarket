@@ -15,8 +15,8 @@
         <Grid.InputBindings>
             <KeyBinding Gesture="Ctrl+F" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
             <KeyBinding Gesture="Ctrl+Shift+F" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithFilters}"/>
-            <KeyBinding Gesture="Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintSizeEnum.Normal}"/>
-            <KeyBinding Gesture="Ctrl+Shift+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintSizeEnum.Small}"/>
+            <KeyBinding Gesture="Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
+            <KeyBinding Gesture="Ctrl+Shift+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Small}"/>
             <KeyBinding Gesture="Ctrl+Shift+X" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
             <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveInvoiceCommand}"/>
             <KeyBinding Gesture="Ctrl+Shift+A" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
@@ -25,7 +25,7 @@
             <ContextMenu>
                 <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"></MenuItem>
                 <MenuItem Header="Հաստատել (Փակել) Ctrl+A" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabItem}}" Tag="1"></MenuItem>
-                <MenuItem Header="Հաստատել տպել Ctrl+P" Tag="2" IsEnabled="False" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintSizeEnum.Normal}"></MenuItem>
+                <MenuItem Header="Հաստատել տպել Ctrl+P" Tag="2" IsEnabled="False" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"></MenuItem>
             </ContextMenu>
         </Grid.ContextMenu>
         <Grid.RowDefinitions>
@@ -262,8 +262,8 @@
                         <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"  />
                         <MenuItem Header="Հաստատել" Command="{Binding ApproveInvoiceCommand}"  />
                         <Separator/>
-                        <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintSizeEnum.Normal}"/>
-                        <MenuItem Header="Տպել վաճառքի կտրոն Ctrl+Shift+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintSizeEnum.Small}"/>
+                        <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
+                        <MenuItem Header="Տպել վաճառքի կտրոն Ctrl+Shift+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Small}"/>
                         <MenuItem Header="Տպել ՀԴՄ կտրոն" Command="{Binding PrintEcrTicketCommand}"/>
                         <Separator/>
                         <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>

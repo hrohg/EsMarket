@@ -27,6 +27,10 @@ namespace UserControls.ViewModels.Managers
 {
     public class ProductManagerViewModel : DocumentViewModel
     {
+        #region Events
+        public delegate void OnProductEditedDelegate();
+        public event OnProductEditedDelegate OnProductEdited;
+        #endregion Events
         #region Product properties
         private const string ProductProperty = "Product";
         private const string ProductsProperty = "Products";
@@ -35,7 +39,7 @@ namespace UserControls.ViewModels.Managers
         #endregion
 
         #region Private properties
-        private long _memberId{get { return ApplicationManager.GetEsMember.Id; }}
+        private long _memberId { get { return ApplicationManager.GetEsMember.Id; } }
         private long _userId { get { return ApplicationManager.GetEsUser.UserId; } }
         private ProductModel _product;
         private List<ProductModel> _products;
@@ -149,7 +153,7 @@ namespace UserControls.ViewModels.Managers
 
             GetProductsCommand = new RelayCommand(GetProductBy);
             ChangeProductEnabledCommand = new RelayCommand(ChangeProductEnabled, CanChangeProductEnabled);
-        AddProductGroupCommand = new RelayCommand<string>(OnAddProductGroup, CanAddProductGroup);
+            AddProductGroupCommand = new RelayCommand<string>(OnAddProductGroup, CanAddProductGroup);
         }
 
         private void TimerElapsed(object obj)
@@ -184,7 +188,7 @@ namespace UserControls.ViewModels.Managers
             }
             if (Application.Current != null)
             {
-                Application.Current.Dispatcher.BeginInvoke( new Action(() => CompletedUpdate(_products.OrderByDescending(s => s.Code).ToList())));
+                Application.Current.Dispatcher.BeginInvoke(new Action(() => CompletedUpdate(_products.OrderByDescending(s => s.Code).ToList())));
             }
             IsLoading = false;
         }
@@ -359,6 +363,8 @@ namespace UserControls.ViewModels.Managers
                 {
                     ProductsManager.CopyProduct(Products.SingleOrDefault(s => s.Id == product.Id), product);
                     ApplicationManager.MessageManager.OnNewMessage(new MessageModel(string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումն իրականացել է հաջողությամբ։", product.Code, product.Description), MessageModel.MessageTypeEnum.Success));
+                    var handler = OnProductEdited;
+                    if (handler != null) handler();
                 }
                 ApplicationManager.CashManager.Products = _products;
             }
@@ -443,11 +449,11 @@ namespace UserControls.ViewModels.Managers
         }
         public void GetProductBy(object o)
         {
-            var type = o is ProductViewType? (ProductViewType)o:(ProductViewType?)null;
+            var type = o is ProductViewType ? (ProductViewType)o : (ProductViewType?)null;
             Products = new ProductsManager().GetProductsBy(type ?? ProductViewType.ByActive, ApplicationManager.GetEsMember.Id);
         }
         public bool CanChangeProductEnabled(object o)
-        {  return Product != null && _products.Any(s => s.Id == Product.Id); }
+        { return Product != null && _products.Any(s => s.Id == Product.Id); }
         public void ChangeProductEnabled(object o)
         {
             if (ProductsManager.ChangeProductEnabled(Product.Id, ApplicationManager.GetEsMember.Id))
@@ -474,8 +480,8 @@ namespace UserControls.ViewModels.Managers
 
         public void SetProduct(ProductModel product)
         {
-            if(IsLoading)
-            {_productOnBufer = product;}
+            if (IsLoading)
+            { _productOnBufer = product; }
             else
             {
                 Product = product;

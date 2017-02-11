@@ -165,7 +165,7 @@ namespace UserControls.ViewModels.Invoices
             ApplicationManager.MessageManager.OnNewMessage(message);
         }
 
-        protected override void OnImportInvoice(object o)
+        protected override void OnImportInvoice(ExportInportEnum importFrom)
         {
             InvoiceItems.Clear();
             var filePath = FileManager.OpenExcelFile("Excel files(*.xls *.xlsx *․xlsm)|*.xls;*.xlsm;*․xlsx|Excel with macros|*.xlsm|Excel 97-2003 file|*.xls", "Excel ֆայլի բեռնում", ConfigSettings.GetConfig("ImportingFilePath"));
@@ -229,7 +229,7 @@ namespace UserControls.ViewModels.Invoices
 
         #region External methods
 
-        protected override void OnPrintInvoice(PrintSizeEnum printSize)
+        protected override void OnPrintInvoice(PrintModeEnum printSize)
         {
             if (!CanPrintInvoice(printSize)) { return; }
             var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
@@ -237,13 +237,13 @@ namespace UserControls.ViewModels.Invoices
 
             switch (printSize)
             {
-                case PrintSizeEnum.Normal:
+                case PrintModeEnum.Normal:
                     PrintManager.PrintPreview(ctrl, "Print invoices", true);
                     break;
-                case PrintSizeEnum.Small:
+                case PrintModeEnum.Small:
                     PrintInvoiceTicket(null);
                     break;
-                case PrintSizeEnum.Large:
+                case PrintModeEnum.Large:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("printSize", printSize, null);

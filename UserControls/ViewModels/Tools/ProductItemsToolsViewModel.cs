@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Windows.Input;
@@ -9,6 +10,7 @@ using ES.Business.Models;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
+using UserControls.Commands;
 using Xceed.Wpf.AvalonDock.Layout;
 
 namespace UserControls.ViewModels.Tools
@@ -68,7 +70,7 @@ namespace UserControls.ViewModels.Tools
 
         public List<CustomItem> Items
         {
-            get { return _items.Where(s=>s.Description.ToLower().Contains(Filter)).ToList(); }
+            get { return _items.Where(s => s.Description.ToLower().Contains(Filter)).ToList(); }
             private set
             {
                 _items = value;
@@ -97,17 +99,16 @@ namespace UserControls.ViewModels.Tools
             IsFloating = true;
             CanFloat = true;
             AnchorSide = AnchorSide.Left;
-            UpdateProducts();
+            OnUpdateProducts(null);
             SelectItemCommand = new RelayCommand<Guid>(OnSelectItem);
             EditProductCommand = new RelayCommand(OnManagingProduct, CanManageProduct);
+            UpdateProductsCommand = new RelayCommand(OnUpdateProducts);
         }
-
-        private void UpdateProducts()
+        public void OnUpdateProducts(object o)
         {
             _products = ApplicationManager.CashManager.Products.OrderBy(s => s.Description).ToList();
             Items = _products.Select(p => new CustomItem(p.Id, string.Format("{0} {1} {2}", p.Code, p.Description, p.Price))).ToList();
         }
-
         private void OnSelectItem(Guid id)
         {
             var product = _products.FirstOrDefault(s => s.Id == SelectedItem.Value);
@@ -121,15 +122,14 @@ namespace UserControls.ViewModels.Tools
 
         private bool CanManageProduct(object item)
         {
-            return true;
             return SelectedItem != null;
         }
 
         private void OnManagingProduct(object item)
         {
-            if(!CanManageProduct(item)) return;
+            if (!CanManageProduct(item)) return;
             var product = _products.SingleOrDefault(s => s.Id == SelectedItem.Value);
-            if(product==null) return;
+            if (product == null) return;
             ManageProduct((ProductModel)product);
 
         }
@@ -140,9 +140,17 @@ namespace UserControls.ViewModels.Tools
         }
         #endregion Internal methods
 
+        #region External methods
+        public void UpdateProducts()
+        {
+            OnUpdateProducts(null);
+        }
+        #endregion External methods
+
         #region Commands
         public ICommand SelectItemCommand { get; private set; }
         public ICommand EditProductCommand { get; private set; }
+        public ICommand UpdateProductsCommand { get; private set; }
         #endregion Commands
     }
 

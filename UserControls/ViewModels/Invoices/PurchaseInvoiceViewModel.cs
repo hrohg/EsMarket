@@ -128,7 +128,7 @@ namespace UserControls.ViewModels.Invoices
             InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id, Member.Id).OrderBy(s => s.Index));
             IsModified = false;
         }
-        protected override void OnPrintInvoice(PrintSizeEnum printSize)
+        protected override void OnPrintInvoice(PrintModeEnum printSize)
         {
             if (!CanPrintInvoice(printSize)) { return; }
             var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();

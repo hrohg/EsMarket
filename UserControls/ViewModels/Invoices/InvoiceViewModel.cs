@@ -35,23 +35,19 @@ using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Invoices
 {
-    public class InvoiceViewModel : DocumentViewModel, IInvoiceViewModel, ITabItem
+    public class InvoiceViewModel : InvoiceViewModelBase
     {
         /// <summary>
         /// Initalize a new instance of the ProductViewModel class.
         /// </summary>
         #region Properties
         private const string DenayChangePriceProperty = "DenayChangePrice";
-
-        private const string InvoiceProperty = "Invoice";
-        private const string FromStockProperty = "FromStock";
-        private const string ToStockProperty = "ToStock";
         protected const string IsExpiringProperty = "IsExpiring";
-        protected const string FilteredInvoiceItemsProperty = "FilteredInvoiceItems";
-        protected const string PartnerProperty = "Partner";
-        protected const string TitleProperty = "Title";
+        
+        
+
         protected const string ShortTitleProperty = "ShortTitle";
-        protected const string IsModifiedProperty = "IsModified";
+
         #endregion
 
         /// <summary>
@@ -64,46 +60,15 @@ namespace UserControls.ViewModels.Invoices
         protected EsUserModel User;
         protected EsMemberModel Member;
         private List<MembersRoles> _roles = new List<MembersRoles>();
-        private InvoiceModel _invoice;
-        private PartnerModel _partner;
+
+        
         private InvoiceItemsModel _invoiceItem;
-        private ObservableCollection<InvoiceItemsModel> _invoiceItems = new ObservableCollection<InvoiceItemsModel>();
+
         private AccountsReceivableModel _accountsReceivable;
         private InvoicePaid _invoicePaid = new InvoicePaid();
-        protected List<StockModel> FromStocks { get; set; }
-        protected StockModel _fromStock;
-        protected StockModel _toStock;
+        
         protected string ProductSearchKey;
-        private bool _isModified;
-        private void InvoiceItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                foreach (InvoiceItemsModel item in e.OldItems)
-                {
-                    //Removed items
-                    item.PropertyChanged -= InvoiceItemPropertyChanged;
-                }
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (InvoiceItemsModel item in e.NewItems)
-                {
-                    //Added items
-                    item.PropertyChanged += InvoiceItemPropertyChanged;
-                }
-            }
-            InvoiceItemPropertyChanged(null, null);
-        }
-        private void InvoiceItemPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            InvoicePaid.Total = Invoice.Total = InvoiceItems.Sum(s => s.Amount);
-            Invoice.Amount = InvoiceItems.Sum(s => (s.Product.Price ?? 0) * (s.Quantity ?? 0));
-            OnPropertyChanged("ProductQuantity");
-            OnPropertyChanged("ActualPercentage");
-            OnPropertyChanged("InvoiceProfit");
-            OnPropertyChanged("ProductCount");
-        }
+
         #endregion
 
         /// <summary>
@@ -111,53 +76,6 @@ namespace UserControls.ViewModels.Invoices
         /// </summary>
 
         #region InvoiceViewModel External properties
-
-        #region Title
-        private string _title;
-
-        private string _description;
-        public virtual string Description
-        {
-            get
-            {
-                return _description ?? (Partner != null ? string.Format("{0} ({1})", Title, Partner.FullName) : Title);
-            }
-            set
-            {
-                if (_description == value) return;
-                _description = value;
-                RaisePropertyChanged("Description");
-            }
-        }
-
-        public virtual string Title
-        {
-            get
-            {
-                return _title;
-            }
-            set
-            {
-                if (_title == value) return;
-                _title = value;
-                RaisePropertyChanged("Title");
-                RaisePropertyChanged("Description");
-            }
-        }
-
-        #endregion Title
-
-        public bool IsModified
-        {
-            get { return _isModified; }
-            set
-            {
-                _isModified = value;
-                OnPropertyChanged(IsModifiedProperty);
-                OnPropertyChanged(ShortTitleProperty);
-                OnPropertyChanged(TitleProperty);
-            }
-        }
 
         public bool IsLoading
         {
@@ -173,47 +91,15 @@ namespace UserControls.ViewModels.Invoices
             }
         }
 
-        public virtual PartnerModel Partner
-        {
-            get { return _partner; }
-            set
-            {
-                _partner = value;
-                Invoice.PartnerId = value != null ? value.Id : (Guid?)null;
-                IsModified = true;
-                OnPropertyChanged(PartnerProperty);
-            }
-        }
-        public InvoiceModel Invoice
-        {
-            get { return _invoice; }
-            set
-            {
-                if (value == null) return;
-                _invoice = value;
-                OnPropertyChanged(InvoiceProperty);
-                FromStock = _invoice.FromStockId != null ? StockManager.GetStock(_invoice.FromStockId, _invoice.MemberId) : null;
-                ToStock = _invoice.ToStockId != null ? StockManager.GetStock(_invoice.ToStockId, _invoice.MemberId) : null;
-                Partner = Invoice.Partner ?? PartnersManager.GetPartner(Invoice.PartnerId, Invoice.MemberId);
-                var invoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id, Member.Id).OrderBy(s => s.Index));
-                InvoiceItems = new ObservableCollection<InvoiceItemsModel>();
-                _invoiceItems.CollectionChanged += InvoiceItemsChanged;
-                foreach (var invoiceItemsModel in invoiceItems)
-                {
-                    InvoiceItems.Add(invoiceItemsModel);
-                }
-                SelectedInvoiceItem = invoiceItems.LastOrDefault();
+        
 
-                IsModified = true;
-            }
-        }
         public bool DenayChangePrice { get { return (_roles.FirstOrDefault(s => s.RoleName == "Manager" || s.RoleName == "Director") == null); } }
+
         public InvoiceItemsModel InvoiceItem
         {
             get { return _invoiceItem; }
             set { _invoiceItem = value; OnPropertyChanged("InvoiceItem"); OnPropertyChanged(IsExpiringProperty); }
         }
-
         private InvoiceItemsModel _selectedInvoiceItem;
         public InvoiceItemsModel SelectedInvoiceItem
         {
@@ -232,66 +118,12 @@ namespace UserControls.ViewModels.Invoices
             }
         }
 
-        public ObservableCollection<InvoiceItemsModel> InvoiceItems
-        {
-            get { return _invoiceItems; }
-            set
-            {
-                _invoiceItems = value;
-                OnPropertyChanged("InvoiceItems"); OnPropertyChanged(FilteredInvoiceItemsProperty);
-                InvoicePaid.Total = Invoice.Total = InvoiceItems.Sum(s => s.Amount);
-                Invoice.Amount = InvoiceItems.Sum(s => s.Product.Price ?? 0 * s.Quantity ?? 0);
-                IsModified = true;
-            }
-        }
-        public ObservableCollection<InvoiceItemsModel> FilteredInvoiceItems
-        {
-            get
-            {
-                return new ObservableCollection<InvoiceItemsModel>(_invoiceItems.Where(s => string.IsNullOrEmpty(Filter) ||
-                    s.Code.Contains(Filter) ||
-                    s.Description.Contains(Filter) ||
-                    s.Price.ToString().Contains(Filter)));
-            }
-        }
         public AccountsReceivableModel AccountsReceivable { get { return _accountsReceivable; } set { _accountsReceivable = value; } }
         public InvoicePaid InvoicePaid
         {
             get { return _invoicePaid; }
             set { _invoicePaid = value; }
         }
-        public StockModel FromStock
-        {
-            get
-            {
-                return _fromStock;
-            }
-            set
-            {
-                _fromStock = value;
-                Invoice.FromStockId = value != null ? value.Id : (long?)null;
-                Invoice.ProviderName = value != null ? value.FullName : string.Empty;
-                if (value != null) FromStocks = new List<StockModel> { value };
-                OnPropertyChanged(FromStockProperty);
-                IsModified = true;
-            }
-        }
-        public StockModel ToStock
-        {
-            get
-            {
-                return _toStock;
-            }
-            set
-            {
-                _toStock = value;
-                Invoice.ToStockId = value != null ? value.Id : (long?)null;
-                Invoice.RecipientName = value != null ? value.FullName : string.Empty;
-                OnPropertyChanged(ToStockProperty);
-                IsModified = true;
-            }
-        }
-        public string Filter { get; set; }
         public bool SaleBySingle { get; set; }
         public bool MoveBySingle { get; set; }
         public bool BuyBySingle { get; set; }
@@ -329,7 +161,7 @@ namespace UserControls.ViewModels.Invoices
 
         private void Initialize()
         {
-            Title = "Ապրանքագիր";
+
             IsClosable = true;
             SaleBySingle = ApplicationManager.BuyBySingle;
             BuyBySingle = ApplicationManager.BuyBySingle;
@@ -337,6 +169,17 @@ namespace UserControls.ViewModels.Invoices
             SetICommands();
             IsModified = false;
             CanFloat = true;
+        }
+        protected override void OnInvoiceItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnInvoiceItemPropertyChanged(sender, e);
+
+            InvoicePaid.Total = Invoice.Total = InvoiceItems.Sum(s => s.Amount);
+            Invoice.Amount = InvoiceItems.Sum(s => (s.Product.Price ?? 0) * (s.Quantity ?? 0));
+            RaisePropertyChanged("ProductQuantity");
+            RaisePropertyChanged("ActualPercentage");
+            RaisePropertyChanged("InvoiceProfit");
+            RaisePropertyChanged("ProductCount");
         }
         private void SetICommands()
         {
@@ -350,14 +193,14 @@ namespace UserControls.ViewModels.Invoices
             //ExportInvoiceToXmlCommand = new ExportInvoiceToXmlCommands(this);
             //ExportInvoiceToExcelRusCommand = new ExportInvoiceToExcelRusCommands(this);
             //ExportInvoiceToXmlRusCommand = new ExportInvoiceToXmlRusCommands(this);
-            ImportInvoiceCommand = new RelayCommand(OnImportInvoice, CanImportInvoice);
+            
             ApproveMoveInvoiceCommand = new ApproveMoveInvoiceCommands(this);
             AddItemsFromPurchaseInvoiceCommand = new AddItemsFromInvoiceCommands(this, InvoiceType.PurchaseInvoice);
             AddItemsFromMoveInvoiceCommand = new AddItemsFromInvoiceCommands(this, InvoiceType.MoveInvoice);
             AddItemsFromStocksCommand = new AddItemsFromStocksCommand(this, InvoiceType.MoveInvoice);
             ApproveInvoiceAndCloseCommand = new ApproveCloseInvoiceCommands(this);
 
-            PrintInvoiceCommand = new RelayCommand<PrintSizeEnum>(OnPrintInvoice, CanPrintInvoice);
+            
 
             GetPartnerCommand = new RelayCommand(OnGetPartner);
             GetProductCommand = new RelayCommand(OnGetProduct);
@@ -366,7 +209,7 @@ namespace UserControls.ViewModels.Invoices
         }
         private void SetModels()
         {
-            InvoiceItem = new InvoiceItemsModel(_invoice);
+            InvoiceItem = new InvoiceItemsModel(Invoice);
             if (Partner == null)
             {
                 SetDefaultPartner();
@@ -498,45 +341,27 @@ namespace UserControls.ViewModels.Invoices
         }
 
         #region Commands methods
-        protected virtual bool CanImportInvoice(object o)
+
+        #region Print invoice
+        protected override bool CanPrintInvoice(PrintModeEnum printSize)
         {
-            return true;
+            return Invoice != null && InvoiceItems != null && InvoiceItems.Count > 0;
         }
-        protected virtual void OnImportInvoice(object o)
+        protected override void OnPrintInvoice(PrintModeEnum printSize)
         {
-            var filePath = FileManager.OpenExcelFile();
-            if (File.Exists(filePath))
+            if (!CanPrintInvoice(printSize)) { return; }
+            var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
+            var ctrl = new InvoicePreview(new ReceiptTicketViewModel(new ResponseReceiptModel())
             {
-                var invoiceObject = ExcelImportManager.ImportInvoice(filePath);
-                if (invoiceObject == null) return;
-                var importInvoice = invoiceObject.Item1 as InvoiceModel;
-                var importInvoiceItems = invoiceObject.Item2 as List<InvoiceItemsModel>;
-                if (importInvoice == null || importInvoiceItems == null) return;
-                Invoice = new InvoiceModel(User, Member, Invoice.InvoiceTypeId);
-                Invoice.CreateDate = importInvoice.CreateDate;
-                if (Invoice.CreateDate == DateTime.MinValue) Invoice.CreateDate = DateTime.Now;
-                InvoiceItems.Clear();
-                foreach (var invoiceItem in importInvoiceItems)
-                {
-                    if (invoiceItem == null || string.IsNullOrEmpty(invoiceItem.Code)) return;
-                    var product = new ProductsManager().GetProductsByCodeOrBarcode(invoiceItem.Code, Member.Id);
-                    if (product == null)
-                    {
-                        MessageBox.Show(invoiceItem.Code +
-                            " կոդով ապրանք չի հայտնաբերվել։ Գործողությունն ընդհատված է։ Փորձեք կրկին։",
-                            "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-                    invoiceItem.InvoiceId = Invoice.Id;
-                    invoiceItem.ProductId = product.Id;
-                    invoiceItem.Description = product.Description;
-                    invoiceItem.Mu = product.Mu;
-                    invoiceItem.Note += product.Note;
-                    invoiceItem.Product = product;
-                    InvoiceItems.Add(invoiceItem);
-                }
-            }
+                Invoice = Invoice,
+                InvoiceItems = InvoiceItems.ToList(),
+                InvoicePaid = InvoicePaid
+            });
+            PrintManager.PrintPreview(ctrl, "Print invoice", true);
+            //PrintManager.PrintOnActivePrinter(new ReceiptTicketSmall(new ReceiptTicketViewModel(new ResponceReceiptModel()){Invocie = Invoice, InvoiceItems = InvoiceItems.ToList(), InvoicePaid = InvoicePaid}), ApplicationManager.ActivePrinter);
+
         }
+        #endregion
 
         private bool CanCleanInvoiceItems(object o)
         {
@@ -555,11 +380,7 @@ namespace UserControls.ViewModels.Invoices
 
         #endregion
 
-        /// <summary>
-        /// nvoiceview model public methods
-        /// </summary>
-
-        #region Invoiceview model public methods
+        #region External methods
         public decimal GetAddedItemCount(decimal? exCount, bool isCountFree)
         {
             var countWindow = new SelectCount(new SelectCountModel(null, exCount, InvoiceItem.Description, isCountFree));
@@ -657,9 +478,10 @@ namespace UserControls.ViewModels.Invoices
 
         protected virtual void CreateNewInvoiceItem(ProductItemModel productItem)
         {
-            if (!IsActive || productItem == null || productItem.Product == null) return;
+            if (!IsSelected || productItem == null || productItem.Product == null) return;
             InvoiceItem = new InvoiceItemsModel
             {
+                InvoiceId = Invoice.Id,
                 Product = productItem.Product,
                 ProductItemId = productItem.Id != Guid.Empty ? productItem.Id : (Guid?)null,
                 ProductId = productItem.ProductId,
@@ -722,16 +544,6 @@ namespace UserControls.ViewModels.Invoices
             SelectedInvoiceItem = InvoiceItem;
             InvoiceItem = new InvoiceItemsModel(Invoice);
             IsModified = true;
-            OnPropertyChanged(FilteredInvoiceItemsProperty);
-        }
-
-        public bool CanExportInvoice()
-        {
-            return InvoiceItems.Count > 0;
-        }
-        public void ExportPrintInvoice()
-        {
-            ExcelExportManager.ExportInvoice(Invoice, InvoiceItems, printInvoice: true);
         }
 
         public void ExportInvoice(bool isCostPrice = false, bool isPrice = true)
@@ -783,20 +595,7 @@ namespace UserControls.ViewModels.Invoices
         {
             return CanSaveInvoice(o);
         }
-        protected virtual void OnPrintInvoice(PrintSizeEnum printSize)
-        {
-            if (!CanPrintInvoice(printSize)) { return; }
-            var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
-            var ctrl = new InvoicePreview(new ReceiptTicketViewModel(new ResponseReceiptModel())
-            {
-                Invoice = Invoice,
-                InvoiceItems = InvoiceItems.ToList(),
-                InvoicePaid = InvoicePaid
-            });
-            PrintManager.PrintPreview(ctrl, "Print invoice", true);
-            //PrintManager.PrintOnActivePrinter(new ReceiptTicketSmall(new ReceiptTicketViewModel(new ResponceReceiptModel()){Invocie = Invoice, InvoiceItems = InvoiceItems.ToList(), InvoicePaid = InvoicePaid}), ApplicationManager.ActivePrinter);
-
-        }
+        
         public void PrintInvoice(bool isPrice, bool isPrint = true)
         {
             var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
@@ -915,12 +714,7 @@ namespace UserControls.ViewModels.Invoices
             InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id, Member.Id).OrderBy(s => s.Index));
             IsModified = false;
         }
-        #region Print invoice
-        protected bool CanPrintInvoice(PrintSizeEnum printSize)
-        {
-            return Invoice != null && InvoiceItems != null && InvoiceItems.Count > 0;
-        }
-        #endregion
+        
         private void CheckForPrize(InvoiceModel invoice)
         {
             if (!InvoicesManager.CheckForPrize(invoice)) return;
@@ -965,7 +759,7 @@ namespace UserControls.ViewModels.Invoices
 
         }
         #endregion
-        #endregion
+        #endregion External methods
 
         #region Commands
         public ICommand RemoveInvoiceItemCommand { get; private set; }
@@ -973,7 +767,7 @@ namespace UserControls.ViewModels.Invoices
         public ICommand SaveInvoiceCommand { get { return new RelayCommand(OnSaveInvoice, CanSaveInvoice); } }
         public ICommand PrintInvoiceItemCommand { get; private set; }
         public ICommand ApproveInvoiceCommand { get { return new RelayCommand(OnApprove, CanApprove); } }
-        public ICommand ImportInvoiceCommand { get; private set; }
+        
         public ICommand ExportInvoiceCommand { get; private set; }
         public ICommand ExportInvoiceToExcelCommand { get; private set; }
         public ICommand ExportInvoiceToXmlCommand { get; private set; }
@@ -984,8 +778,7 @@ namespace UserControls.ViewModels.Invoices
         public ICommand AddItemsFromMoveInvoiceCommand { get; private set; }
         public ICommand AddItemsFromStocksCommand { get; private set; }
         public ICommand ApproveInvoiceAndCloseCommand { get; private set; }
-        public ICommand PrintInvoiceCommand { get; private set; }
-
+        
         public ICommand GetPartnerCommand { get; private set; }
         public ICommand GetProductCommand { get; private set; }
         public ICommand CleanInvoiceIemsCommand { get; private set; }

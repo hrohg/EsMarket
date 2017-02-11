@@ -27,7 +27,7 @@ namespace UserControls.ViewModels.Invoices
         {
             return base.CanAddInvoiceItem(o) && FromStocks != null;
         }
-        protected override void OnPrintInvoice(PrintSizeEnum printSize)
+        protected override void OnPrintInvoice(PrintModeEnum printSize)
         {
             if (!CanPrintInvoice(printSize)) { return; }
             var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();

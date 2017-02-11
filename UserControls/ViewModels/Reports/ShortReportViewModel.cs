@@ -46,7 +46,8 @@ namespace UserControls.ViewModels.Reports
             {
                 _invoices = value;
                 _invoiceItems = _report.InvocieItems.ToList();
-                OnPropertyChanged(InvoicesProperty); OnPropertyChanged(SaleItemsProperty);
+                RaisePropertyChanged(InvoicesProperty); 
+                RaisePropertyChanged(SaleItemsProperty);
             }
         }
         public InvoiceModel Invoice
@@ -56,10 +57,10 @@ namespace UserControls.ViewModels.Reports
             {
                 if(value == _invoice) return;
                 _invoice = value;
-                OnPropertyChanged("Invoice");
-                OnPropertyChanged(SaleItemsProperty);
-                OnPropertyChanged("IsShowInvocieItems");
-                OnPropertyChanged("InvoiceItems");
+                RaisePropertyChanged("Invoice");
+                RaisePropertyChanged(SaleItemsProperty);
+                RaisePropertyChanged("IsShowInvocieItems");
+                RaisePropertyChanged("InvoiceItems");
             }
         }
         public List<ProductOrderItemsModel> SaleItems
@@ -94,7 +95,7 @@ namespace UserControls.ViewModels.Reports
         public MyTime StartTime
         {
             get { return _startTime; }
-            set { _startTime = value; OnPropertyChanged("StartTime"); }
+            set { _startTime = value; RaisePropertyChanged("StartTime"); }
         }
         public MyTime EndTime { get; set; }
         public bool IsLoading
@@ -110,7 +111,7 @@ namespace UserControls.ViewModels.Reports
                     return;
                 }
                 _isLoading = value;
-                OnPropertyChanged("IsLoading");
+                RaisePropertyChanged("IsLoading");
             }
         }
         public bool IsInput { get; set; }
@@ -230,10 +231,10 @@ namespace UserControls.ViewModels.Reports
                 new SaleBy { Description = s.First().Partner != null ? s.First().Partner.FullName : string.Empty, Total = s.Sum(t => t.Total).ToString("N") }));
 
             Description = string.Format("{0} {1} - {2}", "Համառոտ վերլուծություններ", fromDate, toDate);
-            OnPropertyChanged("Description");
-            OnPropertyChanged("Customers");
-            OnPropertyChanged("Sallers");
-            OnPropertyChanged("ShortReport");
+            RaisePropertyChanged("Description");
+            RaisePropertyChanged("Customers");
+            RaisePropertyChanged("Sallers");
+            RaisePropertyChanged("ShortReport");
             IsLoading = false;
         }
         #endregion
@@ -242,18 +243,6 @@ namespace UserControls.ViewModels.Reports
         public ICommand RefreshCommand { get { return new RelayCommand(OnRefresh); } }
         public ICommand BreakCommand { get { return new RelayCommand(OnBreak); } }
         public ICommand ResetInvoiseCommand { get; private set; }
-        #endregion
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
         #endregion
     }
     public class ShortReport

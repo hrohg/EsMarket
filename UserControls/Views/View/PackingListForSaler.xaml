@@ -1,0 +1,45 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:invoices="clr-namespace:UserControls.ViewModels.Invoices"
+                    xmlns:helpers="clr-namespace:Shared.Helpers;assembly=Shared">
+
+    <DataTemplate DataType="{x:Type invoices:PackingListForSallerViewModel}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
+                <Label Content="Ապրանքագիր" FontWeight="Bold"/>
+                <Label Content="{Binding Invoice.InvoiceNumber}" Foreground="Blue"/>
+                <Label Content="Ամսաթիվ" FontWeight="Bold" Margin="10,0,0,0"/>
+                <Label Content="{Binding Invoice.ApproveDate}" Foreground="Blue"/>
+            </StackPanel>
+            <DataGrid Grid.Row="1" CanUserAddRows="False"  CanUserSortColumns="True" CanUserDeleteRows="False" IsReadOnly="True" 
+                  ItemsSource="{Binding InvoiceItems, Mode=TwoWay}" 
+                  AutoGenerateColumns="False">
+                <DataGrid.Resources>
+                    <Style x:Key="CellRightAlign">
+                        <Setter Property="Control.HorizontalAlignment" Value="Right" />
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn IsReadOnly="True" Header="ՀՀ" Binding="{Binding Index}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" CanUserSort="True" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                    <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" CellStyle="{StaticResource CellRightAlign}" />
+                    <DataGridTextColumn IsReadOnly="False" Header="Վաճառքի գին" Binding="{Binding Path=Product.Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" CellStyle="{StaticResource CellRightAlign}" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat=N1}" CellStyle="{StaticResource CellRightAlign}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Command="{Binding ExportInvoiceCommand, ConverterParameter=True}" CommandParameter="{x:Static helpers:ExportInportEnum.Excel}" Content="Արտահանել" Width="75"/>
+                <Button Command="{Binding PrintInvoiceCommand, ConverterParameter=True}" CommandParameter="{x:Static helpers:PrintModeEnum.Normal}" Content="Տպել" Width="75"/>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

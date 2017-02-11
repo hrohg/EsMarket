@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 using ES.Business.Managers;
+using Shared.Helpers;
 using UserControls.ViewModels.Invoices;
 
 namespace UserControls.Commands
@@ -62,39 +63,6 @@ namespace UserControls.Commands
    
     #region Import invoice command
     
-    #endregion
-    #region Export invoice command
-    class ExportPrintInvoiceCommands : ICommand
-    {
-        /// <summary>
-        /// Initialize a new instance of the ProductEditCommand class.
-        /// </summary>
-        /// <param name="viewModel"></param>
-        public ExportPrintInvoiceCommands(InvoiceViewModel viewModel)
-        {
-            _viewModel = viewModel;
-        }
-
-        private InvoiceViewModel _viewModel;
-        public event EventHandler CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
-        public bool CanExecute(object parameter)
-        {
-            return _viewModel.CanExportInvoice();
-        }
-        public void Execute(object parameter)
-        {
-            if (parameter is bool && (bool)parameter)
-            {
-                _viewModel.ExportPrintInvoice();
-                return;
-            }
-            _viewModel.ExportInvoice();
-        }
-    }
     #endregion
     #region Approve invoice command class
     public class ApproveMoveInvoiceCommands : ICommand

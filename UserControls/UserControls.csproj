@@ -154,6 +154,8 @@
     <Compile Include="ViewModels\AccountingRecordsViewModel.cs" />
     <Compile Include="ViewModels\Documents\StartPageViewModel.cs" />
     <Compile Include="ViewModels\EsUserViewModel.cs" />
+    <Compile Include="ViewModels\Invoices\InvoiceViewModelBase.cs" />
+    <Compile Include="ViewModels\Invoices\PackingListViewModel.cs" />
     <Compile Include="ViewModels\Logs\LogViewModel.cs" />
     <Compile Include="ViewModels\Managers\ProductManagerViewModel.cs" />
     <Compile Include="ViewModels\ProductItemsViewModel.cs" />
@@ -433,6 +435,10 @@
     <Page Include="Views\CustomControls\SaleUctrl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\View\PackingListForSaler.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\WaitingCover.xaml">
       <SubType>Designer</SubType>
