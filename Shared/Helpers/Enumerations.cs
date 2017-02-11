@@ -20,10 +20,16 @@ namespace Shared.Helpers
         WithoutFilters
     }
 
-    public enum PrintSizeEnum
+    public enum PrintModeEnum
     {
         Normal,
         Small,
         Large
+    }
+
+    public enum ExportInportEnum
+    {
+        Xml, 
+        Excel
     }
 }
