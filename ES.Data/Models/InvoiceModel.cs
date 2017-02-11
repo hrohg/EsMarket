@@ -4,11 +4,10 @@ using ES.Data.Model;
 
 namespace ES.Data.Models
 {
-    public class InvoiceModel:INotifyPropertyChanged
+    public class InvoiceModel : INotifyPropertyChanged
     {
         public InvoiceModel()
         {
-            
         }
         public InvoiceModel(EsUserModel creator, EsMemberModel member)
         {
@@ -17,12 +16,13 @@ namespace ES.Data.Models
             Creator = creator.FullName;
             _memberId = member.Id;
         }
-        public InvoiceModel(EsUserModel creator, EsMemberModel member, long invoiceTypeId):this(creator, member)
+        public InvoiceModel(EsUserModel creator, EsMemberModel member, long invoiceTypeId)
+            : this(creator, member)
         {
-            _invoiceTypeId = invoiceTypeId;            
+            _invoiceTypeId = invoiceTypeId;
         }
 
-        
+
         #region Invoice model properties
         private const string IdProperty = "Id";
         private const string CreateDateProperty = "CreateDate";
@@ -48,35 +48,50 @@ namespace ES.Data.Models
         private decimal _amount = 0;
         private decimal? _paid;
         private DateTime? _approveDate;
-        
+
         #endregion
         #region Invoice model public properties
         public Guid Id { get { return _id; } set { _id = value; } }
-        public long CreatorId { get { return _creatorId; } set { _creatorId = value;  } }
+        public long CreatorId { get { return _creatorId; } set { _creatorId = value; } }
         public string Creator { get { return _creator; } set { _creator = value; } }
         public long InvoiceTypeId { get { return _invoiceTypeId; } set { _invoiceTypeId = value; } }
-        public string InvoiceNumber { get ; set ;  }
-        public string About { get
+        public string InvoiceNumber { get; set; }
+        public string About
         {
-            return string.Format("{0} {1} {2} {3} {4}", InvoiceNumber, CreateDate, ProviderName,
-                ApproveDate != null ? "=>" : "", RecipientName);
-        } }
+            get
+            {
+                return string.Format("{0} {1} {2} {3} {4}", InvoiceNumber, CreateDate, ProviderName,
+                    ApproveDate != null ? "=>" : "", RecipientName);
+            }
+        }
         public DateTime CreateDate { get { return _createDate; } set { _createDate = value; OnPropertyChanged(CreateDateProperty); } }
         public string RecipientName { get { return _recipientName; } set { _recipientName = value; } }
         public string ProviderName { get { return _providerName; } set { _providerName = value; } }
         public Guid? PartnerId { get { return _partnerId; } set { _partnerId = value; } }
         public PartnerModel Partner { get; set; }
         public decimal? Discount { get { return _discount; } set { _discount = value; } }
-        public decimal Total { get { return _summ; } set { _summ = value;
-        _discount = Amount != 0 ? (Amount - Total) * 100 / Amount : 0; OnPropertyChanged(TotalProperty); OnPropertyChanged(DiscountProperty);
+        public decimal Total
+        {
+            get { return _summ; }
+            set
+            {
+                _summ = value;
+                _discount = Amount != 0 ? (Amount - Total) * 100 / Amount : 0; OnPropertyChanged(TotalProperty); OnPropertyChanged(DiscountProperty);
+            }
         }
+        public decimal Amount
+        {
+            get { return _amount; }
+            set
+            {
+                _amount = value;
+                _discount = Amount != 0 ? (Amount - Total) * 100 / Amount : 0; OnPropertyChanged(DiscountProperty);
+                OnPropertyChanged(AmountProperty); OnPropertyChanged(OddMoneyProperty);
+            }
         }
-        public decimal Amount { get { return _amount; } set { _amount = value;
-        _discount = Amount != 0 ? (Amount - Total) * 100 / Amount : 0; OnPropertyChanged(DiscountProperty);
-            OnPropertyChanged(AmountProperty); OnPropertyChanged(OddMoneyProperty); } }
         public decimal? Paid { get { return _paid; } set { _paid = value; OnPropertyChanged(PaidProperty); OnPropertyChanged(OddMoneyProperty); } }
-        public decimal OddMoney { get { return (Paid!=null?(decimal)Paid:0) - Amount; }} 
-        public long MemberId {get { return _memberId;} set { _memberId = value; }}
+        public decimal OddMoney { get { return (Paid != null ? (decimal)Paid : 0) - Amount; } }
+        public long MemberId { get { return _memberId; } set { _memberId = value; } }
         public long? FromStockId { get; set; }
         public long? ToStockId { get; set; }
         public DateTime? ApproveDate { get { return _approveDate; } set { _approveDate = value; OnPropertyChanged(ApproveDateProperty); } }
@@ -96,9 +111,11 @@ namespace ES.Data.Models
         public string RecipientBankAccount { get; set; }
         public string RecipientTaxRegistration { get; set; }
         private string _note;
-        public string Notes { 
+        public string Notes
+        {
             get { return _note; }
-            set { _note = value; OnPropertyChanged("Notes"); } }
+            set { _note = value; OnPropertyChanged("Notes"); }
+        }
         #endregion
 
         #region INotifyPropertyChanged
