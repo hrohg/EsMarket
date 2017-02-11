@@ -4,7 +4,7 @@ using ES.Data.Model;
 using ES.Data.Models;
 using UserControls.ViewModels.Invoices;
 
-namespace ES.Shop.Views
+namespace ES.Market.Views
 {
     /// <summary>
     /// Interaction logic for PackingListUctrl.xaml
@@ -29,11 +29,6 @@ namespace ES.Shop.Views
                 if (tabControl == null) return;
                 tabControl.Items.Remove(tabControl.SelectedItem);
             }
-        }
-
-        private void DataGrid_OnSorting(object sender, DataGridSortingEventArgs e)
-        {
-            //e.Column.SortDirection
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -74,18 +75,6 @@ namespace ES.Market.ViewModels
         private const string PrintCashReceiptProperty = "PrintCashReceipt";
         private const string MessagesProperty = "Messages";
         private const string MessageProperty = "Message";
-        private ProductItemsToolsViewModel _productItemsToolsViewModel;
-        private ProductItemsToolsViewModel ProductitemsToolViewModel
-        {
-            get
-            {
-                if (_productItemsToolsViewModel == null)
-                {
-                    _productItemsToolsViewModel = new ProductItemsToolsViewModel();
-                    _productItemsToolsViewModel.OnManageProduct += OnSetProduct;
-                }
-                return _productItemsToolsViewModel;
-            } }
         #endregion
 
         #region Internal properties
@@ -100,6 +89,23 @@ namespace ES.Market.ViewModels
         private bool _isLoading;
         private bool _isCashUpdateing;
         public LogViewModel LogViewModel { get; private set; }
+
+        #region ProductitemsToolViewModel
+        private ProductItemsToolsViewModel _productItemsToolsViewModel;
+        private ProductItemsToolsViewModel ProductItemsToolsViewModel
+        {
+            get
+            {
+                if (_productItemsToolsViewModel == null)
+                {
+                    _productItemsToolsViewModel = new ProductItemsToolsViewModel();
+                    _productItemsToolsViewModel.OnManageProduct += OnSetProduct;
+                }
+                return _productItemsToolsViewModel;
+            }
+        }
+        #endregion ProductitemsToolViewModel
+
         #endregion
 
         #region External properties
@@ -204,6 +210,7 @@ namespace ES.Market.ViewModels
             //Admin
             ImportProductsCommand = new RelayCommand(OnImportProducts);
             ViewInternalWayBillCommands = new RelayCommand<ViewInvoicesEnum>(OnViewViewInternalWayBillCommands, CanViewViewInternalWayBillCommands);
+            ViewPackingListForSallerCommand = new RelayCommand(OnViewPackingListForSaller);
 
             //Data
             GetInvoicesCommand = new RelayCommand(OnGetInvoices);
@@ -250,7 +257,7 @@ namespace ES.Market.ViewModels
             var tabControl = new UctrlViewTable { DataContext = viewModel };
             AddTabControl(tabControl, viewModel);
         }
-        
+
         #region Add remove documents
         private void AddDocument<T>(DocumentViewModel vm, bool allowDoublicate = true)
         {
@@ -282,6 +289,14 @@ namespace ES.Market.ViewModels
             if (vm == null) return;
             vm.OnClosed -= OnRemoveDocument;
             Documents.Remove((DocumentViewModel)vm);
+            if (vm is ProductManagerViewModel)
+            {
+                ((ProductManagerViewModel)vm).OnProductEdited -= ProductItemsToolsViewModel.UpdateProducts;
+            }
+            if (vm is InvoiceViewModel)
+            {
+                ProductItemsToolsViewModel.OnProductItemSelected -= ((InvoiceViewModel)vm).OnSetProductItem;
+            }
         }
         #endregion Add remove documents
 
@@ -352,652 +367,7 @@ namespace ES.Market.ViewModels
         }
         #endregion Base
 
-        #region Admin
-        private void OnImportProducts(object o)
-        {
-            var filePath = new OpenFileDialog();
-            filePath.Filter = "Xml file (*.xml) | *.xml";
 
-            if (filePath.ShowDialog() != DialogResult.OK)
-            {
-                return;
-            }
-            var td = new Thread(() => { ImportDsProducts(filePath.FileName); });
-            td.Start();
-        }
-        [Serializable, XmlRoot("user")]
-        public class row
-        {
-            public int ID { get; set; }
-            public string name { get; set; }
-            public string description1 { get; set; }
-            public double price_ret { get; set; }
-            public double last_price_in { get; set; }
-            public string barcode { get; set; }
-            public string unit { get; set; }
-
-        }
-        private void ImportProducts(string fileName)
-        {
-
-            var products = (List<EsProductModel>)XmlManager.Read(fileName, typeof(List<EsProductModel>));
-
-            if (products == null || products.Count == 0)
-            {
-                return;
-            }
-            var insertedProuctCount = 0;
-            bool insertAll = false;
-            bool exitLoop = false;
-            var result = MessageBox.Show(string.Format("Իրականացվել է {0} անվանում ապրանքի բեռնում: Ցանկանու՞մ եք ավելացնել ամբողջությամբ։", products.Count), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
-            switch (result)
-            {
-                case MessageBoxResult.None:
-                    break;
-                case MessageBoxResult.OK:
-                    break;
-                case MessageBoxResult.Cancel:
-                    return;
-                    break;
-                case MessageBoxResult.Yes:
-                    insertAll = true;
-                    break;
-                case MessageBoxResult.No:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            foreach (var product in products)
-            {
-                if (insertAll)
-                {
-                    product.EsMemberId = ApplicationManager.GetEsMember.Id;
-                    product.LastModifierId = ApplicationManager.GetEsUser.UserId;
-                    product.IsEnabled = true;
-                    if (ProductsManager.InsertProduct(Convert(product)))
-                        insertedProuctCount++;
-                    continue;
-                }
-                if (exitLoop) break;
-                result = MessageBox.Show(string.Format("Ցանականու՞մ եք ավելացնել {0} ({1}) ապրանքը։", product.Description, product.Code), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
-                switch (result)
-                {
-                    case MessageBoxResult.None:
-                    case MessageBoxResult.No:
-                        continue;
-                    case MessageBoxResult.Cancel:
-                        exitLoop = true;
-                        break;
-                    case MessageBoxResult.OK:
-
-                    case MessageBoxResult.Yes:
-
-
-                        product.EsMemberId = ApplicationManager.GetEsMember.Id;
-                        product.LastModifierId = ApplicationManager.GetEsUser.UserId;
-                        product.IsEnabled = true;
-                        if (ProductsManager.InsertProduct(Convert(product)))
-                            insertedProuctCount++;
-                        break;
-
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-            MessageBox.Show(string.Format("Իրականացվել է {0} անվանում ապրանքի ավելացում:", insertedProuctCount), "Ապրանքների ավելացում", MessageBoxButton.OK);
-        }
-        private void ImportDsProducts(string fileName)
-        {
-            //XmlManager.Save(new List<row>(), fileName);
-            var products = (List<row>)XmlManager.Read(fileName, typeof(List<row>));
-            //var products = (List<EsProductModel>)XmlManager.Read(fileName, typeof(List<EsProductModel>));
-
-            if (products == null || products.Count == 0)
-            {
-                return;
-            }
-            var insertedProuctCount = 0;
-            bool insertAll = false;
-            bool exitLoop = false;
-            var result = MessageBox.Show(string.Format("Իրականացվել է {0} անվանում ապրանքի բեռնում: Ցանկանու՞մ եք ավելացնել ամբողջությամբ։", products.Count), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
-            switch (result)
-            {
-                case MessageBoxResult.None:
-                    break;
-                case MessageBoxResult.OK:
-                    break;
-                case MessageBoxResult.Cancel:
-                    return;
-                    break;
-                case MessageBoxResult.Yes:
-                    insertAll = true;
-                    break;
-                case MessageBoxResult.No:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            foreach (var item in products)
-            {
-                var product = new EsProductModel()
-                {
-                    Code = item.ID.ToString(),
-                    Barcode = item.barcode,
-                    Description = item.name,
-                    Mu = item.unit,
-                    CostPrice = (decimal)item.last_price_in,
-                    //Price = (decimal) item.price_ret,
-                    Note = item.description1
-                };
-                if (insertAll)
-                {
-                    product.EsMemberId = ApplicationManager.GetEsMember.Id;
-                    product.LastModifierId = ApplicationManager.GetEsUser.UserId;
-                    product.IsEnabled = true;
-                    if (ProductsManager.InsertProduct(Convert(product)))
-                        insertedProuctCount++;
-                    continue;
-                }
-                if (exitLoop) break;
-                result = MessageBox.Show(string.Format("Ցանականու՞մ եք ավելացնել {0} ({1}) ապրանքը։", product.Description, product.Code), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
-                switch (result)
-                {
-                    case MessageBoxResult.None:
-                    case MessageBoxResult.No:
-                        continue;
-                    case MessageBoxResult.Cancel:
-                        exitLoop = true;
-                        break;
-                    case MessageBoxResult.OK:
-
-                    case MessageBoxResult.Yes:
-
-
-                        product.EsMemberId = ApplicationManager.GetEsMember.Id;
-                        product.LastModifierId = ApplicationManager.GetEsUser.UserId;
-                        product.IsEnabled = true;
-                        if (ProductsManager.InsertProduct(Convert(product)))
-                            insertedProuctCount++;
-                        break;
-
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-            MessageBox.Show(string.Format("Իրականացվել է {0} անվանում ապրանքի ավելացում:", insertedProuctCount), "Ապրանքների ավելացում", MessageBoxButton.OK);
-        }
-        private ProductModel Convert(EsProductModel item)
-        {
-            return new ProductModel()
-                        {
-                            Code = item.Code,
-                            Barcode = item.Barcode,
-                            HcdCs = item.HcdCs,
-                            Description = item.Description,
-                            Mu = item.Mu,
-                            CostPrice = item.CostPrice,
-                            Price = item.Price,
-                            ExpiryDays = item.ExpiryDays,
-                            IsWeight = item.IsWeight,
-                            EsMemberId = item.EsMemberId,
-                            LastModifierId = item.LastModifierId,
-                            IsEnabled = item.IsEnabled
-                        };
-        }
-        #endregion
-
-        #region Documents
-        public void OnGetInvoices(object o)
-        {
-            var tuple = o as Tuple<InvoiceType, InvoiceState, MaxInvocieCount>;
-            if (tuple != null)
-            {
-                var type = tuple.Item1;
-                var state = tuple.Item2;
-                var count = (int)tuple.Item3;
-                List<InvoiceModel> invoices = null;
-                switch (state)
-                {
-                    case InvoiceState.All:
-                        switch (type)
-                        {
-                            case InvoiceType.SaleInvoice:
-                                invoices = InvoicesManager.GetInvoices(type, count, ApplicationManager.GetEsMember.Id);
-                                break;
-                            case InvoiceType.MoveInvoice:
-                                invoices = InvoicesManager.GetInvoices(type, count, ApplicationManager.GetEsMember.Id);
-                                break;
-                            case InvoiceType.PurchaseInvoice:
-                                invoices = InvoicesManager.GetInvoices(type, count, ApplicationManager.GetEsMember.Id);
-                                break;
-                            case InvoiceType.InventoryWriteOff:
-                                invoices = InvoicesManager.GetInvoices(type, count, ApplicationManager.GetEsMember.Id);
-                                break;
-                            case InvoiceType.ProductOrder:
-                                break;
-                            case InvoiceType.Statement:
-                                break;
-                            default:
-                                break;
-                        }
-                        break;
-                    case InvoiceState.New:
-                        switch (type)
-                        {
-                            case InvoiceType.SaleInvoice:
-                                CreateNewControl(new SaleInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
-                                break;
-                            case InvoiceType.MoveInvoice:
-                                CreateNewControl(new InternalWaybillInvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
-                                break;
-                            case InvoiceType.PurchaseInvoice:
-                                CreateNewControl(new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
-                                break;
-                            case InvoiceType.InventoryWriteOff:
-                                CreateNewControl(new InventoryWriteOffViewModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
-                                break;
-                            default:
-                                break;
-                        }
-                        return;
-                        break;
-                    case InvoiceState.Accepted:
-                    case InvoiceState.Approved:
-                        invoices = InvoicesManager.GetInvoicesDescriptions(type, count, ApplicationManager.GetEsMember.Id);
-                        break;
-                    case InvoiceState.Saved:
-                        invoices = InvoicesManager.GetUnacceptedInvoicesDescriptions(type, ApplicationManager.GetEsMember.Id);
-                        break;
-                    default:
-                        invoices = InvoicesManager.GetInvoicesDescriptions(type, ApplicationManager.GetEsMember.Id);
-                        break;
-                }
-                invoices = SelectItemsManager.SelectInvoice(invoices, true);
-                foreach (var invoiceModel in invoices)
-                {
-                    switch ((InvoiceType)invoiceModel.InvoiceTypeId)
-                    {
-                        case InvoiceType.SaleInvoice:
-                            CreateNewControl(new SaleInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
-                            break;
-                        case InvoiceType.MoveInvoice:
-                            CreateNewControl(new InternalWaybillInvoiceModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
-                            break;
-                        case InvoiceType.PurchaseInvoice:
-                            CreateNewControl(new PurchaseInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
-                            break;
-                        case InvoiceType.ProductOrder:
-                            break;
-                        case InvoiceType.InventoryWriteOff:
-                            CreateNewControl(new InventoryWriteOffViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
-                            break;
-                        case InvoiceType.Statement:
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
-        #endregion Documents
-
-        #region Cash desk
-
-        private bool CanExecuteEcrAction(object o)
-        {
-            var actionMode = o as EcrExecuiteActions?;
-            switch (actionMode)
-            {
-                case EcrExecuiteActions.CheckConnection:
-                case EcrExecuiteActions.OperatorLogin:
-                case EcrExecuiteActions.PrintReturnTicket:
-                case EcrExecuiteActions.PrintLatestTicket:
-                case EcrExecuiteActions.PrintReportX:
-                case EcrExecuiteActions.PrintReportZ:
-                case EcrExecuiteActions.PrintReceiptTicket:
-                    return true;
-                case EcrExecuiteActions.CheckEcrConnection:
-                    break;
-                case EcrExecuiteActions.Zero:
-                    break;
-                case EcrExecuiteActions.GetOperatorsAndDepList:
-                    break;
-                case EcrExecuiteActions.LogoutOperator:
-                    break;
-                case EcrExecuiteActions.ManageHeaderAndFooter:
-                    break;
-                case EcrExecuiteActions.ManageLogo:
-                    break;
-                case EcrExecuiteActions.PrintEcrReport:
-                    break;
-                case EcrExecuiteActions.GetReceiptData:
-                    break;
-                case EcrExecuiteActions.CashWithdrawal:
-                    break;
-                case EcrExecuiteActions.PrintCash:
-                    break;
-                case EcrExecuiteActions.CashIn:
-                    break;
-                case null:
-                    break;
-                default:
-                    break;
-            }
-            return false;
-        }
-
-        private void ExecuteEcrAction(object o)
-        {
-            var actionMode = o as EcrExecuiteActions?;
-            var ecrserver = new EcrServer(ApplicationManager.EcrSettings);
-            IsLoading = true;
-            MessageModel message = null;
-            switch (actionMode)
-            {
-                case EcrExecuiteActions.CheckConnection:
-                    message = ecrserver.TryConnection() ? new MessageModel("ՀԴՄ կապի ստուգումն իրականացել է հաջողությամբ: " + ecrserver.ActionDescription, MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageModel.MessageTypeEnum.Warning);
-                    IsLoading = false;
-                    break;
-                case EcrExecuiteActions.OperatorLogin:
-                    message = ecrserver.TryOperatorLogin() ? new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageTypeEnum.Warning);
-                    IsLoading = false;
-                    break;
-                case EcrExecuiteActions.PrintReturnTicket:
-                    var resoult = MessageBox.Show("Դուք ցանկանու՞մ եք վերադարձնել ՀԴՄ կտրոնն ամբողջությամբ:", "ՀԴՄ կտրոնի վերադարձ", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (resoult == MessageBoxResult.Yes)
-                    {
-                        message = ecrserver.PrintReceiptReturnTicket(true) ? new MessageModel("ՀԴՄ կտրոնի վերադարձն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageTypeEnum.Error);
-                    }
-                    else if (resoult == MessageBoxResult.No)
-                    {
-                        message = ecrserver.PrintReceiptReturnTicket(false) ? new MessageModel("ՀԴՄ կտրոնի մասնակի վերադարձն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի մասնակի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageTypeEnum.Error);
-                    }
-                    else
-                    {
-                        message = new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումն ընդհատվել է:", MessageModel.MessageTypeEnum.Warning);
-                    }
-                    IsLoading = false;
-                    break;
-                case EcrExecuiteActions.PrintLatestTicket:
-                    message = ecrserver.PrintReceiptLatestCopy() ? new MessageModel("ՀԴՄ վերջին կտրոնի տպումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ վերջին կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageTypeEnum.Warning);
-                    IsLoading = false;
-                    break;
-                case EcrExecuiteActions.PrintReportX:
-                    message = ecrserver.GetReport(ReportType.X) ? new MessageModel("ՀԴՄ X հաշվետվության տպումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ X հաշվետվության տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageTypeEnum.Warning);
-                    IsLoading = false;
-                    break;
-                case EcrExecuiteActions.PrintReportZ:
-                    message = ecrserver.GetReport(ReportType.Z) ? new MessageModel("ՀԴՄ Z հաշվետվության տպումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ Z հաշվետվության տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageTypeEnum.Warning);
-                    IsLoading = false;
-                    break;
-                case EcrExecuiteActions.CheckEcrConnection:
-                    break;
-                case EcrExecuiteActions.Zero:
-                    break;
-                case EcrExecuiteActions.GetOperatorsAndDepList:
-                    break;
-                case EcrExecuiteActions.LogoutOperator:
-                    break;
-                case EcrExecuiteActions.PrintReceiptTicket:
-                    var ecrServer = new EcrServer(ApplicationManager.EcrSettings);
-                    var filePath = FileManager.OpenExcelFile("Excel files(*.xls *.xlsx *․xlsm)|*.xls;*.xlsm;*․xlsx|Excel with macros|*.xlsm|Excel 97-2003 file|*.xls", "Excel ֆայլի բեռնում", ConfigSettings.GetConfig("EcrExcelFilePath"));
-                    if (string.IsNullOrEmpty(filePath))
-                    {
-                        IsLoading = false;
-                        return;
-                    }
-                    try
-                    {
-                        if (ecrServer.PrintReceiptFromExcelFile(filePath))
-                        {
-                            IsLoading = false;
-                            ApplicationManager.MessageManager.OnNewMessage(new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success));
-                        }
-                        else
-                        {
-                            IsLoading = false;
-                            ApplicationManager.MessageManager.OnNewMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումն ընդհատվել է: {1} ({0})", ecrServer.ActionCode, ecrServer.ActionDescription), MessageModel.MessageTypeEnum.Warning));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-
-                        throw;
-                    }
-
-                    ConfigSettings.SetConfig("EcrExcelFilePath", Path.GetDirectoryName(filePath));
-                    break;
-                case EcrExecuiteActions.ManageHeaderAndFooter:
-                    break;
-                case EcrExecuiteActions.ManageLogo:
-                    break;
-                case EcrExecuiteActions.PrintEcrReport:
-                    break;
-                case EcrExecuiteActions.GetReceiptData:
-                    break;
-                case EcrExecuiteActions.CashWithdrawal:
-                    //message = ecrserver.SetCashWithdrawal() != null ? new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումն իրականացել է հաջողությամբ:", MessageModel.MessageType.Success) : new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageType.Warning);
-                    IsLoading = false;
-                    break;
-                case EcrExecuiteActions.PrintCash:
-                    break;
-                case EcrExecuiteActions.CashIn:
-                    //message = ecrserver.SetCashReceipt() != null ? new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումն իրականացել է հաջողությամբ:", MessageModel.MessageType.Success) : new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageType.Warning);
-                    IsLoading = false;
-                    break;
-                case null:
-                    break;
-                default:
-                    message = null;
-                    break;
-            }
-            if (message != null)
-            {
-                ApplicationManager.MessageManager.OnNewMessage(message);
-            }
-            IsLoading = false;
-        }
-
-        private void OnGetCashDeskInfo(object o)
-        {
-            var cashDesks = CashDeskManager.TryGetCashDesk(_member.Id);
-            var partners = PartnersManager.GetPartners(_member.Id);
-
-            if (cashDesks == null || cashDesks.Count == 0)
-            {
-                return;
-            }
-            string content, title;
-            title = "Դրամարկղի մնացորդի դիտում";
-            if (cashDesks == null || partners == null)
-            {
-                content = "Թերի տվյալներ։\nԽնդրում ենք փորձել մի փոքր ուշ։";
-                MessageBox.Show(content, title, MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            var cashDeskContent = string.Empty;
-            if (!UserRoles.Any(s => s.RoleName == "Manager" || s.RoleName == "Director"))
-            {
-                cashDesks = new List<CashDesk>
-                {
-                    CashDeskManager.GetCashDesk(ApplicationManager.GetThisDesk.Id, ApplicationManager.GetEsMember.Id)
-                };
-                cashDeskContent = cashDesks.Where(s => s.IsCash).Aggregate(cashDeskContent, (current, item) => current + string.Format("Դրամարկղ {0}  - {1} դր․ \n", item.Name, item.Total.ToString("N")));
-            }
-            else
-            {
-                foreach (var item in cashDesks.Where(s => s.IsCash))
-                {
-                    cashDeskContent += string.Format("Դրամարկղ {0}  - {1} դր․ \n", item.Name, item.Total.ToString("N"));
-                }
-                cashDeskContent += string.Format("Կանխիկ դրամարկղ - {0} դր․ \n\n", cashDesks.Where(s => s.IsCash).Sum(s => s.Total).ToString("N"));
-
-                foreach (var item in cashDesks.Where(s => !s.IsCash))
-                {
-                    cashDeskContent += string.Format("Դրամարկղ {0}  - {1} դր․ \n", item.Name, item.Total.ToString("N"));
-                }
-                cashDeskContent += string.Format("Անկանխիկ դրամարկղ - {0} դր․ \n\n", cashDesks.Where(s => !s.IsCash).Sum(s => s.Total).ToString("N"));
-                cashDeskContent += string.Format("Ընդամենը - {0} դր․ \n\n", cashDesks.Sum(s => s.Total).ToString("N"));
-                cashDeskContent += string.Format("Դեբիտորական պարտք - {0} դր․ \n", partners.Sum(s => s.Debit ?? 0).ToString("N"));
-                cashDeskContent += string.Format("Կրեդիտորական պարտք - {0} դր․ \n\n", partners.Sum(s => s.Credit ?? 0).ToString("N"));
-                cashDeskContent += string.Format("Ընդամենը դրամական միջոցներ - {0} դր․ \n\n", (cashDesks.Sum(s => s.Total) + partners.Sum(s => (s.Debit ?? 0) + (s.Credit ?? 0))).ToString("N"));
-            }
-            MessageBox.Show(cashDeskContent, title, MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-        private void OnExecuteEcrAction(object o)
-        {
-            var td = new Thread(() => { ExecuteEcrAction(o); });
-            td.SetApartmentState(ApartmentState.STA);
-            td.Start();
-        }
-
-        #endregion
-
-        #region Data
-
-        private bool CanGetProductOrder(object o)
-        {
-            return ApplicationManager.UserRoles.Any(s => s.RoleName == "Director" || s.RoleName == "Manager");
-        }
-
-        private void OnGetProductOrder(object o)
-        {
-            var viewModel = new ProductOrderBySaleViewModel(null);
-            AddTabControl(new UctrlViewTable { DataContext = viewModel }, viewModel);
-        }
-
-        private void OnGetSaleProducts(object o)
-        {
-            var viewModel = new SaleProductsViewModel(null);
-            AddTabControl(new UctrlViewTable { DataContext = viewModel }, viewModel);
-        }
-
-        private void OnWriteOffProducts(object o)
-        {
-            var stock = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.GetEsMember.Id)).FirstOrDefault();
-            if (stock == null) return;
-            var existingProducts = ProductsManager.GetProductItemsByStock(stock.Id, ApplicationManager.GetEsMember.Id);
-            CreateWriteOffInvoice(existingProducts.Select(s => new Tuple<string, decimal>(s.Product.Code, s.Quantity)).ToList(), stock.Id);
-        }
-
-        private void CreateWriteOffInvoice(List<Tuple<string, decimal>> items, long? stockId, string notes = null)
-        {
-            if (!items.Any())
-            {
-                OnNewMessage(new MessageModel(DateTime.Now, "Դուրսգրման ենթակա ապրանք գոյություն չունի:", MessageModel.MessageTypeEnum.Information));
-                return;
-            }
-            var vm = new InventoryWriteOffViewModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
-            vm.Invoice.FromStockId = stockId;
-            vm.Invoice.Notes = notes;
-            foreach (var item in items)
-            {
-                var code = item.Item1;
-                var quantity = item.Item2;
-                vm.SetInvoiceItem(code);
-                if (vm.InvoiceItem.Product == null)
-                {
-                    continue;
-                }
-                vm.InvoiceItem.Quantity = quantity;
-                vm.InvoiceItem.Index = vm.InvoiceItems.Count + 1;
-                vm.InvoiceItems.Add(vm.InvoiceItem);
-                vm.InvoiceItem = new InvoiceItemsModel();
-            }
-            AddDocument(vm);
-            AddTabControl(new InventoryWriteOffUctrl(), vm);
-        }
-        private void OnWriteOffStockTaking(object o)
-        {
-            var stockTake = GetOpeningStockTake();
-            if (stockTake == null) return;
-            var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id, ApplicationManager.GetEsMember.Id);
-            CreateWriteOffInvoice(stockTakeItems.Where(s => s.Balance < 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, -s.Balance ?? 0)).ToList(),
-                stockTake.StockId,
-                string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
-        }
-
-        #endregion
-
-        #region View
-
-        public void OnGetReport(ReportTypes type)
-        {
-            switch (type)
-            {
-                case ReportTypes.ShortReport:
-                    AddDocument(new ShortReportViewModel());
-                    break;
-                case ReportTypes.Report:
-                    var ui = new DataReports(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
-                    ui.DataContext = new ReportsViewModel(ui);
-                    ui.Show();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("o", type, null);
-            }
-
-        }
-
-        private void OnViewProductsByStock(object o)
-        {
-            var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.GetEsMember.Id), true);
-            AddTabControl(new ViewProductsUctrl(), new ProductItemsViewModel(stocks));
-        }
-
-        private bool CanGetProductHistory(object o)
-        {
-            return UserRoles.Any(s => s.RoleName == "Manager" || s.RoleName == "SaleManager");
-        }
-
-        private void OnGetProductsHistory(object o)
-        {
-            AddTabControl(new ProductsHistory(), new ProductHistoryViewModel());
-        }
-
-        #endregion
-
-        #region Help
-
-        #endregion
-
-        #region Manager
-
-        private bool CanManageProcucts(object o)
-        {
-            return _userRoles.Any(s => s.RoleName == "Manager");
-        }
-
-        private void OnManageProducts(object o)
-        { 
-            var vm = new ProductManagerViewModel();
-            AddDocument(vm);
-        }
-        private void OnSetProduct(ProductModel product)
-        {
-            var vm = Documents.OfType<ProductManagerViewModel>().FirstOrDefault();
-            if (vm == null)
-            {
-                vm = new ProductManagerViewModel();
-                AddDocument(vm);
-            }
-            vm.IsActive = true;
-            vm.SetProduct(product);
-        }
-        private bool CanManagePartners(object o)
-        {
-            return _userRoles.Any(s => s.RoleName == "Manager");
-        }
-
-        private void OnManagePartners(object o)
-        {
-            AddDocument(new PartnerViewModel(_member.Id));
-        }
-
-        #endregion
 
         private void CreateLibraryBrowser()
         {
@@ -1049,15 +419,15 @@ namespace ES.Market.ViewModels
             _parentTabControl.UpdateLayout();
         }
 
-        private void CreateNewControl(object model)
+        private void CreateNewControl(object vm)
         {
-            if (model is DocumentViewModel)
+            if (vm is DocumentViewModel)
             {
-                AddDocument((DocumentViewModel)model);
-                ((PaneViewModel)model).IsActive = true;
-                if (model is InvoiceViewModel)
-                    ProductitemsToolViewModel.OnProductItemSelected += ((InvoiceViewModel)model).OnSetProductItem;
-                OnCreateProductItemsTools(ProductitemsToolViewModel);
+                AddDocument((DocumentViewModel)vm);
+                ((PaneViewModel)vm).IsActive = true;
+                if (vm is InvoiceViewModel)
+                    ProductItemsToolsViewModel.OnProductItemSelected += ((InvoiceViewModel)vm).OnSetProductItem;
+                OnCreateProductItemsTools(ProductItemsToolsViewModel);
             }
             int nextTab;
             var tabShop = _parentTabControl.FindChild<TabControl>();
@@ -1066,25 +436,25 @@ namespace ES.Market.ViewModels
                 return;
             }
             //CreateLibraryBrowser();
-            var content = new InventoryWriteOffUctrl() { DataContext = model };
-            if (model is InventoryWriteOffViewModel)
+            var content = new InventoryWriteOffUctrl() { DataContext = vm };
+            if (vm is InventoryWriteOffViewModel)
             {
                 nextTab = tabShop.Items.Add(new TabItem
                 {
                     Content = content,
-                    DataContext = model,
+                    DataContext = vm,
                     AllowDrop = true
                 });
                 tabShop.SelectedIndex = nextTab;
                 _parentTabControl.UpdateLayout();
                 return;
             }
-            if (model is SaleInvoiceViewModel)
+            if (vm is SaleInvoiceViewModel)
             {
                 nextTab = tabShop.Items.Add(new TabItem
                 {
-                    Content = new SaleUctrl(_user, _member, (SaleInvoiceViewModel)model),
-                    DataContext = model,
+                    Content = new SaleUctrl(_user, _member, (SaleInvoiceViewModel)vm),
+                    DataContext = vm,
                     AllowDrop = true
                 });
                 tabShop.SelectedIndex = nextTab;
@@ -1092,36 +462,36 @@ namespace ES.Market.ViewModels
                 return;
             }
 
-            if (model is PurchaseInvoiceViewModel)
+            if (vm is PurchaseInvoiceViewModel)
             {
                 nextTab = tabShop.Items.Add(new TabItem
                 {
-                    Content = new PurchaseUctrl(_user, _member, (PurchaseInvoiceViewModel)model),
-                    DataContext = model,
+                    Content = new PurchaseUctrl(_user, _member, (PurchaseInvoiceViewModel)vm),
+                    DataContext = vm,
                     AllowDrop = true
                 });
                 tabShop.SelectedIndex = nextTab;
                 _parentTabControl.UpdateLayout();
                 return;
             }
-            if (model is ProductOrderViewModel)
+            if (vm is ProductOrderViewModel)
             {
                 nextTab = tabShop.Items.Add(new TabItem
                 {
                     Content = new ProductOrderUctrl(_user, _member),
-                    DataContext = model,
+                    DataContext = vm,
                     AllowDrop = true
                 });
                 tabShop.SelectedIndex = nextTab;
                 _parentTabControl.UpdateLayout();
                 return;
             }
-            if (model is InternalWaybillInvoiceModel)
+            if (vm is InternalWaybillInvoiceModel)
             {
                 nextTab = tabShop.Items.Add(new TabItem
                 {
-                    Content = new UctrlMoveingInvoice(_user, _member, (InternalWaybillInvoiceModel)model),
-                    DataContext = model,
+                    Content = new UctrlMoveingInvoice(_user, _member, (InternalWaybillInvoiceModel)vm),
+                    DataContext = vm,
                     AllowDrop = true
                 });
                 tabShop.SelectedIndex = nextTab;
@@ -1395,6 +765,704 @@ namespace ES.Market.ViewModels
             AddTabControl(new UctrlManageUsers(), new ManageUsersViewModel());
         }
 
+        #region Admin
+        private void OnImportProducts(object o)
+        {
+            var filePath = new OpenFileDialog();
+            filePath.Filter = "Xml file (*.xml) | *.xml";
+
+            if (filePath.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+            var td = new Thread(() => { ImportDsProducts(filePath.FileName); });
+            td.Start();
+        }
+        [Serializable, XmlRoot("user")]
+        public class row
+        {
+            public int ID { get; set; }
+            public string name { get; set; }
+            public string description1 { get; set; }
+            public double price_ret { get; set; }
+            public double last_price_in { get; set; }
+            public string barcode { get; set; }
+            public string unit { get; set; }
+
+        }
+        private void ImportProducts(string fileName)
+        {
+
+            var products = (List<EsProductModel>)XmlManager.Read(fileName, typeof(List<EsProductModel>));
+
+            if (products == null || products.Count == 0)
+            {
+                return;
+            }
+            var insertedProuctCount = 0;
+            bool insertAll = false;
+            bool exitLoop = false;
+            var result = MessageBox.Show(string.Format("Իրականացվել է {0} անվանում ապրանքի բեռնում: Ցանկանու՞մ եք ավելացնել ամբողջությամբ։", products.Count), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
+            switch (result)
+            {
+                case MessageBoxResult.None:
+                    break;
+                case MessageBoxResult.OK:
+                    break;
+                case MessageBoxResult.Cancel:
+                    return;
+                    break;
+                case MessageBoxResult.Yes:
+                    insertAll = true;
+                    break;
+                case MessageBoxResult.No:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            foreach (var product in products)
+            {
+                if (insertAll)
+                {
+                    product.EsMemberId = ApplicationManager.GetEsMember.Id;
+                    product.LastModifierId = ApplicationManager.GetEsUser.UserId;
+                    product.IsEnabled = true;
+                    if (ProductsManager.InsertProduct(Convert(product)))
+                        insertedProuctCount++;
+                    continue;
+                }
+                if (exitLoop) break;
+                result = MessageBox.Show(string.Format("Ցանականու՞մ եք ավելացնել {0} ({1}) ապրանքը։", product.Description, product.Code), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
+                switch (result)
+                {
+                    case MessageBoxResult.None:
+                    case MessageBoxResult.No:
+                        continue;
+                    case MessageBoxResult.Cancel:
+                        exitLoop = true;
+                        break;
+                    case MessageBoxResult.OK:
+
+                    case MessageBoxResult.Yes:
+
+
+                        product.EsMemberId = ApplicationManager.GetEsMember.Id;
+                        product.LastModifierId = ApplicationManager.GetEsUser.UserId;
+                        product.IsEnabled = true;
+                        if (ProductsManager.InsertProduct(Convert(product)))
+                            insertedProuctCount++;
+                        break;
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            MessageBox.Show(string.Format("Իրականացվել է {0} անվանում ապրանքի ավելացում:", insertedProuctCount), "Ապրանքների ավելացում", MessageBoxButton.OK);
+        }
+        private void ImportDsProducts(string fileName)
+        {
+            //XmlManager.Save(new List<row>(), fileName);
+            var products = (List<row>)XmlManager.Read(fileName, typeof(List<row>));
+            //var products = (List<EsProductModel>)XmlManager.Read(fileName, typeof(List<EsProductModel>));
+
+            if (products == null || products.Count == 0)
+            {
+                return;
+            }
+            var insertedProuctCount = 0;
+            bool insertAll = false;
+            bool exitLoop = false;
+            var result = MessageBox.Show(string.Format("Իրականացվել է {0} անվանում ապրանքի բեռնում: Ցանկանու՞մ եք ավելացնել ամբողջությամբ։", products.Count), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
+            switch (result)
+            {
+                case MessageBoxResult.None:
+                    break;
+                case MessageBoxResult.OK:
+                    break;
+                case MessageBoxResult.Cancel:
+                    return;
+                    break;
+                case MessageBoxResult.Yes:
+                    insertAll = true;
+                    break;
+                case MessageBoxResult.No:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            foreach (var item in products)
+            {
+                var product = new EsProductModel()
+                {
+                    Code = item.ID.ToString(),
+                    Barcode = item.barcode,
+                    Description = item.name,
+                    Mu = item.unit,
+                    CostPrice = (decimal)item.last_price_in,
+                    //Price = (decimal) item.price_ret,
+                    Note = item.description1
+                };
+                if (insertAll)
+                {
+                    product.EsMemberId = ApplicationManager.GetEsMember.Id;
+                    product.LastModifierId = ApplicationManager.GetEsUser.UserId;
+                    product.IsEnabled = true;
+                    if (ProductsManager.InsertProduct(Convert(product)))
+                        insertedProuctCount++;
+                    continue;
+                }
+                if (exitLoop) break;
+                result = MessageBox.Show(string.Format("Ցանականու՞մ եք ավելացնել {0} ({1}) ապրանքը։", product.Description, product.Code), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
+                switch (result)
+                {
+                    case MessageBoxResult.None:
+                    case MessageBoxResult.No:
+                        continue;
+                    case MessageBoxResult.Cancel:
+                        exitLoop = true;
+                        break;
+                    case MessageBoxResult.OK:
+
+                    case MessageBoxResult.Yes:
+
+
+                        product.EsMemberId = ApplicationManager.GetEsMember.Id;
+                        product.LastModifierId = ApplicationManager.GetEsUser.UserId;
+                        product.IsEnabled = true;
+                        if (ProductsManager.InsertProduct(Convert(product)))
+                            insertedProuctCount++;
+                        break;
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            MessageBox.Show(string.Format("Իրականացվել է {0} անվանում ապրանքի ավելացում:", insertedProuctCount), "Ապրանքների ավելացում", MessageBoxButton.OK);
+        }
+        private ProductModel Convert(EsProductModel item)
+        {
+            return new ProductModel()
+            {
+                Code = item.Code,
+                Barcode = item.Barcode,
+                HcdCs = item.HcdCs,
+                Description = item.Description,
+                Mu = item.Mu,
+                CostPrice = item.CostPrice,
+                Price = item.Price,
+                ExpiryDays = item.ExpiryDays,
+                IsWeight = item.IsWeight,
+                EsMemberId = item.EsMemberId,
+                LastModifierId = item.LastModifierId,
+                IsEnabled = item.IsEnabled
+            };
+        }
+        #endregion
+
+        #region Documents
+        private List<InvoiceModel> GetInvoices(InvoiceState state, InvoiceType type, int count)
+        {
+            switch (state)
+            {
+                case InvoiceState.All:
+                    switch (type)
+                    {
+                        case InvoiceType.SaleInvoice:
+                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.GetEsMember.Id);
+                            break;
+                        case InvoiceType.MoveInvoice:
+                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.GetEsMember.Id);
+                            break;
+                        case InvoiceType.PurchaseInvoice:
+                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.GetEsMember.Id);
+                            break;
+                        case InvoiceType.InventoryWriteOff:
+                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.GetEsMember.Id);
+                            break;
+                        case InvoiceType.ProductOrder:
+                            break;
+                        case InvoiceType.Statement:
+                            break;
+                        default:
+                            return null;
+                            break;
+                    }
+                    return null;
+                case InvoiceState.New:
+                    return null;
+                    break;
+                case InvoiceState.Saved:
+                    return InvoicesManager.GetInvoicesDescriptions(type, count, ApplicationManager.GetEsMember.Id);
+                    break;
+                case InvoiceState.Accepted:
+                    return InvoicesManager.GetUnacceptedInvoicesDescriptions(type, ApplicationManager.GetEsMember.Id);
+                    break;
+                case InvoiceState.Approved:
+                    return InvoicesManager.GetInvoicesDescriptions(type, ApplicationManager.GetEsMember.Id);
+                    break;
+            }
+            return null;
+        }
+        public void OnGetInvoices(object o)
+        {
+            var tuple = o as Tuple<InvoiceType, InvoiceState, MaxInvocieCount>;
+            if (tuple != null)
+            {
+                var type = tuple.Item1;
+                var state = tuple.Item2;
+                var count = (int)tuple.Item3;
+                List<InvoiceModel> invoices = null;
+                switch (state)
+                {
+                    case InvoiceState.New:
+                        switch (type)
+                        {
+                            case InvoiceType.SaleInvoice:
+                                CreateNewControl(new SaleInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
+                                break;
+                            case InvoiceType.MoveInvoice:
+                                CreateNewControl(new InternalWaybillInvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
+                                break;
+                            case InvoiceType.PurchaseInvoice:
+                                CreateNewControl(new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
+                                break;
+                            case InvoiceType.InventoryWriteOff:
+                                CreateNewControl(new InventoryWriteOffViewModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
+                                break;
+                            default:
+                                break;
+                        }
+                        return;
+                    case InvoiceState.All:
+                    case InvoiceState.Accepted:
+                    case InvoiceState.Approved:
+                        invoices = GetInvoices(state, type, count);
+                        break;
+                    default:
+                        break;
+                }
+                if (invoices == null)
+                {
+                    OnNewMessage(new MessageModel("Ապրանքագիր չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information));
+                    return;
+                }
+                invoices = SelectItemsManager.SelectInvoice(invoices, true);
+                InvoiceViewModel vm = null;
+                foreach (var invoiceModel in invoices)
+                {
+                    switch ((InvoiceType)invoiceModel.InvoiceTypeId)
+                    {
+                        case InvoiceType.SaleInvoice:
+                            vm = new SaleInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+                            break;
+                        case InvoiceType.MoveInvoice:
+                            vm = new InternalWaybillInvoiceModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+                            break;
+                        case InvoiceType.PurchaseInvoice:
+                            vm = new PurchaseInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+                            break;
+                        case InvoiceType.ProductOrder:
+                            break;
+                        case InvoiceType.InventoryWriteOff:
+                            vm = new InventoryWriteOffViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+                            break;
+                        case InvoiceType.Statement:
+                            break;
+                        default:
+                            break;
+                    }
+                    if (vm != null)
+                    {
+                        AddDocument(vm);
+                    }
+                }
+            }
+        }
+        #endregion Documents
+
+        #region Cash desk
+
+        private bool CanExecuteEcrAction(object o)
+        {
+            var actionMode = o as EcrExecuiteActions?;
+            switch (actionMode)
+            {
+                case EcrExecuiteActions.CheckConnection:
+                case EcrExecuiteActions.OperatorLogin:
+                case EcrExecuiteActions.PrintReturnTicket:
+                case EcrExecuiteActions.PrintLatestTicket:
+                case EcrExecuiteActions.PrintReportX:
+                case EcrExecuiteActions.PrintReportZ:
+                case EcrExecuiteActions.PrintReceiptTicket:
+                    return true;
+                case EcrExecuiteActions.CheckEcrConnection:
+                    break;
+                case EcrExecuiteActions.Zero:
+                    break;
+                case EcrExecuiteActions.GetOperatorsAndDepList:
+                    break;
+                case EcrExecuiteActions.LogoutOperator:
+                    break;
+                case EcrExecuiteActions.ManageHeaderAndFooter:
+                    break;
+                case EcrExecuiteActions.ManageLogo:
+                    break;
+                case EcrExecuiteActions.PrintEcrReport:
+                    break;
+                case EcrExecuiteActions.GetReceiptData:
+                    break;
+                case EcrExecuiteActions.CashWithdrawal:
+                    break;
+                case EcrExecuiteActions.PrintCash:
+                    break;
+                case EcrExecuiteActions.CashIn:
+                    break;
+                case null:
+                    break;
+                default:
+                    break;
+            }
+            return false;
+        }
+
+        private void ExecuteEcrAction(object o)
+        {
+            var actionMode = o as EcrExecuiteActions?;
+            var ecrserver = new EcrServer(ApplicationManager.EcrSettings);
+            IsLoading = true;
+            MessageModel message = null;
+            switch (actionMode)
+            {
+                case EcrExecuiteActions.CheckConnection:
+                    message = ecrserver.TryConnection() ? new MessageModel("ՀԴՄ կապի ստուգումն իրականացել է հաջողությամբ: " + ecrserver.ActionDescription, MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageModel.MessageTypeEnum.Warning);
+                    IsLoading = false;
+                    break;
+                case EcrExecuiteActions.OperatorLogin:
+                    message = ecrserver.TryOperatorLogin() ? new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageTypeEnum.Warning);
+                    IsLoading = false;
+                    break;
+                case EcrExecuiteActions.PrintReturnTicket:
+                    var resoult = MessageBox.Show("Դուք ցանկանու՞մ եք վերադարձնել ՀԴՄ կտրոնն ամբողջությամբ:", "ՀԴՄ կտրոնի վերադարձ", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (resoult == MessageBoxResult.Yes)
+                    {
+                        message = ecrserver.PrintReceiptReturnTicket(true) ? new MessageModel("ՀԴՄ կտրոնի վերադարձն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageTypeEnum.Error);
+                    }
+                    else if (resoult == MessageBoxResult.No)
+                    {
+                        message = ecrserver.PrintReceiptReturnTicket(false) ? new MessageModel("ՀԴՄ կտրոնի մասնակի վերադարձն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի մասնակի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageTypeEnum.Error);
+                    }
+                    else
+                    {
+                        message = new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումն ընդհատվել է:", MessageModel.MessageTypeEnum.Warning);
+                    }
+                    IsLoading = false;
+                    break;
+                case EcrExecuiteActions.PrintLatestTicket:
+                    message = ecrserver.PrintReceiptLatestCopy() ? new MessageModel("ՀԴՄ վերջին կտրոնի տպումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ վերջին կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageTypeEnum.Warning);
+                    IsLoading = false;
+                    break;
+                case EcrExecuiteActions.PrintReportX:
+                    message = ecrserver.GetReport(ReportType.X) ? new MessageModel("ՀԴՄ X հաշվետվության տպումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ X հաշվետվության տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageTypeEnum.Warning);
+                    IsLoading = false;
+                    break;
+                case EcrExecuiteActions.PrintReportZ:
+                    message = ecrserver.GetReport(ReportType.Z) ? new MessageModel("ՀԴՄ Z հաշվետվության տպումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ Z հաշվետվության տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageTypeEnum.Warning);
+                    IsLoading = false;
+                    break;
+                case EcrExecuiteActions.CheckEcrConnection:
+                    break;
+                case EcrExecuiteActions.Zero:
+                    break;
+                case EcrExecuiteActions.GetOperatorsAndDepList:
+                    break;
+                case EcrExecuiteActions.LogoutOperator:
+                    break;
+                case EcrExecuiteActions.PrintReceiptTicket:
+                    var ecrServer = new EcrServer(ApplicationManager.EcrSettings);
+                    var filePath = FileManager.OpenExcelFile("Excel files(*.xls *.xlsx *․xlsm)|*.xls;*.xlsm;*․xlsx|Excel with macros|*.xlsm|Excel 97-2003 file|*.xls", "Excel ֆայլի բեռնում", ConfigSettings.GetConfig("EcrExcelFilePath"));
+                    if (string.IsNullOrEmpty(filePath))
+                    {
+                        IsLoading = false;
+                        return;
+                    }
+                    try
+                    {
+                        if (ecrServer.PrintReceiptFromExcelFile(filePath))
+                        {
+                            IsLoading = false;
+                            ApplicationManager.MessageManager.OnNewMessage(new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success));
+                        }
+                        else
+                        {
+                            IsLoading = false;
+                            ApplicationManager.MessageManager.OnNewMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումն ընդհատվել է: {1} ({0})", ecrServer.ActionCode, ecrServer.ActionDescription), MessageModel.MessageTypeEnum.Warning));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+
+                        throw;
+                    }
+
+                    ConfigSettings.SetConfig("EcrExcelFilePath", Path.GetDirectoryName(filePath));
+                    break;
+                case EcrExecuiteActions.ManageHeaderAndFooter:
+                    break;
+                case EcrExecuiteActions.ManageLogo:
+                    break;
+                case EcrExecuiteActions.PrintEcrReport:
+                    break;
+                case EcrExecuiteActions.GetReceiptData:
+                    break;
+                case EcrExecuiteActions.CashWithdrawal:
+                    //message = ecrserver.SetCashWithdrawal() != null ? new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումն իրականացել է հաջողությամբ:", MessageModel.MessageType.Success) : new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageType.Warning);
+                    IsLoading = false;
+                    break;
+                case EcrExecuiteActions.PrintCash:
+                    break;
+                case EcrExecuiteActions.CashIn:
+                    //message = ecrserver.SetCashReceipt() != null ? new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումն իրականացել է հաջողությամբ:", MessageModel.MessageType.Success) : new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageType.Warning);
+                    IsLoading = false;
+                    break;
+                case null:
+                    break;
+                default:
+                    message = null;
+                    break;
+            }
+            if (message != null)
+            {
+                ApplicationManager.MessageManager.OnNewMessage(message);
+            }
+            IsLoading = false;
+        }
+
+        private void OnGetCashDeskInfo(object o)
+        {
+            var cashDesks = CashDeskManager.TryGetCashDesk(_member.Id);
+            var partners = PartnersManager.GetPartners(_member.Id);
+
+            if (cashDesks == null || cashDesks.Count == 0)
+            {
+                return;
+            }
+            string content, title;
+            title = "Դրամարկղի մնացորդի դիտում";
+            if (cashDesks == null || partners == null)
+            {
+                content = "Թերի տվյալներ։\nԽնդրում ենք փորձել մի փոքր ուշ։";
+                MessageBox.Show(content, title, MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            var cashDeskContent = string.Empty;
+            if (!UserRoles.Any(s => s.RoleName == "Manager" || s.RoleName == "Director"))
+            {
+                cashDesks = new List<CashDesk>
+                {
+                    CashDeskManager.GetCashDesk(ApplicationManager.GetThisDesk.Id, ApplicationManager.GetEsMember.Id)
+                };
+                cashDeskContent = cashDesks.Where(s => s.IsCash).Aggregate(cashDeskContent, (current, item) => current + string.Format("Դրամարկղ {0}  - {1} դր․ \n", item.Name, item.Total.ToString("N")));
+            }
+            else
+            {
+                foreach (var item in cashDesks.Where(s => s.IsCash))
+                {
+                    cashDeskContent += string.Format("Դրամարկղ {0}  - {1} դր․ \n", item.Name, item.Total.ToString("N"));
+                }
+                cashDeskContent += string.Format("Կանխիկ դրամարկղ - {0} դր․ \n\n", cashDesks.Where(s => s.IsCash).Sum(s => s.Total).ToString("N"));
+
+                foreach (var item in cashDesks.Where(s => !s.IsCash))
+                {
+                    cashDeskContent += string.Format("Դրամարկղ {0}  - {1} դր․ \n", item.Name, item.Total.ToString("N"));
+                }
+                cashDeskContent += string.Format("Անկանխիկ դրամարկղ - {0} դր․ \n\n", cashDesks.Where(s => !s.IsCash).Sum(s => s.Total).ToString("N"));
+                cashDeskContent += string.Format("Ընդամենը - {0} դր․ \n\n", cashDesks.Sum(s => s.Total).ToString("N"));
+                cashDeskContent += string.Format("Դեբիտորական պարտք - {0} դր․ \n", partners.Sum(s => s.Debit ?? 0).ToString("N"));
+                cashDeskContent += string.Format("Կրեդիտորական պարտք - {0} դր․ \n\n", partners.Sum(s => s.Credit ?? 0).ToString("N"));
+                cashDeskContent += string.Format("Ընդամենը դրամական միջոցներ - {0} դր․ \n\n", (cashDesks.Sum(s => s.Total) + partners.Sum(s => (s.Debit ?? 0) + (s.Credit ?? 0))).ToString("N"));
+            }
+            MessageBox.Show(cashDeskContent, title, MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void OnExecuteEcrAction(object o)
+        {
+            var td = new Thread(() => { ExecuteEcrAction(o); });
+            td.SetApartmentState(ApartmentState.STA);
+            td.Start();
+        }
+
+        #endregion
+
+        #region Data
+
+        private bool CanGetProductOrder(object o)
+        {
+            return ApplicationManager.UserRoles.Any(s => s.RoleName == "Director" || s.RoleName == "Manager");
+        }
+
+        private void OnGetProductOrder(object o)
+        {
+            var viewModel = new ProductOrderBySaleViewModel(null);
+            AddTabControl(new UctrlViewTable { DataContext = viewModel }, viewModel);
+        }
+
+        private void OnGetSaleProducts(object o)
+        {
+            var viewModel = new SaleProductsViewModel(null);
+            AddTabControl(new UctrlViewTable { DataContext = viewModel }, viewModel);
+        }
+
+        private void OnWriteOffProducts(object o)
+        {
+            var stock = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.GetEsMember.Id)).FirstOrDefault();
+            if (stock == null) return;
+            var existingProducts = ProductsManager.GetProductItemsByStock(stock.Id, ApplicationManager.GetEsMember.Id);
+            CreateWriteOffInvoice(existingProducts.Select(s => new Tuple<string, decimal>(s.Product.Code, s.Quantity)).ToList(), stock.Id);
+        }
+
+        private void CreateWriteOffInvoice(List<Tuple<string, decimal>> items, long? stockId, string notes = null)
+        {
+            if (!items.Any())
+            {
+                OnNewMessage(new MessageModel(DateTime.Now, "Դուրսգրման ենթակա ապրանք գոյություն չունի:", MessageModel.MessageTypeEnum.Information));
+                return;
+            }
+            var vm = new InventoryWriteOffViewModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+            vm.Invoice.FromStockId = stockId;
+            vm.Invoice.Notes = notes;
+            foreach (var item in items)
+            {
+                var code = item.Item1;
+                var quantity = item.Item2;
+                vm.SetInvoiceItem(code);
+                if (vm.InvoiceItem.Product == null)
+                {
+                    continue;
+                }
+                vm.InvoiceItem.Quantity = quantity;
+                vm.InvoiceItem.Index = vm.InvoiceItems.Count + 1;
+                vm.InvoiceItems.Add(vm.InvoiceItem);
+                vm.InvoiceItem = new InvoiceItemsModel();
+            }
+            AddDocument(vm);
+        }
+        private void OnWriteOffStockTaking(object o)
+        {
+            var stockTake = GetOpeningStockTake();
+            if (stockTake == null) return;
+            var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id, ApplicationManager.GetEsMember.Id);
+            CreateWriteOffInvoice(stockTakeItems.Where(s => s.Balance < 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, -s.Balance ?? 0)).ToList(),
+                stockTake.StockId,
+                string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
+        }
+
+        #endregion
+
+        #region View
+
+        public void OnGetReport(ReportTypes type)
+        {
+            switch (type)
+            {
+                case ReportTypes.ShortReport:
+                    AddDocument(new ShortReportViewModel());
+                    break;
+                case ReportTypes.Report:
+                    var ui = new DataReports(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+                    ui.DataContext = new ReportsViewModel(ui);
+                    ui.Show();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("o", type, null);
+            }
+
+        }
+
+        private void OnViewProductsByStock(object o)
+        {
+            var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.GetEsMember.Id), true);
+            AddTabControl(new ViewProductsUctrl(), new ProductItemsViewModel(stocks));
+        }
+
+        private bool CanGetProductHistory(object o)
+        {
+            return UserRoles.Any(s => s.RoleName == "Manager" || s.RoleName == "SaleManager");
+        }
+
+        private void OnGetProductsHistory(object o)
+        {
+            AddTabControl(new ProductsHistory(), new ProductHistoryViewModel());
+        }
+
+        private void OnViewPackingListForSaller(object o)
+        {
+            var tuple = o as Tuple<InvoiceType, InvoiceState, MaxInvocieCount>;
+            if (tuple != null)
+            {
+                var type = tuple.Item1;
+                var state = tuple.Item2;
+                var count = (int)tuple.Item3;
+                var invoices = GetInvoices(state, type, count);
+                if (invoices == null)
+                {
+                    OnNewMessage(new MessageModel("Ապրանքագիր չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information));
+                    return;
+                }
+                invoices = SelectItemsManager.SelectInvoice(invoices, true);
+                foreach (var invoiceModel in invoices)
+                {
+                    var vm = new PackingListForSallerViewModel(invoiceModel.Id);
+                    AddDocument(vm);
+
+                }
+            }
+        }
+
+        #endregion
+
+        #region Help
+
+        #endregion
+
+        #region Manager
+
+        private bool CanManageProcucts(object o)
+        {
+            return _userRoles.Any(s => s.RoleName == "Manager");
+        }
+
+        private void OnManageProducts(object o)
+        {
+            var vm = new ProductManagerViewModel();
+            AddDocument(vm);
+            vm.OnProductEdited += ProductItemsToolsViewModel.UpdateProducts;
+
+        }
+        private void OnSetProduct(ProductModel product)
+        {
+            var vm = Documents.OfType<ProductManagerViewModel>().FirstOrDefault();
+            if (vm == null)
+            {
+                vm = new ProductManagerViewModel();
+                AddDocument(vm);
+            }
+            vm.IsActive = true;
+            vm.SetProduct(product);
+        }
+        private bool CanManagePartners(object o)
+        {
+            return _userRoles.Any(s => s.RoleName == "Manager");
+        }
+
+        private void OnManagePartners(object o)
+        {
+            AddDocument(new PartnerViewModel(_member.Id));
+        }
+
+        #endregion
+
         #endregion
 
         #region ICommands
@@ -1441,7 +1509,11 @@ namespace ES.Market.ViewModels
             get { return new RelayCommand(OnGetProductsHistory, CanGetProductHistory); }
         }
 
-        public ICommand ViewInternalWayBillCommands { get; set; }
+        #region View
+
+        public ICommand ViewInternalWayBillCommands { get; private set; }
+        public ICommand ViewPackingListForSallerCommand { get; private set; }
+        #endregion View
 
         #region Stock Take
 

@@ -11,6 +11,7 @@ using ES.Data.Enumerations;
 using ES.Data.Models;
 using ES.DataAccess.Models;
 using ES.Market.ViewModels;
+using ES.Market.Views;
 using ES.Market.Views.Reports.View;
 using ES.MsOffice.ExcelManager;
 using ES.Shop;
@@ -742,11 +743,7 @@ namespace ES.Market
         {
             LoadPackingListTab((long)InvoiceType.MoveInvoice, false);
         }
-        private void MiViewPurchaseInvoices_Click(object sender, RoutedEventArgs e)
-        {
-            LoadPackingListTab((long)InvoiceType.PurchaseInvoice);
-        }
-
+        
         #endregion
 
         #region Edit
