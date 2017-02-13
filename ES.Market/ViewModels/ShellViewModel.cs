@@ -993,10 +993,10 @@ namespace ES.Market.ViewModels
                 case InvoiceState.New:
                     return null;
                     break;
-                case InvoiceState.Saved:
+                case InvoiceState.Accepted:
                     return InvoicesManager.GetInvoicesDescriptions(type, count, ApplicationManager.GetEsMember.Id);
                     break;
-                case InvoiceState.Accepted:
+                case InvoiceState.Saved:
                     return InvoicesManager.GetUnacceptedInvoicesDescriptions(type, ApplicationManager.GetEsMember.Id);
                     break;
                 case InvoiceState.Approved:
@@ -1035,6 +1035,7 @@ namespace ES.Market.ViewModels
                                 break;
                         }
                         return;
+                    case InvoiceState.Saved:
                     case InvoiceState.All:
                     case InvoiceState.Accepted:
                     case InvoiceState.Approved:
@@ -1449,6 +1450,7 @@ namespace ES.Market.ViewModels
                 AddDocument(vm);
             }
             vm.IsActive = true;
+            vm.IsSelected = true;
             vm.SetProduct(product);
         }
         private bool CanManagePartners(object o)

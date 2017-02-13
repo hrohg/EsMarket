@@ -18,18 +18,18 @@ namespace UserControls
 
 		private void btnOK_Click(object sender, RoutedEventArgs e)
 		{
-			if(string.IsNullOrEmpty( pswPassword.Password ))
-			{
-				MessageBox.Show(CultureResources.Inst["InputPassword"], "", MessageBoxButton.OK, MessageBoxImage.Error);
-				pswPassword.Focus();
-				return;
-			}
-			if(string.IsNullOrEmpty(pswRepeatPassword.Password))
-			{
-				MessageBox.Show(CultureResources.Inst["InputPassword"], "", MessageBoxButton.OK, MessageBoxImage.Error);
-				pswRepeatPassword.Focus();
-				return;
-			}
+            //if(string.IsNullOrEmpty( pswPassword.Password ))
+            //{
+            //    MessageBox.Show(CultureResources.Inst["InputPassword"], "", MessageBoxButton.OK, MessageBoxImage.Error);
+            //    pswPassword.Focus();
+            //    return;
+            //}
+            //if(string.IsNullOrEmpty(pswRepeatPassword.Password))
+            //{
+            //    MessageBox.Show(CultureResources.Inst["InputPassword"], "", MessageBoxButton.OK, MessageBoxImage.Error);
+            //    pswRepeatPassword.Focus();
+            //    return;
+            //}
 			if(pswPassword.Password == pswRepeatPassword.Password)
 			{
 				DialogResult = true;
@@ -39,7 +39,7 @@ namespace UserControls
 			else
 			{
 				Password = string.Empty;
-				MessageBox.Show(CultureResources.Inst["PasswordIsIncorrect"], "", MessageBoxButton.OK, MessageBoxImage.Error);
+				MessageBox.Show("PasswordIsIncorrect", "", MessageBoxButton.OK, MessageBoxImage.Error);
 				pswRepeatPassword.Password = string.Empty;
 				pswRepeatPassword.Focus();
 				return;

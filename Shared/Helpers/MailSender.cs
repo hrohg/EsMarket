@@ -13,15 +13,15 @@ namespace Shared.Helpers
 		public static bool Send(string sMailTo, string sSubject, string sBody)
 		{
 			MailMessage oMessage = new MailMessage();
-			SmtpClient smtpClient = new SmtpClient("mail.rambler.ru");
+			SmtpClient smtpClient = new SmtpClient("mail.gmail.com");
 
-			oMessage.From = new MailAddress("rieltor_mail@rambler.ru", "Realtor", Encoding.UTF8);
+            oMessage.From = new MailAddress("easyshoplogistics@gmail.com", "ES market", Encoding.UTF8);
 
 			oMessage.Subject = sSubject;
 			oMessage.IsBodyHtml = true;
 			oMessage.Body = sBody;
 
-			smtpClient.Credentials = new NetworkCredential("rieltor_mail@rambler.ru", "rieltor123456");
+            smtpClient.Credentials = new NetworkCredential("easyshoplogistics@gmail.com", "easyshop@)!$");
 
 			smtpClient.Port = 587;
 			oMessage.To.Clear();
@@ -39,8 +39,8 @@ namespace Shared.Helpers
 
 		public static void SendErrorReport(string exceptionText, string exceptionDetails)
 		{
-			Send("arsen.kostandyan@gmail.com", 
-				string.Format("Rieltor Error from {0}", System.Configuration.ConfigurationManager.AppSettings["Company"]), 
+			Send("hrayrgishyan@gmail.com", 
+				string.Format("ES Error from {0}", "Company"), 
 				string.Format("Exception Text: <b>{0}</b><br />Exception Details: <b>{1}</b>", 
 				exceptionText, 
 				exceptionDetails));

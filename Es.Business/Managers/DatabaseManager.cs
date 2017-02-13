@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Data.Entity.Core.EntityClient;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Transactions;
 using ES.Business.Helpers;
 using ES.Business.Models;
 using ES.Common;
+using ES.DataAccess.Helpers;
 using ES.DataAccess.Models;
 
 namespace ES.Business.Managers
@@ -790,6 +793,60 @@ namespace ES.Business.Managers
                 : new MessageModel("Տվյալների համաժամանակեցումը ձախողվել է։", MessageModel.MessageTypeEnum.Warning));
         }
 
+        #region Backup Restore
+        public static string BackUpCommand(string databaseName, string fileAddress)
+        {
+            string command = string.Format("BACKUP DATABASE {0} TO DISK = N'{1}' WITH NOFORMAT, NOINIT,  NAME = N'MyAir-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 10", databaseName, fileAddress);
+            return command;
+        }
+        public static string RestoreCommand(string databaseName, string fileAddress)
+        {
+            string command = @"use [master]
+                        ALTER DATABASE  " + databaseName + @"
+                        SET SINGLE_USER
+                        WITH ROLLBACK IMMEDIATE
+                        RESTORE DATABASE " + databaseName + @"
+                        FROM  DISK = N'" + fileAddress + "'";
+
+            return command;
+        }
+        public static bool CreateDatabaseBackup(string backupFilePath, string dbName, ref string errorMessage)
+        {
+            if (File.Exists(backupFilePath))
+            {
+                try
+                {
+                    //File.Delete(backupFilePath);
+                }
+                catch { }
+            }
+            else
+            {
+                File.Create(backupFilePath);
+            }
+
+
+
+            using (var db = GetDataContext())
+            {
+                using (var ts = new TransactionScope(TransactionScopeOption.Suppress))
+                {
+                    try
+                    {
+                        db.Database.UseTransaction(null);
+                        db.Database.ExecuteSqlCommand(System.Data.Entity.TransactionalBehavior.DoNotEnsureTransaction, BackUpCommand(dbName, backupFilePath));
+                    }
+                    catch (Exception ex)
+                    {
+                        return false;
+                    }
+                    ts.Complete();
+                    return true;
+                }
+            }
+        }
+
+        #endregion Backup Restore
         #endregion
     }
 }

@@ -28,7 +28,7 @@ namespace DatabaseManagement
             {
                 Title = "Backup File",
                 RestoreDirectory = true,
-                Filter = "Realtor Bakup Files (*.esl)|*.esl",
+                Filter = "Realtor Bakup Files (*.es)|*.es",
                 AddExtension = true
             };
 
@@ -47,31 +47,32 @@ namespace DatabaseManagement
             InputPassword passWindow = new InputPassword();
             if (passWindow.ShowDialog() ?? false)
             {
-                password = passWindow.Password;
+                password = passWindow.Password.Trim();
             }
             else
             {
                 return;
             }
-            if (string.IsNullOrEmpty(password.Trim()))
-            {
-                MessageBox.Show(CultureResources.Inst["PasswordCanNotBeEmpty"], CultureResources.Inst["PasswordError"], MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            //if (string.IsNullOrEmpty(password))
+            //{
+            //    MessageBox.Show(CultureResources.Inst["PasswordCanNotBeEmpty"], CultureResources.Inst["PasswordError"], MessageBoxButton.OK, MessageBoxImage.Error);
+            //    return;
+            //}
             Cursor = Cursors.Wait;
 
             string errorMessage = string.Empty;
-            if (backupFilePath.EndsWith(".esl"))
+            if (backupFilePath.EndsWith(".es"))
             {
-                backupFilePath = backupFilePath.Replace(".esl", string.Empty);
+                backupFilePath = backupFilePath.Replace(".es", ".bak");
             }
 
             //if (!Session.Inst.BEManager.CreateDatabaseBackup(backupFilePath, DatabaseManager.GetConnectionString(), ref errorMessage))
-
-            if (!Session.Inst.BEManager.CreateDatabaseBackup(backupFilePath, ApplicationManager.ConnectionString, ref errorMessage))
+            var connectionString = !(ApplicationManager.IsEsServer) ? ApplicationManager.ConnectionString : string.Empty;
+            //if (!Session.Inst.BEManager.CreateDatabaseBackup(backupFilePath, connectionString, ref errorMessage))
+            if (DatabaseManager.CreateDatabaseBackup(backupFilePath, ApplicationManager.dbName, ref errorMessage))
             {
                 Cursor = null;
-                MessageBox.Show(CultureResources.Inst["ArchiveIsNotCompletedTryLater"], CultureResources.Inst["ArchiveError"], MessageBoxButton.OK, MessageBoxImage.Error);
+                //MessageBox.Show(CultureResources.Inst["ArchiveIsNotCompletedTryLater"], CultureResources.Inst["ArchiveError"], MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -81,16 +82,16 @@ namespace DatabaseManagement
             {
                 Cryptography cryptography = new Cryptography(password);
 
-                if (cryptography.Encrypt(backupFilePath, string.Format("{0}.esl", backupFilePath)))
+                if (cryptography.Encrypt(backupFilePath, string.Format("{0}.es", backupFilePath)))
                 {
-                    MessageBox.Show(CultureResources.Inst["ArchiveCreatedSuccessfully"], "", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //MessageBox.Show(CultureResources.Inst["ArchiveCreatedSuccessfully"], "", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 Cursor = null;
             }
             else
             {
                 Cursor = null;
-                MessageBox.Show(CultureResources.Inst["ArchiveIsNotCompletedTryLater"], CultureResources.Inst["ArchiveError"], MessageBoxButton.OK, MessageBoxImage.Error);
+                //MessageBox.Show(CultureResources.Inst["ArchiveIsNotCompletedTryLater"], CultureResources.Inst["ArchiveError"], MessageBoxButton.OK, MessageBoxImage.Error);
             }
             try
             {
@@ -109,18 +110,18 @@ namespace DatabaseManagement
 
         public void RestoreDatabase(string filePath)
         {
-            if (MessageBox.Show(CultureResources.Inst["RestoreWillDeleteAnyChanges"], CultureResources.Inst["ConfirmRestore"], MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
-            {
-                return;
-            }
+            //if (MessageBox.Show(CultureResources.Inst["RestoreWillDeleteAnyChanges"], CultureResources.Inst["ConfirmRestore"], MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            //{
+            //    return;
+            //}
 
             var processes = Process.GetProcessesByName("RealEstateApp");
             if (processes.Length > 0)
             {
-                if (MessageBox.Show(CultureResources.Inst["RealtorIsOpenAndWillBeClose"], CultureResources.Inst["ConfirmRestore"], MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
-                {
-                    return;
-                }
+                //if (MessageBox.Show(CultureResources.Inst["RealtorIsOpenAndWillBeClose"], CultureResources.Inst["ConfirmRestore"], MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                //{
+                //    return;
+                //}
                 processes[0].Kill();
             }
 
@@ -134,7 +135,7 @@ namespace DatabaseManagement
                                                                     Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                                                                     Multiselect = false,
                                                                     RestoreDirectory = true,
-                                                                    Title = CultureResources.Inst["SelectArchive"]
+                                                                    Title = "SelectArchive"
                                                                 };
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
@@ -152,11 +153,11 @@ namespace DatabaseManagement
             {
                 restorePassword = passWindow.Password;
 
-                if (string.IsNullOrEmpty(restorePassword))
-                {
-                    MessageBox.Show(CultureResources.Inst["PasswordCanNotBeEmpty"], CultureResources.Inst["PasswordError"], MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
+                //if (string.IsNullOrEmpty(restorePassword))
+                //{
+                //    MessageBox.Show(CultureResources.Inst["PasswordCanNotBeEmpty"], CultureResources.Inst["PasswordError"], MessageBoxButton.OK, MessageBoxImage.Error);
+                //    return;
+                //}
             }
             else
             {
@@ -170,7 +171,7 @@ namespace DatabaseManagement
                 if (!cryptography.Decrypt(filePath, restoreFilePath))
                 {
                     Cursor = null;
-                    MessageBox.Show(CultureResources.Inst["PasswordIsIncorrect"], "", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //MessageBox.Show(CultureResources.Inst["PasswordIsIncorrect"], "", MessageBoxButton.OK, MessageBoxImage.Information);
                     DeleteBackupFile(restoreFilePath);
                     return;
                 }

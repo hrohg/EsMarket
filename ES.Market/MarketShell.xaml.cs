@@ -107,7 +107,7 @@ namespace ES.Market
                     MiViewLastStockTaking.IsEnabled =
                    MiMoveingInvoices.IsEnabled = true;
             }
-            if (_userRoles.FirstOrDefault(s => s.Id == (int)ESLSettingsManager.MemberRoles.Seller || s.Id == (int)ESLSettingsManager.MemberRoles.SeniorSeller) != null)
+            if (_userRoles.FirstOrDefault(s => s.Id == (int)EsSettingsManager.MemberRoles.Seller || s.Id == (int)EsSettingsManager.MemberRoles.SeniorSeller) != null)
             {
                 MiViewLastStockTaking.IsEnabled = true;
             }

@@ -16,6 +16,10 @@ namespace ES.Business.Managers
         public delegate void OnReceivedLog(MessageModel log);
         public event OnReceivedLog ReveiveLogEvent;
 
+        #region Internal fields
+        private static DataServer _server;
+        #endregion Internal fields
+
         #region Internal properties
         private static EsMemberModel _member = new EsMemberModel();
         private static EsMembersAccountsModel _membersAccounts;
@@ -68,6 +72,7 @@ namespace ES.Business.Managers
         }
         #region External properties
         public static bool IsEsServer { get; private set; }
+        public static string dbName { get { return _server != null ? _server.Database : string.Empty; } }
         public static EsMemberModel GetEsMember { get { return _member; } }
 
         public static EsMembersAccountsModel GetEsMembersAccounts
@@ -92,7 +97,7 @@ namespace ES.Business.Managers
             }
         }
 
-        public static List<MembersRoles> UserRoles { get { return _userRoles; }  private set { _userRoles = value; } }
+        public static List<MembersRoles> UserRoles { get { return _userRoles; } private set { _userRoles = value; } }
         public static EsUserModel GetEsUser { get { return _esUser; } }
         public static EsUserModel SetEsUser { set { _esUser = value; } }
         public static string DefaultConnectionString
@@ -156,7 +161,7 @@ namespace ES.Business.Managers
                 sqlBuilder.MultipleActiveResultSets = true;
                 sqlBuilder.UserID = "sa";
                 sqlBuilder.Password = "academypbx569280";
-                
+
                 // Build the SqlConnection connection string.
                 string providerString = sqlBuilder.ToString();
 
@@ -166,7 +171,7 @@ namespace ES.Business.Managers
 
                 //Set the provider name.
                 entityBuilder.Provider = providerName;
-                
+
                 // Set the provider-specific connection string.
                 entityBuilder.ProviderConnectionString = providerString;
 
@@ -303,7 +308,7 @@ namespace ES.Business.Managers
         }
         public static bool CreateConnectionString(DataServer server)
         {
-            if (server != null)
+           if (server != null)
             {
                 switch (server.Description.ToLower())
                 {
@@ -320,6 +325,7 @@ namespace ES.Business.Managers
                         IsEsServer = false;
                         break;
                     default:
+                        _server = server;
                         IsEsServer = false;
                         if (string.IsNullOrEmpty(server.Name) || string.IsNullOrEmpty(server.Database)) { return false; }
                         var sqlBuilder = new SqlConnectionStringBuilder();
@@ -332,8 +338,8 @@ namespace ES.Business.Managers
                         sqlBuilder.IntegratedSecurity = server.IntegratedSecurity;
                         sqlBuilder.PersistSecurityInfo = server.PersistSecurityInfo;
                         sqlBuilder.MultipleActiveResultSets = server.MultipleActiveResultSets;
-                        sqlBuilder.UserID = server.Login??string.Empty;
-                        sqlBuilder.Password = server.Password??string.Empty;
+                        sqlBuilder.UserID = server.Login ?? string.Empty;
+                        sqlBuilder.Password = server.Password ?? string.Empty;
 
                         // Build the SqlConnection connection string.
                         string providerString = sqlBuilder.ToString();
@@ -436,7 +442,7 @@ namespace ES.Business.Managers
             var handler = ReveiveLogEvent;
             if (handler != null) handler(log);
         }
-        
+
         #endregion
     }
 

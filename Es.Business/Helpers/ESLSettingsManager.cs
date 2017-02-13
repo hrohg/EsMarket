@@ -1,8 +1,6 @@
-﻿using Shared.Helpers;
-
-namespace ES.Business.Helpers
+﻿namespace ES.Business.Helpers
 {
-	public class ESLSettingsManager : DataManagerBase
+	public class EsSettingsManager
 	{
 	    
 	    public enum MemberRoles
@@ -10,7 +8,7 @@ namespace ES.Business.Helpers
 	        Administrator = 1,
             Director = 2,
             Manager = 3,
-            Seller =4,
+            Seller = 4,
             Storekeeper=5,
             SaleManager = 6,
             SeniorSeller =7

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using Shared.Helpers;
 
 namespace UserControls.Controls
 {
@@ -79,7 +80,7 @@ namespace UserControls.Controls
 
         private void btnSendErrorReport(object sender, RoutedEventArgs e)
         {
-            //MailSender.SendErrorReport(ExceptionText, ExceptionDetailText);
+            MailSender.SendErrorReport(ExceptionText, ExceptionDetailText);
             Close();
         }
 

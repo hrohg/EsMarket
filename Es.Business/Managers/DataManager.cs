@@ -4,7 +4,7 @@ using ES.Common.Cultures;
 using ES.DataAccess.Helpers;
 using ES.DataAccess.Models;
 
-namespace Shared.Helpers
+namespace ES.Business.Managers
 {
     //[ServiceContract]
     //public interface IEstateService
@@ -16,7 +16,7 @@ namespace Shared.Helpers
     //    int SaveEstate(Estate estate, ref StringBuilder errorMessage);
     //}
 
-    public class DataManager : DataManagerBase
+    public class DataManager
     {
         public static DataManager GetInstance()
         {
@@ -446,6 +446,8 @@ namespace Shared.Helpers
 
         //    return DatabaseTools.RestoreDatabase(backupFilePath, dataFolderPath, ref errorMessage);
         //}
+
+       
         public bool CreateDatabaseBackup(string backupFilePath,string con, ref string errorMessage)
         {
             if (File.Exists(backupFilePath))
@@ -466,7 +468,7 @@ namespace Shared.Helpers
                 MessageBox.Show(CultureResources.Inst["PleaseSelectArchiveFile"]);
                 return false;
             }
-            //TODO: move it to UI
+            //TODO:
 
             return DatabaseTools.RestoreDatabase(backupFilePath, dataFolderPath, ref errorMessage);
         }

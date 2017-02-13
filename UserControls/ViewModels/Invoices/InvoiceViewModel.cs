@@ -185,7 +185,7 @@ namespace UserControls.ViewModels.Invoices
         {
             //ICommands
             RemoveInvoiceItemCommand = new RemoveInvoiceItemCommands(this);
-
+            SetInvoiceItemCommand = new RelayCommand<string>(OnSetInvoiceItem);
             //PrintInvoiceItemCommand = new PrintInvoiceItemCommands(this);
             //ExportInvoiceCommand = new ExportInvoiceItemCommands(this);
 
@@ -493,12 +493,18 @@ namespace UserControls.ViewModels.Invoices
                 Discount = productItem.Product.Discount,
                 Note = productItem.Product.Note
             };
-            //OnPropertyChanged(IsExpiringProperty);
+            RaisePropertyChanged(IsExpiringProperty);
+            RaisePropertyChanged("InvoiceItem");
         }
         public void OnSetProductItem(ProductItemModel productItem)
         {
             CreateNewInvoiceItem(productItem);
             OnAddInvoiceItem(InvoiceItem);
+        }
+        public virtual void OnSetInvoiceItem(string code)
+        {
+            SetInvoiceItem(code);
+            OnAddInvoiceItem(null);
         }
         public virtual void SetInvoiceItem(string code)
         {
@@ -510,7 +516,7 @@ namespace UserControls.ViewModels.Invoices
                 product = new ProductsManager().GetProductsByCodeOrBarcode(code.Substring(2, 5), Member.Id);
                 count = HgConvert.ToDecimal(code.Substring(7, 5)) / 1000;
             }
-
+            InvoiceItem = new InvoiceItemsModel();
             if (product != null)
             {
                 InvoiceItem.InvoiceId = Invoice.Id;
@@ -525,7 +531,8 @@ namespace UserControls.ViewModels.Invoices
                 InvoiceItem.Discount = product.Discount;
                 InvoiceItem.Note = product.Note;
             }
-            OnPropertyChanged(IsExpiringProperty);
+            RaisePropertyChanged("InvoiceItem");
+            RaisePropertyChanged(IsExpiringProperty);
         }
 
         public bool CanEdit
@@ -552,7 +559,7 @@ namespace UserControls.ViewModels.Invoices
         }
         public virtual bool CanRemoveInvoiceItem()
         {
-            return Invoice.ApproveDate == null && SelectedInvoiceItem != null && (ApplicationManager.UserRoles.Any(s => s.Id == (int)ESLSettingsManager.MemberRoles.SeniorSeller || s.Id == (int)ESLSettingsManager.MemberRoles.Manager));
+            return Invoice.ApproveDate == null && SelectedInvoiceItem != null && (ApplicationManager.UserRoles.Any(s => s.Id == (int)EsSettingsManager.MemberRoles.SeniorSeller || s.Id == (int)EsSettingsManager.MemberRoles.Manager));
         }
         public virtual void RemoveInvoiceItem()
         {
@@ -763,6 +770,8 @@ namespace UserControls.ViewModels.Invoices
 
         #region Commands
         public ICommand RemoveInvoiceItemCommand { get; private set; }
+
+        public ICommand SetInvoiceItemCommand { get; private set; }
         public ICommand AddInvoiceItemCommand { get { return new RelayCommand(OnAddInvoiceItem, CanAddInvoiceItem); } }
         public ICommand SaveInvoiceCommand { get { return new RelayCommand(OnSaveInvoice, CanSaveInvoice); } }
         public ICommand PrintInvoiceItemCommand { get; private set; }

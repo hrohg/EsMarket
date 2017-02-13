@@ -109,17 +109,6 @@ namespace UserControls.Views.CustomControls
                         break;
                 }
             }
-            if (e.Key == Key.Enter)
-            {
-                //todo
-                //_viewModel.SetInvoiceItem(TxtCode.Text);
-                if (string.IsNullOrEmpty(TxtDescription.Text))
-                {
-                    return;
-                }
-                //todo
-                //_viewModel.OnAddInvoiceItem(null);
-            }
         }
         private void CmMiChooseProductByName_Click(object sender, EventArgs e)
         {

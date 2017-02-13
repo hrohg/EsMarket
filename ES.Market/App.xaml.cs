@@ -415,8 +415,8 @@ namespace ES.Market
         {
             EsExceptionBox box = new EsExceptionBox
             {
-                //ExceptionText = CultureResources.Inst["SendErrorMessage"],
-                ExceptionDetailText = e.ToString()
+                ExceptionText = "SendErrorMessage",
+                ExceptionDetailText = e.Exception.ToString()
             };
             box.ShowDialog();
             e.Handled = true;

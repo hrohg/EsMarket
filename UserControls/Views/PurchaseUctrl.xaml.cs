@@ -65,7 +65,7 @@ namespace UserControls.Views
                         TxtCode.SelectAll();
                         break;
                     case Key.S:
-                        _viewModel.OnSaveInvoice(null);
+                        //_viewModel.OnSaveInvoice(null);
                         break;
                     case Key.Q:
                         
@@ -91,7 +91,7 @@ namespace UserControls.Views
             }
             if (e.Key == Key.Enter)
             {
-                _viewModel.OnAddInvoiceItem(null);
+                //_viewModel.OnAddInvoiceItem(null);
             }
         }
         private void TxtCode_KeyDown(object sender, KeyEventArgs e)
@@ -106,11 +106,6 @@ namespace UserControls.Views
                         return;
                         break;
                 }
-            }
-            if (e.Key == Key.Enter && !string.IsNullOrEmpty(TxtCode.Text))
-            {
-                _viewModel.SetInvoiceItem(TxtCode.Text);
-                _viewModel.OnAddInvoiceItem(null);
             }
         }
         private void CmMiChooseProductByName_Click(object sender, EventArgs e)

@@ -42,19 +42,47 @@
                     <KeyBinding Key="Enter" Command="{Binding SelectItemCommand}" CommandParameter="{Binding ElementName=ListView, Path=SelectedValue}"/>
                     <!--<MouseBinding MouseAction="LeftDoubleClick" Gesture="LeftDoubleClick" Command="{Binding SelectItemCommand}" CommandParameter="{Binding Path=SelectedItem}"/>-->
                 </ListView.InputBindings>
-
                 <ListView.ItemTemplate>
-                    <DataTemplate DataType="{x:Type tools:CustomItem}">
-                        <Border>
-                            <Border.InputBindings>
-                                <MouseBinding MouseAction="LeftDoubleClick" 
-                                              Command="{Binding Path= DataContext.SelectItemCommand, ElementName=ListView}" 
-                                              CommandParameter="{Binding Value}"/>
-                            </Border.InputBindings>
-                            <TextBlock Text="{Binding Description}"/>
+                    <DataTemplate x:Name="DataTemplate" DataType="{x:Type tools:CustomItem}">
+                        <Border x:Name="Border">
+                            <TextBlock x:Name="TextBlock" Text="{Binding Description}" />
                         </Border>
+                        <DataTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="TextBlock" Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </DataTemplate.Triggers>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                    <Border x:Name="Border">
+                                        <Border.InputBindings>
+                                            <MouseBinding MouseAction="LeftDoubleClick" 
+                                              Command="{Binding Path= DataContext.SelectItemCommand, ElementName=ListView}" 
+                                              CommandParameter="{Binding Path=Value}"/>
+                                        </Border.InputBindings>
+                                        <ContentPresenter
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#FF9903"/>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#FF9903"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                </ListView.ItemContainerStyle>
             </ListView>
         </Grid>
     </DataTemplate>

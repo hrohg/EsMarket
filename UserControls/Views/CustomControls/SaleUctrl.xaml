@@ -51,7 +51,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0" Name="TxtPartner" FontSize="15" Text="{Binding Partner.Description, Mode=OneWay}" IsReadOnly="True" TabIndex="0" >
                                 <TextBox.ContextMenu>
-                                    <ContextMenu>                                        
+                                    <ContextMenu>
                                         <MenuItem Header="Ընտրել պատվիրատու" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Customer}"></MenuItem>
                                         <MenuItem Header="Ընտրել գործընկեր" Command="{Binding GetPartnerCommand}"></MenuItem>
                                         <MenuItem Header="Ընտրել մատակարար" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Provider}"></MenuItem>
@@ -101,10 +101,14 @@
                         <RowDefinition/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Label Grid.Row="0" Content="Կոդ"  VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="12"/>
-                    <TextBox Grid.Row="1" Name="TxtCode" Text="{Binding Path=InvoiceItem.Code, UpdateSourceTrigger=PropertyChanged}" 
+                    <TextBlock Grid.Row="0" Text="Կոդ"  VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="12"/>
+                    <TextBox Grid.Row="1" x:Name="TxtCode" Text="{Binding Path=InvoiceItem.Code, UpdateSourceTrigger=PropertyChanged}" 
                              Height="35" FontSize="20"  IsReadOnlyCaretVisible="True" Width="150" TabIndex="1" 
-                             KeyDown="TxtCode_KeyDown" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="1" />
+                             KeyDown="TxtCode_KeyDown" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="1">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding ElementName=TxtCode, Path=Text}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
                     <Label Grid.Row="0" Content="Անվանում" VerticalAlignment="Center"  HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="150,0,0,0" FontSize="12"/>
                     <TextBox Grid.Row="1" Name="TxtDescription" Text="{Binding Path=InvoiceItem.Description, UpdateSourceTrigger=PropertyChanged}"
                    Height="35" FontSize="20" VerticalContentAlignment="Center" Margin="152,1,106,1" VerticalAlignment="Center" IsReadOnly="True">

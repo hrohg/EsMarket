@@ -97,7 +97,11 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" HorizontalAlignment="Left">
                     <Label Content="Կոդ"/>
-                    <TextBox Name="TxtCode" Text="{Binding Path=InvoiceItem.Code, UpdateSourceTrigger=PropertyChanged}" Height="35" FontSize="20" VerticalAlignment="Center" Width="150" TabIndex="3" KeyDown="TxtCode_KeyDown"/>
+                    <TextBox Name="TxtCode" Text="{Binding Path=InvoiceItem.Code, UpdateSourceTrigger=PropertyChanged}" Height="35" FontSize="20" VerticalAlignment="Center" Width="150" TabIndex="3" KeyDown="TxtCode_KeyDown">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding ElementName=TxtCode, Path=Text}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
                 </StackPanel>
                 <StackPanel Grid.Column="1" HorizontalAlignment="Stretch">
                     <Label Content="Անվանում"/>

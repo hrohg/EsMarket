@@ -469,6 +469,25 @@ namespace ES.Business.Managers
 
         private static Invoices TryApprovePurchaseInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, long stockId, InvoicePaid invoicePaid)
         {
+            
+            CashDesk selCashDesk = null;
+            CashDesk selCashDeskByCheck = null;
+            decimal amount = 0;
+            
+            amount = (invoicePaid.Paid - invoicePaid.Change) ?? 0;
+            if (amount > 0)
+            {
+                selCashDesk = SelectItemsManager.SelectCashDesks(true, invoice.MemberId, false, "Ընտրել դրամարկղը որտեղից վճարվել է գումարը։").FirstOrDefault();
+                if (selCashDesk == null) return null;
+            }
+
+            amount = invoicePaid.ByCheck ?? 0;
+            if (amount > 0)
+            {
+                selCashDeskByCheck = SelectItemsManager.SelectCashDesks(false, invoice.MemberId, false, "Ընտրել հաշիվը որտեղից փոխանցվել է գումարը։").FirstOrDefault();
+                if (selCashDeskByCheck == null) return null;
+            }
+
             using (var transaction = new TransactionScope())
             {
                 using (var db = GetDataContext())
@@ -561,7 +580,7 @@ namespace ES.Business.Managers
                     #region Add Purchase 216 - 521
 
                     // 216 - 521 Register in AccountingRecoords Accounting Receivable
-                    var amount = invoice.Summ;
+                    amount = invoice.Summ;
                     var apAccountingRecords = new AccountingRecords
                     {
                         Id = Guid.NewGuid(),
@@ -585,9 +604,8 @@ namespace ES.Business.Managers
                     amount = (invoicePaid.Paid - invoicePaid.Change ?? 0);
                     if (amount > 0)
                     {
-                        var selCashDesks = SelectItemsManager.SelectCashDesks(true, invoice.MemberId, false, "Ընտրել դրամարկղը որտեղից վճարվել է գումարը։").FirstOrDefault();
-                        if (selCashDesks == null) return null;
-                        var exCashDesk = db.CashDesk.SingleOrDefault(s => s.Id == selCashDesks.Id && s.MemberId == invoice.MemberId);
+                        if (selCashDesk == null) return null;
+                        var exCashDesk = db.CashDesk.SingleOrDefault(s => s.Id == selCashDesk.Id && s.MemberId == invoice.MemberId);
 
                         // 521 - 251 Register in AccountingRecoords
                         var cpAccountingRecords = new AccountingRecords
@@ -618,7 +636,6 @@ namespace ES.Business.Managers
                     amount = invoicePaid.ByCheck ?? 0;
                     if (amount > 0)
                     {
-                        var selCashDeskByCheck = SelectItemsManager.SelectCashDesks(false, invoice.MemberId, false, "Ընտրել հաշիվը որտեղից փոխանցվել է գումարը։").FirstOrDefault();
                         if (selCashDeskByCheck == null) return null;
                         var exCashDeskByCheck = db.CashDesk.SingleOrDefault(s => s.Id == selCashDeskByCheck.Id && s.MemberId == invoice.MemberId);
                         if (exCashDeskByCheck == null)

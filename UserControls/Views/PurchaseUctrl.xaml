@@ -105,9 +105,13 @@
                     <RowDefinition Height="25"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                <Label Grid.Column="0" Grid.Row="0" Content="Կոդ" BorderThickness="1 0 0 0" BorderBrush="LightGray"/>
-                <TextBox Grid.Column="0" Grid.Row="1" Name="TxtCode" FontSize="14" Text="{Binding Path=InvoiceItem.Code, UpdateSourceTrigger=PropertyChanged}"
-                   Width="150" TabIndex="3" KeyDown="TxtCode_KeyDown"/>
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="Կոդ"/>
+                <TextBox Grid.Column="0" Grid.Row="1" x:Name="TxtCode" FontSize="14" Text="{Binding Path=InvoiceItem.Code, UpdateSourceTrigger=PropertyChanged}"
+                   Width="150" TabIndex="3" KeyDown="TxtCode_KeyDown">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding ElementName=TxtCode, Path=Text}"/>
+                    </TextBox.InputBindings>
+                    </TextBox>
                 <Label  Grid.Column="1" Grid.Row="0" Content="Անվանում" BorderThickness="1 0" BorderBrush="LightGray"/>
                 <TextBox  Grid.Column="1" Grid.Row="1" Name="TxtDescription" Text="{Binding Path=InvoiceItem.Description, UpdateSourceTrigger=PropertyChanged}"
                      TabIndex="4" IsReadOnly="True">

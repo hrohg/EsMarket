@@ -102,8 +102,6 @@
     <Compile Include="Helpers\CalculationHelper.cs" />
     <Compile Include="Helpers\Cryptography.cs" />
     <Compile Include="Helpers\DataGridExcelTools.cs" />
-    <Compile Include="Helpers\DataManager.cs" />
-    <Compile Include="Helpers\DataManagerBase.cs" />
     <Compile Include="Helpers\Enumerations.cs" />
     <Compile Include="Helpers\ExportManager.cs" />
     <Compile Include="Helpers\ExtensionMethods.cs" />
