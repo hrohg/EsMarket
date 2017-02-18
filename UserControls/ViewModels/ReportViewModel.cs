@@ -119,6 +119,7 @@ namespace UserControls.ViewModels
             protected set
             {
                 _items = value.ToList();
+                
                 OnPropertyChanged("ViewList");
                 OnPropertyChanged("Count");
                 OnPropertyChanged("Total");
@@ -157,7 +158,7 @@ namespace UserControls.ViewModels
             ViewList = new ObservableCollection<IInvoiceReport>(reports);
             TotalRows = reports.Count;
             //TotalCount = (double)_items.Sum(s => s.Quantity ?? 0);
-            Total = (double)ViewList.Sum(i => i.Sale);
+            Total = (double)ViewList.Sum(i => i.Sale??0);
             IsLoading = false;
             OnPropertyChanged(IsInProgressProperty);
         }
@@ -280,8 +281,8 @@ namespace UserControls.ViewModels
             if (reports != null)
             {
                 TotalRows = reports.Count;
-                TotalCount = reports.Sum(s => s.Count);
-                Total = (double)reports.Sum(i => i.Quantity * (i.Count));
+                TotalCount = (double) reports.Sum(s => s.Quantity);
+                Total = (double)reports.Sum(i => i.Sale??0);
             }
             IsLoading = false;
             OnPropertyChanged(IsInProgressProperty);

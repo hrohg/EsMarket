@@ -24,6 +24,7 @@ namespace UserControls.ViewModels.Invoices
         private void Initialize()
         {
             Title = string.Format("Ապրանքների ցուցակ {0}", IsInvocieValid && Invoice.InvoiceNumber!=null? Invoice.InvoiceNumber: string.Empty);
+            IsModified = true;
             Description = string.Format("{0} {1}", Title, IsInvocieValid? (Partner != null ? Partner.FullName : FromStock != null ? FromStock.FullName : string.Empty):string.Empty);
         }
         protected override bool CanImportInvoice(ExportInportEnum importFrom)

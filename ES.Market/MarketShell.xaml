@@ -11,7 +11,7 @@
         xmlns:controls="clr-namespace:Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls;assembly=Xceed.Wpf.AvalonDock"
         xmlns:behaviors1="clr-namespace:Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Behaviors;assembly=Xceed.Wpf.AvalonDock"
         xmlns:helpers="clr-namespace:Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Helpers;assembly=Xceed.Wpf.AvalonDock"
-        Name="WinShop" Title="ES Logistics - Վաճառք" MinHeight="600" MinWidth="800" Closing="WinShop_Closing" Closed="WinShop_Closed"
+        Name="WinShop" Title="ES Logistics - Վաճառք" MinHeight="600" MinWidth="800" Closing="WinShop_Closing"
         WindowState="Maximized" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Shared;component/Images/shopping_cart.Ico">
     <Window.Resources>
@@ -24,21 +24,6 @@
             <SolidColorBrush x:Key="DefaultBackground" Color="#19C8FA"/>
             <SolidColorBrush x:Key="TabBackground" Color="#F5F5F5"/>
             <SolidColorBrush x:Key="StatusBarBackground" Color="#DC6E0A"/>
-            <Style x:Key="VerticalSeparatorStyle"
-                   TargetType="{x:Type Separator}"
-                   BasedOn="{StaticResource {x:Type Separator}}">
-                <Setter Property="LayoutTransform">
-                    <Setter.Value>
-                        <TransformGroup>
-                            <TransformGroup.Children>
-                                <TransformCollection>
-                                    <RotateTransform Angle="90"/>
-                                </TransformCollection>
-                            </TransformGroup.Children>
-                        </TransformGroup>
-                    </Setter.Value>
-                </Setter>
-            </Style>
 
         </ResourceDictionary>
     </Window.Resources>
@@ -67,8 +52,8 @@
                     <MenuItem.Icon>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Safe.ico"/>
                     </MenuItem.Icon>
-                    <MenuItem Header="Կազմակերպությունների խմբագրում" Margin="3" Click="MiManageMembers_Click"></MenuItem>
-                    <MenuItem Header="Օգտագործողների խմբագրում" Margin="3" Click="MiManageUsers_Click"></MenuItem>
+                    <MenuItem Header="Կազմակերպությունների խմբագրում" Margin="3"></MenuItem>
+                    <MenuItem Header="Օգտագործողների խմբագրում" Margin="3"></MenuItem>
                     <MenuItem Header="Հատուկ գործողություն" Margin="3" Click="MiExecute_Click"></MenuItem>
                     <MenuItem Header="Ապրանքների բեռնում" Margin="3" Command="{Binding ImportProductsCommand}"></MenuItem>
                 </MenuItem>
@@ -76,12 +61,12 @@
                     <MenuItem.Icon>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/UserSettings.ico"/>
                     </MenuItem.Icon>
-                    <MenuItem Name="MiChangePassword" Header="Գաղտնաբառի փոփոխում" Click="MiChangePassword_Click">
+                    <MenuItem Name="MiChangePassword" Header="Գաղտնաբառի փոփոխում" Command="{Binding ChangePasswordCommand}">
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/ChangePassword.png"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Name="MiLogoff" Header="_Logoff _F9" Click="MiLogoff_Click">
+                    <MenuItem Name="MiLogoff" Header="_Logoff _F9" Command="{Binding LogOutCommand}">
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/WindowsLogOff.png"/>
                         </MenuItem.Icon>
@@ -422,7 +407,6 @@
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/user.png"></Image>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Name="MiManageUsers" Header="Օգտագործողների խմբագրում" Margin="3" Click="MiEditUsers_Click" IsEnabled="False" Visibility="Collapsed"></MenuItem>
                     </MenuItem>
                     <Separator/>
                     <MenuItem Name="MiView" Header="Դիտում">
@@ -553,17 +537,11 @@
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
                         </MenuItem.Icon>
-                        <MenuItem Header="Ապրանքագիր Excel" Name="MiImportFromExcel" Click="MiImportInvoiceFromExcel_Click">
-                            <MenuItem.Icon>
-                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
                     </MenuItem>
                     <MenuItem Header="Արտահանել" >
                         <MenuItem.Icon>
                             <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Upload.ico"/>
                         </MenuItem.Icon>
-                        <MenuItem Header="Ապրանքագիր Excel" Name="MiExportToExcel" IsEnabled="False"></MenuItem>
                         <Separator/>
                         <MenuItem Header="Կշեռք">
                             <MenuItem.Icon>
@@ -742,7 +720,7 @@
             </Menu>
         </Grid>
         <Grid Grid.Row="1">
-           <Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -752,8 +730,8 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.Resources>
-                
-                
+
+
             </Grid.Resources>
             <TabControl Grid.Column="1" Grid.Row="0"  Width="Auto"  Name="TabShop" ItemContainerStyle="{StaticResource TabItemBaseStyle}" Visibility="Collapsed"
                         Background="{StaticResource TabBackground}" ContentTemplate="{StaticResource TabContentTemplate}"/>
@@ -768,7 +746,7 @@
                 <controls:ExtendedDockingManager.LayoutUpdateStrategy>
                     <helpers:LayoutUpdateStrategy />
                 </controls:ExtendedDockingManager.LayoutUpdateStrategy>
-                
+
                 <!--<controls:ExtendedDockingManager.LayoutItemContainerStyleSelector>
                     <helpers:AutobinderLayoutSelector>
                         <helpers:AutobinderLayoutSelector.DocumentStyle>
@@ -803,15 +781,25 @@
                 <!--<xcad:DockingManager.Theme>-->
                 <!--<xcad:MetroTheme />-->
                 <!--</xcad:DockingManager.Theme>-->
-               
+
                 <xcad:LayoutRoot>
                     <xcad:LayoutPanel Orientation="Horizontal">
-                        <xcad:LayoutDocumentPane/>
+                        <xcad:LayoutPanel Orientation="Horizontal">
+                            <xcad:LayoutPanel Orientation="Vertical">
+                        <xcad:LayoutAnchorablePane Name="LeftPane" DockWidth="350"/>
+                                </xcad:LayoutPanel>
+                        <xcad:LayoutPanel Orientation="Vertical">
+                            <xcad:LayoutAnchorablePane Name="ToolsPane" DockHeight="150"/>
+                            <xcad:LayoutDocumentPane/>
+                            <xcad:LayoutAnchorablePane Name="ToolsPane" DockHeight="100" />
+                            </xcad:LayoutPanel>
+                        </xcad:LayoutPanel>
+                        <xcad:LayoutAnchorablePane Name="ToolsPane" DockWidth="250"/>
                     </xcad:LayoutPanel>
                 </xcad:LayoutRoot>
             </controls:ExtendedDockingManager>
         </Grid>
-        
+
         <Border Grid.Row="2" Background="{StaticResource StatusBarBackground}" Height="30">
             <Border.Resources>
                 <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">

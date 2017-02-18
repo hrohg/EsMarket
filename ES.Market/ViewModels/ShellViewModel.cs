@@ -4,13 +4,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 using CashReg;
 using CashReg.Helper;
@@ -25,14 +23,11 @@ using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
 using ES.DataAccess.Models;
-using ES.Market.Controls;
-using ES.Market.Views;
 using ES.Market.Views.Reports.View;
 using ES.Shop.Commands;
 using ES.Shop.Config;
 using ES.Shop.Controls;
-using ES.Shop.Users.ViewModels;
-using ES.Shop.Users.Views;
+using ES.Shop.Users;
 using ES.Shop.Views;
 using ES.Shop.Views.Reports.View;
 using ES.Shop.Views.Reports.ViewModels;
@@ -40,7 +35,6 @@ using Shared.Helpers;
 using UserControls.Barcodes;
 using UserControls.Barcodes.ViewModels;
 using UserControls.ControlPanel.Controls;
-using UserControls.Editors.EditProducts.Views;
 using UserControls.Helpers;
 using UserControls.Interfaces;
 using UserControls.ViewModels;
@@ -51,10 +45,12 @@ using UserControls.ViewModels.Managers;
 using UserControls.ViewModels.Partners;
 using UserControls.ViewModels.Products;
 using UserControls.ViewModels.Reports;
+using UserControls.ViewModels.Settings;
 using UserControls.ViewModels.StockTakeings;
 using UserControls.ViewModels.Tools;
 using UserControls.Views;
 using UserControls.Views.CustomControls;
+using Application = System.Windows.Application;
 using ExportManager = ES.Business.Managers.ExportManager;
 using ItemsToSelect = UserControls.ControlPanel.Controls.ItemsToSelect;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
@@ -65,8 +61,13 @@ using UserControl = System.Windows.Controls.UserControl;
 
 namespace ES.Market.ViewModels
 {
-    public class ShellViewModel : IShellViewModel
+    public class ShellViewModel : IShellViewModel, IDisposable
     {
+        #region Events
+        public delegate void LogOutDelegate();
+        public event LogOutDelegate OnLogOut;
+        #endregion Events
+
         #region Internal fields
         private const string UserProperty = "User";
         private const string MemberProperty = "Member";
@@ -176,17 +177,20 @@ namespace ES.Market.ViewModels
         #endregion
 
         #region Constructors
-        public ShellViewModel(MarketShell parentcontrol)
+        public ShellViewModel()
         {
             User = ApplicationManager.GetEsUser;
             Member = ApplicationManager.GetEsMember;
             UserRoles = ApplicationManager.UserRoles;
             IsLocalMode = ApplicationManager.LocalMode;
             IsEcrActivated = ApplicationManager.IsEcrActivated;
-            _parentTabControl = parentcontrol;
             RefreshCashCommand = new RefreshCashCommand(this);
             ApplicationManager.MessageManager.NewMessageReceived += OnNewMessage;
             Initialize();
+        }
+        public void Dispose()
+        {
+           
         }
         #endregion
 
@@ -212,13 +216,15 @@ namespace ES.Market.ViewModels
             ViewInternalWayBillCommands = new RelayCommand<ViewInvoicesEnum>(OnViewViewInternalWayBillCommands, CanViewViewInternalWayBillCommands);
             ViewPackingListForSallerCommand = new RelayCommand(OnViewPackingListForSaller);
 
+            LogOutCommand = new RelayCommand(OnLogoff);
+            ChangePasswordCommand = new RelayCommand(OnChangePassword);
             //Data
             GetInvoicesCommand = new RelayCommand(OnGetInvoices);
             WriteOffProductsCommand = new RelayCommand(OnWriteOffProducts);
             WriteOffStockTakingCommand = new RelayCommand(OnWriteOffStockTaking);
             GetReportCommand = new RelayCommand<ReportTypes>(OnGetReport);
             //Settings
-            EditUsersCommand = new RelayCommand(OnEditUsers);
+            EditUsersCommand = new RelayCommand(OnEditUsers, CanEditUserCommand);
 
 
         }
@@ -258,19 +264,16 @@ namespace ES.Market.ViewModels
             AddTabControl(tabControl, viewModel);
         }
 
-        #region Add remove documents
+        #region Add remove documents and tools
         private void AddDocument<T>(DocumentViewModel vm, bool allowDoublicate = true)
         {
-            if (!allowDoublicate)
+            var exDocument = Documents.FirstOrDefault(s => s is T);
+            if (!allowDoublicate && exDocument != null)
             {
-                var exDocument = Documents.FirstOrDefault(s => s is T);
-                if (exDocument != null)
-                {
-                    //todo
-                    exDocument.IsActive = true;
-                    exDocument.IsSelected = true;
-                    return;
-                }
+                //todo: Activate document
+                exDocument.IsActive = true;
+                exDocument.IsSelected = true;
+                return;
             }
             AddDocument(vm);
         }
@@ -298,7 +301,32 @@ namespace ES.Market.ViewModels
                 ProductItemsToolsViewModel.OnProductItemSelected -= ((InvoiceViewModel)vm).OnSetProductItem;
             }
         }
-        #endregion Add remove documents
+        private void AddTools(ToolsViewModel vm)
+        {
+            Tools.Add(vm);
+            vm.OnClosed += OnRemoveTools;
+            vm.IsActive = true;
+            vm.IsSelected = true;
+        }
+        private void AddTools<T>(ToolsViewModel vm, bool allowDoublicate = true)
+        {
+            var exTools = Tools.FirstOrDefault(s => s is T);
+            if (!allowDoublicate && exTools != null)
+            {
+                //todo: Activate tab
+                exTools.IsActive = true;
+                exTools.IsSelected = true;
+                return;
+            }
+            AddTools(vm);
+        }
+        private void OnRemoveTools(PaneViewModel vm)
+        {
+            if (vm == null) return;
+            vm.OnClosed -= OnRemoveDocument;
+            Tools.Remove((ToolsViewModel)vm);
+        }
+        #endregion Add remove documents and tools
 
         #region Base
 
@@ -309,7 +337,7 @@ namespace ES.Market.ViewModels
                 switch (e.Key)
                 {
                     case Key.L:
-                        _parentTabControl.Logoff();
+                        OnLogoff(null);
                         break;
                 }
             }
@@ -350,10 +378,7 @@ namespace ES.Market.ViewModels
                     //MiManageProducts_Click(null, null);
                     break;
                 case Key.F9:
-                    //handle X key logoff
-                    //todo
-                    _parentTabControl.Logoff();
-                    //MiLogoff_Click(null, null);
+                    OnLogoff(null);
                     break;
                 case Key.F10:
                     //handle X key quite
@@ -428,6 +453,7 @@ namespace ES.Market.ViewModels
                 if (vm is InvoiceViewModel)
                     ProductItemsToolsViewModel.OnProductItemSelected += ((InvoiceViewModel)vm).OnSetProductItem;
                 OnCreateProductItemsTools(ProductItemsToolsViewModel);
+                return;
             }
             int nextTab;
             var tabShop = _parentTabControl.FindChild<TabControl>();
@@ -498,19 +524,6 @@ namespace ES.Market.ViewModels
                 _parentTabControl.UpdateLayout();
                 return;
             }
-        }
-
-        private void AddTools(ToolsViewModel vm, bool allowDoublicate = true)
-        {
-            if (allowDoublicate || Tools.All(s => s.Title != vm.Title))
-            {
-                Tools.Add(vm);
-            }
-            else
-            {
-                vm = Tools.First(s => s.Title != vm.Title);
-            }
-            vm.IsActive = true;
         }
 
         private void CreateNewControl(List<object> models)
@@ -760,9 +773,13 @@ namespace ES.Market.ViewModels
             td.Start();
         }
 
+        private bool CanEditUserCommand(object o)
+        {
+            return !ApplicationManager.IsEsServer;
+        }
         private void OnEditUsers(object o)
         {
-            AddTabControl(new UctrlManageUsers(), new ManageUsersViewModel());
+            AddTools<ManageUsersViewModel>(new ManageUsersViewModel(), false);
         }
 
         #region Admin
@@ -960,6 +977,25 @@ namespace ES.Market.ViewModels
             };
         }
         #endregion
+
+        #region Users
+        public void OnLogoff(object o)
+        {
+            if (MessageBox.Show("Դուք իսկապե՞ս ցանկանում եք դուրս գալ համակարգից:", "Աշխատանքի ավարտ",
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                var handler = OnLogOut;
+                if (handler != null)
+                {
+                    handler();
+                }
+            }
+        }
+        public void OnChangePassword(object o)
+        {
+            new ChangePassword(ApplicationManager.GetEsUser).Show();
+        }
+        #endregion Users
 
         #region Documents
         private List<InvoiceModel> GetInvoices(InvoiceState state, InvoiceType type, int count)
@@ -1483,7 +1519,8 @@ namespace ES.Market.ViewModels
         {
             get { return new RelayCommand(OnExecuteEcrAction, CanExecuteEcrAction); }
         }
-
+        public ICommand LogOutCommand { get; private set; }
+        public ICommand ChangePasswordCommand { get; private set; }
         #endregion Admin
 
         #region Documents
@@ -1638,5 +1675,6 @@ namespace ES.Market.ViewModels
         }
 
         #endregion
+        
     }
 }

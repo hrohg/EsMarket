@@ -8,12 +8,13 @@
              xmlns:viewModels="clr-namespace:UserControls.ViewModels"
              xmlns:views="clr-namespace:UserControls.Views"
              xmlns:models1="clr-namespace:ES.DataAccess.Models;assembly=ES.DataAccess"
+             xmlns:converters="clr-namespace:UserControls.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
 
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-        <!--<converters:InvertVisibilityConverter x:Key="InvertVisibilityConverter"/>-->
+        <converters:InvertVisibilityConverter x:Key="InvertVisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid>

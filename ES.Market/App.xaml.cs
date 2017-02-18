@@ -6,25 +6,19 @@ using System.Windows;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common;
-using ES.Common.Cultures;
 using ES.Common.Helpers;
 using ES.Data.Model;
 using ES.Login;
 using ES.Market.ViewModels;
-using ES.Shop.Config;
 using UserControls.Controls;
-using UserControls.ViewModels;
-using UserControls.Views;
 
 namespace ES.Market
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
+   public partial class App : Application
     {
         #region Internal properties
         private SplashScreen _splash;
+
         #region LoginWindow
         private LoginWindow _loginWindow;
         private LoginWindow LoginWindow
@@ -41,12 +35,43 @@ namespace ES.Market
                 var logins = new XmlManager().GetXmlElements(XmlTagItems.Logins).ToList();
                 var loginVm = new LoginViewModel(login, logins.Select(s => s.Value).ToList(), ConfigSettings.GetDataServers());
                 loginVm.OnLogining += OnLogining;
-                loginVm.OnLogined += OnLogined;
+                loginVm.OnLogin += OnLogin;
                 loginVm.OnClosed += OnClosed;
                 return _loginWindow = new LoginWindow(loginVm);
             }
         }
         #endregion LoginWindow
+
+        #region Mrket window
+
+        private ShellViewModel _shellVm;
+        private ShellViewModel ShellVm
+        {
+            get
+            {
+                if (_shellVm == null)
+                {
+                    _shellVm = new ShellViewModel();
+                    _shellVm.OnLogOut += OnLogOut;
+                }
+                return _shellVm;
+            }
+        }
+
+        private MarketShell _market;
+        private MarketShell Market
+        {
+            get
+            {
+                if (_market == null)
+                {
+                    _market = new MarketShell(ShellVm);
+                    Market.Closed += OnMarketClosed;
+                }
+                return _market;
+            }
+        }
+        #endregion Market window
 
         #endregion Internal properties
 
@@ -68,12 +93,12 @@ namespace ES.Market
             catch (ApplicationException ex)
             {
                 MessageBox.Show(ex.Message, "Application error", MessageBoxButton.OK, MessageBoxImage.Error);
-                Current.Shutdown();
+                if (Application.Current != null) Current.Shutdown();
             }
             catch
             {
                 MessageBox.Show("Unknown exception.", "Application error", MessageBoxButton.OK, MessageBoxImage.Error);
-                Current.Shutdown();
+                if (Application.Current != null) Current.Shutdown();
             }
         }
         private void Application_Startup(object sender, StartupEventArgs e)
@@ -115,16 +140,17 @@ namespace ES.Market
 
                 ApplicationManager.CreateConnectionString(null);
                 OnTryLogin();
-                while (!ApplicationManager.CreateConnectionString(UserControls.Helpers.SelectItemsManager.SelectServer(ConfigSettings.GetDataServers())))
-                {
-                    //Breack
-                    Current.Shutdown();
+                if (Application.Current != null) Application.Current.Shutdown();
+                //while (!ApplicationManager.CreateConnectionString(UserControls.Helpers.SelectItemsManager.SelectServer(ConfigSettings.GetDataServers())))
+                //{
+                //    //Breack
+                //    if (Application.Current!=null) Application.Current.Shutdown();
 
-                    var configServer = new ServerConfig(new ServerViewModel(new DataServer()));
-                    configServer.ShowDialog();
-                    //this.Hide();
-                    return;
-                }
+                //    var configServer = new ServerConfig(new ServerViewModel(new DataServer()));
+                //    configServer.ShowDialog();
+                //    //this.Hide();
+                //    return;
+                //}
 
 
                 //        MainWindow mainWindow = new MainWindow();
@@ -169,7 +195,7 @@ namespace ES.Market
                 if (Current != null)
                 {
                     DeleteDatFile();
-                    Current.Shutdown();
+                    if (Application.Current != null) Current.Shutdown();
                 }
             }
         }
@@ -200,11 +226,11 @@ namespace ES.Market
             if (isterminated)
             {
                 LoginWindow.Close();
-                Current.Shutdown();
+                if (Application.Current != null) Current.Shutdown();
             }
         }
 
-        private void OnLogined(EsUserModel esuser)
+        private void OnLogin(EsUserModel esuser)
         {
             if (esuser == null)
             {
@@ -228,10 +254,29 @@ namespace ES.Market
                 ApplicationManager.GetThisDesk = CashDeskManager.GetCashDesk(xml.GetItemsByControl(XmlTagItems.SaleCashDesks).Select(s => HgConvert.ToGuid(s.Value)).SingleOrDefault(), member.Id);
                 ApplicationManager.LoadConfigData(member.Id);
 
-                var shellVm = new ShellViewModel(null);
-                var market = new MarketShell(shellVm, LoginWindow);
-                market.ShowDialog();
+                
+                Market.ShowDialog();
             }
+        }
+
+        private void OnMarketClosed(object sender, EventArgs e)
+        {
+            Market.Closed -= OnMarketClosed;
+            ShellVm.OnLogOut -= OnLogOut;
+            ShellVm.Dispose();
+            
+            if (Application.Current != null) Application.Current.Shutdown();
+        }
+
+        private void OnLogOut()
+        {
+            Market.Closed -= OnMarketClosed;
+            Market.Close();
+            ShellVm.OnLogOut -= OnLogOut;
+            ShellVm.Dispose();
+            _market = null;
+            _shellVm = null;
+            LoginWindow.ShowDialog();
         }
 
         private void OnLogining()
@@ -423,14 +468,15 @@ namespace ES.Market
             DeleteDatFile();
             //Current.Shutdown();
         }
+        private static void ShutdownApplication()
+        {
+            DeleteDatFile();
+            if (Application.Current != null) Application.Current.Shutdown();
+        }
         #endregion Internal methods
 
         #region External methods
-        public static void ShutdownApplication()
-        {
-            DeleteDatFile();
-            Current.Shutdown();
-        }
+
         #endregion External methods
     }
 }

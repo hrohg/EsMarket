@@ -12,16 +12,9 @@ using ES.Data.Models;
 using ES.DataAccess.Models;
 using ES.Market.ViewModels;
 using ES.Market.Views;
-using ES.Market.Views.Reports.View;
 using ES.MsOffice.ExcelManager;
-using ES.Shop;
 using ES.Shop.Controls;
 using ES.Shop.Edit;
-using ES.Shop.Users;
-using ES.Shop.Views;
-using ES.Shop.Views.Reports.View;
-using ES.Shop.Views.Reports.ViewModels;
-using Shared.Helpers;
 using UserControls.Barcodes;
 using UserControls.Barcodes.ViewModels;
 using UserControls.ControlPanel.Controls;
@@ -31,7 +24,6 @@ using UserControls.ViewModels;
 using UserControls.ViewModels.StockTakeings;
 using UserControls.Views;
 using UserControls.Views.CustomControls;
-using Application = System.Windows.Application;
 using ExportManager = ES.Business.Managers.ExportManager;
 using MessageBox = System.Windows.MessageBox;
 using UserControlSession = UserControls.Session;
@@ -47,12 +39,9 @@ namespace ES.Market
     public partial class MarketShell : Window
     {
         #region Private properties
-        private bool isLogoff = false;
-
+        
 
         private List<MembersRoles> _userRoles;
-        private Window _loginWindow;
-
         #endregion
 
         #region Private methods
@@ -70,8 +59,7 @@ namespace ES.Market
                 MiViewStockTaking.IsEnabled =
                     MiViewLastStockTaking.IsEnabled =
                     MiPurchaseInvoices.IsEnabled =
-                    MiMoveingInvoices.IsEnabled =
-                    MiManageUsers.IsEnabled = true;
+                    MiMoveingInvoices.IsEnabled = true;
                 MiControlPanel.Visibility =
                 MiAccounting.Visibility =
                 MiAction.Visibility =
@@ -152,10 +140,10 @@ namespace ES.Market
             if(DataContext==null)
             MessageBox.Show("Ոչ արտոնագրված գործողություն։ Ծրագիրը կփակվի։ Խնդրում ենք արտոնագրել ծրագրային ապահովումը։",
                  "Արտոնագրային սխալ", MessageBoxButton.OK, MessageBoxImage.Information);
-            App.ShutdownApplication();
+            Close();
             //InitializeComponent();
         }
-        public MarketShell(ShellViewModel vm, Window loginWindow)
+        public MarketShell(ShellViewModel vm)
         {
             DataContext = vm;
             _userRoles = ApplicationManager.UserRoles;
@@ -163,15 +151,14 @@ namespace ES.Market
             {
                 MessageBox.Show("Ոչ արտոնագրված գործողություն։ Ծրագիրը կփակվի։ Խնդրում ենք արտոնագրել ծրագրային ապահովումը։",
                  "Արտոնագրային սխալ", MessageBoxButton.OK, MessageBoxImage.Information);
-                App.ShutdownApplication();
+                Close();
                 return;
             }
-            _loginWindow = loginWindow;
 
             if (_userRoles == null || _userRoles.Count == 0)
             {
                 MessageBox.Show("Ծրագիրը կփակվի, քանի որ դուք ոչ մի համակարգում ընդգրկված չեք։ Ընդգրկվելու համար խնդրում ենք դիմել տնօրինություն։ ");
-                App.ShutdownApplication();
+                Close();
                 return;
             }
 
@@ -183,7 +170,7 @@ namespace ES.Market
             UserControlSession.Inst.BEManager = DataManager.GetInstance();
 
             InitializeComponent();
-            DataContext = new ShellViewModel(this);
+            DataContext = vm;
             _userRoles = UsersManager.GetUserRoles(ApplicationManager.GetEsUser.UserId, ApplicationManager.GetEsMember.Id);
             ConfigureComponent();
         }
@@ -208,36 +195,7 @@ namespace ES.Market
                 }
             }
 
-            if (isLogoff) { return; }
-            Application.Current.Shutdown();
-            return;
-            //isLogoff = ;
-            //_loginWindow.Show();
-            //Close();
-
-
         }
-        private void WinShop_Closed(object sender, EventArgs e)
-        {
-            if (!isLogoff) Application.Current.Shutdown();
-        }
-        private void MiImportInvoiceFromExcel_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-        private void MiEditUsers_Click(object sender, RoutedEventArgs e)
-        {
-            //new WinUsersManager().Show();
-        }
-        private void MiManageUsers_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-        private void MiManageMembers_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-        
         #region Menu items
         
         #region Admin
@@ -248,29 +206,7 @@ namespace ES.Market
         }
        
         #endregion
-        #region User
-        private void MiChangePassword_Click(object sender, RoutedEventArgs e)
-        {
-            new ChangePassword(ApplicationManager.GetEsUser).Show();
-        }
-        private void MiLogoff_Click(object sender, EventArgs e)
-        {
-            Logoff();
-        }
-
-        public void Logoff()
-        {
-            if (MessageBox.Show("Դուք իսկապե՞ս ցանկանում եք դուրս գալ համակարգից:", "Աշխատանքի ավարտ",
-                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
-
-                isLogoff = true;
-                _loginWindow.Show();
-                Close();
-            }
-        }
-        #endregion
-
+        
         #region Product order
         protected void MiProductOrderByMinQuantity_Click(object sender, EventArgs e)
         {

@@ -146,6 +146,7 @@ namespace UserControls.ViewModels.Invoices
             User = user;
             Member = member;
             Invoice = new InvoiceModel(user, member);
+            IsModified = true;
             Initialize();
         }
         public InvoiceViewModel(Guid id, EsUserModel user, EsMemberModel member)

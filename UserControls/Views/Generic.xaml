@@ -3,15 +3,18 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Documents/StartPageTemplate.xaml"/>
         <ResourceDictionary Source="Documents/InvoiceTemplates.xaml"/>
-        <ResourceDictionary Source="Documents/SettingsTemplate.xaml"/>
+        
 
         <ResourceDictionary Source="Reports/ShortReportTemplate.xaml"/>
         <ResourceDictionary Source="View/PackingListForSaler.xaml"/>
         <ResourceDictionary Source="Editors/ManageProducts.xaml"/>
         <ResourceDictionary Source="Editors/ManagePartners.xaml"/>
-
+        <!--Settings-->
+        <ResourceDictionary Source="Settings/SettingsTemplate.xaml"/>
+        <ResourceDictionary Source="Settings/ManageUsersTemplate.xaml"/>
+        
         <ResourceDictionary Source="Logs/LogsView.xaml"/>
         <ResourceDictionary Source="Tools/ProductItemsTools.xaml"/>
     </ResourceDictionary.MergedDictionaries>
-    
+
 </ResourceDictionary>

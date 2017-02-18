@@ -16,11 +16,11 @@ namespace ES.Login
     {
         #region Events
 
-        public delegate void Logining();
-        public event Logining OnLogining;
+        public delegate void LoginingDelegate();
+        public event LoginingDelegate OnLogining;
 
-        public delegate void Logined(EsUserModel esUser);
-        public event Logined OnLogined;
+        public delegate void LoginDelegate(EsUserModel esUser);
+        public event LoginDelegate OnLogin;
 
         public delegate void Closed(bool isTerminated);
         public event Closed OnClosed;
@@ -47,7 +47,7 @@ namespace ES.Login
             }
         }
         #endregion Logins
-        
+
         #region Login
         private string _login;
         public string Login
@@ -75,6 +75,20 @@ namespace ES.Login
                 {
                     _password = value;
                     RaisePropertyChanged("Password");
+                }
+            }
+        }
+
+        private bool _isClearPassword;
+        public bool IsClearPassword
+        {
+            get { return _isClearPassword; }
+            set
+            {
+                if (_isClearPassword != value)
+                {
+                    _isClearPassword = value;
+                    RaisePropertyChanged("IsClearPassword");
                 }
             }
         }
@@ -112,7 +126,7 @@ namespace ES.Login
 
         private void Initialize()
         {
-            LoginCommnd = new RelayCommand(OnLogin, CanLogin);
+            LoginCommnd = new RelayCommand(OnLoginCompleted, CanLogin);
             CloseCommnd = new RelayCommand<bool?>(OnClose);
             SetLogins();
         }
@@ -122,7 +136,7 @@ namespace ES.Login
             return !string.IsNullOrEmpty(Login) && Password != null && Password.Length > 0;
         }
 
-        private void OnLogin(object o)
+        private void OnLoginCompleted(object o)
         {
             //while (!ApplicationManager.CreateConnectionString(UserControls.Helpers.SelectItemsManager.SelectServer(ConfigSettings.GetDataServers())))
             //{
@@ -155,9 +169,10 @@ namespace ES.Login
                 return;
             }
             var password = Password;
-            Password = new SecureString();
+            IsClearPassword = true;
             var user = ApplicationManager.SetEsUser = UsersManager.VerifyLogin(Login, password);
-            var loginedHandler = OnLogined;
+            IsClearPassword = false;
+            var loginedHandler = OnLogin;
             if (loginedHandler == null)
             {
                 OnClose(false);
@@ -165,9 +180,8 @@ namespace ES.Login
             }
             if (user == null)
             {
-
-                loginedHandler(null);
                 LoginMessage = "Սխալ մուտքային տվյալներ:";
+                loginedHandler(null);
             }
             else
             {

@@ -164,6 +164,7 @@
     <Compile Include="ViewModels\ServerViewModel.cs" />
     <Compile Include="ViewModels\ServicesViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\ManageUsersViewModel.cs" />
     <Compile Include="ViewModels\TabItemViewModel.cs" />
     <Compile Include="ViewModels\Tools\ProductItemsToolsViewModel.cs" />
     <Compile Include="Views\InventoryWriteOffUctrl.xaml.cs">
@@ -320,7 +321,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Documents\SettingsTemplate.xaml">
+    <Page Include="Views\Settings\SettingsTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -353,6 +354,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Reports\ShortReportTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\ManageUsersTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

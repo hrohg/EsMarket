@@ -48,6 +48,7 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Helpers
                     break;
                     
             }
+            
             anchorableToShow.AddToLayout(layout.Manager, showSide);
             return true;
         }

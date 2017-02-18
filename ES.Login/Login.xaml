@@ -47,7 +47,7 @@
                 <PasswordBox Name="TxtPassword" HorizontalAlignment="Right" Width="200" Height="25" 
                              HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TabIndex="1">
                     <i:Interaction.Behaviors>
-                        <behaviors1:PasswordBoxBindingBehavior Password="{Binding Password}"/>
+                        <behaviors1:PasswordBoxBindingBehavior Password="{Binding Password, Mode=TwoWay}" IsClear="{Binding IsClearPassword, Mode= OneWay}"/>
                         <behaviors1:FocusNextElementBehaviors />
                     </i:Interaction.Behaviors>
                     <PasswordBox.InputBindings>
