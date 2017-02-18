@@ -91,7 +91,7 @@ namespace ES.Business.Managers
         {
             return TryGetMembersRoles(userId, memberId);
         }
-        public static List<MemberRolesModel> GetMemberRoles(long memberId)
+        public static List<MemberRolesModel> GetMemberRoles()
         {
             return TryGetMembersRoles().Select(s => new MemberRolesModel { Id = s.Id, RoleName = s.RoleName, Description = s.Description }).ToList();
         }
@@ -107,9 +107,9 @@ namespace ES.Business.Managers
         {
             return TryRemoveUser(userId);
         }
-        public static bool InsertUserRole(MemberUsersRoles role)
+        public static bool EditUser(EsUserModel user, List<MemberUsersRoles> roles, long memberId)
         {
-            return TryInsertUserRole(role);
+            return TryEditUser(ConvertEsUser(user), roles, memberId);
         }
         public static bool RemoveUserRole(UsersRolesModel userRole)
         {
@@ -132,14 +132,28 @@ namespace ES.Business.Managers
         {
             using (var db = GetDataContext())
             {
-                return db.EsUsers.ToList();
+                try
+                {
+                    return db.EsUsers.ToList();
+                }
+                catch (Exception)
+                {
+                    return new List<EsUsers>();
+                }
             }
         }
         private static List<EsUsers> TryGetUsers(long memberId)
         {
             using (var db = GetDataContext())
             {
-                return db.MemberUsersRoles.Where(s => s.MemberId == memberId).Select(s => s.EsUsers).Distinct().ToList();
+                try
+                {
+                    return db.MemberUsersRoles.Where(s => s.MemberId == memberId).Select(s => s.EsUsers).Distinct().ToList();
+                }
+                catch (Exception)
+                {
+                    return new List<EsUsers>();
+                }
             }
         }
 
@@ -149,7 +163,7 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                   var encodePassword = EncodePassword(password);
+                    var encodePassword = EncodePassword(password);
                     var user = db.EsUsers.FirstOrDefault(s =>
                         (s.UserName.ToLower() == userName.ToLower() ||
                          s.Email.ToLower() == userName.ToLower()) &&
@@ -290,10 +304,18 @@ namespace ES.Business.Managers
         {
             using (var db = GetDataContext())
             {
-                return db.MemberUsersRoles.Where(s => s.MemberId == memberId)
-                    .Include(s => s.EsUsers)
-                    .Include(s => s.MembersRoles)
-                    .ToList();
+                try
+                {
+                    return db.MemberUsersRoles.Where(s => s.MemberId == memberId)
+                                        .Include(s => s.EsUsers)
+                                        .Include(s => s.MembersRoles)
+                                        .ToList();
+                }
+                catch (Exception)
+                {
+                    return new List<MemberUsersRoles>();
+                }
+
             }
         }
         private static EsUsers TryLoadUserByEmail(string email)
@@ -372,13 +394,42 @@ namespace ES.Business.Managers
             }
             return true;
         }
-        private static bool TryInsertUserRole(MemberUsersRoles role)
+        private static bool TryEditUser(EsUsers user, List<MemberUsersRoles> roles, long memberId)
         {
             using (var db = GetDataContext())
             {
-                if (db.MemberUsersRoles.Any(s => s.MemberId == role.MemberId && s.EsUserId == role.EsUserId && s.MemberRoleId == role.MemberRoleId)) return true;
-                var newRole = new MemberUsersRoles { Id = Guid.NewGuid(), MemberId = role.MemberId, EsUserId = role.EsUserId, MemberRoleId = role.MemberRoleId };
-                db.MemberUsersRoles.Add(newRole);
+                var exUser = db.EsUsers.SingleOrDefault(s => s.UserId == user.UserId);
+                if (exUser != null)
+                {
+                    exUser.Mobile = user.Mobile;
+                }
+                else
+                {
+                    db.EsUsers.Add(user);
+                    db.SaveChanges();
+                }
+
+                var exRolesInDb = db.MemberUsersRoles.Where(s => s.EsUserId == user.UserId && s.MemberId == memberId);
+                foreach (var role in exRolesInDb)
+                {
+                    var roleInDb = role;
+                    var exRoles = roles.Where(s => s.MemberRoleId == roleInDb.MemberRoleId && s.MemberId==roleInDb.MemberId && s.EsUserId == roleInDb.EsUserId).ToList();
+                    if (exRoles.Any())
+                    {
+                        foreach (var item in exRoles)
+                        {
+                            roles.Remove(item);
+                        }
+                    }
+                    else
+                    {
+                        db.MemberUsersRoles.Remove(role);
+                    }
+                }
+                foreach (var role in roles)
+                {
+                    db.MemberUsersRoles.Add(role);
+                }
                 db.SaveChanges();
             }
             return true;

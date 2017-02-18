@@ -1521,8 +1521,8 @@ namespace ES.Business.Managers
                         Partner = s.FirstOrDefault().p.FullName,
                         Count = s.Count(),
                         Quantity = s.Sum(t => t.ii.Quantity ?? 0),
-                        Cost = s.Sum(t => t.ii.Quantity * (t.ii.CostPrice ?? 0)),
-                        Sale = s.Sum(t => t.ii.Quantity * (t.ii.Price ?? 0)),
+                        Cost = s.Sum(t => (t.ii.Quantity??0) * (t.ii.CostPrice ?? 0)),
+                        Sale = s.Sum(t => (t.ii.Quantity??0) * (t.ii.Price ?? 0)),
                         Approver = s.FirstOrDefault().ii.Invoices.Approver
                     }).ToList();
                     return report;
@@ -1547,8 +1547,8 @@ namespace ES.Business.Managers
                         Partner = s.FirstOrDefault().p.FullName,
                         Count = s.Count(),
                         Quantity = s.Sum(t => t.ii.Quantity ?? 0),
-                        Cost = s.Sum(t => t.ii.Quantity * (t.ii.CostPrice ?? 0)),
-                        Sale = s.Sum(t => t.ii.Quantity * (t.ii.Price ?? 0)),
+                        Cost = s.Sum(t => (t.ii.Quantity??0) * (t.ii.CostPrice ?? 0)),
+                        Sale = s.Sum(t => (t.ii.Quantity??0) * (t.ii.Price ?? 0)),
                         Approver = s.FirstOrDefault().ii.Invoices.Approver
                     }).ToList();
                     return report;
