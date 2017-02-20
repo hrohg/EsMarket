@@ -10,6 +10,7 @@ using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Data.Models.Reports;
 using Shared.Helpers;
+using UserControls.ControlPanel.Controls;
 using UserControls.Interfaces;
 using UserControls.ViewModels;
 using UserControls.ViewModels.Invoices;
@@ -54,8 +55,22 @@ namespace ES.Shop.Views.Reports.ViewModels
         {
             ViewInternalWayBillCommands = new RelayCommand<ViewInvoicesEnum>(OnViewViewInternalWayBillCommands, CanViewViewInternalWayBillCommands);
             ViewSaleCommand = new RelayCommand<ViewInvoicesEnum>(OnViewSale);
+            SallByCustomersCommand = new RelayCommand(OnSallByCustomers);
         }
 
+        private void OnSallByCustomers(object o)
+        {
+            var vm = new ReportBaseViewModel();
+            vm.OnUpdate += UpdateSallByCustomers;
+            vm.Update();
+            var tabControl = new UctrlViewTable { DataContext = vm };
+            AddTab(tabControl, vm);
+        }
+
+        private List<InvoiceReport> UpdateSallByCustomers(Tuple<DateTime, DateTime> dateIntermediate)
+        {
+           return InvoicesManager.GetSaleByPartners(dateIntermediate, ApplicationManager.GetEsMember.Id);
+        }
         private void AddTab<T>(TableViewModel<T> vm)
         {
             var tab = _parentTabControl.FindChild<TabControl>();
@@ -152,7 +167,7 @@ namespace ES.Shop.Views.Reports.ViewModels
 
         public ICommand ViewInternalWayBillCommands { get; private set; }
         public ICommand ViewSaleCommand { get; private set; }
-
+        public ICommand SallByCustomersCommand { get; private set; }
         #endregion
 
         #region INotifyPropertyChanged

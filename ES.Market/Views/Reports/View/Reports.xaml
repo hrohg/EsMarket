@@ -73,6 +73,10 @@
                 <MenuItem Header="Ապրանքներ" Name="MiProducts" Visibility="Collapsed">
                     <MenuItem Header="Ապրանքների գնում ըստ մատակարարների" Click="MiViewProductReportByProviders_OnClick"></MenuItem>
                 </MenuItem>
+                <MenuItem Header="Գնորդ">
+                    <MenuItem Header="Գնումեր" Command="{Binding SallByCustomersCommand}">
+                    </MenuItem>
+                </MenuItem>
             </Menu>
             <TabControl Grid.Row="1" Margin="10" Width="Auto"  
                         Name="TabReport" 
