@@ -442,6 +442,50 @@
                                   </DataGrid.Columns>
                                 </DataGrid>
                               </DataTemplate>
+                                <DataTemplate DataType="{x:Type viewModels:ReportBaseViewModel}">
+                                    <DataGrid x:Name="DataGrid" ItemsSource="{Binding ViewList}" CanUserAddRows="False" CanUserDeleteRows="False" 
+                                          FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True"
+                                          VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
+                                        <DataGrid.Columns>
+                                            <DataGridTemplateColumn Header="Անվանում" CanUserSort="True">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding Description}"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTemplateColumn Header="Վաճառք" CanUserSort="True" SortMemberPath="Count">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate DataType="{x:Type models1:InvoiceItems}">
+                                                        <TextBlock Text="{Binding Count, StringFormat=N0}" HorizontalAlignment="Right"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTemplateColumn Header="Գին" CanUserSort="True">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate DataType="{x:Type models1:InvoiceItems}">
+                                                        <TextBlock Text="{Binding Price, StringFormat='# ###.##'}" FontStyle="Italic" HorizontalAlignment="Right"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTemplateColumn Header="Գումար" CanUserSort="True" SortDirection="Descending" SortMemberPath="Sale">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding Sale, StringFormat=N0}" FontStyle="Italic" HorizontalAlignment="Right"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTemplateColumn Header="Նշումներ">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate DataType="{x:Type models1:InvoiceItems}">
+                                                        <TextBlock Text="{Binding Note}"/>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </DataTemplate>
+
                             </ContentControl.Resources>
                         </ContentControl>
                     </Grid>

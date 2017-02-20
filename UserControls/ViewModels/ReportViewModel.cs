@@ -32,6 +32,7 @@ namespace UserControls.ViewModels
         #region Internal properties
         private bool _isInProgress;
         #endregion
+
         #region External properties
         public bool IsInProgress
         {
@@ -99,7 +100,97 @@ namespace UserControls.ViewModels
         #endregion
 
     }
+    public class ReportBaseViewModel : TableViewModel<IInvoiceReport>
+    {
+        #region Event
+        public delegate List<InvoiceReport> UpdateDelegate(Tuple<DateTime, DateTime> dateIntermediate);
+        public event UpdateDelegate OnUpdate;
+        #endregion Event
+        #region Internal properties
 
+        #endregion
+
+        #region External properties
+        private List<IInvoiceReport> _items = new List<IInvoiceReport>();
+        public override ObservableCollection<IInvoiceReport> ViewList
+        {
+            get
+            {
+                return new ObservableCollection<IInvoiceReport>(_items);
+            }
+            protected set
+            {
+                _items = value.ToList();
+
+                OnPropertyChanged("ViewList");
+                OnPropertyChanged("Count");
+                OnPropertyChanged("Total");
+            }
+        }
+        #endregion
+
+        #region Constructors
+        public ReportBaseViewModel()
+            : base()
+        {
+            Title = Description = "Հաշվետվություն";
+            IsShowUpdateButton = true;
+            Initialize();
+        }
+        #endregion
+
+        #region Internal methods
+        private void Initialize()
+        {
+        }
+
+        private void OnUpdateAsync(Tuple<DateTime, DateTime> dateIntermediate)
+        {
+            IsLoading = true;
+            OnPropertyChanged(IsInProgressProperty);
+            var handle = OnUpdate;
+            if (handle == null) return;
+            var reports = handle(dateIntermediate);
+            if (reports == null || reports.Count == 0)
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(()=>
+                    ApplicationManager.MessageManager.OnNewMessage
+                    (new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information))));
+                return;
+            }
+            ViewList = new ObservableCollection<IInvoiceReport>(reports);
+            TotalRows = reports.Count;
+            //TotalCount = (double)_items.Sum(s => s.Quantity ?? 0);
+            Total = (double)ViewList.Sum(i => i.Sale ?? 0);
+            IsLoading = false;
+            OnPropertyChanged(IsInProgressProperty);
+        }
+
+        public void Update()
+        {
+            base.OnUpdate(null);
+            Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
+            if (dateIntermediate == null) return;
+            Description = string.Format("Հաշվետվություն {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
+            OnPropertyChanged("Description");
+            var thread = new Thread(() => OnUpdateAsync(dateIntermediate));
+            thread.Start();
+        }
+
+        protected override void OnPrint(object o)
+        {
+            base.OnPrint(o);
+            if (o == null)
+            {
+                return;
+            }
+            var productOrder = ((FrameworkElement)o).FindVisualChildren<Border>().FirstOrDefault();
+            if (productOrder == null) return;
+            PrintManager.PrintEx(productOrder);
+        }
+
+        #endregion
+    }
 
     public class InvoiceReportViewModel : TableViewModel<IInvoiceReport>
     {
@@ -119,7 +210,7 @@ namespace UserControls.ViewModels
             protected set
             {
                 _items = value.ToList();
-                
+
                 OnPropertyChanged("ViewList");
                 OnPropertyChanged("Count");
                 OnPropertyChanged("Total");
@@ -158,7 +249,7 @@ namespace UserControls.ViewModels
             ViewList = new ObservableCollection<IInvoiceReport>(reports);
             TotalRows = reports.Count;
             //TotalCount = (double)_items.Sum(s => s.Quantity ?? 0);
-            Total = (double)ViewList.Sum(i => i.Sale??0);
+            Total = (double)ViewList.Sum(i => i.Sale ?? 0);
             IsLoading = false;
             OnPropertyChanged(IsInProgressProperty);
         }
@@ -269,7 +360,6 @@ namespace UserControls.ViewModels
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
             if (reports == null || reports.Count == 0)
             {
                 ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information));
@@ -281,13 +371,33 @@ namespace UserControls.ViewModels
             if (reports != null)
             {
                 TotalRows = reports.Count;
-                TotalCount = (double) reports.Sum(s => s.Quantity);
-                Total = (double)reports.Sum(i => i.Sale??0);
+                TotalCount = (double)reports.Sum(s => s.Quantity);
+                Total = (double)reports.Sum(i => i.Sale ?? 0);
+            }
+            IsLoading = false;
+            OnPropertyChanged(IsInProgressProperty);
+
+        }
+
+        private void InitializeReport(List<InvoiceReport> reports)
+        {
+            if (reports == null || reports.Count == 0)
+            {
+                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information));
+            }
+            else
+            {
+                ViewList = new ObservableCollection<IInvoiceReport>(reports);
+            }
+            if (reports != null)
+            {
+                TotalRows = reports.Count;
+                TotalCount = (double)reports.Sum(s => s.Quantity);
+                Total = (double)reports.Sum(i => i.Sale ?? 0);
             }
             IsLoading = false;
             OnPropertyChanged(IsInProgressProperty);
         }
-
         protected override void OnUpdate(object o)
         {
             base.OnUpdate(o);
