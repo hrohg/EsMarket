@@ -97,20 +97,6 @@ namespace UserControls.Views
         }
         private void CmMiChooseProductByName_Click(object sender, EventArgs e)
         {
-            //var products = new ProductsManager().GetExistingProduct(ApplicationManager.GetEsMember.Id);
-            //if (products == null || products.Count == 0) return;
-            //var selectedItems = new SelectItems(
-            //        products.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1} {2})", s.Description, s.Code, s.Price), SelectedValue = s.Id }).ToList(),
-            //        false);
-            //var product = (selectedItems.ShowDialog() == true && selectedItems.SelectedItems != null)
-            //    ? products.FirstOrDefault(
-            //        s => selectedItems.SelectedItems.Select(t => t.SelectedValue).ToList().Contains(s.Id))
-            //    : null;
-            //if (product == null)
-            //{
-            //    return;
-            //}
-            //_viewModel.GetProduct(product.Code);
             TxtQuantity.Focus();
             TxtQuantity.SelectAll();
         }

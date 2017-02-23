@@ -62,7 +62,7 @@
                     <TextBlock Grid.Column="0" Grid.Row="2" Text="Էլ փոստ:"/>
                     <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding SelectedEsUser.Email}"/>
                     <GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Header="Իրավունքներ">
-                        <Grid>
+                        <Grid MinHeight="100">
                             <ItemsControl  ItemsSource="{Binding Roles}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>

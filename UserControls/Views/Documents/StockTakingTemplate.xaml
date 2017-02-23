@@ -1,0 +1,140 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:filter="clr-namespace:Shared.Helpers;assembly=Shared"
+                    xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
+                    xmlns:stockTakeings="clr-namespace:UserControls.ViewModels.StockTakeings">
+    <DataTemplate DataType="{x:Type stockTakeings:StockTakeViewModel}">
+        <Grid>
+            <Grid.InputBindings>
+                <KeyBinding Gesture="Ctrl+F" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
+                <KeyBinding Gesture="Ctrl+Shift+F" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithFilters}"/>
+                <!--<KeyBinding Gesture="Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
+            <KeyBinding Gesture="Ctrl+Shift+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Small}"/>
+            <KeyBinding Gesture="Ctrl+Shift+X" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
+            <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveInvoiceCommand}"/>
+            <KeyBinding Gesture="Ctrl+Shift+A" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>-->
+            </Grid.InputBindings>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Label Content="Գույքագրման համար" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" HorizontalContentAlignment="Right"/>
+                    <Label Content="{Binding StockTake.StockTakeName}" Foreground="Blue" Margin ="3"/>
+                </StackPanel>
+                <StackPanel Orientation ="Horizontal" HorizontalAlignment="Right">
+                    <Label Content="Գույքագրման սկիզբ" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" HorizontalContentAlignment="Right"/>
+                    <TextBlock Text="{Binding Path=StockTake.CreateDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" Margin="3" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <Label Content ="Գույքագրման ավարտ" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" HorizontalContentAlignment="Right"/>
+                    <TextBlock Text ="{Binding StockTake.ClosedDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" Margin ="3" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation ="Horizontal" HorizontalAlignment="Right">
+                    <Label Content="Գույքագրվող պահեստ" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" HorizontalContentAlignment="Right"/>
+                    <Label Content="{Binding Path=Stock.Name}" Margin="3" Foreground="Blue" HorizontalAlignment="Right" />
+                    <Label Content="Գույքագրող" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" HorizontalContentAlignment="Right"/>
+                    <Label Content="{Binding Path=Creator.FullName}" Margin="3" Foreground="Blue" HorizontalAlignment="Right" />
+                </StackPanel>
+                <StackPanel Orientation ="Horizontal" HorizontalAlignment="Right">
+
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Content="Կոդ անվանում" VerticalAlignment="Center"  HorizontalContentAlignment="Right" HorizontalAlignment="Left" Width="150" FontSize="15"/>
+                    <TextBox Grid.Row="0" Text="{Binding Path=StockTakeItem.CodeOrBarcode, UpdateSourceTrigger=PropertyChanged}" Height="35" TextWrapping="Wrap" FontSize="20" VerticalAlignment="Center" IsReadOnlyCaretVisible="True" HorizontalAlignment="Left" Width="250" TabIndex="3" Margin="150,0,0,0">
+                    <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding GetProductItemCommand}"/>
+                    </TextBox.InputBindings>    
+                    </TextBox>
+                    <TextBox Grid.Row="0" Name="TxtDescription" 
+                         Text="{Binding Path=StockTakeItem.ProductDescription, UpdateSourceTrigger=PropertyChanged}" 
+                         Height="35" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Center" 
+                         IsReadOnlyCaretVisible="True" TabIndex="4" IsReadOnly="True" Margin="400,0,1,0">
+                        <TextBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Ընտրել ըստ անվանման" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
+                            </ContextMenu>
+                        </TextBox.ContextMenu>
+                    </TextBox>
+
+
+                    <Label Grid.Row="1" Content="Նշումներ" VerticalAlignment="Top" HorizontalContentAlignment="Right" FontSize="15" HorizontalAlignment="Left" Width="150" Margin="1"/>
+                    <TextBox Grid.Row="1" Text="{Binding StockTakeItem.Description, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Height="50" TextWrapping="Wrap" AcceptsReturn="True" Margin="150,1,1,1"/>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Label Content="Առկա է պահեստում"  VerticalAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right" Width="170" Margin ="1"  FontSize="15"/>
+                        <TextBlock Text="{Binding Path=StockTakeItem.Quantity, StringFormat='N'}" VerticalAlignment="Center" Foreground="Blue" />
+                        <Label Content="Առկա է"  VerticalAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right" Width="100" Margin ="1"  FontSize="15"/>
+                        <TextBox Text="{Binding Path=StockTakeItem.StockTakeQuantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" Margin="0,0,1,2" Width="120" Height="35" FontSize="20" TextWrapping="Wrap" VerticalAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right">
+                        <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding AddStockTakingItemCommand}"/>
+                        </TextBox.InputBindings>    
+                        </TextBox>
+                    </StackPanel>
+                    <TextBox Grid.Row="3" Text="{Binding Filter, UpdateSourceTrigger = PropertyChanged}" Margin="1,1,130,1"/>
+                    <Button Grid.Row="3" Content="Ավելացնել" Width ="120" Margin="3" Height="25" Command="{Binding AddStockTakingItemCommand}" HorizontalAlignment="Right"/>
+                </Grid>
+            </StackPanel>
+            <extendedControls:ExtendedDataGrid x:Name="DgInvoiceItems"  Grid.Row="3" ItemsSource="{Binding StockTakeItems}"
+                  SelectedItem="{Binding SelectedItem}"
+                  VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="18" Margin="1" >
+                <DataGrid.Resources>
+                    <Style x:Key="CellRightAlign">
+                        <Setter Property="Control.HorizontalAlignment" Value="Right" />
+                    </Style>
+                    <ContextMenu x:Key="RowMenu">
+                        <MenuItem Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemoveStockTakingItemCommand}" 
+                              CommandParameter="{Binding StockTakingItems.Id}" 
+                              Header="Հեռացնել"/>
+                    </ContextMenu>
+                </DataGrid.Resources>
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="ContextMenu" Value="{StaticResource RowMenu}"/>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding CodeOrBarcode}" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding ProductDescription}" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                    <DataGridTextColumn IsReadOnly="False" Header="Առկա է պահեստում" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Առկա է" Binding="{Binding Path=StockTakeQuantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Հաշվեկշիռ" Binding="{Binding Path=Balance, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Ընդամենը" Binding="{Binding Path=Amount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Գույքագրման ամսաթիվ" Binding="{Binding Path=StockTakeDate}" CellStyle="{StaticResource CellRightAlign}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Description}" />
+                </DataGrid.Columns>
+            </extendedControls:ExtendedDataGrid>
+            <Label Grid.Row="6" Content="Նշումներ" VerticalAlignment="Top" HorizontalContentAlignment="Right" FontSize="15" HorizontalAlignment="Left" Width="100"/>
+            <TextBox Grid.Row="6" Text="{Binding StockTake.Description}" Height="50" TextWrapping="Wrap" AcceptsReturn="True" Margin="98,0,3,0"/>
+            <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,10, 3, 10">
+                <TextBlock Text="Գումար" FontSize="10"/>
+                <TextBlock Text="{Binding Amount, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                <TextBlock Text="Պակասորդ" FontSize="10"/>
+                <TextBlock Text="{Binding Deficit, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                <TextBlock Text="Ավելցուկ" FontSize="10"/>
+                <TextBlock Text="{Binding Surplace, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                <TextBlock Text="Ընդամենը" FontSize="10"/>
+                <TextBlock Text="{Binding Total, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                <Button Margin="3" Content="Ներմուծել" Command="{Binding ImportInvoiceCommand}" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" TabIndex="10" />
+                <Button Margin="3" Content="Արտահանել" Command="{Binding ExportInvoiceCommand}" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" IsEnabled="False" TabIndex="10" />
+                <Button Margin="3" Command="{Binding PrintInvoiceCommand}" Content="Տպել Ctrl+P" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" IsEnabled="False" TabIndex="10" />
+                <Button Margin="3" Command="{Binding GetUnavailableProductItemsCommand}" Content="Չհաշվառված" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" RenderTransformOrigin="4.44,0.55" TabIndex="11" />
+                <Button Command="{Binding ViewDetileCommand}" Margin="3" Content="Դիտում" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" TabIndex="12"/>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

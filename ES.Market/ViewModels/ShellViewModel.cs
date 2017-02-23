@@ -299,6 +299,9 @@ namespace ES.Market.ViewModels
             if (vm is InvoiceViewModel)
             {
                 ProductItemsToolsViewModel.OnProductItemSelected -= ((InvoiceViewModel)vm).OnSetProductItem;
+            } if (vm is StockTakeViewModel)
+            {
+                ProductItemsToolsViewModel.OnProductItemSelected -= ((StockTakeViewModel)vm).OnSetProductItem;
             }
         }
         private void AddTools(ToolsViewModel vm)
@@ -451,7 +454,13 @@ namespace ES.Market.ViewModels
                 AddDocument((DocumentViewModel)vm);
                 ((PaneViewModel)vm).IsActive = true;
                 if (vm is InvoiceViewModel)
+                {
                     ProductItemsToolsViewModel.OnProductItemSelected += ((InvoiceViewModel)vm).OnSetProductItem;
+                }
+                if (vm is StockTakeViewModel)
+                {
+                    ProductItemsToolsViewModel.OnProductItemSelected += ((StockTakeViewModel)vm).OnSetProductItem;
+                }
                 OnCreateProductItemsTools(ProductItemsToolsViewModel);
                 return;
             }
@@ -591,7 +600,7 @@ namespace ES.Market.ViewModels
                 return;
             }
             vm = new StockTakeViewModel(stockTake, _member.Id);
-            AddTabControl(new StockTakingUctrl(vm), vm);
+            AddDocument(vm);
         }
 
         private StockTakeModel GetOpeningStockTake()

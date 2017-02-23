@@ -9,16 +9,17 @@ using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common.Helpers;
+using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
 using Shared.Helpers;
 using UserControls.Commands;
-using UserControls.Interfaces;
+using UserControls.Views.CustomControls;
 using ProductModel = ES.Business.Models.ProductModel;
 
 namespace UserControls.ViewModels.StockTakeings
 {
-    public class StockTakeViewModel:ITabItem
+    public class StockTakeViewModel : DocumentViewModel
     {
         #region Properties
 
@@ -43,28 +44,35 @@ namespace UserControls.ViewModels.StockTakeings
         public string Title { get; set; }
         public bool IsLoading
         {
-            get; set; }
+            get;
+            set;
+        }
         public string Description { get; set; }
         public bool IsModified { get; set; }
-        public StockTakeModel StockTake {get { return _stockTake; }set { _stockTake = value; OnPropertyChanged("Title"); }}
-        public ObservableCollection<StockTakeItemsModel> StockTakeItems{
-            get { return new ObservableCollection<StockTakeItemsModel>(_stockTakeItems.Where(s=>(s.CodeOrBarcode+s.ProductDescription).ToLower().Contains(Filter!=null? Filter.ToLower():string.Empty)).ToList()); }
-            set { _stockTakeItems = value; } }
+        public StockTakeModel StockTake { get { return _stockTake; } set { _stockTake = value; OnPropertyChanged("Title"); } }
+        public ObservableCollection<StockTakeItemsModel> StockTakeItems
+        {
+            get { return new ObservableCollection<StockTakeItemsModel>(_stockTakeItems.Where(s => (s.CodeOrBarcode + s.ProductDescription).ToLower().Contains(Filter != null ? Filter.ToLower() : string.Empty)).ToList()); }
+            set { _stockTakeItems = value; }
+        }
         public StockModel Stock { get { return _stock; } set { _stock = value; } }
         public EsUserModel Creator { get { return _creator; } set { _creator = value; } }
         public ProductModel Product { get { return _product; } set { _product = value; OnPropertyChanged(ProductProperty); } }
-        public StockTakeItemsModel StockTakeItem { get { return _stockTakeItem; } set {_stockTakeItem = value; OnPropertyChanged(StockTakeItemProperty);} }
+        public StockTakeItemsModel StockTakeItem { get { return _stockTakeItem; } set { _stockTakeItem = value; OnPropertyChanged(StockTakeItemProperty); } }
         public StockTakeItemsModel SelectedItem { get; set; }
         public decimal Count { get { return StockTakeItems.Sum(s => s.Quantity); } }
         public decimal Amount { get { return StockTakeItems.Sum(s => (s.Price ?? 0) * s.StockTakeQuantity); } }
         public decimal Surplace { get { return StockTakeItems.Sum(s => (s.Price ?? 0) * ((s.Quantity - s.StockTakeQuantity) < 0 ? -s.Quantity + s.StockTakeQuantity : 0)); } }
         public decimal Deficit { get { return StockTakeItems.Sum(s => (s.Price ?? 0) * ((s.Quantity - s.StockTakeQuantity) > 0 ? s.Quantity - s.StockTakeQuantity : 0)); } }
         public decimal Total { get { return StockTakeItems.Sum(s => s.Amount); } }
-        public string Filter { get { return _filter; } 
-            set
+        public string Filter
         {
-            _filter = value; OnPropertyChanged(StockTakeItemsProperty);
-            } }
+            get { return _filter; }
+            set
+            {
+                _filter = value; OnPropertyChanged(StockTakeItemsProperty);
+            }
+        }
         #endregion
 
         #region Constructors
@@ -87,15 +95,33 @@ namespace UserControls.ViewModels.StockTakeings
         {
             Title = string.Format("Գույքագրում {0}", StockTake.StockTakeName);
             Description = "Գույքագրում";
+            IsActive = true;
         }
         private void SetCommands()
         {
+            GetProductItemCommand = new RelayCommand(OnGetProductItem, CanGetProductItem);
             AddStockTakingItemCommand = new AddStoCkTakingItemCommand(this);
             RemoveStockTakingItemCommand = new RemoveStockTakingItemCommand(this);
             ExportToExcelCommand = new ExportToExcelCommand(this);
             ViewDetileCommand = new ViewDetileCommand(this);
             GetUnavailableProductItemsCommand = new UnavailableProductItemsCommand(this);
+
+            ViewDetilesCommand = new RelayCommand(OnViewDetiles, CanViewDetiles);
         }
+
+        #region Command methods
+
+        private bool CanGetProductItem(object o)
+        {
+            return StockTakeItem != null && !string.IsNullOrEmpty(StockTakeItem.CodeOrBarcode);
+        }
+
+        private void OnGetProductItem(object o)
+        {
+            if(!CanGetProductItem(o)) return;
+            GetProduct(StockTakeItem.CodeOrBarcode);
+        }
+        #endregion Command methods
         private void SetStockTakeItem(EsProductModel product)
         {
             if (StockTakeItem == null) StockTakeItem = new StockTakeItemsModel(StockTake.Id);
@@ -106,7 +132,7 @@ namespace UserControls.ViewModels.StockTakeings
                 StockTakeItem.ProductDescription = product.Description;
                 StockTakeItem.Mu = product.Mu;
                 StockTakeItem.Price = product.Price;
-                StockTakeItem.Quantity = ProductsManager.GetProductItemCountFromStock(product.Id, new List<long>{StockTake.StockId??0},_memberId );
+                StockTakeItem.Quantity = ProductsManager.GetProductItemCountFromStock(product.Id, new List<long> { StockTake.StockId ?? 0 }, _memberId);
             }
             else
             {
@@ -128,7 +154,6 @@ namespace UserControls.ViewModels.StockTakeings
                 tabControl.Items.Remove(tabitem);
             }
         }
-
         protected void OnGetProduct(object o)
         {
             var products = ApplicationManager.CashManager.Products.OrderBy(s => s.Description);
@@ -146,9 +171,38 @@ namespace UserControls.ViewModels.StockTakeings
             }
             GetProduct(product.Code);
         }
+
+        private bool CanViewDetiles(object o)
+        {
+            return StockTakeItems.Any();
+        }
+
+        private void OnViewDetiles(object o)
+        {
+            var products = new ProductsManager().GetProducts(ApplicationManager.GetEsMember.Id);
+            var detile = from s in StockTakeItems
+                         join t in products on s.ProductId equals t.Id
+                         select new
+                         {
+                             Կոդ = s.CodeOrBarcode,
+                             Անվանում = s.ProductDescription,
+                             Չմ = s.Mu,
+                             Քանակ = s.Quantity,
+                             Առկա = s.StockTakeQuantity,
+                             Հաշվեկշիռ = s.Balance,
+                             Գումար = s.Balance * t.Price,
+                             Ամսաթիվ = s.StockTakeDate
+                         };
+            var ui = new UIListView(detile);
+            ui.Show();
+        }
         #endregion
 
         #region Public methods
+        public void OnSetProductItem(ProductItemModel productItem)
+        {
+            OnGetProduct(productItem.Product.Code);
+        }
         public void GetProduct(string code)
         {
             SetStockTakeItem(new ProductsManager().GetProductsByCodeOrBarcode(code, _memberId));
@@ -159,37 +213,35 @@ namespace UserControls.ViewModels.StockTakeings
         }
         public bool CanAddStockTakingItem()
         {
-            return StockTakeItem!=null && StockTakeItem.StockTakeQuantity != null && StockTake.ClosedDate==null && !string.IsNullOrEmpty(StockTakeItem.CodeOrBarcode);
+            return StockTakeItem != null && StockTakeItem.StockTakeQuantity != null && StockTake.ClosedDate == null && !string.IsNullOrEmpty(StockTakeItem.CodeOrBarcode);
         }
         public void AddStockTakingItem()
         {
-            if(!CanAddStockTakingItem()) {return;}
+            if (!CanAddStockTakingItem()) { return; }
             StockTakeItem.StockTakeDate = DateTime.Now;
             var exItem = StockTakeManager.GetStockTakeItem(StockTake.Id, StockTakeItem.CodeOrBarcode, _memberId);
             if (exItem != null)
             {
-                if(MessageBox.Show("Տվյալ կոդով ապրանք արդեն գույքագրվել է " + exItem.StockTakeQuantity + " հատ։ \n Ցանկանու՞մ եք ավելացնել ևս " + StockTakeItem.StockTakeQuantity +"-ով։" , 
-                    "Կրկնակի գույքագրում", MessageBoxButton.YesNo, MessageBoxImage.Question)!= MessageBoxResult.Yes) {return;}
+                if (MessageBox.Show("Տվյալ կոդով ապրանք արդեն գույքագրվել է " + exItem.StockTakeQuantity + " հատ։ \n Ցանկանու՞մ եք ավելացնել ևս " + StockTakeItem.StockTakeQuantity + "-ով։",
+                    "Կրկնակի գույքագրում", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) { return; }
                 StockTakeItem.StockTakeQuantity += exItem.StockTakeQuantity;
             }
-            if (!StockTakeManager.EditStockTakeItems(StockTakeItem, StockTake.StockId, _memberId)) { return;}
+            if (!StockTakeManager.EditStockTakeItems(StockTakeItem, StockTake.StockId, _memberId)) { return; }
             StockTakeItem = new StockTakeItemsModel(StockTake.Id);
             OnPropertyChanged(StockTakeItemProperty);
             StockTakeItems = new ObservableCollection<StockTakeItemsModel>(StockTakeManager.GetStockTakeItems(StockTake.Id, _memberId));
             OnPropertyChanged(StockTakeItemsProperty);
-            
+
             OnPropertyChanged("Count");
             OnPropertyChanged("Amount");
             OnPropertyChanged("Surplace");
             OnPropertyChanged("Deficit");
             OnPropertyChanged("Total");
-            
-
 
         }
         public bool CanRemoveStockTakingItem()
         {
-            return SelectedItem!=null && StockTake.ClosedDate == null && StockTakeItems.SingleOrDefault(s => s.Id == SelectedItem.Id) != null;
+            return SelectedItem != null && StockTake.ClosedDate == null && StockTakeItems.SingleOrDefault(s => s.Id == SelectedItem.Id) != null;
         }
         public void RemoveStockTakingItem()
         {
@@ -197,7 +249,7 @@ namespace UserControls.ViewModels.StockTakeings
             {
                 return;
             }
-            if(!StockTakeManager.RemoveStoCkakeItem(SelectedItem.Id, _memberId)) {return;}
+            if (!StockTakeManager.RemoveStoCkakeItem(SelectedItem.Id, _memberId)) { return; }
             //StockTakeItems.Remove(StockTakeItems.SingleOrDefault(s=>s.Id==StockTakeItem.Id));
             StockTakeItem = new StockTakeItemsModel(StockTake.Id);
             OnPropertyChanged(StockTakeItemProperty);
@@ -210,41 +262,41 @@ namespace UserControls.ViewModels.StockTakeings
         }
         public void ExportToExcel()
         {
-            
+
         }
         public void ViewDetile()
         {
-            
+
         }
         public bool CanGetUnavailableProductItems()
         {
-            return StockTake.ClosedDate==null;
+            return StockTake.ClosedDate == null;
         }
 
         public void GetUnavailableProductItems()
         {
             var unavailableProductItems =
-                new ProductsManager().GetUnavailableProductItems(_stockTakeItems.Where(s=>s.ProductId!=null).Select(s=>s.ProductId != null ? (Guid)s.ProductId : new Guid()).ToList(), _memberId);
-            var productItemIds = unavailableProductItems.GroupBy(s => s.ProductId).Select(s=>s.Select(t=>t.ProductId).First()).OrderBy(s=>s).ToList();
+                new ProductsManager().GetUnavailableProductItems(_stockTakeItems.Where(s => s.ProductId != null).Select(s => s.ProductId != null ? (Guid)s.ProductId : new Guid()).ToList(), _memberId);
+            var productItemIds = unavailableProductItems.GroupBy(s => s.ProductId).Select(s => s.Select(t => t.ProductId).First()).OrderBy(s => s).ToList();
             foreach (var productId in productItemIds)
             {
-                var quantity = unavailableProductItems.Where(s => s.ProductId == productId).Sum(s=>s.Quantity);
-                var product = unavailableProductItems.Where(s => s.ProductId == productId).Select(s=>s.Product).FirstOrDefault();
-                if(product==null) continue;
-                switch (MessageBox.Show(product.Description +" (" + product.Code + ") ապրանքից " + quantity + " հատ չի հաշվառվել։ \n Ցանկանու՞մ եք հաշվառել։", "Հաշվառում", 
+                var quantity = unavailableProductItems.Where(s => s.ProductId == productId).Sum(s => s.Quantity);
+                var product = unavailableProductItems.Where(s => s.ProductId == productId).Select(s => s.Product).FirstOrDefault();
+                if (product == null) continue;
+                switch (MessageBox.Show(product.Description + " (" + product.Code + ") ապրանքից " + quantity + " հատ չի հաշվառվել։ \n Ցանկանու՞մ եք հաշվառել։", "Հաշվառում",
                     MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
                 {
-                    case MessageBoxResult.Cancel: 
+                    case MessageBoxResult.Cancel:
                         return;
                         break;
                     case MessageBoxResult.No:
-                            continue;
-                            break;
-                    case  MessageBoxResult.Yes:
+                        continue;
+                        break;
+                    case MessageBoxResult.Yes:
                         SetStockTakeItem(product);
                         StockTakeItem.StockTakeQuantity = 0;
                         AddStockTakingItem();
-                            break;
+                        break;
                     default:
                         break;
                 }
@@ -253,13 +305,15 @@ namespace UserControls.ViewModels.StockTakeings
         #endregion
 
         #region Commands
+        public ICommand GetProductItemCommand { get; private set; }
         public ICommand AddStockTakingItemCommand { get; private set; }
         public ICommand RemoveStockTakingItemCommand { get; private set; }
         public ICommand ExportToExcelCommand { get; private set; }
         public ICommand ViewDetileCommand { get; private set; }
         public ICommand GetUnavailableProductItemsCommand { get; private set; }
-        public ICommand CloseCommand { get { return new RelayCommand(OnCloseCommand);} }
+        public ICommand CloseCommand { get { return new RelayCommand(OnCloseCommand); } }
         public ICommand GetProductCommand { get { return new RelayCommand(OnGetProduct); } }
+        public ICommand ViewDetilesCommand { get; private set; }
         #endregion
 
         #region INotifyPropertyChanged
@@ -274,6 +328,6 @@ namespace UserControls.ViewModels.StockTakeings
         }
         #endregion
 
-        
+
     }
 }

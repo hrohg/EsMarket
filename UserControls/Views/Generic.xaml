@@ -3,7 +3,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Documents/StartPageTemplate.xaml"/>
         <ResourceDictionary Source="Documents/InvoiceTemplates.xaml"/>
-        
+        <ResourceDictionary Source="Documents/StockTakingTemplate.xaml"/>
 
         <ResourceDictionary Source="Reports/ShortReportTemplate.xaml"/>
         <ResourceDictionary Source="View/PackingListForSaler.xaml"/>

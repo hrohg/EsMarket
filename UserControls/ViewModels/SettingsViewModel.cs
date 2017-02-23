@@ -16,6 +16,7 @@ using ES.Common;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using UserControls.Commands;
+using Application = System.Windows.Application;
 
 namespace UserControls.ViewModels
 {
@@ -247,7 +248,10 @@ namespace UserControls.ViewModels
             }
             if (message != null)
             {
-                ApplicationManager.MessageManager.OnNewMessage(message);
+                if (Application.Current != null)
+                {
+                    Application.Current.Dispatcher.Invoke(new Action(() => ApplicationManager.MessageManager.OnNewMessage(message)));
+                }
             }
             IsInProgress = false;
         }
