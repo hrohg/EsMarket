@@ -87,7 +87,7 @@ namespace UserControls.ViewModels.Invoices
             {
                 if (value == _isLoading) return;
                 _isLoading = value;
-                OnPropertyChanged("IsLoading");
+                RaisePropertyChanged("IsLoading");
             }
         }
 
@@ -98,7 +98,7 @@ namespace UserControls.ViewModels.Invoices
         public InvoiceItemsModel InvoiceItem
         {
             get { return _invoiceItem; }
-            set { _invoiceItem = value; OnPropertyChanged("InvoiceItem"); OnPropertyChanged(IsExpiringProperty); }
+            set { _invoiceItem = value; RaisePropertyChanged("InvoiceItem"); RaisePropertyChanged(IsExpiringProperty); }
         }
         private InvoiceItemsModel _selectedInvoiceItem;
         public InvoiceItemsModel SelectedInvoiceItem
@@ -107,7 +107,7 @@ namespace UserControls.ViewModels.Invoices
             set
             {
                 _selectedInvoiceItem = value;
-                OnPropertyChanged("SelectedInvoiceItem");
+                RaisePropertyChanged("SelectedInvoiceItem");
             }
         }
         public Visibility IsExpiring
@@ -216,7 +216,7 @@ namespace UserControls.ViewModels.Invoices
                 SetDefaultPartner();
             }
             _roles = ApplicationManager.UserRoles; //UsersManager.GetUserRoles(_user.UserId, memberId: _member.Id);
-            OnPropertyChanged(DenayChangePriceProperty);
+            RaisePropertyChanged(DenayChangePriceProperty);
         }
         private void SetDefaultPartner()
         {
@@ -374,7 +374,7 @@ namespace UserControls.ViewModels.Invoices
             if (CanCleanInvoiceItems(o))
             {
                 InvoiceItems.Clear();
-                OnPropertyChanged("InvoiceItems");
+                RaisePropertyChanged("InvoiceItems");
             }
         }
         #endregion
@@ -793,17 +793,5 @@ namespace UserControls.ViewModels.Invoices
         public ICommand GetProductCommand { get; private set; }
         public ICommand CleanInvoiceIemsCommand { get; private set; }
         #endregion Commands
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
-        #endregion
-    }
 }

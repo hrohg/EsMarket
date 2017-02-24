@@ -133,7 +133,7 @@
                 <Button Margin="3" Content="Արտահանել" Command="{Binding ExportInvoiceCommand}" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" IsEnabled="False" TabIndex="10" />
                 <Button Margin="3" Command="{Binding PrintInvoiceCommand}" Content="Տպել Ctrl+P" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" IsEnabled="False" TabIndex="10" />
                 <Button Margin="3" Command="{Binding GetUnavailableProductItemsCommand}" Content="Չհաշվառված" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" RenderTransformOrigin="4.44,0.55" TabIndex="11" />
-                <Button Command="{Binding ViewDetileCommand}" Margin="3" Content="Դիտում" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" TabIndex="12"/>
+                <Button Command="{Binding ViewDetilesCommand}" Margin="3" Content="Դիտում" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" TabIndex="12"/>
             </StackPanel>
         </Grid>
     </DataTemplate>
