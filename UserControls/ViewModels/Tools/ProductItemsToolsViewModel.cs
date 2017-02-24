@@ -70,7 +70,7 @@ namespace UserControls.ViewModels.Tools
 
         public List<CustomItem> Items
         {
-            get { return _items.Where(s => s.Description.ToLower().Contains(Filter)).ToList(); }
+            get { return _items != null ? _items.Where(s => s.Description.ToLower().Contains(Filter)).ToList() : null; }
             private set
             {
                 _items = value;
@@ -81,6 +81,24 @@ namespace UserControls.ViewModels.Tools
 
         public CustomItem SelectedItem { get; set; }
 
+        #region Loading
+        private bool _isLoading;
+
+        public bool IsLoading
+        {
+            get
+            {
+                return _isLoading;
+            }
+            set
+            {
+                if (value == _isLoading) return;
+                _isLoading = value;
+                RaisePropertyChanged("IsLoading");
+            }
+        }
+
+        #endregion Loading
         #endregion External proeprties
 
         #region Constructors
@@ -102,12 +120,32 @@ namespace UserControls.ViewModels.Tools
             OnUpdateProducts(null);
             SelectItemCommand = new RelayCommand<Guid>(OnSelectItem);
             EditProductCommand = new RelayCommand(OnManagingProduct, CanManageProduct);
+            ApplicationManager.Instance.CashProvider.ProductsUpdateing += OnProductsUpdating;
+            ApplicationManager.Instance.CashProvider.ProductUpdated += OnProductsUpdated;
             UpdateProductsCommand = new RelayCommand(OnUpdateProducts);
+            _products = ApplicationManager.Instance.CashProvider.Products;
         }
+
+        private void OnProductsUpdating()
+        {
+            IsLoading = true;
+        }
+
+        private void OnProductsUpdated()
+        {
+            _products = ApplicationManager.Instance.CashProvider.Products;
+            if (_products != null)
+            {
+                _products = _products.OrderBy(s => s.Description).ToList();
+                Items = _products.Select(p => new CustomItem(p.Id, string.Format("{0} {1} {2}", p.Code, p.Description, p.Price))).ToList();
+            }
+            IsLoading = false;
+        }
+
         public void OnUpdateProducts(object o)
         {
-            _products = ApplicationManager.CashManager.Products.OrderBy(s => s.Description).ToList();
-            Items = _products.Select(p => new CustomItem(p.Id, string.Format("{0} {1} {2}", p.Code, p.Description, p.Price))).ToList();
+            ApplicationManager.Instance.CashProvider.UpdateProducts();
+
         }
         private void OnSelectItem(Guid id)
         {

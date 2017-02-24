@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Windows;
+using Xceed.Wpf.AvalonDock.Controls;
 using Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls;
 using Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Interfaces;
 using Xceed.Wpf.AvalonDock.Layout;
@@ -27,29 +29,43 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Helpers
             var vm = anchorableToShow.Content as IExtendedAnchorableBase;
             if (vm == null) return false;
             AnchorableShowStrategy showSide;
+            LayoutAnchorablePane toolsPane=null;
             
             switch (vm.AnchorSide)
             {
                 case AnchorSide.Top:
                     showSide = AnchorableShowStrategy.Top;
+                    anchorableToShow.FloatingHeight = 100;
+                    toolsPane = layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(d => d.Name == "TopPane");
                     break;
                 case AnchorSide.Left:
                     showSide = AnchorableShowStrategy.Left;
                     anchorableToShow.AutoHideWidth = 250;
                     anchorableToShow.FloatingWidth = 250;
-                    
+                    toolsPane = layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(d => d.Name == "LeftPane");
                     break;
                 case AnchorSide.Bottom:
                     showSide = AnchorableShowStrategy.Bottom;
+                    anchorableToShow.FloatingHeight = 150;
+                    toolsPane = layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(d => d.Name == "ToolsPane");
                     break;
-                case AnchorSide.Right: 
-                              default:
+                case AnchorSide.Right:
+                default:
                     showSide = AnchorableShowStrategy.Right;
+                    anchorableToShow.FloatingWidth = 150;
+                    toolsPane = layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(d => d.Name == "RightPane");
                     break;
-                    
+
             }
             
-            anchorableToShow.AddToLayout(layout.Manager, showSide);
+            if (toolsPane != null)
+            {
+                toolsPane.Children.Add(anchorableToShow);
+            }
+            else
+            {
+                anchorableToShow.AddToLayout(layout.Manager, showSide);
+            }
             return true;
         }
 

@@ -249,7 +249,7 @@ namespace ES.Market
                     return;
                 }
 
-                var member = ApplicationManager.SetEsMember = members.Single();
+                var member = ApplicationManager.Instance.SetEsMember = members.Single();
                 var xml = new XmlManager();
                 ApplicationManager.GetThisDesk = CashDeskManager.GetCashDesk(xml.GetItemsByControl(XmlTagItems.SaleCashDesks).Select(s => HgConvert.ToGuid(s.Value)).SingleOrDefault(), member.Id);
                 ApplicationManager.LoadConfigData(member.Id);

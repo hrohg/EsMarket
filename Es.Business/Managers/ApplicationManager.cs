@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data.Entity.Core.EntityClient;
 using System.Data.SqlClient;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Controls;
 using CashReg.Helper;
 using ES.Business.Models;
@@ -70,6 +72,7 @@ namespace ES.Business.Managers
 
             return entityConnectionStringBuilder.ConnectionString;
         }
+
         #region External properties
         public static bool IsEsServer { get; private set; }
         public static string dbName { get { return _server != null ? _server.Database : string.Empty; } }
@@ -87,7 +90,7 @@ namespace ES.Business.Managers
             }
         }
 
-        public static EsMemberModel SetEsMember
+        public EsMemberModel SetEsMember
         {
             set
             {
@@ -97,7 +100,7 @@ namespace ES.Business.Managers
             }
         }
 
-        public static List<MembersRoles> UserRoles { get { return _userRoles; } private set { _userRoles = value; } }
+        public List<MembersRoles> UserRoles { get { return _userRoles; } private set { _userRoles = value; } }
         public static EsUserModel GetEsUser { get { return _esUser; } }
         public static EsUserModel SetEsUser { set { _esUser = value; } }
         public static string DefaultConnectionString
@@ -308,7 +311,7 @@ namespace ES.Business.Managers
         }
         public static bool CreateConnectionString(DataServer server)
         {
-           if (server != null)
+            if (server != null)
             {
                 switch (server.Description.ToLower())
                 {
@@ -398,12 +401,21 @@ namespace ES.Business.Managers
             get { return EcrSettings != null && _isEcrActivated; }
             set { _isEcrActivated = value; }
         }
-
+        public LocalManager CashProvider {get{return CashManager;} }
         #endregion
+
+        #region Constructors
+        private static ApplicationManager _insatance;
+        public static ApplicationManager Instance
+        {
+            get { return _insatance ?? (_insatance = new ApplicationManager()); }
+        }
         public ApplicationManager()
         {
 
         }
+        #endregion Constructors
+
         #region Internal methods
         private static void ResetMemberData()
         {

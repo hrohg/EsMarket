@@ -138,6 +138,7 @@
     <Compile Include="Converters\CommandParameterConverter.cs" />
     <Compile Include="Converters\InverseVisibilityConverter.cs" />
     <Compile Include="Converters\MessageColorConverter.cs" />
+    <Compile Include="Converters\UserRoleToBoolConverter.cs" />
     <Compile Include="Editors\EditProducts\Views\EditProductUctrl.xaml.cs">
       <DependentUpon>EditProductUctrl.xaml</DependentUpon>
     </Compile>

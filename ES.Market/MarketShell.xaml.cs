@@ -146,7 +146,7 @@ namespace ES.Market
         public MarketShell(ShellViewModel vm)
         {
             DataContext = vm;
-            _userRoles = ApplicationManager.UserRoles;
+            _userRoles = ApplicationManager.Instance.UserRoles;
             if (ApplicationManager.GetEsMember == null || ApplicationManager.GetEsUser == null)
             {
                 MessageBox.Show("Ոչ արտոնագրված գործողություն։ Ծրագիրը կփակվի։ Խնդրում ենք արտոնագրել ծրագրային ապահովումը։",

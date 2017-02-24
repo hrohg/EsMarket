@@ -9,7 +9,7 @@
     </Style>
 
     <DataTemplate DataType="{x:Type settings:ManageUsersViewModel}">
-        <Grid>
+        <Grid MinWidth="170">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -66,7 +66,7 @@
                             <ItemsControl  ItemsSource="{Binding Roles}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal"/>
+                                        <WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"/>
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.Template>
@@ -78,39 +78,18 @@
                                 </ItemsControl.Template>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate DataType="{x:Type settings:UserRole}">
-                                        <CheckBox IsChecked="{Binding IsSelected,Mode=TwoWay}" Content="{Binding Alias}" Margin="5"/>
+                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Content="{Binding Alias}" Margin="5" Width="85" ToolTip="{Binding Role.Description}"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </Grid>
                     </GroupBox>
-                    <StackPanel Grid.Column="1" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button  Content="Խմբագրել" Command="{Binding EditUserRoleCommand}" CommandParameter="{Binding SelectedEsUser}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                    <StackPanel Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button  Content="Խմբագրել" Command="{Binding EditUserRoleCommand}" CommandParameter="{Binding SelectedEsUser}"/>
                         <Button Content="Հեռացնել" Command="{Binding RemoveEsUserCommand}" CommandParameter="{Binding SelectedEsUser}"/>
                     </StackPanel>
                 </Grid>
             </GroupBox>
-            <!--<DataGrid Grid.Row="3" ItemsSource="{Binding UsersRoles}" SelectedItem="{Binding UserRole}" CanUserAddRows="False" CanUserDeleteRows="False"
-                                      FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True"
-                                      VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Անվանում:" CanUserSort="True" CanUserReorder="True" SortMemberPath="EsUser.FullName">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:UsersRolesModel}">
-                                <TextBlock Text="{Binding EsUser.FullName}"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Խումբ" CanUserSort="True" SortMemberPath="Role.RoleName">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:UsersRolesModel}">
-                                <TextBlock Text="{Binding Role.RoleName}" HorizontalAlignment="Center"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>-->
-
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

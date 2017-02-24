@@ -359,7 +359,7 @@ namespace UserControls.ViewModels.Products
                     ProductsManager.CopyProduct(Products.SingleOrDefault(s => s.Id == product.Id), product);
                     ApplicationManager.MessageManager.OnNewMessage(new MessageModel(string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումն իրականացել է հաջողությամբ։", product.Code, product.Description), MessageModel.MessageTypeEnum.Success));
                 }
-                ApplicationManager.CashManager.Products = _products;
+                ApplicationManager.Instance.CashProvider.UpdateProducts(_products);
             }
             else
             {
@@ -370,7 +370,7 @@ namespace UserControls.ViewModels.Products
         {
             ProductsManager.DeleteProduct(id, _memberId);
             _products.Remove(Product); OnPropertyChanged(ProductsProperty);
-            ApplicationManager.CashManager.Products = Products;
+            ApplicationManager.Instance.CashProvider.UpdateProducts(_products);
             Product = new ProductModel(_memberId, _userId, true); OnPropertyChanged("Product");
         }
         public bool CanChangeProductCode()

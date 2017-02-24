@@ -18,4 +18,9 @@
         //    return list;
         //}
 	}
+
+    public enum UserRoleEnum
+    {
+        Admin, Director, Manager, StockKeeper, SaleManager, SeniorSaler, Saller, 
+    }
 }

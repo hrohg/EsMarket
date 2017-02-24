@@ -12,11 +12,11 @@ namespace ES.Business.Managers
     public class LocalManager
     {
         #region Private properties
+        private readonly object _locker = new object(); 
         private bool LocalMode = false;
         private long memberId;
         private List<PartnerModel> _partners;
         private List<StockModel> _stocks;
-        private List<ProductModel> _products;
         private List<ProductItemModel> _productItems;
         private List<EsDefaults> _esDefaults;
         private List<ProductResidue> _productResidues; 
@@ -44,15 +44,6 @@ namespace ES.Business.Managers
                 }
                 return _stocks;
             }
-        }
-        public List<ProductModel> Products
-        {
-            get
-            {
-                if (!LocalMode || _products == null) _products = new ProductsManager().GetProducts(memberId);
-                return _products;
-            }
-            set { _products = value; }
         }
         public List<ProductModel> ExistingProducts
         {
@@ -104,6 +95,65 @@ namespace ES.Business.Managers
         {
             return EsDefaults.FirstOrDefault(s => s.Control == control);
         }
+
+
+        #region Products
+        private bool _isProductsUpdating;
+        public delegate void ProductsUpdateingEvent();
+        public event ProductsUpdateingEvent ProductsUpdateing;
+        public delegate void ProductUpdatedDelegate();
+        public event ProductUpdatedDelegate ProductUpdated;
+
+        private List<ProductModel> _products;
+        public List<ProductModel> Products
+        {
+            get
+            {
+                if (_products == null)
+                {
+                    UpdateProducts();
+                }
+                return _products;
+            }
+        }
+
+        private void GetProducts()
+        {
+            _isProductsUpdating = true;
+            var updateingHandler = ProductsUpdateing;
+            if (updateingHandler != null) updateingHandler();
+            lock (_locker)
+            {
+                _products = new ProductsManager().GetProducts(memberId);
+            }
+            OnProductsUpdated();
+        }
+
+        private void OnProductsUpdated()
+        {
+            _isProductsUpdating = false;
+            var updatedHandler = ProductUpdated;
+            if (updatedHandler != null) updatedHandler();
+        }
+        public void UpdateProducts(bool isAsync = true)
+        {
+            if(_isProductsUpdating) return;
+            if (isAsync)
+            {
+                var thread = new Thread(GetProducts);
+                thread.Start();
+            }
+            else
+            {
+                GetProducts();
+            }
+        }
+        public void UpdateProducts(List<ProductModel> products)
+        {
+            _products = products;
+            OnProductsUpdated();
+        }
+        #endregion Products
         #endregion
 
         #region Constructors
@@ -135,10 +185,7 @@ namespace ES.Business.Managers
             _stocks = StockManager.GetStocks(memberId);
         }
 
-        private void SetProducts()
-        {
-            _products = new ProductsManager().GetProducts(memberId);
-        }
+        
 
         private void SetProductItems()
         {
@@ -150,8 +197,7 @@ namespace ES.Business.Managers
         #region External methods
         public void Refresh()
         {
-            
-            new Thread(SetProducts).Start();
+            UpdateProducts();
             new Thread(SetStocks).Start();
             //new Thread(SetProducts).Start();
             new Thread(SetProductItems).Start();

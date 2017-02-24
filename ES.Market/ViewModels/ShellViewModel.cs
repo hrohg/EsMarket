@@ -181,10 +181,9 @@ namespace ES.Market.ViewModels
         {
             User = ApplicationManager.GetEsUser;
             Member = ApplicationManager.GetEsMember;
-            UserRoles = ApplicationManager.UserRoles;
+            UserRoles = ApplicationManager.Instance.UserRoles;
             IsLocalMode = ApplicationManager.LocalMode;
             IsEcrActivated = ApplicationManager.IsEcrActivated;
-            RefreshCashCommand = new RefreshCashCommand(this);
             ApplicationManager.MessageManager.NewMessageReceived += OnNewMessage;
             Initialize();
         }
@@ -198,16 +197,17 @@ namespace ES.Market.ViewModels
         private void Initialize()
         {
             InitializeCommands();
-            var appManager = new ApplicationManager();
             Documents = new ObservableCollection<DocumentViewModel>();
+            Tools = new ObservableCollection<ToolsViewModel>();
             AddDocument(new StartPageViewModel(this));
             LogViewModel = new LogViewModel();
             ApplicationManager.MessageManager.NewMessageReceived += LogViewModel.AddLog;
-            Tools = new ObservableCollection<ToolsViewModel>();
+            
             Tools.Add(LogViewModel);
         }
         private void InitializeCommands()
         {
+            RefreshCashCommand = new RefreshCashCommand(this);
             //Base
             KeyPressedCommand = new RelayCommand<KeyEventArgs>(OnKeyPressed);
 
@@ -637,13 +637,13 @@ namespace ES.Market.ViewModels
             switch (syncronizeMode)
             {
                 case SyncronizeServersMode.DownloadMemberData:
-                    return ApplicationManager.UserRoles.Any(s => s.RoleName == "Admin");
+                    return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Admin");
                 case SyncronizeServersMode.DownloadUserData:
-                    return ApplicationManager.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director");
+                    return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director");
                 case SyncronizeServersMode.DownloadBaseData:
-                    return ApplicationManager.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director");
+                    return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director");
                 case SyncronizeServersMode.SyncronizeBaseData:
-                    return ApplicationManager.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director" || s.RoleName == "Manager");
+                    return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director" || s.RoleName == "Manager");
                 case SyncronizeServersMode.None:
                     return false;
                 default:
@@ -695,7 +695,7 @@ namespace ES.Market.ViewModels
                 case ExportForScale.All:
                     break;
                 default:
-                    ExportManager.ExportPriceForScaleToXml(new ProductsManager().GetProducts(_member.Id));
+                    ExportManager.ExportPriceForScaleToXml(ApplicationManager.Instance.CashProvider.Products);
                     break;
             }
         }
@@ -745,17 +745,17 @@ namespace ES.Market.ViewModels
 
         public bool IsAdminRule
         {
-            get { return ApplicationManager.UserRoles.Any(s => s.RoleName == "Admin"); }
+            get { return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Admin"); }
         }
 
         public bool IsAdminOrDirectorRule
         {
-            get { return ApplicationManager.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director"); }
+            get { return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director"); }
         }
 
         public bool IsManageRule
         {
-            get { return ApplicationManager.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director" || s.RoleName == "Manager"); }
+            get { return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director" || s.RoleName == "Manager"); }
         }
 
         #endregion
@@ -1345,7 +1345,7 @@ namespace ES.Market.ViewModels
 
         private bool CanGetProductOrder(object o)
         {
-            return ApplicationManager.UserRoles.Any(s => s.RoleName == "Director" || s.RoleName == "Manager");
+            return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Director" || s.RoleName == "Manager");
         }
 
         private void OnGetProductOrder(object o)

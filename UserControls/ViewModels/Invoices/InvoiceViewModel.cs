@@ -215,7 +215,7 @@ namespace UserControls.ViewModels.Invoices
             {
                 SetDefaultPartner();
             }
-            _roles = ApplicationManager.UserRoles; //UsersManager.GetUserRoles(_user.UserId, memberId: _member.Id);
+            _roles = ApplicationManager.Instance.UserRoles; //UsersManager.GetUserRoles(_user.UserId, memberId: _member.Id);
             RaisePropertyChanged(DenayChangePriceProperty);
         }
         private void SetDefaultPartner()
@@ -560,7 +560,7 @@ namespace UserControls.ViewModels.Invoices
         }
         public virtual bool CanRemoveInvoiceItem()
         {
-            return Invoice.ApproveDate == null && SelectedInvoiceItem != null && (ApplicationManager.UserRoles.Any(s => s.Id == (int)EsSettingsManager.MemberRoles.SeniorSeller || s.Id == (int)EsSettingsManager.MemberRoles.Manager));
+            return Invoice.ApproveDate == null && SelectedInvoiceItem != null && (ApplicationManager.Instance.UserRoles.Any(s => s.Id == (int)EsSettingsManager.MemberRoles.SeniorSeller || s.Id == (int)EsSettingsManager.MemberRoles.Manager));
         }
         public virtual void RemoveInvoiceItem()
         {

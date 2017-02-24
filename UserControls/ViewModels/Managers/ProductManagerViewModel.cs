@@ -366,7 +366,7 @@ namespace UserControls.ViewModels.Managers
                     var handler = OnProductEdited;
                     if (handler != null) handler();
                 }
-                ApplicationManager.CashManager.Products = _products;
+                ApplicationManager.Instance.CashProvider.UpdateProducts(_products);
             }
             else
             {
@@ -377,7 +377,7 @@ namespace UserControls.ViewModels.Managers
         {
             ProductsManager.DeleteProduct(Product.Id, _memberId);
             _products.Remove(Product); RaisePropertyChanged(ProductsProperty);
-            ApplicationManager.CashManager.Products = Products;
+            ApplicationManager.Instance.CashProvider.UpdateProducts(_products);
             Product = new ProductModel(_memberId, _userId, true); RaisePropertyChanged("Product");
         }
         public bool CanChangeProductCode(object o)
