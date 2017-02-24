@@ -706,6 +706,11 @@ namespace ES.Business.Managers
 
         private static Invoices TryApproveSaleInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, IEnumerable<long> fromStockIds, InvoicePaid invoicePaid)
         {
+            CashDesk cashDeskByCheck = null;
+            if (invoicePaid.ByCheck != null && invoicePaid.ByCheck > 0)
+            {
+                cashDeskByCheck = SelectItemsManager.SelectCashDesks(false, invoice.MemberId, false, "Ընտրել հաշիվը որտեղ փոխանցվել է գումարը։").FirstOrDefault();
+            }
             using (var transaction = new TransactionScope())
             {
                 using (var db = GetDataContext())
@@ -813,13 +818,6 @@ namespace ES.Business.Managers
                         }
                     }
 
-                    var cashDesk = CashDeskManager.GetDefaultSaleCashDesk(invoice.MemberId);
-                    var exCashDesk = cashDesk != null ? db.CashDesk.SingleOrDefault(s => s.Id == cashDesk.Id && s.MemberId == invoice.MemberId) : null;
-                    if (exCashDesk == null)
-                    {
-                        return null;
-                    }
-
                     // 711 - 216 Register cost price in AccountingRecoords
 
                     var pcAccountingRecords = new AccountingRecords
@@ -842,6 +840,8 @@ namespace ES.Business.Managers
                     var exPartner = db.Partners.SingleOrDefault(s => s.EsMemberId == invoice.MemberId && s.Id == invoicePaid.PartnerId);
                     if (exPartner == null)
                     {
+                        ApplicationManager.MessageManager.OnNewMessage(
+                            new MessageModel("Պատվիրատու ընտրված չէ։ Ընտրեք պատվիրատու և փորձեք կրկին։", MessageModel.MessageTypeEnum.Warning));
                         return null;
                     }
                     if (exPartner.Credit == null) exPartner.Credit = 0;
@@ -872,6 +872,13 @@ namespace ES.Business.Managers
 
                     if (invoicePaid.Paid != null && invoicePaid.Paid > 0)
                     {
+                        var cashDesk = CashDeskManager.GetDefaultSaleCashDesk(invoice.MemberId);
+                        var exCashDesk = cashDesk != null ? db.CashDesk.SingleOrDefault(s => s.Id == cashDesk.Id && s.MemberId == invoice.MemberId) : null;
+                        if (exCashDesk == null)
+                        {
+                            ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Դրամարկղ ընտրված չէ։ Ընտրեք դրամարկղ և փորձեք կրկին։", MessageModel.MessageTypeEnum.Warning));
+                            return null;
+                        }
                         amount = (invoicePaid.Paid - invoicePaid.Change ?? 0);
                         // 251 - 221 Register in AccountingRecoords
                         var cpAccountingRecords = new AccountingRecords
@@ -913,10 +920,10 @@ namespace ES.Business.Managers
                     amount = invoicePaid.ByCheck ?? 0;
                     if (amount > 0)
                     {
-                        var cashDeskByCheck = SelectItemsManager.SelectCashDesks(false, invoice.MemberId, false, "Ընտրել հաշիվը որտեղ փոխանցվել է գումարը։").First();
                         var exCashDeskByCheck = (cashDeskByCheck != null) ? db.CashDesk.SingleOrDefault(s => s.Id == cashDeskByCheck.Id && s.MemberId == invoice.MemberId) : null;
                         if (exCashDeskByCheck == null)
                         {
+                            ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Անկանխիկ դրամարկղ ընտրված չէ։", MessageModel.MessageTypeEnum.Warning));
                             return null;
                         }
                         // 251 - 221 Register in AccountingRecoords
@@ -1559,6 +1566,34 @@ namespace ES.Business.Managers
                 return new List<InvoiceReportByPartner>();
             }
         }
+                private static List<InvoiceReport> TryGetSaleByPartners(DateTime startDate, DateTime endDate, long memberId)
+        {
+            try
+            {
+                using (var db = GetDataContext())
+                {
+                    var report = db.Invoices
+                        .Where(s => s.ApproveDate != null && s.ApproveDate >= startDate && s.ApproveDate <= endDate
+                                    && s.InvoiceTypeId == (long)InvoiceType.SaleInvoice &&
+                                    s.MemberId == memberId)
+                        .Join(db.Partners, ii => ii.PartnerId, p => p.Id, (ii, p) =>
+                            new { ii, p }).GroupBy(s => s.p.Id).Select(s => 
+                        new InvoiceReport
+                    {
+                        Description = s.FirstOrDefault().p.FullName,
+                        Count = s.Count(),
+                        //Quantity = s.Sum(t => t.ii.Quantity ?? 0),
+                        //Cost = s.Sum(t => (t.ii.Quantity??0) * (t.ii.CostPrice ?? 0)),
+                        Sale = s.Sum(t => t.ii.Summ),
+                    }).ToList();
+                    return report;
+                }
+            }
+            catch (Exception)
+            {
+                return new List<InvoiceReport>();
+            }
+        }
 
         #endregion
 
@@ -2028,7 +2063,10 @@ namespace ES.Business.Managers
         {
             return TryGetInvoicesReportsByPartners(startDate, endDate, invoiceType, partnerIds, memberId);
         }
-
+        public static List<InvoiceReport> GetSaleByPartners(Tuple<DateTime, DateTime> dateIntermediate, long memberId)
+        {
+            return TryGetSaleByPartners(dateIntermediate.Item1, dateIntermediate.Item2, memberId);
+        }
         #endregion
 
         #region Will bill
