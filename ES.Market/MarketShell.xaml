@@ -770,8 +770,8 @@
                         <Setter Property="Title" Value="{Binding Model.Title}" />
                         <Setter Property="ToolTip" Value="{Binding Model.Description}"/>
                         <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
-                        <Setter Property="CanClose" Value="{Binding Model.CanClose}" />
-                        <Setter Property="CanFloat" Value="{Binding Model.CanFloat}"/>
+                        <Setter Property="CanClose" Value="{Binding Model.CanClose, Mode=TwoWay}" />
+                        <Setter Property="CanFloat" Value="{Binding Model.CanFloat, Mode=TwoWay}"/>
                         <Setter Property="IsSelected" Value="{Binding Model.IsSelected, Mode=TwoWay}" />
                         <Setter Property="IsActive" Value="{Binding Model.IsActive, Mode=TwoWay}"/>
                     </Style>
@@ -786,7 +786,7 @@
                     <xcad:LayoutPanel Orientation="Horizontal">
                         <xcad:LayoutAnchorablePaneGroup Orientation="Horizontal" DockWidth="250">
                             <xcad:LayoutAnchorablePane Name="LeftPane" DockWidth="250">
-                                <controls:ExtendedLayoutAnchorable IsPinned="False" IsLayoutVisible="False" IsVisible="False">
+                                <controls:ExtendedLayoutAnchorable IsPinned="False" IsLayoutVisible="False" AutoHideMinWidth="250" IsAnchorablePaneAutoHidden="True" AutoHideWidth="250" FloatingWidth="250">
                                    
                                 </controls:ExtendedLayoutAnchorable>
                             </xcad:LayoutAnchorablePane>

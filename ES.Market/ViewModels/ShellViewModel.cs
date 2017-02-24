@@ -89,7 +89,15 @@ namespace ES.Market.ViewModels
         private UctrlLibraryBrowser _libraryBrowser;
         private bool _isLoading;
         private bool _isCashUpdateing;
-        public LogViewModel LogViewModel { get; private set; }
+
+        #region Log
+        private LogViewModel _logViewModel;
+
+        public LogViewModel LogViewModel
+        {
+            get { return _logViewModel ?? (_logViewModel = new LogViewModel()); }
+        }
+        #endregion
 
         #region ProductitemsToolViewModel
         private ProductItemsToolsViewModel _productItemsToolsViewModel;
@@ -184,26 +192,23 @@ namespace ES.Market.ViewModels
             UserRoles = ApplicationManager.Instance.UserRoles;
             IsLocalMode = ApplicationManager.LocalMode;
             IsEcrActivated = ApplicationManager.IsEcrActivated;
-            ApplicationManager.MessageManager.NewMessageReceived += OnNewMessage;
             Initialize();
         }
         public void Dispose()
         {
-           
+
         }
         #endregion
 
         #region Internal methods
         private void Initialize()
         {
-            InitializeCommands();
             Documents = new ObservableCollection<DocumentViewModel>();
             Tools = new ObservableCollection<ToolsViewModel>();
             AddDocument(new StartPageViewModel(this));
-            LogViewModel = new LogViewModel();
-            ApplicationManager.MessageManager.NewMessageReceived += LogViewModel.AddLog;
-            
+            ApplicationManager.MessageManager.NewMessageReceived += OnNewMessage;
             Tools.Add(LogViewModel);
+            InitializeCommands();
         }
         private void InitializeCommands()
         {
@@ -225,8 +230,6 @@ namespace ES.Market.ViewModels
             GetReportCommand = new RelayCommand<ReportTypes>(OnGetReport);
             //Settings
             EditUsersCommand = new RelayCommand(OnEditUsers, CanEditUserCommand);
-
-
         }
         private bool CanViewViewInternalWayBillCommands(ViewInvoicesEnum o)
         {
@@ -368,7 +371,7 @@ namespace ES.Market.ViewModels
                     OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.MoveInvoice, InvoiceState.New, MaxInvocieCount.All));
                     break;
                 case Key.F5:
-
+                    //Used
                     break;
                 case Key.F7:
                     //handle X key reate new sale invoice
@@ -381,7 +384,7 @@ namespace ES.Market.ViewModels
                     //MiManageProducts_Click(null, null);
                     break;
                 case Key.F9:
-                    OnLogoff(null);
+                    //Used
                     break;
                 case Key.F10:
                     //handle X key quite
@@ -424,6 +427,7 @@ namespace ES.Market.ViewModels
 
         private void OnNewMessage(MessageModel message)
         {
+            LogViewModel.AddLog(message);
             _messages.Add(message);
             OnPropertyChanged(MessagesProperty);
         }
@@ -1684,6 +1688,6 @@ namespace ES.Market.ViewModels
         }
 
         #endregion
-        
+
     }
 }

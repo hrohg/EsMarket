@@ -16,9 +16,15 @@
     <xcad:NullToDoNothingConverter x:Key="NullToDoNothingConverter"/>
     <xcad:LayoutItemFromLayoutModelConverter x:Key="LayoutItemFromLayoutModelConverter"/>
     <xcad:ActivateCommandLayoutItemFromLayoutModelConverter x:Key="ActivateCommandLayoutItemFromLayoutModelConverter"/>
-
+    
+    <SolidColorBrush x:Key="BackgroundBrush" Color="#535659" />
+    <SolidColorBrush x:Key="TabItemBackgroundBrush" Color="#1B2024" />
+    <SolidColorBrush x:Key="TabItemBackgroundLightBrush" Color="#717476" />
+    <SolidColorBrush x:Key="TabItemForegroundBrush" Color="#5E636A" />
+    
     <!--DocumentPaneControlStyle-->
     <Style x:Key="DocumentPaneControlStyle" TargetType="{x:Type xcad:LayoutDocumentPaneControl}">
+        
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type xcad:LayoutDocumentPaneControl}">
@@ -88,9 +94,60 @@
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <Setter Property="Height" Value="22"/>
+                    <Setter Property="Background" Value="{StaticResource TabItemBackgroundBrush}"/>
+                    <Setter Property="Foreground" Value="{StaticResource TabItemForegroundBrush}"/>
+                    <Setter Property="Margin" Value="0"/>
                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                    <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type TabItem}">
+                                <Grid SnapsToDevicePixels="true">
+                                    <Border Padding="6 1 4 1"  x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="2 2 0 0">
+                                        <ContentPresenter x:Name="Content" 
+                                                                      ContentSource="Header" 
+                                                                      HorizontalAlignment="Stretch" 
+                                                                      VerticalAlignment="Center"
+                                                                      RecognizesAccessKey="True" 
+                                                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    </Border>
+                                    <Border x:Name="ShadowBorder"  Background="#21262B" VerticalAlignment="Bottom" Height="3" CornerRadius="2 2 0 0"/>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="Selector.IsSelected" Value="true">
+                                        <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+                                        <Setter TargetName="ShadowBorder" Property="Visibility" Value="Collapsed" />
+                                        <Setter TargetName="ShadowBorder" Property="Background" Value="#1B2024" />
+                                        <Setter Property="Panel.ZIndex" Value="0" />
+                                        <Setter Property="Foreground" Value="#FFD4DDE8" />
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="false">
+                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                                    </Trigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=DataContext.Content.SurfaceBackground}" Value="TileLightBrush"/>
+                                            <Condition Binding="{Binding IsSelected}" Value="true"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="{StaticResource TabItemBackgroundLightBrush}"/>
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Title}" Value="Get Started"/>
+                                            <Condition Binding="{Binding IsSelected}" Value="true"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Background" Value="#343A3D"/>
+                                        <!--<Setter TargetName="ShadowBorder" Property="Background" Value="#343A3D"/>-->
+                                    </MultiDataTrigger>
+                                    <DataTrigger Binding="{Binding Title}" Value="Get Started">
+                                        <Setter Property="ToolTip" Value="{x:Null}"/>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </Setter.Value>
         </Setter>
@@ -109,6 +166,7 @@
                 </DataTemplate>
             </Setter.Value>
         </Setter>
+
     </Style>
 
     <!--AnchorablePaneControlStyle-->
@@ -372,10 +430,18 @@
         <Grid>
             <Control Template="{DynamicResource LoadingControlSmall}" Visibility="{Binding DataContext.Content.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}"/>
             <StackPanel Orientation="Horizontal">
-                <TextBlock x:Name="DocumentText" Text="{Binding DataContext.Content.Title, RelativeSource={RelativeSource TemplatedParent}}" Foreground="#ACB3BC" />
-                <TextBlock Text="*" Foreground="Red" Visibility="{Binding DataContext.Content.IsModified, Converter={StaticResource BoolToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}"/>
-            </StackPanel>
+                    <TextBlock x:Name="DocumentText" Text="{Binding DataContext.Content.Title, RelativeSource={RelativeSource TemplatedParent}}" Foreground="#ACB3BC" />
+                    <TextBlock x:Name="ModificationFlag" Text="*" Foreground="Red" Visibility="Hidden"/>
+                </StackPanel>
         </Grid>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding DataContext.Content.IsModified, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                <Setter TargetName="ModificationFlag" Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding DataContext.Content.IsSelected, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                <Setter TargetName="DocumentText" Property="Foreground" Value="#FF8202"/>
+            </DataTrigger>
+        </DataTemplate.Triggers>
     </DataTemplate>
 
     <DataTemplate x:Key="AnchorableHeaderTemplate">
@@ -494,6 +560,9 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+     
+
 
     <!--LayoutGridResizerControl-->
                             <Style x:Key="{x:Type xcad:LayoutGridResizerControl}" TargetType="{x:Type xcad:LayoutGridResizerControl}">

@@ -155,7 +155,7 @@ namespace ES.Market
                 return;
             }
 
-            if (_userRoles == null || _userRoles.Count == 0)
+            if (_userRoles == null || !_userRoles.Any())
             {
                 MessageBox.Show("Ծրագիրը կփակվի, քանի որ դուք ոչ մի համակարգում ընդգրկված չեք։ Ընդգրկվելու համար խնդրում ենք դիմել տնօրինություն։ ");
                 Close();
@@ -170,8 +170,6 @@ namespace ES.Market
             UserControlSession.Inst.BEManager = DataManager.GetInstance();
 
             InitializeComponent();
-            DataContext = vm;
-            _userRoles = UsersManager.GetUserRoles(ApplicationManager.GetEsUser.UserId, ApplicationManager.GetEsMember.Id);
             ConfigureComponent();
         }
         private void WinShop_Closing(object sender, System.ComponentModel.CancelEventArgs e)

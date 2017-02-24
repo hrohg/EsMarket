@@ -25,7 +25,8 @@
                         Background="Transparent" BorderBrush="Transparent"
                         IsTabStop="False"
                         Focusable="False"
-                        Command="{Binding UpdateProductsCommand}">
+                        Command="{Binding UpdateProductsCommand}"
+                        ToolTip="Թարմացնել">
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Refresh_Dark.png"/>
                     </Button>
                     <Button VerticalAlignment="Top" 
@@ -33,7 +34,8 @@
                         Background="Transparent" BorderBrush="Transparent"
                         IsTabStop="False"
                         Focusable="False"
-                        Command="{Binding EditProductCommand}">
+                        Command="{Binding EditProductCommand}"
+                        ToolTip="Խմբագրել">
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Edit.ico"/>
                     </Button>
                 </StackPanel>

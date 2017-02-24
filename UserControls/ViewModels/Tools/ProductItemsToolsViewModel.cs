@@ -117,11 +117,12 @@ namespace UserControls.ViewModels.Tools
             IsFloating = true;
             CanFloat = true;
             AnchorSide = AnchorSide.Left;
-            OnUpdateProducts(null);
+                        
             SelectItemCommand = new RelayCommand<Guid>(OnSelectItem);
             EditProductCommand = new RelayCommand(OnManagingProduct, CanManageProduct);
             ApplicationManager.Instance.CashProvider.ProductsUpdateing += OnProductsUpdating;
             ApplicationManager.Instance.CashProvider.ProductUpdated += OnProductsUpdated;
+            OnUpdateProducts(null);
             UpdateProductsCommand = new RelayCommand(OnUpdateProducts);
             _products = ApplicationManager.Instance.CashProvider.Products;
         }
