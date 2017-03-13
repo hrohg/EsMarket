@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using ES.Common.Cultures;
 using UserControls.Controls;
+using UserControls.ViewModels;
 using UserControls.Views;
 
 namespace DatabaseManagement
@@ -39,8 +40,7 @@ namespace DatabaseManagement
 		{
 			EsExceptionBox box = new EsExceptionBox
 			{
-				ExceptionText = CultureResources.Inst["MainErrorTitle"],
-				ExceptionDetailText = e.ToString()
+				DataContext = new ReportExceptionViewModel(e.Exception)
 			};
 			box.ShowDialog();
 			e.Handled = true;

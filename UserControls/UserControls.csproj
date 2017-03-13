@@ -160,6 +160,7 @@
     <Compile Include="ViewModels\Logs\LogViewModel.cs" />
     <Compile Include="ViewModels\Managers\ProductManagerViewModel.cs" />
     <Compile Include="ViewModels\ProductItemsViewModel.cs" />
+    <Compile Include="ViewModels\ReportExceptionViewModel.cs" />
     <Compile Include="ViewModels\ReportViewModel.cs" />
     <Compile Include="ViewModels\SaleProductsViewModel.cs" />
     <Compile Include="ViewModels\ServerViewModel.cs" />

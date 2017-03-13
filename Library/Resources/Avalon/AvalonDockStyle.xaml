@@ -16,15 +16,24 @@
     <xcad:NullToDoNothingConverter x:Key="NullToDoNothingConverter"/>
     <xcad:LayoutItemFromLayoutModelConverter x:Key="LayoutItemFromLayoutModelConverter"/>
     <xcad:ActivateCommandLayoutItemFromLayoutModelConverter x:Key="ActivateCommandLayoutItemFromLayoutModelConverter"/>
+
+    <SolidColorBrush x:Key="BackgroundBrush" Color="#FFF4F4F4" />
+    <SolidColorBrush x:Key="TabItemBackgroundBrush" Color="#FFE0E0E0" />
+    <SolidColorBrush x:Key="TabItemBackgroundLightBrush" Color="#FF0F0F0F" />
+    <SolidColorBrush x:Key="TabItemForegroundBrush" Color="#1B2024" />
+    <SolidColorBrush x:Key="ShadowBorderBrush" Color="#FFCACACA" />
+    <SolidColorBrush x:Key="SelectedTabForeground" Color="#FF8A8A8A" />
+    <SolidColorBrush x:Key="ActiveTabForeground" Color="#FF8202" />
+
+    <SolidColorBrush x:Key="CloseBackgroundBrush" Color="#FF5A5A5A" />
+    <SolidColorBrush x:Key="CloseDownBackgroundBrush" Color="#FF8202" />
+    <SolidColorBrush x:Key="CloseOverBackgroundBrush" Color="#FF8202" />
     
-    <SolidColorBrush x:Key="BackgroundBrush" Color="#535659" />
-    <SolidColorBrush x:Key="TabItemBackgroundBrush" Color="#1B2024" />
-    <SolidColorBrush x:Key="TabItemBackgroundLightBrush" Color="#717476" />
-    <SolidColorBrush x:Key="TabItemForegroundBrush" Color="#5E636A" />
+
     
     <!--DocumentPaneControlStyle-->
     <Style x:Key="DocumentPaneControlStyle" TargetType="{x:Type xcad:LayoutDocumentPaneControl}">
-        
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type xcad:LayoutDocumentPaneControl}">
@@ -113,13 +122,13 @@
                                                                       RecognizesAccessKey="True" 
                                                                       SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                                     </Border>
-                                    <Border x:Name="ShadowBorder"  Background="#21262B" VerticalAlignment="Bottom" Height="3" CornerRadius="2 2 0 0"/>
+                                    <Border x:Name="ShadowBorder"  Background="{StaticResource ShadowBorderBrush}" VerticalAlignment="Bottom" Height="1" CornerRadius="0"/>
                                 </Grid>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="Selector.IsSelected" Value="true">
                                         <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
                                         <Setter TargetName="ShadowBorder" Property="Visibility" Value="Collapsed" />
-                                        <Setter TargetName="ShadowBorder" Property="Background" Value="#1B2024" />
+                                        <Setter TargetName="ShadowBorder" Property="Background" Value="{StaticResource ShadowBorderBrush}" />
                                         <Setter Property="Panel.ZIndex" Value="0" />
                                         <Setter Property="Foreground" Value="#FFD4DDE8" />
                                     </Trigger>
@@ -133,17 +142,6 @@
                                         </MultiDataTrigger.Conditions>
                                         <Setter Property="Background" Value="{StaticResource TabItemBackgroundLightBrush}"/>
                                     </MultiDataTrigger>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding Title}" Value="Get Started"/>
-                                            <Condition Binding="{Binding IsSelected}" Value="true"/>
-                                        </MultiDataTrigger.Conditions>
-                                        <Setter Property="Background" Value="#343A3D"/>
-                                        <!--<Setter TargetName="ShadowBorder" Property="Background" Value="#343A3D"/>-->
-                                    </MultiDataTrigger>
-                                    <DataTrigger Binding="{Binding Title}" Value="Get Started">
-                                        <Setter Property="ToolTip" Value="{x:Null}"/>
-                                    </DataTrigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
                         </Setter.Value>
@@ -426,20 +424,55 @@
         </Setter>
     </Style>
 
+    <Style x:Key="CloseButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Width" Value="12"/>
+        <Setter Property="Margin" Value="0,0,4,0"/>
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Foreground" Value="{StaticResource CloseBackgroundBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Path x:Name="Path" Data="M 0 0 L 10 10 M 0 10 L 10 0" Stroke="{TemplateBinding Foreground}" StrokeThickness="1" Stretch="None" VerticalAlignment="Center"/>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource CloseDownBackgroundBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Path" Property="Data" Value="M 0 0 L 12 12 M 0 12 L 12 0"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsPressed" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Foreground" Value="{StaticResource CloseOverBackgroundBrush}" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
     <DataTemplate x:Key="DocumentHeaderTemplate">
         <Grid>
             <Control Template="{DynamicResource LoadingControlSmall}" Visibility="{Binding DataContext.Content.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}"/>
             <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Name="DocumentText" Text="{Binding DataContext.Content.Title, RelativeSource={RelativeSource TemplatedParent}}" Foreground="#ACB3BC" />
-                    <TextBlock x:Name="ModificationFlag" Text="*" Foreground="Red" Visibility="Hidden"/>
-                </StackPanel>
+                <TextBlock x:Name="DocumentText" Text="{Binding DataContext.Content.Title, RelativeSource={RelativeSource TemplatedParent}}" Foreground="{StaticResource TabItemForegroundBrush}" />
+                <TextBlock x:Name="ModificationFlag" Text="*" Foreground="Red" Visibility="Hidden"/>
+                <Button Style="{StaticResource CloseButtonStyle}" 
+                        Command="{Binding DataContext.Content.CloseCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                        Visibility="{Binding Converter={StaticResource BoolToVisibilityConverter}, Path=DataContext.Content.IsClosable, RelativeSource={RelativeSource TemplatedParent}}"/>
+            </StackPanel>
         </Grid>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding DataContext.Content.IsModified, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
                 <Setter TargetName="ModificationFlag" Property="Visibility" Value="Visible"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding DataContext.Content.IsSelected, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
-                <Setter TargetName="DocumentText" Property="Foreground" Value="#FF8202"/>
+                <Setter TargetName="DocumentText" Property="Foreground" Value="{StaticResource SelectedTabForeground}"/>
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>

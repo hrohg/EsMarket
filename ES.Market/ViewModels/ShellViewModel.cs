@@ -288,6 +288,7 @@ namespace ES.Market.ViewModels
             }
             vm.IsActive = true;
             vm.IsSelected = true;
+            vm.Id = Guid.NewGuid();
             Documents.Add(vm);
         }
         private void OnRemoveDocument(PaneViewModel vm)
@@ -309,6 +310,7 @@ namespace ES.Market.ViewModels
         }
         private void AddTools(ToolsViewModel vm)
         {
+            vm.Id = Guid.NewGuid();
             Tools.Add(vm);
             vm.OnClosed += OnRemoveTools;
             vm.IsActive = true;

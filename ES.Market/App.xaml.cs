@@ -11,6 +11,7 @@ using ES.Data.Model;
 using ES.Login;
 using ES.Market.ViewModels;
 using UserControls.Controls;
+using UserControls.ViewModels;
 
 namespace ES.Market
 {
@@ -182,21 +183,7 @@ namespace ES.Market
             }
             catch (Exception ex)
             {
-                //if (!CultureResources.HasCulture)
-                //{
-                //    CultureResources.ChangeCulture(new CustomCultureInfo("en-US"));
-                //}
-                EsExceptionBox box = new EsExceptionBox
-                {
-                    //ExceptionText = CultureResources.Inst["SendErrorMessage"],
-                    //ExceptionDetailText = ex.ToString()
-                };
-                box.ShowDialog();
-                if (Current != null)
-                {
-                    DeleteDatFile();
-                    if (Application.Current != null) Current.Shutdown();
-                }
+                new EsExceptionBox {DataContext = new ReportExceptionViewModel(ex)}.ShowDialog();
             }
         }
 
@@ -458,15 +445,8 @@ namespace ES.Market
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            EsExceptionBox box = new EsExceptionBox
-            {
-                ExceptionText = "SendErrorMessage",
-                ExceptionDetailText = e.Exception.ToString()
-            };
-            box.ShowDialog();
+            new EsExceptionBox{DataContext = new ReportExceptionViewModel(e.Exception)}.ShowDialog();
             e.Handled = true;
-            DeleteDatFile();
-            //Current.Shutdown();
         }
         private static void ShutdownApplication()
         {

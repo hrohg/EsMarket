@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 using System.Windows.Media;
 using ES.Common.Helpers;
 
@@ -77,6 +78,7 @@ namespace ES.Common.ViewModels.Base
         }
         #endregion IsModified
 
+        public Guid Id { get; set; }
         #region Closable
 
         private bool _isClosable;

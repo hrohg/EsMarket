@@ -612,6 +612,7 @@ namespace ES.Business.Managers
                         var exStock = db.EsStock.SingleOrDefault(s => s.Id == item.Id);
                         if (exStock == null)
                         {
+                            //todo exception on adding new stock
                             db.EsStock.Add(new EsStock()
                             {
                                 Id = item.Id,

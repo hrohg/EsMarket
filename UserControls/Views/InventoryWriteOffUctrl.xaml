@@ -59,9 +59,13 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Label Grid.Row="0" Content="Կոդ"  VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="12"/>
-                        <TextBox Grid.Row="1" Name="TxtCode" Text="{Binding Path=InvoiceItem.Code, UpdateSourceTrigger=PropertyChanged}" KeyDown="TxtCode_KeyDown"
-                   Height="35" FontSize="20"  IsReadOnlyCaretVisible="True" Width="150" TabIndex="3" 
-                   VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="1" />
+                        <TextBox Grid.Row="1" Text="{Binding Path=InvoiceItem.Code, UpdateSourceTrigger=PropertyChanged}" 
+                                 Height="35" FontSize="20"  IsReadOnlyCaretVisible="True" Width="150" TabIndex="3" 
+                                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="1">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding Path=InvoiceItem.Code}"/>
+                            </TextBox.InputBindings>
+                        </TextBox>
                         <Label Grid.Row="0" Content="Անվանում" VerticalAlignment="Center"  HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="150,0,0,0" FontSize="12"/>
                         <TextBox Grid.Row="1" Name="TxtDescription" Text="{Binding Path=InvoiceItem.Description, UpdateSourceTrigger=PropertyChanged}"
                    Height="35" FontSize="20" VerticalContentAlignment="Center" Margin="152,1,106,1" VerticalAlignment="Center" TabIndex="4" IsReadOnly="True">
@@ -100,7 +104,7 @@
                     <Style TargetType="DataGridRow">
                         <Setter Property="ContextMenu" Value="{StaticResource RowMenu}"/>
                     </Style>
-                        
+
                 </DataGrid.RowStyle>
                 <DataGrid.InputBindings>
                     <KeyBinding Gesture="Delete" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemoveInvoiceItemCommand}" CommandParameter="{Binding InvoiceItem.Id}"/>
