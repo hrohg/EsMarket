@@ -227,6 +227,7 @@ namespace ES.Market.ViewModels
             GetInvoicesCommand = new RelayCommand(OnGetInvoices);
             WriteOffProductsCommand = new RelayCommand(OnWriteOffProducts);
             WriteOffStockTakingCommand = new RelayCommand(OnWriteOffStockTaking);
+            WriteInStockTakingCommand = new RelayCommand(OnWriteInStockTaking);
             GetReportCommand = new RelayCommand<ReportTypes>(OnGetReport);
             //Settings
             EditUsersCommand = new RelayCommand(OnEditUsers, CanEditUserCommand);
@@ -1400,12 +1401,47 @@ namespace ES.Market.ViewModels
             }
             AddDocument(vm);
         }
+        private void CreateWriteInInvoice(List<Tuple<string, decimal>> items, long? stockId, string notes = null)
+        {
+            if (!items.Any())
+            {
+                OnNewMessage(new MessageModel(DateTime.Now, "Մուտքագրման ենթակա ապրանք գոյություն չունի:", MessageModel.MessageTypeEnum.Information));
+                return;
+            }
+            var vm = new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+            vm.ToStock = StockManager.GetStock(stockId, ApplicationManager.GetEsMember.Id);
+            vm.Invoice.Notes = notes;
+            foreach (var item in items)
+            {
+                var code = item.Item1;
+                var quantity = item.Item2;
+                vm.SetInvoiceItem(code);
+                if (vm.InvoiceItem.Product == null)
+                {
+                    continue;
+                }
+                vm.InvoiceItem.Quantity = quantity;
+                vm.InvoiceItem.Index = vm.InvoiceItems.Count + 1;
+                vm.InvoiceItems.Add(vm.InvoiceItem);
+                vm.InvoiceItem = new InvoiceItemsModel();
+            }
+            AddDocument(vm);
+        }
         private void OnWriteOffStockTaking(object o)
         {
             var stockTake = GetOpeningStockTake();
             if (stockTake == null) return;
             var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id, ApplicationManager.GetEsMember.Id);
             CreateWriteOffInvoice(stockTakeItems.Where(s => s.Balance < 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, -s.Balance ?? 0)).ToList(),
+                stockTake.StockId,
+                string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
+        }
+        private void OnWriteInStockTaking(object o)
+        {
+            var stockTake = GetOpeningStockTake();
+            if (stockTake == null) return;
+            var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id, ApplicationManager.GetEsMember.Id);
+            CreateWriteInInvoice(stockTakeItems.Where(s => s.Balance > 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, s.Balance ?? 0)).ToList(),
                 stockTake.StockId,
                 string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
         }
@@ -1572,6 +1608,7 @@ namespace ES.Market.ViewModels
         #region Stock Take
 
         public ICommand WriteOffStockTakingCommand { get; private set; }
+        public ICommand WriteInStockTakingCommand { get; private set; }
 
         #endregion Stock Take
 

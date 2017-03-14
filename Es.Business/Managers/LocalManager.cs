@@ -111,7 +111,7 @@ namespace ES.Business.Managers
             {
                 if (_products == null)
                 {
-                    UpdateProducts();
+                    UpdateProducts(false);
                 }
                 return _products;
             }

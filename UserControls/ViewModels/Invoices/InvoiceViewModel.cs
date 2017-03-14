@@ -43,8 +43,8 @@ namespace UserControls.ViewModels.Invoices
         #region Properties
         private const string DenayChangePriceProperty = "DenayChangePrice";
         protected const string IsExpiringProperty = "IsExpiring";
-        
-        
+
+
 
         protected const string ShortTitleProperty = "ShortTitle";
 
@@ -61,12 +61,12 @@ namespace UserControls.ViewModels.Invoices
         protected EsMemberModel Member;
         private List<MembersRoles> _roles = new List<MembersRoles>();
 
-        
+
         private InvoiceItemsModel _invoiceItem;
 
         private AccountsReceivableModel _accountsReceivable;
         private InvoicePaid _invoicePaid = new InvoicePaid();
-        
+
         protected string ProductSearchKey;
 
         #endregion
@@ -76,7 +76,6 @@ namespace UserControls.ViewModels.Invoices
         /// </summary>
 
         #region InvoiceViewModel External properties
-
         public bool IsLoading
         {
             get
@@ -91,8 +90,6 @@ namespace UserControls.ViewModels.Invoices
             }
         }
 
-        
-
         public bool DenayChangePrice { get { return (_roles.FirstOrDefault(s => s.RoleName == "Manager" || s.RoleName == "Director") == null); } }
 
         public InvoiceItemsModel InvoiceItem
@@ -100,6 +97,8 @@ namespace UserControls.ViewModels.Invoices
             get { return _invoiceItem; }
             set { _invoiceItem = value; RaisePropertyChanged("InvoiceItem"); RaisePropertyChanged(IsExpiringProperty); }
         }
+
+
         private InvoiceItemsModel _selectedInvoiceItem;
         public InvoiceItemsModel SelectedInvoiceItem
         {
@@ -194,14 +193,14 @@ namespace UserControls.ViewModels.Invoices
             //ExportInvoiceToXmlCommand = new ExportInvoiceToXmlCommands(this);
             //ExportInvoiceToExcelRusCommand = new ExportInvoiceToExcelRusCommands(this);
             //ExportInvoiceToXmlRusCommand = new ExportInvoiceToXmlRusCommands(this);
-            
+
             ApproveMoveInvoiceCommand = new ApproveMoveInvoiceCommands(this);
             AddItemsFromPurchaseInvoiceCommand = new AddItemsFromInvoiceCommands(this, InvoiceType.PurchaseInvoice);
             AddItemsFromMoveInvoiceCommand = new AddItemsFromInvoiceCommands(this, InvoiceType.MoveInvoice);
             AddItemsFromStocksCommand = new AddItemsFromStocksCommand(this, InvoiceType.MoveInvoice);
             ApproveInvoiceAndCloseCommand = new ApproveCloseInvoiceCommands(this);
 
-            
+
 
             GetPartnerCommand = new RelayCommand(OnGetPartner);
             GetProductCommand = new RelayCommand(OnGetProduct);
@@ -603,7 +602,7 @@ namespace UserControls.ViewModels.Invoices
         {
             return CanSaveInvoice(o);
         }
-        
+
         public void PrintInvoice(bool isPrice, bool isPrint = true)
         {
             var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
@@ -671,8 +670,7 @@ namespace UserControls.ViewModels.Invoices
                         MessageBox.Show("Պահեստ ընտրված չէ: Խնդրում ենք խմբագրել նոր պահեստ:", "Գործողության ընդհատում",
                             MessageBoxButton.OK, MessageBoxImage.Error); return;
                     }
-                    Invoice.ToStockId = stock.Id;
-                    Invoice.RecipientName = stock.FullName;
+                    ToStock = stock;
                     var purchaseInvoice = InvoicesManager.ApproveInvoice(Invoice, new List<InvoiceItemsModel>(InvoiceItems), InvoicePaid);
                     if (purchaseInvoice == null)
                     {
@@ -722,7 +720,7 @@ namespace UserControls.ViewModels.Invoices
             InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id, Member.Id).OrderBy(s => s.Index));
             IsModified = false;
         }
-        
+
         private void CheckForPrize(InvoiceModel invoice)
         {
             if (!InvoicesManager.CheckForPrize(invoice)) return;
@@ -777,7 +775,7 @@ namespace UserControls.ViewModels.Invoices
         public ICommand SaveInvoiceCommand { get { return new RelayCommand(OnSaveInvoice, CanSaveInvoice); } }
         public ICommand PrintInvoiceItemCommand { get; private set; }
         public ICommand ApproveInvoiceCommand { get { return new RelayCommand(OnApprove, CanApprove); } }
-        
+
         public ICommand ExportInvoiceCommand { get; private set; }
         public ICommand ExportInvoiceToExcelCommand { get; private set; }
         public ICommand ExportInvoiceToXmlCommand { get; private set; }
@@ -788,10 +786,10 @@ namespace UserControls.ViewModels.Invoices
         public ICommand AddItemsFromMoveInvoiceCommand { get; private set; }
         public ICommand AddItemsFromStocksCommand { get; private set; }
         public ICommand ApproveInvoiceAndCloseCommand { get; private set; }
-        
+
         public ICommand GetPartnerCommand { get; private set; }
         public ICommand GetProductCommand { get; private set; }
         public ICommand CleanInvoiceIemsCommand { get; private set; }
         #endregion Commands
-        }
+    }
 }
