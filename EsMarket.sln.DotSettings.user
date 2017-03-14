@@ -5,6 +5,7 @@
   &lt;Assembly Path="C:\Hrayr\VS Projects\ES\EsLogistics\packages\DotNetProjects.Wpf.Toolkit.5.0.26\lib\net40\DotNetProjects.WPF.Themes.dll" /&gt;&#xD;
   &lt;Assembly Path="D:\MyProjects\ES\ES Market\Bin\CashReg.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Hrayr\VS Projects\ES\EsLogistics\Bin\CashReg.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Windows\assembly\GAC_MSIL\Microsoft.SqlServer.Smo\11.0.0.0__89845dcd8080cc91\Microsoft.SqlServer.Smo.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:Int64 x:Key="/Default/Environment/SearchAndNavigation/DefaultOccurencesGroupingIndex/@EntryValue">1</s:Int64>
 	<s:Boolean x:Key="/Default/Housekeeping/Bookmarks/NumberedBookmarks/=Bookmark0/@KeyIndexDefined">True</s:Boolean>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -36,7 +37,6 @@ namespace UserControls.ViewModels.StockTakeings
         private EsUserModel _creator;
         private ProductModel _product;
         private StockTakeItemsModel _stockTakeItem;
-        private string _filter;
         private string _productSearchKey;
         #endregion
 
@@ -65,14 +65,27 @@ namespace UserControls.ViewModels.StockTakeings
         public decimal Surplace { get { return StockTakeItems.Sum(s => (s.Price ?? 0) * ((s.Quantity - s.StockTakeQuantity) < 0 ? -s.Quantity + s.StockTakeQuantity : 0)); } }
         public decimal Deficit { get { return StockTakeItems.Sum(s => (s.Price ?? 0) * ((s.Quantity - s.StockTakeQuantity) > 0 ? s.Quantity - s.StockTakeQuantity : 0)); } }
         public decimal Total { get { return StockTakeItems.Sum(s => s.Amount); } }
+
+        #region Filter
+        Timer _timer = null;
+        private void TimerElapsed(object obj)
+        {
+            RaisePropertyChanged(StockTakeItemsProperty);
+            DisposeTimer();
+        }
+        private string _filter;
         public string Filter
         {
             get { return _filter; }
             set
             {
-                _filter = value; OnPropertyChanged(StockTakeItemsProperty);
+                _filter = value; RaisePropertyChanged("Filter");
+                DisposeTimer();
+                _timer = new Timer(TimerElapsed, null, 300, 300);
             }
         }
+        #endregion Filter
+
         #endregion
 
         #region Constructors
@@ -109,6 +122,15 @@ namespace UserControls.ViewModels.StockTakeings
             ViewDetilesCommand = new RelayCommand(OnViewDetiles, CanViewDetiles);
         }
 
+        private void DisposeTimer()
+        {
+            if (_timer != null)
+            {
+                _timer.Dispose();
+                _timer = null;
+            }
+        }
+
         #region Command methods
 
         private bool CanGetProductItem(object o)
@@ -118,7 +140,7 @@ namespace UserControls.ViewModels.StockTakeings
 
         private void OnGetProductItem(object o)
         {
-            if(!CanGetProductItem(o)) return;
+            if (!CanGetProductItem(o)) return;
             GetProduct(StockTakeItem.CodeOrBarcode);
         }
         #endregion Command methods
@@ -144,15 +166,9 @@ namespace UserControls.ViewModels.StockTakeings
             }
             OnPropertyChanged(StockTakeItemProperty);
         }
-        private void OnCloseCommand(object o)
+        protected override void OnClose(object o)
         {
-            var tabitem = o as TabItem;
-            if (tabitem != null)
-            {
-                var tabControl = tabitem.Parent as TabControl;
-                if (tabControl == null) return;
-                tabControl.Items.Remove(tabitem);
-            }
+            base.OnClose(this);
         }
         protected void OnGetProduct(object o)
         {
@@ -196,6 +212,7 @@ namespace UserControls.ViewModels.StockTakeings
             var ui = new UIListView(detile);
             ui.Show();
         }
+        
         #endregion
 
         #region Public methods
@@ -311,7 +328,6 @@ namespace UserControls.ViewModels.StockTakeings
         public ICommand ExportToExcelCommand { get; private set; }
         public ICommand ViewDetileCommand { get; private set; }
         public ICommand GetUnavailableProductItemsCommand { get; private set; }
-        public ICommand CloseCommand { get { return new RelayCommand(OnCloseCommand); } }
         public ICommand GetProductCommand { get { return new RelayCommand(OnGetProduct); } }
         public ICommand ViewDetilesCommand { get; private set; }
         #endregion

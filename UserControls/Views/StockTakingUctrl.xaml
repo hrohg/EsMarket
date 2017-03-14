@@ -25,7 +25,7 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition/>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -33,18 +33,18 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Label Content="Գույքագրման համար" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" HorizontalContentAlignment="Right"/>
+                <Label Content="Գույքագրում" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" HorizontalContentAlignment="Right"/>
                 <Label Content="{Binding StockTake.StockTakeName}" Foreground="Blue" Margin ="3"/>
             </StackPanel>
             <StackPanel Orientation ="Horizontal" HorizontalAlignment="Right">
-                <Label Content="Գույքագրման սկիզբ" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" HorizontalContentAlignment="Right"/>
+                <Label Content="Սկիզբ" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" HorizontalContentAlignment="Right"/>
                 <TextBlock Text="{Binding Path=StockTake.CreateDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" Margin="3" HorizontalAlignment="Right" VerticalAlignment="Center" />
-                <Label Content ="Գույքագրման ավարտ" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" HorizontalContentAlignment="Right"/>
+                <Label Content ="Ավարտ" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" HorizontalContentAlignment="Right"/>
                 <TextBlock Text ="{Binding StockTake.ClosedDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" Margin ="3" VerticalAlignment="Center"/>
             </StackPanel>
             <StackPanel Orientation ="Horizontal" HorizontalAlignment="Right">
-                <Label Content="Գույքագրվող պահեստ" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" HorizontalContentAlignment="Right"/>
-                <Label Content="{Binding Path=Stock.Name}" Margin="3" Foreground="Blue" HorizontalAlignment="Right" />
+                <Label Content="Պահեստ" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" HorizontalContentAlignment="Right"/>
+                <TextBlock Text="{Binding Path=Stock.Name}" Margin="3" Foreground="Blue" HorizontalAlignment="Right" />
                 <Label Content="Գույքագրող" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="10" HorizontalContentAlignment="Right"/>
                 <Label Content="{Binding Path=Creator.FullName}" Margin="3" Foreground="Blue" HorizontalAlignment="Right" />
             </StackPanel>
