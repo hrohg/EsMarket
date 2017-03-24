@@ -56,9 +56,9 @@ namespace UserControls.ViewModels
         {
             IsInProgress = true;
             var dateIntermediate = SelectManager.GetDateIntermediate();
-            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.GetEsMember.Id);
+            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetEsMember.Id);
             var invoiceItems = InvoicesManager.GetInvoiceItems(invoices.Select(s => s.Id));
-            var productItems = new ProductsManager().GetProductItems(ApplicationManager.GetEsMember.Id);
+            var productItems = new ProductsManager().GetProductItems(ApplicationManager.Instance.GetEsMember.Id);
             var productOrder = new List<object>(productItems.GroupBy(s => s.Product).Select(s =>
                 new ProductOrderModel
                 {
@@ -240,7 +240,7 @@ namespace UserControls.ViewModels
             IsLoading = true;
             OnPropertyChanged(IsInProgressProperty);
 
-            var reports = InvoicesManager.GetInvoicesReports(dateIntermediate.Item1, dateIntermediate.Item2, _invoiceTypes, ApplicationManager.GetEsMember.Id);
+            var reports = InvoicesManager.GetInvoicesReports(dateIntermediate.Item1, dateIntermediate.Item2, _invoiceTypes, ApplicationManager.Instance.GetEsMember.Id);
             if (reports == null || reports.Count == 0)
             {
                 ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information));
@@ -342,7 +342,7 @@ namespace UserControls.ViewModels
 
                     if (partners != null && partners.Count > 0)
                     {
-                        reports = InvoicesManager.GetSaleInvoicesReportsByPartners(dateIntermediate.Item1, dateIntermediate.Item2, InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList(), ApplicationManager.GetEsMember.Id);
+                        reports = InvoicesManager.GetSaleInvoicesReportsByPartners(dateIntermediate.Item1, dateIntermediate.Item2, InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList(), ApplicationManager.Instance.GetEsMember.Id);
                     }
                     break;
                 case ViewInvoicesEnum.ByPartnerType:
@@ -354,7 +354,7 @@ namespace UserControls.ViewModels
 
                     if (partnerTypes != null && partnerTypes.Count > 0)
                     {
-                        reports = InvoicesManager.GetSaleInvoicesReportsByPartnerTypes(dateIntermediate.Item1, dateIntermediate.Item2, InvoiceType.SaleInvoice, partnerTypes, ApplicationManager.GetEsMember.Id);
+                        reports = InvoicesManager.GetSaleInvoicesReportsByPartnerTypes(dateIntermediate.Item1, dateIntermediate.Item2, InvoiceType.SaleInvoice, partnerTypes, ApplicationManager.Instance.GetEsMember.Id);
                     }
                     break;
                 default:

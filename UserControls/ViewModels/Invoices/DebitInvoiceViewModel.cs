@@ -66,7 +66,7 @@ namespace UserControls.ViewModels.Invoices
                 ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Գործողության ձախողում:", MessageModel.MessageTypeEnum.Warning));
                 return;
             }
-            var fromStocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.GetEsMember.Id));
+            var fromStocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Instance.GetEsMember.Id));
 if(fromStocks==null || fromStocks.Count==0) return;
             var td = new Thread(()=>Approve(fromStocks.Select(s => s.Id).ToList()));
             td.Start();

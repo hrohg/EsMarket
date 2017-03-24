@@ -12,7 +12,27 @@ namespace ES.Common.ViewModels.Base
         public event CloseModel OnClosed;
 
         #region External properties
-        
+
+        public Guid Id { get; set; }
+
+        #region ContentId
+
+        private string _contentId = null;
+        public string ContentId
+        {
+            get { return _contentId; }
+            set
+            {
+                if (_contentId != value)
+                {
+                    _contentId = value;
+                    RaisePropertyChanged("ContentId");
+                }
+            }
+        }
+
+        #endregion ContentId
+
         #region Title
         private string _title;
         public virtual string Title
@@ -78,7 +98,6 @@ namespace ES.Common.ViewModels.Base
         }
         #endregion IsModified
 
-        public Guid Id { get; set; }
         #region Closable
 
         private bool _isClosable;
@@ -97,30 +116,6 @@ namespace ES.Common.ViewModels.Base
             }
         }
         #endregion Closable
-
-        public ImageSource IconSource
-        {
-            get;
-            protected set;
-        }
-
-        #region ContentId
-
-        private string _contentId = null;
-        public string ContentId
-        {
-            get { return _contentId; }
-            set
-            {
-                if (_contentId != value)
-                {
-                    _contentId = value;
-                    RaisePropertyChanged("ContentId");
-                }
-            }
-        }
-
-        #endregion
 
         #region IsSelected
 
@@ -158,6 +153,28 @@ namespace ES.Common.ViewModels.Base
 
         #endregion
 
+        #region Visible
+
+        private bool _isVisible;
+
+        public bool IsVisible
+        {
+            get { return _isVisible; }
+            set
+            {
+                _isVisible = value;
+                RaisePropertyChanged("IsVisible");
+            }
+        }
+        #endregion Visible
+
+        public ImageSource IconSource
+        {
+            get;
+            protected set;
+        }
+
+
         #endregion External properties
 
         #region Contructors
@@ -180,7 +197,7 @@ namespace ES.Common.ViewModels.Base
         }
         protected virtual void OnClose(object o)
         {
-            if(!CanClose(o)) return;
+            if (!CanClose(o)) return;
             var handle = OnClosed;
             if (handle != null) handle(this);
         }

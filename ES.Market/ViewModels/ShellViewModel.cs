@@ -188,7 +188,7 @@ namespace ES.Market.ViewModels
         public ShellViewModel()
         {
             User = ApplicationManager.GetEsUser;
-            Member = ApplicationManager.GetEsMember;
+            Member = ApplicationManager.Instance.GetEsMember;
             UserRoles = ApplicationManager.Instance.UserRoles;
             IsLocalMode = ApplicationManager.LocalMode;
             IsEcrActivated = ApplicationManager.IsEcrActivated;
@@ -325,6 +325,10 @@ namespace ES.Market.ViewModels
                 //todo: Activate tab
                 exTools.IsActive = true;
                 exTools.IsSelected = true;
+                
+                exTools.IsVisible = true;
+                Tools.Remove(exTools);
+                Tools.Add(exTools);
                 return;
             }
             AddTools(vm);
@@ -357,6 +361,7 @@ namespace ES.Market.ViewModels
                     //
                     break;
                 case Key.F2:
+                    if (!ApplicationManager.Instance.IsInRole(UserRoleEnum.Saller)) return;
                     //handle X key reate new sale invoice
                     if (_userRoles.FirstOrDefault(s => s.RoleName == "Seller") == null &&
                         _userRoles.FirstOrDefault(s => s.RoleName == "SaleManager") == null &&
@@ -364,24 +369,30 @@ namespace ES.Market.ViewModels
                     OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.SaleInvoice, InvoiceState.New, MaxInvocieCount.All));
                     break;
                 case Key.F3:
+                    if (!ApplicationManager.Instance.IsInRole(UserRoleEnum.Manager)) return;
                     //handle X key reate new sale invoice
                     if (_userRoles.FirstOrDefault(s => s.RoleName == "Manager") == null) break;
                     OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.PurchaseInvoice, InvoiceState.New, MaxInvocieCount.All));
                     break;
                 case Key.F4:
+                    if (!ApplicationManager.Instance.IsInRole(UserRoleEnum.StockKeeper)) return;
                     //handle X key reate new sale invoice
                     if (_userRoles.FirstOrDefault(s => s.RoleName == "Storekeeper") == null) break;
                     OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.MoveInvoice, InvoiceState.New, MaxInvocieCount.All));
                     break;
                 case Key.F5:
                     //Used
+                case Key.F6:
+                    //Used
                     break;
                 case Key.F7:
+                    if (!ApplicationManager.Instance.IsInRole(UserRoleEnum.Manager)) return;
                     //handle X key reate new sale invoice
                     if (_userRoles.FirstOrDefault(s => s.RoleName != "Manager" || s.RoleName == "Storekeeper" || s.RoleName != "Seller") == null) break;
                     OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.ProductOrder, InvoiceState.New, MaxInvocieCount.All));
                     break;
                 case Key.F8:
+                    if (!ApplicationManager.Instance.IsInRole(UserRoleEnum.Manager)) return;
                     //handle X key logoff
                     if (_userRoles.FirstOrDefault(s => s.RoleName != "Manager") == null) break;
                     //MiManageProducts_Click(null, null);
@@ -662,7 +673,7 @@ namespace ES.Market.ViewModels
         private void OnSyncronizeServerData(object o)
         {
             var syncronizeMode = o as SyncronizeServersMode? ?? SyncronizeServersMode.None;
-            if (DatabaseManager.SyncronizeServers(syncronizeMode, ApplicationManager.GetEsMember.Id))
+            if (DatabaseManager.SyncronizeServers(syncronizeMode, ApplicationManager.Instance.GetEsMember.Id))
             {
                 ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Տվյալների համաժամանակեցումն իրականացել է հաջողությամբ։", MessageModel.MessageTypeEnum.Success));
             }
@@ -783,7 +794,7 @@ namespace ES.Market.ViewModels
             var td = new Thread(() =>
             {
                 IsLoading = IsCashUpdateing = true;
-                ApplicationManager.CashManager.Refresh();
+                ApplicationManager.Instance.CashProvider.Refresh();
                 IsLoading = IsCashUpdateing = false;
             });
             td.Start();
@@ -857,7 +868,7 @@ namespace ES.Market.ViewModels
             {
                 if (insertAll)
                 {
-                    product.EsMemberId = ApplicationManager.GetEsMember.Id;
+                    product.EsMemberId = ApplicationManager.Instance.GetEsMember.Id;
                     product.LastModifierId = ApplicationManager.GetEsUser.UserId;
                     product.IsEnabled = true;
                     if (ProductsManager.InsertProduct(Convert(product)))
@@ -879,7 +890,7 @@ namespace ES.Market.ViewModels
                     case MessageBoxResult.Yes:
 
 
-                        product.EsMemberId = ApplicationManager.GetEsMember.Id;
+                        product.EsMemberId = ApplicationManager.Instance.GetEsMember.Id;
                         product.LastModifierId = ApplicationManager.GetEsUser.UserId;
                         product.IsEnabled = true;
                         if (ProductsManager.InsertProduct(Convert(product)))
@@ -938,7 +949,7 @@ namespace ES.Market.ViewModels
                 };
                 if (insertAll)
                 {
-                    product.EsMemberId = ApplicationManager.GetEsMember.Id;
+                    product.EsMemberId = ApplicationManager.Instance.GetEsMember.Id;
                     product.LastModifierId = ApplicationManager.GetEsUser.UserId;
                     product.IsEnabled = true;
                     if (ProductsManager.InsertProduct(Convert(product)))
@@ -960,7 +971,7 @@ namespace ES.Market.ViewModels
                     case MessageBoxResult.Yes:
 
 
-                        product.EsMemberId = ApplicationManager.GetEsMember.Id;
+                        product.EsMemberId = ApplicationManager.Instance.GetEsMember.Id;
                         product.LastModifierId = ApplicationManager.GetEsUser.UserId;
                         product.IsEnabled = true;
                         if (ProductsManager.InsertProduct(Convert(product)))
@@ -1022,16 +1033,16 @@ namespace ES.Market.ViewModels
                     switch (type)
                     {
                         case InvoiceType.SaleInvoice:
-                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.GetEsMember.Id);
+                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.Instance.GetEsMember.Id);
                             break;
                         case InvoiceType.MoveInvoice:
-                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.GetEsMember.Id);
+                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.Instance.GetEsMember.Id);
                             break;
                         case InvoiceType.PurchaseInvoice:
-                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.GetEsMember.Id);
+                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.Instance.GetEsMember.Id);
                             break;
                         case InvoiceType.InventoryWriteOff:
-                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.GetEsMember.Id);
+                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.Instance.GetEsMember.Id);
                             break;
                         case InvoiceType.ProductOrder:
                             break;
@@ -1046,13 +1057,13 @@ namespace ES.Market.ViewModels
                     return null;
                     break;
                 case InvoiceState.Accepted:
-                    return InvoicesManager.GetInvoicesDescriptions(type, count, ApplicationManager.GetEsMember.Id);
+                    return InvoicesManager.GetInvoicesDescriptions(type, count, ApplicationManager.Instance.GetEsMember.Id);
                     break;
                 case InvoiceState.Saved:
-                    return InvoicesManager.GetUnacceptedInvoicesDescriptions(type, ApplicationManager.GetEsMember.Id);
+                    return InvoicesManager.GetUnacceptedInvoicesDescriptions(type, ApplicationManager.Instance.GetEsMember.Id);
                     break;
                 case InvoiceState.Approved:
-                    return InvoicesManager.GetInvoicesDescriptions(type, ApplicationManager.GetEsMember.Id);
+                    return InvoicesManager.GetInvoicesDescriptions(type, ApplicationManager.Instance.GetEsMember.Id);
                     break;
             }
             return null;
@@ -1072,16 +1083,16 @@ namespace ES.Market.ViewModels
                         switch (type)
                         {
                             case InvoiceType.SaleInvoice:
-                                CreateNewControl(new SaleInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
+                                CreateNewControl(new SaleInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
                                 break;
                             case InvoiceType.MoveInvoice:
-                                CreateNewControl(new InternalWaybillInvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
+                                CreateNewControl(new InternalWaybillInvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
                                 break;
                             case InvoiceType.PurchaseInvoice:
-                                CreateNewControl(new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
+                                CreateNewControl(new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
                                 break;
                             case InvoiceType.InventoryWriteOff:
-                                CreateNewControl(new InventoryWriteOffViewModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember));
+                                CreateNewControl(new InventoryWriteOffViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
                                 break;
                             default:
                                 break;
@@ -1108,18 +1119,18 @@ namespace ES.Market.ViewModels
                     switch ((InvoiceType)invoiceModel.InvoiceTypeId)
                     {
                         case InvoiceType.SaleInvoice:
-                            vm = new SaleInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+                            vm = new SaleInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
                             break;
                         case InvoiceType.MoveInvoice:
-                            vm = new InternalWaybillInvoiceModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+                            vm = new InternalWaybillInvoiceModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
                             break;
                         case InvoiceType.PurchaseInvoice:
-                            vm = new PurchaseInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+                            vm = new PurchaseInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
                             break;
                         case InvoiceType.ProductOrder:
                             break;
                         case InvoiceType.InventoryWriteOff:
-                            vm = new InventoryWriteOffViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+                            vm = new InventoryWriteOffViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
                             break;
                         case InvoiceType.Statement:
                             break;
@@ -1314,7 +1325,7 @@ namespace ES.Market.ViewModels
             {
                 cashDesks = new List<CashDesk>
                 {
-                    CashDeskManager.GetCashDesk(ApplicationManager.GetThisDesk.Id, ApplicationManager.GetEsMember.Id)
+                    CashDeskManager.GetCashDesk(ApplicationManager.GetThisDesk.Id, ApplicationManager.Instance.GetEsMember.Id)
                 };
                 cashDeskContent = cashDesks.Where(s => s.IsCash).Aggregate(cashDeskContent, (current, item) => current + string.Format("Դրամարկղ {0}  - {1} դր․ \n", item.Name, item.Total.ToString("N")));
             }
@@ -1369,9 +1380,9 @@ namespace ES.Market.ViewModels
 
         private void OnWriteOffProducts(object o)
         {
-            var stock = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.GetEsMember.Id)).FirstOrDefault();
+            var stock = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Instance.GetEsMember.Id)).FirstOrDefault();
             if (stock == null) return;
-            var existingProducts = ProductsManager.GetProductItemsByStock(stock.Id, ApplicationManager.GetEsMember.Id);
+            var existingProducts = ProductsManager.GetProductItemsByStock(stock.Id, ApplicationManager.Instance.GetEsMember.Id);
             CreateWriteOffInvoice(existingProducts.Select(s => new Tuple<string, decimal>(s.Product.Code, s.Quantity)).ToList(), stock.Id);
         }
 
@@ -1382,7 +1393,7 @@ namespace ES.Market.ViewModels
                 OnNewMessage(new MessageModel(DateTime.Now, "Դուրսգրման ենթակա ապրանք գոյություն չունի:", MessageModel.MessageTypeEnum.Information));
                 return;
             }
-            var vm = new InventoryWriteOffViewModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+            var vm = new InventoryWriteOffViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
             vm.Invoice.FromStockId = stockId;
             vm.Invoice.Notes = notes;
             foreach (var item in items)
@@ -1408,8 +1419,8 @@ namespace ES.Market.ViewModels
                 OnNewMessage(new MessageModel(DateTime.Now, "Մուտքագրման ենթակա ապրանք գոյություն չունի:", MessageModel.MessageTypeEnum.Information));
                 return;
             }
-            var vm = new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
-            vm.ToStock = StockManager.GetStock(stockId, ApplicationManager.GetEsMember.Id);
+            var vm = new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
+            vm.ToStock = StockManager.GetStock(stockId, ApplicationManager.Instance.GetEsMember.Id);
             vm.Invoice.Notes = notes;
             foreach (var item in items)
             {
@@ -1431,7 +1442,7 @@ namespace ES.Market.ViewModels
         {
             var stockTake = GetOpeningStockTake();
             if (stockTake == null) return;
-            var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id, ApplicationManager.GetEsMember.Id);
+            var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id, ApplicationManager.Instance.GetEsMember.Id);
             CreateWriteOffInvoice(stockTakeItems.Where(s => s.Balance < 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, -s.Balance ?? 0)).ToList(),
                 stockTake.StockId,
                 string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
@@ -1440,7 +1451,7 @@ namespace ES.Market.ViewModels
         {
             var stockTake = GetOpeningStockTake();
             if (stockTake == null) return;
-            var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id, ApplicationManager.GetEsMember.Id);
+            var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id, ApplicationManager.Instance.GetEsMember.Id);
             CreateWriteInInvoice(stockTakeItems.Where(s => s.Balance > 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, s.Balance ?? 0)).ToList(),
                 stockTake.StockId,
                 string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
@@ -1458,7 +1469,7 @@ namespace ES.Market.ViewModels
                     AddDocument(new ShortReportViewModel());
                     break;
                 case ReportTypes.Report:
-                    var ui = new DataReports(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+                    var ui = new DataReports(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
                     ui.DataContext = new ReportsViewModel(ui);
                     ui.Show();
                     break;
@@ -1470,7 +1481,7 @@ namespace ES.Market.ViewModels
 
         private void OnViewProductsByStock(object o)
         {
-            var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.GetEsMember.Id), true);
+            var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Instance.GetEsMember.Id), true);
             AddTabControl(new ViewProductsUctrl(), new ProductItemsViewModel(stocks));
         }
 
@@ -1547,7 +1558,7 @@ namespace ES.Market.ViewModels
 
         private void OnManagePartners(object o)
         {
-            AddDocument(new PartnerViewModel(_member.Id));
+            AddDocument(new PartnerViewModel());
         }
 
         #endregion

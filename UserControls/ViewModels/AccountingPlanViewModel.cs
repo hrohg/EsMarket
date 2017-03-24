@@ -117,7 +117,7 @@ namespace UserControls.ViewModels
         public AccountingPlanViewModel()
         {
             _accountingPlans = AccountingRecordsManager.GetAccountingPlan();
-            _subAccountingPlans = SubAccountingPlanManager.GetSubAccountingPlanModels(ApplicationManager.GetEsMember.Id);
+            _subAccountingPlans = SubAccountingPlanManager.GetSubAccountingPlanModels(ApplicationManager.Instance.GetEsMember.Id);
             SubAccountingPlan = new SubAccountingPlanModel();
             SetCommands();
         }

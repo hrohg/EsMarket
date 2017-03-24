@@ -172,7 +172,7 @@ namespace UserControls.ViewModels.StockTakeings
         }
         protected void OnGetProduct(object o)
         {
-            var products = ApplicationManager.CashManager.Products.OrderBy(s => s.Description);
+            var products = ApplicationManager.Instance.CashProvider.Products.OrderBy(s => s.Description);
             var selectedItems =
                 new SelectItems(products.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1} {2})", s.Description, s.Code, s.Price), SelectedValue = s.Id }).ToList(), false);
             selectedItems.SearchKey = o is FiltersUsage && ((FiltersUsage)o) == FiltersUsage.WithFilters ? _productSearchKey : string.Empty;
@@ -195,7 +195,7 @@ namespace UserControls.ViewModels.StockTakeings
 
         private void OnViewDetiles(object o)
         {
-            var products = new ProductsManager().GetProducts(ApplicationManager.GetEsMember.Id);
+            var products = new ProductsManager().GetProducts(ApplicationManager.Instance.GetEsMember.Id);
             var detile = from s in StockTakeItems
                          join t in products on s.ProductId equals t.Id
                          select new

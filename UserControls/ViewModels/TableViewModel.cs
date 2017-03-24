@@ -200,9 +200,9 @@ namespace UserControls.ViewModels
         {
             IsLoading = true;
             IsLoading = true; OnPropertyChanged(IsInProgressProperty);
-            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.GetEsMember.Id).Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice);
+            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetEsMember.Id).Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice);
             var invoiceItems = InvoicesManager.GetInvoiceItems(invoices.Select(s => s.Id));
-            var productItems = new ProductsManager().GetProductItems(ApplicationManager.GetEsMember.Id);
+            var productItems = new ProductsManager().GetProductItems(ApplicationManager.Instance.GetEsMember.Id);
             var productOrder = invoiceItems.GroupBy(s => s.ProductId).Where(s => s.FirstOrDefault() != null).Select(s =>
                 new ProductOrderModel
                 {

@@ -52,6 +52,7 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Helpers
                 case AnchorSide.Right:
                 default:
                     showSide = AnchorableShowStrategy.Right;
+                    
                     anchorableToShow.FloatingWidth = 150;
                     toolsPane = layout.Descendents().OfType<LayoutAnchorablePane>().FirstOrDefault(d => d.Name == "RightPane");
                     break;
@@ -66,6 +67,9 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Helpers
             {
                 anchorableToShow.AddToLayout(layout.Manager, showSide);
             }
+            anchorableToShow.IsVisible = true;
+            anchorableToShow.IsActive = true;
+            anchorableToShow.IsSelected = true;
             return true;
         }
 

@@ -61,7 +61,7 @@ namespace ES.Business.Models
         public AccountingRecordsModel()
         {
             RegisterDate = DateTime.Now;
-            MemberId = ApplicationManager.GetEsMember.Id;
+            MemberId = ApplicationManager.Instance.GetEsMember.Id;
             RegisterId = ApplicationManager.GetEsUser.UserId;
         }
     }

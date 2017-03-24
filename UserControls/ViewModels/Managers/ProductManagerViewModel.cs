@@ -39,7 +39,7 @@ namespace UserControls.ViewModels.Managers
         #endregion
 
         #region Private properties
-        private long _memberId { get { return ApplicationManager.GetEsMember.Id; } }
+        private long _memberId { get { return ApplicationManager.Instance.GetEsMember.Id; } }
         private long _userId { get { return ApplicationManager.GetEsUser.UserId; } }
         private ProductModel _product;
         private List<ProductModel> _products;
@@ -69,7 +69,7 @@ namespace UserControls.ViewModels.Managers
         }
         public ProductModel Product
         {
-            get { return _product ?? new ProductModel(ApplicationManager.GetEsMember.Id, ApplicationManager.GetEsUser.UserId, true); }
+            get { return _product ?? new ProductModel(ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId, true); }
             set
             {
                 if (value == _product) return;
@@ -178,8 +178,8 @@ namespace UserControls.ViewModels.Managers
         {
             IsLoading = true;
             _productOnBufer = null;
-            _products = ApplicationManager.CashManager.Products;
-            var productResidue = ApplicationManager.CashManager.ProductResidues;
+            _products = ApplicationManager.Instance.CashProvider.Products;
+            var productResidue = ApplicationManager.Instance.CashProvider.ProductResidues;
             foreach (var item in _products)
             {
                 var product = item;
@@ -214,8 +214,8 @@ namespace UserControls.ViewModels.Managers
         private void OnGetProduct(object o)
         {
             if (!CanGetProduct(o)) { return; }
-            var product = new ProductsManager().GetProductsByCodeOrBarcode(o as string, ApplicationManager.GetEsMember.Id);
-            Product = product ?? new ProductModel(ApplicationManager.GetEsMember.Id, ApplicationManager.GetEsUser.UserId, true) { Code = o as string };
+            var product = new ProductsManager().GetProductsByCodeOrBarcode(o as string, ApplicationManager.Instance.GetEsMember.Id);
+            Product = product ?? new ProductModel(ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId, true) { Code = o as string };
         }
         private bool CanGenerateBarcode(object o)
         {
@@ -264,8 +264,8 @@ namespace UserControls.ViewModels.Managers
             }
             if (ProductsManager.EditProducts(products))
             {
-                ApplicationManager.CashManager.Refresh();
-                Products = ApplicationManager.CashManager.Products;
+                ApplicationManager.Instance.CashProvider.Refresh();
+                Products = ApplicationManager.Instance.CashProvider.Products;
                 ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Ապրանքների բեռնումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success));
             }
             else
@@ -442,7 +442,7 @@ namespace UserControls.ViewModels.Managers
         {
             get
             {
-                return ProductsManager.GetNextProductCode(ApplicationManager.GetEsMember.Id); //_products.Count + 1;
+                return ProductsManager.GetNextProductCode(ApplicationManager.Instance.GetEsMember.Id); //_products.Count + 1;
                 //if (!string.IsNullOrEmpty(Product.Code)) Int32.TryParse(Product.Code, out next);
                 //return next;
             }
@@ -450,13 +450,13 @@ namespace UserControls.ViewModels.Managers
         public void GetProductBy(object o)
         {
             var type = o is ProductViewType ? (ProductViewType)o : (ProductViewType?)null;
-            Products = new ProductsManager().GetProductsBy(type ?? ProductViewType.ByActive, ApplicationManager.GetEsMember.Id);
+            Products = new ProductsManager().GetProductsBy(type ?? ProductViewType.ByActive, ApplicationManager.Instance.GetEsMember.Id);
         }
         public bool CanChangeProductEnabled(object o)
         { return Product != null && _products.Any(s => s.Id == Product.Id); }
         public void ChangeProductEnabled(object o)
         {
-            if (ProductsManager.ChangeProductEnabled(Product.Id, ApplicationManager.GetEsMember.Id))
+            if (ProductsManager.ChangeProductEnabled(Product.Id, ApplicationManager.Instance.GetEsMember.Id))
             {
                 Product.IsEnabled = !Product.IsEnabled;
                 RaisePropertyChanged(ProductProperty); RaisePropertyChanged(ProductsProperty);

@@ -103,7 +103,7 @@ namespace UserControls.Views
        
         private void BtnViewDetile_Click(object sender, EventArgs e)
         {
-            var products = new ProductsManager().GetProducts(ApplicationManager.GetEsMember.Id);
+            var products = new ProductsManager().GetProducts(ApplicationManager.Instance.GetEsMember.Id);
             var detile = from s in _viewModel.StockTakeItems
                          join t in products on s.ProductId equals t.Id
                          select new

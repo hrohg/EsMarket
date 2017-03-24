@@ -73,8 +73,8 @@ namespace UserControls.ViewModels.Invoices
             Invoice.InvoiceTypeId = (int)InvoiceType.SaleInvoice;
             if (Partner == null)
             {
-                var provideDefault = ApplicationManager.CashManager.GetEsDefaults(DefaultControls.Customer);
-                Partner = provideDefault == null ? ApplicationManager.CashManager.GetPartners.FirstOrDefault() : ApplicationManager.CashManager.GetPartners.FirstOrDefault(s => s.Id == provideDefault.ValueInGuid);
+                var provideDefault = ApplicationManager.Instance.CashProvider.GetEsDefaults(DefaultControls.Customer);
+                Partner = provideDefault == null ? ApplicationManager.Instance.CashProvider.GetPartners.FirstOrDefault() : ApplicationManager.Instance.CashProvider.GetPartners.FirstOrDefault(s => s.Id == provideDefault.ValueInGuid);
             } IsModified = false;
             SaleBySingle = ApplicationManager.SaleBySingle;
             PrintEcrTicketCommand = new RelayCommand(OnPrintEcrTicket, CanPrintEcrTicket);

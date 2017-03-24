@@ -40,8 +40,8 @@ namespace ES.Shop.Views.Reports.ViewModels
         {
             Title = "Ապրանքաշրջանառություն";
             var date = SelectManager.GetDateIntermediate();
-            var products = UserControls.Helpers.SelectItemsManager.SelectProductByCheck(ApplicationManager.GetEsMember.Id, true);
-            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetProductHistory(products.Select(s => s.Id).ToList(), date.Item1, date.Item2, ApplicationManager.GetEsMember.Id));
+            var products = UserControls.Helpers.SelectItemsManager.SelectProductByCheck(ApplicationManager.Instance.GetEsMember.Id, true);
+            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetProductHistory(products.Select(s => s.Id).ToList(), date.Item1, date.Item2, ApplicationManager.Instance.GetEsMember.Id));
         }
         #region Internal methods
 

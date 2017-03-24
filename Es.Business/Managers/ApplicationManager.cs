@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Data.Entity.Core.EntityClient;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Controls;
 using CashReg.Helper;
 using ES.Business.Models;
 using ES.Common;
+using ES.Common.Enumerations;
 using ES.Data.Model;
+using ES.Data.Models;
 using ES.DataAccess.Models;
 
 namespace ES.Business.Managers
@@ -27,7 +30,7 @@ namespace ES.Business.Managers
         private static EsMembersAccountsModel _membersAccounts;
         private static EsUserModel _esUser = new EsUserModel();
         private static List<MembersRoles> _userRoles;
-        private static LocalManager _cashManager;
+        private static LocalManager _cashProvider;
         private static bool _localMode = false;
         private static string _connectionString;
         private static List<ScaleModel> _weighers;
@@ -76,9 +79,9 @@ namespace ES.Business.Managers
         #region External properties
         public static bool IsEsServer { get; private set; }
         public static string dbName { get { return _server != null ? _server.Database : string.Empty; } }
-        public static EsMemberModel GetEsMember { get { return _member; } }
+        public EsMemberModel GetEsMember { get { return _member; } }
 
-        public static EsMembersAccountsModel GetEsMembersAccounts
+        public EsMembersAccountsModel GetEsMembersAccounts
         {
             get
             {
@@ -380,11 +383,6 @@ namespace ES.Business.Managers
         }
         public static string ConnectionString { get { return _connectionString; } set { _connectionString = value; } }
         public static bool LocalMode { get { return _localMode; } set { _localMode = value; } }
-        public static LocalManager CashManager
-        {
-            get { return _cashManager ?? (_cashManager = new LocalManager()); }
-            set { _cashManager = value; }
-        }
         public static bool SaleBySingle { get; set; }
         public static bool BuyBySingle { get; set; }
         public static string ActivePrinter { get; set; }
@@ -401,7 +399,12 @@ namespace ES.Business.Managers
             get { return EcrSettings != null && _isEcrActivated; }
             set { _isEcrActivated = value; }
         }
-        public LocalManager CashProvider {get{return CashManager;} }
+        public LocalManager CashProvider
+        {
+            get { return _cashProvider ?? (_cashProvider = new LocalManager()); }
+            set { _cashProvider = value; }
+        }
+        
         #endregion
 
         #region Constructors
@@ -417,11 +420,12 @@ namespace ES.Business.Managers
         #endregion Constructors
 
         #region Internal methods
-        private static void ResetMemberData()
+        private void ResetMemberData()
         {
-            CashManager = new LocalManager();
+            CashProvider = new LocalManager();
         }
         #endregion
+
         #region External methods
         public static Uri GetServerPath()
         {
@@ -455,6 +459,35 @@ namespace ES.Business.Managers
             if (handler != null) handler(log);
         }
 
+        public bool IsInRole(UserRoleEnum type)
+        {
+            switch (type)
+            {
+                case UserRoleEnum.Admin:
+                    return Instance.UserRoles.Any(r => r.Id == 1);
+                    break;
+                case UserRoleEnum.Director:
+                    return Instance.UserRoles.Any(r => r.Id == 2);
+                    break;
+                case UserRoleEnum.Manager:
+                    return Instance.UserRoles.Any(r => r.Id == 3);
+                    break;
+                case UserRoleEnum.StockKeeper:
+                    return Instance.UserRoles.Any(r => r.Id == 4);
+                    break;
+                case UserRoleEnum.SaleManager:
+                    return Instance.UserRoles.Any(r => r.Id == 5);
+                    break;
+                case UserRoleEnum.SeniorSaler:
+                    return Instance.UserRoles.Any(r => r.Id == 6);
+                    break;
+                case UserRoleEnum.Saller:
+                    return Instance.UserRoles.Any(r => r.Id == 7);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
         #endregion
     }
 

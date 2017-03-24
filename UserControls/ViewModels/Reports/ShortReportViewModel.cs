@@ -175,7 +175,7 @@ namespace UserControls.ViewModels.Reports
 
             var fromDate = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hour, StartTime.Minute, StartTime.Second);
             var toDate = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hour, EndTime.Minute, EndTime.Second);
-            _report = InvoicesManager.GetInvoicesFinance(fromDate.Date, toDate.Date.AddDays(1), ApplicationManager.GetEsMember.Id);
+            _report = InvoicesManager.GetInvoicesFinance(fromDate.Date, toDate.Date.AddDays(1), ApplicationManager.Instance.GetEsMember.Id);
 
             var fromTimeValue = StartTime.Hour * 3600 + StartTime.Minute * 60 + StartTime.Second;
             var toTimeValue = EndTime.Hour * 3600 + EndTime.Minute * 60 + EndTime.Second;

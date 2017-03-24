@@ -11,7 +11,8 @@
         xmlns:controls="clr-namespace:Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls;assembly=Xceed.Wpf.AvalonDock"
         xmlns:behaviors1="clr-namespace:Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Behaviors;assembly=Xceed.Wpf.AvalonDock"
         xmlns:helpers="clr-namespace:Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Helpers;assembly=Xceed.Wpf.AvalonDock"
-        Name="WinShop" Title="ES Logistics - Վաճառք" MinHeight="600" MinWidth="800" Closing="WinShop_Closing"
+        xmlns:controls1="clr-namespace:ES.Common.Controls;assembly=ES.Common"
+        Name="WinShop" Title="ES Market - Վաճառք" MinHeight="600" MinWidth="800" Closing="WinShop_Closing"
         WindowState="Maximized" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Shared;component/Images/shopping_cart.Ico">
     <Window.Resources>
@@ -721,6 +722,7 @@
                 </MenuItem>
             </Menu>
         </Grid>
+        
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -777,8 +779,18 @@
                         <Setter Property="IsSelected" Value="{Binding Model.IsSelected, Mode=TwoWay}" />
                         <Setter Property="IsActive" Value="{Binding Model.IsActive, Mode=TwoWay}"/>
                     </Style>
-
                 </controls:ExtendedDockingManager.LayoutItemContainerStyle>
+
+                <controls:ExtendedDockingManager.LayoutItemContainerStyleSelector>
+                    <controls1:PanesStyleSelector>
+                        <controls1:PanesStyleSelector.TabStyle>
+                            <Style TargetType="{x:Type xcad:LayoutAnchorableItem}">
+
+                                <Setter Property="Visibility" Value="{Binding Model.IsVisible, Converter={StaticResource BoolToVisibilityConverter}, Mode=TwoWay}"/>
+                            </Style>
+                        </controls1:PanesStyleSelector.TabStyle>
+                    </controls1:PanesStyleSelector>
+                </controls:ExtendedDockingManager.LayoutItemContainerStyleSelector>
 
                 <!--<xcad:DockingManager.Theme>-->
                 <!--<xcad:MetroTheme />-->
@@ -788,14 +800,18 @@
                     <xcad:LayoutPanel Orientation="Horizontal">
                         <xcad:LayoutAnchorablePaneGroup Orientation="Horizontal" DockWidth="250">
                             <xcad:LayoutAnchorablePane Name="LeftPane" DockWidth="250">
-                                <controls:ExtendedLayoutAnchorable IsPinned="False" IsLayoutVisible="False" AutoHideMinWidth="250" IsAnchorablePaneAutoHidden="True" AutoHideWidth="250" FloatingWidth="250">
-                                   
+                                <controls:ExtendedLayoutAnchorable IsToggleAutoHide="False"
+                                    IsPinned="False" IsLayoutVisible="False"
+                                                                   AutoHideMinWidth="250" 
+                                                                   IsAnchorablePaneAutoHidden="True" 
+                                                                   AutoHideWidth="250" 
+                                                                   FloatingWidth="250">
                                 </controls:ExtendedLayoutAnchorable>
                             </xcad:LayoutAnchorablePane>
                         </xcad:LayoutAnchorablePaneGroup>
                         <xcad:LayoutPanel Orientation="Vertical">
                             <xcad:LayoutAnchorablePaneGroup DockHeight="100">
-                                <xcad:LayoutAnchorablePane Name="TopPane" DockHeight="100"/>
+                                <xcad:LayoutAnchorablePane Name="TopPane" DockHeight="150"/>
                             </xcad:LayoutAnchorablePaneGroup>
                             <xcad:LayoutDocumentPane/>
                             <xcad:LayoutAnchorablePaneGroup DockHeight="150">
@@ -804,13 +820,22 @@
                         </xcad:LayoutPanel>
                         <xcad:LayoutAnchorablePaneGroup DockWidth="250">
                             <xcad:LayoutAnchorablePane Name="RightPane" DockWidth="250">
-                                <controls:ExtendedLayoutAnchorable IsPinned="False" Title="Help">
+                                <controls:ExtendedLayoutAnchorable Title="Help" 
+                                                                   AutoHideMinWidth="250" 
+                                                                   AutoHideWidth="250" 
+                                                                   FloatingWidth="250" 
+                                                                   IsAnchorablePaneAutoHidden="True" 
+                                                                   IsLayoutVisible="False"
+                                                                   IsVisible="False"
+                                                                   IsPinned="False" IsToggleAutoHide="True">
 
                                 </controls:ExtendedLayoutAnchorable>
                             </xcad:LayoutAnchorablePane>
                         </xcad:LayoutAnchorablePaneGroup>
                     </xcad:LayoutPanel>
                 </xcad:LayoutRoot>
+
+                
             </controls:ExtendedDockingManager>
         </Grid>
 

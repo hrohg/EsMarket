@@ -58,8 +58,8 @@ namespace ES.Business.Models
             get { return debit; }
             set
             {
-                debit = value; SubDebits = 
-                    new ObservableCollection<SubAccountingPlanModel>(SubAccountingPlanManager.GetSubAccountingPlanModels(Debit.Id, ApplicationManager.GetEsMember.Id, true));
+                debit = value; SubDebits =
+                    new ObservableCollection<SubAccountingPlanModel>(SubAccountingPlanManager.GetSubAccountingPlanModels(Debit.Id, ApplicationManager.Instance.GetEsMember.Id, true));
             }
         }
         public ObservableCollection<AccountingAccounts> Credits { get { return credits; } set { credits = value; OnPropertyChanged(DebitsProperty); } }
@@ -72,7 +72,7 @@ namespace ES.Business.Models
                 credit = value; OnPropertyChanged(CreditsProperty);
                 SubCredits =
                     new ObservableCollection<SubAccountingPlanModel>(
-                        SubAccountingPlanManager.GetSubAccountingPlanModels(Credit.Id, ApplicationManager.GetEsMember.Id, true));
+                        SubAccountingPlanManager.GetSubAccountingPlanModels(Credit.Id, ApplicationManager.Instance.GetEsMember.Id, true));
             }
         }
         #endregion

@@ -154,7 +154,7 @@ namespace ES.Business.Managers
                     return "Տրված ընթացիկ կանխավճարներ";
                     break;
                 case (long)AccountingPlan.CashDesk:
-                    return CashDeskManager.GetCashDesk(guidId, ApplicationManager.GetEsMember.Id).Name;
+                    return CashDeskManager.GetCashDesk(guidId, ApplicationManager.Instance.GetEsMember.Id).Name;
                     break;
                 case (long)AccountingPlan.Accounts:
                     return "Հաշվարկային հաշիվ";

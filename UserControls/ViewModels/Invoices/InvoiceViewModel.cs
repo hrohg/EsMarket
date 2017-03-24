@@ -152,7 +152,7 @@ namespace UserControls.ViewModels.Invoices
         {
             User = user;
             Member = member;
-            Invoice = InvoicesManager.GetInvoice(id, ApplicationManager.GetEsMember.Id);
+            Invoice = InvoicesManager.GetInvoice(id, ApplicationManager.Instance.GetEsMember.Id);
             Initialize();
         }
         #endregion
@@ -220,7 +220,7 @@ namespace UserControls.ViewModels.Invoices
         private void SetDefaultPartner()
         {
             Partner = PartnersManager.GetDefaultParnerByInvoiceType(Invoice.MemberId, (InvoiceType)Invoice.InvoiceTypeId);
-            var partners = ApplicationManager.CashManager.GetPartners;
+            var partners = ApplicationManager.Instance.CashProvider.GetPartners;
             switch (Invoice.InvoiceTypeId)
             {
                 //case (long)InvoiceType.SaleInvoice:
@@ -228,7 +228,7 @@ namespace UserControls.ViewModels.Invoices
                 //    Partner = customerDefault == null ? partners.FirstOrDefault() : partners.FirstOrDefault(s => s.Id == customerDefault.ValueInGuid);
                 //    break;
                 case (long)InvoiceType.PurchaseInvoice:
-                    var provideDefault = ApplicationManager.CashManager.GetEsDefaults(DefaultControls.Provider);
+                    var provideDefault = ApplicationManager.Instance.CashProvider.GetEsDefaults(DefaultControls.Provider);
                     Partner = provideDefault == null ? partners.FirstOrDefault() : partners.FirstOrDefault(s => s.Id == provideDefault.ValueInGuid);
                     break;
                 default:
@@ -308,7 +308,7 @@ namespace UserControls.ViewModels.Invoices
         #region Set Partner
         protected virtual void OnGetPartner(object o)
         {
-            var partners = o is PartnerType ? PartnersManager.GetPartner(ApplicationManager.GetEsMember.Id, (PartnerType)o) : PartnersManager.GetPartners(ApplicationManager.GetEsMember.Id);
+            var partners = o is PartnerType ? PartnersManager.GetPartner(ApplicationManager.Instance.GetEsMember.Id, (PartnerType)o) : PartnersManager.GetPartners(ApplicationManager.Instance.GetEsMember.Id);
             if (partners.Count == 0) return;
             var selectedItems = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName + " " + s.Mobile, SelectedValue = s.Id }).ToList(), false);
             selectedItems.ShowDialog();
@@ -324,7 +324,7 @@ namespace UserControls.ViewModels.Invoices
         #endregion Set Partner
         protected virtual void OnGetProduct(object o)
         {
-            var products = ApplicationManager.CashManager.Products.OrderBy(s => s.Description);
+            var products = ApplicationManager.Instance.CashProvider.Products.OrderBy(s => s.Description);
             var selectedItems =
                 new SelectItems(products.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1} {2})", s.Description, s.Code, s.Price), SelectedValue = s.Id }).ToList(), false);
             selectedItems.SearchKey = o is FiltersUsage && ((FiltersUsage)o) == FiltersUsage.WithFilters ? ProductSearchKey : string.Empty;

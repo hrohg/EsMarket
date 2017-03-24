@@ -43,7 +43,7 @@ namespace UserControls.Helpers
         }
         public static List<PartnerModel> SelectPartners(bool allowMultipleSelect = false, string title = "Ընտրել")
         {
-            var partners = PartnersManager.GetPartners(ApplicationManager.GetEsMember.Id);
+            var partners = PartnersManager.GetPartners(ApplicationManager.Instance.GetEsMember.Id);
             if (partners == null || partners.Count == 0) return new List<PartnerModel>();
             if (partners.Count == 1) { return partners; }
             var selectItem = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), allowMultipleSelect,title);
@@ -52,7 +52,7 @@ namespace UserControls.Helpers
         }
         public static List<PartnerType> SelectPartnersTypes(bool allowMultipleSelect = false,  string title = "Ընտրել")
         {
-            var partnerTypes = PartnersManager.GetPartnersTypes(ApplicationManager.GetEsMember.Id);
+            var partnerTypes = PartnersManager.GetPartnersTypes(ApplicationManager.Instance.GetEsMember.Id);
             if (partnerTypes == null || partnerTypes.Count == 0) return new List<PartnerType>();
             if (partnerTypes.Count == 1) { return partnerTypes.Select(s=>(PartnerType)s.Id).ToList(); }
             var selectItem = new SelectItems(partnerTypes.Select(s => new ItemsToSelect { DisplayName = s.Description, SelectedValue = s.Id }).ToList(), allowMultipleSelect, title);
@@ -134,7 +134,7 @@ namespace UserControls.Helpers
 
         public static List<ProductModel> SelectProduct(bool multipleChoose=false)
         {
-            var products = ApplicationManager.CashManager.Products.ToList();
+            var products = ApplicationManager.Instance.CashProvider.Products.ToList();
             if (products.Count < 2) return products;
             var selectedItems = new SelectItems(products.Select(s => new ItemsToSelect
                  {  DisplayName = string.Format("{0} ({1} {2} {3})", s.Description, s.Code, s.Barcode, s.Price), SelectedValue = s.Id }).ToList(), false, "Ընտրել արտահանվող ապրանքները");

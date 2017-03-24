@@ -69,7 +69,7 @@ namespace ES.Shop.Views.Reports.ViewModels
 
         private List<InvoiceReport> UpdateSallByCustomers(Tuple<DateTime, DateTime> dateIntermediate)
         {
-           return InvoicesManager.GetSaleByPartners(dateIntermediate, ApplicationManager.GetEsMember.Id);
+            return InvoicesManager.GetSaleByPartners(dateIntermediate, ApplicationManager.Instance.GetEsMember.Id);
         }
         private void AddTab<T>(TableViewModel<T> vm)
         {

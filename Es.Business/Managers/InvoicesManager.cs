@@ -1795,7 +1795,7 @@ namespace ES.Business.Managers
         {
             invoice.ApproveDate = DateTime.Now;
             //invoice.ApproveDate = invoice.CreateDate;
-            return ConvertInvoice(TryApproveSaleInvoice(ConvertInvoice(invoice), invoiceItems.Select(Convert).ToList(), stockIds, invoicePaid), ApplicationManager.CashManager.GetPartners.SingleOrDefault(p => p.Id == invoice.PartnerId));
+            return ConvertInvoice(TryApproveSaleInvoice(ConvertInvoice(invoice), invoiceItems.Select(Convert).ToList(), stockIds, invoicePaid), ApplicationManager.Instance.CashProvider.GetPartners.SingleOrDefault(p => p.Id == invoice.PartnerId));
         }
 
         public static InvoiceModel RegisterInventoryWriteOffInvoice(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems, IEnumerable<long> stockIds)
@@ -1813,7 +1813,7 @@ namespace ES.Business.Managers
                     {
                         return null;
                     }
-                    return ConvertInvoice(TryApprovePurchaseInvoice(ConvertInvoice(invoice), invoiceItems.Select(Convert).ToList(), (long)invoice.ToStockId, invoicePaid), ApplicationManager.CashManager.GetPartners.SingleOrDefault(p => p.Id == invoice.PartnerId));
+                    return ConvertInvoice(TryApprovePurchaseInvoice(ConvertInvoice(invoice), invoiceItems.Select(Convert).ToList(), (long)invoice.ToStockId, invoicePaid), ApplicationManager.Instance.CashProvider.GetPartners.SingleOrDefault(p => p.Id == invoice.PartnerId));
                     break;
                 case (long)InvoiceType.SaleInvoice:
                     if (invoicePaid == null)
@@ -1823,7 +1823,7 @@ namespace ES.Business.Managers
                     return null; // TryApproveSaleInvoice(ConvertInvoice(invoice), invoiceItems.Select(ConvertInvoiceItem).ToList(), (long)invoice.FromStockId, invoicePaid);
                     break;
                 case (long)InvoiceType.MoveInvoice:
-                    return ConvertInvoice(TryApproveMoveingInvoice(ConvertInvoice(invoice), invoiceItems.Select(Convert).ToList()), ApplicationManager.CashManager.GetPartners.SingleOrDefault(p => p.Id == invoice.PartnerId));
+                    return ConvertInvoice(TryApproveMoveingInvoice(ConvertInvoice(invoice), invoiceItems.Select(Convert).ToList()), ApplicationManager.Instance.CashProvider.GetPartners.SingleOrDefault(p => p.Id == invoice.PartnerId));
                     break;
                 default:
                     return null;

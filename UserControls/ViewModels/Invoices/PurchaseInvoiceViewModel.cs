@@ -62,10 +62,10 @@ namespace UserControls.ViewModels.Invoices
             Invoice.InvoiceTypeId = (int)InvoiceType.PurchaseInvoice;
             if (Partner == null)
             {
-                var provideDefault = ApplicationManager.CashManager.GetEsDefaults(DefaultControls.Provider);
+                var provideDefault = ApplicationManager.Instance.CashProvider.GetEsDefaults(DefaultControls.Provider);
                 Partner = provideDefault == null
-                    ? ApplicationManager.CashManager.GetPartners.FirstOrDefault()
-                    : ApplicationManager.CashManager.GetPartners.FirstOrDefault(s => s.Id == provideDefault.ValueInGuid);
+                    ? ApplicationManager.Instance.CashProvider.GetPartners.FirstOrDefault()
+                    : ApplicationManager.Instance.CashProvider.GetPartners.FirstOrDefault(s => s.Id == provideDefault.ValueInGuid);
             }
 
             IsModified = false;

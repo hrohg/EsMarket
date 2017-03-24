@@ -31,7 +31,7 @@ namespace UserControls.ViewModels.Invoices
         #endregion Internal fields
 
         #region Internal properties
-        protected EsMemberModel Member { get { return ApplicationManager.GetEsMember; } }
+        protected EsMemberModel Member { get { return ApplicationManager.Instance.GetEsMember; } }
         protected EsUserModel User { get { return ApplicationManager.GetEsUser; } }
 
         protected bool IsInvocieValid
@@ -168,7 +168,7 @@ namespace UserControls.ViewModels.Invoices
         public InvoiceViewModelBase(Guid id)
             : this()
         {
-            Invoice = InvoicesManager.GetInvoice(id, ApplicationManager.GetEsMember.Id);
+            Invoice = InvoicesManager.GetInvoice(id, ApplicationManager.Instance.GetEsMember.Id);
             Initialize();
         }
         #endregion Constructors
@@ -177,7 +177,7 @@ namespace UserControls.ViewModels.Invoices
         private void Initialize()
         {
             Title = "Ապրանքագիր";
-            if (Invoice == null) Invoice = new InvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.GetEsMember);
+            if (Invoice == null) Invoice = new InvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
             PrintInvoiceCommand = new RelayCommand<PrintModeEnum>(OnPrintInvoice, CanPrintInvoice);
             ImportInvoiceCommand = new RelayCommand<ExportInportEnum>(OnImportInvoice, CanImportInvoice);
             ExportInvoiceCommand = new RelayCommand<ExportInportEnum>(OnImportInvoice, CanImportInvoice);
