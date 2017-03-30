@@ -14,11 +14,11 @@ using ES.Common;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Data.Models;
-using UserControls.Barcodes;
-using UserControls.Barcodes.ViewModels;
+using UserControls.PriceTicketControl;
 using UserControls.Commands;
 using UserControls.Helpers;
 using UserControls.Interfaces;
+using UserControls.PriceTicketControl.ViewModels;
 using ProductModel = ES.Business.Models.ProductModel;
 
 namespace UserControls.ViewModels.Products
@@ -256,7 +256,7 @@ namespace UserControls.ViewModels.Products
             }
             if (ProductsManager.EditProducts(products))
             {
-                ApplicationManager.Instance.CashProvider.Refresh();
+                ApplicationManager.Instance.CashProvider.UpdateCash();
                 Products = ApplicationManager.Instance.CashProvider.Products;
                 ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Ապրանքների բեռնումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success));
             }

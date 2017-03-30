@@ -17,6 +17,7 @@
     </Style>
 
     <DataTemplate DataType="{x:Type documents:StartPageViewModel}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
         <Grid>
             <Grid.Resources>
                 <Style x:Key="HeaderStyle" TargetType="{x:Type TextBlock}">
@@ -46,6 +47,7 @@
                 <RowDefinition Height="3*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -173,5 +175,6 @@
                 </Grid>
             </Grid>
         </Grid>
+        </ScrollViewer>
     </DataTemplate>
 </ResourceDictionary>

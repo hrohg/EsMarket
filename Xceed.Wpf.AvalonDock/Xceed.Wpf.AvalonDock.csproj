@@ -110,6 +110,7 @@
     <Compile Include="DocumentClosingEventArgs.cs" />
     <Compile Include="ExtendedAvalonDock\Behaviors\AvalonDockLayoutSerializer.cs" />
     <Compile Include="ExtendedAvalonDock\Behaviors\ExtendedWindowStylesBehavior.cs" />
+    <Compile Include="ExtendedAvalonDock\Controls\RootVersion.cs" />
     <Compile Include="ExtendedAvalonDock\Helpers\AutobinderLayoutSelector.cs" />
     <Compile Include="ExtendedAvalonDock\Helpers\AutobinderTemplateSelector .cs" />
     <Compile Include="ExtendedAvalonDock\Helpers\LayoutUpdateStrategy.cs" />

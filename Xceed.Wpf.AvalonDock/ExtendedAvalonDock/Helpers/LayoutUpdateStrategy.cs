@@ -70,6 +70,7 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Helpers
             anchorableToShow.IsVisible = true;
             anchorableToShow.IsActive = true;
             anchorableToShow.IsSelected = true;
+            
             return true;
         }
 

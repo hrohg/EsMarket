@@ -18,6 +18,10 @@ namespace ES.Business.Managers
 
         private List<StockModel> _stocks;
         private List<EsDefaults> _esDefaults;
+
+        private bool _isProductItemsUpdating;
+        private bool _isStocksUpdating;
+        private bool _isPartnersUpdating;
         #endregion
 
         #region Public properties
@@ -79,7 +83,6 @@ namespace ES.Business.Managers
         public event ProductsUpdateingEvent ProductsUpdateing;
         public delegate void ProductUpdatedDelegate();
         public event ProductUpdatedDelegate ProductUpdated;
-
         private List<ProductModel> _products;
         public List<ProductModel> Products
         {
@@ -122,7 +125,7 @@ namespace ES.Business.Managers
         {
             return EsDefaults.FirstOrDefault(s => s.Control == control);
         }
-        
+
         #endregion
 
         #region Constructors
@@ -131,7 +134,7 @@ namespace ES.Business.Managers
             LocalMode = isOffline;
             if (isOffline)
             {
-                new Thread(Refresh).Start();
+                UpdateCash();
             }
         }
         public LocalManager()
@@ -150,23 +153,32 @@ namespace ES.Business.Managers
         }
         private void SetPartners()
         {
+            _isPartnersUpdating = true;
             lock (_locker)
             {
                 _partners = PartnersManager.GetPartners(Member.Id);
             }
+            _isPartnersUpdating = false;
         }
 
         private void SetStocks()
         {
+            _isStocksUpdating = true;
             lock (_locker)
             {
                 _stocks = StockManager.GetStocks(Member.Id);
             }
+            _isStocksUpdating = false;
         }
 
         private void SetProductItems()
         {
-            _productItems = new ProductsManager().GetProductItems(Member.Id);
+            _isProductItemsUpdating = true;
+            lock (_locker)
+            {
+                _productItems = new ProductsManager().GetProductItems(Member.Id);
+            }
+            _isProductItemsUpdating = false;
         }
         private void GetProducts()
         {
@@ -183,31 +195,105 @@ namespace ES.Business.Managers
         #endregion
 
         #region External methods
-        public void Refresh()
+        public void UpdateCash(bool async = true)
         {
-            UpdateProducts();
-            new Thread(SetStocks).Start();
-            //new Thread(SetProducts).Start();
-            new Thread(SetProductItems).Start();
+            UpdateProducts(async);
+            UpdateProductItems();
+            UpdateStocks();
+            
         }
-
         public void UpdateProducts(bool isAsync = true)
         {
-            if (_isProductsUpdating) return;
-            if (isAsync)
+            if (_isProductsUpdating)
             {
-                var thread = new Thread(GetProducts);
-                thread.Start();
+                while (_isProductsUpdating)
+                {
+                    Thread.Sleep(100);
+                }
             }
             else
             {
-                GetProducts();
+                if (isAsync)
+                {
+                    var thread = new Thread(GetProducts);
+                    thread.Start();
+                }
+                else
+                {
+                    GetProducts();
+                }
             }
         }
         public void UpdateProducts(List<ProductModel> products)
         {
             _products = products;
             OnProductsUpdated();
+        }
+        public void UpdateProductItems(bool async = true)
+        {
+            if (_isProductItemsUpdating)
+            {
+                while (_isProductItemsUpdating)
+                {
+                    Thread.Sleep(100);
+                }
+            }
+            else
+            {
+                if (async)
+                {
+                    var thread = new Thread(SetProductItems);
+                    thread.Start();
+                }
+                else
+                {
+                    SetProductItems();
+                }
+            }
+        }
+        public void UpdatePartners(bool async = true)
+        {
+            if (_isPartnersUpdating)
+            {
+                while (_isPartnersUpdating)
+                {
+                    Thread.Sleep(100);
+                }
+            }
+            else
+            {
+                if (async)
+                {
+                    var thread = new Thread(SetPartners);
+                    thread.Start();
+                }
+                else
+                {
+                    SetPartners();
+                }
+            }
+        }
+        public void UpdateStocks(bool async = true)
+        {
+            if (_isStocksUpdating)
+            {
+                while (_isStocksUpdating)
+                {
+                    Thread.Sleep(100);
+                }
+            }
+            else
+            {
+                if (async)
+                {
+                    var thread = new Thread(SetStocks);
+                    thread.Start();
+                }
+                else
+                {
+                    SetStocks();
+                }
+            }
         }
         #endregion
     }

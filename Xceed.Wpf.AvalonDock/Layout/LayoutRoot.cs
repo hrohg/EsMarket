@@ -23,6 +23,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Markup;
 using System.Xml.Serialization;
 using Standard;
+using Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls;
 
 namespace Xceed.Wpf.AvalonDock.Layout
 {
@@ -39,6 +40,7 @@ namespace Xceed.Wpf.AvalonDock.Layout
             RootPanel = new LayoutPanel(new LayoutDocumentPane());
         }
 
+        public RootVersion RootVersion { get; set; }
 
         #region RootPanel
 

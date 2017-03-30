@@ -27,7 +27,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="1" Header="Օգտագործողներ">
+            <GroupBox Grid.Row="1" Header="Օգտագործողներ" MinHeight="50">
                 <ListView  ItemsSource="{Binding EsUsers}" SelectedItem="{Binding SelectedEsUser}">
                     <ListView.ItemTemplate>
                         <DataTemplate DataType="{x:Type model:EsUserModel}">

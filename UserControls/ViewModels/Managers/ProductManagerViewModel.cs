@@ -18,10 +18,10 @@ using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
-using UserControls.Barcodes;
-using UserControls.Barcodes.ViewModels;
+using UserControls.PriceTicketControl;
 using UserControls.Commands;
 using UserControls.Helpers;
+using UserControls.PriceTicketControl.ViewModels;
 
 namespace UserControls.ViewModels.Managers
 {
@@ -264,7 +264,7 @@ namespace UserControls.ViewModels.Managers
             }
             if (ProductsManager.EditProducts(products))
             {
-                ApplicationManager.Instance.CashProvider.Refresh();
+                ApplicationManager.Instance.CashProvider.UpdateCash();
                 Products = ApplicationManager.Instance.CashProvider.Products;
                 ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Ապրանքների բեռնումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success));
             }

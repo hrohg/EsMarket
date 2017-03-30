@@ -74,7 +74,9 @@ namespace Xceed.Wpf.AvalonDock.Layout
                 if (_content != value)
                 {
                     RaisePropertyChanging("Content");
+                    var oldValue = _content;
                     _content = value;
+                    OnContentChanged(oldValue, _content);
                     RaisePropertyChanged("Content");
                 }
             }
@@ -736,7 +738,7 @@ namespace Xceed.Wpf.AvalonDock.Layout
         { 
 
         }
-
+        protected virtual void OnContentChanged(object oldValue, object newValue) { }
 
         #region CanClose
 

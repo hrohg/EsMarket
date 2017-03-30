@@ -408,8 +408,10 @@ namespace Xceed.Wpf.AvalonDock.Layout
 
 
         #region AutoHide
+        protected virtual void ToggleAutoHided() { }
         public void ToggleAutoHide()
         {
+            PreviewToggleAutoHide();
             #region Anchorable is already auto hidden
             if (IsAutoHidden)
             {
@@ -545,6 +547,7 @@ namespace Xceed.Wpf.AvalonDock.Layout
                 }
             }
             #endregion
+            ToggleAutoHided();
         }
 
         #endregion
@@ -623,7 +626,7 @@ namespace Xceed.Wpf.AvalonDock.Layout
             base.WriteXml(writer);
         }
 
-
+        protected virtual void PreviewToggleAutoHide() { }
 #if TRACE
         public override void ConsoleDump(int tab)
         {

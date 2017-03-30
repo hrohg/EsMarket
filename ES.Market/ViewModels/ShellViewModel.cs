@@ -32,11 +32,14 @@ using ES.Shop.Views;
 using ES.Shop.Views.Reports.View;
 using ES.Shop.Views.Reports.ViewModels;
 using Shared.Helpers;
-using UserControls.Barcodes;
-using UserControls.Barcodes.ViewModels;
+using UserControls.PriceTicketControl;
 using UserControls.ControlPanel.Controls;
 using UserControls.Helpers;
 using UserControls.Interfaces;
+using UserControls.PriceTicketControl;
+using UserControls.PriceTicketControl.Helper;
+using UserControls.PriceTicketControl.Implementations;
+using UserControls.PriceTicketControl.ViewModels;
 using UserControls.ViewModels;
 using UserControls.ViewModels.Documents;
 using UserControls.ViewModels.Invoices;
@@ -187,11 +190,6 @@ namespace ES.Market.ViewModels
         #region Constructors
         public ShellViewModel()
         {
-            User = ApplicationManager.GetEsUser;
-            Member = ApplicationManager.Instance.GetEsMember;
-            UserRoles = ApplicationManager.Instance.UserRoles;
-            IsLocalMode = ApplicationManager.LocalMode;
-            IsEcrActivated = ApplicationManager.IsEcrActivated;
             Initialize();
         }
         public void Dispose()
@@ -203,11 +201,18 @@ namespace ES.Market.ViewModels
         #region Internal methods
         private void Initialize()
         {
+            User = ApplicationManager.GetEsUser;
+            Member = ApplicationManager.Instance.GetEsMember;
+            UserRoles = ApplicationManager.Instance.UserRoles;
+            IsLocalMode = ApplicationManager.LocalMode;
+            IsEcrActivated = ApplicationManager.IsEcrActivated;
+
             Documents = new ObservableCollection<DocumentViewModel>();
             Tools = new ObservableCollection<ToolsViewModel>();
-            AddDocument(new StartPageViewModel(this));
             ApplicationManager.MessageManager.NewMessageReceived += OnNewMessage;
             Tools.Add(LogViewModel);
+            AddDocument(new StartPageViewModel(this));
+            ApplicationManager.Instance.CashProvider.UpdateCash();
             InitializeCommands();
         }
         private void InitializeCommands()
@@ -229,8 +234,15 @@ namespace ES.Market.ViewModels
             WriteOffStockTakingCommand = new RelayCommand(OnWriteOffStockTaking);
             WriteInStockTakingCommand = new RelayCommand(OnWriteInStockTaking);
             GetReportCommand = new RelayCommand<ReportTypes>(OnGetReport);
-            //Settings
+
+            #region Help
+            PrintPriceTicketCommand = new RelayCommand<PrintPriceTicketEnum?>(OnPrintPriceTicket, CanPrintPriceTicket);
+            #endregion Help
+
+            #region Settings
             EditUsersCommand = new RelayCommand(OnEditUsers, CanEditUserCommand);
+            #endregion Settings
+
         }
         private bool CanViewViewInternalWayBillCommands(ViewInvoicesEnum o)
         {
@@ -325,7 +337,7 @@ namespace ES.Market.ViewModels
                 //todo: Activate tab
                 exTools.IsActive = true;
                 exTools.IsSelected = true;
-                
+
                 exTools.IsVisible = true;
                 Tools.Remove(exTools);
                 Tools.Add(exTools);
@@ -381,7 +393,7 @@ namespace ES.Market.ViewModels
                     OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.MoveInvoice, InvoiceState.New, MaxInvocieCount.All));
                     break;
                 case Key.F5:
-                    //Used
+                //Used
                 case Key.F6:
                     //Used
                     break;
@@ -733,21 +745,44 @@ namespace ES.Market.ViewModels
         /// </summary>
         /// <returns></returns>
         /// Barcode
-        public bool OnCanPrintBarcode(object o)
+        private bool CanPrintPriceTicket(PrintPriceTicketEnum? printPriceTicketEnum)
         {
-            return true;
+            return printPriceTicketEnum != null;
         }
 
-        public void OnPrintBarcodeLarge(object o)
+        public void OnPrintPriceTicket(PrintPriceTicketEnum? printPriceTicketEnum)
         {
-            if (o == null || !OnCanPrintBarcode(o))
+            if (printPriceTicketEnum == null || !CanPrintPriceTicket(printPriceTicketEnum))
             {
                 return;
             }
             var product = SelectItemsManager.SelectProduct().FirstOrDefault();
             if (product == null) return;
-            var ctrl = new UctrlBarcodeX(new BarcodeViewModel(product.Code, product.Barcode, product.Description, product.Price, null));
-            PrintManager.PrintPreview(ctrl, "Print Barcode", HgConvert.ToBoolean(o));
+            UserControl priceTicket = null;
+            switch (printPriceTicketEnum)
+            {
+                case PrintPriceTicketEnum.Normal:
+                    break;
+                case PrintPriceTicketEnum.Small:
+                    break;
+                case PrintPriceTicketEnum.Large:
+                    priceTicket = new UctrlBarcodeX(new BarcodeViewModel(product.Code, product.Barcode, product.Description, product.Price, null));
+                    break;
+                case PrintPriceTicketEnum.LargePrice:
+                    //var priceTicket = new PriceTicketDialog
+                    //{
+                    //    DataContext = new PriceTicketLargePriceVewModel(product.Code, product.Barcode, product.Description,product.Price, null)
+                    //};
+                    //priceTicket.Show();
+                    priceTicket = new UctrlPriceTicket(new PriceTicketLargePriceVewModel(product.Code, product.Barcode, product.Description, product.Price, null));
+                    break;
+                case null:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("printPriceTicketEnum", printPriceTicketEnum, null);
+            }
+            PrintManager.PrintPreview(priceTicket, "Գնապիտակ", HgConvert.ToBoolean(printPriceTicketEnum));
+
             //if (HgConvert.ToBoolean(o))
             //{
             //    PrintManager.Print(ctrl, true);
@@ -794,7 +829,7 @@ namespace ES.Market.ViewModels
             var td = new Thread(() =>
             {
                 IsLoading = IsCashUpdateing = true;
-                ApplicationManager.Instance.CashProvider.Refresh();
+                ApplicationManager.Instance.CashProvider.UpdateCash();
                 IsLoading = IsCashUpdateing = false;
             });
             td.Start();
@@ -804,12 +839,14 @@ namespace ES.Market.ViewModels
         {
             return !ApplicationManager.IsEsServer;
         }
+
         private void OnEditUsers(object o)
         {
             AddTools<ManageUsersViewModel>(new ManageUsersViewModel(), false);
         }
 
         #region Admin
+
         private void OnImportProducts(object o)
         {
             var filePath = new OpenFileDialog();
@@ -822,6 +859,7 @@ namespace ES.Market.ViewModels
             var td = new Thread(() => { ImportDsProducts(filePath.FileName); });
             td.Start();
         }
+
         [Serializable, XmlRoot("user")]
         public class row
         {
@@ -832,11 +870,10 @@ namespace ES.Market.ViewModels
             public double last_price_in { get; set; }
             public string barcode { get; set; }
             public string unit { get; set; }
-
         }
+
         private void ImportProducts(string fileName)
         {
-
             var products = (List<EsProductModel>)XmlManager.Read(fileName, typeof(List<EsProductModel>));
 
             if (products == null || products.Count == 0)
@@ -904,6 +941,7 @@ namespace ES.Market.ViewModels
             }
             MessageBox.Show(string.Format("Իրականացվել է {0} անվանում ապրանքի ավելացում:", insertedProuctCount), "Ապրանքների ավելացում", MessageBoxButton.OK);
         }
+
         private void ImportDsProducts(string fileName)
         {
             //XmlManager.Save(new List<row>(), fileName);
@@ -985,6 +1023,7 @@ namespace ES.Market.ViewModels
             }
             MessageBox.Show(string.Format("Իրականացվել է {0} անվանում ապրանքի ավելացում:", insertedProuctCount), "Ապրանքների ավելացում", MessageBoxButton.OK);
         }
+
         private ProductModel Convert(EsProductModel item)
         {
             return new ProductModel()
@@ -1003,13 +1042,14 @@ namespace ES.Market.ViewModels
                 IsEnabled = item.IsEnabled
             };
         }
+
         #endregion
 
         #region Users
+
         public void OnLogoff(object o)
         {
-            if (MessageBox.Show("Դուք իսկապե՞ս ցանկանում եք դուրս գալ համակարգից:", "Աշխատանքի ավարտ",
-                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Դուք իսկապե՞ս ցանկանում եք դուրս գալ համակարգից:", "Աշխատանքի ավարտ", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 var handler = OnLogOut;
                 if (handler != null)
@@ -1018,13 +1058,16 @@ namespace ES.Market.ViewModels
                 }
             }
         }
+
         public void OnChangePassword(object o)
         {
             new ChangePassword(ApplicationManager.GetEsUser).Show();
         }
+
         #endregion Users
 
         #region Documents
+
         private List<InvoiceModel> GetInvoices(InvoiceState state, InvoiceType type, int count)
         {
             switch (state)
@@ -1068,6 +1111,7 @@ namespace ES.Market.ViewModels
             }
             return null;
         }
+
         public void OnGetInvoices(object o)
         {
             var tuple = o as Tuple<InvoiceType, InvoiceState, MaxInvocieCount>;
@@ -1144,6 +1188,7 @@ namespace ES.Market.ViewModels
                 }
             }
         }
+
         #endregion Documents
 
         #region Cash desk
@@ -1266,7 +1311,6 @@ namespace ES.Market.ViewModels
                     }
                     catch (Exception ex)
                     {
-
                         throw;
                     }
 
@@ -1412,6 +1456,7 @@ namespace ES.Market.ViewModels
             }
             AddDocument(vm);
         }
+
         private void CreateWriteInInvoice(List<Tuple<string, decimal>> items, long? stockId, string notes = null)
         {
             if (!items.Any())
@@ -1438,23 +1483,21 @@ namespace ES.Market.ViewModels
             }
             AddDocument(vm);
         }
+
         private void OnWriteOffStockTaking(object o)
         {
             var stockTake = GetOpeningStockTake();
             if (stockTake == null) return;
             var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id, ApplicationManager.Instance.GetEsMember.Id);
-            CreateWriteOffInvoice(stockTakeItems.Where(s => s.Balance < 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, -s.Balance ?? 0)).ToList(),
-                stockTake.StockId,
-                string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
+            CreateWriteOffInvoice(stockTakeItems.Where(s => s.Balance < 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, -s.Balance ?? 0)).ToList(), stockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
         }
+
         private void OnWriteInStockTaking(object o)
         {
             var stockTake = GetOpeningStockTake();
             if (stockTake == null) return;
             var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id, ApplicationManager.Instance.GetEsMember.Id);
-            CreateWriteInInvoice(stockTakeItems.Where(s => s.Balance > 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, s.Balance ?? 0)).ToList(),
-                stockTake.StockId,
-                string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
+            CreateWriteInInvoice(stockTakeItems.Where(s => s.Balance > 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, s.Balance ?? 0)).ToList(), stockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
         }
 
         #endregion
@@ -1476,7 +1519,6 @@ namespace ES.Market.ViewModels
                 default:
                     throw new ArgumentOutOfRangeException("o", type, null);
             }
-
         }
 
         private void OnViewProductsByStock(object o)
@@ -1514,7 +1556,6 @@ namespace ES.Market.ViewModels
                 {
                     var vm = new PackingListForSallerViewModel(invoiceModel.Id);
                     AddDocument(vm);
-
                 }
             }
         }
@@ -1537,8 +1578,8 @@ namespace ES.Market.ViewModels
             var vm = new ProductManagerViewModel();
             AddDocument(vm);
             vm.OnProductEdited += ProductItemsToolsViewModel.UpdateProducts;
-
         }
+
         private void OnSetProduct(ProductModel product)
         {
             var vm = Documents.OfType<ProductManagerViewModel>().FirstOrDefault();
@@ -1551,6 +1592,7 @@ namespace ES.Market.ViewModels
             vm.IsSelected = true;
             vm.SetProduct(product);
         }
+
         private bool CanManagePartners(object o)
         {
             return _userRoles.Any(s => s.RoleName == "Manager");
@@ -1581,8 +1623,10 @@ namespace ES.Market.ViewModels
         {
             get { return new RelayCommand(OnExecuteEcrAction, CanExecuteEcrAction); }
         }
+
         public ICommand LogOutCommand { get; private set; }
         public ICommand ChangePasswordCommand { get; private set; }
+
         #endregion Admin
 
         #region Documents
@@ -1614,6 +1658,7 @@ namespace ES.Market.ViewModels
 
         public ICommand ViewInternalWayBillCommands { get; private set; }
         public ICommand ViewPackingListForSallerCommand { get; private set; }
+
         #endregion View
 
         #region Stock Take
@@ -1688,10 +1733,7 @@ namespace ES.Market.ViewModels
             get { return new ChangeSettingsCommand(this); }
         }
 
-        public ICommand PrintBarcodeLCommand
-        {
-            get { return new RelayCommand(OnPrintBarcodeLarge, OnCanPrintBarcode); }
-        }
+        public ICommand PrintPriceTicketCommand { get; private set; }
 
         public ICommand StockTakingCommand
         {
@@ -1738,6 +1780,5 @@ namespace ES.Market.ViewModels
         }
 
         #endregion
-
     }
 }

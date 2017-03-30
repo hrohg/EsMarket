@@ -44,8 +44,8 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls
         public virtual int GetTabItemIndex(object tabItem) { return 0; }
         public virtual void SetTabItemIndex(object tabItem, int index) { }
         public virtual void PaneContentLoaded(ExtendedLayoutAnchorable anchorable, bool isLoaded) { }
-        public virtual void PreviewToggleAutoHide(ExtendedLayoutAnchorable customLayoutAnchorable) { }
-        public virtual void ToggleAutoHided(ExtendedLayoutAnchorable customLayoutAnchorable) { }
+        public virtual void PreviewToggleAutoHide(ExtendedLayoutAnchorable extendedLayoutAnchorable) { }
+        public virtual void ToggleAutoHided(ExtendedLayoutAnchorable extendedLayoutAnchorable) { }
         public virtual void PreviewLayoutDocumentColllectionChanged(object sender, NotifyCollectionChangedEventArgs e) { }
         public virtual bool CanForceDeserialization() { return true; }
 
@@ -129,9 +129,9 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls
                 {
                     var layoutContainer = layoutAnchorGroupControl.Model as ILayoutContainer;
                     if (layoutContainer == null) continue;
-                    var customLayoutAnchorable = layoutContainer.Children.FirstOrDefault() as ExtendedLayoutAnchorable;
-                    if (customLayoutAnchorable == null) continue;
-                    anchorable = customLayoutAnchorable;
+                    var extendedLayoutAnchorable = layoutContainer.Children.FirstOrDefault() as ExtendedLayoutAnchorable;
+                    if (extendedLayoutAnchorable == null) continue;
+                    anchorable = extendedLayoutAnchorable;
                     break;
                 }
                 //we should reset ToggleAutoHide for side controls layout, for inserting it in LayoutPanelControl

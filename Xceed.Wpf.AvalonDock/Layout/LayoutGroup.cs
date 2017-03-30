@@ -223,8 +223,14 @@ namespace Xceed.Wpf.AvalonDock.Layout
                     serializer = new XmlSerializer(typeof(LayoutAnchorGroup));
                 else if (reader.LocalName == "LayoutPanel")
                     serializer = new XmlSerializer(typeof(LayoutPanel));
-
-                Children.Add((T)serializer.Deserialize(reader));
+                if (serializer != null)
+                {
+                    Children.Add((T)serializer.Deserialize(reader));
+                }
+                else
+                {
+                    return;
+                }
             }
 
             reader.ReadEndElement();

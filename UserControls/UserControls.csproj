@@ -85,17 +85,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Barcodes\Ean13BarcodeControl.cs" />
-    <Compile Include="Barcodes\UctrlBarcodeLargeWithText.xaml.cs">
+    <Compile Include="PriceTicketControl\Ean13BarcodeControl.cs" />
+    <Compile Include="PriceTicketControl\Helper\Enumerations.cs" />
+    <Compile Include="PriceTicketControl\UctrlBarcodeLargeWithText.xaml.cs">
       <DependentUpon>UctrlBarcodeLargeWithText.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Barcodes\UctrlBarcodeWithText.xaml.cs">
+    <Compile Include="PriceTicketControl\UctrlBarcodeWithText.xaml.cs">
       <DependentUpon>UctrlBarcodeWithText.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Barcodes\UctrlBarcodeX.xaml.cs">
+    <Compile Include="PriceTicketControl\UctrlBarcodeX.xaml.cs">
       <DependentUpon>UctrlBarcodeX.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Barcodes\ViewModels\BarcodeViewModel.cs" />
+    <Compile Include="PriceTicketControl\UctrlPriceTicket.xaml.cs">
+      <DependentUpon>UctrlPriceTicket.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PriceTicketControl\ViewModels\BarcodeViewModel.cs" />
     <Compile Include="Commands\AccountingRecordsCommands.cs" />
     <Compile Include="Commands\EsUserChangeCommand.cs" />
     <Compile Include="Commands\InvoiceCommands.cs" />
@@ -149,8 +153,11 @@
     <Compile Include="Helpers\PrintManager.cs" />
     <Compile Include="Helpers\SelectItemsManager.cs" />
     <Compile Include="Helpers\ToolsManager.cs" />
+    <Compile Include="PriceTicketControl\Implementations\PriceTicketDialog.cs" />
     <Compile Include="Interfaces\IInvoiceViewModel.cs" />
     <Compile Include="Interfaces\ITabItem.cs" />
+    <Compile Include="PriceTicketControl\ViewModels\PriceTicketLargePriceVewModel.cs" />
+    <Compile Include="PriceTicketControl\ViewModels\PriceTicketViewModelBase.cs" />
     <Compile Include="ViewModels\AccountingPlanViewModel.cs" />
     <Compile Include="ViewModels\AccountingRecordsViewModel.cs" />
     <Compile Include="ViewModels\Documents\StartPageViewModel.cs" />
@@ -261,15 +268,15 @@
       <DependentUpon>WaitingCover.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Barcodes\UctrlBarcodeLargeWithText.xaml">
+    <Page Include="PriceTicketControl\UctrlBarcodeLargeWithText.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Barcodes\UctrlBarcodeWithText.xaml">
+    <Page Include="PriceTicketControl\UctrlBarcodeWithText.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Barcodes\UctrlBarcodeX.xaml">
+    <Page Include="PriceTicketControl\UctrlBarcodeX.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -320,6 +327,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Editors\EditProducts\Views\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PriceTicketControl\UctrlPriceTicket.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -448,6 +459,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\View\PackingListForSaler.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PriceTicketControl\Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
