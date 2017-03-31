@@ -752,6 +752,9 @@
                                              AllowMixedOrientation="True"
                                              behaviors1:AvalonDockLayoutSerializer.LoadLayoutCommand="{Binding ADLayout.LoadLayoutCommand}"
                                              behaviors1:AvalonDockLayoutSerializer.SaveLayoutCommand="{Binding ADLayout.SaveLayoutCommand}">
+                <controls:ExtendedDockingManager.Resources>
+                   
+                </controls:ExtendedDockingManager.Resources>
                 <controls:ExtendedDockingManager.LayoutUpdateStrategy>
                     <helpers:LayoutUpdateStrategy />
                 </controls:ExtendedDockingManager.LayoutUpdateStrategy>
@@ -793,6 +796,7 @@
 
                                 <Setter Property="Visibility" Value="{Binding Model.IsVisible, Converter={StaticResource BoolToVisibilityConverter}, Mode=TwoWay}"/>
                             </Style>
+                            
                         </controls1:PanesStyleSelector.TabStyle>
                     </controls1:PanesStyleSelector>
                 </controls:ExtendedDockingManager.LayoutItemContainerStyleSelector>
@@ -804,37 +808,27 @@
                 <xcad:LayoutRoot>
                     <xcad:LayoutPanel Orientation="Horizontal">
                         <xcad:LayoutAnchorablePaneGroup Orientation="Horizontal" DockWidth="250">
-                            <xcad:LayoutAnchorablePane Name="LeftPane" DockWidth="250">
-                                <controls:ExtendedLayoutAnchorable IsToggleAutoHide="False"
-                                    IsPinned="False" IsLayoutVisible="False"
-                                                                   AutoHideMinWidth="250" 
-                                                                   IsAnchorablePaneAutoHidden="True" 
-                                                                   AutoHideWidth="250" 
-                                                                   FloatingWidth="250">
+                            <xcad:LayoutAnchorablePane Name="LeftPane">
+                                <controls:ExtendedLayoutAnchorable AutoHideMinWidth="250" AutoHideWidth="250">
                                 </controls:ExtendedLayoutAnchorable>
                             </xcad:LayoutAnchorablePane>
                         </xcad:LayoutAnchorablePaneGroup>
                         <xcad:LayoutPanel Orientation="Vertical">
-                            <xcad:LayoutAnchorablePaneGroup DockHeight="100">
-                                <xcad:LayoutAnchorablePane Name="TopPane" DockHeight="150"/>
+                            <xcad:LayoutAnchorablePaneGroup DockHeight="150">
+                                <xcad:LayoutAnchorablePane Name="TopPane">
+                                     <controls:ExtendedLayoutAnchorable AutoHideMinHeight="150" AutoHideHeight="200"/>
+                                </xcad:LayoutAnchorablePane>
                             </xcad:LayoutAnchorablePaneGroup>
                             <xcad:LayoutDocumentPane/>
                             <xcad:LayoutAnchorablePaneGroup DockHeight="150">
-                                <xcad:LayoutAnchorablePane Name="ToolsPane" DockHeight="150"/>
+                                <xcad:LayoutAnchorablePane>
+                                    <controls:ExtendedLayoutAnchorable AutoHideMinHeight="150" AutoHideHeight="200"/>
+                                </xcad:LayoutAnchorablePane>
                             </xcad:LayoutAnchorablePaneGroup>
                         </xcad:LayoutPanel>
                         <xcad:LayoutAnchorablePaneGroup DockWidth="250">
-                            <xcad:LayoutAnchorablePane Name="RightPane" DockWidth="250">
-                                <controls:ExtendedLayoutAnchorable Title="Help" 
-                                                                   AutoHideMinWidth="250" 
-                                                                   AutoHideWidth="250" 
-                                                                   FloatingWidth="250" 
-                                                                   IsAnchorablePaneAutoHidden="True" 
-                                                                   IsLayoutVisible="False"
-                                                                   IsVisible="False"
-                                                                   IsPinned="False" IsToggleAutoHide="True">
-
-                                </controls:ExtendedLayoutAnchorable>
+                            <xcad:LayoutAnchorablePane Name="RightPane" FloatingWidth="250">
+                                <controls:ExtendedLayoutAnchorable AutoHideMinWidth="250" AutoHideWidth="250"/>
                             </xcad:LayoutAnchorablePane>
                         </xcad:LayoutAnchorablePaneGroup>
                     </xcad:LayoutPanel>

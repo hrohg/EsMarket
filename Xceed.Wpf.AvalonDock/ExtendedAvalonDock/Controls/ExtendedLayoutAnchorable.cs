@@ -26,8 +26,12 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls
     [Serializable]
     public class ExtendedLayoutAnchorable : LayoutAnchorable
     {
+        #region Internal properties
         private bool _isAnchorPaneLoaded;
         protected bool FreezeTabItemSelectionChange;
+        #endregion Internal properties
+
+        #region Dependency properties
         public static readonly DependencyProperty TypeProperty = DependencyProperty.Register("Type", typeof(AnchorableType), typeof(ExtendedLayoutAnchorable));
         public AnchorableType Type
         {
@@ -98,10 +102,23 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls
             get { return (string)GetValue(BindableTitlePostFixProperty); }
             set { SetValue(BindableTitlePostFixProperty, value); }
         }
+
+        //public static readonly DependencyProperty IsPaneVisibleProperty = DependencyProperty.Register("IsPaneVisible", typeof(bool), typeof(ExtendedLayoutAnchorable), new PropertyMetadata(true));
+        //public bool IsPaneVisible
+        //{
+        //    get { return IsVisible; }
+        //    set { IsVisible = value; }
+        //}
+        #endregion Dependency properties
+
+        #region External properties
         public bool IsPinned { get; set; }
         public bool IsToggleAutoHide { get; set; }
         public ICommand FloatCommand { get; set; }
         public ICommand DockCommand { get; set; }
+        #endregion External properties
+
+        #region Constructors
         public ExtendedLayoutAnchorable()
         {
             FloatCommand = new RelayCommand((p) => OnFloatCommand(p), (p) => CanExecuteFloatCommand(p));
@@ -111,6 +128,9 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls
                 this.ToggleAutoHided();
             }
         }
+        #endregion Constructors
+
+        #region Internal methods
         private bool CanExecuteFloatCommand(object anchorable)
         {
             return CanFloat && this.FindParent<LayoutFloatingWindow>() == null;
@@ -373,6 +393,9 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls
             if (manager != null)
                 manager.PaneContentLoaded(this, isLoaded);
         }
+        #endregion Internal methods
+
+        #region External methods
         public void OnTabItemPreviewMouseDown()
         {
             FreezeTabItemSelectionChange = true;
@@ -458,5 +481,7 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls
             UpdateBindings(notDeserializedAnchorable, MiddleTitleProperty);
             UpdateBindings(notDeserializedAnchorable, BindableTitlePostFixProperty);
         }
+        #endregion External methods
+
     }
 }

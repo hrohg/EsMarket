@@ -110,6 +110,15 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls
             /*this is more necessary to get BottomSidePanel, for integrating new added LayoutAnchorables*/
             var notDeserializedSidePanels = new[] { manager.LeftSidePanel, manager.RightSidePanel, manager.TopSidePanel, manager.BottomSidePanel };
             var notDeserializedAnchorables = manager.Layout.Descendents().OfType<ExtendedLayoutAnchorable>().ToList();
+
+            foreach (var notDeserializedAnchorable in notDeserializedAnchorables)
+            {
+                notDeserializedAnchorable.Hide();
+                //notDeserializedAnchorable.ToggleAutoHide();
+            }
+            
+                
+            
             var isDeserialized = isDeserialize && Deserialize();
             var deserializedSidePanels = new[] { manager.LeftSidePanel, manager.RightSidePanel, manager.TopSidePanel, manager.BottomSidePanel };
             var anchorables = manager.Layout.Descendents().OfType<ExtendedLayoutAnchorable>().ToList();

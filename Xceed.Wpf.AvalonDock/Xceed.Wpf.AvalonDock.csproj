@@ -132,6 +132,7 @@
     <Compile Include="ExtendedAvalonDock\Interfaces\IDockDocument.cs" />
     <Compile Include="ExtendedAvalonDock\Interfaces\IDockToolBar.cs" />
     <Compile Include="ExtendedAvalonDock\Interfaces\IExtendedAnchorableBase.cs" />
+    <Compile Include="ExtendedAvalonDock\Interfaces\IExtendedLayoutUpdateStrategy.cs" />
     <Compile Include="Extentions.cs" />
     <Compile Include="LayoutEventArgs.cs" />
     <Compile Include="Layout\AnchorableShowStrategy.cs" />
