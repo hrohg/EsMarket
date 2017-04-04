@@ -196,7 +196,7 @@ namespace ES.Common
     {
         #region internal properties
 
-        private string _providerName = "System.Data.EntityClient";
+        private string _providerName = "System.Data.SqlClient";
         private string _connectionMetadata = @"res://*/Models.EsStockDbModel.csdl|res://*/Models.EsStockDbModel.ssdl|res://*/Models.EsStockDbModel.msl";
         private bool _integratedSecurity = false;
         private bool _persistSecurityInfo = true;

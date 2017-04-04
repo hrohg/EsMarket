@@ -179,8 +179,8 @@ namespace UserControls.ViewModels.Invoices
             Title = "Ապրանքագիր";
             if (Invoice == null) Invoice = new InvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
             PrintInvoiceCommand = new RelayCommand<PrintModeEnum>(OnPrintInvoice, CanPrintInvoice);
-            ImportInvoiceCommand = new RelayCommand<ExportInportEnum>(OnImportInvoice, CanImportInvoice);
-            ExportInvoiceCommand = new RelayCommand<ExportInportEnum>(OnImportInvoice, CanImportInvoice);
+            ImportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnImportInvoice, CanImportInvoice);
+            ExportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnImportInvoice, CanImportInvoice);
         }
         protected virtual void OnInvoiceItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -232,11 +232,11 @@ namespace UserControls.ViewModels.Invoices
         #endregion
 
         #region Import
-        protected virtual bool CanImportInvoice(ExportInportEnum importFrom)
+        protected virtual bool CanImportInvoice(ExportImportEnum importFrom)
         {
             return IsInvocieValid && !IsInvocieAppoved;
         }
-        protected virtual void OnImportInvoice(ExportInportEnum importFrom)
+        protected virtual void OnImportInvoice(ExportImportEnum importFrom)
         {
             var filePath = FileManager.OpenExcelFile();
             if (File.Exists(filePath))
@@ -274,11 +274,11 @@ namespace UserControls.ViewModels.Invoices
         #endregion Import
 
         #region Export
-        protected virtual bool CanExportInvoice(ExportInportEnum exportTo)
+        protected virtual bool CanExportInvoice(ExportImportEnum exportTo)
         {
             return IsInvocieValid;
         }
-        protected virtual void ExportPrintInvoice(ExportInportEnum exportTo)
+        protected virtual void ExportPrintInvoice(ExportImportEnum exportTo)
         {
             ExcelExportManager.ExportInvoice(Invoice, InvoiceItems);
         }

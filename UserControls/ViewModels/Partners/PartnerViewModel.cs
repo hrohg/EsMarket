@@ -93,11 +93,6 @@ namespace UserControls.ViewModels.Partners
             SetDefaultPartnerCommand = new RelayCommand<PartnerModel>(OnSetDefault, CanSetDefault);
         }
         #region Command methods
-        private void OnClose(object o)
-        {
-            ApplicationManager.OnTabItemClose(o as TabItem);
-        }
-
         private bool CanSetDefault(PartnerModel partner)
         {
             return partner != null;
@@ -174,7 +169,6 @@ namespace UserControls.ViewModels.Partners
         public ICommand AddPartnerCommand { get; private set; }
         public ICommand EditPartnerCommand { get; private set; }
         public ICommand RemovePartnerCommand { get; private set; }
-        public ICommand CloseCommand { get { return new RelayCommand(OnClose); } }
         public ICommand SetDefaultPartnerCommand { get; private set; }
         #endregion
 

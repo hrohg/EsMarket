@@ -25,7 +25,18 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls
     {
         //private IEventAggregator _eventAggregator;
         private const string DefaultLayoutPath = "ES.Common.DefaultLayout.config";
-        private string GetEsmTempPath {get { return Path.Combine(Path.GetTempPath(), "ESM"); }}
+
+        private string GetEsmTempPath
+        {
+            get
+            {
+                var path = Path.Combine(Path.GetTempPath(), "ESM");
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+                return path;
+            }
+        }
+
         private const string LayoutFileName = "Layout.config";
         #region Constructors
 

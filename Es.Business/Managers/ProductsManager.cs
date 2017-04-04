@@ -358,7 +358,7 @@ namespace ES.Business.Managers
         }
         public static List<ProductItemModel> GetProductItemsByStock(long stockId, long memberId)
         {
-            var productItems = TryGetProductItemsByStock(stockId,memberId);
+            var productItems = TryGetProductItemsByStock(stockId, memberId);
             var products = productItems.GroupBy(s => s.Products).Select(s => Convert(s.Key)).ToList();
             return productItems.Select(s => Convert(s, products)).ToList();
         }
@@ -858,46 +858,50 @@ namespace ES.Business.Managers
         {
             using (var db = GetDataContext())
             {
-                foreach (var item in items)
-                {
-                    if (db.Products.Count(s => s.Code == item.Code || (!string.IsNullOrEmpty(s.Barcode) && s.Barcode == item.Barcode)) > 1)
-                    {
-                        MessageBox.Show("Code-ը կամ Barcode-ը կրկնվում է։ Գործողությունը հնարավոր չէ շարունակել։");
-                        return false;
-                    }
-                    var exItem = db.Products.SingleOrDefault(s => s.Code == item.Code && s.EsMemberId == item.EsMemberId);
-                    if (exItem != null)
-                    {
-                        exItem.Code = item.Code;
-                        exItem.Barcode = item.Barcode;
-                        exItem.HCDCS = item.HCDCS;
-                        exItem.Description = item.Description;
-                        exItem.Mu = item.Mu;
-                        exItem.IsWeight = item.IsWeight;
-                        exItem.Note = item.Note;
-                        exItem.CostPrice = item.CostPrice;
-                        exItem.ExpiryDays = item.ExpiryDays;
-                        if (exItem.Price != item.Price)
-                        {
-                            exItem.OldPrice = exItem.Price;
-                        }
-                        exItem.Price = item.Price;
-                        exItem.Discount = item.Discount;
-                        exItem.DealerPrice = item.DealerPrice;
-                        exItem.DealerDiscount = item.DealerDiscount;
-                        exItem.ImagePath = item.ImagePath;
-                        exItem.IsEnable = item.IsEnable;
-                        exItem.BrandId = item.BrandId;
-                        exItem.LastModifierId = item.LastModifierId;
-                    }
-                    else
-                    {
-                        db.Products.Add(item);
-                    }
-                }
+                var memberId = ApplicationManager.Instance.GetEsMember.Id;
+                var userId = ApplicationManager.GetEsUser.UserId;
                 try
                 {
-                    db.SaveChanges();
+                    foreach (var item in items)
+                    {
+                        if (db.Products.Count(s =>s.EsMemberId==memberId && (s.Code == item.Code || (!string.IsNullOrEmpty(s.Barcode) && s.Barcode == item.Barcode) || (!string.IsNullOrEmpty(item.Barcode) && s.ProductGroup.Any(t => t.Barcode == item.Barcode)))) > 1)
+                        {
+                            ApplicationManager.MessageManager.OnNewMessage(new MessageModel(string.Format("Barcode-ի կրկնություն։ Ապրանքի խմբագրումը չի իրականացել։ \n Կոդ։ {0} \nԲարկոդ: {1}", item.Code, item.Barcode), MessageModel.MessageTypeEnum.Warning));
+                        }
+                        var exItem = db.Products.SingleOrDefault(s => s.Code == item.Code && s.EsMemberId == memberId);
+                        if (exItem != null)
+                        {
+                            exItem.Code = item.Code;
+                            exItem.Barcode = item.Barcode;
+                            exItem.HCDCS = item.HCDCS;
+                            exItem.Description = item.Description;
+                            exItem.Mu = item.Mu;
+                            exItem.IsWeight = item.IsWeight;
+                            exItem.Note = item.Note;
+                            exItem.CostPrice = item.CostPrice;
+                            exItem.ExpiryDays = item.ExpiryDays;
+                            if (exItem.Price != item.Price)
+                            {
+                                exItem.OldPrice = exItem.Price;
+                            }
+                            exItem.Price = item.Price;
+                            exItem.Discount = item.Discount;
+                            exItem.DealerPrice = item.DealerPrice;
+                            exItem.DealerDiscount = item.DealerDiscount;
+                            exItem.ImagePath = item.ImagePath;
+                            exItem.IsEnable = item.IsEnable;
+                            exItem.BrandId = item.BrandId;
+                            exItem.LastModifierId = item.LastModifierId;
+                        }
+                        else
+                        {
+                            item.Id = Guid.NewGuid();
+                            item.EsMemberId = memberId;
+                            item.LastModifierId = userId;
+                            db.Products.Add(item);
+                        } 
+                        db.SaveChanges();
+                    }
                     return true;
                 }
                 catch (Exception)
@@ -910,9 +914,9 @@ namespace ES.Business.Managers
         {
             using (var db = GetDataContext())
             {
-                if (db.Products.Count(s => s.Code == item.Code || (!string.IsNullOrEmpty(s.Barcode) && s.Barcode == item.Barcode) || (!string.IsNullOrEmpty(item.Barcode) && s.ProductGroup.Any(t=>t.Barcode==item.Barcode))) > 1)
+                if (db.Products.Count(s => s.Code == item.Code || (!string.IsNullOrEmpty(s.Barcode) && s.Barcode == item.Barcode) || (!string.IsNullOrEmpty(item.Barcode) && s.ProductGroup.Any(t => t.Barcode == item.Barcode))) > 1)
                 {
-                    //MessageBox.Show(string.Format("Code-ը կամ Barcode-ը կրկնվում է։ {0} ({1})", item.Description,item.Code));
+                    ApplicationManager.MessageManager.OnNewMessage(new MessageModel(string.Format("Barcode-ի կրկնություն։ Ապրանքի խմբագրումը չի իրականացել։ \n Կոդ։ {0} \nԲարկոդ: {1}", item.Code, item.Barcode), MessageModel.MessageTypeEnum.Warning));
                     return false;
                 }
                 var exItem = db.Products.SingleOrDefault(s => s.Code == item.Code && s.EsMemberId == item.EsMemberId);
@@ -1061,7 +1065,7 @@ namespace ES.Business.Managers
             }
 
         }
-        private static List<ProductItems> TryGetProductItemsByStock(long stockId,long memberId)
+        private static List<ProductItems> TryGetProductItemsByStock(long stockId, long memberId)
         {
             var db = GetDataContext();
             try
@@ -1070,7 +1074,7 @@ namespace ES.Business.Managers
                     .Include(s => s.Products)
                     .Include(s => s.Products.ProductGroup)
                     .Include(s => s.Products.ProductCategories)
-                    .Where(s => s.MemberId == memberId && s.StockId==stockId && s.Quantity != 0).ToList();
+                    .Where(s => s.MemberId == memberId && s.StockId == stockId && s.Quantity != 0).ToList();
             }
             catch (Exception)
             {
@@ -1169,9 +1173,9 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    var items = db.Products.Where(s=>s.EsMemberId==memberId);
+                    var items = db.Products.Where(s => s.EsMemberId == memberId);
                     nextcode += items.Count();
-                    while (items.Any(s=>s.Code == nextcode.ToString()))
+                    while (items.Any(s => s.Code == nextcode.ToString()))
                     {
                         nextcode--;
                     }
@@ -1183,6 +1187,7 @@ namespace ES.Business.Managers
             }
         }
         #endregion
+
         #endregion
     }
 }

@@ -3,7 +3,8 @@
                     xmlns:enumerations="clr-namespace:ES.Common.Enumerations;assembly=ES.Common"
                     xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
                     xmlns:views="clr-namespace:UserControls.Views"
-                    xmlns:managers="clr-namespace:UserControls.ViewModels.Managers">
+                    xmlns:managers="clr-namespace:UserControls.ViewModels.Managers"
+                    xmlns:helpers="clr-namespace:Shared.Helpers;assembly=Shared">
 
 
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
@@ -16,21 +17,6 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0"  Margin="5,5,5,0">
-                    <Menu Margin="3" Visibility="Collapsed">
-                        <MenuItem Header="Տվյալներ" Margin="3" IsEnabled="False">
-                            <MenuItem Header="Ներմուծել" Margin="3">
-                                <MenuItem Header="Excel" Name="MiImportFromExcel" Margin="3"></MenuItem>
-                            </MenuItem>
-                            <MenuItem Header="Արտահանել" Margin="3">
-                                <MenuItem Header="Excel" Name="MiExportToExcel"></MenuItem>
-                            </MenuItem>
-                        </MenuItem>
-                    </Menu>
-                    <DockPanel></DockPanel>
-                    <StackPanel  Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="3" Visibility="Collapsed">
-                        <Label Content="Նույնականացման համար" HorizontalContentAlignment="Right"/>
-                        <TextBox Name="TxtId" Text="{Binding Product.Id}" Width="250" IsReadOnly="True" />
-                    </StackPanel>
                     <TabControl MinHeight="100">
                         <TabItem Header="Հիմնական">
                             <Grid Margin="3">
@@ -221,7 +207,20 @@
                                 </MenuItem>
                                 <MenuItem Header="{Binding ChangeProductActivityDescription}" Command="{Binding ChangeProductEnabledCommand}"/>
                                 <Separator/>
-                                <MenuItem Header="Ներբեռնել Excel ֆայլից" Command="{Binding ImportProductsCommand}"/>
+                                <MenuItem Header="Ներբեռնել">
+                                    <MenuItem.Icon>
+                                        <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
+                                    </MenuItem.Icon>
+                                    <MenuItem Header="Ներբեռնել Xml" Command="{Binding ImportProductsCommand}" CommandParameter="{x:Static helpers:ExportImportEnum.Xml}"/>
+                                    <MenuItem Header="Ներբեռնել Excel" Command="{Binding ImportProductsCommand}" CommandParameter="{x:Static helpers:ExportImportEnum.Excel}"/>
+                                </MenuItem>
+                                <MenuItem Header="Արտահանել">
+                                    <MenuItem.Icon>
+                                        <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Upload.ico"/>
+                                    </MenuItem.Icon>
+                                    <MenuItem Header="Արտահանել Xml" Command="{Binding ExportProductsCommand}" CommandParameter="{x:Static helpers:ExportImportEnum.Xml}"/>
+                                    <MenuItem Header="Արտահանել Excel" Command="{Binding ExportProductsCommand}" CommandParameter="{x:Static helpers:ExportImportEnum.Excel}"/>
+                                </MenuItem>
                                 <Separator/>
                                 <MenuItem Header="Տպել Բարկոդ" Command="{Binding PrintBarcodeCommand}" CommandParameter="False">
                                     <MenuItem.Icon>

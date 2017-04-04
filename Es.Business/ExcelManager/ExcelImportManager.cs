@@ -132,7 +132,7 @@ namespace ES.Business.ExcelManager
         }
         public static Tuple<InvoiceModel, List<InvoiceItemsModel>> ImportSaleInvoice(string filePath = null, bool addVAT = true)
         {
-            var file = !string.IsNullOrEmpty(filePath) ? filePath : FileManager.FileManager.OpenExcelFile("Excel files(*.xls *.xlsx *․xlsm)|*.xls;*.xlsm;*․xlsx|Excel with macros|*.xlsm|Excel 97-2003 file|*.xls", "Excel ֆայլի բեռնում");
+            var file = !string.IsNullOrEmpty(filePath) ? filePath : FileManager.FileManager.OpenExcelFile("Excel ֆայլի բեռնում", "Excel files(*.xls *.xlsx *․xlsm)|*.xls;*.xlsm;*․xlsx|Excel with macros|*.xlsm|Excel 97-2003 file|*.xls");
             if (file == null) return null;
             using (var xlApp = new ExcelDataContent(file))
             {

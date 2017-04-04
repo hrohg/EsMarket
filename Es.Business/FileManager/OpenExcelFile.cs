@@ -8,12 +8,12 @@ namespace ES.Business.FileManager
         private const string InitialDirectory = @"C:\";
         private const string SeccondInitialDirectory = @"D:\Stores\Forms";
 
-        public static string OpenFile()
+        public static string OpenFile(string title = "Open File", string filter = "All files |*.*")
         {
             var openFileDialog = new OpenFileDialog
             {
-                Title = "Մուտքագրման ակտի բեռնում",
-                Filter = "All files |*.*",
+                Title = title,
+                Filter = filter,
                 InitialDirectory = InitialDirectory
             };
             openFileDialog.ShowDialog();
@@ -42,6 +42,7 @@ namespace ES.Business.FileManager
             openFileDialog.ShowDialog();
             return openFileDialog.FileName;
         }
+        
         public static string OpenExcelFile(string filter, string title, string filePath = null)
         {
             var openFileDialog = new OpenFileDialog
@@ -53,16 +54,27 @@ namespace ES.Business.FileManager
             openFileDialog.ShowDialog();
             return openFileDialog.FileName;
         }
-        public static string OpenExcelFile(string filter)
+        public static string OpenExcelFile(string title, string filter)
         {
             var openFileDialog = new OpenFileDialog
             {
-                Title = "Excel ֆայլի բեռնում",
+                Title = title,
                 Filter = filter,
                 InitialDirectory = InitialDirectory
             };
             openFileDialog.ShowDialog();
             return openFileDialog.FileName;
+        }
+
+        public static string SaveFile(string title = "Save file", string filter = "All files |*.*")
+        {
+            var fileDialog = new SaveFileDialog()
+            {
+                Title = title,
+                Filter = filter,
+                InitialDirectory = InitialDirectory
+            };
+            return (fileDialog.ShowDialog()==true)?fileDialog.FileName:string.Empty;
         }
     }
 }

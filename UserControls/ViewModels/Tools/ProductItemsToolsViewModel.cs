@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
+using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
@@ -161,7 +162,7 @@ namespace UserControls.ViewModels.Tools
 
         private bool CanManageProduct(object item)
         {
-            return SelectedItem != null;
+            return SelectedItem != null && ApplicationManager.Instance.IsInRole(UserRoleEnum.Manager);
         }
 
         private void OnManagingProduct(object item)

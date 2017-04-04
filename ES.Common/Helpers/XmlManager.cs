@@ -71,7 +71,7 @@ namespace ES.Common.Helpers
             var serializer = new XmlSerializer(typeof(T));
             try
             {
-                return (T) serializer.Deserialize(new XmlNodeReader(element));
+                return (T)serializer.Deserialize(new XmlNodeReader(element));
             }
             catch (InvalidOperationException)
             {
@@ -386,7 +386,7 @@ namespace ES.Common.Helpers
         }
         public XElement GetXmlElementByKey(string toElement, long memberId)
         {
-            if (string.IsNullOrEmpty(toElement) || memberId<1)
+            if (string.IsNullOrEmpty(toElement) || memberId < 1)
             {
                 return null;
             }
@@ -473,7 +473,7 @@ namespace ES.Common.Helpers
         }
         public List<XElement> GetXmlElements(string toElement, long memberId)
         {
-            if (string.IsNullOrEmpty(toElement) || memberId<1)
+            if (string.IsNullOrEmpty(toElement) || memberId < 1)
             {
                 return null;
             }
@@ -591,8 +591,8 @@ namespace ES.Common.Helpers
                 {
                     return false;
                 }
-                var el = xEl.Elements().FirstOrDefault(s=>s.Value==xElement.Value);
-                if (el!=null)
+                var el = xEl.Elements().FirstOrDefault(s => s.Value == xElement.Value);
+                if (el != null)
                 {
                     el.Remove();
                     xDoc.Save(_FileName);
@@ -608,7 +608,7 @@ namespace ES.Common.Helpers
         }
         public bool SetXmlElement(string toElement, XElement xElement, long memberId)
         {
-            if (string.IsNullOrEmpty(toElement) || xElement == null || memberId<1)
+            if (string.IsNullOrEmpty(toElement) || xElement == null || memberId < 1)
             {
                 return false;
             }
@@ -852,19 +852,27 @@ namespace ES.Common.Helpers
             return GetItemsByControl(element);
         }
 
-        public static void Save(Object o, String path)
+        public static bool Save(Object o, String filePath)
         {
             // Create a new Serializer
             XmlSerializer serializer = new XmlSerializer(o.GetType());
 
             // Create a new StreamWriter
-            TextWriter writer = new StreamWriter(path);
+            
+            TextWriter writer = new StreamWriter(filePath);
 
             // Serialize the file
             serializer.Serialize(writer, o);
 
             // Close the writer
             writer.Close();
+            return true;
+        }
+
+        public static T Read<T>(String path)
+        {
+            var data = Read(path, typeof (T));
+            return (T)data;
         }
 
         public static object Read(String path, Type type)

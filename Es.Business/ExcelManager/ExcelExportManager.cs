@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using ES.Business.Models;
 using ES.Data.Models;
 using ES.DataAccess.Models;
 using Microsoft.Office.Interop.Excel;
@@ -60,8 +61,43 @@ namespace ES.Business.ExcelManager
                 //xlApp.Dispose();
             }
         }
+        public static bool ExportProducts(List<ProductModel> products)
+        {
+            var xlApp = new ExcelDataContent(false);
 
-        public static bool ExportProducts(string filePath, List<Products> products)
+            var xlWSh = xlApp.GetWorksheet();
+            if (xlWSh == null) return false;
+            xlWSh.Activate();
+
+            var nextRow = 1;
+            try
+            {
+                foreach (var product in products)
+                {
+                    xlWSh.Cells[nextRow, 1] = product.Code;
+                    xlWSh.Cells[nextRow, 2] = product.Description;
+                    xlWSh.Cells[nextRow, 3] = product.Mu;
+                    xlWSh.Cells[nextRow, 4] = product.Note;
+                    xlWSh.Cells[nextRow, 5] = product.CostPrice;
+                    xlWSh.Cells[nextRow, 6] = product.DealerPrice;
+                    xlWSh.Cells[nextRow, 7] = product.DealerDiscount;
+                    xlWSh.Cells[nextRow, 8] = product.Price;
+                    xlWSh.Cells[nextRow, 9] = product.Discount;
+                    nextRow++;
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                xlApp.Dispose();
+            }
+        }
+
+        public static bool ExportProducts(string filePath, List<ProductModel> products)
         {
             using (var xlApp = new ExcelDataContent(filePath))
             {

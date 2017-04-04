@@ -7,7 +7,6 @@ using System.Transactions;
 using ES.Business.Helpers;
 using ES.Business.Models;
 using ES.Common;
-using ES.DataAccess.Helpers;
 using ES.DataAccess.Models;
 
 namespace ES.Business.Managers
@@ -731,7 +730,22 @@ namespace ES.Business.Managers
                 return db.Database.Connection.ConnectionString;
             }
         }
-
+        public static bool CheckConnection(string connectionString)
+        {
+            using (var db = GetDataContext(connectionString))
+            {
+                try
+                {
+                    var members = db.EsMembers.ToList();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    ApplicationManager.MessageManager.OnNewMessage(new MessageModel(ex.Message, MessageModel.MessageTypeEnum.Information));
+                    return false;
+                }
+            }
+        }
         /// <summary>
         /// Download Member Data
         /// </summary>

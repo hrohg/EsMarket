@@ -27,7 +27,7 @@ namespace Xceed.Wpf.AvalonDock.Layout.Serialization
     {
         public XmlLayoutSerializer(DockingManager manager)
             : base(manager)
-        { 
+        {
 
         }
 
@@ -49,8 +49,19 @@ namespace Xceed.Wpf.AvalonDock.Layout.Serialization
 
         public void Serialize(string filepath)
         {
-            using (var stream = new StreamWriter(filepath))
-                Serialize(stream);
+            try
+            {
+                return;
+                if (!File.Exists(filepath))
+                    File.Create(filepath);
+                using (var stream = new StreamWriter(filepath))
+                    Serialize(stream);
+            }
+            catch (Exception)
+            {
+
+            }
+
         }
 
         public void Deserialize(System.IO.Stream stream)

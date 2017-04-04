@@ -16,9 +16,12 @@ namespace UserControls.Helpers
 {
     public class SelectItemsManager
     {
-        public static DataServer SelectServer(List<DataServer> servers)
+        public static DataServer SelectServer(List<DataServer> servers=null)
         {
-            if (servers == null) return null;
+            if (servers == null)
+            {
+                servers = ConfigSettings.GetDataServers();
+            }
             if (servers.Count < 2) { return servers.FirstOrDefault(); }
             var selectItem = new SelectItems(servers.Select(s => new ItemsToSelect {DisplayName =string.Format("{0} ({1})",s.Description, s.Name)  , SelectedValue = s.Name }).ToList(), false, "Ընտրել սերվեր");
             if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return null; }

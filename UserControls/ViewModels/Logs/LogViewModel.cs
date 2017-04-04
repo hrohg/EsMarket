@@ -55,7 +55,7 @@ namespace UserControls.ViewModels.Logs
 
         public void AddLog(MessageModel log)
         {
-            Logs.Add(log);
+            Logs.Insert(0, log);
             CurrentLog = log;
         }
         #endregion External methods

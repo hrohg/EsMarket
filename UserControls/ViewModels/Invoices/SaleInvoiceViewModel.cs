@@ -165,7 +165,7 @@ namespace UserControls.ViewModels.Invoices
             ApplicationManager.MessageManager.OnNewMessage(message);
         }
 
-        protected override void OnImportInvoice(ExportInportEnum importFrom)
+        protected override void OnImportInvoice(ExportImportEnum importFrom)
         {
             InvoiceItems.Clear();
             var filePath = FileManager.OpenExcelFile("Excel files(*.xls *.xlsx *․xlsm)|*.xls;*.xlsm;*․xlsx|Excel with macros|*.xlsm|Excel 97-2003 file|*.xls", "Excel ֆայլի բեռնում", ConfigSettings.GetConfig("ImportingFilePath"));

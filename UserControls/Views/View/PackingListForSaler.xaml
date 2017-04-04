@@ -37,7 +37,7 @@
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Command="{Binding ExportInvoiceCommand, ConverterParameter=True}" CommandParameter="{x:Static helpers:ExportInportEnum.Excel}" Content="Արտահանել" Width="75"/>
+                <Button Command="{Binding ExportInvoiceCommand, ConverterParameter=True}" CommandParameter="{x:Static helpers:ExportImportEnum.Excel}" Content="Արտահանել" Width="75"/>
                 <Button Command="{Binding PrintInvoiceCommand, ConverterParameter=True}" CommandParameter="{x:Static helpers:PrintModeEnum.Normal}" Content="Տպել" Width="75"/>
             </StackPanel>
         </Grid>

@@ -241,6 +241,7 @@ namespace ES.Market.ViewModels
 
             #region Settings
             EditUsersCommand = new RelayCommand(OnEditUsers, CanEditUserCommand);
+            CheckConnectionCommand = new RelayCommand(OnCheckConnection);
             #endregion Settings
 
         }
@@ -1605,6 +1606,27 @@ namespace ES.Market.ViewModels
 
         #endregion
 
+
+        #region Settings
+        private void OnCheckConnection(object o)
+        {
+            var server = SelectItemsManager.SelectServer();
+            if (server == null)
+            {
+                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Սերվերը բացակայում է", MessageModel.MessageTypeEnum.Information));
+                return;
+            }
+            if (DatabaseManager.CheckConnection(DatabaseManager.CreateConnectionString(server)))
+            {
+                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Սերվերի կապի ստաւոգումը հաջողվել է։", MessageModel.MessageTypeEnum.Information));
+            }
+            else
+            {
+                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Սերվերի կապի ստաւոգումը ձախողվել է։", MessageModel.MessageTypeEnum.Warning));
+            }
+        }
+#endregion Sttings
+
         #endregion
 
         #region ICommands
@@ -1761,6 +1783,7 @@ namespace ES.Market.ViewModels
         }
 
         public ICommand EditUsersCommand { get; private set; }
+        public ICommand CheckConnectionCommand { get; private set; }
 
         #endregion Settings
 
