@@ -18,6 +18,7 @@ using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
+using ES.Data.Models.EsModels;
 using Shared.Helpers;
 using UserControls.PriceTicketControl;
 using UserControls.Commands;
@@ -602,7 +603,14 @@ namespace UserControls.ViewModels.Managers
                 Product = product;
             }
         }
-
+        public void SetProductCategory(EsCategoriesModel category)
+        {
+            if (Product != null)
+            {
+                Product.HcdCs = category.HcDcs;
+                RaisePropertyChanged("Product");
+            }
+        }
         #endregion
 
         #region Product Commands

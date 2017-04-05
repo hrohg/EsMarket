@@ -153,6 +153,26 @@ namespace ES.Common.ViewModels.Base
 
         #endregion
 
+        #region Is loading
+
+        private bool _isLoading;
+
+        public virtual bool IsLoading
+        {
+            get
+            {
+                return _isLoading;
+            }
+            set
+            {
+                if (value == _isLoading) return;
+                _isLoading = value;
+                RaisePropertyChanged("IsLoading");
+            }
+        }
+
+        #endregion Is loading
+
         #region Visible
 
         private bool _isVisible;

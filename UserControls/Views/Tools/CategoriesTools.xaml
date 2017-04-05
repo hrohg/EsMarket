@@ -1,0 +1,84 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:tools="clr-namespace:UserControls.ViewModels.Tools"
+                    xmlns:views="clr-namespace:UserControls.Views"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+    
+    <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    
+    <DataTemplate DataType="{x:Type tools:CategoriesToolsViewModel}">
+        <Grid>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Width" Value="Auto"/>
+                        </Style>
+                    </StackPanel.Resources>
+                    <Button VerticalAlignment="Top" 
+                        HorizontalAlignment="Right" 
+                        Background="Transparent" BorderBrush="Transparent"
+                        IsTabStop="False"
+                        Focusable="False"
+                        Command="{Binding RefreshCommand}"
+                        ToolTip="Թարմացնել">
+                        <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Refresh_Dark.png"/>
+                    </Button>
+                    <Button VerticalAlignment="Top" 
+                        HorizontalAlignment="Right" 
+                        Background="Transparent" BorderBrush="Transparent"
+                        IsTabStop="False"
+                        Focusable="False"
+                        Command="{Binding SetCategoryCommand}"
+                        ToolTip="Խմբագրել">
+                        <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Edit.ico"/>
+                    </Button>
+                </StackPanel>
+                <TextBox VerticalAlignment="Top" Grid.Row="1" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Stretch" Height="25" FontSize="15" VerticalContentAlignment="Center" Width="Auto" BorderThickness="1" BorderBrush="Black"/>
+                <!--todo-->
+                <!--<Button VerticalAlignment="Top" Grid.Row="0" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" IsTabStop="False">
+                <Image Height="20" Width="20" Source="pack://application:,,,/Shared;component/Images/Search.png"></Image>
+            </Button>-->
+                <Grid Grid.Row="2">
+                    <Border Margin="10" BorderThickness="1">
+                        <TreeView x:Name="TreeView" ItemsSource="{Binding Items}">
+                            <TreeView.ItemContainerStyle>
+                                <Style TargetType="{x:Type TreeViewItem}">
+                                    <!--<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />-->
+                                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                                    <Setter Property="FontWeight" Value="Normal" />
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="FontWeight" Value="Bold" />
+                                            <Setter Property="Background" Value="#FF8801"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TreeView.ItemContainerStyle>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                    <Border ToolTip="{Binding Description}">
+                                        <TextBlock Text="{Binding ShortDescription}" TextTrimming="CharacterEllipsis"/>
+                                    </Border>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectedItemChanged">
+                                    <i:InvokeCommandAction Command="{Binding SelectedItemChangedCommand}" CommandParameter="{Binding ElementName=TreeView, Path=SelectedItem}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TreeView>
+                    </Border>
+                </Grid>
+
+            </Grid>
+            <views:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

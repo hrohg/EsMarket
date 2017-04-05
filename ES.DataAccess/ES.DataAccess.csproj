@@ -108,7 +108,7 @@
     <Compile Include="Models\CashDesk.cs">
       <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Categories.cs">
+    <Compile Include="Models\EsCategories.cs">
       <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EsDefaults.cs">

@@ -591,10 +591,13 @@
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Name="MiReleate" Header="Օգնություն">
+                <MenuItem x:Name="Help" Header="Օգնություն">
                     <MenuItem.Icon>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Help.ico" />
                     </MenuItem.Icon>
+                    <MenuItem Header="Գործիքներ">
+                        <MenuItem Header="Ապրանքային խմբեր" Command="{Binding CategoriesToolCommand}"/>
+                    </MenuItem>
                     <MenuItem Header="Լրացուցիչ">
                         <MenuItem.Icon>
                             <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>

@@ -9,6 +9,7 @@ using ES.Business.Models;
 using ES.Common;
 using ES.Common.Enumerations;
 using ES.Data.Models;
+using ES.Data.Models.EsModels;
 using ES.DataAccess.Models;
 using DataTable = System.Data.DataTable;
 using ProductModel = ES.Business.Models.ProductModel;
@@ -22,18 +23,18 @@ namespace ES.Business.Managers
         /// </summary>
         /// <returns></returns>
         #region Categories public methods
-        public static List<Categories> GetCategories()
+        public static List<EsCategories> GetCategories()
         {
             return TryGetCategories();
         }
 
         #endregion
         #region Categories private methods
-        private static List<Categories> TryGetCategories()
+        private static List<EsCategories> TryGetCategories()
         {
             using (var db = GetDataContext())
             {
-                return db.Categories.ToList();
+                return db.EsCategories.ToList();
             }
         }
         #endregion
@@ -1189,5 +1190,81 @@ namespace ES.Business.Managers
         #endregion
 
         #endregion
+
+        #region Categories
+        public static List<EsCategoriesModel> GetEsCategories()
+        {
+            return Convert(TryGetEsCategories());
+        }
+        private static List<EsCategoriesModel> Convert(List<EsCategories> list)
+        {
+            if (list == null) return null;
+            var categories = new List<EsCategoriesModel>();
+            foreach (var item in list.Where(s => s.ParentId == null).ToList())
+            {
+                var subCategory = Convert(item);
+                Convert(subCategory, list.Where(s => s.ParentId != null).ToList());
+                categories.Add(subCategory);
+            }
+            return categories;
+        }
+        private static EsCategories Convert(EsCategoriesModel category)
+        {
+            if (category == null) return null;
+            return new EsCategories()
+            {
+                Id = category.Id,
+                ParentId = category.ParentId,
+                Name = category.Name,
+                Description = category.Description,
+                IsActive = category.IsActive,
+                HCDCS = category.HcDcs,
+                LastModificationDate = category.LastModificationDate,
+                Logo = category.Logo,
+                LastModifierId = category.LastModifierId
+            };
+        }
+
+        private static void Convert(EsCategoriesModel parent, List<EsCategories> list)
+        {
+            foreach (var item in list.Where(s => s.ParentId == parent.Id).ToList())
+            {
+                var subCategory = Convert(item);
+                Convert(subCategory, list.Where(s => s.ParentId != item.Id).ToList());
+                item.ParentId = parent.Id;
+                parent.Children.Add(subCategory);
+            }
+        }
+        private static EsCategoriesModel Convert(EsCategories item)
+        {
+            if (item == null) return null;
+            return new EsCategoriesModel
+            {
+                Id = item.Id,
+                ParentId = item.ParentId,
+                Name = item.Name,
+                Description = item.Description,
+                IsActive = item.IsActive,
+                HcDcs = item.HCDCS,
+                LastModificationDate = item.LastModificationDate,
+                Logo = item.Logo,
+                LastModifierId = item.LastModifierId
+            };
+        } 
+        private static List<EsCategories> TryGetEsCategories()
+        {
+            using (var db = GetServerDataContext())
+            {
+                try
+                {
+                    return db.EsCategories.Include("EsCategories1").Include("EsCategories2").OrderBy(s => s.HCDCS).ToList();
+                }
+                catch (Exception)
+                {
+                    return new List<EsCategories>();
+                }
+            }
+        }
+        #endregion Categories
     }
 }

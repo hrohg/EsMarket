@@ -22,6 +22,7 @@ using ES.Common.Interfaces;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
+using ES.Data.Models.EsModels;
 using ES.DataAccess.Models;
 using ES.Market.Views.Reports.View;
 using ES.Shop.Commands;
@@ -1625,11 +1626,11 @@ namespace ES.Market.ViewModels
                 ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Սերվերի կապի ստաւոգումը ձախողվել է։", MessageModel.MessageTypeEnum.Warning));
             }
         }
-#endregion Sttings
+        #endregion Sttings
 
         #endregion
 
-        #region ICommands
+        #region Commands
 
         #region Base
 
@@ -1746,6 +1747,37 @@ namespace ES.Market.ViewModels
             get { return new PrintSampleInvoiceCommand(); }
         }
 
+        #region Categories tool
+
+        private ICommand _categoriesToolCommand;
+
+        public ICommand CategoriesToolCommand
+        {
+            get
+            {
+                if (_categoriesToolCommand == null) _categoriesToolCommand = new RelayCommand(OnCategoriesTool);
+                return _categoriesToolCommand;
+            }
+        }
+
+        private void OnCategoriesTool(object obj)
+        {
+            var vm =new CategoriesToolsViewModel();
+            AddTools<CategoriesToolsViewModel>(vm, false);
+            vm.OnSetCategory += OnSetCategory;
+        }
+
+        private void OnSetCategory(EsCategoriesModel category)
+        {
+            var activeDocument = Documents.SingleOrDefault(s => s.IsActive);
+            var productManager = activeDocument as ProductManagerViewModel;
+            if (productManager != null)
+            {
+                productManager.SetProductCategory(category);
+            }
+        }
+
+        #endregion Categories tools
         #endregion Help
 
         #region Settings

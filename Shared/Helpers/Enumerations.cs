@@ -27,6 +27,10 @@ namespace Shared.Helpers
         Large
     }
 
+    public enum FileTypeEnum
+    {
+        Xml, Xls
+    }
     public enum ExportImportEnum
     {
         Xml, 

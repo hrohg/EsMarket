@@ -69,15 +69,19 @@
           <Property Name="IsCash" Type="bit" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
-        <EntityType Name="Categories">
+        <EntityType Name="EsCategories">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="CategoryName" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ParentId" Type="uniqueidentifier" />
+          <Property Name="Name" Type="nvarchar" MaxLength="250" Nullable="false" />
           <Property Name="Description" Type="ntext" />
-          <Property Name="ParentCategoryId" Type="bigint" />
-          <Property Name="LogoPath" Type="nvarchar" MaxLength="250" />
+          <Property Name="HCDCS" Type="nvarchar" MaxLength="12" />
+          <Property Name="Logo" Type="nvarchar" MaxLength="250" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="LastModificationDate" Type="datetime" Nullable="false" />
+          <Property Name="LastModifierId" Type="bigint" Nullable="false" />
         </EntityType>
         <EntityType Name="EsDefaults">
           <Key>
@@ -533,6 +537,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_EsCategories_EsCategories">
+          <End Role="EsCategories" Type="Self.EsCategories" Multiplicity="0..1" />
+          <End Role="EsCategories1" Type="Self.EsCategories" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EsCategories">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EsCategories1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_EsInvoiceItems_ProductItems">
           <End Role="ProductItems" Type="Self.ProductItems" Multiplicity="0..1" />
           <End Role="InvoiceItems" Type="Self.InvoiceItems" Multiplicity="*" />
@@ -797,18 +813,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ProductCategories_Categories">
-          <End Role="Categories" Type="Self.Categories" Multiplicity="1" />
-          <End Role="ProductCategories" Type="Self.ProductCategories" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Categories">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="ProductCategories">
-              <PropertyRef Name="CategoryId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_ProductCategories_Products">
           <End Role="Products" Type="Self.Products" Multiplicity="1" />
           <End Role="ProductCategories" Type="Self.ProductCategories" Multiplicity="*" />
@@ -1055,7 +1059,7 @@
           <EntitySet Name="AccountsReceivable" EntityType="Self.AccountsReceivable" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Brands" EntityType="Self.Brands" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CashDesk" EntityType="Self.CashDesk" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Categories" EntityType="Self.Categories" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EsCategories" EntityType="Self.EsCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EsDefaults" EntityType="Self.EsDefaults" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EsInvoiceTypes" EntityType="Self.EsInvoiceTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EsMembers" EntityType="Self.EsMembers" Schema="dbo" store:Type="Tables" />
@@ -1109,6 +1113,10 @@
           <AssociationSet Name="FK_CashDesk_CashDesk" Association="Self.FK_CashDesk_CashDesk">
             <End Role="EsMembers" EntitySet="EsMembers" />
             <End Role="CashDesk" EntitySet="CashDesk" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EsCategories_EsCategories" Association="Self.FK_EsCategories_EsCategories">
+            <End Role="EsCategories" EntitySet="EsCategories" />
+            <End Role="EsCategories1" EntitySet="EsCategories" />
           </AssociationSet>
           <AssociationSet Name="FK_EsInvoiceItems_ProductItems" Association="Self.FK_EsInvoiceItems_ProductItems">
             <End Role="ProductItems" EntitySet="ProductItems" />
@@ -1197,10 +1205,6 @@
           <AssociationSet Name="FK_Partners_EsUsers" Association="Self.FK_Partners_EsUsers">
             <End Role="EsUsers" EntitySet="EsUsers" />
             <End Role="Partners" EntitySet="Partners" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ProductCategories_Categories" Association="Self.FK_ProductCategories_Categories">
-            <End Role="Categories" EntitySet="Categories" />
-            <End Role="ProductCategories" EntitySet="ProductCategories" />
           </AssociationSet>
           <AssociationSet Name="FK_ProductCategories_Products" Association="Self.FK_ProductCategories_Products">
             <End Role="Products" EntitySet="Products" />
@@ -1293,7 +1297,6 @@
           <EntitySet Name="AccountsReceivable" EntityType="EsStockDbModel.AccountsReceivable" />
           <EntitySet Name="Brands" EntityType="EsStockDbModel.Brands" />
           <EntitySet Name="CashDesk" EntityType="EsStockDbModel.CashDesk" />
-          <EntitySet Name="Categories" EntityType="EsStockDbModel.Categories" />
           <EntitySet Name="EsDefaults" EntityType="EsStockDbModel.EsDefaults" />
           <EntitySet Name="EsInvoiceTypes" EntityType="EsStockDbModel.EsInvoiceTypes" />
           <EntitySet Name="EsMembers" EntityType="EsStockDbModel.EsMembers" />
@@ -1310,7 +1313,6 @@
           <EntitySet Name="MembersRoles" EntityType="EsStockDbModel.MembersRoles" />
           <EntitySet Name="MemberUsersRoles" EntityType="EsStockDbModel.MemberUsersRoles" />
           <EntitySet Name="Partners" EntityType="EsStockDbModel.Partners" />
-          <EntitySet Name="ProductCategories" EntityType="EsStockDbModel.ProductCategories" />
           <EntitySet Name="ProductGroup" EntityType="EsStockDbModel.ProductGroup" />
           <EntitySet Name="ProductItems" EntityType="EsStockDbModel.ProductItems" />
           <EntitySet Name="ProductOrder" EntityType="EsStockDbModel.ProductOrder" />
@@ -1359,10 +1361,6 @@
           <AssociationSet Name="FK_SaleInCash_CashDesk" Association="EsStockDbModel.FK_SaleInCash_CashDesk">
             <End Role="CashDesk" EntitySet="CashDesk" />
             <End Role="SaleInCash" EntitySet="SaleInCash" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ProductCategories_Categories" Association="EsStockDbModel.FK_ProductCategories_Categories">
-            <End Role="Categories" EntitySet="Categories" />
-            <End Role="ProductCategories" EntitySet="ProductCategories" />
           </AssociationSet>
           <AssociationSet Name="FK_ESInvoices_InvoiceTypes" Association="EsStockDbModel.FK_ESInvoices_InvoiceTypes">
             <End Role="EsInvoiceTypes" EntitySet="EsInvoiceTypes" />
@@ -1488,10 +1486,6 @@
             <End Role="MembersRoles" EntitySet="MembersRoles" />
             <End Role="MemberUsersRoles" EntitySet="MemberUsersRoles" />
           </AssociationSet>
-          <AssociationSet Name="FK_ProductCategories_Products" Association="EsStockDbModel.FK_ProductCategories_Products">
-            <End Role="Products" EntitySet="Products" />
-            <End Role="ProductCategories" EntitySet="ProductCategories" />
-          </AssociationSet>
           <AssociationSet Name="FK_ProductGroup_Products" Association="EsStockDbModel.FK_ProductGroup_Products">
             <End Role="Products" EntitySet="Products" />
             <End Role="ProductGroup" EntitySet="ProductGroup" />
@@ -1519,6 +1513,16 @@
           <AssociationSet Name="FK_StockTakingItems_StockTaking" Association="EsStockDbModel.FK_StockTakingItems_StockTaking">
             <End Role="StockTake" EntitySet="StockTake" />
             <End Role="StockTakeItems" EntitySet="StockTakeItems" />
+          </AssociationSet>
+          <EntitySet Name="EsCategories" EntityType="EsStockDbModel.EsCategories" />
+          <AssociationSet Name="FK_EsCategories_EsCategories" Association="EsStockDbModel.FK_EsCategories_EsCategories">
+            <End Role="EsCategories" EntitySet="EsCategories" />
+            <End Role="EsCategories1" EntitySet="EsCategories" />
+          </AssociationSet>
+          <EntitySet Name="ProductCategories" EntityType="EsStockDbModel.ProductCategories" />
+          <AssociationSet Name="FK_ProductCategories_Products" Association="EsStockDbModel.FK_ProductCategories_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProductCategories" EntitySet="ProductCategories" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="AccountingPlan">
@@ -1595,17 +1599,6 @@
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="EsMembers" Relationship="EsStockDbModel.FK_CashDesk_CashDesk" FromRole="CashDesk" ToRole="EsMembers" />
           <NavigationProperty Name="SaleInCash" Relationship="EsStockDbModel.FK_SaleInCash_CashDesk" FromRole="CashDesk" ToRole="SaleInCash" />
-        </EntityType>
-        <EntityType Name="Categories">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CategoryName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ParentCategoryId" Type="Int64" />
-          <Property Name="LogoPath" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="ProductCategories" Relationship="EsStockDbModel.FK_ProductCategories_Categories" FromRole="Categories" ToRole="ProductCategories" />
         </EntityType>
         <EntityType Name="EsDefaults">
           <Key>
@@ -1884,16 +1877,6 @@
           <NavigationProperty Name="EsPartnersTypes" Relationship="EsStockDbModel.FK_Partners_EsPartnersTypes" FromRole="Partners" ToRole="EsPartnersTypes" />
           <NavigationProperty Name="EsUsers" Relationship="EsStockDbModel.FK_Partners_EsUsers" FromRole="Partners" ToRole="EsUsers" />
         </EntityType>
-        <EntityType Name="ProductCategories">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="ProductId" Type="Guid" Nullable="false" />
-          <Property Name="CategoryId" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="Categories" Relationship="EsStockDbModel.FK_ProductCategories_Categories" FromRole="ProductCategories" ToRole="Categories" />
-          <NavigationProperty Name="Products" Relationship="EsStockDbModel.FK_ProductCategories_Products" FromRole="ProductCategories" ToRole="Products" />
-        </EntityType>
         <EntityType Name="ProductGroup">
           <Key>
             <PropertyRef Name="Id" />
@@ -1999,10 +1982,10 @@
           <NavigationProperty Name="EsMembers" Relationship="EsStockDbModel.FK_Products_EsMembers" FromRole="Products" ToRole="EsMembers" />
           <NavigationProperty Name="EsUsers" Relationship="EsStockDbModel.FK_Products_EsUsers" FromRole="Products" ToRole="EsUsers" />
           <NavigationProperty Name="InvoiceItems" Relationship="EsStockDbModel.FK_InvoiceItems_Products" FromRole="Products" ToRole="InvoiceItems" />
-          <NavigationProperty Name="ProductCategories" Relationship="EsStockDbModel.FK_ProductCategories_Products" FromRole="Products" ToRole="ProductCategories" />
           <NavigationProperty Name="ProductGroup" Relationship="EsStockDbModel.FK_ProductGroup_Products" FromRole="Products" ToRole="ProductGroup" />
           <NavigationProperty Name="ProductItems" Relationship="EsStockDbModel.FK_ProductItems_Products" FromRole="Products" ToRole="ProductItems" />
           <NavigationProperty Name="ProductOrderItems" Relationship="EsStockDbModel.FK_ProductOrderItems_Products" FromRole="Products" ToRole="ProductOrderItems" />
+          <NavigationProperty Name="ProductCategories" Relationship="EsStockDbModel.FK_ProductCategories_Products" FromRole="Products" ToRole="ProductCategories" />
         </EntityType>
         <EntityType Name="SaleInCash">
           <Key>
@@ -2182,18 +2165,6 @@
             </Principal>
             <Dependent Role="SaleInCash">
               <PropertyRef Name="CashDeskId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ProductCategories_Categories">
-          <End Type="EsStockDbModel.Categories" Role="Categories" Multiplicity="1" />
-          <End Type="EsStockDbModel.ProductCategories" Role="ProductCategories" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Categories">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="ProductCategories">
-              <PropertyRef Name="CategoryId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2569,18 +2540,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ProductCategories_Products">
-          <End Type="EsStockDbModel.Products" Role="Products" Multiplicity="1" />
-          <End Type="EsStockDbModel.ProductCategories" Role="ProductCategories" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Products">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="ProductCategories">
-              <PropertyRef Name="ProductId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_ProductGroup_Products">
           <End Type="EsStockDbModel.Products" Role="Products" Multiplicity="1" />
           <End Type="EsStockDbModel.ProductGroup" Role="ProductGroup" Multiplicity="*" />
@@ -2665,6 +2624,55 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="EsCategories">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="ParentId" Type="Guid" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="HCDCS" Type="String" MaxLength="12" FixedLength="false" Unicode="true" />
+          <Property Name="Logo" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="LastModificationDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LastModifierId" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="EsCategories1" Relationship="EsStockDbModel.FK_EsCategories_EsCategories" FromRole="EsCategories" ToRole="EsCategories1" />
+          <NavigationProperty Name="EsCategories2" Relationship="EsStockDbModel.FK_EsCategories_EsCategories" FromRole="EsCategories1" ToRole="EsCategories" />
+        </EntityType>
+        <Association Name="FK_EsCategories_EsCategories">
+          <End Type="EsStockDbModel.EsCategories" Role="EsCategories" Multiplicity="0..1" />
+          <End Type="EsStockDbModel.EsCategories" Role="EsCategories1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EsCategories">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EsCategories1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ProductCategories">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="ProductId" Type="Guid" Nullable="false" />
+          <Property Name="CategoryId" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="Products" Relationship="EsStockDbModel.FK_ProductCategories_Products" FromRole="ProductCategories" ToRole="Products" />
+        </EntityType>
+        <Association Name="FK_ProductCategories_Products">
+          <End Type="EsStockDbModel.Products" Role="Products" Multiplicity="1" />
+          <End Type="EsStockDbModel.ProductCategories" Role="ProductCategories" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProductCategories">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2736,17 +2744,6 @@
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Total" ColumnName="Total" />
                 <ScalarProperty Name="MemberId" ColumnName="MemberId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Categories">
-            <EntityTypeMapping TypeName="EsStockDbModel.Categories">
-              <MappingFragment StoreEntitySet="Categories">
-                <ScalarProperty Name="LogoPath" ColumnName="LogoPath" />
-                <ScalarProperty Name="ParentCategoryId" ColumnName="ParentCategoryId" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -2987,15 +2984,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="ProductCategories">
-            <EntityTypeMapping TypeName="EsStockDbModel.ProductCategories">
-              <MappingFragment StoreEntitySet="ProductCategories">
-                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
-                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="ProductGroup">
             <EntityTypeMapping TypeName="EsStockDbModel.ProductGroup">
               <MappingFragment StoreEntitySet="ProductGroup">
@@ -3143,6 +3131,30 @@
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="SubAccountingPlanId" ColumnName="SubAccountingPlanId" />
                 <ScalarProperty Name="AccountingPlanId" ColumnName="AccountingPlanId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EsCategories">
+            <EntityTypeMapping TypeName="EsStockDbModel.EsCategories">
+              <MappingFragment StoreEntitySet="EsCategories">
+                <ScalarProperty Name="LastModifierId" ColumnName="LastModifierId" />
+                <ScalarProperty Name="LastModificationDate" ColumnName="LastModificationDate" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Logo" ColumnName="Logo" />
+                <ScalarProperty Name="HCDCS" ColumnName="HCDCS" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProductCategories">
+            <EntityTypeMapping TypeName="EsStockDbModel.ProductCategories">
+              <MappingFragment StoreEntitySet="ProductCategories">
+                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

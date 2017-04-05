@@ -18,7 +18,6 @@ namespace ES.DataAccess.Models
         public System.Guid ProductId { get; set; }
         public long CategoryId { get; set; }
     
-        public virtual Categories Categories { get; set; }
         public virtual Products Products { get; set; }
     }
 }

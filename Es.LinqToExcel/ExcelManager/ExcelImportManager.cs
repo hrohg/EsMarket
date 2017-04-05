@@ -67,8 +67,8 @@ namespace ES.MsOffice.ExcelManager
                         Discount = HgConvert.ToDecimal(xlWSh.Cells[nextRow, 11].Text)
                     };
                     product.Brands = new Brands { BrandName = xlWSh.Cells[nextRow, 1].Text };
-                    var category = new Categories() { CategoryName = xlWSh.Cells[nextRow, 2].Text };
-                    productCategories.Add(new ProductCategories { Products = product, Categories = category });
+                    var category = new EsCategories() { Name = xlWSh.Cells[nextRow, 2].Text };
+                    //productCategories.Add(new ProductCategories { Products = product,  Categories = category });
                     products.Add(product);
                     nextRow++;
                 }

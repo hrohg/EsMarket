@@ -42,10 +42,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enumerations\PartnerType.cs" />
+    <Compile Include="Models\Bases\TreeViewItemBaseModel.cs" />
     <Compile Include="Models\BrandModel.cs" />
     <Compile Include="Models\CashierModel.cs" />
     <Compile Include="Models\CategoriesModel.cs" />
     <Compile Include="Models\EsMemberModel.cs" />
+    <Compile Include="Models\EsModels\EsCategoriesModel.cs" />
     <Compile Include="Models\EsUserModel.cs" />
     <Compile Include="Models\InvoiceItemsModel.cs" />
     <Compile Include="Models\InvoiceModel.cs" />
