@@ -1769,7 +1769,7 @@ namespace ES.Market.ViewModels
 
         private void OnSetCategory(EsCategoriesModel category)
         {
-            var activeDocument = Documents.SingleOrDefault(s => s.IsActive);
+            var activeDocument = Documents.FirstOrDefault(s => s.IsActive);
             var productManager = activeDocument as ProductManagerViewModel;
             if (productManager != null)
             {

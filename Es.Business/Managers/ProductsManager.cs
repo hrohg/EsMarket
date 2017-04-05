@@ -1230,7 +1230,7 @@ namespace ES.Business.Managers
             foreach (var item in list.Where(s => s.ParentId == parent.Id).ToList())
             {
                 var subCategory = Convert(item);
-                Convert(subCategory, list.Where(s => s.ParentId != item.Id).ToList());
+                Convert(subCategory, list.Where(s => s.ParentId != parent.Id).ToList());
                 item.ParentId = parent.Id;
                 parent.Children.Add(subCategory);
             }

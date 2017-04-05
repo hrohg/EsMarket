@@ -58,7 +58,7 @@ namespace UserControls.ViewModels.Tools
             get
             {
                 return string.IsNullOrEmpty(Filter) ? _items :
-                _items.Where(s => s.Description.ToLower().Contains(Filter)).ToList();
+                GetEsCategoriesList(_items, Filter);
             }
             set
             {
@@ -89,10 +89,7 @@ namespace UserControls.ViewModels.Tools
 
         public EsCategoriesModel Category
         {
-            get
-            {
-                return _category;
-            }
+            get { return _category; }
             set
             {
                 if (value == _category) return;
@@ -145,11 +142,35 @@ namespace UserControls.ViewModels.Tools
         #region internal methods
         private void Initialize()
         {
-            Title = "Manage ES categories";
+            Title = "Ապրանքային խմբեր";
             OnRefresh(null);
             IsLoading = false;
             CanFloat = true;
         }
+
+        private List<EsCategoriesModel> GetEsCategoriesList(List<EsCategoriesModel> categories, string key = null)
+        {
+            if (!string.IsNullOrEmpty(key))
+            {
+                key = key.ToLower();
+            }
+            var list = new List<EsCategoriesModel>();
+            foreach (var item in categories)
+            {
+                if (string.IsNullOrEmpty(key) ||
+                    (!string.IsNullOrEmpty(item.HcDcs) && item.HcDcs.ToLower().Contains(key) ||
+                     (!string.IsNullOrEmpty(item.Name) && item.Name.ToLower().Contains(key)) ||
+                     (!string.IsNullOrEmpty(item.Description) && item.Description.ToLower().Contains(key))))
+                {
+                    list.Add(item);
+                }
+                else
+                {
+                    list.AddRange(GetEsCategoriesList(item.Children, key));
+                }
+            }
+            return list;
+        } 
         #endregion Internal methods
 
         #region External methods

@@ -27,7 +27,7 @@ namespace ES.Data.Models.EsModels
             set
             {
                 if (string.Equals(value, Name)) return;
-                _name = value != null ? value.Trim() : string.Empty;
+                _name = value ?? string.Empty;
             }
         }
 
@@ -42,7 +42,7 @@ namespace ES.Data.Models.EsModels
             set
             {
                 if (string.Equals(value, _description)) return;
-                _description = value != null ? value.Trim() : null;
+                _description = value;
             }
         }
 

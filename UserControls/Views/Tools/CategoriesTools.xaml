@@ -72,6 +72,9 @@
                                 <i:EventTrigger EventName="SelectedItemChanged">
                                     <i:InvokeCommandAction Command="{Binding SelectedItemChangedCommand}" CommandParameter="{Binding ElementName=TreeView, Path=SelectedItem}"/>
                                 </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseDoubleClick">
+                                    <i:InvokeCommandAction Command="{Binding SetCategoryCommand}" CommandParameter="{Binding ElementName=ParentTreeView, Path=SelectedItem}"/>
+                                </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </TreeView>
                     </Border>
