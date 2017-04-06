@@ -93,6 +93,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\EventToCommandBehavior.cs" />
+    <Compile Include="Behaviors\FocusNextBehaviors.cs" />
+    <Compile Include="Behaviors\FocusPreviousElementBehaviors.cs" />
     <Compile Include="Behaviors\TextBoxBehaivior.cs" />
     <Compile Include="Controls\ExtendedLayoutAnchorablePane.cs" />
     <Compile Include="Controls\ExtendedLayoutDocumentPane.cs" />
