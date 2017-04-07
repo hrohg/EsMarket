@@ -270,13 +270,9 @@ namespace UserControls.ViewModels.Invoices
             base.OnAddInvoiceItem(o);
         }
 
-        public override void SetInvoiceItem(string code)
+        protected override void SetInvoiceItemPrice()
         {
-            base.SetInvoiceItem(code);
-            if (InvoiceItem.Product != null)
-            {
-                InvoiceItem.Price = InvoiceItem.Product.Price;
-            }
+            if (InvoiceItem.Product != null) InvoiceItem.Price = InvoiceItem.Price;
         }
 
         private bool IsPaid

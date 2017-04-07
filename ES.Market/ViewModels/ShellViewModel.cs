@@ -24,6 +24,7 @@ using ES.Data.Model;
 using ES.Data.Models;
 using ES.Data.Models.EsModels;
 using ES.DataAccess.Models;
+using ES.Market.Enumerations;
 using ES.Market.Views.Reports.View;
 using ES.Shop.Commands;
 using ES.Shop.Config;
@@ -291,10 +292,18 @@ namespace ES.Market.ViewModels
                 //todo: Activate document
                 exDocument.IsActive = true;
                 exDocument.IsSelected = true;
+                exDocument.OnActiveTabChangeEvent += OnActiveTabChange;
+                
                 return;
             }
             AddDocument(vm);
         }
+
+        private void OnActiveTabChange(DocumentViewModel document, ActivityChangedEventArgs e)
+        {
+            Documents.Select(s => s.IsActive = (s == document && e.Value));
+        }
+
         private void AddDocument(DocumentViewModel vm)
         {
             if (vm.IsClosable)
@@ -303,13 +312,17 @@ namespace ES.Market.ViewModels
             }
             vm.IsActive = true;
             vm.IsSelected = true;
-            vm.Id = Guid.NewGuid();
             Documents.Add(vm);
         }
         private void OnRemoveDocument(PaneViewModel vm)
         {
             if (vm == null) return;
             vm.OnClosed -= OnRemoveDocument;
+            if (vm is DocumentViewModel)
+            {
+                ((DocumentViewModel)vm).OnActiveTabChangeEvent -= OnActiveTabChange;
+            }
+            
             Documents.Remove((DocumentViewModel)vm);
             if (vm is ProductManagerViewModel)
             {
@@ -323,9 +336,9 @@ namespace ES.Market.ViewModels
                 ProductItemsToolsViewModel.OnProductItemSelected -= ((StockTakeViewModel)vm).OnSetProductItem;
             }
         }
+
         private void AddTools(ToolsViewModel vm)
         {
-            vm.Id = Guid.NewGuid();
             Tools.Add(vm);
             vm.OnClosed += OnRemoveTools;
             vm.IsActive = true;
@@ -1747,24 +1760,59 @@ namespace ES.Market.ViewModels
             get { return new PrintSampleInvoiceCommand(); }
         }
 
-        #region Categories tool
+        #region Tool
 
-        private ICommand _categoriesToolCommand;
+        private ICommand _toolsCommand;
 
-        public ICommand CategoriesToolCommand
+        public ICommand ToolsCommand
         {
             get
             {
-                if (_categoriesToolCommand == null) _categoriesToolCommand = new RelayCommand(OnCategoriesTool);
-                return _categoriesToolCommand;
+                if (_toolsCommand == null) _toolsCommand = new RelayCommand<ToolsEnum>(OnTools, CanExecuteTools);
+                return _toolsCommand;
             }
         }
 
-        private void OnCategoriesTool(object obj)
+        private bool CanExecuteTools(ToolsEnum toolsEnum)
         {
-            var vm =new CategoriesToolsViewModel();
-            AddTools<CategoriesToolsViewModel>(vm, false);
-            vm.OnSetCategory += OnSetCategory;
+            switch (toolsEnum)
+            {
+                case ToolsEnum.Log:
+                    break;
+                case ToolsEnum.ProductItems:
+                    break;
+                case ToolsEnum.Categories:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("toolsEnum", toolsEnum, null);
+            }
+            return true;
+        }
+
+        private void OnTools(ToolsEnum toolsEnum)
+        {
+            ToolsViewModel tool = null;
+            switch (toolsEnum)
+            {
+                    
+                case ToolsEnum.Log:
+                    tool = new LogViewModel();
+                    AddTools<LogViewModel>(tool, false);
+                    break;
+                case ToolsEnum.ProductItems:
+                    tool = new ProductItemsToolsViewModel();
+                    AddTools<ProductItemsToolsViewModel>(tool, false);
+                    break;
+                case ToolsEnum.Categories:
+                    tool = new CategoriesToolsViewModel();
+                    ((CategoriesToolsViewModel)tool).OnSetCategory += OnSetCategory;
+                    AddTools<CategoriesToolsViewModel>(tool, false);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("toolsEnum", toolsEnum, null);
+            }
+            
+            
         }
 
         private void OnSetCategory(EsCategoriesModel category)
@@ -1778,6 +1826,7 @@ namespace ES.Market.ViewModels
         }
 
         #endregion Categories tools
+
         #endregion Help
 
         #region Settings

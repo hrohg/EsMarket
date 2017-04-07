@@ -1,32 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using CashReg.Models;
 using ES.Business.ExcelManager;
-using ES.Business.FileManager;
 using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common;
 using ES.Common.Helpers;
-using ES.Common.ViewModels.Base;
 using ES.Data.Enumerations;
 using ES.Data.Model;
 using ES.Data.Models;
-using ES.Common;
 using ES.DataAccess.Models;
 using Shared.Helpers;
 using UserControls.Commands;
 using UserControls.Helpers;
-using UserControls.Interfaces;
 using UserControls.Views.ReceiptTickets.Views;
 using ExcelImportManager = ES.Business.ExcelManager.ExcelImportManager;
 using ProductModel = ES.Business.Models.ProductModel;
@@ -489,12 +482,18 @@ namespace UserControls.ViewModels.Invoices
                 Code = productItem.Product.Code,
                 Description = productItem.Product.Description,
                 Mu = productItem.Product.Mu,
-                Price = productItem.Product.CostPrice,
+                Price = productItem.Product.Price,
                 Discount = productItem.Product.Discount,
                 Note = productItem.Product.Note
             };
+            SetInvoiceItemPrice();
             RaisePropertyChanged(IsExpiringProperty);
             RaisePropertyChanged("InvoiceItem");
+        }
+
+        protected virtual void SetInvoiceItemPrice()
+        {
+            if (InvoiceItem.Product != null) InvoiceItem.Price = InvoiceItem.Product.Price;
         }
         public void OnSetProductItem(ProductItemModel productItem)
         {
@@ -531,6 +530,7 @@ namespace UserControls.ViewModels.Invoices
                 InvoiceItem.Discount = product.Discount;
                 InvoiceItem.Note = product.Note;
             }
+            SetInvoiceItemPrice();
             RaisePropertyChanged("InvoiceItem");
             RaisePropertyChanged(IsExpiringProperty);
         }
@@ -546,9 +546,19 @@ namespace UserControls.ViewModels.Invoices
         public virtual void OnAddInvoiceItem(object o)
         {
             if (!CanAddInvoiceItem(o)) { return; }
-            InvoiceItem.Index = InvoiceItems.Count + 1;
-            InvoiceItems.Insert(0, InvoiceItem);
-            SelectedInvoiceItem = InvoiceItem;
+            var exInvocieItem = InvoiceItems.FirstOrDefault(s => s.ProductId == InvoiceItem.ProductId && s.ProductItemId == null && s.Price == InvoiceItem.Price);
+            if (exInvocieItem != null)
+            {
+                exInvocieItem.Quantity += InvoiceItem.Quantity;
+                SelectedInvoiceItem = exInvocieItem;
+            }
+            else
+            {
+                InvoiceItem.Index = InvoiceItems.Count + 1;
+                InvoiceItems.Insert(InvoiceItems.Count, InvoiceItem);
+                SelectedInvoiceItem = InvoiceItem;
+            }
+
             InvoiceItem = new InvoiceItemsModel(Invoice);
             IsModified = true;
         }

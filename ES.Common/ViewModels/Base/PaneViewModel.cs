@@ -13,7 +13,7 @@ namespace ES.Common.ViewModels.Base
 
         #region External properties
 
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
 
         #region ContentId
 
@@ -138,7 +138,7 @@ namespace ES.Common.ViewModels.Base
         #region IsActive
 
         private bool _isActive = false;
-        public bool IsActive
+        public virtual bool IsActive
         {
             get { return _isActive; }
             set
@@ -208,6 +208,7 @@ namespace ES.Common.ViewModels.Base
 
         private void Initialize()
         {
+            Id = Guid.NewGuid();
             CloseCommand = new RelayCommand(OnClose, CanClose);
         }
 

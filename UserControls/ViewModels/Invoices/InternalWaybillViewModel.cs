@@ -115,13 +115,9 @@ namespace UserControls.ViewModels.Invoices
             ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, string.Format("Անբավարար միջոցներ: Կոդ: {0} Տվյալ ապրանքատեսակից բավարար քանակ առկա չէ:", InvoiceItem.Code), MessageModel.MessageTypeEnum.Warning));
             return false;
         }
-        public override void SetInvoiceItem(string code)
+        protected override void SetInvoiceItemPrice()
         {
-            base.SetInvoiceItem(code);
-            if (InvoiceItem.Product != null)
-            {
-                InvoiceItem.Price = InvoiceItem.Product.Price;
-            }
+            if (InvoiceItem.Product != null) InvoiceItem.Price = InvoiceItem.Product.CostPrice;
         }
         public override void OnAddInvoiceItem(object o)
         {

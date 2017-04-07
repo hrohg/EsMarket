@@ -76,6 +76,10 @@ namespace UserControls.ViewModels.Invoices
             base.OnGetProduct(o);
             OnAddInvoiceItem(o);
         }
+        protected override void SetInvoiceItemPrice()
+        {
+            if (InvoiceItem.Product != null) InvoiceItem.Price = InvoiceItem.Product.CostPrice;
+        }
         #endregion
 
         #region External Methods
@@ -88,10 +92,6 @@ namespace UserControls.ViewModels.Invoices
             if (!CanAddInvoiceItem(o)) { return; }
             if (!SetQuantity(BuyBySingle)) { return; }
             base.OnAddInvoiceItem(o);
-        }
-        public override void SetInvoiceItem(string code)
-        {
-            base.SetInvoiceItem(code);
         }
         public override bool CanApprove(object o)
         {
