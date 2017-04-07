@@ -724,13 +724,13 @@ namespace ES.Market
                 MessageBox.Show("Գործողությունն ընդհատված է։", "Թերի տվյալներ", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            var nextTab = TabShop.Items.Add(new TabItem
-            {
-                Header = "Գույքագրում",
-                Content = new StockTakingUctrl(new StockTakeViewModel(stockTake, ApplicationManager.Instance.GetEsMember.Id)),
-                AllowDrop = true
-            });
-            TabShop.SelectedIndex = nextTab;
+            //var nextTab = TabShop.Items.Add(new TabItem
+            //{
+            //    Header = "Գույքագրում",
+            //    Content = new StockTakingUctrl(new StockTakeViewModel(stockTake, ApplicationManager.Instance.GetEsMember.Id)),
+            //    AllowDrop = true
+            //});
+            //TabShop.SelectedIndex = nextTab;
         }
         private void MiViewLastStockTaking_OnClick(object sender, EventArgs e)
         {
@@ -740,13 +740,13 @@ namespace ES.Market
                 MessageBox.Show("Տվյալ ժամանակահատվածում հաշվառում չի իրականացվել։", "Թերի տվյալներ", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            var nextTab = TabShop.Items.Add(new TabItem
-            {
-                Header = "Գույքագրում",
-                Content = new StockTakingUctrl(new StockTakeViewModel(stockTaking, ApplicationManager.Instance.GetEsMember.Id)),
-                AllowDrop = true
-            });
-            TabShop.SelectedIndex = nextTab;
+            //var nextTab = TabShop.Items.Add(new TabItem
+            //{
+            //    Header = "Գույքագրում",
+            //    Content = new StockTakingUctrl(new StockTakeViewModel(stockTaking, ApplicationManager.Instance.GetEsMember.Id)),
+            //    AllowDrop = true
+            //});
+            //TabShop.SelectedIndex = nextTab;
         }
         #endregion
 

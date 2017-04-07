@@ -4,8 +4,7 @@
                     xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
                     xmlns:stockTakeings="clr-namespace:UserControls.ViewModels.StockTakeings"
                     xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
-                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                    xmlns:customControls="clr-namespace:ES.Common.CustomControls;assembly=ES.Common">
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
     <DataTemplate DataType="{x:Type stockTakeings:StockTakeViewModel}">
         <Grid>
             <Grid.InputBindings>
@@ -39,118 +38,121 @@
                     <TextBlock Text="{Binding Path=Creator.FullName}" Margin="1 0 5 0" Foreground="Blue" VerticalAlignment="Center" />
                 </StackPanel>
             </StackPanel>
-            <Grid Grid.Row="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <GroupBox Grid.Row="0" Grid.Column="0" Header="Կոդ / անվանում" FontSize="10" >
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0"  Text="{Binding Path=StockTakeItem.CodeOrBarcode, UpdateSourceTrigger=PropertyChanged}" 
+            <Border Grid.Row="1" BorderThickness="0.5" CornerRadius="3" BorderBrush="#D5DFE5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <GroupBox Grid.Row="0" Grid.Column="0" Header="Կոդ / անվանում" FontSize="10" >
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0"  Text="{Binding Path=StockTakeItem.CodeOrBarcode, UpdateSourceTrigger=PropertyChanged}" 
                                  FontSize="14" HorizontalContentAlignment="Center" TabIndex="3">
-                            <i:Interaction.Behaviors>
-                                <behaviors:FocusNextElementBehaviors />
-                            </i:Interaction.Behaviors>
-                            <TextBox.InputBindings>
-                                <KeyBinding Key="Enter" Command="{Binding GetProductItemCommand}"/>
-                            </TextBox.InputBindings>
-                            
-                        </TextBox>
-                        <TextBox Grid.Column="1"  
+                                <i:Interaction.Behaviors>
+                                    <behaviors:TextBoxBehavior IsFocusOnTextChanged="True" />
+                                </i:Interaction.Behaviors>
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Enter" Command="{Binding GetProductItemCommand}"/>
+                                </TextBox.InputBindings>
+
+                            </TextBox>
+                            <TextBox Grid.Column="1"  
                                  Text="{Binding Path=StockTakeItem.ProductDescription, UpdateSourceTrigger=PropertyChanged}" 
                                  FontSize="14" IsReadOnly="True" Margin="1 0">
-                            <TextBox.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Ընտրել ըստ անվանման" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
-                                </ContextMenu>
-                            </TextBox.ContextMenu>
-                        </TextBox>
-                    </Grid>
-                </GroupBox>
-                <GroupBox  Grid.Row="0" Grid.Column="1" Header="Հաշվառվել է" FontSize="10">
-                    <customControls:CustomCodeTextBox Text="{Binding Path=StockTakeItem.StockTakeQuantity, UpdateSourceTrigger=PropertyChanged, StringFormat='# ##0.##'}" 
-                             Margin="1 0" Width="120" FontSize="14" 
+                                <TextBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Ընտրել ըստ անվանման" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
+                                    </ContextMenu>
+                                </TextBox.ContextMenu>
+                            </TextBox>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox  Grid.Row="0" Grid.Column="1" Header="Հաշվառվել է" FontSize="10">
+                        <TextBox Text="{Binding Path=StockTakeItem.StockTakeQuantity, UpdateSourceTrigger=PropertyChanged}" 
+                             Margin="1 0" Width="120" FontSize="14"
                              VerticalAlignment="Center" TabIndex="4"
-                             HorizontalContentAlignment="Right">
-                        <customControls:CustomCodeTextBox.InputBindings>
-                            <KeyBinding Key="Enter" Command="{Binding AddStockTakingItemCommand}"/>
-                        </customControls:CustomCodeTextBox.InputBindings>
-                        <i:Interaction.Behaviors>
-                            <behaviors:FocusPreviousElementBehaviors/>
-                        </i:Interaction.Behaviors>
-                    </customControls:CustomCodeTextBox>
-                </GroupBox>
-                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-                    <TextBlock Text="Առկա է պահեստում"  VerticalAlignment="Center" Margin ="1 0"  FontSize="10"/>
-                    <TextBlock Text="{Binding Path=StockTakeItem.Quantity, StringFormat='# ##0.##'}" VerticalAlignment="Center" Foreground="Blue" />
-                </StackPanel>
-                <Button Grid.Row="2" Grid.Column="1" Content="Ավելացնել" Width ="80" Margin="1 0" 
+                             HorizontalContentAlignment="Right" IsEnabled="{Binding ElementName=AddButton, Path=IsEnabled}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding AddStockTakingItemCommand}"/>
+                            </TextBox.InputBindings>
+                            <i:Interaction.Behaviors>
+                                <behaviors:TextBoxBehavior IsFocusOnEnable="True" IsSelectTextOnFocus="True" />
+                            </i:Interaction.Behaviors>
+                        </TextBox>
+                    </GroupBox>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="3">
+                        <TextBlock Text="Առկա է պահեստում"  VerticalAlignment="Center" Margin ="1 0"  FontSize="10"/>
+                        <TextBlock Text="{Binding Path=StockTakeItem.Quantity, StringFormat='# ##0.##'}" VerticalAlignment="Center" Foreground="Blue" />
+                    </StackPanel>
+                    <Button x:Name="AddButton" Grid.Row="2" Grid.Column="1" Content="Ավելացնել" Width ="80" Margin="3" 
                         Command="{Binding AddStockTakingItemCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Right" VerticalContentAlignment="Center"/>
-                <TextBox Grid.Row="1" Grid.Column="0" Grid.RowSpan="2"
-                         Text="{Binding StockTakeItem.Description, UpdateSourceTrigger=PropertyChanged}" 
-                         VerticalAlignment="Stretch" VerticalContentAlignment="Top" TextWrapping="Wrap" AcceptsReturn="True" Margin="3 0"/>
-            </Grid>
-            <Grid Grid.Row="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <TextBox Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger = PropertyChanged}" Margin="3 5"/>
-                <extendedControls:ExtendedDataGrid x:Name="DgInvoiceItems"  Grid.Row="1" ItemsSource="{Binding StockTakeItems}"
+                    <TextBox Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Text="{Binding StockTakeItem.Description, UpdateSourceTrigger=PropertyChanged}" 
+                         VerticalAlignment="Stretch" VerticalContentAlignment="Top" TextWrapping="Wrap" AcceptsReturn="True" Height="50" Margin="3 0 3 3"/>
+                </Grid>
+            </Border>
+            <Border Grid.Row="2" BorderThickness="1" CornerRadius="3" BorderBrush="#D5DFE5" Margin="0 1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBox Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger = PropertyChanged}" Margin="3 5"/>
+                    <extendedControls:ExtendedDataGrid x:Name="DgInvoiceItems"  Grid.Row="1" ItemsSource="{Binding StockTakeItems}"
                   SelectedItem="{Binding SelectedItem}"
                   VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="18" Margin="1" >
-                    <DataGrid.Resources>
-                        <Style x:Key="CellRightAlign">
-                            <Setter Property="Control.HorizontalAlignment" Value="Right" />
-                        </Style>
-                        <ContextMenu x:Key="RowMenu">
-                            <MenuItem Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemoveStockTakingItemCommand}" 
-                              CommandParameter="{Binding StockTakingItems.Id}" 
+                        <DataGrid.Resources>
+                            <Style x:Key="CellRightAlign">
+                                <Setter Property="Control.HorizontalAlignment" Value="Right" />
+                            </Style>
+                            <ContextMenu x:Key="RowMenu">
+                                <MenuItem Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Border}}, Path=DataContext.RemoveStockTakingItemCommand}" 
+                              CommandParameter="{Binding DataContext.Id, RelativeSource={RelativeSource Self}}" 
                               Header="Հեռացնել"/>
-                        </ContextMenu>
-                    </DataGrid.Resources>
-                    <DataGrid.RowStyle>
-                        <Style TargetType="DataGridRow">
-                            <Setter Property="ContextMenu" Value="{StaticResource RowMenu}"/>
-                        </Style>
-                    </DataGrid.RowStyle>
-                    <DataGrid.Columns>
-                        <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding CodeOrBarcode}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding ProductDescription}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
-                        <DataGridTextColumn IsReadOnly="False" Header="Առկա է պահեստում" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Առկա է" Binding="{Binding Path=StockTakeQuantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Հաշվեկշիռ" Binding="{Binding Path=Balance, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Ընդամենը" Binding="{Binding Path=Amount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Գույքագրման ամսաթիվ" Binding="{Binding Path=StockTakeDate}" CellStyle="{StaticResource CellRightAlign}"/>
-                        <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Description}" />
-                    </DataGrid.Columns>
-                </extendedControls:ExtendedDataGrid>
-                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <TextBlock Text="Գումար" FontSize="10"/>
-                    <TextBlock Text="{Binding Amount, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
-                    <TextBlock Text="Պակասորդ" FontSize="10"/>
-                    <TextBlock Text="{Binding Deficit, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
-                    <TextBlock Text="Ավելցուկ" FontSize="10"/>
-                    <TextBlock Text="{Binding Surplace, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
-                    <TextBlock Text="Ընդամենը" FontSize="10"/>
-                    <TextBlock Text="{Binding Total, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
-                </StackPanel>
-                <GroupBox Grid.Row="3" Header="Նշումներ">
-                    <TextBox Text="{Binding StockTake.Description}" Height="50" TextWrapping="Wrap" AcceptsReturn="True"/>
-                </GroupBox>
-            </Grid>
+                            </ContextMenu>
+                        </DataGrid.Resources>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="ContextMenu" Value="{StaticResource RowMenu}"/>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding CodeOrBarcode}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding ProductDescription}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                            <DataGridTextColumn IsReadOnly="False" Header="Առկա է պահեստում" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Առկա է" Binding="{Binding Path=StockTakeQuantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Հաշվեկշիռ" Binding="{Binding Path=Balance, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Ընդամենը" Binding="{Binding Path=Amount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Գույքագրման ամսաթիվ" Binding="{Binding Path=StockTakeDate}" CellStyle="{StaticResource CellRightAlign}"/>
+                            <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Description}" />
+                        </DataGrid.Columns>
+                    </extendedControls:ExtendedDataGrid>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Text="Գումար" FontSize="10"/>
+                        <TextBlock Text="{Binding Amount, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                        <TextBlock Text="Պակասորդ" FontSize="10"/>
+                        <TextBlock Text="{Binding Deficit, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                        <TextBlock Text="Ավելցուկ" FontSize="10"/>
+                        <TextBlock Text="{Binding Surplace, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                        <TextBlock Text="Ընդամենը" FontSize="10"/>
+                        <TextBlock Text="{Binding Total, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                    </StackPanel>
+                    <GroupBox Grid.Row="3" Header="Նշումներ">
+                        <TextBox Text="{Binding StockTake.Description}" Height="50" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    </GroupBox>
+                </Grid>
+            </Border>
             <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 5">
                 <Button Margin="3" Content="Ներմուծել" Command="{Binding ImportInvoiceCommand}" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" TabIndex="10" />
                 <Button Margin="3" Content="Արտահանել" Command="{Binding ExportInvoiceCommand}" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" IsEnabled="False" TabIndex="10" />

@@ -187,9 +187,6 @@
     <Compile Include="Views\PurchaseUctrl.xaml.cs">
       <DependentUpon>PurchaseUctrl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\StockTakingUctrl.xaml.cs">
-      <DependentUpon>StockTakingUctrl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\UctrlMoveingInvoice.xaml.cs">
       <DependentUpon>UctrlMoveingInvoice.xaml</DependentUpon>
     </Compile>
@@ -379,10 +376,6 @@
     <Page Include="Views\Settings\ManageUsersTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\StockTakingUctrl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Tools\CategoriesTools.xaml">
       <SubType>Designer</SubType>

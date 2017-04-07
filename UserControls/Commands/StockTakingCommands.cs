@@ -4,29 +4,6 @@ using UserControls.ViewModels.StockTakeings;
 
 namespace UserControls.Commands
 {
-    #region Add StoCkTakingItem command
-    class AddStoCkTakingItemCommand : ICommand
-    {
-        private readonly StockTakeViewModel _viewModel;
-        public AddStoCkTakingItemCommand(StockTakeViewModel viewModel)
-        {
-            _viewModel = viewModel;
-        }
-        public bool CanExecute(object param)
-        {
-            return _viewModel.CanAddStockTakingItem();
-        }
-        public void Execute(object param)
-        {
-            _viewModel.AddStockTakingItem();
-        }
-        public event EventHandler CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
-    }
-    #endregion
     #region Remove StockTakingItem command
 
     public class RemoveStockTakingItemCommand : ICommand

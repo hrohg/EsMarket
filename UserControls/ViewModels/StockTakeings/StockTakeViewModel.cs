@@ -41,15 +41,8 @@ namespace UserControls.ViewModels.StockTakeings
         #endregion
 
         #region Public properties
-        public string Title { get; set; }
-        public bool IsLoading
-        {
-            get;
-            set;
-        }
-        public string Description { get; set; }
-        public bool IsModified { get; set; }
-        public StockTakeModel StockTake { get { return _stockTake; } set { _stockTake = value; OnPropertyChanged("Title"); } }
+        
+        public StockTakeModel StockTake { get { return _stockTake; } set { _stockTake = value; RaisePropertyChanged("Title"); } }
         public ObservableCollection<StockTakeItemsModel> StockTakeItems
         {
             get { return new ObservableCollection<StockTakeItemsModel>(_stockTakeItems.Where(s => (s.CodeOrBarcode + s.ProductDescription).ToLower().Contains(Filter != null ? Filter.ToLower() : string.Empty)).ToList()); }
@@ -57,8 +50,13 @@ namespace UserControls.ViewModels.StockTakeings
         }
         public StockModel Stock { get { return _stock; } set { _stock = value; } }
         public EsUserModel Creator { get { return _creator; } set { _creator = value; } }
-        public ProductModel Product { get { return _product; } set { _product = value; OnPropertyChanged(ProductProperty); } }
-        public StockTakeItemsModel StockTakeItem { get { return _stockTakeItem; } set { _stockTakeItem = value; OnPropertyChanged(StockTakeItemProperty); } }
+        public ProductModel Product { get { return _product; } set { _product = value; RaisePropertyChanged(ProductProperty); } }
+
+        public StockTakeItemsModel StockTakeItem
+        {
+            get { return _stockTakeItem; } 
+            set { _stockTakeItem = value; RaisePropertyChanged(StockTakeItemProperty); }
+        }
         public StockTakeItemsModel SelectedItem { get; set; }
         public decimal Count { get { return StockTakeItems.Sum(s => s.Quantity); } }
         public decimal Amount { get { return StockTakeItems.Sum(s => (s.Price ?? 0) * s.StockTakeQuantity); } }
@@ -113,7 +111,6 @@ namespace UserControls.ViewModels.StockTakeings
         private void SetCommands()
         {
             GetProductItemCommand = new RelayCommand(OnGetProductItem, CanGetProductItem);
-            AddStockTakingItemCommand = new AddStoCkTakingItemCommand(this);
             RemoveStockTakingItemCommand = new RemoveStockTakingItemCommand(this);
             ExportToExcelCommand = new ExportToExcelCommand(this);
             ViewDetileCommand = new ViewDetileCommand(this);
@@ -164,7 +161,7 @@ namespace UserControls.ViewModels.StockTakeings
                 StockTakeItem.Price = null;
                 StockTakeItem.StockTakeQuantity = 0;
             }
-            OnPropertyChanged(StockTakeItemProperty);
+            RaisePropertyChanged(StockTakeItemProperty);
         }
         protected override void OnClose(object o)
         {
@@ -212,7 +209,7 @@ namespace UserControls.ViewModels.StockTakeings
             var ui = new UIListView(detile);
             ui.Show();
         }
-        
+
         #endregion
 
         #region Public methods
@@ -228,34 +225,7 @@ namespace UserControls.ViewModels.StockTakeings
         {
             SetStockTakeItem(new ProductsManager().GetProduct(id, _memberId));
         }
-        public bool CanAddStockTakingItem()
-        {
-            return StockTakeItem != null && StockTakeItem.StockTakeQuantity != null && StockTake.ClosedDate == null && !string.IsNullOrEmpty(StockTakeItem.CodeOrBarcode);
-        }
-        public void AddStockTakingItem()
-        {
-            if (!CanAddStockTakingItem()) { return; }
-            StockTakeItem.StockTakeDate = DateTime.Now;
-            var exItem = StockTakeManager.GetStockTakeItem(StockTake.Id, StockTakeItem.CodeOrBarcode, _memberId);
-            if (exItem != null)
-            {
-                if (MessageBox.Show("Տվյալ կոդով ապրանք արդեն գույքագրվել է " + exItem.StockTakeQuantity + " հատ։ \n Ցանկանու՞մ եք ավելացնել ևս " + StockTakeItem.StockTakeQuantity + "-ով։",
-                    "Կրկնակի գույքագրում", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) { return; }
-                StockTakeItem.StockTakeQuantity += exItem.StockTakeQuantity;
-            }
-            if (!StockTakeManager.EditStockTakeItems(StockTakeItem, StockTake.StockId, _memberId)) { return; }
-            StockTakeItem = new StockTakeItemsModel(StockTake.Id);
-            OnPropertyChanged(StockTakeItemProperty);
-            StockTakeItems = new ObservableCollection<StockTakeItemsModel>(StockTakeManager.GetStockTakeItems(StockTake.Id, _memberId));
-            OnPropertyChanged(StockTakeItemsProperty);
 
-            OnPropertyChanged("Count");
-            OnPropertyChanged("Amount");
-            OnPropertyChanged("Surplace");
-            OnPropertyChanged("Deficit");
-            OnPropertyChanged("Total");
-
-        }
         public bool CanRemoveStockTakingItem()
         {
             return SelectedItem != null && StockTake.ClosedDate == null && StockTakeItems.SingleOrDefault(s => s.Id == SelectedItem.Id) != null;
@@ -269,9 +239,9 @@ namespace UserControls.ViewModels.StockTakeings
             if (!StockTakeManager.RemoveStoCkakeItem(SelectedItem.Id, _memberId)) { return; }
             //StockTakeItems.Remove(StockTakeItems.SingleOrDefault(s=>s.Id==StockTakeItem.Id));
             StockTakeItem = new StockTakeItemsModel(StockTake.Id);
-            OnPropertyChanged(StockTakeItemProperty);
+            RaisePropertyChanged(StockTakeItemProperty);
             StockTakeItems = new ObservableCollection<StockTakeItemsModel>(StockTakeManager.GetStockTakeItems(StockTake.Id, _memberId));
-            OnPropertyChanged(StockTakeItemsProperty);
+            RaisePropertyChanged(StockTakeItemsProperty);
         }
         public bool CanExportToExcel()
         {
@@ -312,7 +282,7 @@ namespace UserControls.ViewModels.StockTakeings
                     case MessageBoxResult.Yes:
                         SetStockTakeItem(product);
                         StockTakeItem.StockTakeQuantity = 0;
-                        AddStockTakingItem();
+                        OnAddStockTakingItem(null);
                         break;
                     default:
                         break;
@@ -323,7 +293,43 @@ namespace UserControls.ViewModels.StockTakeings
 
         #region Commands
         public ICommand GetProductItemCommand { get; private set; }
-        public ICommand AddStockTakingItemCommand { get; private set; }
+        #region Add stock take item
+
+        private ICommand _addStockTakingItemCommand;
+        public ICommand AddStockTakingItemCommand { get
+        {
+            return _addStockTakingItemCommand ?? (_addStockTakingItemCommand = new RelayCommand(OnAddStockTakingItem, CanAddStockTakingItem));
+        }
+        }
+        private bool CanAddStockTakingItem(object o)
+        {
+            return StockTake.ClosedDate == null && StockTakeItem != null && StockTakeItem.ProductId!=null && !string.IsNullOrEmpty(StockTakeItem.CodeOrBarcode);
+        }
+        public void OnAddStockTakingItem(object o)
+        {
+            if (!CanAddStockTakingItem(o)) { return; }
+            StockTakeItem.StockTakeDate = DateTime.Now;
+            var exItem = StockTakeManager.GetStockTakeItem(StockTake.Id, StockTakeItem.CodeOrBarcode, _memberId);
+            if (exItem != null)
+            {
+                if (MessageBox.Show("Տվյալ կոդով ապրանք արդեն գույքագրվել է " + exItem.StockTakeQuantity + " հատ։ \n Ցանկանու՞մ եք ավելացնել ևս " + StockTakeItem.StockTakeQuantity + "-ով։",
+                    "Կրկնակի գույքագրում", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) { return; }
+                StockTakeItem.StockTakeQuantity += exItem.StockTakeQuantity;
+            }
+            if (!StockTakeManager.EditStockTakeItems(StockTakeItem, StockTake.StockId, _memberId)) { return; }
+            StockTakeItem = new StockTakeItemsModel(StockTake.Id);
+            RaisePropertyChanged(StockTakeItemProperty);
+            StockTakeItems = new ObservableCollection<StockTakeItemsModel>(StockTakeManager.GetStockTakeItems(StockTake.Id, _memberId));
+            RaisePropertyChanged(StockTakeItemsProperty);
+
+            RaisePropertyChanged("Count");
+            RaisePropertyChanged("Amount");
+            RaisePropertyChanged("Surplace");
+            RaisePropertyChanged("Deficit");
+            RaisePropertyChanged("Total");
+
+        }
+        #endregion Add stock take item
         public ICommand RemoveStockTakingItemCommand { get; private set; }
         public ICommand ExportToExcelCommand { get; private set; }
         public ICommand ViewDetileCommand { get; private set; }
@@ -331,19 +337,6 @@ namespace UserControls.ViewModels.StockTakeings
         public ICommand GetProductCommand { get { return new RelayCommand(OnGetProduct); } }
         public ICommand ViewDetilesCommand { get; private set; }
         #endregion
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-        #endregion
-
 
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
@@ -7,12 +8,36 @@ namespace ES.Common.Behaviors
 {
     public class TextBoxBehavior : Behavior<TextBox>
     {
+        private bool _isSelectedAll;
+
         public static readonly DependencyProperty IsLeaveOnEnterProperty = DependencyProperty.Register("IsLeaveOnEnter", typeof(bool), typeof(TextBoxBehavior), new PropertyMetadata(IsLeaveOnEnterChanged));
         public bool IsLeaveOnEnter
         {
             get { return (bool)GetValue(IsLeaveOnEnterProperty); }
             set { SetValue(IsLeaveOnEnterProperty, value); }
         }
+
+        public static readonly DependencyProperty IsSelectTextOnFocusProperty = DependencyProperty.Register("IsSelectTextOnFocus", typeof(bool), typeof(TextBoxBehavior), new PropertyMetadata(false));
+        public bool IsSelectTextOnFocus
+        {
+            get { return (bool)GetValue(IsSelectTextOnFocusProperty); }
+            set { SetValue(IsSelectTextOnFocusProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsFocusOnEnableProperty = DependencyProperty.Register("IsFocusOnEnable", typeof(bool), typeof(TextBoxBehavior), new PropertyMetadata(false));
+        public bool IsFocusOnEnable
+        {
+            get { return (bool)GetValue(IsFocusOnEnableProperty); }
+            set { SetValue(IsFocusOnEnableProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsFocusOnTextChangedProperty = DependencyProperty.Register("IsFocusOnTextChanged", typeof(bool), typeof(TextBoxBehavior), new PropertyMetadata(false));
+        public bool IsFocusOnTextChanged
+        {
+            get { return (bool)GetValue(IsFocusOnTextChangedProperty); }
+            set { SetValue(IsFocusOnTextChangedProperty, value); }
+        }
+
         public static readonly DependencyProperty CaretIndexProperty = DependencyProperty.RegisterAttached("CaretIndex", typeof(int), typeof(TextBoxBehavior), new PropertyMetadata(0, OnCaretIndexChanged));
         public int CaretIndex
         {
@@ -35,13 +60,44 @@ namespace ES.Common.Behaviors
         protected override void OnAttached()
         {
             if (IsLeaveOnEnter) AssociatedObject.PreviewKeyUp += OnPreviewKeyUp;
+            if (IsSelectTextOnFocus)
+            {
+                AssociatedObject.GotFocus += GotFocus;
+                AssociatedObject.PreviewMouseUp += OnPreviewMouseUp;
+            }
+            if (IsFocusOnEnable) AssociatedObject.IsEnabledChanged += OnEnabledChanged;
+            if (IsFocusOnTextChanged) AssociatedObject.TextChanged += TextChanged;
         }
-
+        
         protected override void OnDetaching()
         {
             if (IsLeaveOnEnter) AssociatedObject.PreviewKeyUp -= OnPreviewKeyUp;
+            if (IsSelectTextOnFocus)
+            {
+                AssociatedObject.GotFocus -= GotFocus;
+                AssociatedObject.PreviewMouseUp -= OnPreviewMouseUp;
+            }
+            if (IsFocusOnEnable) AssociatedObject.IsEnabledChanged -= OnEnabledChanged;
+            if (IsFocusOnTextChanged) AssociatedObject.TextChanged -= TextChanged;
+        }
+        
+        private void TextChanged(object sender, TextChangedEventArgs e)
+        {
+            OnFocus(sender as TextBox);
+        }
+        private void OnEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            OnFocus(textBox);
         }
 
+        private void OnFocus(TextBox textBox)
+        {
+            if (textBox != null && textBox.IsEnabled)
+            {
+                textBox.Focus();
+            }
+        }
         private static void IsLeaveOnEnterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var behavior = d as TextBoxBehavior;
@@ -103,5 +159,28 @@ namespace ES.Common.Behaviors
 
             var a = AssociatedObject.MoveFocus(request);
         }
+
+        private void GotFocus(object sender, RoutedEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            if (textBox != null)
+            {
+                textBox.SelectAll();
+                _isSelectedAll = true;
+            }
+        }
+        private void OnPreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            if (textBox != null && _isSelectedAll)
+            {
+                _isSelectedAll = false;
+                textBox.SelectAll();
+                textBox.ReleaseMouseCapture();
+
+            }
+        }
+
+
     }
 }
