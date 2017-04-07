@@ -16,7 +16,7 @@ namespace ES.Common.Behaviors
         {
             if (e.Key != Key.Enter) return;
             e.Handled = true;
-            var request = new TraversalRequest(FocusNavigationDirection.Next) { Wrapped = false };
+            var request = new TraversalRequest(FocusNavigationDirection.Previous) { Wrapped = false };
             AssociatedObject.MoveFocus(request);
 
         }
@@ -26,5 +26,29 @@ namespace ES.Common.Behaviors
             AssociatedObject.KeyDown -= AssociatedObjectLostKeyDown;
             base.OnDetaching();
         }
+
+        //public class FocusPreviousElementBehaviors : Behavior<UIElement>
+        //{
+        //    protected override void OnAttached()
+        //    {
+        //        base.OnAttached();
+        //        AssociatedObject.KeyDown += AssociatedObjectLostKeyDown;
+        //    }
+
+        //    private void AssociatedObjectLostKeyDown(object sender, KeyEventArgs e)
+        //    {
+        //        if (e.Key != Key.Enter) return;
+        //        e.Handled = true;
+        //        var request = new TraversalRequest(FocusNavigationDirection.Next) { Wrapped = false };
+        //        AssociatedObject.MoveFocus(request);
+
+        //    }
+
+        //    protected override void OnDetaching()
+        //    {
+        //        AssociatedObject.KeyDown -= AssociatedObjectLostKeyDown;
+        //        base.OnDetaching();
+        //    }
+        //}
     }
 }

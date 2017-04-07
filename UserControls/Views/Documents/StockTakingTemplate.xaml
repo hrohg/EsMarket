@@ -4,7 +4,8 @@
                     xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
                     xmlns:stockTakeings="clr-namespace:UserControls.ViewModels.StockTakeings"
                     xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
-                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                    xmlns:customControls="clr-namespace:ES.Common.CustomControls;assembly=ES.Common">
     <DataTemplate DataType="{x:Type stockTakeings:StockTakeViewModel}">
         <Grid>
             <Grid.InputBindings>
@@ -56,12 +57,13 @@
                         </Grid.ColumnDefinitions>
                         <TextBox Grid.Column="0"  Text="{Binding Path=StockTakeItem.CodeOrBarcode, UpdateSourceTrigger=PropertyChanged}" 
                                  FontSize="14" HorizontalContentAlignment="Center" TabIndex="3">
-                            <TextBox.InputBindings>
-                                <KeyBinding Key="Enter" Command="{Binding GetProductItemCommand}"/>
-                            </TextBox.InputBindings>
                             <i:Interaction.Behaviors>
                                 <behaviors:FocusNextElementBehaviors />
                             </i:Interaction.Behaviors>
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding GetProductItemCommand}"/>
+                            </TextBox.InputBindings>
+                            
                         </TextBox>
                         <TextBox Grid.Column="1"  
                                  Text="{Binding Path=StockTakeItem.ProductDescription, UpdateSourceTrigger=PropertyChanged}" 
@@ -75,28 +77,27 @@
                     </Grid>
                 </GroupBox>
                 <GroupBox  Grid.Row="0" Grid.Column="1" Header="Հաշվառվել է" FontSize="10">
-                    <TextBox Text="{Binding Path=StockTakeItem.StockTakeQuantity, UpdateSourceTrigger=PropertyChanged, StringFormat='# ##0.##'}" 
+                    <customControls:CustomCodeTextBox Text="{Binding Path=StockTakeItem.StockTakeQuantity, UpdateSourceTrigger=PropertyChanged, StringFormat='# ##0.##'}" 
                              Margin="1 0" Width="120" FontSize="14" 
                              VerticalAlignment="Center" TabIndex="4"
                              HorizontalContentAlignment="Right">
-                        <TextBox.InputBindings>
+                        <customControls:CustomCodeTextBox.InputBindings>
                             <KeyBinding Key="Enter" Command="{Binding AddStockTakingItemCommand}"/>
-                        </TextBox.InputBindings>
+                        </customControls:CustomCodeTextBox.InputBindings>
                         <i:Interaction.Behaviors>
                             <behaviors:FocusPreviousElementBehaviors/>
                         </i:Interaction.Behaviors>
-                    </TextBox>
+                    </customControls:CustomCodeTextBox>
                 </GroupBox>
                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
                     <TextBlock Text="Առկա է պահեստում"  VerticalAlignment="Center" Margin ="1 0"  FontSize="10"/>
                     <TextBlock Text="{Binding Path=StockTakeItem.Quantity, StringFormat='# ##0.##'}" VerticalAlignment="Center" Foreground="Blue" />
                 </StackPanel>
                 <Button Grid.Row="2" Grid.Column="1" Content="Ավելացնել" Width ="80" Margin="1 0" 
-                        Command="{Binding AddStockTakingItemCommand}" 
-                        VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+                        Command="{Binding AddStockTakingItemCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Right" VerticalContentAlignment="Center"/>
                 <TextBox Grid.Row="1" Grid.Column="0" Grid.RowSpan="2"
                          Text="{Binding StockTakeItem.Description, UpdateSourceTrigger=PropertyChanged}" 
-                         VerticalAlignment="Stretch" VerticalContentAlignment="Top" TextWrapping="Wrap" AcceptsReturn="True"/>
+                         VerticalAlignment="Stretch" VerticalContentAlignment="Top" TextWrapping="Wrap" AcceptsReturn="True" Margin="3 0"/>
             </Grid>
             <Grid Grid.Row="2">
                 <Grid.RowDefinitions>
@@ -105,7 +106,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBox Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger = PropertyChanged}" Margin="0 5"/>
+                <TextBox Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger = PropertyChanged}" Margin="3 5"/>
                 <extendedControls:ExtendedDataGrid x:Name="DgInvoiceItems"  Grid.Row="1" ItemsSource="{Binding StockTakeItems}"
                   SelectedItem="{Binding SelectedItem}"
                   VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="18" Margin="1" >
@@ -150,7 +151,7 @@
                     <TextBox Text="{Binding StockTake.Description}" Height="50" TextWrapping="Wrap" AcceptsReturn="True"/>
                 </GroupBox>
             </Grid>
-            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 10">
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 5">
                 <Button Margin="3" Content="Ներմուծել" Command="{Binding ImportInvoiceCommand}" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" TabIndex="10" />
                 <Button Margin="3" Content="Արտահանել" Command="{Binding ExportInvoiceCommand}" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" IsEnabled="False" TabIndex="10" />
                 <Button Margin="3" Command="{Binding PrintInvoiceCommand}" Content="Տպել Ctrl+P" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" IsEnabled="False" TabIndex="10" />

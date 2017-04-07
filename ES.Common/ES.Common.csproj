@@ -103,6 +103,7 @@
     <Compile Include="Controls\ExtendedLayoutRoot.cs" />
     <Compile Include="Controls\PanesStyleSelector.cs" />
     <Compile Include="Controls\PanesTemplateSelector.cs" />
+    <Compile Include="CustomControls\CustomTextBox.cs" />
     <Compile Include="Enumerations\Enums.cs" />
     <Compile Include="Enumerations\ProductEnums.cs" />
     <Compile Include="Enumerations\Scale.cs" />
@@ -189,6 +190,7 @@
   <ItemGroup>
     <None Include="DefaultLayout.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
