@@ -226,7 +226,6 @@ namespace ES.Market.ViewModels
             //Admin
             ImportProductsCommand = new RelayCommand(OnImportProducts);
             ViewInternalWayBillCommands = new RelayCommand<ViewInvoicesEnum>(OnViewViewInternalWayBillCommands, CanViewViewInternalWayBillCommands);
-            ViewPackingListForSallerCommand = new RelayCommand(OnViewPackingListForSaller);
 
             LogOutCommand = new RelayCommand(OnLogoff);
             ChangePasswordCommand = new RelayCommand(OnChangePassword);
@@ -293,7 +292,7 @@ namespace ES.Market.ViewModels
                 exDocument.IsActive = true;
                 exDocument.IsSelected = true;
                 exDocument.OnActiveTabChangeEvent += OnActiveTabChange;
-                
+
                 return;
             }
             AddDocument(vm);
@@ -322,7 +321,7 @@ namespace ES.Market.ViewModels
             {
                 ((DocumentViewModel)vm).OnActiveTabChangeEvent -= OnActiveTabChange;
             }
-            
+
             Documents.Remove((DocumentViewModel)vm);
             if (vm is ProductManagerViewModel)
             {
@@ -1693,7 +1692,17 @@ namespace ES.Market.ViewModels
         #region View
 
         public ICommand ViewInternalWayBillCommands { get; private set; }
-        public ICommand ViewPackingListForSallerCommand { get; private set; }
+
+        #region View Packing List For Saller Command
+        private ICommand _viewPackingListForSallerCommand;
+        public ICommand ViewPackingListForSallerCommand
+        {
+            get
+            {
+                return _viewPackingListForSallerCommand ?? (_viewPackingListForSallerCommand = new RelayCommand(OnViewPackingListForSaller));
+            }
+        }
+        #endregion View Packing List For Saller Command
 
         #endregion View
 
@@ -1794,7 +1803,7 @@ namespace ES.Market.ViewModels
             ToolsViewModel tool = null;
             switch (toolsEnum)
             {
-                    
+
                 case ToolsEnum.Log:
                     tool = new LogViewModel();
                     AddTools<LogViewModel>(tool, false);
@@ -1811,8 +1820,8 @@ namespace ES.Market.ViewModels
                 default:
                     throw new ArgumentOutOfRangeException("toolsEnum", toolsEnum, null);
             }
-            
-            
+
+
         }
 
         private void OnSetCategory(EsCategoriesModel category)

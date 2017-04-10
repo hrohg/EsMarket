@@ -83,7 +83,7 @@ namespace UserControls.ViewModels.Invoices
             }
         }
 
-        public bool DenayChangePrice { get { return (_roles.FirstOrDefault(s => s.RoleName == "Manager" || s.RoleName == "Director") == null); } }
+        public bool DenayChangePrice { get { return (_roles.FirstOrDefault(s => s.RoleName == "Manager" || s.RoleName == "Director") == null) || InvoiceItem.Product==null; } }
 
         public InvoiceItemsModel InvoiceItem
         {
@@ -229,65 +229,11 @@ namespace UserControls.ViewModels.Invoices
             }
             if (Partner == null) { Partner = partners.FirstOrDefault(); }
         }
-        public virtual decimal? GetPartnerPrice(EsProductModel product)
+        protected virtual decimal GetPartnerPrice(EsProductModel product)
         {
-            if (product == null)
-            {
-                return 0;
-            }
-            if (Partner == null)
-            {
-                return product.Price;
-            }
-            decimal price = 0;
-            switch (Invoice.InvoiceTypeId)
-            {
-                case (long)InvoiceType.PurchaseInvoice:
-                    return product.CostPrice;
-                    break;
-                case (long)InvoiceType.SaleInvoice:
-                    switch (Partner.PartnersTypeId)
-                    {
-                        case (long)PartnerType.Dealer:
-                            price = HgConvert.ToDecimal(product.DealerPrice);
-                            if (HgConvert.ToDecimal(product.DealerDiscount) != 0)
-                                price = Math.Max(HgConvert.ToDecimal(product.DealerPrice),
-                                    HgConvert.ToDecimal(product.Price * (1 - product.DealerDiscount / 100)));
-                            if (HgConvert.ToDecimal(Partner.Discount) != 0)
-                            {
-                                price = Math.Max(HgConvert.ToDecimal(product.DealerPrice),
-                                    HgConvert.ToDecimal(product.Price) * (1 - HgConvert.ToDecimal(Partner.Discount) / 100));
-                            }
-                            if (price == 0) price = HgConvert.ToDecimal(product.Price);
-                            break;
-                        case (long)PartnerType.Customer:
-                        case (long)PartnerType.Provider:
-                            price = HgConvert.ToDecimal(product.Price);
-                            if (HgConvert.ToDecimal(product.Discount) != 0)
-                            {
-                                price = Math.Max(HgConvert.ToDecimal(product.DealerPrice),
-                                    HgConvert.ToDecimal(product.Price * (1 - product.Discount / 100)));
-                            }
-                            if (HgConvert.ToDecimal(Partner.Discount) != 0)
-                            {
-                                price = Math.Max(HgConvert.ToDecimal(product.DealerPrice),
-                                    HgConvert.ToDecimal(product.Price) * (1 - HgConvert.ToDecimal(Partner.Discount) / 100));
-                            }
-                            break;
-                        default:
-                            price = HgConvert.ToDecimal(product.Price);
-                            if (HgConvert.ToDecimal(Partner.Discount) != 0)
-                            {
-                                price = Math.Max(HgConvert.ToDecimal(product.DealerPrice),
-                                    HgConvert.ToDecimal(product.Price) * (1 - HgConvert.ToDecimal(product.Discount) / 100));
-                            }
-                            break;
-                    }
-                    return Math.Max(HgConvert.ToDecimal(product.DealerPrice), price);
-                    break;
-                default:
-                    return product.Price;
-            }
+            return product!=null?
+                (product.Price ?? 0) * (product.Discount > 0 ? 
+                1 - (product.Discount ?? 0) / 100 : 1 - (Partner.Discount ?? 0) / 100):0;
         }
         protected virtual bool SetQuantity(bool addSingle)
         {
@@ -482,19 +428,14 @@ namespace UserControls.ViewModels.Invoices
                 Code = productItem.Product.Code,
                 Description = productItem.Product.Description,
                 Mu = productItem.Product.Mu,
-                Price = productItem.Product.Price,
+                Price = GetPartnerPrice(productItem.Product),
                 Discount = productItem.Product.Discount,
                 Note = productItem.Product.Note
             };
-            SetInvoiceItemPrice();
             RaisePropertyChanged(IsExpiringProperty);
             RaisePropertyChanged("InvoiceItem");
         }
 
-        protected virtual void SetInvoiceItemPrice()
-        {
-            if (InvoiceItem.Product != null) InvoiceItem.Price = InvoiceItem.Product.Price;
-        }
         public void OnSetProductItem(ProductItemModel productItem)
         {
             CreateNewInvoiceItem(productItem);
@@ -526,11 +467,10 @@ namespace UserControls.ViewModels.Invoices
                 InvoiceItem.Description = product.Description;
                 InvoiceItem.Mu = product.Mu;
                 InvoiceItem.Quantity = count;
-                InvoiceItem.Price = product.CostPrice;
+                InvoiceItem.Price = GetPartnerPrice(product);
                 InvoiceItem.Discount = product.Discount;
                 InvoiceItem.Note = product.Note;
             }
-            SetInvoiceItemPrice();
             RaisePropertyChanged("InvoiceItem");
             RaisePropertyChanged(IsExpiringProperty);
         }

@@ -16,25 +16,13 @@ namespace UserControls.Views
     /// </summary>
     public partial class PurchaseUctrl : UserControl
     {
-        #region Properties
-        public const string Description = "Գնում -";
-        private readonly EsMemberModel _member;
-        private readonly EsUserModel _user;
-        private PurchaseInvoiceViewModel _viewModel;
-        #endregion
         public PurchaseUctrl()
         {
             InitializeComponent();
         }
         public PurchaseUctrl(EsUserModel user, EsMemberModel member, PurchaseInvoiceViewModel viewModel):this()
         {
-            _member = member;
-            _user = user;
-            if (_member == null || _user == null)
-            {
-                return;
-            }
-            DataContext = _viewModel = viewModel ?? new PurchaseInvoiceViewModel(user, _member);
+            DataContext = viewModel ?? new PurchaseInvoiceViewModel(user, member);
             //if( viewModel==null || viewModel.Partner==null) _viewModel.Partner = MembersManager.GetDefaultParner(_member.Id, (long)MembersManager.PartnersTypes.Provider);
         }
         

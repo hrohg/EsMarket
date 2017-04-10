@@ -6,6 +6,8 @@
              xmlns:filter="clr-namespace:Shared.Helpers;assembly=Shared"
              xmlns:views="clr-namespace:UserControls.Views"
              xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
 
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -65,6 +67,9 @@
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding Path=InvoiceItem.Code}"/>
                             </TextBox.InputBindings>
+                            <i:Interaction.Behaviors>
+                                <behaviors:TextBoxBehavior IsFocusOnLoad="True" IsSelectTextOnFocus="True" />
+                            </i:Interaction.Behaviors>
                         </TextBox>
                         <Label Grid.Row="0" Content="Անվանում" VerticalAlignment="Center"  HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="150,0,0,0" FontSize="12"/>
                         <TextBox Grid.Row="1" Name="TxtDescription" Text="{Binding Path=InvoiceItem.Description, UpdateSourceTrigger=PropertyChanged}"

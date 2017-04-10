@@ -12,31 +12,31 @@
             <RowDefinition />
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-<StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
-            <Label Content="Ապրանքագիր" FontWeight="Bold"/>
-    <Label Content="{Binding Invoice.InvoiceNumber}" Foreground="Blue"/>
-            <Label Content="Ամսաթիվ" FontWeight="Bold" Margin="10,0,0,0"/>
-    <Label Content="{Binding Invoice.ApproveDate}" Foreground="Blue"/>
+        <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
+            <TextBlock Text="Ապրանքագիր" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Invoice.InvoiceNumber}" Foreground="Blue"/>
+            <TextBlock Text="Ամսաթիվ" FontWeight="Bold" Margin="10,0,0,0"/>
+            <TextBlock Text="{Binding Invoice.ApproveDate}" Foreground="Blue"/>
         </StackPanel>
         <DataGrid Grid.Row="1" CanUserAddRows="False"  CanUserSortColumns="True" CanUserDeleteRows="False" IsReadOnly="True" 
                   ItemsSource="{Binding InvoiceItems, Mode=TwoWay}" 
                   AutoGenerateColumns="False">
-        <DataGrid.Resources>
-            <Style x:Key="CellRightAlign">
-                <Setter Property="Control.HorizontalAlignment" Value="Right" />
-            </Style>
-        </DataGrid.Resources>
-        
-        <DataGrid.Columns>
-            <DataGridTextColumn IsReadOnly="True" Header="Բրենդ" Binding="{Binding Product.Brand.BrandName}"/>
-        <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" CanUserSort="True" />
-        <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
-        <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
-        <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" CellStyle="{StaticResource CellRightAlign}" />
-        <DataGridTextColumn IsReadOnly="False" Header="Վաճառքի գին" Binding="{Binding Path=Product.Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" CellStyle="{StaticResource CellRightAlign}" />
-        <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat=N1}" CellStyle="{StaticResource CellRightAlign}"/>
-        <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
-        </DataGrid.Columns>
+            <DataGrid.Resources>
+                <Style x:Key="CellRightAlign">
+                    <Setter Property="Control.HorizontalAlignment" Value="Right" />
+                </Style>
+            </DataGrid.Resources>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn IsReadOnly="True" Header="Բրենդ" Binding="{Binding Product.Brand.BrandName}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" CanUserSort="True" />
+                <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
+                <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" CellStyle="{StaticResource CellRightAlign}" />
+                <DataGridTextColumn IsReadOnly="False" Header="Վաճառքի գին" Binding="{Binding Path=Product.Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" CellStyle="{StaticResource CellRightAlign}" />
+                <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat=N1}" CellStyle="{StaticResource CellRightAlign}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
+            </DataGrid.Columns>
         </DataGrid>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
             <Button Command="{Binding ExportInvoiceCommand, ConverterParameter=True}" CommandParameter="True" Content="Արտահանել" Width="100"/>

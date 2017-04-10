@@ -10,6 +10,13 @@ namespace ES.Common.Behaviors
     {
         private bool _isSelectedAll;
 
+        public static readonly DependencyProperty IsFocusOnLoadProperty = DependencyProperty.Register("IsFocusOnLoad", typeof(bool), typeof(TextBoxBehavior), new PropertyMetadata(false));
+        public bool IsFocusOnLoad
+        {
+            get { return (bool)GetValue(IsFocusOnLoadProperty); }
+            set { SetValue(IsFocusOnLoadProperty, value); }
+        }
+
         public static readonly DependencyProperty IsLeaveOnEnterProperty = DependencyProperty.Register("IsLeaveOnEnter", typeof(bool), typeof(TextBoxBehavior), new PropertyMetadata(IsLeaveOnEnterChanged));
         public bool IsLeaveOnEnter
         {
@@ -38,6 +45,11 @@ namespace ES.Common.Behaviors
             set { SetValue(IsFocusOnTextChangedProperty, value); }
         }
 
+
+
+
+
+
         public static readonly DependencyProperty CaretIndexProperty = DependencyProperty.RegisterAttached("CaretIndex", typeof(int), typeof(TextBoxBehavior), new PropertyMetadata(0, OnCaretIndexChanged));
         public int CaretIndex
         {
@@ -59,6 +71,7 @@ namespace ES.Common.Behaviors
 
         protected override void OnAttached()
         {
+            if (IsFocusOnLoad) AssociatedObject.Loaded += OnLoaded;
             if (IsLeaveOnEnter) AssociatedObject.PreviewKeyUp += OnPreviewKeyUp;
             if (IsSelectTextOnFocus)
             {
@@ -71,6 +84,7 @@ namespace ES.Common.Behaviors
         
         protected override void OnDetaching()
         {
+            if (IsFocusOnLoad) AssociatedObject.Loaded -= OnLoaded;
             if (IsLeaveOnEnter) AssociatedObject.PreviewKeyUp -= OnPreviewKeyUp;
             if (IsSelectTextOnFocus)
             {
@@ -80,7 +94,12 @@ namespace ES.Common.Behaviors
             if (IsFocusOnEnable) AssociatedObject.IsEnabledChanged -= OnEnabledChanged;
             if (IsFocusOnTextChanged) AssociatedObject.TextChanged -= TextChanged;
         }
-        
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            OnFocus(sender as TextBox);
+        }
+
         private void TextChanged(object sender, TextChangedEventArgs e)
         {
             OnFocus(sender as TextBox);

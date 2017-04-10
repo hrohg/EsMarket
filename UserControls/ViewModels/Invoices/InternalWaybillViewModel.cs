@@ -84,6 +84,11 @@ namespace UserControls.ViewModels.Invoices
             base.OnGetProduct(o);
             OnAddInvoiceItem(o);
         }
+        protected override decimal GetPartnerPrice(EsProductModel product)
+        {
+            return product != null ? (product.CostPrice??0) : 0;
+
+        }
         #endregion
 
         #region External methods
@@ -114,10 +119,6 @@ namespace UserControls.ViewModels.Invoices
             InvoiceItem.Quantity = null;
             ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, string.Format("Անբավարար միջոցներ: Կոդ: {0} Տվյալ ապրանքատեսակից բավարար քանակ առկա չէ:", InvoiceItem.Code), MessageModel.MessageTypeEnum.Warning));
             return false;
-        }
-        protected override void SetInvoiceItemPrice()
-        {
-            if (InvoiceItem.Product != null) InvoiceItem.Price = InvoiceItem.Product.CostPrice;
         }
         public override void OnAddInvoiceItem(object o)
         {

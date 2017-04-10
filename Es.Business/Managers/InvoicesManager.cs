@@ -280,7 +280,7 @@ namespace ES.Business.Managers
             {
                 using (var db = GetDataContext())
                 {
-                    var items = db.Invoices.Where(s => s.InvoiceTypeId == (long)invoiceType && s.MemberId == memberId).OrderByDescending(s => s.ApproveDate);
+                    var items = db.Invoices.Where(s => s.InvoiceTypeId == (long)invoiceType && s.MemberId == memberId).OrderByDescending(s => s.CreateDate).ThenBy(s => s.ApproveDate);
                     return maxCount != null ? items.Take((int)maxCount).ToList() : items.ToList();
                 }
             }

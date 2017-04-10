@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using CashReg;
+using CashReg.Helper;
 using CashReg.Models;
 using ES.Business.ExcelManager;
 using ES.Business.FileManager;
@@ -15,6 +16,8 @@ using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common;
 using ES.Common.Helpers;
+using ES.Data.Enumerations;
+using ES.DataAccess.Models;
 using Shared.Helpers;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
@@ -177,7 +180,7 @@ namespace UserControls.ViewModels.Invoices
             ConfigSettings.SetConfig("ImportingFilePath", Path.GetDirectoryName(filePath));
             ProductModel product;
             var invoice = ExcelImportManager.ImportSaleInvoice(filePath);
-            if(invoice==null) return;
+            if (invoice == null) return;
             var invoiceItems = invoice.Item2;
             foreach (var item in invoiceItems)
             {
@@ -222,9 +225,9 @@ namespace UserControls.ViewModels.Invoices
                 InvoiceItem.Price = exProduct != null && exProduct.Price != null && exProduct.Price > 0 ? exProduct.Price * (100 - (InvoiceItem.Discount ?? 0)) / 100 : item.Price;
                 base.OnAddInvoiceItem(null);
                 InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
+                RaisePropertyChanged("InvoicePaid");
             }
         }
-
         #endregion
 
         #region External methods
@@ -268,13 +271,28 @@ namespace UserControls.ViewModels.Invoices
                 return;
             }
             base.OnAddInvoiceItem(o);
+            //InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
+            //RaisePropertyChanged("InvoicePaid");
         }
 
-        protected override void SetInvoiceItemPrice()
+        protected override decimal GetPartnerPrice(EsProductModel product)
         {
-            if (InvoiceItem.Product != null) InvoiceItem.Price = InvoiceItem.Product.Price;
-        }
+            decimal price = product != null? (product.Price??0): 0;
+            if (Partner == null || product==null) { return price; }
 
+            price = base.GetPartnerPrice(product);
+            var dealerPrice = (product.DealerPrice ?? 0)* (1 - (product.DealerDiscount ?? 0) / 100);
+            switch (Partner.PartnersTypeId)
+            {
+                case (long)PartnerType.Dealer:
+                    price = product.HasDealerPrice ? dealerPrice: price;
+                    break;
+                default:
+                    if (product.HasDealerPrice) price = Math.Max(price, dealerPrice);
+                    break;
+            }
+            return price;
+        }
         private bool IsPaid
         {
             get { return InvoicePaid.IsPaid && InvoicePaid.Change <= (InvoicePaid.Paid ?? 0) && Partner != null && (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - (Partner.Debit ?? 0) && (InvoicePaid.ReceivedPrepayment ?? 0) <= (Partner.Credit ?? 0); }

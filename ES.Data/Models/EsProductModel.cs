@@ -132,6 +132,7 @@ namespace ES.Data.Models
                 //    OnPropertyChanged(DealerProfitPercentProperty);
             }
         }
+        public bool HasDealerPrice { get { return _dealerPrice != null; } }
         public decimal? DealerPrice
         {
             get { return _dealerPrice ?? Price; }

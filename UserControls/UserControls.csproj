@@ -86,6 +86,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="PriceTicketControl\Ean13BarcodeControl.cs" />
     <Compile Include="PriceTicketControl\Helper\Enumerations.cs" />
     <Compile Include="PriceTicketControl\UctrlBarcodeLargeWithText.xaml.cs">

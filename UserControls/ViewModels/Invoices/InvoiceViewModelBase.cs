@@ -180,8 +180,9 @@ namespace UserControls.ViewModels.Invoices
             if (Invoice == null) Invoice = new InvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
             PrintInvoiceCommand = new RelayCommand<PrintModeEnum>(OnPrintInvoice, CanPrintInvoice);
             ImportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnImportInvoice, CanImportInvoice);
-            ExportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnImportInvoice, CanImportInvoice);
+            ExportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnExportInvoice, CanExportInvoice);
         }
+
         protected virtual void OnInvoiceItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -278,7 +279,7 @@ namespace UserControls.ViewModels.Invoices
         {
             return IsInvocieValid;
         }
-        protected virtual void ExportPrintInvoice(ExportImportEnum exportTo)
+        protected virtual void OnExportInvoice(ExportImportEnum exportTo)
         {
             ExcelExportManager.ExportInvoice(Invoice, InvoiceItems);
         }

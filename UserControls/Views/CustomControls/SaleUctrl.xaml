@@ -6,11 +6,17 @@
          xmlns:filter="clr-namespace:Shared.Helpers;assembly=Shared"
          xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
          xmlns:enumerations="clr-namespace:ES.Data.Enumerations;assembly=ES.Data"
+         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+         xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
+         xmlns:converters="clr-namespace:UserControls.Converters"
          MinHeight="450"
          MinWidth="700"
          Width="Auto"
          mc:Ignorable="d"
          Name ="CtrlInvoice" Loaded="CtrlInvoice_Loaded" KeyUp="CtrlInvoice_KeyUp">
+    <UserControl.Resources>
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    </UserControl.Resources>
     <Grid Width="Auto">
         <Grid.InputBindings>
             <KeyBinding Gesture="Ctrl+F" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
@@ -49,7 +55,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Name="TxtPartner" FontSize="15" Text="{Binding Partner.Description, Mode=OneWay}" IsReadOnly="True" TabIndex="0" >
+                            <TextBox Grid.Column="0" Name="TxtPartner" FontSize="15" Text="{Binding Partner.Description, Mode=OneWay}" IsReadOnly="True">
                                 <TextBox.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Ընտրել պատվիրատու" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Customer}"></MenuItem>
@@ -103,11 +109,14 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Text="Կոդ"  VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="12"/>
                     <TextBox Grid.Row="1" x:Name="TxtCode" Text="{Binding Path=InvoiceItem.Code, UpdateSourceTrigger=PropertyChanged}" 
-                             Height="35" FontSize="20"  IsReadOnlyCaretVisible="True" Width="150" TabIndex="1" 
+                             FontSize="16" Width="150" TabIndex="1" 
                              KeyDown="TxtCode_KeyDown" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="1">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding ElementName=TxtCode, Path=Text}"/>
                         </TextBox.InputBindings>
+                        <i:Interaction.Behaviors>
+                            <behaviors:TextBoxBehavior IsFocusOnLoad="True" IsSelectTextOnFocus="True" />
+                        </i:Interaction.Behaviors>
                     </TextBox>
                     <Label Grid.Row="0" Content="Անվանում" VerticalAlignment="Center"  HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="150,0,0,0" FontSize="12"/>
                     <TextBox Grid.Row="1" Name="TxtDescription" Text="{Binding Path=InvoiceItem.Description, UpdateSourceTrigger=PropertyChanged}"
@@ -119,16 +128,27 @@
                         </TextBox.ContextMenu>
                     </TextBox>
                     <Label Grid.Row="0" Content="Գին"  VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right" Margin="0,0,65,0" FontSize="12"/>
-                    <TextBox Grid.Row="1" Name="TxtPrice" Text="{Binding Path=InvoiceItem.Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N}" IsReadOnly="{Binding Path = DenayChangePrice}" Width="105" Height="35" FontSize="20" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right" KeyDown="TxtPrice_KeyDown" TabIndex="2"/>
+                    <TextBox Grid.Row="1" Name="TxtPrice" Text="{Binding Path=InvoiceItem.Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N}" 
+                             IsReadOnly="{Binding Path = DenayChangePrice}" Width="105" Height="35" FontSize="20" VerticalContentAlignment="Center" 
+                             Focusable="{Binding DenayChangePrice, Converter={StaticResource InverseBooleanConverter}}"
+                             VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right" KeyDown="TxtPrice_KeyDown" TabIndex="2">
+                        
+                        <i:Interaction.Behaviors>
+                            <behaviors:TextBoxBehavior IsSelectTextOnFocus="True" />
+                        </i:Interaction.Behaviors>
+                    </TextBox>
                 </Grid>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="3">
-                <CheckBox Name="CbAddSingle" Content="Ավելացնել մեկական" IsChecked="{Binding SaleBySingle}"  Margin="5" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Right"/>
+                <CheckBox Name="CbAddSingle" Content="Ավելացնել մեկական" IsChecked="{Binding SaleBySingle}"  Margin="5" VerticalContentAlignment="Center" VerticalAlignment="Center" Focusable="False" HorizontalContentAlignment="Right"/>
                 <Button Name="BtnAddItem" Content="Ավելացնել" Width ="100" Padding="3" Command="{Binding AddInvoiceItemCommand}" Click="BtnAddItem_Click" TabIndex="3"/>
             </StackPanel>
         </StackPanel>
 
-        <extendedControls:ExtendedDataGrid Grid.Row="1" x:Name="DgInvoiceItems"   ItemsSource="{Binding InvoiceItems}" SelectedItem="{Binding SelectedInvoiceItem}" VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="14" >
+        <extendedControls:ExtendedDataGrid Grid.Row="1" x:Name="DgInvoiceItems"   ItemsSource="{Binding InvoiceItems}" 
+                                           SelectedItem="{Binding SelectedInvoiceItem}" VerticalContentAlignment="Stretch"
+                                           CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="14" 
+                                           AlternatingRowBackground ="GhostWhite" AlternationCount="2">
             <DataGrid.Resources>
                 <Style x:Key="CellRightAlign">
                     <Setter Property="Control.HorizontalAlignment" Value="Right" />
@@ -189,16 +209,20 @@
 
                             <StackPanel VerticalAlignment="Bottom" >
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Label Content="Կանխիկ" VerticalAlignment="Center" />
-                                    <TextBox Name="TxtPaid" Text="{Binding Path=InvoicePaid.Paid, StringFormat='#,###.##', TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
+                                    <TextBlock Text="Կանխիկ" VerticalAlignment="Center" />
+                                    <TextBox Name="TxtPaid" Text="{Binding Path=InvoicePaid.Paid, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}"
                BorderThickness="1" BorderBrush="Black" Margin="1"
    VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100"
-   FontSize="15" Height="25" Foreground="Blue" TabIndex="4"/>
+   FontSize="15" Height="25" Foreground="Blue" TabIndex="4">
+                                        <i:Interaction.Behaviors>
+                                            <behaviors:TextBoxBehavior IsSelectTextOnFocus="True" />
+                                        </i:Interaction.Behaviors>
+                                    </TextBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment =" Right">
                                     <Label Content="Անկանխիկ" VerticalAlignment="Center" HorizontalContentAlignment="Right"/>
 
-                                    <TextBox Text="{Binding Path=InvoicePaid.ByCheck, StringFormat='#,###.##', TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
+                                    <TextBox Text="{Binding Path=InvoicePaid.ByCheck, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
                BorderThickness="1" BorderBrush="Black" Margin="1"
    VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100"
    FontSize="15" Height="25" Foreground="Blue" />

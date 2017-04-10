@@ -11,10 +11,10 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
-                <Label Content="Ապրանքագիր" FontWeight="Bold"/>
-                <Label Content="{Binding Invoice.InvoiceNumber}" Foreground="Blue"/>
-                <Label Content="Ամսաթիվ" FontWeight="Bold" Margin="10,0,0,0"/>
-                <Label Content="{Binding Invoice.ApproveDate}" Foreground="Blue"/>
+                <TextBlock Text="Ապրանքագիր" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Invoice.InvoiceNumber}" Foreground="Blue"/>
+                <TextBlock Text="Ամսաթիվ" FontWeight="Bold" Margin="10,0,0,0"/>
+                <TextBlock Text="{Binding Invoice.ApproveDate}" Foreground="Blue"/>
             </StackPanel>
             <DataGrid Grid.Row="1" CanUserAddRows="False"  CanUserSortColumns="True" CanUserDeleteRows="False" IsReadOnly="True" 
                   ItemsSource="{Binding InvoiceItems, Mode=TwoWay}" 
@@ -37,7 +37,7 @@
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Command="{Binding ExportInvoiceCommand, ConverterParameter=True}" CommandParameter="{x:Static helpers:ExportImportEnum.Excel}" Content="Արտահանել" Width="75"/>
+                <Button Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static helpers:ExportImportEnum.Excel}" Content="Արտահանել" Width="75"/>
                 <Button Command="{Binding PrintInvoiceCommand, ConverterParameter=True}" CommandParameter="{x:Static helpers:PrintModeEnum.Normal}" Content="Տպել" Width="75"/>
             </StackPanel>
         </Grid>

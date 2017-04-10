@@ -76,10 +76,12 @@ namespace UserControls.ViewModels.Invoices
             base.OnGetProduct(o);
             OnAddInvoiceItem(o);
         }
-        protected override void SetInvoiceItemPrice()
+        protected override decimal GetPartnerPrice(EsProductModel product)
         {
-            if (InvoiceItem.Product != null) InvoiceItem.Price = InvoiceItem.Product.CostPrice;
+            return product!=null? (product.CostPrice??0):0;
+            
         }
+
         #endregion
 
         #region External Methods
@@ -92,6 +94,8 @@ namespace UserControls.ViewModels.Invoices
             if (!CanAddInvoiceItem(o)) { return; }
             if (!SetQuantity(BuyBySingle)) { return; }
             base.OnAddInvoiceItem(o);
+            InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
+            RaisePropertyChanged("InvoicePaid");
         }
         public override bool CanApprove(object o)
         {

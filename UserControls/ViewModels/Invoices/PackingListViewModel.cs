@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Data;
+using CashReg.Models;
+using ES.Data.Models;
 using Shared.Helpers;
+using UserControls.Helpers;
+using UserControls.Views.ReceiptTickets.Views;
 
 namespace UserControls.ViewModels.Invoices
 {
@@ -31,6 +36,18 @@ namespace UserControls.ViewModels.Invoices
         {
             return false;
         }
+
+        protected override void OnPrintInvoice(PrintModeEnum printSize)
+        {
+            if (!CanPrintInvoice(printSize)) { return; }
+            var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
+            var ctrl = new InvoicePreview(this);
+            PrintManager.PrintPreview(ctrl, "Print invoice", true);
+            //PrintManager.PrintOnActivePrinter(new ReceiptTicketSmall(new ReceiptTicketViewModel(new ResponceReceiptModel()){Invocie = Invoice, InvoiceItems = InvoiceItems.ToList(), InvoicePaid = InvoicePaid}), ApplicationManager.ActivePrinter);
+
+        }
         #endregion Internal methods
     }
+
+    public class PackingListViewModel{}
 }

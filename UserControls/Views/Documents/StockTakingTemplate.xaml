@@ -109,6 +109,7 @@
                     </Grid.RowDefinitions>
                     <TextBox Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger = PropertyChanged}" Margin="3 5"/>
                     <extendedControls:ExtendedDataGrid x:Name="DgInvoiceItems"  Grid.Row="1" ItemsSource="{Binding StockTakeItems}"
+                                                       AlternatingRowBackground ="GhostWhite" AlternationCount="2"
                   SelectedItem="{Binding SelectedItem}"
                   VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="18" Margin="1" >
                         <DataGrid.Resources>
@@ -124,8 +125,13 @@
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
                                 <Setter Property="ContextMenu" Value="{StaticResource RowMenu}"/>
+                            
                             </Style>
                         </DataGrid.RowStyle>
+                        <DataGrid.InputBindings>
+                            <KeyBinding Key="Delete" Command="{Binding RemoveStockTakingItemCommand}" CommandParameter="{Binding DataContext.Id, RelativeSource={RelativeSource Self}}"/>
+
+                        </DataGrid.InputBindings>
                         <DataGrid.Columns>
                             <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding CodeOrBarcode}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding ProductDescription}" />

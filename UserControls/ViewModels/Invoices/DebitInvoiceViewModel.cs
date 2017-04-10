@@ -50,9 +50,9 @@ namespace UserControls.ViewModels.Invoices
             base.OnAddInvoiceItem(o);
             InvoiceItem.Price = 0;
         }
-        public override decimal? GetPartnerPrice(EsProductModel product)
+        protected override decimal GetPartnerPrice(EsProductModel product)
         {
-            return product != null ? product.Price : 0;
+            return product != null ? (product.Price?? 0) : 0;
         }
 
         public override bool CanApprove(object o)

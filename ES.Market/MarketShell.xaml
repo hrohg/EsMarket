@@ -721,7 +721,7 @@
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="Սերվերի կապի ստուգում" Command="{Binding CheckConnectionCommand}" Visibility="{Binding IsAdminRule, Converter ={StaticResource BoolToVisibilityConverter}}">
-                           
+
                         </MenuItem>
                     </MenuItem>
                     <MenuItem Header="Օգտագործողների խմբագրում" Command="{Binding EditUsersCommand}" Visibility="{Binding IsAdminOrDirectorRule, Converter = {StaticResource BoolToVisibilityConverter}}">

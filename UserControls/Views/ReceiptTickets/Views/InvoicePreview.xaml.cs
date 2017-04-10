@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using UserControls.ViewModels.Invoices;
 
 namespace UserControls.Views.ReceiptTickets.Views
 {
@@ -8,6 +9,12 @@ namespace UserControls.Views.ReceiptTickets.Views
     public partial class InvoicePreview : UserControl
     {
         public InvoicePreview(SaleInvocieSmallTicketViewModel vm)
+        {
+            InitializeComponent();
+            DataContext = vm;
+        }
+
+        public InvoicePreview(PackingListForSallerViewModel vm)
         {
             InitializeComponent();
             DataContext = vm;
