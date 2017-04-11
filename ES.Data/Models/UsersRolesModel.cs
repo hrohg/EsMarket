@@ -17,6 +17,7 @@ namespace ES.Data.Models
     {
         public long Id { get; set; }
         public string RoleName { get; set; }
+        public string Name { get { return string.IsNullOrEmpty(Description) ? RoleName : Description; } }
         public string Description { get; set; }
     }
 }

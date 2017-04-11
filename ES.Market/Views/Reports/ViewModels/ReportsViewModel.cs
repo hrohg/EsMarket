@@ -120,7 +120,7 @@ namespace ES.Shop.Views.Reports.ViewModels
             switch (o)
             {
                 case ViewInvoicesEnum.None:
-                    viewModel = new InternalWayBillViewModel(o);
+                    viewModel = new ViewInternalWayBillViewModel(o);
                     break;
                 case ViewInvoicesEnum.ByStock:
                     break;

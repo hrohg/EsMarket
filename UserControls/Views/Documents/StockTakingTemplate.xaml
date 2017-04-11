@@ -56,9 +56,9 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0"  Text="{Binding Path=StockTakeItem.CodeOrBarcode, UpdateSourceTrigger=PropertyChanged}" 
-                                 FontSize="14" HorizontalContentAlignment="Center" TabIndex="3">
+                                 FontSize="14" HorizontalContentAlignment="Center" TabIndex="1">
                                 <i:Interaction.Behaviors>
-                                    <behaviors:TextBoxBehavior IsFocusOnTextChanged="True" />
+                                    <behaviors:TextBoxBehavior IsFocusOnTextChanged="True" IsSelectTextOnFocus="True" />
                                 </i:Interaction.Behaviors>
                                 <TextBox.InputBindings>
                                     <KeyBinding Key="Enter" Command="{Binding GetProductItemCommand}"/>

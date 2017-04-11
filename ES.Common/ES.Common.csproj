@@ -131,7 +131,7 @@
     <Compile Include="Enumerations\OfficePlaceType.cs" />
     <Compile Include="Enumerations\PriceTypes.cs" />
     <Compile Include="Enumerations\ReportTypes.cs" />
-    <Compile Include="Enumerations\Roles.cs" />
+    <Compile Include="Enumerations\RolesEnum.cs" />
     <Compile Include="Enumerations\ShowableColumn.cs" />
     <Compile Include="EstatePrintData.cs" />
     <Compile Include="ExtensionMethods.cs" />

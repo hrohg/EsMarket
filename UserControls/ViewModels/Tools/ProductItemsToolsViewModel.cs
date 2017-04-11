@@ -162,7 +162,7 @@ namespace UserControls.ViewModels.Tools
 
         private bool CanManageProduct(object item)
         {
-            return SelectedItem != null && ApplicationManager.Instance.IsInRole(UserRoleEnum.Manager);
+            return SelectedItem != null && ApplicationManager.IsInRole(UserRoleEnum.Manager);
         }
 
         private void OnManagingProduct(object item)

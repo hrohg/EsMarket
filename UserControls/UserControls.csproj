@@ -229,7 +229,7 @@
     </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="ViewModels\Invoices\DebitInvoiceViewModel.cs" />
-    <Compile Include="ViewModels\InternalWaybillViewModel.cs" />
+    <Compile Include="ViewModels\ViewInternalWaybillViewModel.cs" />
     <Compile Include="ViewModels\Invoices\InternalWaybillViewModel.cs" />
     <Compile Include="ViewModels\Reports\ShortReportViewModel.cs" />
     <Compile Include="ViewModels\Invoices\InvoiceViewModel.cs" />

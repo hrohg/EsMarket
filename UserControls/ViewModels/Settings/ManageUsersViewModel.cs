@@ -157,7 +157,8 @@ namespace UserControls.ViewModels.Settings
     public class UserRole:ViewModelBase
     {
         #region External properties
-        public string Alias { get { return Role != null ? Role.RoleName : string.Empty; } }
+        public string Alias { get { return Role != null ? Role.Name : string.Empty; } }
+        public string Description { get { return Role != null ? Role.Description : string.Empty; } }
         public MemberRolesModel Role { get; set; }
 
         private bool _isSelected;

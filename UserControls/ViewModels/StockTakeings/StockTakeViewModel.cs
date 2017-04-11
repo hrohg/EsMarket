@@ -215,7 +215,7 @@ namespace UserControls.ViewModels.StockTakeings
         #region Public methods
         public void OnSetProductItem(ProductItemModel productItem)
         {
-            OnGetProduct(productItem.Product.Code);
+            SetStockTakeItem(productItem.Product);
         }
         public void GetProduct(string code)
         {

@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Data.Entity.Core.EntityClient;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows.Controls;
 using CashReg.Helper;
 using ES.Business.Models;
 using ES.Common;
 using ES.Common.Enumerations;
 using ES.Data.Model;
-using ES.Data.Models;
 using ES.DataAccess.Models;
 
 namespace ES.Business.Managers
@@ -459,7 +456,7 @@ namespace ES.Business.Managers
             if (handler != null) handler(log);
         }
 
-        public bool IsInRole(UserRoleEnum type)
+        public static bool IsInRole(UserRoleEnum? type)
         {
             switch (type)
             {
@@ -467,22 +464,37 @@ namespace ES.Business.Managers
                     return Instance.UserRoles.Any(r => r.Id == 1);
                     break;
                 case UserRoleEnum.Director:
-                    return Instance.UserRoles.Any(r => r.Id == 2);
+                    return Instance.UserRoles.Any(r => r.Id == 2) || IsInRole(UserRoleEnum.Admin);
                     break;
                 case UserRoleEnum.Manager:
-                    return Instance.UserRoles.Any(r => r.Id == 3);
+                    return Instance.UserRoles.Any(r => r.Id == 3) || IsInRole(UserRoleEnum.Director);
                     break;
                 case UserRoleEnum.StockKeeper:
-                    return Instance.UserRoles.Any(r => r.Id == 4);
+                    return Instance.UserRoles.Any(r => r.Id == 4) || IsInRole(UserRoleEnum.Manager);
                     break;
                 case UserRoleEnum.SaleManager:
-                    return Instance.UserRoles.Any(r => r.Id == 5);
+                    return Instance.UserRoles.Any(r => r.Id == 5) || IsInRole(UserRoleEnum.Manager);
                     break;
-                case UserRoleEnum.SeniorSaler:
-                    return Instance.UserRoles.Any(r => r.Id == 6);
+                case UserRoleEnum.SeniorSeller:
+                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.SaleManager) || IsInRole(UserRoleEnum.SaleManager);
                     break;
-                case UserRoleEnum.Saller:
-                    return Instance.UserRoles.Any(r => r.Id == 7);
+                case UserRoleEnum.Seller:
+                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.Seller)|| IsInRole(UserRoleEnum.SeniorSeller);
+                    break;
+                case UserRoleEnum.Cashier:
+                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.Cashier ) || IsInRole(UserRoleEnum.SeniorCashier);
+                    break;
+                case UserRoleEnum.SeniorCashier:
+                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.SeniorCashier) || IsInRole(UserRoleEnum.Director);
+                    break;
+                case UserRoleEnum.JuniorCashier:
+                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.JuniorCashier);
+                    break;
+                case UserRoleEnum.JuniorSeller:
+                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.JuniorSeller);
+                    break;
+                case null:
+                    return false;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -61,7 +61,7 @@
                     <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding SelectedEsUser.Mobile}"/>
                     <TextBlock Grid.Column="0" Grid.Row="2" Text="Էլ փոստ:"/>
                     <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding SelectedEsUser.Email}"/>
-                    <GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Header="Իրավունքներ">
+                    <GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Header="Օգտագործողի խմբեր">
                         <Grid MinHeight="100">
                             <ItemsControl  ItemsSource="{Binding Roles}">
                                 <ItemsControl.ItemsPanel>
@@ -78,7 +78,7 @@
                                 </ItemsControl.Template>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate DataType="{x:Type settings:UserRole}">
-                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Content="{Binding Alias}" Margin="5" Width="85" ToolTip="{Binding Role.Description}"/>
+                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Content="{Binding Alias}" Margin="5" Width="125" ToolTip="{Binding Role.Description}"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>

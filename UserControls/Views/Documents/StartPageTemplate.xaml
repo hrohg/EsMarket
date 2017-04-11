@@ -7,6 +7,7 @@
 
     <converters:GetInvocieParameterConverter x:Key="GetInvocieParameterConverter"/>
     <converters:UserRoleToBoolConverter x:Key="UserRoleToBoolConverter"/>
+    
     <Style x:Key="SeparatorStyle"
            TargetType="{x:Type Border}">
         <Setter Property="BorderThickness" Value="1,0,0,0"/>
@@ -69,7 +70,7 @@
                     <TextBlock Grid.Row="0" Text="Փաստաթղթեր" Style="{StaticResource HeaderStyle}"/>
                     <TextBlock Grid.Row="1" Text="Ստեղծել նոր փաստաթղթեր" Style="{StaticResource DescriptionStyle}"/>
                     <StackPanel Grid.Row="2"  Margin="15">
-                        <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Saller}}">
+                        <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Seller}}">
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">

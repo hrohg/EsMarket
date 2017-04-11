@@ -241,7 +241,7 @@ namespace ES.Market.ViewModels
             #endregion Help
 
             #region Settings
-            EditUsersCommand = new RelayCommand(OnEditUsers, CanEditUserCommand);
+            
             CheckConnectionCommand = new RelayCommand(OnCheckConnection);
             #endregion Settings
 
@@ -268,7 +268,7 @@ namespace ES.Market.ViewModels
             switch (o)
             {
                 case ViewInvoicesEnum.None:
-                    viewModel = new InternalWayBillViewModel(o);
+                    viewModel = new ViewInternalWayBillViewModel(o);
                     break;
                 case ViewInvoicesEnum.ByStock:
                     break;
@@ -387,7 +387,7 @@ namespace ES.Market.ViewModels
                     //
                     break;
                 case Key.F2:
-                    if (!ApplicationManager.Instance.IsInRole(UserRoleEnum.Saller)) return;
+                    if (!ApplicationManager.IsInRole(UserRoleEnum.Seller)) return;
                     //handle X key reate new sale invoice
                     if (_userRoles.FirstOrDefault(s => s.RoleName == "Seller") == null &&
                         _userRoles.FirstOrDefault(s => s.RoleName == "SaleManager") == null &&
@@ -395,13 +395,13 @@ namespace ES.Market.ViewModels
                     OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.SaleInvoice, InvoiceState.New, MaxInvocieCount.All));
                     break;
                 case Key.F3:
-                    if (!ApplicationManager.Instance.IsInRole(UserRoleEnum.Manager)) return;
+                    if (!ApplicationManager.IsInRole(UserRoleEnum.Manager)) return;
                     //handle X key reate new sale invoice
                     if (_userRoles.FirstOrDefault(s => s.RoleName == "Manager") == null) break;
                     OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.PurchaseInvoice, InvoiceState.New, MaxInvocieCount.All));
                     break;
                 case Key.F4:
-                    if (!ApplicationManager.Instance.IsInRole(UserRoleEnum.StockKeeper)) return;
+                    if (!ApplicationManager.IsInRole(UserRoleEnum.StockKeeper)) return;
                     //handle X key reate new sale invoice
                     if (_userRoles.FirstOrDefault(s => s.RoleName == "Storekeeper") == null) break;
                     OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.MoveInvoice, InvoiceState.New, MaxInvocieCount.All));
@@ -412,13 +412,13 @@ namespace ES.Market.ViewModels
                     //Used
                     break;
                 case Key.F7:
-                    if (!ApplicationManager.Instance.IsInRole(UserRoleEnum.Manager)) return;
+                    if (!ApplicationManager.IsInRole(UserRoleEnum.Manager)) return;
                     //handle X key reate new sale invoice
                     if (_userRoles.FirstOrDefault(s => s.RoleName != "Manager" || s.RoleName == "Storekeeper" || s.RoleName != "Seller") == null) break;
                     OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.ProductOrder, InvoiceState.New, MaxInvocieCount.All));
                     break;
                 case Key.F8:
-                    if (!ApplicationManager.Instance.IsInRole(UserRoleEnum.Manager)) return;
+                    if (!ApplicationManager.IsInRole(UserRoleEnum.Manager)) return;
                     //handle X key logoff
                     if (_userRoles.FirstOrDefault(s => s.RoleName != "Manager") == null) break;
                     //MiManageProducts_Click(null, null);
@@ -491,7 +491,7 @@ namespace ES.Market.ViewModels
             _parentTabControl.UpdateLayout();
         }
 
-        private void CreateNewControl(object vm)
+        private void AddInvoiceDocument(object vm)
         {
             if (vm is DocumentViewModel)
             {
@@ -508,6 +508,8 @@ namespace ES.Market.ViewModels
                 OnCreateProductItemsTools(ProductItemsToolsViewModel);
                 return;
             }
+
+            //todo: remove code
             int nextTab;
             var tabShop = _parentTabControl.FindChild<TabControl>();
             if (tabShop == null)
@@ -583,7 +585,7 @@ namespace ES.Market.ViewModels
         {
             foreach (var model in models)
             {
-                CreateNewControl(model);
+                AddInvoiceDocument(model);
             }
         }
 
@@ -644,7 +646,7 @@ namespace ES.Market.ViewModels
                 return;
             }
             vm = new StockTakeViewModel(stockTake, _member.Id);
-            AddDocument(vm);
+            AddInvoiceDocument(vm);
         }
 
         private StockTakeModel GetOpeningStockTake()
@@ -809,22 +811,7 @@ namespace ES.Market.ViewModels
             //    pb.Close();
             //}
         }
-
-        public bool IsAdminRule
-        {
-            get { return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Admin"); }
-        }
-
-        public bool IsAdminOrDirectorRule
-        {
-            get { return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director"); }
-        }
-
-        public bool IsManageRule
-        {
-            get { return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director" || s.RoleName == "Manager"); }
-        }
-
+        
         #endregion
 
         #region Command methods
@@ -851,7 +838,7 @@ namespace ES.Market.ViewModels
 
         private bool CanEditUserCommand(object o)
         {
-            return !ApplicationManager.IsEsServer;
+            return ApplicationManager.IsInRole(UserRoleEnum.Director);
         }
 
         private void OnEditUsers(object o)
@@ -1141,16 +1128,16 @@ namespace ES.Market.ViewModels
                         switch (type)
                         {
                             case InvoiceType.SaleInvoice:
-                                CreateNewControl(new SaleInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
+                                AddInvoiceDocument(new SaleInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
                                 break;
                             case InvoiceType.MoveInvoice:
-                                CreateNewControl(new InternalWaybillInvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
+                                AddInvoiceDocument(new InternalWaybillInvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
                                 break;
                             case InvoiceType.PurchaseInvoice:
-                                CreateNewControl(new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
+                                AddInvoiceDocument(new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
                                 break;
                             case InvoiceType.InventoryWriteOff:
-                                CreateNewControl(new InventoryWriteOffViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
+                                AddInvoiceDocument(new InventoryWriteOffViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
                                 break;
                             default:
                                 break;
@@ -1871,8 +1858,13 @@ namespace ES.Market.ViewModels
         {
             get { return new RelayCommand(OnSyncronizeProducts); }
         }
-
-        public ICommand EditUsersCommand { get; private set; }
+        #region Edit users command
+        private ICommand _editUsersCommand;
+        public ICommand EditUsersCommand { get
+        {
+            return _editUsersCommand ?? (_editUsersCommand = new RelayCommand(OnEditUsers, CanEditUserCommand));
+        }}
+        #endregion Edit users command
         public ICommand CheckConnectionCommand { get; private set; }
 
         #endregion Settings

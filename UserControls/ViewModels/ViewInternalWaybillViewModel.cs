@@ -81,7 +81,7 @@ namespace UserControls.ViewModels
         #endregion
     }
 
-    public class InternalWayBillViewModel : TableViewModel<InternalWayBillModel>
+    public class ViewInternalWayBillViewModel : TableViewModel<InternalWayBillModel>
     {
 
         #region Internal properties
@@ -108,7 +108,7 @@ namespace UserControls.ViewModels
         #endregion
 
         #region Constructors
-        public InternalWayBillViewModel(ViewInvoicesEnum o)
+        public ViewInternalWayBillViewModel(ViewInvoicesEnum o)
             : base()
         {
             Title = Description = "Տեղափոխություն";

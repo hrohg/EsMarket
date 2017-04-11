@@ -48,7 +48,7 @@ namespace ES.Market
         private void SetPermitions()
         {
             var stocks = ApplicationManager.Instance.CashProvider.GetStocks;
-            MiMoveingInvoices.Visibility = (stocks != null && stocks.Count > 1) ? Visibility.Visible : Visibility.Collapsed;
+            
             if (_userRoles.FirstOrDefault(s => s.RoleName == "Admin") != null)
             {
                 MiAdmin.Visibility = Visibility.Visible;
@@ -57,9 +57,7 @@ namespace ES.Market
             if (_userRoles.FirstOrDefault(s => s.RoleName == "Director") != null)
             {
                 MiViewStockTaking.IsEnabled =
-                    MiViewLastStockTaking.IsEnabled =
-                    MiPurchaseInvoices.IsEnabled =
-                    MiMoveingInvoices.IsEnabled = true;
+                    MiViewLastStockTaking.IsEnabled = true;
                 MiControlPanel.Visibility =
                 MiAccounting.Visibility =
                 MiAction.Visibility =
@@ -73,8 +71,6 @@ namespace ES.Market
                 MiAccounting.Visibility = Visibility.Visible;
                 MiViewStockTaking.IsEnabled =
                    MiViewLastStockTaking.IsEnabled =
-                   MiPurchaseInvoices.IsEnabled =
-                   MiMoveingInvoices.IsEnabled =
                    MiManageServices.IsEnabled = true;
                 MiControlPanel.Visibility = MiReport.Visibility =
                 MiAdvancedSettings.Visibility = MiAdvancedSettings.Visibility = Visibility.Visible;
@@ -82,9 +78,7 @@ namespace ES.Market
             if (_userRoles.FirstOrDefault(s => s.RoleName == "SaleManager") != null)
             {
                 MiViewStockTaking.IsEnabled =
-                 MiViewLastStockTaking.IsEnabled =
-                 MiPurchaseInvoices.IsEnabled =
-                 MiMoveingInvoices.IsEnabled = true;
+                 MiViewLastStockTaking.IsEnabled =true;
                 MiControlPanel.Visibility = MiReport.Visibility =
 
                 MiProductOrderByProviders.Visibility = MiProductOrderByBrands.Visibility = Visibility.Visible;
@@ -92,8 +86,7 @@ namespace ES.Market
             if (_userRoles.FirstOrDefault(s => s.RoleName == "Storekeeper") != null)
             {
                 MiViewStockTaking.IsEnabled =
-                    MiViewLastStockTaking.IsEnabled =
-                   MiMoveingInvoices.IsEnabled = true;
+                    MiViewLastStockTaking.IsEnabled =true;
             }
             if (_userRoles.FirstOrDefault(s => s.Id == (int)EsSettingsManager.MemberRoles.Seller || s.Id == (int)EsSettingsManager.MemberRoles.SeniorSeller) != null)
             {

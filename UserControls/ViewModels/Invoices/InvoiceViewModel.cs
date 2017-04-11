@@ -69,7 +69,7 @@ namespace UserControls.ViewModels.Invoices
         /// </summary>
 
         #region InvoiceViewModel External properties
-        public bool IsLoading
+        public override bool IsLoading
         {
             get
             {
