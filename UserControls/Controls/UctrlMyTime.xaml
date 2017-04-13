@@ -3,14 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d">
+             mc:Ignorable="d" x:Name="MyTimeControl">
     <Grid>
-            <StackPanel Orientation="Horizontal">
-                <TextBox Name="TxtHour" MinWidth="20px" TextAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" Text="{Binding Path=Hour, UpdateSourceTrigger=PropertyChanged, StringFormat='00'}" FontSize="11" Margin="0 0 -4 0"/>
-                <Label Content=":" VerticalAlignment="Center"/>
-            <TextBox Name="TxtMinute" Width="20px" TextAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"  Text="{Binding Path=Minute,UpdateSourceTrigger=PropertyChanged, StringFormat='00'}" FontSize="11" Margin="-4 0"/>
-                <Label Content=":" VerticalAlignment="Center"/>
-            <TextBox Name="TxtSecond" Width="20px" TextAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"  Text="{Binding Path=Second,UpdateSourceTrigger=PropertyChanged, StringFormat='00'}" FontSize="11" Margin="-4 0 0 0"/>
-            </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBox Name="TxtHour" MinWidth="20px" TextAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" Text="{Binding Path=Time.Hour, ElementName=MyTimeControl, UpdateSourceTrigger=PropertyChanged, StringFormat='00'}" FontSize="11" Margin="0 0 -4 0"/>
+            <Label Content=":" VerticalAlignment="Center"/>
+            <TextBox Name="TxtMinute" Width="20px" TextAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"  Text="{Binding Path=Time.Minute, ElementName=MyTimeControl, UpdateSourceTrigger=PropertyChanged, StringFormat='00'}" FontSize="11" Margin="-4 0"/>
+            <Label Content=":" VerticalAlignment="Center"/>
+            <TextBox Name="TxtSecond" Width="20px" TextAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"  Text="{Binding Path=Time.Second, ElementName=MyTimeControl, UpdateSourceTrigger=PropertyChanged, StringFormat='00'}" FontSize="11" Margin="-4 0 0 0"/>
+        </StackPanel>
     </Grid>
 </UserControl>

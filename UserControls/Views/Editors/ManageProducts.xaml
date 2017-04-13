@@ -16,8 +16,8 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Expander Grid.Row="2" Header ="Ապրանքների խմբագրում" IsExpanded="True" BorderBrush="Blue">
-                    <StackPanel   Margin="5,5,5,0">
+                <Expander Grid.Row="0" Header ="Ապրանքների խմբագրում" IsExpanded="True" BorderBrush="Blue">
+                    <StackPanel Margin="5,5,5,0">
                         <TabControl MinHeight="100">
                             <TabItem Header="Հիմնական">
                                 <Grid Margin="3">
@@ -44,8 +44,7 @@
                                                 <RowDefinition/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
-
-                                            <Label Content="Կոդ" Grid.Column="0" Grid.Row="0" HorizontalContentAlignment="Right"/>
+                                            <TextBlock Text="Կոդ" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"/>
                                             <TextBox Grid.Column="1" Grid.Row="0" x:Name="TextBoxCode" Text="{Binding Path=Product.Code, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="auto"  TabIndex="1">
                                                 <TextBox.InputBindings>
                                                     <KeyBinding Key="Enter" Command="{Binding GetProductCommand}" CommandParameter="{Binding ElementName=TextBoxCode, Path=Text}"/>
@@ -69,7 +68,7 @@
                                             <TextBlock Grid.Column="2" Grid.Row="1" Text="ԱՏԳ կոդ" ToolTip="Արտաքին տնտեսական գործունեության կոդ"  HorizontalAlignment="Right" Margin="0 1 1 1"/>
                                             <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal">
                                                 <TextBox Grid.Column="3" Grid.Row="1" Text="{Binding Product.HcdCs, UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalAlignment="Left" Margin="0 1"/>
-                                                <Label Grid.Column="4" Grid.Row="0"  Content="Չափման միավոր" HorizontalContentAlignment="Right" Margin="0 1"/>
+                                                <TextBlock Grid.Column="4" Grid.Row="0"  Text="Չափման միավոր" HorizontalAlignment="Right" Margin="0 1"/>
                                                 <StackPanel Grid.Column="5" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
                                                     <TextBox Name="TxtMu" Text="{Binding Product.Mu, UpdateSourceTrigger=PropertyChanged}" Width="100"  Margin="0 1" TabIndex="3" HorizontalAlignment="Left"/>
                                                     <CheckBox IsChecked="{Binding Product.IsWeight}" Content="Քաշային" Margin="10 0" VerticalAlignment="Center"/>

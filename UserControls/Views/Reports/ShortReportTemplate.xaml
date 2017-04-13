@@ -3,8 +3,12 @@
                     xmlns:views="clr-namespace:UserControls.Views"
                     xmlns:controls="clr-namespace:UserControls.Controls"
                     xmlns:reports="clr-namespace:UserControls.ViewModels.Reports">
-    
-        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+    <Style x:Key="CellRightAlign">
+        <Setter Property="Control.HorizontalAlignment" Value="Right" />
+    </Style>
 
     <DataTemplate DataType="{x:Type reports:ShortReportViewModel}">
         <Grid>
@@ -12,86 +16,146 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition />
-                    <RowDefinition />
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
 
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <CheckBox Content="Մուտք" IsChecked="{Binding IsInput}" VerticalAlignment="Center"/>
-                    <CheckBox Content="Ելք" IsChecked="{Binding IsOutput}" VerticalAlignment="Center"/>
-                    <Label Content="Ամսաթիվ"/>
-                    <DatePicker Name="DtpStartDate" SelectedDateFormat="Short"  FirstDayOfWeek="Monday" SelectedDate="{Binding StartDate}" />
-                    <Label Content=" - "  />
-                    <DatePicker Name="DtpEndDate" SelectedDateFormat="Short"  FirstDayOfWeek="Monday" SelectedDate="{Binding EndDate}" />
-                    <Label Content="Ժամանակահատված"/>
-                    <controls:UctrlMyTime DataContext ="{Binding StartTime}"/>
-                    <Label Content=" - " />
-                    <controls:UctrlMyTime DataContext="{Binding EndTime}"/>
-                    <Button Content="Թարմացնել" Command="{Binding RefreshCommand}" Margin="3"/>
-                </StackPanel>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="3" CanVerticallyScroll="True">
-                    <DataGrid Name="DgSaleByPartners" ItemsSource="{Binding Customers}" AutoGenerateColumns="True" MaxHeight="200px" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False"/>
-                    <DataGrid Name="DgSaleByOperators" ItemsSource="{Binding Sallers}"  AutoGenerateColumns="True" VerticalContentAlignment="Stretch"  VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False"/>
-                    <DataGrid Name="DgShortReport"  ItemsSource="{Binding ShortReport}" AutoGenerateColumns="True" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False"/>
-                </StackPanel>
-
-                <DataGrid Grid.Row="2" ItemsSource="{Binding Invoices}" SelectedItem="{Binding Invoice}"  AutoGenerateColumns="False" VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False">
-                    <DataGrid.Resources>
-                        <Style x:Key="CellRightAlign">
-                            <Setter Property="Control.HorizontalAlignment" Value="Right" />
-                        </Style>
-                    </DataGrid.Resources>
-                    <DataGrid.InputBindings>
-                        <KeyBinding Key="Escape" Command="{Binding ResetInvoiseCommand}"/>
-                    </DataGrid.InputBindings>
-                    <DataGrid.Columns>
-                        <DataGridTextColumn IsReadOnly="True" Header="Գործընկեր" Binding="{Binding Partner.FullName}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Ապրանքագիր" Binding="{Binding InvoiceNumber}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Ստեղծման ամսաթիվ" Binding="{Binding CreateDate}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Total, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
-                        <DataGridTextColumn IsReadOnly="True" Header="Հեղինակ" Binding="{Binding Creator}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Հասատման ամսաթիվ" Binding="{Binding Path=ApproveDate}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Հաստատեց" Binding="{Binding Approver}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Notes}" />
-                    </DataGrid.Columns>
-                </DataGrid>
-                <DataGrid Grid.Row="3" ItemsSource="{Binding SaleItems}" AutoGenerateColumns="False" VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False">
-                    <DataGrid.Resources>
-                        <Style x:Key="CellRightAlign">
-                            <Setter Property="Control.HorizontalAlignment" Value="Right" />
-                        </Style>
-                    </DataGrid.Resources>
-                    <DataGrid.Columns>
-                        <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}"/>
-                        <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Quantity, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
-                        <DataGridTextColumn IsReadOnly="True" Header="Մնացորդ" Binding="{Binding ExistingQuantity, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
-                        <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Price, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
-                        <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
-                        <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
-                    </DataGrid.Columns>
-                </DataGrid>
-                <DataGrid Grid.Row="3" ItemsSource="{Binding InvoiceItems, Mode=OneWay}"  AutoGenerateColumns="False" VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" Visibility="{Binding Path=IsShowInvocieItems, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
-                    <DataGrid.Resources>
-                        <Style x:Key="CellRightAlign">
-                            <Setter Property="Control.HorizontalAlignment" Value="Right" />
-                        </Style>
-                    </DataGrid.Resources>
-                    <DataGrid.Columns>
-                        <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}"/>
-                        <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Quantity, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
-                        <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Price, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
-                        <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
-                        <DataGridTextColumn IsReadOnly="True" Header="Զեղչ" Binding="{Binding Path=Discount, StringFormat='#0.00'}" CellStyle="{StaticResource CellRightAlign}"/>
-                        <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
-                    </DataGrid.Columns>
-                </DataGrid>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="3" CanVerticallyScroll="True">
+                        <DataGrid Name="DgSaleByPartners" ItemsSource="{Binding Customers}" AutoGenerateColumns="True" MaxHeight="200px" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False"/>
+                        <DataGrid Name="DgSaleByOperators" ItemsSource="{Binding Sellers}"  AutoGenerateColumns="True" VerticalContentAlignment="Stretch"  VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False"/>
+                        <StackPanel>
+                            <DataGrid Name="DgShortReport"  ItemsSource="{Binding ShortReport}" AutoGenerateColumns="False" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Ապրանքագիր" Binding="{Binding Description}" />
+                                    <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Path = Count, StringFormat={}{0:#,0}}" 
+                                                CellStyle="{StaticResource CellRightAlign}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path = Total, StringFormat={}{0:#,0.##}}" 
+                                                CellStyle="{StaticResource CellRightAlign}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="%" Binding="{Binding Path=Profit, StringFormat={}{0:#,0.##}%}" 
+                                                CellStyle="{StaticResource CellRightAlign}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <GroupBox Header="Վաճառք" HorizontalAlignment="Stretch">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="Շահույթ*" ToolTip="Վաճառքից ստացվող շահույթ: Հաշվարկվող շահույթն իր մեջ պարունակում է անուղակի ծախսերը:"/>
+                                        <TextBlock Text="{Binding Path=ProfitFromSale, StringFormat={}{0:#,0.##}}" Foreground="Blue"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="Ինքնարժեք"/>
+                                        <TextBlock Text="{Binding Path=CostFromSale, StringFormat={}{0:#,0.##}}" Foreground="Blue"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="Հասույթ"/>
+                                        <TextBlock Text="{Binding Path=TotalSale, StringFormat={}{0:#,0.##}}" Foreground="Blue"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="Ընդամենը"/>
+                                        <TextBlock  Text ="{Binding Path=ProfitPrcentFromSale, StringFormat={}{0:#,0.##}%}" Foreground="Blue"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Stretch">
+                        <GroupBox Header="Ամսաթիվ" HorizontalAlignment="Right">
+                            <StackPanel Orientation="Horizontal">
+                                <DatePicker SelectedDateFormat="Short"  FirstDayOfWeek="Monday" SelectedDate="{Binding StartDate}" />
+                                <TextBlock Text=" - "  />
+                                <DatePicker SelectedDateFormat="Short"  FirstDayOfWeek="Monday" SelectedDate="{Binding EndDate}" />
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Ժամանակահատված" HorizontalAlignment="Stretch">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <controls:UctrlMyTime Grid.Column="0" Time="{Binding StartTime}" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text=" - " />
+                                <controls:UctrlMyTime Grid.Column="2" Time="{Binding EndTime}" HorizontalAlignment="Center"/>
+                            </Grid>
+                        </GroupBox>
+                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5" AllowDrop="True" Width="260">
+                            <CheckBox Content="Մուտք" IsChecked="{Binding IsSale}" VerticalAlignment="Center" Width="110"/>
+                            <CheckBox Content="Վաճառք" IsChecked="{Binding IsPurchase}" VerticalAlignment="Center"  Width="110"/>
+                            <CheckBox Content="Տեղափոխություն" IsChecked="{Binding IsMove}" VerticalAlignment="Center"  Width="110"/>
+                        </WrapPanel>
+                        <Button Content="Թարմացնել" Command="{Binding RefreshCommand}" HorizontalAlignment="Right" Margin="0 5" VerticalAlignment="Bottom"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Expander Grid.Row="0" IsExpanded="True" >
+                        <DataGrid  ItemsSource="{Binding Invoices}" SelectedItem="{Binding Invoice}"  AutoGenerateColumns="False" VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False">
+                            <DataGrid.InputBindings>
+                                <KeyBinding Key="Escape" Command="{Binding ResetInvoiseCommand}"/>
+                            </DataGrid.InputBindings>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn IsReadOnly="True" Header="Գործընկեր" Binding="{Binding Partner.FullName}" />
+                                <DataGridTextColumn IsReadOnly="True" Header="Ապրանքագիր" Binding="{Binding InvoiceNumber}" />
+                                <DataGridTextColumn IsReadOnly="True" Header="Ստեղծման ամսաթիվ" Binding="{Binding CreateDate}" />
+                                <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Total, StringFormat={}{0:#,0.##}}" 
+                                            CellStyle="{StaticResource CellRightAlign}"/>
+                                <DataGridTextColumn IsReadOnly="True" Header="Հեղինակ" Binding="{Binding Creator}" />
+                                <DataGridTextColumn IsReadOnly="True" Header="Հասատման ամսաթիվ" Binding="{Binding Path=ApproveDate}" />
+                                <DataGridTextColumn IsReadOnly="True" Header="Հաստատեց" Binding="{Binding Approver}" />
+                                <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Notes}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Expander>
+                    <Expander Grid.Row="1" IsExpanded="True">
+                        <Grid>
+                            <DataGrid  ItemsSource="{Binding SaleItems}" AutoGenerateColumns="False" VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False">
+                                <DataGrid.Resources>
+                                    <Style x:Key="CellRightAlign">
+                                        <Setter Property="Control.HorizontalAlignment" Value="Right" />
+                                    </Style>
+                                </DataGrid.Resources>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
+                                    <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                                    <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Quantity, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Մնացորդ" Binding="{Binding ExistingQuantity, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Price, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <DataGrid  ItemsSource="{Binding InvoiceItems, Mode=OneWay}"  AutoGenerateColumns="False" VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" Visibility="{Binding Path=IsShowInvocieItems, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
+                                <DataGrid.Resources>
+                                    <Style x:Key="CellRightAlign">
+                                        <Setter Property="Control.HorizontalAlignment" Value="Right" />
+                                    </Style>
+                                </DataGrid.Resources>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
+                                    <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                                    <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Quantity, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Price, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Զեղչ" Binding="{Binding Path=Discount, StringFormat={}{0:#,0.00}}" CellStyle="{StaticResource CellRightAlign}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </Expander>
+                    <views:WaitingCover Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding IsInvoiceItemsLoading, Converter={StaticResource BoolToVisibility}}" />
+                </Grid>
             </Grid>
             <views:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
         </Grid>

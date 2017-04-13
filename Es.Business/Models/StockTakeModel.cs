@@ -49,10 +49,11 @@ namespace ES.Business.Models
         private const string DescriptionProperty = "Description";
         private const string QuantityProperty = "Quantity";
         private const string StockTakeQuantityProperty = "StockTakeQuantity";
-        private const string BalanceProperty = "Balance"; 
+        private const string BalanceProperty = "Balance";
         private const string AmountProperty = "Amount";
         private const string StockTakeDateProperty = "StockTakeDate";
         #endregion
+
         #region Private properties
         private Guid _id = Guid.NewGuid();
         private Guid _stockTakeId;
@@ -66,8 +67,29 @@ namespace ES.Business.Models
         private decimal? _stockTakeQuantity;
         private DateTime _stockTakeDate;
         #endregion
+
         #region Public properties
         public Guid Id { get { return _id; } set { _id = value; } }
+
+        #region Index
+
+        private int _index;
+
+        public int Index
+        {
+            get
+            {
+                return _index;
+            }
+            set
+            {
+                if (value == _index) return;
+                _index = value;
+                OnPropertyChanged("Index");
+            }
+        }
+
+        #endregion Index
         public Guid StockTakeId { get { return _stockTakeId; } set { _stockTakeId = value; } }
         public Guid? ProductId { get { return _productId; } set { _productId = value; } }
         public string ProductDescription { get { return _productDescription; } set { _productDescription = value; OnPropertyChanged(ProductDescriptionProperty); } }
@@ -92,13 +114,14 @@ namespace ES.Business.Models
 
         public decimal StockTakeQuantity
         {
-            get { return _stockTakeQuantity??0; }
+            get { return _stockTakeQuantity ?? 0; }
             set { _stockTakeQuantity = value; OnPropertyChanged(StockTakeQuantityProperty); OnPropertyChanged(BalanceProperty); OnPropertyChanged(AmountProperty); }
         }
         public decimal? Balance { get { return StockTakeQuantity - Quantity; } }
-        public decimal Amount { get { return (StockTakeQuantity - Quantity) * (Price??0); } }
+        public decimal Amount { get { return (StockTakeQuantity - Quantity) * (Price ?? 0); } }
         public DateTime StockTakeDate { get { return _stockTakeDate; } set { _stockTakeDate = value; OnPropertyChanged(StockTakeDateProperty); } }
         #endregion
+
         public StockTakeItemsModel(Guid stockTakeId)
         {
             StockTakeId = stockTakeId;

@@ -230,7 +230,6 @@ namespace ES.Market.ViewModels
             LogOutCommand = new RelayCommand(OnLogoff);
             ChangePasswordCommand = new RelayCommand(OnChangePassword);
             //Data
-            GetInvoicesCommand = new RelayCommand(OnGetInvoices);
             WriteOffProductsCommand = new RelayCommand(OnWriteOffProducts);
             WriteOffStockTakingCommand = new RelayCommand(OnWriteOffStockTaking);
             WriteInStockTakingCommand = new RelayCommand(OnWriteInStockTaking);
@@ -241,7 +240,7 @@ namespace ES.Market.ViewModels
             #endregion Help
 
             #region Settings
-            
+
             CheckConnectionCommand = new RelayCommand(OnCheckConnection);
             #endregion Settings
 
@@ -811,7 +810,7 @@ namespace ES.Market.ViewModels
             //    pb.Close();
             //}
         }
-        
+
         #endregion
 
         #region Command methods
@@ -1113,83 +1112,6 @@ namespace ES.Market.ViewModels
             return null;
         }
 
-        public void OnGetInvoices(object o)
-        {
-            var tuple = o as Tuple<InvoiceType, InvoiceState, MaxInvocieCount>;
-            if (tuple != null)
-            {
-                var type = tuple.Item1;
-                var state = tuple.Item2;
-                var count = (int)tuple.Item3;
-                List<InvoiceModel> invoices = null;
-                switch (state)
-                {
-                    case InvoiceState.New:
-                        switch (type)
-                        {
-                            case InvoiceType.SaleInvoice:
-                                AddInvoiceDocument(new SaleInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
-                                break;
-                            case InvoiceType.MoveInvoice:
-                                AddInvoiceDocument(new InternalWaybillInvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
-                                break;
-                            case InvoiceType.PurchaseInvoice:
-                                AddInvoiceDocument(new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
-                                break;
-                            case InvoiceType.InventoryWriteOff:
-                                AddInvoiceDocument(new InventoryWriteOffViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
-                                break;
-                            default:
-                                break;
-                        }
-                        return;
-                    case InvoiceState.Saved:
-                    case InvoiceState.All:
-                    case InvoiceState.Accepted:
-                    case InvoiceState.Approved:
-                        invoices = GetInvoices(state, type, count);
-                        break;
-                    default:
-                        break;
-                }
-                if (invoices == null)
-                {
-                    OnNewMessage(new MessageModel("Ապրանքագիր չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information));
-                    return;
-                }
-                invoices = SelectItemsManager.SelectInvoice(invoices, true);
-                InvoiceViewModel vm = null;
-                foreach (var invoiceModel in invoices)
-                {
-                    switch ((InvoiceType)invoiceModel.InvoiceTypeId)
-                    {
-                        case InvoiceType.SaleInvoice:
-                            vm = new SaleInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
-                            break;
-                        case InvoiceType.MoveInvoice:
-                            vm = new InternalWaybillInvoiceModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
-                            break;
-                        case InvoiceType.PurchaseInvoice:
-                            vm = new PurchaseInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
-                            break;
-                        case InvoiceType.ProductOrder:
-                            break;
-                        case InvoiceType.InventoryWriteOff:
-                            vm = new InventoryWriteOffViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
-                            break;
-                        case InvoiceType.Statement:
-                            break;
-                        default:
-                            break;
-                    }
-                    if (vm != null)
-                    {
-                        AddDocument(vm);
-                    }
-                }
-            }
-        }
-
         #endregion Documents
 
         #region Cash desk
@@ -1376,20 +1298,23 @@ namespace ES.Market.ViewModels
             }
             else
             {
+                cashDeskContent += "Կանխիկ դրամարկղ \n";
                 foreach (var item in cashDesks.Where(s => s.IsCash))
                 {
-                    cashDeskContent += string.Format("Դրամարկղ {0}  - {1} դր․ \n", item.Name, item.Total.ToString("N"));
+                    cashDeskContent += string.Format("{0}  - {1} դր․ \n", item.Name, item.Total.ToString("N"));
                 }
-                cashDeskContent += string.Format("Կանխիկ դրամարկղ - {0} դր․ \n\n", cashDesks.Where(s => s.IsCash).Sum(s => s.Total).ToString("N"));
+                cashDeskContent += string.Format("Ընդամենը կանխիկ - {0} դր․ \n\n", cashDesks.Where(s => s.IsCash).Sum(s => s.Total).ToString("N"));
 
+                cashDeskContent += "Անկանխիկ դրամարկղ \n";
                 foreach (var item in cashDesks.Where(s => !s.IsCash))
                 {
-                    cashDeskContent += string.Format("Դրամարկղ {0}  - {1} դր․ \n", item.Name, item.Total.ToString("N"));
+                    cashDeskContent += string.Format("{0}  - {1} դր․ \n", item.Name, item.Total.ToString("N"));
                 }
-                cashDeskContent += string.Format("Անկանխիկ դրամարկղ - {0} դր․ \n\n", cashDesks.Where(s => !s.IsCash).Sum(s => s.Total).ToString("N"));
+                cashDeskContent += string.Format("Ընդամենը անկանխիկ - {0} դր․ \n\n", cashDesks.Where(s => !s.IsCash).Sum(s => s.Total).ToString("N"));
                 cashDeskContent += string.Format("Ընդամենը - {0} դր․ \n\n", cashDesks.Sum(s => s.Total).ToString("N"));
-                cashDeskContent += string.Format("Դեբիտորական պարտք - {0} դր․ \n", partners.Sum(s => s.Debit ?? 0).ToString("N"));
-                cashDeskContent += string.Format("Կրեդիտորական պարտք - {0} դր․ \n\n", partners.Sum(s => s.Credit ?? 0).ToString("N"));
+                cashDeskContent += "Պարտքեր \n";
+                cashDeskContent += string.Format("Դեբիտորական - {0} դր․ \n", partners.Sum(s => s.Debit ?? 0).ToString("N"));
+                cashDeskContent += string.Format("Կրեդիտորական - {0} դր․ \n\n", partners.Sum(s => s.Credit ?? 0).ToString("N"));
                 cashDeskContent += string.Format("Ընդամենը դրամական միջոցներ - {0} դր․ \n\n", (cashDesks.Sum(s => s.Total) + partners.Sum(s => (s.Debit ?? 0) + (s.Credit ?? 0))).ToString("N"));
             }
             MessageBox.Show(cashDeskContent, title, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -1653,7 +1578,93 @@ namespace ES.Market.ViewModels
 
         #region Documents
 
-        public ICommand GetInvoicesCommand { get; private set; }
+        #region Get invoices command
+        private ICommand _getInvoicesCommand;
+        public ICommand GetInvoicesCommand
+        {
+            get
+            {
+                return _getInvoicesCommand ?? (_getInvoicesCommand = new RelayCommand(OnGetInvoices));
+            }
+        }
+        public void OnGetInvoices(object o)
+        {
+            var tuple = o as Tuple<InvoiceType, InvoiceState, MaxInvocieCount>;
+            if (tuple != null)
+            {
+                var type = tuple.Item1;
+                var state = tuple.Item2;
+                var count = (int)tuple.Item3;
+                List<InvoiceModel> invoices = null;
+                switch (state)
+                {
+                    case InvoiceState.New:
+                        switch (type)
+                        {
+                            case InvoiceType.SaleInvoice:
+                                AddInvoiceDocument(new SaleInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
+                                break;
+                            case InvoiceType.MoveInvoice:
+                                AddInvoiceDocument(new InternalWaybillInvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
+                                break;
+                            case InvoiceType.PurchaseInvoice:
+                                AddInvoiceDocument(new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
+                                break;
+                            case InvoiceType.InventoryWriteOff:
+                                AddInvoiceDocument(new InventoryWriteOffViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
+                                break;
+                            default:
+                                break;
+                        }
+                        return;
+                    case InvoiceState.Saved:
+                    case InvoiceState.All:
+                    case InvoiceState.Accepted:
+                    case InvoiceState.Approved:
+                        invoices = GetInvoices(state, type, count);
+                        break;
+                    default:
+                        break;
+                }
+                if (invoices == null)
+                {
+                    OnNewMessage(new MessageModel("Ապրանքագիր չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information));
+                    return;
+                }
+                invoices = SelectItemsManager.SelectInvoice(invoices, true);
+                InvoiceViewModel vm = null;
+                foreach (var invoiceModel in invoices)
+                {
+                    switch ((InvoiceType)invoiceModel.InvoiceTypeId)
+                    {
+                        case InvoiceType.SaleInvoice:
+                            vm = new SaleInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
+                            break;
+                        case InvoiceType.MoveInvoice:
+                            vm = new InternalWaybillInvoiceModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
+                            break;
+                        case InvoiceType.PurchaseInvoice:
+                            vm = new PurchaseInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
+                            break;
+                        case InvoiceType.ProductOrder:
+                            break;
+                        case InvoiceType.InventoryWriteOff:
+                            vm = new InventoryWriteOffViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
+                            break;
+                        case InvoiceType.Statement:
+                            break;
+                        default:
+                            break;
+                    }
+                    if (vm != null)
+                    {
+                        AddDocument(vm);
+                    }
+                }
+            }
+        }
+        #endregion Get invoices command
+
         public ICommand WriteOffProductsCommand { get; private set; }
 
         #endregion Documents
@@ -1860,10 +1871,13 @@ namespace ES.Market.ViewModels
         }
         #region Edit users command
         private ICommand _editUsersCommand;
-        public ICommand EditUsersCommand { get
+        public ICommand EditUsersCommand
         {
-            return _editUsersCommand ?? (_editUsersCommand = new RelayCommand(OnEditUsers, CanEditUserCommand));
-        }}
+            get
+            {
+                return _editUsersCommand ?? (_editUsersCommand = new RelayCommand(OnEditUsers, CanEditUserCommand));
+            }
+        }
         #endregion Edit users command
         public ICommand CheckConnectionCommand { get; private set; }
 

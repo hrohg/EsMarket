@@ -25,6 +25,7 @@ namespace ES.DataAccess.Models
         public decimal Quantity { get; set; }
         public Nullable<decimal> StockTakeQuantity { get; set; }
         public System.DateTime StockTakeDate { get; set; }
+        public Nullable<int> Index { get; set; }
     
         public virtual StockTake StockTake { get; set; }
     }

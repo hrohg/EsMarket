@@ -112,6 +112,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ES.Common\ES.Common.csproj">
+      <Project>{7baa5615-1224-4f30-8e69-8ec0b3c1e5ab}</Project>
+      <Name>ES.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Shared\Shared.csproj">
       <Project>{EC37832A-A5EE-41B9-BFAF-1929A7E43755}</Project>
       <Name>Shared</Name>

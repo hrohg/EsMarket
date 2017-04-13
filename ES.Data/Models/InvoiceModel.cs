@@ -50,6 +50,7 @@ namespace ES.Data.Models
         private DateTime? _approveDate;
 
         #endregion
+
         #region Invoice model public properties
         public Guid Id { get { return _id; } set { _id = value; } }
         public long CreatorId { get { return _creatorId; } set { _creatorId = value; } }
@@ -70,6 +71,21 @@ namespace ES.Data.Models
         public Guid? PartnerId { get { return _partnerId; } set { _partnerId = value; } }
         public PartnerModel Partner { get; set; }
         public decimal? Discount { get { return _discount; } set { _discount = value; } }
+
+        #region Cost price
+        private decimal _costPrice;
+        public decimal CostPrice
+        {
+            get { return _costPrice; }
+            set
+            {
+                if (value == _costPrice) return;
+                _costPrice = value;
+                OnPropertyChanged("CostPrice");
+            }
+        }
+        #endregion Cost price
+
         public decimal Total
         {
             get { return _summ; }

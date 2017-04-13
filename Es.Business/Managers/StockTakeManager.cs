@@ -8,7 +8,7 @@ using ES.DataAccess.Models;
 
 namespace ES.Business.Managers
 {
-    public class StockTakeManager:BaseManager
+    public class StockTakeManager : BaseManager
     {
         /// <summary>
         /// StockTaking converters
@@ -30,7 +30,7 @@ namespace ES.Business.Managers
                 CreatorId = item.CreatorId,
                 ModifierId = item.ModifierId,
                 CloserId = item.CloserId,
-                Description=item.Description
+                Description = item.Description
             };
         }
         public static StockTake ConvertStockTake(StockTakeModel item)
@@ -56,6 +56,7 @@ namespace ES.Business.Managers
             return new StockTakeItemsModel(item.StockTakeId)
             {
                 Id = item.Id,
+                Index = item.Index ?? 0,
                 StockTakeId = item.StockTakeId,
                 ProductId = item.ProductId,
                 ProductDescription = item.ProductDescription,
@@ -64,7 +65,7 @@ namespace ES.Business.Managers
                 Price = item.Price,
                 Description = item.Description,
                 Quantity = item.Quantity,
-                StockTakeQuantity = item.StockTakeQuantity??0,
+                StockTakeQuantity = item.StockTakeQuantity ?? 0,
                 StockTakeDate = item.StockTakeDate
             };
         }
@@ -74,6 +75,7 @@ namespace ES.Business.Managers
             return new StockTakeItems
             {
                 Id = item.Id,
+                Index = item.Index,
                 StockTakeId = item.StockTakeId,
                 ProductId = item.ProductId,
                 ProductDescription = item.ProductDescription,
@@ -112,7 +114,7 @@ namespace ES.Business.Managers
         #region StockTakeItems public methods
         public static StockTakeItemsModel GetStockTakeItem(Guid stockTakeId, string codeOrBarcode, long memberId)
         {
-            return ConvertStockTakeItem(TryGetStockTakeItem(stockTakeId,codeOrBarcode, memberId));
+            return ConvertStockTakeItem(TryGetStockTakeItem(stockTakeId, codeOrBarcode, memberId));
         }
         public static List<StockTakeItemsModel> GetStockTakeItems(Guid stockTakingId, long memberId)
         {
@@ -134,7 +136,7 @@ namespace ES.Business.Managers
             {
                 using (var db = GetDataContext())
                 {
-                    return db.StockTake.Single(s => s.Id == id && s.MemberId==memberId);
+                    return db.StockTake.Single(s => s.Id == id && s.MemberId == memberId);
                 }
             }
             catch (Exception)
@@ -148,7 +150,7 @@ namespace ES.Business.Managers
             {
                 using (var db = GetDataContext())
                 {
-                    return db.StockTake.Where(s=>s.MemberId==memberId).OrderByDescending(s=>s.CreateDate).FirstOrDefault();
+                    return db.StockTake.Where(s => s.MemberId == memberId).OrderByDescending(s => s.CreateDate).FirstOrDefault();
                 }
             }
             catch (Exception)
@@ -162,7 +164,7 @@ namespace ES.Business.Managers
             {
                 using (var db = GetDataContext())
                 {
-                    return db.StockTake.Where(s =>s.MemberId==memberId && s.ClosedDate == null).ToList();
+                    return db.StockTake.Where(s => s.MemberId == memberId && s.ClosedDate == null).ToList();
                 }
             }
             catch (Exception)
@@ -176,7 +178,7 @@ namespace ES.Business.Managers
             {
                 using (var db = GetDataContext())
                 {
-                    return db.StockTake.Where(s => s.CreateDate >= startDate && s.CreateDate<=endDate && s.MemberId==memberid).ToList();
+                    return db.StockTake.Where(s => s.CreateDate >= startDate && s.CreateDate <= endDate && s.MemberId == memberid).ToList();
                 }
             }
             catch (Exception)
@@ -196,16 +198,16 @@ namespace ES.Business.Managers
                     {
                         Id = Guid.NewGuid(),
                         MemberId = memberId,
-                        StockTakeNumber = lastNumber!=null? ++lastNumber: 1,
+                        StockTakeNumber = lastNumber != null ? ++lastNumber : 1,
                         StockId = stockId,
                         CreateDate = DateTime.Now,
                         CreatorId = creatorId
                     };
                     db.StockTake.Add(newItem);
                     db.SaveChanges();
-                return newItem;
+                    return newItem;
+                }
             }
-        }
             catch (Exception ex)
             {
                 return null;
@@ -220,7 +222,7 @@ namespace ES.Business.Managers
                 using (var db = GetDataContext())
                 {
                     return db.StockTakeItems.Include(s => s.StockTake).
-                        SingleOrDefault(s =>s.StockTake.MemberId == memberId && s.StockTakeId==stockTakeId && s.CodeOrBarcode == codeOrBarCode );
+                        SingleOrDefault(s => s.StockTake.MemberId == memberId && s.StockTakeId == stockTakeId && s.CodeOrBarcode == codeOrBarCode);
                 }
             }
             catch (Exception ex)
@@ -236,7 +238,7 @@ namespace ES.Business.Managers
                 {
                     return
                         db.StockTakeItems.Include(s => s.StockTake)
-                            .Where(s => s.StockTakeId == stockTakingId && s.StockTake.MemberId==memberId).ToList();
+                            .Where(s => s.StockTakeId == stockTakingId && s.StockTake.MemberId == memberId).ToList();
                 }
             }
             catch (Exception ex)
@@ -248,15 +250,15 @@ namespace ES.Business.Managers
         {
             try
             {
-                using (var db=GetDataContext())
+                using (var db = GetDataContext())
                 {
-                    if(item.ProductId!=null)
+                    if (item.ProductId != null)
                         item.Quantity = stockId != null ? ProductsManager.GetProductItemCountFromStock(item.ProductId, new List<long> { (long)stockId }, memberId) : 0;
                     item.StockTakeDate = DateTime.Now;
-                    var exItem=db.StockTakeItems.
-                        SingleOrDefault(s => s.StockTakeId==item.StockTakeId && (s.Id==item.Id || s.CodeOrBarcode==item.CodeOrBarcode));
+                    var exItem = db.StockTakeItems.SingleOrDefault(s => s.StockTakeId == item.StockTakeId && (s.Id == item.Id || s.CodeOrBarcode == item.CodeOrBarcode));
                     if (exItem != null)
                     {
+                        exItem.Index = item.Index;
                         exItem.ProductId = item.ProductId;
                         exItem.ProductDescription = item.ProductDescription;
                         exItem.CodeOrBarcode = item.CodeOrBarcode;
@@ -289,7 +291,7 @@ namespace ES.Business.Managers
                 {
                     var exItem =
                         db.StockTakeItems.SingleOrDefault(s => s.Id == id && s.StockTake.MemberId == memberId && s.StockTake.ClosedDate == null);
-                    if (exItem == null) {return false;}
+                    if (exItem == null) { return false; }
                     db.StockTakeItems.Remove(exItem);
                     db.SaveChanges();
                     return true;
@@ -297,7 +299,7 @@ namespace ES.Business.Managers
             }
             catch (Exception)
             {
-              return false;
+                return false;
             }
         }
         #endregion

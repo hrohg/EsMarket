@@ -1,122 +1,174 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.ServiceModel.Security.Tokens;
 using System.Threading;
-using System.Windows.Automation.Peers;
-using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
-using ES.Common;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
+using ES.Data.Model;
 using ES.Data.Models;
-using UserControls.Interfaces;
 
 namespace UserControls.ViewModels.Reports
 {
     public class ShortReportViewModel : DocumentViewModel
     {
-        #region InvoiceView models properties
-        private const string InvoicesProperty = "Invoices";
-        private const string SaleItemsProperty = "SaleItems";
-        #endregion
-
         #region Internal fields
         private Thread _tdUpdate;
+        private List<EsUserModel> _users;
+        private List<PartnerModel> _partners;
+
+        private string GetUserName(long? id)
+        {
+            var user = _users != null && id != null ? _users.SingleOrDefault(s => s.UserId == id) : null;
+            return user == null ? string.Empty : user.UserName;
+        }
+        private string GetPartner(Guid? id)
+        {
+            var partner = _partners != null ? _partners.SingleOrDefault(s => s.Id == id) : null;
+            return partner == null ? string.Empty : partner.FullName;
+        }
         #endregion
 
         #region Internal properties
-        private bool _isLoading;
-        private FinanceReportModel _report;
+
+        //private FinanceReportModel _report;
         private InvoiceModel _invoice;
         private List<InvoiceModel> _invoices;
         private List<InvoiceItemsModel> _invoiceItems;
         #endregion
 
         #region External properties
-        public string Title { get; set; }
-        public string Description { get; set; }
-        
-        public List<InvoiceModel> Invoices
-        {
-            get { return _invoices; }
-            set
-            {
-                _invoices = value;
-                _invoiceItems = _report.InvocieItems.ToList();
-                RaisePropertyChanged(InvoicesProperty); 
-                RaisePropertyChanged(SaleItemsProperty);
-            }
-        }
-        public InvoiceModel Invoice
-        {
-            get { return _invoice; }
-            set
-            {
-                if(value == _invoice) return;
-                _invoice = value;
-                RaisePropertyChanged("Invoice");
-                RaisePropertyChanged(SaleItemsProperty);
-                RaisePropertyChanged("IsShowInvocieItems");
-                RaisePropertyChanged("InvoiceItems");
-            }
-        }
-        public List<ProductOrderItemsModel> SaleItems
+
+        #region Start date
+        private DateTime? _startDate;
+        public DateTime StartDate
         {
             get
             {
-                return _report == null
-                    ? null
-                    : _report.InvocieItems.OrderBy(s => s.Code)
-                        .GroupBy(s => s.Code + s.Price)
-                        .Select(s => new ProductOrderItemsModel
-                        {
-                            ProductId = s.Select(t => t.ProductId).First(),
-                            Code = s.Select(t => t.Code).First(),
-                            Description = s.Select(t => t.Description).First(),
-                            Mu = s.Select(t => t.Mu).First(),
-                            Quantity = s.Sum(t => t.Quantity),
-                            ExistingQuantity = _report.ProductResidues.Where(pr => pr.ProductId == s.First().ProductId).Select(pr => pr.Quantity).FirstOrDefault(),
-                            Price = s.Select(t => t.Price).First(),
-                            Note =
-                                s.Select(t => t.Product != null ? t.Product.Note : string.Empty)
-                                    .First()
-                        }).ToList();
+                return _startDate != null ? new DateTime(_startDate.Value.Year, _startDate.Value.Month, _startDate.Value.Day,
+                                 StartTime != null ? StartTime.Hour : 0, StartTime != null ? StartTime.Minute : 0, StartTime != null ? StartTime.Second : 0) : DateTime.Today;
+            }
+            set
+            {
+                if (value.Equals(_startDate)) return;
+                if (_startDate == null) StartTime.SetTime(value.TimeOfDay);
+                _startDate = value;
+                RaisePropertyChanged("StartDate");
             }
         }
-        public ObservableCollection<ShortReport> ShortReport { get; set; }
-        public ObservableCollection<SaleBy> Sallers { get; set; }
-        public ObservableCollection<SaleBy> Customers { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        #endregion Start date
+
+        #region End date
+        private DateTime? _endDate;
+        public DateTime EndDate
+        {
+            get
+            {
+                return _endDate != null ? new DateTime(_endDate.Value.Year, _endDate.Value.Month, _endDate.Value.Day,
+                                 EndTime != null ? EndTime.Hour : 0, EndTime != null ? EndTime.Minute : 0, EndTime != null ? EndTime.Second : 0) : DateTime.Now;
+            }
+            set
+            {
+                if (value.Equals(_endDate)) return;
+                if(_endDate==null) EndTime.SetTime(value.TimeOfDay);
+                _endDate = value;
+                RaisePropertyChanged("EndDate");
+            }
+        }
+        #endregion End date
+
+        #region Start time
+
         private MyTime _startTime;
         public MyTime StartTime
         {
-            get { return _startTime; }
-            set { _startTime = value; RaisePropertyChanged("StartTime"); }
-        }
-        public MyTime EndTime { get; set; }
-        public bool IsLoading
-        {
             get
             {
-                return _isLoading;
+                return _startTime ?? (_startTime = new MyTime());
             }
             set
             {
-                if (_isLoading == value)
-                {
-                    return;
-                }
-                _isLoading = value;
-                RaisePropertyChanged("IsLoading");
+                if (value.Equals(_startTime)) return;
+                _startTime = value;
+                RaisePropertyChanged("StartTime");
             }
         }
-        public bool IsInput { get; set; }
-        public bool IsOutput { get; set; }
+        #endregion Start time
+
+        #region End time
+        private MyTime _endTime;
+        public MyTime EndTime
+        {
+            get
+            {
+                return _endTime ?? (_endTime = new MyTime());
+            }
+            set
+            {
+                if (value.Equals(_endTime)) return;
+                _endTime = value;
+                RaisePropertyChanged("EndTime");
+            }
+        }
+        #endregion End time
+
+        #region Invoice types
+        private bool _isSale;
+
+        public bool IsSale
+        {
+            get
+            {
+                return _isSale;
+            }
+            set
+            {
+                if (value == _isSale) return;
+                _isSale = value; RaisePropertyChanged("IsSale");
+                RaisePropertyChanged("Invoices");
+            }
+        }
+
+        private bool _isPurchase;
+        public bool IsPurchase
+        {
+            get
+            {
+                return _isPurchase;
+            }
+            set
+            {
+                if (value == _isPurchase) return;
+                _isPurchase = value;
+                RaisePropertyChanged("IsPurchase");
+                RaisePropertyChanged("Invoices");
+            }
+        }
+
+        private bool _isMove;
+
+        public bool IsMove
+        {
+            get
+            {
+                return _isMove;
+            }
+            set
+            {
+                if (value == _isMove) return;
+                _isMove = value;
+                RaisePropertyChanged("IsMove");
+                RaisePropertyChanged("Invoices");
+            }
+        }
+
+        #endregion Invoice types
+
         public List<InvoiceItemsModel> InvoiceItems
         {
             get
@@ -132,7 +184,197 @@ namespace UserControls.ViewModels.Reports
             }
         }
 
-        #endregion
+        #region Is invoice items loading
+        private bool _isInvocieItemsLoading;
+        public virtual bool IsInvoiceItemsLoading
+        {
+            get
+            {
+                return _isInvocieItemsLoading && !IsLoading;
+            }
+            set
+            {
+                if (value == _isInvocieItemsLoading) return;
+                _isInvocieItemsLoading = value;
+                RaisePropertyChanged("IsInvoiceItemsLoading");
+            }
+        }
+        #endregion Is invoice items loading
+
+        #region Short invoice report
+        public List<InvoiceModel> Invoices
+        {
+            get
+            {
+                return _invoices != null ? _invoices.Where(s =>
+                    (IsSale && (InvoiceType)s.InvoiceTypeId == InvoiceType.SaleInvoice) ||
+                    (IsPurchase && (InvoiceType)s.InvoiceTypeId == InvoiceType.PurchaseInvoice) ||
+                    (IsMove && (InvoiceType)s.InvoiceTypeId == InvoiceType.MoveInvoice)).ToList() : new List<InvoiceModel>();
+            }
+        }
+        #endregion Short invoice report
+
+        #region Short invoice report from sale
+        private List<InvoiceModel> _shortInvoiceReportFromSale;
+        public List<InvoiceModel> ShortInvoiceReportFromSale
+        {
+            get { return _shortInvoiceReportFromSale; }
+            set
+            {
+                _shortInvoiceReportFromSale = value;
+                CostFromSale = _shortInvoiceReportFromSale.Sum(s => s.CostPrice);
+                TotalSale = _shortInvoiceReportFromSale.Sum(s => s.Total);
+                RaisePropertyChanged("ShortInvocieReportFromSale");
+            }
+        }
+
+        #region Total Sale
+        private decimal _totalSale;
+        public decimal TotalSale
+        {
+            get
+            {
+                return _totalSale;
+            }
+            set
+            {
+                if (value == _totalSale) return;
+                _totalSale = value;
+                RaisePropertyChanged("TotalSale");
+                RaisePropertyChanged("ProfitFromSale");
+                RaisePropertyChanged("ProfitPrcentFromSale");
+            }
+        }
+        #endregion Total Sale
+
+        #region Cost From Sale
+        private decimal _costFromSale;
+        private List<ProductModel> _products;
+        private List<ProductItemModel> _productItems;
+
+        public decimal CostFromSale
+        {
+            get
+            {
+                return _costFromSale;
+            }
+            set
+            {
+                if (value == _costFromSale) return;
+                _costFromSale = value;
+                RaisePropertyChanged("CostFromSale");
+                RaisePropertyChanged("ProfitFromSale");
+                RaisePropertyChanged("ProfitPrcentFromSale");
+            }
+        }
+
+        #endregion Cost From Sale
+
+        public decimal ProfitFromSale { get { return TotalSale - CostFromSale; } }
+        public decimal ProfitPrcentFromSale { get { return TotalSale != 0 ? ProfitFromSale * 100 / TotalSale : 0; } }
+
+        #endregion Short invoice report from sale
+
+
+        public InvoiceModel Invoice
+        {
+            get { return _invoice; }
+            set
+            {
+                if (value == _invoice) return;
+                _invoice = value;
+                RaisePropertyChanged("Invoice");
+                RaisePropertyChanged("SaleItems");
+                RaisePropertyChanged("IsShowInvocieItems");
+                RaisePropertyChanged("InvoiceItems");
+            }
+        }
+        public List<ProductOrderItemsModel> SaleItems
+        {
+            get
+            {
+                return _invoiceItems == null
+                    ? null
+                    : _invoiceItems.OrderBy(s => s.Code)
+                        .GroupBy(s => s.Code + s.Price)
+                        .Select(s => new ProductOrderItemsModel
+                        {
+                            ProductId = s.Select(t => t.ProductId).First(),
+                            Code = s.Select(t => t.Code).First(),
+                            Description = s.Select(t => t.Description).First(),
+                            Mu = s.Select(t => t.Mu).First(),
+                            Quantity = s.Sum(t => t.Quantity),
+                            ExistingQuantity = _productItems != null ? _productItems.Where(pr => pr.ProductId == s.First().ProductId).Select(pr => pr.Quantity).FirstOrDefault() : (decimal?)null,
+                            Price = s.Select(t => t.Price).First(),
+                            Note = s.Select(t => t.Product != null ? t.Product.Note : string.Empty).First(),
+                        }).ToList();
+            }
+        }
+
+        #region Short report
+
+        public List<ShortReport> ShortReport
+        {
+            get
+            {
+                return _invoices != null
+                    ? new List<ShortReport>
+                    {
+                        new ShortReport
+                        {
+                            InvoiceType = InvoiceType.PurchaseInvoice,
+                            ShortInvoiceReports = _invoices
+                        },
+                        new ShortReport
+                        {
+                            InvoiceType = InvoiceType.SaleInvoice,
+                            ShortInvoiceReports = _invoices
+                        },
+                        new ShortReport
+                        {
+                            InvoiceType = InvoiceType.MoveInvoice,
+                            ShortInvoiceReports = _invoices
+                        },
+                        new ShortReport
+                        {
+                            InvoiceType = InvoiceType.InventoryWriteOff,
+                            ShortInvoiceReports = _invoices
+                        }
+                    }
+                    : new List<ShortReport>();
+            }
+        }
+        #endregion Short report
+
+        public List<SaleBy> Sellers
+        {
+            get
+            {
+                return _invoices != null ? _invoices.Where(s => (InvoiceType)s.InvoiceTypeId == InvoiceType.SaleInvoice)
+                    .GroupBy(s => s.ApproverId).Select(s => new SaleBy
+                {
+                    Description = GetUserName(s.First().ApproverId),
+                    Count = s.Count(),
+                    Total = s.Sum(t => t.Total)
+                }).ToList() : new List<SaleBy>();
+            }
+        }
+
+        public List<SaleBy> Customers
+        {
+            get
+            {
+                return _invoices != null ? _invoices.Where(s => (InvoiceType)s.InvoiceTypeId == InvoiceType.SaleInvoice)
+                    .GroupBy(s => s.PartnerId).Select(s => new SaleBy
+                {
+                    Description = GetPartner(s.First().PartnerId),
+                    Count = s.Count(),
+                    Total = s.Sum(t => t.Total)
+                }).ToList() : new List<SaleBy>();
+            }
+        }
+
+        #endregion External properties
 
         #region Constructors
         public ShortReportViewModel()
@@ -145,22 +387,37 @@ namespace UserControls.ViewModels.Reports
         private void Initialize()
         {
             Title = "Համառոտ վերլուծություններ";
-            StartDate = EndDate = DateTime.Today;
-            StartTime = new MyTime();
-            EndTime = new MyTime();
-            IsInput = IsOutput = true;
+            StartDate = DateTime.Today;
+            EndDate = DateTime.Now;
+            IsSale = IsPurchase = true;
             ResetInvoiseCommand = new RelayCommand(OnResetInvoice);
 
             OnRefresh(null);
         }
-
+        private void OnUpdateInvoices()
+        {
+            if (_invoiceItems != null && _invoiceItems.Any() && _invoices != null)
+            {
+                foreach (var invoiceModel in _invoices)
+                {
+                    invoiceModel.CostPrice = _invoiceItems.Where(s => s.InvoiceId == invoiceModel.Id).Sum(s => s.Quantity * s.CostPrice) ?? 0;
+                    invoiceModel.Partner = _partners != null ? _partners.SingleOrDefault(s => s.Id == invoiceModel.PartnerId) : null;
+                }
+            }
+            ShortInvoiceReportFromSale = _invoices != null ? _invoices.Where(s => (InvoiceType)s.InvoiceTypeId == InvoiceType.SaleInvoice).ToList() : new List<InvoiceModel>();
+            RaisePropertyChanged("Invoices");
+            RaisePropertyChanged("Customers");
+            RaisePropertyChanged("Sellers");
+            RaisePropertyChanged("ShortReport");
+            RaisePropertyChanged("SaleItems");
+        }
         private void OnResetInvoice(object obj)
         {
             Invoice = null;
         }
         private void OnRefresh(object o)
         {
-            _tdUpdate = new Thread(Update);
+            _tdUpdate = new Thread(UpdateAsync);
             _tdUpdate.Start();
         }
 
@@ -169,74 +426,50 @@ namespace UserControls.ViewModels.Reports
             _tdUpdate.Abort();
             IsLoading = false;
         }
-        private void Update()
+        private void UpdateAsync()
+        {
+            Description = string.Format("{0} {1} - {2}", "Համառոտ վերլուծություններ", StartDate, EndDate);
+            RaisePropertyChanged("Description");
+
+            new Thread(UpdateTools).Start();
+            new Thread(UpdateShortReport).Start();
+            new Thread(UpdateInvoiceItems).Start();
+        }
+
+        private void UpdateTools()
+        {
+            _partners = ApplicationManager.Instance.CashProvider.GetPartners;
+            _users = ApplicationManager.Instance.CashProvider.GetUsers;
+            _products = ApplicationManager.Instance.CashProvider.Products;
+            _productItems = ApplicationManager.Instance.CashProvider.ProductItems;
+            OnUpdateInvoices();
+        }
+        private void UpdateShortReport()
         {
             IsLoading = true;
-
-            var fromDate = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, StartTime.Hour, StartTime.Minute, StartTime.Second);
-            var toDate = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day, EndTime.Hour, EndTime.Minute, EndTime.Second);
-            _report = InvoicesManager.GetInvoicesFinance(fromDate.Date, toDate.Date.AddDays(1), ApplicationManager.Instance.GetEsMember.Id);
-
-            var fromTimeValue = StartTime.Hour * 3600 + StartTime.Minute * 60 + StartTime.Second;
-            var toTimeValue = EndTime.Hour * 3600 + EndTime.Minute * 60 + EndTime.Second;
-            var invoices = _report.InvocieItems.Select(s => s.Invoice).ToList();
-            invoices = invoices.Where(s =>
-                        (IsInput && s.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice) ||
-                        (IsOutput && s.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).GroupBy(s => s.Id).Select(s => s.First()).ToList();
-            if (StartTime.Hour != EndTime.Hour || StartTime.Minute != EndTime.Minute || StartTime.Second != EndTime.Second)
-                invoices = invoices.Where(s =>
-                            s.CreateDate.Hour * 3600 + s.CreateDate.Minute * 60 + s.CreateDate.Second > fromTimeValue &&
-                            s.CreateDate.Hour * 3600 + s.CreateDate.Minute * 60 + s.CreateDate.Second < toTimeValue).ToList();
-            //var invoiceItems = invoicesReports.Select(s=>s.InvocieItem);
-            Invoices = invoices;
-            var totalPurchase = invoices.Where(s => s.InvoiceTypeId == (long)InvoiceType.PurchaseInvoice).Sum(s => s.Total);
-            var profitPurchase = _invoiceItems.Where(ii => ii.Invoice.InvoiceTypeId == (long)InvoiceType.PurchaseInvoice).Sum(s => (s.Price ?? 0) * (s.Quantity ?? 0)) - totalPurchase;
-            var totalSale = invoices.Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).Sum(s => s.Total);
-            var profitSale = _invoiceItems.Where(ii => ii.Invoice.InvoiceTypeId == (long)InvoiceType.SaleInvoice).Sum(s => ((s.Price ?? 0) - HgConvert.ToDecimal(s.CostPrice ?? 0)) * (s.Quantity ?? 0));
-            var totalCost = _invoiceItems.Where(ii => ii.Invoice.InvoiceTypeId == (long)InvoiceType.SaleInvoice).Sum(ii => (ii.CostPrice ?? 0) * (ii.Quantity ?? 0));
-            ShortReport = new ObservableCollection<ShortReport>()
-            {
-                new ShortReport
-                {
-                    Description = "Մուտքեր", 
-                    Count = invoices.Count(s => s.InvoiceTypeId==(long)InvoiceType.PurchaseInvoice).ToString("N2"),
-                    Amount = totalPurchase.ToString("N2"),
-                    Detile = totalPurchase!=0? (profitPurchase/totalPurchase).ToString("P"): "0%"
-                },
-                new ShortReport
-                {
-                    Description = "Ելքեր", 
-                    Count = invoices.Count(s => s.InvoiceTypeId==(long)InvoiceType.SaleInvoice).ToString("N2"),
-                    Amount = totalSale.ToString("N2"),
-                    Detile = totalSale!=0? (profitSale/totalSale).ToString("P"): "0%"
-                },
-                new ShortReport
-                {
-                    Description = "Հաշվեկշիռ",
-                    Count = "",
-                    Amount =(totalPurchase-totalSale).ToString("N"),
-                    Detile = ""
-                },
-                new ShortReport
-                {
-                    Description = "Ինքնարժեք",
-                    Count = profitSale.ToString("N2"),
-                    Amount = totalCost.ToString("N2"),
-                    Detile = totalSale!=0? (profitSale/totalSale).ToString("P"): "0%"
-                }
-            };
-            var invoicesByApprover = invoices.Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice).GroupBy(s => s.ApproverId).ToList();
-            var invoicesByPartner = invoices.Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice).GroupBy(s => s.PartnerId).ToList();
-            Sallers = new ObservableCollection<SaleBy>(invoicesByApprover.Select(s => new SaleBy { Description = s.First().Approver, Total = s.Sum(t => t.Total).ToString("N") }));
-            Customers = new ObservableCollection<SaleBy>(invoicesByPartner.Where(s => s.FirstOrDefault() != null).Select(s =>
-                new SaleBy { Description = s.First().Partner != null ? s.First().Partner.FullName : string.Empty, Total = s.Sum(t => t.Total).ToString("N") }));
-
-            Description = string.Format("{0} {1} - {2}", "Համառոտ վերլուծություններ", fromDate, toDate);
-            RaisePropertyChanged("Description");
-            RaisePropertyChanged("Customers");
-            RaisePropertyChanged("Sallers");
-            RaisePropertyChanged("ShortReport");
+            RaisePropertyChanged("IsInvoiceItemsLoading");
+            _invoices = ReportManager.GetShortInvoiceReport(StartDate, EndDate);
+            OnUpdateInvoices();
             IsLoading = false;
+            RaisePropertyChanged("IsInvoiceItemsLoading");
+        }
+
+        private void UpdateInvoiceItems()
+        {
+            IsInvoiceItemsLoading = true;
+            _invoiceItems = InvoicesManager.GetInvoiceItems(StartDate, EndDate);
+            OnUpdateInvoices();
+            //_report = InvoicesManager.GetInvoicesFinance(StartDate, EndDate);
+
+            //var invoices = _report.InvocieItems.Select(s => s.Invoice).ToList();
+            //invoices = invoices.Where(s => 
+            //            (IsInput && s.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice) ||
+            //            (IsOutput && s.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).GroupBy(s => s.Id).Select(s => s.First()).ToList();
+            //if (StartTime.Hour != EndTime.Hour || StartTime.Minute != EndTime.Minute || StartTime.Second != EndTime.Second)
+            //    invoices = invoices.Where(s => s.CreateDate >= StartDate && s.CreateDate <= EndDate).ToList();
+            ////var invoiceItems = invoicesReports.Select(s=>s.InvocieItem);
+            //Invoices = invoices;
+            IsInvoiceItemsLoading = false;
         }
         #endregion
 
@@ -248,20 +481,96 @@ namespace UserControls.ViewModels.Reports
     }
     public class ShortReport
     {
-        public string Description { get; set; }
-        public string Count { get; set; }
-        public string Amount { get; set; }
-        public string Detile { get; set; }
+        public InvoiceType InvoiceType;
+        public List<InvoiceModel> ShortInvoiceReports { get; set; }
+        public string Description
+        {
+            get
+            {
+                var descritpion = string.Empty;
+                switch (InvoiceType)
+                {
+                    case InvoiceType.PurchaseInvoice:
+                        descritpion = "Գնում";
+                        break;
+                    case InvoiceType.SaleInvoice:
+                        descritpion = "Վաճառք";
+                        break;
+                    case InvoiceType.ProductOrder:
+
+                        break;
+                    case InvoiceType.MoveInvoice:
+                        descritpion = "Տեղափոխություն";
+                        break;
+                    case InvoiceType.InventoryWriteOff:
+                        descritpion = "Դուրսգրման ակտ";
+                        break;
+                    case InvoiceType.Statement:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                return descritpion;
+            }
+        }
+
+        public int Count
+        {
+            get
+            {
+                return ShortInvoiceReports.Count(s => (InvoiceType)s.InvoiceTypeId == InvoiceType);
+            }
+        }
+        public decimal Total
+        {
+            get
+            {
+                return ShortInvoiceReports.Where(s => (InvoiceType)s.InvoiceTypeId == InvoiceType).Sum(s => s.Total);
+            }
+        }
+        public decimal CostPrice { get { return ShortInvoiceReports.Where(s => (InvoiceType)s.InvoiceTypeId == InvoiceType).Sum(s => s.CostPrice); } }
+
+        public decimal? Profit
+        {
+            get
+            {
+                decimal? profit = null;
+                switch (InvoiceType)
+                {
+                    case InvoiceType.PurchaseInvoice:
+                        //var salePrice = ShortInvoiceReports.Where(s => (InvoiceType)s.InvoiceTypeId == InvoiceType).Sum(s => s.);
+                        break;
+                    case InvoiceType.SaleInvoice:
+                        profit = Total != 0 ? ((Total - CostPrice) * 100 / Total) : (decimal?)null;
+                        break;
+                    case InvoiceType.ProductOrder:
+                        break;
+                    case InvoiceType.MoveInvoice:
+                        break;
+                    case InvoiceType.InventoryWriteOff:
+                        break;
+                    case InvoiceType.Statement:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                return profit;
+            }
+        }
     }
 
     public class SaleBy
     {
         public string Description { get; set; }
-        public string Total { get; set; }
+        public int Count { get; set; }
+        public decimal Total { get; set; }
     }
 
     public class MyTime : INotifyPropertyChanged
     {
+        public delegate void TimeChangedEvent();
+
+        public event TimeChangedEvent HandleTimeChanged;
         private bool IsTimeFree = false;
         private const string HourProperty = "Hour";
         private const string MinuteProperty = "Minute";
@@ -269,31 +578,47 @@ namespace UserControls.ViewModels.Reports
         private int _hour = 0;
         private int _minute = 0;
         private int _second = 0;
-        public int Hour { get { return _hour; } set { _hour = value; OnPropertyChanged(HourProperty); } }
+
+        public int Hour
+        {
+            get { return _hour; }
+            set
+            {
+                _hour = value < 24 ? value : 0;
+                OnPropertyChanged(HourProperty);
+                OnTimeChanged();
+            }
+        }
+
         public int Minute
         {
             get { return _minute; }
             set
             {
-                _minute = value % 60;
-                Hour += value / 60; OnPropertyChanged(MinuteProperty);
+                _minute = value < 60 ? value : 0;
+                OnPropertyChanged(MinuteProperty);
+                OnTimeChanged();
             }
         }
+
         public int Second
         {
             get { return _second; }
             set
             {
-                _second = value % 60;
-                Minute += value / 60; OnPropertyChanged(SecondProperty);
+                _second = value < 60 ? value : 0;
+                OnPropertyChanged(SecondProperty);
+                OnTimeChanged();
             }
         }
+
         public MyTime()
         {
             Hour = 0;
             Minute = 0;
             Second = 0;
         }
+
         public MyTime(bool isTimeFree = false)
         {
             Hour = 0;
@@ -301,6 +626,7 @@ namespace UserControls.ViewModels.Reports
             Second = 0;
             IsTimeFree = isTimeFree;
         }
+
         public MyTime(int hour = 0, int minute = 0, int second = 0, bool isTimeFree = false)
         {
             Hour = hour;
@@ -309,12 +635,31 @@ namespace UserControls.ViewModels.Reports
             IsTimeFree = isTimeFree;
         }
 
-        public int GetHour { get { return Hour; } }
-        public int GetMinute { get { return Hour * 60 + Minute; } }
-        public int GetSeccond { get { return Hour * 3600 + Minute * 60 + Second; } }
+        public int GetHour
+        {
+            get { return Hour; }
+        }
+
+        public int GetMinute
+        {
+            get { return Hour * 60 + Minute; }
+        }
+
+        public int GetSeccond
+        {
+            get { return Hour * 3600 + Minute * 60 + Second; }
+        }
+
+        private void OnTimeChanged()
+        {
+            var handle = HandleTimeChanged;
+            if (handle != null) handle();
+        }
 
         #region INotifyPropertyChanged
+
         public event PropertyChangedEventHandler PropertyChanged;
+
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
@@ -323,6 +668,117 @@ namespace UserControls.ViewModels.Reports
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        #endregion
+
+        public void SetTime(TimeSpan timeOfDay)
+        {
+            Hour = timeOfDay.Hours;
+            Minute = timeOfDay.Minutes;
+            Second = timeOfDay.Seconds;
+        }
+    }
+
+    public class CustomDateTime : ViewModelBase
+    {
+        public delegate void DateTimeChangedEvent();
+
+        public event DateTimeChangedEvent HandleDateTimeChanged;
+
+        private const string HourProperty = "Hour";
+        private const string MinuteProperty = "Minute";
+        private const string SecondProperty = "Second";
+
+
+        private int _hour = 0;
+
+        public int Hour
+        {
+            get { return _hour; }
+            set
+            {
+                _hour = value;
+                OnPropertyChanged(HourProperty);
+                OnTimeChanged();
+            }
+        }
+
+        private int _minute = 0;
+
+        public int Minute
+        {
+            get { return _minute; }
+            set
+            {
+                _minute = value % 60;
+                Hour += value / 60;
+                OnPropertyChanged(MinuteProperty);
+                OnTimeChanged();
+            }
+        }
+
+        private int _second = 0;
+
+        public int Second
+        {
+            get { return _second; }
+            set
+            {
+                _second = value % 60;
+                Minute += value / 60;
+                OnPropertyChanged(SecondProperty);
+                OnTimeChanged();
+            }
+        }
+
+        public CustomDateTime()
+        {
+            Hour = 0;
+            Minute = 0;
+            Second = 0;
+        }
+
+        public CustomDateTime(int hour = 0, int minute = 0, int second = 0)
+        {
+            Hour = hour;
+            Minute = minute;
+            Second = second;
+        }
+
+        public int GetHour
+        {
+            get { return Hour; }
+        }
+
+        public int GetMinute
+        {
+            get { return Hour * 60 + Minute; }
+        }
+
+        public int GetSeccond
+        {
+            get { return Hour * 3600 + Minute * 60 + Second; }
+        }
+
+        private void OnTimeChanged()
+        {
+            var handle = HandleDateTimeChanged;
+            if (handle != null) handle();
+        }
+
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
         #endregion
     }
 }

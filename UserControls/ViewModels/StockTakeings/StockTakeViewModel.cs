@@ -310,13 +310,19 @@ namespace UserControls.ViewModels.StockTakeings
             if (!CanAddStockTakingItem(o)) { return; }
             StockTakeItem.StockTakeDate = DateTime.Now;
             var exItem = StockTakeManager.GetStockTakeItem(StockTake.Id, StockTakeItem.CodeOrBarcode, _memberId);
+            var index = exItem != null ? exItem.Index : StockTakeItems.Count + 1;
             if (exItem != null)
             {
                 if (MessageBox.Show("Տվյալ կոդով ապրանք արդեն գույքագրվել է " + exItem.StockTakeQuantity + " հատ։ \n Ցանկանու՞մ եք ավելացնել ևս " + StockTakeItem.StockTakeQuantity + "-ով։",
                     "Կրկնակի գույքագրում", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) { return; }
                 StockTakeItem.StockTakeQuantity += exItem.StockTakeQuantity;
             }
+            else
+            {
+                StockTakeItem.Index = index;
+            }
             if (!StockTakeManager.EditStockTakeItems(StockTakeItem, StockTake.StockId, _memberId)) { return; }
+            SelectedItem = StockTakeItems.FirstOrDefault(s => s.Index == index);
             StockTakeItem = new StockTakeItemsModel(StockTake.Id);
             RaisePropertyChanged(StockTakeItemProperty);
             StockTakeItems = new ObservableCollection<StockTakeItemsModel>(StockTakeManager.GetStockTakeItems(StockTake.Id, _memberId));

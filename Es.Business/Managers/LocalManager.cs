@@ -98,6 +98,15 @@ namespace ES.Business.Managers
 
         #endregion Products
 
+
+        #region Users
+
+        private List<EsUserModel> _esUsers; 
+        public List<EsUserModel> GetUsers
+        {
+            get { return _esUsers ?? (_esUsers = UsersManager.GetEsUsers(Member.Id)); }
+        }
+        #endregion Users
         public List<StockModel> GetStocks
         {
             get
@@ -200,7 +209,7 @@ namespace ES.Business.Managers
             UpdateProducts(async);
             UpdateProductItems();
             UpdateStocks();
-            
+
         }
         public void UpdateProducts(bool isAsync = true)
         {

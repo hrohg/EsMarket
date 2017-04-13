@@ -98,6 +98,7 @@
   <ItemGroup>
     <Compile Include="Converters\ConverterExtension.cs" />
     <Compile Include="Converters\Converters.cs" />
+    <Compile Include="Converters\InverseBoolConverter.cs" />
     <Compile Include="Converters\IValu.cs" />
     <Compile Include="Helpers\CalculationHelper.cs" />
     <Compile Include="Helpers\Cryptography.cs" />

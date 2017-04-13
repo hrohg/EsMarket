@@ -167,6 +167,29 @@ namespace ES.Business.Managers
                 Note = item.Note
             };
         }
+        private static InvoiceItemsModel ConvertLite(InvoiceItems item)
+        {
+            if (item == null) return null;
+            return new InvoiceItemsModel
+            {
+                Id = item.Id,
+                Index = item.Index,
+                InvoiceId = item.InvoiceId,
+                //Invoice = ConvertInvoice(item.Invoices, new PartnerModel()),
+                ProductId = item.ProductId,
+                //Product = ProductsManager.Convert(item.Products),
+                ProductItemId = item.ProductItemId,
+                //ProductItem = new ProductsManager().Convert(item.ProductItems),
+                Code = item.Code,
+                Description = item.Description,
+                Mu = item.Mu,
+                Quantity = item.Quantity,
+                Price = item.Price,
+                CostPrice = item.CostPrice,
+                Discount = item.Discount,
+                Note = item.Note
+            };
+        }
         private static InvoiceItems Convert(InvoiceItemsModel item)
         {
             if (item == null) return null;
@@ -1599,8 +1622,9 @@ namespace ES.Business.Managers
 
         #region Invoices report
 
-        private static FinanceReportModel TryGetInvoicesFinance(DateTime? startDate, DateTime? endDate, long memberId)
+        private static FinanceReportModel TryGetInvoicesFinance(DateTime? startDate, DateTime? endDate)
         {
+            long memberId = ApplicationManager.Instance.GetEsMember.Id;
             try
             {
                 using (var db = GetDataContext())
@@ -1649,7 +1673,23 @@ namespace ES.Business.Managers
                 return new FinanceReportModel();
             }
         }
-
+        private static List<InvoiceItems> TryGetInvoiceItems(DateTime? startDate, DateTime? endDate)
+        {
+            var memberId = ApplicationManager.Instance.GetEsMember.Id;
+            try
+            {
+                using (var db = GetDataContext())
+                {
+                    if (startDate == null) startDate = DateTime.Today;
+                    if (endDate == null) endDate = DateTime.Now;
+                    return db.InvoiceItems.Where(s => s.Invoices.MemberId == memberId && s.Invoices.ApproveDate >= startDate && s.Invoices.ApproveDate <= endDate).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                return new List<InvoiceItems>();
+            }
+        }
         #endregion
 
         #region Will bill
@@ -2044,11 +2084,14 @@ namespace ES.Business.Managers
 
         #region Invoices Reports
 
-        public static FinanceReportModel GetInvoicesFinance(DateTime startDate, DateTime endDate, long memberId)
+        public static FinanceReportModel GetInvoicesFinance(DateTime startDate, DateTime endDate)
         {
-            return TryGetInvoicesFinance(startDate, endDate, memberId);
+            return TryGetInvoicesFinance(startDate, endDate);
         }
-
+        public static List<InvoiceItemsModel> GetInvoiceItems(DateTime startDate, DateTime endDate)
+        {
+            return TryGetInvoiceItems(startDate, endDate).Select(ConvertLite).ToList();
+        }
         public static List<IInvoiceReport> GetInvoicesReports(DateTime startDate, DateTime endDate, List<InvoiceType> invoiceTypes, long memberId)
         {
             return TryGetInvoicesReports(startDate, endDate, invoiceTypes, memberId);

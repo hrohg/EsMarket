@@ -429,6 +429,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Index" Type="int" />
           <Property Name="StockTakeId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ProductId" Type="uniqueidentifier" />
           <Property Name="CodeOrBarcode" Type="nvarchar" MaxLength="50" />
@@ -2034,6 +2035,7 @@
           <Property Name="StockTakeQuantity" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="StockTakeDate" Type="DateTime" Nullable="false" Precision="0" />
           <NavigationProperty Name="StockTake" Relationship="EsStockDbModel.FK_StockTakingItems_StockTaking" FromRole="StockTakeItems" ToRole="StockTake" />
+          <Property Name="Index" Type="Int32" />
         </EntityType>
         <EntityType Name="SubAccountingPlan">
           <Key>
@@ -3107,6 +3109,7 @@
           <EntitySetMapping Name="StockTakeItems">
             <EntityTypeMapping TypeName="EsStockDbModel.StockTakeItems">
               <MappingFragment StoreEntitySet="StockTakeItems">
+                <ScalarProperty Name="Index" ColumnName="Index" />
                 <ScalarProperty Name="StockTakeDate" ColumnName="StockTakeDate" />
                 <ScalarProperty Name="StockTakeQuantity" ColumnName="StockTakeQuantity" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />

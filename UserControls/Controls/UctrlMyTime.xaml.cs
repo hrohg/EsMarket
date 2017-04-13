@@ -28,12 +28,12 @@ namespace UserControls.Controls
         public UctrlMyTime()
         {
             InitializeComponent();
-            DataContext = Time = new MyTime();
+            //DataContext = Time;
         }
         public UctrlMyTime(MyTime time)
         {
             InitializeComponent();
-            DataContext = Time = time;
+            //DataContext = Time = time;
         }
     }
 }
