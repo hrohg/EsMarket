@@ -111,8 +111,8 @@
                             </Grid>
                         </GroupBox>
                         <WrapPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5" AllowDrop="True" Width="260">
-                            <CheckBox Content="Մուտք" IsChecked="{Binding IsSale}" VerticalAlignment="Center" Width="110"/>
-                            <CheckBox Content="Վաճառք" IsChecked="{Binding IsPurchase}" VerticalAlignment="Center"  Width="110"/>
+                            <CheckBox Content="Վաճառք" IsChecked="{Binding IsSale}" VerticalAlignment="Center" Width="110"/>
+                            <CheckBox Content="Գնում" IsChecked="{Binding IsPurchase}" VerticalAlignment="Center"  Width="110"/>
                             <CheckBox Content="Տեղափոխություն" IsChecked="{Binding IsMove}" VerticalAlignment="Center"  Width="110"/>
                         </WrapPanel>
                         <Button Grid.Row="3" Content="Թարմացնել" Command="{Binding RefreshCommand}" HorizontalAlignment="Right" Margin="0 5" VerticalAlignment="Bottom"/>
