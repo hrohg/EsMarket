@@ -27,53 +27,78 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="3" CanVerticallyScroll="True">
-                        <DataGrid Name="DgSaleByPartners" ItemsSource="{Binding Customers}" AutoGenerateColumns="True" MaxHeight="200px" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False"/>
-                        <DataGrid Name="DgSaleByOperators" ItemsSource="{Binding Sellers}"  AutoGenerateColumns="True" VerticalContentAlignment="Stretch"  VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False"/>
-                        <StackPanel>
-                            <DataGrid Name="DgShortReport"  ItemsSource="{Binding ShortReport}" AutoGenerateColumns="False" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" CanVerticallyScroll="True">
+                        <GroupBox Header="Վաճառք ըստ գնորդների" VerticalAlignment="Stretch">
+                            <DataGrid ItemsSource="{Binding Customers}" AutoGenerateColumns="False" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn IsReadOnly="True" Header="Ապրանքագիր" Binding="{Binding Description}" />
+                                    <DataGridTextColumn IsReadOnly="True" Header="Գնորդ" Binding="{Binding Description}" />
                                     <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Path = Count, StringFormat={}{0:#,0}}" 
                                                 CellStyle="{StaticResource CellRightAlign}"/>
                                     <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path = Total, StringFormat={}{0:#,0.##}}" 
                                                 CellStyle="{StaticResource CellRightAlign}"/>
-                                    <DataGridTextColumn IsReadOnly="True" Header="%" Binding="{Binding Path=Profit, StringFormat={}{0:#,0.##}%}" 
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+                        <GroupBox Header="Վաճառք ըստ վաճառողների" VerticalAlignment="Stretch">
+                            <DataGrid ItemsSource="{Binding Sellers}" AutoGenerateColumns="False" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Վաճառող" Binding="{Binding Description}" />
+                                    <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Path = Count, StringFormat={}{0:#,0}}" 
+                                                CellStyle="{StaticResource CellRightAlign}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path = Total, StringFormat={}{0:#,0.##}}" 
                                                 CellStyle="{StaticResource CellRightAlign}"/>
                                 </DataGrid.Columns>
                             </DataGrid>
-                            <GroupBox Header="Վաճառք" HorizontalAlignment="Stretch">
+                        </GroupBox>
+                        <GroupBox Header="Շրջանառություն" VerticalAlignment="Stretch">
                                 <StackPanel>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <TextBlock Text="Շահույթ*" ToolTip="Վաճառքից ստացվող շահույթ: Հաշվարկվող շահույթն իր մեջ պարունակում է անուղակի ծախսերը:"/>
-                                        <TextBlock Text="{Binding Path=ProfitFromSale, StringFormat={}{0:#,0.##}}" Foreground="Blue"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <TextBlock Text="Ինքնարժեք"/>
-                                        <TextBlock Text="{Binding Path=CostFromSale, StringFormat={}{0:#,0.##}}" Foreground="Blue"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <TextBlock Text="Հասույթ"/>
-                                        <TextBlock Text="{Binding Path=TotalSale, StringFormat={}{0:#,0.##}}" Foreground="Blue"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <TextBlock Text="Ընդամենը"/>
-                                        <TextBlock  Text ="{Binding Path=ProfitPrcentFromSale, StringFormat={}{0:#,0.##}%}" Foreground="Blue"/>
+                                    <DataGrid ItemsSource="{Binding ShortReport}" AutoGenerateColumns="False" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn IsReadOnly="True" Header="Ապրանքագիր" Binding="{Binding Description}" />
+                                            <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Path = Count, StringFormat={}{0:#,0}}" 
+                                                CellStyle="{StaticResource CellRightAlign}"/>
+                                            <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path = Total, StringFormat={}{0:#,0.##}}" 
+                                                CellStyle="{StaticResource CellRightAlign}"/>
+                                            <DataGridTextColumn IsReadOnly="True" Header="%" Binding="{Binding Path=Profit, StringFormat={}{0:#,0.##}%}" 
+                                                CellStyle="{StaticResource CellRightAlign}"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <TextBlock Text="Շահույթ*" ToolTip="Վաճառքից ստացվող շահույթ: Հաշվարկվող շահույթն իր մեջ պարունակում է անուղակի ծախսերը:"/>
+                                            <TextBlock Text="{Binding Path=ProfitFromSale, StringFormat={}{0:#,0.##}}" Foreground="Blue"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <TextBlock Text="Ինքնարժեք"/>
+                                            <TextBlock Text="{Binding Path=CostFromSale, StringFormat={}{0:#,0.##}}" Foreground="Blue"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <TextBlock Text="Հասույթ"/>
+                                            <TextBlock Text="{Binding Path=TotalSale, StringFormat={}{0:#,0.##}}" Foreground="Blue"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <TextBlock Text="Ընդամենը"/>
+                                            <TextBlock  Text ="{Binding Path=ProfitPrcentFromSale, StringFormat={}{0:#,0.##}%}" Foreground="Blue"/>
+                                        </StackPanel>
                                     </StackPanel>
                                 </StackPanel>
                             </GroupBox>
-                        </StackPanel>
                     </StackPanel>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Stretch">
-                        <GroupBox Header="Ամսաթիվ" HorizontalAlignment="Right">
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <GroupBox Grid.Row="0" Header="Ամսաթիվ" HorizontalAlignment="Right">
                             <StackPanel Orientation="Horizontal">
                                 <DatePicker SelectedDateFormat="Short"  FirstDayOfWeek="Monday" SelectedDate="{Binding StartDate}" />
                                 <TextBlock Text=" - "  />
                                 <DatePicker SelectedDateFormat="Short"  FirstDayOfWeek="Monday" SelectedDate="{Binding EndDate}" />
                             </StackPanel>
                         </GroupBox>
-                        <GroupBox Header="Ժամանակահատված" HorizontalAlignment="Stretch">
+                        <GroupBox Grid.Row="1" Header="Ժամանակահատված" HorizontalAlignment="Stretch">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -85,14 +110,15 @@
                                 <controls:UctrlMyTime Grid.Column="2" Time="{Binding EndTime}" HorizontalAlignment="Center"/>
                             </Grid>
                         </GroupBox>
-                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5" AllowDrop="True" Width="260">
+                        <WrapPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5" AllowDrop="True" Width="260">
                             <CheckBox Content="Մուտք" IsChecked="{Binding IsSale}" VerticalAlignment="Center" Width="110"/>
                             <CheckBox Content="Վաճառք" IsChecked="{Binding IsPurchase}" VerticalAlignment="Center"  Width="110"/>
                             <CheckBox Content="Տեղափոխություն" IsChecked="{Binding IsMove}" VerticalAlignment="Center"  Width="110"/>
                         </WrapPanel>
-                        <Button Content="Թարմացնել" Command="{Binding RefreshCommand}" HorizontalAlignment="Right" Margin="0 5" VerticalAlignment="Bottom"/>
-                    </StackPanel>
+                        <Button Grid.Row="3" Content="Թարմացնել" Command="{Binding RefreshCommand}" HorizontalAlignment="Right" Margin="0 5" VerticalAlignment="Bottom"/>
+                    </Grid>
                 </Grid>
+                <Separator Grid.Row="1" Margin="10 3"/>
                 <Grid Grid.Row="2">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -154,10 +180,11 @@
                             </DataGrid>
                         </Grid>
                     </Expander>
-                    <views:WaitingCover Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding IsInvoiceItemsLoading, Converter={StaticResource BoolToVisibility}}" />
+                    <views:WaitingCover Grid.Row="1" Visibility="{Binding IsInvoiceItemsLoading, Converter={StaticResource BoolToVisibility}}" />
                 </Grid>
             </Grid>
             <views:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
         </Grid>
     </DataTemplate>
+    
 </ResourceDictionary>

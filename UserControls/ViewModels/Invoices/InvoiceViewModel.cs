@@ -726,7 +726,6 @@ namespace UserControls.ViewModels.Invoices
         public ICommand PrintInvoiceItemCommand { get; private set; }
         public ICommand ApproveInvoiceCommand { get { return new RelayCommand(OnApprove, CanApprove); } }
 
-        public ICommand ExportInvoiceCommand { get; private set; }
         public ICommand ExportInvoiceToExcelCommand { get; private set; }
         public ICommand ExportInvoiceToXmlCommand { get; private set; }
         public ICommand ExportInvoiceToExcelRusCommand { get; private set; }

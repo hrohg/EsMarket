@@ -19,10 +19,25 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" HorizontalAlignment="Right" Margin="0 10">
+            <Menu Grid.Row="0">
+                <MenuItem Header="Գույքագրում">
+                    <MenuItem Header="Ներմուծել" Command="{Binding ImportInvoiceCommand}"/>
+                    <MenuItem Header="Արտահանել" Command="{Binding ExportToExcelCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="Տպել" CommandTarget="Ctrl+P" Command="{Binding PrintCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="Չհաշվառվածների ավելացում" Command="{Binding GetUnavailableProductItemsCommand}"/>
+                    <MenuItem Header="Ամփոփել" Command="{Binding CompletedStockTakingCommand}" ToolTip="Փակել գործող գույքագրումը: Այն այլևս հնարավոր չի լինի փոփոխել:"/>
+                    <Separator/>
+                    <MenuItem Header="Փակել" Command="{Binding CloseCommand}"/>
+                </MenuItem>
+                <MenuItem Header="Դիտում" Command="{Binding ViewDetilesCommand}"/>
+            </Menu>
+            <StackPanel Grid.Row="1" HorizontalAlignment="Right" Margin="0 10">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" >
                     <TextBlock Text="Գույքագրում" FontSize="10" VerticalAlignment="Center" />
                     <TextBlock Text="{Binding StockTake.StockTakeName}" Foreground="Blue" Margin ="1 0 5 0" VerticalAlignment="Center" />
@@ -38,7 +53,7 @@
                     <TextBlock Text="{Binding Path=Creator.FullName}" Margin="1 0 5 0" Foreground="Blue" VerticalAlignment="Center" />
                 </StackPanel>
             </StackPanel>
-            <Border Grid.Row="1" BorderThickness="0.5" CornerRadius="3" BorderBrush="#D5DFE5">
+            <Border Grid.Row="2" BorderThickness="0.5" CornerRadius="3" BorderBrush="#D5DFE5">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -55,7 +70,7 @@
                                 <ColumnDefinition Width="100"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0"  Text="{Binding Path=StockTakeItem.CodeOrBarcode, UpdateSourceTrigger=PropertyChanged}" 
+                            <TextBox Grid.Column="0"  Text="{Binding Path=CodeOrBarcode, UpdateSourceTrigger=PropertyChanged}" 
                                  FontSize="14" HorizontalContentAlignment="Center" TabIndex="1">
                                 <i:Interaction.Behaviors>
                                     <behaviors:TextBoxBehavior IsFocusOnTextChanged="True" IsSelectTextOnFocus="True" />
@@ -63,14 +78,13 @@
                                 <TextBox.InputBindings>
                                     <KeyBinding Key="Enter" Command="{Binding GetProductItemCommand}"/>
                                 </TextBox.InputBindings>
-
                             </TextBox>
                             <TextBox Grid.Column="1"  
                                  Text="{Binding Path=StockTakeItem.ProductDescription, UpdateSourceTrigger=PropertyChanged}" 
                                  FontSize="14" IsReadOnly="True" Margin="1 0">
                                 <TextBox.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Ընտրել ըստ անվանման" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
+                                        <MenuItem Header="Ընտրել ըստ անվանման" Command="{Binding GetProductByNameCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
                                     </ContextMenu>
                                 </TextBox.ContextMenu>
                             </TextBox>
@@ -99,7 +113,7 @@
                          VerticalAlignment="Stretch" VerticalContentAlignment="Top" TextWrapping="Wrap" AcceptsReturn="True" Height="50" Margin="3 0 3 3"/>
                 </Grid>
             </Border>
-            <Border Grid.Row="2" BorderThickness="1" CornerRadius="3" BorderBrush="#D5DFE5" Margin="0 1">
+            <Border Grid.Row="3" BorderThickness="1" CornerRadius="3" BorderBrush="#D5DFE5" Margin="0 1">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -108,7 +122,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <TextBox Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger = PropertyChanged}" Margin="3 5"/>
-                    <extendedControls:ExtendedDataGrid x:Name="DgInvoiceItems"  Grid.Row="1" ItemsSource="{Binding StockTakeItems}"
+                    <extendedControls:ExtendedDataGrid Grid.Row="1" ItemsSource="{Binding StockTakeItems}"
                                                        AlternatingRowBackground ="GhostWhite" AlternationCount="2"
                   SelectedItem="{Binding SelectedItem}"
                   VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="18" Margin="1" >
@@ -125,14 +139,13 @@
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
                                 <Setter Property="ContextMenu" Value="{StaticResource RowMenu}"/>
-                            
                             </Style>
                         </DataGrid.RowStyle>
                         <DataGrid.InputBindings>
                             <KeyBinding Key="Delete" Command="{Binding RemoveStockTakingItemCommand}" CommandParameter="{Binding DataContext.Id, RelativeSource={RelativeSource Self}}"/>
-
                         </DataGrid.InputBindings>
                         <DataGrid.Columns>
+                            <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding Index}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding CodeOrBarcode}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding ProductDescription}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
@@ -159,13 +172,6 @@
                     </GroupBox>
                 </Grid>
             </Border>
-            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 5">
-                <Button Margin="3" Content="Ներմուծել" Command="{Binding ImportInvoiceCommand}" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" TabIndex="10" />
-                <Button Margin="3" Content="Արտահանել" Command="{Binding ExportInvoiceCommand}" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" IsEnabled="False" TabIndex="10" />
-                <Button Margin="3" Command="{Binding PrintInvoiceCommand}" Content="Տպել Ctrl+P" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" IsEnabled="False" TabIndex="10" />
-                <Button Margin="3" Command="{Binding GetUnavailableProductItemsCommand}" Content="Չհաշվառված" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" RenderTransformOrigin="4.44,0.55" TabIndex="11" />
-                <Button Command="{Binding ViewDetilesCommand}" Margin="3" Content="Դիտում" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" TabIndex="12"/>
-            </StackPanel>
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

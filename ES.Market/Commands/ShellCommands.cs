@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Market.ViewModels;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets.Views;
 
-namespace ES.Shop.Commands
+namespace ES.Market.Commands
 {
-    public struct InvoiceCommandParameter
-    {
-        public InvoiceType Type { get; set; }
-        public int? Count { get; set; }
-    }
     public class RefreshCashCommand : ICommand
     {
         /// <summary>
@@ -72,25 +66,6 @@ namespace ES.Shop.Commands
     }
     #endregion
     #region Help
-    public class OpenCarculatorCommand : ICommand
-    {
-        /// <summary>
-        /// Initialize a new instance of the ProductEditCommand class.
-        /// </summary>
-        public event EventHandler CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
-        public bool CanExecute(object parameter)
-        {
-            return true;
-        }
-        public void Execute(object parameter)
-        {
-            Process.Start("calc");
-        }
-    }
     public class PrintSampleInvoiceCommand : ICommand
     {
         /// <summary>

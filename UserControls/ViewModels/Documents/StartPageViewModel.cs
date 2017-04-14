@@ -2,8 +2,10 @@
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
-using ES.Common.Interfaces;
 using ES.Common.ViewModels.Base;
+using ES.Data.Models.EsModels;
+using UserControls.Enumerations;
+using UserControls.Interfaces;
 
 namespace UserControls.ViewModels.Documents
 {
@@ -36,6 +38,8 @@ namespace UserControls.ViewModels.Documents
             IsClosable = false;
             OpenInvocieCommand = new RelayCommand(OnOpenInvoice);
             GetReportCommand = new RelayCommand<ReportTypes>(OnGetReport);
+            OpenCarculatorCommand = new RelayCommand(_parent.OnOpenCalc);
+            ToolsCommand = new RelayCommand<ToolsEnum>(_parent.OnTools);
         }
 
         private void OnOpenInvoice(object o)
@@ -61,8 +65,9 @@ namespace UserControls.ViewModels.Documents
 
         #region Reports
         public ICommand GetReportCommand { get; private set; }
+        public ICommand OpenCarculatorCommand { get; private set; }
         #endregion Reports
-
+        public ICommand ToolsCommand { get; private set; }
         #endregion Commands
     }
 }

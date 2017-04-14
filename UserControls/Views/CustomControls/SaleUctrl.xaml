@@ -40,7 +40,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
-            <Expander  Header="Ապրանքագիր" BorderBrush="Blue" IsExpanded="False" >
+            <Expander  Header="Ապրանքագիր" BorderBrush="Blue" IsExpanded="True" >
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -132,7 +132,7 @@
                              IsReadOnly="{Binding Path = DenayChangePrice}" Width="105" Height="35" FontSize="20" VerticalContentAlignment="Center" 
                              Focusable="{Binding DenayChangePrice, Converter={StaticResource InverseBooleanConverter}}"
                              VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right" KeyDown="TxtPrice_KeyDown" TabIndex="2">
-                        
+
                         <i:Interaction.Behaviors>
                             <behaviors:TextBoxBehavior IsSelectTextOnFocus="True" />
                         </i:Interaction.Behaviors>
@@ -267,25 +267,6 @@
             </Expander>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,10, 0, 0">
                 <Menu>
-                    <MenuItem Header="Բեռնել">
-                        <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceToXmlCommand}"/>
-                        <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ImportInvoiceCommand}"/>
-                        <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" Visibility="Collapsed"/>
-                        <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}"  Visibility="Collapsed"/>
-                        <MenuItem Header="Ապրանքների բեռնում">
-                            <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
-                            <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromMoveInvoiceCommand}"  />
-                            <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromPurchaseInvoiceCommand}" />
-                        </MenuItem>
-                    </MenuItem>
-                    <MenuItem Header="Արտահանել">
-                        <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceToXmlCommand}"/>
-                        <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ExportInvoiceToExcelCommand}"/>
-                        <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" Visibility="Collapsed"/>
-                        <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}" Visibility="Collapsed"/>
-                        <MenuItem Header="Արտահանել Ctrl+E" Command="{Binding ExportInvoiceCommand}" Visibility="Collapsed"/>
-                    </MenuItem>
-                    <MenuItem Header="Հաստատել (Փակել)" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}" TabIndex="5"></MenuItem>
                     <MenuItem Header="...">
                         <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"  />
                         <MenuItem Header="Հաստատել" Command="{Binding ApproveInvoiceCommand}"  />
@@ -294,9 +275,35 @@
                         <MenuItem Header="Տպել վաճառքի կտրոն Ctrl+Shift+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Small}"/>
                         <MenuItem Header="Տպել ՀԴՄ կտրոն" Command="{Binding PrintEcrTicketCommand}"/>
                         <Separator/>
+                        <MenuItem Header="Բեռնել">
+                            <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceToXmlCommand}"/>
+                            <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ImportInvoiceCommand}"/>
+                            <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" Visibility="Collapsed"/>
+                            <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}"  Visibility="Collapsed"/>
+                            <MenuItem Header="Ապրանքների բեռնում">
+                                <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
+                                <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromMoveInvoiceCommand}"  />
+                                <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromPurchaseInvoiceCommand}" />
+                            </MenuItem>
+                        </MenuItem>
+                        <MenuItem Header="Արտահանել">
+                            <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceToXmlCommand}"/>
+                            <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ExportInvoiceToExcelCommand}"/>
+                            <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" Visibility="Collapsed"/>
+                            <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}" Visibility="Collapsed"/>
+                            <MenuItem Header="Արտահանել Ctrl+E" Command="{Binding ExportInvoiceCommand}" Visibility="Collapsed"/>
+                        </MenuItem>
+                        <Separator/>
                         <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>
                     </MenuItem>
                 </Menu>
+                <Button Content="Հիշել" Width="80"
+                        Command="{Binding SaveInvoiceCommand}"
+                        ToolTip="Հիշել Ctrl+S"/>
+                <Button Content="Հաստատել" Width="80"
+                        Command="{Binding ApproveInvoiceAndCloseCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"
+                        ToolTip="Հաստատել (Փակել) Ctrl+F5"/>
             </StackPanel>
         </StackPanel>
     </Grid>

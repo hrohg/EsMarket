@@ -41,7 +41,7 @@ namespace UserControls.ViewModels.Invoices
             Invoice.RecipientName = null;
         }
 
-        
+
         #endregion
 
         #region External methods
@@ -52,7 +52,7 @@ namespace UserControls.ViewModels.Invoices
         }
         protected override decimal GetPartnerPrice(EsProductModel product)
         {
-            return product != null ? (product.Price?? 0) : 0;
+            return product != null ? (product.Price ?? 0) : 0;
         }
 
         public override bool CanApprove(object o)
@@ -67,8 +67,8 @@ namespace UserControls.ViewModels.Invoices
                 return;
             }
             var fromStocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Instance.GetEsMember.Id));
-if(fromStocks==null || fromStocks.Count==0) return;
-            var td = new Thread(()=>Approve(fromStocks.Select(s => s.Id).ToList()));
+            if (fromStocks == null || fromStocks.Count == 0) return;
+            var td = new Thread(() => Approve(fromStocks.Select(s => s.Id).ToList()));
             td.Start();
         }
 

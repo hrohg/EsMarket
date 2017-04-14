@@ -111,6 +111,7 @@ namespace ES.Business.Managers
             return ConvertStockTake(TryCreateStockTake(stockId, creatorId, memberId));
         }
         #endregion
+
         #region StockTakeItems public methods
         public static StockTakeItemsModel GetStockTakeItem(Guid stockTakeId, string codeOrBarcode, long memberId)
         {
@@ -128,7 +129,12 @@ namespace ES.Business.Managers
         {
             return TryRemoveStoCkakeItem(id, memberId);
         }
+        public static bool CompletedStockTake(StockTakeModel stockTake)
+        {
+            return TryCompletedStockTake(stockTake);
+        }
         #endregion
+
         #region StockTake Private methods
         private static StockTake TryGetStockTake(Guid id, long memberId)
         {
@@ -192,8 +198,7 @@ namespace ES.Business.Managers
             {
                 using (var db = GetDataContext())
                 {
-                    var lastNumber = db.StockTake.Where(s => s.MemberId == memberId).OrderByDescending(s => s.StockTakeNumber)
-                                .Select(s => s.StockTakeNumber).FirstOrDefault();
+                    var lastNumber = db.StockTake.Where(s => s.MemberId == memberId).OrderByDescending(s => s.StockTakeNumber).Select(s => s.StockTakeNumber).FirstOrDefault();
                     var newItem = new StockTake
                     {
                         Id = Guid.NewGuid(),
@@ -213,7 +218,31 @@ namespace ES.Business.Managers
                 return null;
             }
         }
+        private static bool TryCompletedStockTake(StockTakeModel stockTake)
+        {
+            if (stockTake == null) return false;
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    var exStocktake = db.StockTake.SingleOrDefault(s => s.Id == stockTake.Id);
+                    if (exStocktake == null) return false;
+                    exStocktake.Description = stockTake.Description;
+                    exStocktake.ClosedDate = DateTime.Now;
+                    exStocktake.CloserId = ApplicationManager.GetEsUser.UserId;
+                    db.SaveChanges();
+                    stockTake.ClosedDate = exStocktake.ClosedDate;
+                    stockTake.CloserId = exStocktake.CloserId;
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    return false;
+                }
+            }
+        }
         #endregion
+
         #region StockTakeItems private methods
         private static StockTakeItems TryGetStockTakeItem(Guid stockTakeId, string codeOrBarCode, long memberId)
         {
@@ -238,7 +267,8 @@ namespace ES.Business.Managers
                 {
                     return
                         db.StockTakeItems.Include(s => s.StockTake)
-                            .Where(s => s.StockTakeId == stockTakingId && s.StockTake.MemberId == memberId).ToList();
+                        .Where(s => s.StockTakeId == stockTakingId && s.StockTake.MemberId == memberId)
+                        .OrderBy(s=>s.StockTakeDate).ToList();
                 }
             }
             catch (Exception ex)
@@ -303,5 +333,7 @@ namespace ES.Business.Managers
             }
         }
         #endregion
+
+
     }
 }

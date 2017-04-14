@@ -275,7 +275,6 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                 <TextBlock Text="Եկամտաբերություն %"/>
                 <TextBlock Text="{Binding ActualPercentage, StringFormat={}{0:#,#.##}}"/>
-                <ToggleButton x:Name="Part_ToggleButton" Content="Մանրամասն" Height="22" />
                 <!--<popup:DraggablePopup IsOpen="{Binding ElementName=Part_ToggleButton, Path=IsChecked}" StaysOpen="False" AllowsTransparency="True">
                     <Border Background="Yellow" MinWidth="200" MinHeight="100">
                         <Grid>
@@ -325,8 +324,7 @@
                         </Grid>
                     </Border>
                 </popup:DraggablePopup>-->
-                <Button Margin="3" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}" Content="Հաստատել (Փակել)" HorizontalAlignment="Right"  VerticalAlignment="Top" Width="110" RenderTransformOrigin="4.44,0.55" TabIndex="11" />
-                <Menu Height="22" Margin="5 0">
+                <Menu Margin="3 0">
                     <MenuItem Header="...">
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
@@ -341,6 +339,14 @@
                         <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>
                     </MenuItem>
                 </Menu>
+                <ToggleButton Content="Մանրամասն" Width="80" />
+                <Button Content="Հիշել" Width="80"
+                        Command="{Binding SaveInvoiceCommand}"
+                        ToolTip="Հիշել Ctrl+S"/>
+                <Button Content="Հաստատել" Width="80"
+                        Command="{Binding ApproveInvoiceAndCloseCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"
+                        ToolTip="Հաստատել (Փակել) Ctrl+F5"/>
             </StackPanel>
         </StackPanel>
     </Grid>

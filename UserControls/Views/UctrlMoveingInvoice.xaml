@@ -167,10 +167,7 @@
                 </StackPanel>
             </Grid>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                <Menu Margin="3">
-
-                </Menu>
-                <Menu Height="22" Margin="5 0">
+                <Menu Margin="3 0">
                     <MenuItem Header="Ապրանքների բեռնում">
                         <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
                         <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromMoveInvoiceCommand}"  />
@@ -191,6 +188,13 @@
                         <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>
                     </MenuItem>
                 </Menu>
+                <Button Content="Հիշել" Width="80"
+                        Command="{Binding SaveInvoiceCommand}"
+                        ToolTip="Հիշել Ctrl+S"/>
+                <Button Content="Հաստատել" Width="80"
+                        Command="{Binding ApproveInvoiceAndCloseCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"
+                        ToolTip="Հաստատել (Փակել) Ctrl+F5"/>
             </StackPanel>
         </StackPanel>
     </Grid>

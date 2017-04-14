@@ -3,11 +3,12 @@
                     xmlns:managers="clr-namespace:ES.Business.Managers;assembly=ES.Business"
                     xmlns:converters="clr-namespace:UserControls.Converters"
                     xmlns:documents="clr-namespace:UserControls.ViewModels.Documents"
-                    xmlns:enumerations="clr-namespace:ES.Common.Enumerations;assembly=ES.Common">
+                    xmlns:enumerations="clr-namespace:ES.Common.Enumerations;assembly=ES.Common"
+                    xmlns:enumerations1="clr-namespace:UserControls.Enumerations">
 
     <converters:GetInvocieParameterConverter x:Key="GetInvocieParameterConverter"/>
     <converters:UserRoleToBoolConverter x:Key="UserRoleToBoolConverter"/>
-    
+
     <Style x:Key="SeparatorStyle"
            TargetType="{x:Type Border}">
         <Setter Property="BorderThickness" Value="1,0,0,0"/>
@@ -19,58 +20,58 @@
 
     <DataTemplate DataType="{x:Type documents:StartPageViewModel}">
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-        <Grid>
-            <Grid.Resources>
-                <Style x:Key="HeaderStyle" TargetType="{x:Type TextBlock}">
-                    <Setter Property="FontSize" Value="16"/>
-                    <Setter Property="FontWeight" Value="Bold"/>
-                    <Setter Property="HorizontalAlignment" Value="Center"/>
-                </Style>
-                <Style x:Key="DescriptionStyle" TargetType="{x:Type TextBlock}">
-                    <Setter Property="FontSize" Value="12"/>
-                    <Setter Property="Margin" Value="10"/>
-                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                    <Setter Property="Foreground" Value="#E3E3E3"/>
-                </Style>
-                <Style x:Key="LinkStyle" TargetType="{x:Type TextBlock}">
-                    <Setter Property="FontSize" Value="12"/>
-                    <Setter Property="HorizontalAlignment" Value="Center"/>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="#FFC5C5C5"/>
-                            <Setter Property="FontWeight" Value="Bold"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Grid.Resources>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="2*"/>
-                <RowDefinition Height="3*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="3*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="3*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="3*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="3*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="50"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Text="Փաստաթղթեր" Style="{StaticResource HeaderStyle}"/>
-                    <TextBlock Grid.Row="1" Text="Ստեղծել նոր փաստաթղթեր" Style="{StaticResource DescriptionStyle}"/>
-                    <StackPanel Grid.Row="2"  Margin="15">
-                        <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Seller}}">
+            <Grid>
+                <Grid.Resources>
+                    <Style x:Key="HeaderStyle" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                    </Style>
+                    <Style x:Key="DescriptionStyle" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="Margin" Value="10"/>
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="Foreground" Value="#E3E3E3"/>
+                    </Style>
+                    <Style x:Key="LinkStyle" TargetType="{x:Type TextBlock}">
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="#FFC5C5C5"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Resources>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Փաստաթղթեր" Style="{StaticResource HeaderStyle}"/>
+                        <TextBlock Grid.Row="1" Text="Ստեղծել նոր փաստաթղթեր" Style="{StaticResource DescriptionStyle}"/>
+                        <StackPanel Grid.Row="2"  Margin="15">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Seller}}">
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
@@ -82,7 +83,7 @@
                             <TextBlock Text="Վաճառքի ապրանքագիր F2" Style="{StaticResource LinkStyle}"/>
                             </Hyperlink>
                     </TextBlock>
-                        <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.SaleManager}}">
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
@@ -94,7 +95,7 @@
                             <TextBlock Text="Գնման ապրանքագիր F3" Style="{StaticResource LinkStyle}"/>
                             </Hyperlink>
                     </TextBlock>
-                        <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.StockKeeper}}">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.SaleManager}}">
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
@@ -106,7 +107,7 @@
                             <TextBlock Text="Տեղափոխման ապրանքագիր" Style="{StaticResource LinkStyle}"/>
                             </Hyperlink>
                     </TextBlock>
-                        <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
@@ -118,7 +119,7 @@
                             <TextBlock Text="Դուրսգրման ակտ" Style="{StaticResource LinkStyle}"/>
                             </Hyperlink>
                     </TextBlock>
-                        <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.SaleManager}}">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.SaleManager}}">
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
@@ -130,7 +131,7 @@
                             <TextBlock Text="Ետ վերադարձ" Style="{StaticResource LinkStyle}"/>
                             </Hyperlink>
                     </TextBlock>
-                        <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.SaleManager}}">
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
@@ -142,40 +143,63 @@
                             <TextBlock Text="Վերադարձ մատակարարին" Style="{StaticResource LinkStyle}"/>
                             </Hyperlink>
                     </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                    <Border Grid.Column="2" Style="{StaticResource SeparatorStyle}" Margin="0 10"/>
+                    <StackPanel Grid.Column="3">
+                        <TextBlock Text="Դրամարկղ" Style="{StaticResource HeaderStyle}"/>
                     </StackPanel>
-                </Grid>
-                <Border Grid.Column="2" Style="{StaticResource SeparatorStyle}" Margin="0 10"/>
-                <StackPanel Grid.Column="3">
-                    <TextBlock Text="Դրամարկղ" Style="{StaticResource HeaderStyle}"/>
-                </StackPanel>
-                <Border Grid.Column="4" Style="{StaticResource SeparatorStyle}" Margin="0 10"/>
-                <StackPanel Grid.Column="5">
-                    <TextBlock Text="Տվյալներ" Style="{StaticResource HeaderStyle}"/>
-                </StackPanel>
-                <Border Grid.Column="6" Style="{StaticResource SeparatorStyle}" Margin="0 10"/>
-                <Grid Grid.Column="7">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="50"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Text="Վերլուծություններ" Style="{StaticResource HeaderStyle}"/>
-                    <TextBlock Grid.Row="1" Text="Վերլուծությունների դիտում" Style="{StaticResource DescriptionStyle}"/>
-                    <StackPanel Grid.Row="2" Margin="15">
-                        <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
+                    <Border Grid.Column="4" Style="{StaticResource SeparatorStyle}" Margin="0 10"/>
+                    <Grid Grid.Column="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Տվյալներ" Style="{StaticResource HeaderStyle}"/>
+                        <TextBlock Grid.Row="1" Text="Վերլուծությունների դիտում: Տվյալների մշակում:" Style="{StaticResource DescriptionStyle}"/>
+                        <StackPanel Grid.Row="2" Margin="15">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
                                                 <Hyperlink TextDecorations="None" Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations:ReportTypes.Report}">
                                                     <TextBlock Text="Վերլուծություններ" Style="{StaticResource LinkStyle}"/>
                                                     </Hyperlink>
                                                 </TextBlock>
-                        <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
                                                     <Hyperlink TextDecorations="None" Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations:ReportTypes.ShortReport}">
                                                         <TextBlock Text="Համառոտ վերլուծություններ" Style="{StaticResource LinkStyle}"/>
                                                         </Hyperlink>
                                                 </TextBlock>
-                    </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                    <Border Grid.Column="6" Style="{StaticResource SeparatorStyle}" Margin="0 10"/>
+                    <Grid Grid.Column="7">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Գործիքներ" Style="{StaticResource HeaderStyle}"/>
+                        <TextBlock Grid.Row="1" Text="Օգտակար գործիքներ: Օգնություն" Style="{StaticResource DescriptionStyle}"/>
+                        <StackPanel Grid.Row="2" Margin="15">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
+                                                <Hyperlink TextDecorations="None" Command="{Binding ToolsCommand}"  CommandParameter="{x:Static enumerations1:ToolsEnum.ProductItems}">
+                                                    <TextBlock Text="Ապրանքացուցակ" Style="{StaticResource LinkStyle}"/>
+                                                    </Hyperlink>
+                                                </TextBlock>
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
+                                                <Hyperlink TextDecorations="None" Command="{Binding ToolsCommand}" CommandParameter="{x:Static enumerations1:ToolsEnum.Categories}">
+                                                    <TextBlock Text="Ապրանքային խմբեր" Style="{StaticResource LinkStyle}"/>
+                                                    </Hyperlink>
+                                                </TextBlock>
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
+                                                <Hyperlink TextDecorations="None" Command="{Binding OpenCarculatorCommand}">
+                                                    <TextBlock Text="Հաշվիչ" Style="{StaticResource LinkStyle}"/>
+                                                    </Hyperlink>
+                                                </TextBlock>
+                        </StackPanel>
+                    </Grid>
                 </Grid>
             </Grid>
-        </Grid>
         </ScrollViewer>
     </DataTemplate>
 </ResourceDictionary>

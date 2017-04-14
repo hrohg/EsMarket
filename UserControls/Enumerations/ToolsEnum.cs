@@ -1,4 +1,4 @@
-﻿namespace ES.Market.Enumerations
+﻿namespace UserControls.Enumerations
 {
     public enum ToolsEnum
     {

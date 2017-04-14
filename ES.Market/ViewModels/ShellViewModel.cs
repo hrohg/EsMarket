@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -18,15 +19,13 @@ using ES.Business.Models;
 using ES.Common;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
-using ES.Common.Interfaces;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
 using ES.Data.Models.EsModels;
 using ES.DataAccess.Models;
-using ES.Market.Enumerations;
+using ES.Market.Commands;
 using ES.Market.Views.Reports.View;
-using ES.Shop.Commands;
 using ES.Shop.Config;
 using ES.Shop.Controls;
 using ES.Shop.Users;
@@ -36,6 +35,7 @@ using ES.Shop.Views.Reports.ViewModels;
 using Shared.Helpers;
 using UserControls.PriceTicketControl;
 using UserControls.ControlPanel.Controls;
+using UserControls.Enumerations;
 using UserControls.Helpers;
 using UserControls.Interfaces;
 using UserControls.PriceTicketControl;
@@ -644,7 +644,7 @@ namespace ES.Market.ViewModels
                 ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Գործողությունն ընդհատված է։", MessageModel.MessageTypeEnum.Warning));
                 return;
             }
-            vm = new StockTakeViewModel(stockTake, _member.Id);
+            vm = new StockTakeViewModel(stockTake);
             AddInvoiceDocument(vm);
         }
 
@@ -1757,10 +1757,16 @@ namespace ES.Market.ViewModels
 
         #region Help
 
+        #region OpenCarculatorCommand
         public ICommand OpenCarculatorCommand
         {
-            get { return new OpenCarculatorCommand(); }
+            get { return new RelayCommand(OnOpenCalc); }
         }
+        public void OnOpenCalc(object obj)
+        {
+            Process.Start("calc");
+        }
+        #endregion OpenCarculatorCommand
 
         public ICommand PrintSampleInvoiceCommand
         {
@@ -1780,7 +1786,7 @@ namespace ES.Market.ViewModels
             }
         }
 
-        private bool CanExecuteTools(ToolsEnum toolsEnum)
+        public bool CanExecuteTools(ToolsEnum toolsEnum)
         {
             switch (toolsEnum)
             {
@@ -1796,7 +1802,7 @@ namespace ES.Market.ViewModels
             return true;
         }
 
-        private void OnTools(ToolsEnum toolsEnum)
+        public void OnTools(ToolsEnum toolsEnum)
         {
             ToolsViewModel tool = null;
             switch (toolsEnum)
@@ -1822,7 +1828,7 @@ namespace ES.Market.ViewModels
 
         }
 
-        private void OnSetCategory(EsCategoriesModel category)
+        public void OnSetCategory(EsCategoriesModel category)
         {
             var activeDocument = Documents.FirstOrDefault(s => s.IsActive);
             var productManager = activeDocument as ProductManagerViewModel;
@@ -1831,7 +1837,6 @@ namespace ES.Market.ViewModels
                 productManager.SetProductCategory(category);
             }
         }
-
         #endregion Categories tools
 
         #endregion Help

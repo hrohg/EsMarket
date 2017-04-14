@@ -119,7 +119,6 @@
     <Compile Include="Controls\UctrlSettings.xaml.cs">
       <DependentUpon>UctrlSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Enumerations\ToolsEnum.cs" />
     <Compile Include="ViewModels\AvalonDockLayoutViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="Views\PackingListUctrl.xaml.cs">

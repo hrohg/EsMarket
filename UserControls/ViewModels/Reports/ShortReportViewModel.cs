@@ -388,7 +388,7 @@ namespace UserControls.ViewModels.Reports
         {
             Title = "Համառոտ վերլուծություններ";
             StartDate = DateTime.Today;
-            EndDate = DateTime.Now;
+            EndDate = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day, 23,59,59);
             IsSale = IsPurchase = true;
             ResetInvoiseCommand = new RelayCommand(OnResetInvoice);
 

@@ -36,7 +36,7 @@ namespace UserControls.Views.ReceiptTickets
         }
         public string Title { get { return _title; } set { _title = value; OnPropertyChanged(TitleProperty); } }
         public string Footer { get { return _footer; } set { _footer = value; OnPropertyChanged(FooterProperty);} }
-        public string Prize { get { return ResponseReceipt!=null && ResponseReceipt.Prize == (int)CashReg.Helper.Prize.Prize ? Enumerations.GetEnumDescription(CashReg.Helper.Prize.Prize) : Enumerations.GetEnumDescription(CashReg.Helper.Prize.NoPrize); } }
+        public string Prize { get { return ResponseReceipt!=null && ResponseReceipt.Prize == (int)CashReg.Helper.Prize.Prize ? Shared.Helpers.Enumerations.GetEnumDescription(CashReg.Helper.Prize.Prize) : Shared.Helpers.Enumerations.GetEnumDescription(CashReg.Helper.Prize.NoPrize); } }
         public DateTime? Date { get {return Invoice != null ? Invoice.ApproveDate ?? Invoice.CreateDate : (DateTime?) null;} }
         public bool IsCheck { get { return InvoicePaid != null && InvoicePaid.ByCheck > 0; } }
         public bool IsAccountsReceivable { get { return InvoicePaid != null && InvoicePaid.AccountsReceivable > 0; } }

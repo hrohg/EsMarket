@@ -61,7 +61,6 @@ namespace ES.Market
                 MiControlPanel.Visibility =
                 MiAccounting.Visibility =
                 MiAction.Visibility =
-                MiFinanceReport.Visibility =
                 MiAdministratorSettings.Visibility =
                  Visibility.Visible;
             }
