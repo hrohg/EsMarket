@@ -8,6 +8,7 @@
 
     <converters:GetInvocieParameterConverter x:Key="GetInvocieParameterConverter"/>
     <converters:UserRoleToBoolConverter x:Key="UserRoleToBoolConverter"/>
+    <converters:UserRoleToBoolMultiValueConverter x:Key="UserRoleToBoolMultiValueConverter"/>
 
     <Style x:Key="SeparatorStyle"
            TargetType="{x:Type Border}">
@@ -71,7 +72,13 @@
                         <TextBlock Grid.Row="0" Text="Փաստաթղթեր" Style="{StaticResource HeaderStyle}"/>
                         <TextBlock Grid.Row="1" Text="Ստեղծել նոր փաստաթղթեր" Style="{StaticResource DescriptionStyle}"/>
                         <StackPanel Grid.Row="2"  Margin="15">
-                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Seller}}">
+                            <TextBlock Margin="0 4 0 0" >
+                                <TextBlock.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                        <Binding Source="{x:Static enumerations:UserRoleEnum.SaleManager}"/>
+                                        <Binding Source="{x:Static enumerations:UserRoleEnum.JuniorSeller}"/>
+                                    </MultiBinding>
+                                </TextBlock.IsEnabled>
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
@@ -83,7 +90,8 @@
                             <TextBlock Text="Վաճառքի ապրանքագիր F2" Style="{StaticResource LinkStyle}"/>
                             </Hyperlink>
                     </TextBlock>
-                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.SaleManager}}">
+                            <TextBlock Margin="0 4 0 0" 
+                                       IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.SaleManager}}">
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
@@ -159,7 +167,7 @@
                         <TextBlock Grid.Row="0" Text="Տվյալներ" Style="{StaticResource HeaderStyle}"/>
                         <TextBlock Grid.Row="1" Text="Վերլուծությունների դիտում: Տվյալների մշակում:" Style="{StaticResource DescriptionStyle}"/>
                         <StackPanel Grid.Row="2" Margin="15">
-                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.SaleManager}}">
                                                 <Hyperlink TextDecorations="None" Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations:ReportTypes.Report}">
                                                     <TextBlock Text="Վերլուծություններ" Style="{StaticResource LinkStyle}"/>
                                                     </Hyperlink>
@@ -181,17 +189,17 @@
                         <TextBlock Text="Գործիքներ" Style="{StaticResource HeaderStyle}"/>
                         <TextBlock Grid.Row="1" Text="Օգտակար գործիքներ: Օգնություն" Style="{StaticResource DescriptionStyle}"/>
                         <StackPanel Grid.Row="2" Margin="15">
-                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Seller}}">
                                                 <Hyperlink TextDecorations="None" Command="{Binding ToolsCommand}"  CommandParameter="{x:Static enumerations1:ToolsEnum.ProductItems}">
                                                     <TextBlock Text="Ապրանքացուցակ" Style="{StaticResource LinkStyle}"/>
                                                     </Hyperlink>
                                                 </TextBlock>
-                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.SaleManager}}">
                                                 <Hyperlink TextDecorations="None" Command="{Binding ToolsCommand}" CommandParameter="{x:Static enumerations1:ToolsEnum.Categories}">
                                                     <TextBlock Text="Ապրանքային խմբեր" Style="{StaticResource LinkStyle}"/>
                                                     </Hyperlink>
                                                 </TextBlock>
-                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
+                            <TextBlock Margin="0 4 0 0">
                                                 <Hyperlink TextDecorations="None" Command="{Binding OpenCarculatorCommand}">
                                                     <TextBlock Text="Հաշվիչ" Style="{StaticResource LinkStyle}"/>
                                                     </Hyperlink>

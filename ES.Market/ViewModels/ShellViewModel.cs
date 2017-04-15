@@ -388,22 +388,28 @@ namespace ES.Market.ViewModels
                 case Key.F2:
                     if (!ApplicationManager.IsInRole(UserRoleEnum.Seller)) return;
                     //handle X key reate new sale invoice
-                    if (_userRoles.FirstOrDefault(s => s.RoleName == "Seller") == null &&
-                        _userRoles.FirstOrDefault(s => s.RoleName == "SaleManager") == null &&
-                        _userRoles.FirstOrDefault(s => s.RoleName == "Manager") == null) { break; }
-                    OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.SaleInvoice, InvoiceState.New, MaxInvocieCount.All));
+                    if (ApplicationManager.IsInRole(UserRoleEnum.Seller) ||
+                        ApplicationManager.IsInRole(UserRoleEnum.JuniorSeller))
+                    {
+                        OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.SaleInvoice,InvoiceState.New, MaxInvocieCount.All));
+                    }
                     break;
                 case Key.F3:
                     if (!ApplicationManager.IsInRole(UserRoleEnum.Manager)) return;
                     //handle X key reate new sale invoice
-                    if (_userRoles.FirstOrDefault(s => s.RoleName == "Manager") == null) break;
-                    OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.PurchaseInvoice, InvoiceState.New, MaxInvocieCount.All));
+                    if (ApplicationManager.IsInRole(UserRoleEnum.SaleManager))
+                    {
+                        OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.PurchaseInvoice, InvoiceState.New, MaxInvocieCount.All));
+                    }
                     break;
                 case Key.F4:
                     if (!ApplicationManager.IsInRole(UserRoleEnum.StockKeeper)) return;
                     //handle X key reate new sale invoice
-                    if (_userRoles.FirstOrDefault(s => s.RoleName == "Storekeeper") == null) break;
-                    OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.MoveInvoice, InvoiceState.New, MaxInvocieCount.All));
+                    if (ApplicationManager.IsInRole(UserRoleEnum.SaleManager) ||
+                        ApplicationManager.IsInRole(UserRoleEnum.StockKeeper))
+                    {
+                        OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.MoveInvoice, InvoiceState.New, MaxInvocieCount.All));
+                    }
                     break;
                 case Key.F5:
                 //Used
@@ -427,11 +433,7 @@ namespace ES.Market.ViewModels
                     break;
                 case Key.F10:
                     //handle X key quite
-                    if (MessageBox.Show("Դուք իսկապե՞ս ցանկանում եք ավարտել աշխատանքը:", "Աշխատանքի ավարտ",
-                        MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                    {
-                        _parentTabControl.Close();
-                    }
+                    _parentTabControl.Close();
                     break;
             }
         }

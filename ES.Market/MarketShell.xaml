@@ -626,7 +626,7 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Name="MiReport" Header="Վերլուծություններ" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
+                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
                               Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations1:ReportTypes.Report}">
                         <MenuItem.Icon>

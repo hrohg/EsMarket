@@ -19,4 +19,18 @@ namespace UserControls.Converters
             throw new Exception("Invalid call - one way only");
         }
     }
+
+    public class UserRoleToBoolMultiValueConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var type = (UserRoleEnum?)parameter;
+            return ApplicationManager.IsInRole(type);
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new Exception("Invalid call - one way only");
+        }
+    }
 }

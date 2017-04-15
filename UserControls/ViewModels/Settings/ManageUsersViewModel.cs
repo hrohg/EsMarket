@@ -105,7 +105,7 @@ namespace UserControls.ViewModels.Settings
         {
             SelectedEsUser = null;
             EsUsers = new ObservableCollection<EsUserModel>(UsersManager.GetEsUsers(ApplicationManager.Instance.GetEsMember.Id));
-            UsersRoles = UsersManager.GetUsersRoles(ApplicationManager.Instance.GetEsMember.Id);
+            UsersRoles = UsersManager.GetUsersRoles();
             Roles = UsersManager.GetMemberRoles().Select(s => new UserRole(s)).ToList();
         }
         private bool CanLoadUser(string userEmailOrMobile)
@@ -137,8 +137,17 @@ namespace UserControls.ViewModels.Settings
         private void OnEditUser(object o)
         {
             var memberId = ApplicationManager.Instance.GetEsMember.Id;
-            if (UsersManager.EditUser(SelectedEsUser, Roles.Where(s => s.IsSelected).Select(s => 
-                new MemberUsersRoles {Id = Guid.NewGuid(), EsUserId = SelectedEsUser.UserId, MemberRoleId = s.Role.Id, MemberId = memberId }).ToList(), memberId)) ;
+            if (UsersManager.EditUser(SelectedEsUser, Roles.Where(s => s.IsSelected).Select(s =>
+                new MemberUsersRoles
+                {
+                    Id = Guid.NewGuid(),
+                    EsUserId = SelectedEsUser.UserId,
+                    MemberRoleId = s.Role.Id,
+                    MemberId = memberId
+                }).ToList(), memberId))
+            {
+                UsersRoles = UsersManager.GetUsersRoles();
+            }
         }
         #endregion //Internal methods
 

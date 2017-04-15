@@ -95,9 +95,9 @@ namespace ES.Business.Managers
         {
             return TryGetMembersRoles().Select(s => new MemberRolesModel { Id = s.Id, RoleName = s.RoleName, Description = s.Description }).ToList();
         }
-        public static List<UsersRolesModel> GetUsersRoles(long memberId)
+        public static List<UsersRolesModel> GetUsersRoles()
         {
-            return TryGetMembersUsersRoles(memberId).Select(Convert).ToList();
+            return TryGetMembersUsersRoles().Select(Convert).ToList();
         }
         public static EsUserModel LoadEsUserByEmail(string email)
         {
@@ -300,8 +300,9 @@ namespace ES.Business.Managers
                 return db.MemberUsersRoles.Where(s => s.EsUserId == userId && s.MemberId == memberId).GroupBy(s => s.MemberRoleId).Select(s => s.Select(t => t.MembersRoles).FirstOrDefault()).ToList();
             }
         }
-        private static List<MemberUsersRoles> TryGetMembersUsersRoles(long memberId)
+        private static List<MemberUsersRoles> TryGetMembersUsersRoles()
         {
+            var memberId = ApplicationManager.Instance.GetEsMember.Id;
             using (var db = GetDataContext())
             {
                 try

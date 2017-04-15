@@ -466,6 +466,29 @@ namespace ES.Business.Managers
                     }
                     db.SaveChanges();
                     #endregion
+
+                    #region Download Roles
+                    var roles = dbServer.MembersRoles;
+                    foreach (var item in roles)
+                    {
+                        var exItem = db.MembersRoles.SingleOrDefault(s => s.Id == item.Id);
+                        if (exItem == null)
+                        {
+                            db.MembersRoles.Add(new MembersRoles
+                            {
+                                Id = item.Id,
+                                RoleName = item.RoleName,
+                                Description = item.Description
+                            });
+                        }
+                        else
+                        {
+                            exItem.RoleName = item.RoleName;
+                            exItem.Description = item.Description;
+                        }
+                    }
+                    db.SaveChanges();
+                    #endregion Download roles
                 }
                 catch (Exception)
                 {
@@ -577,7 +600,7 @@ namespace ES.Business.Managers
                         var exCashDesk = db.CashDesk.SingleOrDefault(s => s.Id == item.Id);
                         if (exCashDesk == null)
                         {
-                            db.CashDesk.Add(new CashDesk()
+                            db.CashDesk.Add(new CashDesk
                             {
                                 Id = item.Id,
                                 MemberId = item.MemberId,
@@ -593,7 +616,7 @@ namespace ES.Business.Managers
                         {
                             // ToDo
                             exCashDesk.MemberId = item.MemberId;
-                            exCashDesk.Total = item.Total;
+                            //exCashDesk.Total = item.Total;
                             exCashDesk.Name = item.Name;
                             exCashDesk.Description = item.Description;
                             exCashDesk.Notes = item.Notes;
