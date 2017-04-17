@@ -181,6 +181,7 @@
     <Compile Include="ViewModels\TabItemViewModel.cs" />
     <Compile Include="ViewModels\Tools\CategoriesToolsViewModel.cs" />
     <Compile Include="ViewModels\Tools\ProductItemsToolsViewModel.cs" />
+    <Compile Include="Views\Accountant\ViewAccountantTableViewModel.cs" />
     <Compile Include="Views\InventoryWriteOffUctrl.xaml.cs">
       <DependentUpon>InventoryWriteOffUctrl.xaml</DependentUpon>
     </Compile>
@@ -333,6 +334,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PriceTicketControl\UctrlPriceTicket.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accountant\View\ViewAccountantTableTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

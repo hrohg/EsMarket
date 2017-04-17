@@ -351,7 +351,8 @@
                             <MenuItem.Icon>
                                 <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"/>
                             </MenuItem.Icon>
-                            <MenuItem Header="Հաշվային պլան" Click="MiViewAccountingPlan_Click"/>
+                            <MenuItem Header="Հաշվային պլան" Command="{Binding ViewAccountantTableCommand}"/>
+                            <MenuItem Header="Հաշվային պլան մանրամասն" Click="MiViewAccountingPlan_Click"/>
                             <Separator/>
                         </MenuItem>
                         <Separator Margin="3"/>

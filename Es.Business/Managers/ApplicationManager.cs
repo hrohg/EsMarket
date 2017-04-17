@@ -90,6 +90,10 @@ namespace ES.Business.Managers
             }
         }
 
+        public static EsMemberModel Member
+        {
+            get { return Instance.GetEsMember; }
+        }
         public EsMemberModel SetEsMember
         {
             set

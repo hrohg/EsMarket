@@ -198,13 +198,13 @@ namespace ES.Business.Managers
                 repaymentAccountingRecords: Convert(repaymentAccountingRecords), memberId: memberid);
         }
 
-        public static List<AccountingRecordsModel> GetAccountingRecords(DateTime beginDate, DateTime endDate, long memberId)
+        public static List<AccountingRecordsModel> GetAccountingRecords(DateTime beginDate, DateTime endDate)
         {
-            return TryGetAccountingRecords(beginDate, endDate, memberId).Select(Convert).ToList();
+            return TryGetAccountingRecords(beginDate, endDate).Select(Convert).ToList();
         }
-        public static List<AccountingRecordsModel> GetAccountingRecords(long debit, long credit, long memberId)
+        public static List<AccountingRecordsModel> GetAccountingRecords(long debit, long credit)
         {
-            return TryGetAccountingRecords(debit, credit, memberId).Select(Convert).ToList();
+            return TryGetAccountingRecords(debit, credit).Select(Convert).ToList();
         }
         public static List<ES.DataAccess.Models.AccountingPlan> GetAccountingPlan()
         {
@@ -387,9 +387,10 @@ namespace ES.Business.Managers
             }
             return true;
         }
-        private static List<AccountingRecords> TryGetAccountingRecords(DateTime beginDate, DateTime endDate, long memberId)
+        private static List<AccountingRecords> TryGetAccountingRecords(DateTime beginDate, DateTime endDate)
         {
-            endDate = endDate.Date.AddDays(1);
+            //endDate = endDate.Date.AddDays(1);
+            var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
             {
                 try
@@ -405,8 +406,9 @@ namespace ES.Business.Managers
                 }
             }
         }
-        private static List<AccountingRecords> TryGetAccountingRecords(long debit, long credit, long memberId)
+        private static List<AccountingRecords> TryGetAccountingRecords(long debit, long credit)
         {
+            var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
             {
                 try

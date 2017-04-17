@@ -9,6 +9,9 @@
         <ResourceDictionary Source="View/PackingListForSaler.xaml"/>
         <ResourceDictionary Source="Editors/ManageProducts.xaml"/>
         <ResourceDictionary Source="Editors/ManagePartners.xaml"/>
+
+        <!--Views-->
+        <ResourceDictionary Source="Accountant/View/ViewAccountantTableTemplate.xaml"/>
         <!--Settings-->
         <ResourceDictionary Source="Settings/SettingsTemplate.xaml"/>
         <ResourceDictionary Source="Settings/ManageUsersTemplate.xaml"/>

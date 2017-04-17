@@ -104,10 +104,9 @@ namespace ES.Shop.Views.Reports.ViewModels
                 case ViewInvoicesEnum.None:
                 case ViewInvoicesEnum.ByDetiles:
                     return true;
-                    break;
                 case ViewInvoicesEnum.ByStock:
                     return false;
-                    break;
+
 
                 default:
                     return false;
@@ -115,7 +114,7 @@ namespace ES.Shop.Views.Reports.ViewModels
         }
         private void OnViewViewInternalWayBillCommands(ViewInvoicesEnum o)
         {
-            
+
             ITabItem viewModel = null;
             switch (o)
             {
@@ -130,7 +129,7 @@ namespace ES.Shop.Views.Reports.ViewModels
                 default:
                     break;
             }
-            var tabControl = new UctrlViewTable{DataContext = viewModel};
+            var tabControl = new UctrlViewTable { DataContext = viewModel };
             AddTab(tabControl, viewModel);
         }
 
@@ -153,7 +152,7 @@ namespace ES.Shop.Views.Reports.ViewModels
                 default:
                     throw new ArgumentOutOfRangeException("type", type, null);
             }
-            var tabControl = new UctrlViewTable { DataContext = viewModel};
+            var tabControl = new UctrlViewTable { DataContext = viewModel };
             AddTab(tabControl, viewModel);
         }
 

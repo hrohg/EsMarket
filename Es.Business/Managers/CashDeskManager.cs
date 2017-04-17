@@ -11,22 +11,38 @@ namespace ES.Business.Managers
     public class CashDeskManager : BaseManager
     {
         #region CashDesk
+
         #region Public methods
 
         public static CashDesk GetCashDesk(Guid? id, long memberId)
         {
-            return TryGetCashDesk(id, memberId);    
+            return TryGetCashDesk(id, memberId);
         }
         public static CashDesk GetDefaultSaleCashDesk(long memberId)
         {
             var xml = new XmlManager();
             var cashDesks = xml.GetItemsByControl(XmlTagItems.SaleCashDesks);
-            using (var db=GetDataContext())
+            using (var db = GetDataContext())
             {
                 try
                 {
                     var cashDeskIds = cashDesks.Select(s => s.Value.ToString()).ToList();
-                    return db.CashDesk.FirstOrDefault(s =>s.MemberId==memberId && cashDeskIds.Contains(s.Id.ToString()));
+                    return db.CashDesk.FirstOrDefault(s => s.MemberId == memberId && cashDeskIds.Contains(s.Id.ToString()));
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+        }
+
+        public static List<CashDesk> GetCashDesks()
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    return db.CashDesk.Where(s => s.MemberId == ApplicationManager.Member.Id).ToList();
                 }
                 catch (Exception)
                 {
@@ -35,6 +51,7 @@ namespace ES.Business.Managers
             }
         }
         #endregion
+
         #region Private methods
         private static CashDesk TryGetCashDesk(Guid? id, long memberId)
         {
@@ -69,16 +86,16 @@ namespace ES.Business.Managers
             var xml = new XmlManager();
             var cashDeskIds = xml.GetItemsByControl(XmlTagItems.SaleCashDesks).Select(s => HgConvert.ToGuid(s.Value));
             var cashDesks = TryGetCashDesks(cashDeskIds, memberId);
-            if (cashDesks == null) { return new List<CashDesk>();}
+            if (cashDesks == null) { return new List<CashDesk>(); }
             return (isCash == null) ? cashDesks.ToList() : cashDesks.Where(s => s.IsCash == isCash).ToList();
         }
-        public static List<CashDesk> TryGetCashDesk(long memberId, bool? isCash=null)
+        public static List<CashDesk> TryGetCashDesk(long memberId, bool? isCash = null)
         {
             using (var db = GetDataContext())
             {
                 try
                 {
-                    return db.CashDesk.Where(s => s.MemberId == memberId && s.IsActive && (isCash==null || s.IsCash==isCash)).ToList();
+                    return db.CashDesk.Where(s => s.MemberId == memberId && s.IsActive && (isCash == null || s.IsCash == isCash)).ToList();
                 }
                 catch (Exception)
                 {
@@ -103,8 +120,9 @@ namespace ES.Business.Managers
                 }
             }
         }
-        
+
         #endregion
+
         #endregion
     }
 

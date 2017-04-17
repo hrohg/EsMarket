@@ -380,7 +380,7 @@ namespace ES.Market
             var ctrl = new SelectDateIntermediate();
             ctrl.ShowDialog();
             if (ctrl.DialogResult != true) { return; }
-            var accountingRecords = AccountingRecordsManager.GetAccountingRecords(beginDate: ctrl.StartDate ?? DateTime.Now, endDate: ctrl.EndDate ?? DateTime.Now, memberId: ApplicationManager.Instance.GetEsMember.Id);
+            var accountingRecords = AccountingRecordsManager.GetAccountingRecords(beginDate: ctrl.StartDate ?? DateTime.Now, endDate: ctrl.EndDate ?? DateTime.Now);
             var uiReport = new UIListView(accountingRecords.Select(s =>
                 new
                 {
@@ -642,7 +642,7 @@ namespace ES.Market
         {
             var partner = SelectPartner();
             if (partner == null) return;
-            var repayment = AccountingRecordsManager.GetAccountingRecords((long)AccountingRecordsManager.AccountingPlan.CashDesk, (long)AccountingRecordsManager.AccountingPlan.AccountingReceivable, ApplicationManager.Instance.GetEsMember.Id);
+            var repayment = AccountingRecordsManager.GetAccountingRecords((long)AccountingRecordsManager.AccountingPlan.CashDesk, (long)AccountingRecordsManager.AccountingPlan.AccountingReceivable);
             var ui = new UIListView(repayment.Where(s => s.CreditGuidId == partner.Id).Select(s => new { Ամսաթիվ = s.RegisterDate, Վճարված = s.Amount, Նշումներ = s.Description }).ToList(), partner.FullName);
             ui.Show();
         }

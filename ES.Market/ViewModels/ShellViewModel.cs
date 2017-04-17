@@ -54,6 +54,7 @@ using UserControls.ViewModels.Settings;
 using UserControls.ViewModels.StockTakeings;
 using UserControls.ViewModels.Tools;
 using UserControls.Views;
+using UserControls.Views.Accountant;
 using UserControls.Views.CustomControls;
 using Application = System.Windows.Application;
 using ExportManager = ES.Business.Managers.ExportManager;
@@ -391,7 +392,7 @@ namespace ES.Market.ViewModels
                     if (ApplicationManager.IsInRole(UserRoleEnum.Seller) ||
                         ApplicationManager.IsInRole(UserRoleEnum.JuniorSeller))
                     {
-                        OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.SaleInvoice,InvoiceState.New, MaxInvocieCount.All));
+                        OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.SaleInvoice, InvoiceState.New, MaxInvocieCount.All));
                     }
                     break;
                 case Key.F3:
@@ -1100,16 +1101,16 @@ namespace ES.Market.ViewModels
                     return null;
                 case InvoiceState.New:
                     return null;
-                    break;
+                    
                 case InvoiceState.Accepted:
                     return InvoicesManager.GetInvoicesDescriptions(type, count, ApplicationManager.Instance.GetEsMember.Id);
-                    break;
+                    
                 case InvoiceState.Saved:
                     return InvoicesManager.GetUnacceptedInvoicesDescriptions(type, ApplicationManager.Instance.GetEsMember.Id);
-                    break;
+                    
                 case InvoiceState.Approved:
                     return InvoicesManager.GetInvoicesDescriptions(type, ApplicationManager.Instance.GetEsMember.Id);
-                    break;
+                    
             }
             return null;
         }
@@ -1676,6 +1677,21 @@ namespace ES.Market.ViewModels
         public ICommand GetChashDesksInfoCommand
         {
             get { return new RelayCommand(OnGetCashDeskInfo); }
+        }
+
+        private ICommand _viewAccountantTableCommand;
+        public ICommand ViewAccountantTableCommand
+        {
+            get
+            {
+                return _viewAccountantTableCommand ?? (_viewAccountantTableCommand = new RelayCommand(OnViewAccountantTable));
+            }
+        }
+        private void OnViewAccountantTable(object obj)
+        {
+            var dates = SelectManager.GetDateIntermediate();
+            if(dates==null) return;
+            AddInvoiceDocument(new ViewAccountantTableViewModel(dates.Item1, dates.Item2));
         }
 
         #endregion CashDesk

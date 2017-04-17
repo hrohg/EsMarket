@@ -194,19 +194,19 @@ namespace ES.Market
 
             }
 
-            return;
-            var xml = new XmlManager();
-            var localMode = xml.GetElementInnerText(XmlTagItems.LocalMode);
-            ApplicationManager.LocalMode = Convert.ToBoolean(localMode);
-            ApplicationManager.SaleBySingle = HgConvert.ToBoolean(xml.GetElementInnerText(XmlTagItems.SaleBySingle));
-            ApplicationManager.BuyBySingle = HgConvert.ToBoolean(xml.GetElementInnerText(XmlTagItems.BuyBySingle));
-            var weighers = xml.GetItemsByControl(XmlTagItems.Weighers, XmlTagItems.Weigher);
-            ApplicationManager.Weighers = weighers.Select(s => new ScaleModel(s.Value.ToString())).ToList();
-            ApplicationManager.DefaultPrinter = xml.GetItemsByControl(XmlTagItems.Equipments, XmlTagItems.DefaultPrinter).Select(s => s.Value.ToString()).FirstOrDefault();
-            //Printers
-            ApplicationManager.ActivePrinter = xml.GetElementInnerText(XmlTagItems.ActivePrinter);
-            ApplicationManager.SalePrinter = xml.GetElementInnerText(XmlTagItems.SalePrinter);
-            ApplicationManager.BarcodePrinter = xml.GetElementInnerText(XmlTagItems.BarcodePrinter);
+            //return;
+            //var xml = new XmlManager();
+            //var localMode = xml.GetElementInnerText(XmlTagItems.LocalMode);
+            //ApplicationManager.LocalMode = Convert.ToBoolean(localMode);
+            //ApplicationManager.SaleBySingle = HgConvert.ToBoolean(xml.GetElementInnerText(XmlTagItems.SaleBySingle));
+            //ApplicationManager.BuyBySingle = HgConvert.ToBoolean(xml.GetElementInnerText(XmlTagItems.BuyBySingle));
+            //var weighers = xml.GetItemsByControl(XmlTagItems.Weighers, XmlTagItems.Weigher);
+            //ApplicationManager.Weighers = weighers.Select(s => new ScaleModel(s.Value.ToString())).ToList();
+            //ApplicationManager.DefaultPrinter = xml.GetItemsByControl(XmlTagItems.Equipments, XmlTagItems.DefaultPrinter).Select(s => s.Value.ToString()).FirstOrDefault();
+            ////Printers
+            //ApplicationManager.ActivePrinter = xml.GetElementInnerText(XmlTagItems.ActivePrinter);
+            //ApplicationManager.SalePrinter = xml.GetElementInnerText(XmlTagItems.SalePrinter);
+            //ApplicationManager.BarcodePrinter = xml.GetElementInnerText(XmlTagItems.BarcodePrinter);
         }
         private void OnClosed(bool isterminated)
         {

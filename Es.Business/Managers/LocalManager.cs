@@ -42,6 +42,12 @@ namespace ES.Business.Managers
 
         #endregion Partners
 
+        #region Cash desks
+
+        private List<CashDesk> _cashDesk;
+        public List<CashDesk> GetCashDesk { get { return _cashDesk ?? (_cashDesk = CashDeskManager.GetCashDesks()); } }
+        #endregion Cash desks
+
         #region Products
         private List<ProductItemModel> _productItems;
         private List<ProductResidue> _productResidues;
@@ -101,10 +107,14 @@ namespace ES.Business.Managers
 
         #region Users
 
-        private List<EsUserModel> _esUsers; 
+        private List<EsUserModel> _esUsers;
         public List<EsUserModel> GetUsers
         {
             get { return _esUsers ?? (_esUsers = UsersManager.GetEsUsers(Member.Id)); }
+        }
+        public EsUserModel GetUser(long id)
+        {
+            return GetUsers.SingleOrDefault(s=>s.UserId==id);
         }
         #endregion Users
         public List<StockModel> GetStocks

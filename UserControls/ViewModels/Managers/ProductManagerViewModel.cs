@@ -49,27 +49,10 @@ namespace UserControls.ViewModels.Managers
         private string _filterText;
         Timer _timer = null;
         private ProductModel _productOnBufer;
-        private bool _isLoading;
+        
         #endregion
 
         #region External properties
-        public string Title { get; set; }
-        public string Description
-        {
-            get;
-            set;
-        }
-
-        public bool IsLoading
-        {
-            get { return _isLoading; }
-            set
-            {
-                if (_isLoading == value) { return; }
-                _isLoading = value;
-                RaisePropertyChanged("IsLoading");
-            }
-        }
         public ProductModel Product
         {
             get { return _product ?? new ProductModel(ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId, true); }
