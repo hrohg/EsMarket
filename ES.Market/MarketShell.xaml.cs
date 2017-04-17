@@ -298,17 +298,16 @@ namespace ES.Market
 
         private void MiRepaymentOfReceivable_Click(object sender, EventArgs e)
         {
-            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId);
+            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Member.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
             accountingRecords.Credit = (long)AccountingRecordsManager.AccountingPlan.AccountingReceivable;
-            var cashDesk = SelectItemsManager.SelectDefaultCashDesks(null, ApplicationManager.Instance.GetEsMember.Id, false, "Ընտրել դրամարկղ").FirstOrDefault();
+            var cashDesk = SelectItemsManager.SelectDefaultCashDesks(null, false, "Ընտրել դրամարկղ").FirstOrDefault();
             if (cashDesk == null)
             {
                 MessageBox.Show("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
                 return;
             }
             accountingRecords.DebitGuidId = cashDesk.Id;
-            //var partners =  PartnersManager.GetPartners(_member.Id);
             var partner = SelectPartner();
             if (partner == null)
             {
@@ -338,7 +337,7 @@ namespace ES.Market
                 CreditGuidId = repaymentAccountingRecord.CreditGuidId,
             };
 
-            if (partner.Debit != null && repaymentAccountingRecord.Amount > partner.Debit)
+            if (repaymentAccountingRecord.Amount > partner.Debit)
             {
                 if (MessageBox.Show(
                     "Վճարվել է " + (repaymentAccountingRecord.Amount - partner.Debit) + " դրամ ավել։ \n" +
@@ -347,11 +346,11 @@ namespace ES.Market
                 {
                     return;
                 }
-                depositAccountingRecords.Amount = repaymentAccountingRecord.Amount - (decimal)partner.Debit;
+                depositAccountingRecords.Amount = repaymentAccountingRecord.Amount - partner.Debit;
             }
             repaymentAccountingRecord.Amount -= depositAccountingRecords.Amount;
             if (AccountingRecordsManager.SetPartnerPayment(depositeAccountRecords: depositAccountingRecords,
-                repaymentAccountingRecords: repaymentAccountingRecord, memberid: ApplicationManager.Instance.GetEsMember.Id))
+                repaymentAccountingRecords: repaymentAccountingRecord))
             {
                 MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
             }
@@ -523,7 +522,7 @@ namespace ES.Market
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
             accountingRecords.Credit = (long)AccountingRecordsManager.AccountingPlan.ReceivedInAdvance;
-            var cashDesk = SelectItemsManager.SelectDefaultCashDesks(null, ApplicationManager.Instance.GetEsMember.Id, false, "Ընտրել դրամարկղ").FirstOrDefault();
+            var cashDesk = SelectItemsManager.SelectDefaultCashDesks(null, false, "Ընտրել դրամարկղ").FirstOrDefault();
             if (cashDesk == null)
             {
                 MessageBox.Show("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
@@ -549,7 +548,7 @@ namespace ES.Market
             receivedInAdvance.DebitGuidId = cashDesk.Id;
             if (!ctrlAccountingRecords.Result || receivedInAdvance == null || receivedInAdvance.Amount == 0) return;
             AccountingRecordsManager.SetPartnerPayment(depositeAccountRecords: receivedInAdvance,
-                repaymentAccountingRecords: null, memberid: ApplicationManager.Instance.GetEsMember.Id);
+                repaymentAccountingRecords: null);
         }
 
         //712

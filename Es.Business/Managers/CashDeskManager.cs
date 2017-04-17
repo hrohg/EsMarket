@@ -67,8 +67,9 @@ namespace ES.Business.Managers
                 }
             }
         }
-        private static IEnumerable<CashDesk> TryGetCashDesks(IEnumerable<Guid> ids, long memberId)
+        private static IEnumerable<CashDesk> TryGetCashDesks(IEnumerable<Guid> ids)
         {
+            var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
             {
                 try
@@ -81,11 +82,11 @@ namespace ES.Business.Managers
                 }
             }
         }
-        public static List<CashDesk> GetDefaultCashDesks(long memberId, bool? isCash)
+        public static List<CashDesk> GetDefaultCashDesks(bool? isCash)
         {
             var xml = new XmlManager();
             var cashDeskIds = xml.GetItemsByControl(XmlTagItems.SaleCashDesks).Select(s => HgConvert.ToGuid(s.Value));
-            var cashDesks = TryGetCashDesks(cashDeskIds, memberId);
+            var cashDesks = TryGetCashDesks(cashDeskIds);
             if (cashDesks == null) { return new List<CashDesk>(); }
             return (isCash == null) ? cashDesks.ToList() : cashDesks.Where(s => s.IsCash == isCash).ToList();
         }

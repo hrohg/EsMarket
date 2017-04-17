@@ -69,11 +69,11 @@
                             <StackPanel Grid.Column="1" Margin="1" VerticalAlignment="Bottom">
                                 <StackPanel  Orientation="Horizontal" HorizontalAlignment="Right">
                                     <Label Content="Կանխավճար" VerticalAlignment="Center" AllowDrop="True" HorizontalContentAlignment="Right" FontSize="12"/>
-                                    <TextBox Text="{Binding Partner.Credit, StringFormat=N}" Width="100" Foreground="Blue" VerticalAlignment="Center" HorizontalContentAlignment="Right" FontSize="15" Margin="1" IsReadOnly="True"></TextBox>
+                                    <TextBox Text="{Binding Partner.Credit, StringFormat={}{0:#,#.##}}" Width="100" Foreground="Blue" VerticalAlignment="Center" HorizontalContentAlignment="Right" FontSize="15" Margin="1" IsReadOnly="True"></TextBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                     <Label Content="Դեբետ" VerticalAlignment="Center" AllowDrop="True" HorizontalContentAlignment="Right" FontSize="12"/>
-                                    <TextBox Text="{Binding Partner.Debit, StringFormat=N}" Foreground="Blue" Width="100" VerticalAlignment="Center" HorizontalContentAlignment="Right" IsReadOnly="True" FontSize="15" Margin="1"></TextBox>
+                                    <TextBox Text="{Binding Partner.Debit, StringFormat={}{0:#,#.##}}" Foreground="Blue" Width="100" VerticalAlignment="Center" HorizontalContentAlignment="Right" IsReadOnly="True" FontSize="15" Margin="1"></TextBox>
                                 </StackPanel>
                             </StackPanel>
                         </Grid>
@@ -110,7 +110,7 @@
                     <TextBlock Grid.Row="0" Text="Կոդ"  VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="12"/>
                     <TextBox Grid.Row="1" x:Name="TxtCode" Text="{Binding Path=InvoiceItem.Code, UpdateSourceTrigger=PropertyChanged}" 
                              FontSize="16" Width="150" TabIndex="1" 
-                             KeyDown="TxtCode_KeyDown" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="1">
+                             VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="1">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding ElementName=TxtCode, Path=Text}"/>
                         </TextBox.InputBindings>
@@ -128,10 +128,10 @@
                         </TextBox.ContextMenu>
                     </TextBox>
                     <Label Grid.Row="0" Content="Գին"  VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right" Margin="0,0,65,0" FontSize="12"/>
-                    <TextBox Grid.Row="1" Name="TxtPrice" Text="{Binding Path=InvoiceItem.Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N}" 
+                    <TextBox Grid.Row="1" Name="TxtPrice" Text="{Binding Path=InvoiceItem.Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" 
                              IsReadOnly="{Binding Path = DenayChangePrice}" Width="105" Height="35" FontSize="20" VerticalContentAlignment="Center" 
                              Focusable="{Binding DenayChangePrice, Converter={StaticResource InverseBooleanConverter}}"
-                             VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right" KeyDown="TxtPrice_KeyDown" TabIndex="2">
+                             VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right" TabIndex="2">
 
                         <i:Interaction.Behaviors>
                             <behaviors:TextBoxBehavior IsSelectTextOnFocus="True" />
@@ -141,7 +141,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="3">
                 <CheckBox Name="CbAddSingle" Content="Ավելացնել մեկական" IsChecked="{Binding SaleBySingle}"  Margin="5" VerticalContentAlignment="Center" VerticalAlignment="Center" Focusable="False" HorizontalContentAlignment="Right"/>
-                <Button Name="BtnAddItem" Content="Ավելացնել" Width ="100" Padding="3" Command="{Binding AddInvoiceItemCommand}" Click="BtnAddItem_Click" TabIndex="3"/>
+                <Button Name="BtnAddItem" Content="Ավելացնել" Width ="100" Padding="3" Command="{Binding AddInvoiceItemCommand}" TabIndex="3"/>
             </StackPanel>
         </StackPanel>
 
@@ -168,10 +168,10 @@
                 <DataGridTextColumn IsReadOnly="True" Header="Բարկոդ" Binding="{Binding Product.Barcode}" />
                 <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
                 <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
-                <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" CellStyle="{StaticResource CellRightAlign}" />
-                <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, StringFormat='#,###.##'}" CellStyle="{StaticResource CellRightAlign}" />
-                <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}"/>
-                <DataGridTextColumn IsReadOnly="True" Header="Զեղչ" Binding="{Binding Path=Discount, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}"/>
+                <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}" />
+                <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}" />
+                <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Զեղչ" Binding="{Binding Path=Discount, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}"/>
                 <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
             </DataGrid.Columns>
         </extendedControls:ExtendedDataGrid>
@@ -188,19 +188,19 @@
                 <StackPanel Grid.Column="1" VerticalAlignment="Bottom">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Label Content="Գումար" VerticalAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right" FontSize="12" Foreground="Green"/>
-                        <TextBox Text="{Binding Path=Invoice.Amount, StringFormat=N}" VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsEnabled="False" Foreground="Blue  "/>
+                        <TextBox Text="{Binding Path=Invoice.Amount, StringFormat={}{0:#,#.##}}" VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsEnabled="False" Foreground="Blue  "/>
                         <Label Content="Զեղչ" VerticalAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right" FontSize="12" Width="50"  Foreground="Green"/>
-                        <TextBox Text="{Binding Path=Invoice.Discount, StringFormat=N}" IsEnabled="False"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="50" FontSize="15" Foreground="Blue"/>
+                        <TextBox Text="{Binding Path=Invoice.Discount, StringFormat={}{0:#,#.##}}" IsEnabled="False"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="50" FontSize="15" Foreground="Blue"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Label Content="Ընդամենը" VerticalAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right" FontSize="12"  Foreground="Green"/>
-                        <TextBox Text="{Binding Path=Invoice.Total, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsReadOnly="True" Foreground="Blue"/>
+                        <TextBox Text="{Binding Path=Invoice.Total, StringFormat={}{0:#,#.##}}"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsReadOnly="True" Foreground="Blue"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>
             <Expander Header ="Վճարում" IsExpanded="True" BorderBrush="Blue">
                 <StackPanel  Orientation="Horizontal"  HorizontalAlignment="Right" CanHorizontallyScroll="True">
-                    <TextBlock Foreground="Red" FontSize="60" Text="{Binding Path=Invoice.Total, StringFormat='###,###'}"/>
+                    <TextBlock Foreground="Red" FontSize="60" Text="{Binding Path=Invoice.Total, StringFormat={}{0:#,#.##}}"/>
                     <GroupBox>
                         <GroupBox.Header>
                             <Label Content="Վճարում" FontSize="10"/>
@@ -252,13 +252,13 @@
                         <StackPanel VerticalAlignment="Bottom">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <Label Content="Կանխիկ" VerticalAlignment="Center" Foreground="Green"/>
-                                <TextBox Text="{Binding Path=InvoicePaid.Change, Mode=OneWay, StringFormat=N}" IsReadOnly="True"
+                                <TextBox Text="{Binding Path=InvoicePaid.Change, Mode=OneWay, StringFormat={}{0:#,#.##}}" IsReadOnly="True"
                  BorderThickness="1"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100"
                  FontSize="15" Height="25" Margin="1" Foreground="Green"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal ">
                                 <Label Content="Կանխավճար" VerticalAlignment="Center" Foreground="Green"/>
-                                <TextBox Text="{Binding Path=InvoicePaid.Prepayment, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right"
+                                <TextBox Text="{Binding Path=InvoicePaid.Prepayment, StringFormat={}{0:#,#.##}}"  VerticalAlignment="Center" HorizontalContentAlignment="Right"
                  Width="100" FontSize="15" Height="25" Margin="1" Foreground="Green" IsReadOnly="True"/>
                             </StackPanel>
                         </StackPanel>

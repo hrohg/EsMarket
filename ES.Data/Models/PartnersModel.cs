@@ -48,8 +48,8 @@ namespace ES.Data.Models
         private string _email;
         private string _address;
         private decimal? _discount;
-        private decimal? _debit;
-        private decimal? _credit;
+        private decimal _debit;
+        private decimal _credit;
         private decimal? _maxDebit;
         private string _tin;
         private string _pasportData;
@@ -101,9 +101,9 @@ namespace ES.Data.Models
         public string Email{get { return _email; }set { _email = value; OnPropertyChanged(EmailProperty); }}
         public string Address{get { return _address; }set { _address= value; OnPropertyChanged(AddressProperty);}}
         public decimal? Discount{get { return _discount; }set { _discount = value; OnPropertyChanged(DiscountProperty); }}
-        public decimal? Debit {get { return _debit; }set { _debit= value; OnPropertyChanged(DebitProperty); }}
+        public decimal Debit {get { return _debit; }set { _debit= value; OnPropertyChanged(DebitProperty); }}
 
-        public decimal? Credit
+        public decimal Credit
         {
             get
             {

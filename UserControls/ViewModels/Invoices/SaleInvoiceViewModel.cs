@@ -295,7 +295,7 @@ namespace UserControls.ViewModels.Invoices
         }
         private bool IsPaid
         {
-            get { return InvoicePaid.IsPaid && InvoicePaid.Change <= (InvoicePaid.Paid ?? 0) && Partner != null && (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - (Partner.Debit ?? 0) && (InvoicePaid.ReceivedPrepayment ?? 0) <= (Partner.Credit ?? 0); }
+            get { return InvoicePaid.IsPaid && InvoicePaid.Change <= (InvoicePaid.Paid ?? 0) && Partner != null && (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit && (InvoicePaid.ReceivedPrepayment ?? 0) <= Partner.Credit; }
         }
 
         public override bool CanApprove(object o)

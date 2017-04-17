@@ -79,7 +79,7 @@ namespace ES.Business.Helpers
         }
         public static List<CashDesk> SelectDefaultCashDesks(bool? isCash, long memberId, bool allowMultipleChoise, string title)
         {
-            var cashDesks = CashDeskManager.GetDefaultCashDesks( memberId,isCash).ToList();
+            var cashDesks = CashDeskManager.GetDefaultCashDesks(isCash).ToList();
             if (cashDesks.Count == 0) return new List<CashDesk>();
             if (cashDesks.Count == 1) return cashDesks;
             var ui = new SelectItems(cashDesks.Select(s => new ItemsToSelect { DisplayName = s.Name, SelectedValue = s.Id }).ToList(), allowMultipleChoise, title);

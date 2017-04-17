@@ -471,10 +471,16 @@ namespace UserControls.ViewModels.Invoices
                 InvoiceItem.Discount = product.Discount;
                 InvoiceItem.Note = product.Note;
             }
+            else
+            {
+                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(string.Format("{0} կոդով ապրանք չի հայտնաբերվել:", code), MessageModel.MessageTypeEnum.Warning));
+                MessageBox.Show(string.Format("{0} կոդով ապրանք չի հայտնաբերվել:", code), "Սխալ ապա կոդ", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
             RaisePropertyChanged("InvoiceItem");
             RaisePropertyChanged(IsExpiringProperty);
         }
-
+        
         public bool CanEdit
         {
             get { return Invoice != null; }

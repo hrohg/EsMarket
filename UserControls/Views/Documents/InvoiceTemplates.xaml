@@ -12,7 +12,7 @@
         <views:PurchaseUctrl/>
     </DataTemplate>
     
-    <DataTemplate DataType="{x:Type invoices:InternalWaybillInvoiceModel}">
+    <DataTemplate DataType="{x:Type invoices:InternalWaybillViewModel}">
         <views:UctrlMoveingInvoice/>
     </DataTemplate>
     

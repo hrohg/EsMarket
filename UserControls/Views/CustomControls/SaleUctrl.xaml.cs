@@ -77,39 +77,6 @@ namespace UserControls.Views.CustomControls
                 }
             }
         }
-        private void TxtPrice_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl))
-            {
-                switch (e.Key)
-                {
-                    case Key.Enter:
-                        TxtPaid.Focus();
-                        TxtPaid.SelectAll();
-                        return;
-                        break;
-                }
-            }
-            if (e.Key == Key.Enter && !string.IsNullOrEmpty(TxtCode.Text))
-            {
-                BtnAddItem_Click(sender, e);
-                BtnAddItem.Command.Execute(null);
-            }
-        }
-        private void TxtCode_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl))
-            {
-                switch (e.Key)
-                {
-                    case Key.Enter:
-                        TxtPaid.Focus();
-                        TxtPaid.SelectAll();
-                        return;
-                        break;
-                }
-            }
-        }
         private void CmMiChooseProductByName_Click(object sender, EventArgs e)
         {
             //var products = ApplicationManager.CashManager.Products;
@@ -129,11 +96,7 @@ namespace UserControls.Views.CustomControls
             TxtPrice.Focus();
             TxtPrice.SelectAll();
         }
-        private void BtnAddItem_Click(object sender, RoutedEventArgs e)
-        {
-            TxtCode.Focus();
-            TxtCode.SelectAll();
-        }
+        
         private void SaleUctrl_Unloaded(object sender, RoutedEventArgs e)
         {
             //todo

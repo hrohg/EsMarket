@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.ServiceModel;
 using System.Windows.Data;
+using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
+using ES.Common.Helpers;
 using ES.Data.Model;
 using ES.Data.Models;
 using Shared.Helpers;
@@ -12,7 +15,7 @@ using UserControls.Views.ReceiptTickets.Views;
 
 namespace UserControls.ViewModels.Invoices
 {
-    public class InternalWaybillInvoiceModel : InvoiceViewModel
+    public class InternalWaybillViewModel : InvoiceViewModel
     {
         #region External properties
         public override string Title
@@ -59,12 +62,12 @@ namespace UserControls.ViewModels.Invoices
             }
         }
         #endregion
-        public InternalWaybillInvoiceModel(EsUserModel user, EsMemberModel member)
+        public InternalWaybillViewModel(EsUserModel user, EsMemberModel member)
             : base(user, member)
         {
             Initialize();
         }
-        public InternalWaybillInvoiceModel(Guid id, EsUserModel user, EsMemberModel member)
+        public InternalWaybillViewModel(Guid id, EsUserModel user, EsMemberModel member)
             : base(id, user, member)
         {
             Initialize();
@@ -86,7 +89,7 @@ namespace UserControls.ViewModels.Invoices
         }
         protected override decimal GetPartnerPrice(EsProductModel product)
         {
-            return product != null ? (product.CostPrice??0) : 0;
+            return product != null ? (product.CostPrice ?? 0) : 0;
 
         }
         #endregion
@@ -127,5 +130,60 @@ namespace UserControls.ViewModels.Invoices
             base.OnAddInvoiceItem(o);
         }
         #endregion
+
+        #region Commands
+
+        private ICommand _selectStockCommand;
+        public ICommand SelectStockCommand
+        {
+            get
+            {
+                return _selectStockCommand ?? (_selectStockCommand = new RelayCommand<StockTypeEnum>(OnSelectStock));
+            }
+        }
+
+        private void OnSelectStock(StockTypeEnum stockTypeEnum)
+        {
+            var stocks = StockManager.GetStocks(ApplicationManager.Member.Id);
+            if (stocks == null) return;
+            StockModel stock = null;
+            if (stocks.Count == 1)
+            {
+                stock = stocks.FirstOrDefault();
+            }
+            var selectItem = new ControlPanel.Controls.SelectItems(stocks.Select(s => new ControlPanel.Controls.ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), false);
+            if (selectItem.ShowDialog() != true || selectItem.SelectedItems.FirstOrDefault() == null) { return; }
+            stock = stocks.FirstOrDefault(s =>
+            {
+                var firstOrDefault = selectItem.SelectedItems.FirstOrDefault();
+                return firstOrDefault != null && (long) firstOrDefault.SelectedValue == s.Id;
+            });
+            switch (stockTypeEnum)
+            {
+                case StockTypeEnum.None:
+                    break;
+                case StockTypeEnum.Outgoing:
+                    FromStock = stock;
+                    break;
+                case StockTypeEnum.Incomming:
+                    ToStock = stock;
+                    break;
+                case StockTypeEnum.All:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("stockTypeEnum", stockTypeEnum, null);
+            }
+        }
+
+        #endregion Commands
+    }
+
+    [Flags]
+    public enum StockTypeEnum
+    {
+        None = 0,
+        Outgoing = 1,
+        Incomming = 2,
+        All = 0xF
     }
 }

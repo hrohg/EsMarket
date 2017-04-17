@@ -5,11 +5,9 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
-using CashReg.Models;
 using ES.Business.ExcelManager;
 using ES.Business.FileManager;
 using ES.Business.Managers;
@@ -17,11 +15,8 @@ using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
-using ES.DataAccess.Models;
 using Shared.Helpers;
-using UserControls.Helpers;
 using UserControls.Interfaces;
-using UserControls.Views.ReceiptTickets.Views;
 
 namespace UserControls.ViewModels.Invoices
 {
@@ -43,7 +38,7 @@ namespace UserControls.ViewModels.Invoices
         }
         protected bool IsInvocieAppoved
         {
-            get { return Invoice != null && Invoice.ApproveDate!=null; }
+            get { return Invoice != null && Invoice.ApproveDate != null; }
         }
         #endregion Internal properties
 
@@ -119,6 +114,7 @@ namespace UserControls.ViewModels.Invoices
                 Invoice.ProviderName = value != null ? value.FullName : string.Empty;
                 if (value != null) FromStocks = new List<StockModel> { value };
                 RaisePropertyChanged(FromStockProperty);
+                RaisePropertyChanged("Description");
                 IsModified = true;
             }
         }
@@ -137,6 +133,7 @@ namespace UserControls.ViewModels.Invoices
                 Invoice.ToStockId = value != null ? value.Id : (long?)null;
                 Invoice.RecipientName = value != null ? value.FullName : string.Empty;
                 RaisePropertyChanged(ToStockProperty);
+                RaisePropertyChanged("Description");
                 IsModified = true;
             }
         }
@@ -159,6 +156,14 @@ namespace UserControls.ViewModels.Invoices
         #endregion Partner
 
         #endregion External properties
+
+        public override string Description
+        {
+            get
+            {
+                return string.Format("Տեղափոխություն ({0} -> {1})", FromStock!=null? FromStock.Name:string.Empty, ToStock!=null? ToStock.Name:string.Empty);
+            }
+        }
 
         #region Constructors
         public InvoiceViewModelBase()

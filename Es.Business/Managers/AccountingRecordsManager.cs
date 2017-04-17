@@ -192,10 +192,10 @@ namespace ES.Business.Managers
         {
             return TryAddAccountingRecords(Convert(accountingRecords));
         }
-        public static bool SetPartnerPayment(AccountingRecordsModel depositeAccountRecords, AccountingRecordsModel repaymentAccountingRecords, long memberid)
+        public static bool SetPartnerPayment(AccountingRecordsModel depositeAccountRecords, AccountingRecordsModel repaymentAccountingRecords)
         {
             return TrySetPartnerPayment(depositeAccountRecords: Convert(depositeAccountRecords),
-                repaymentAccountingRecords: Convert(repaymentAccountingRecords), memberId: memberid);
+                repaymentAccountingRecords: Convert(repaymentAccountingRecords));
         }
 
         public static List<AccountingRecordsModel> GetAccountingRecords(DateTime beginDate, DateTime endDate)
@@ -337,8 +337,9 @@ namespace ES.Business.Managers
         }
 
         // needs review
-        private static bool TrySetPartnerPayment(AccountingRecords depositeAccountRecords, AccountingRecords repaymentAccountingRecords, long memberId)
+        private static bool TrySetPartnerPayment(AccountingRecords depositeAccountRecords, AccountingRecords repaymentAccountingRecords)
         {
+            var memberId = ApplicationManager.Member.Id;
             using (var transaction = new TransactionScope())
             {
                 using (var db = GetDataContext())
@@ -354,23 +355,20 @@ namespace ES.Business.Managers
                     if (repaymentAccountingRecords != null)
                     {
                         var accountingReceivable = db.AccountsReceivable
-                            .Where(s =>
-                                 s.MemberId == memberId && s.PartnerId == repaymentAccountingRecords.CreditGuidId && s.Amount != s.PaidAmount)
+                            .Where(s => s.MemberId == memberId && s.PartnerId == repaymentAccountingRecords.CreditGuidId && s.Amount != s.PaidAmount)
                             .OrderBy(s => s.ExpairyDate)
                             .ToList();
 
                         var paid = repaymentAccountingRecords.Amount;
                         exCashBox.Total += paid;
-                        decimal value;
+                        exPartner.Debit -= paid;
                         foreach (var item in accountingReceivable.Where(item => item != null))
                         {
-                            value = (((item.Amount - (item.PaidAmount ?? 0)) > paid)
-                                ? paid
-                                : item.Amount - (item.PaidAmount ?? 0));
+                            if (item.PaidAmount == null) item.PaidAmount = 0;
+                            var value = ((item.Amount - item.PaidAmount) > paid)? paid: item.Amount - (decimal)item.PaidAmount;
 
                             item.PaidAmount += value;
                             paid -= value;
-                            exPartner.Debit -= value;
                             if (paid == 0) break;
                         }
                         db.AccountingRecords.Add(repaymentAccountingRecords);

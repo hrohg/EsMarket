@@ -103,7 +103,7 @@ namespace UserControls.ViewModels.Invoices
                 && InvoicePaid.IsPaid
                 && InvoicePaid.Change <= (InvoicePaid.Paid ?? 0)
                 && Partner != null
-                && (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - (Partner.Debit ?? 0);
+                && (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit;
         }
         public override void OnApprove(object o)
         {

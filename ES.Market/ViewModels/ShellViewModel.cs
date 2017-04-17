@@ -519,61 +519,13 @@ namespace ES.Market.ViewModels
                 return;
             }
             //CreateLibraryBrowser();
-            var content = new InventoryWriteOffUctrl() { DataContext = vm };
-            if (vm is InventoryWriteOffViewModel)
-            {
-                nextTab = tabShop.Items.Add(new TabItem
-                {
-                    Content = content,
-                    DataContext = vm,
-                    AllowDrop = true
-                });
-                tabShop.SelectedIndex = nextTab;
-                _parentTabControl.UpdateLayout();
-                return;
-            }
-            if (vm is SaleInvoiceViewModel)
-            {
-                nextTab = tabShop.Items.Add(new TabItem
-                {
-                    Content = new SaleUctrl(_user, _member, (SaleInvoiceViewModel)vm),
-                    DataContext = vm,
-                    AllowDrop = true
-                });
-                tabShop.SelectedIndex = nextTab;
-                _parentTabControl.UpdateLayout();
-                return;
-            }
-
-            if (vm is PurchaseInvoiceViewModel)
-            {
-                nextTab = tabShop.Items.Add(new TabItem
-                {
-                    Content = new PurchaseUctrl(_user, _member, (PurchaseInvoiceViewModel)vm),
-                    DataContext = vm,
-                    AllowDrop = true
-                });
-                tabShop.SelectedIndex = nextTab;
-                _parentTabControl.UpdateLayout();
-                return;
-            }
+           
+            
             if (vm is ProductOrderViewModel)
             {
                 nextTab = tabShop.Items.Add(new TabItem
                 {
                     Content = new ProductOrderUctrl(_user, _member),
-                    DataContext = vm,
-                    AllowDrop = true
-                });
-                tabShop.SelectedIndex = nextTab;
-                _parentTabControl.UpdateLayout();
-                return;
-            }
-            if (vm is InternalWaybillInvoiceModel)
-            {
-                nextTab = tabShop.Items.Add(new TabItem
-                {
-                    Content = new UctrlMoveingInvoice(_user, _member, (InternalWaybillInvoiceModel)vm),
                     DataContext = vm,
                     AllowDrop = true
                 });
@@ -1316,9 +1268,9 @@ namespace ES.Market.ViewModels
                 cashDeskContent += string.Format("Ընդամենը անկանխիկ - {0} դր․ \n\n", cashDesks.Where(s => !s.IsCash).Sum(s => s.Total).ToString("N"));
                 cashDeskContent += string.Format("Ընդամենը - {0} դր․ \n\n", cashDesks.Sum(s => s.Total).ToString("N"));
                 cashDeskContent += "Պարտքեր \n";
-                cashDeskContent += string.Format("Դեբիտորական - {0} դր․ \n", partners.Sum(s => s.Debit ?? 0).ToString("N"));
-                cashDeskContent += string.Format("Կրեդիտորական - {0} դր․ \n\n", partners.Sum(s => s.Credit ?? 0).ToString("N"));
-                cashDeskContent += string.Format("Ընդամենը դրամական միջոցներ - {0} դր․ \n\n", (cashDesks.Sum(s => s.Total) + partners.Sum(s => (s.Debit ?? 0) + (s.Credit ?? 0))).ToString("N"));
+                cashDeskContent += string.Format("Դեբիտորական - {0} դր․ \n", partners.Sum(s => s.Debit).ToString("N"));
+                cashDeskContent += string.Format("Կրեդիտորական - {0} դր․ \n\n", partners.Sum(s => s.Credit).ToString("N"));
+                cashDeskContent += string.Format("Ընդամենը դրամական միջոցներ - {0} դր․ \n\n", (cashDesks.Sum(s => s.Total) + partners.Sum(s => (s.Debit) + (s.Credit))).ToString("N"));
             }
             MessageBox.Show(cashDeskContent, title, MessageBoxButton.OK, MessageBoxImage.Information);
         }
@@ -1608,7 +1560,7 @@ namespace ES.Market.ViewModels
                                 AddInvoiceDocument(new SaleInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
                                 break;
                             case InvoiceType.MoveInvoice:
-                                AddInvoiceDocument(new InternalWaybillInvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
+                                AddInvoiceDocument(new InternalWaybillViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
                                 break;
                             case InvoiceType.PurchaseInvoice:
                                 AddInvoiceDocument(new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember));
@@ -1644,7 +1596,7 @@ namespace ES.Market.ViewModels
                             vm = new SaleInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
                             break;
                         case InvoiceType.MoveInvoice:
-                            vm = new InternalWaybillInvoiceModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
+                            vm = new InternalWaybillViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
                             break;
                         case InvoiceType.PurchaseInvoice:
                             vm = new PurchaseInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);

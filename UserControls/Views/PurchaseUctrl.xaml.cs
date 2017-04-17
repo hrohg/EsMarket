@@ -23,7 +23,6 @@ namespace UserControls.Views
         public PurchaseUctrl(EsUserModel user, EsMemberModel member, PurchaseInvoiceViewModel viewModel):this()
         {
             DataContext = viewModel ?? new PurchaseInvoiceViewModel(user, member);
-            //if( viewModel==null || viewModel.Partner==null) _viewModel.Partner = MembersManager.GetDefaultParner(_member.Id, (long)MembersManager.PartnersTypes.Provider);
         }
         
         #region Events

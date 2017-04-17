@@ -21,28 +21,23 @@ namespace UserControls.Views
     /// </summary>
     public partial class UctrlMoveingInvoice : UserControl
     {
-        /// <summary>
-        /// Interaction logic for SaleUserControl.xaml
-        /// </summary>
         #region Properties
-        public const string Description = "Տեղափոխություն";
-        private readonly EsMemberModel _member;
+        //private readonly EsMemberModel _member;
         private readonly EsUserModel _user;
-        private InternalWaybillInvoiceModel _viewModel;
+        //private InternalWaybillInvoiceModel _viewModel;
         #endregion
         public UctrlMoveingInvoice()
         {
             InitializeComponent();
         }
-        public UctrlMoveingInvoice(EsUserModel user, EsMemberModel member, InternalWaybillInvoiceModel viewModel):this()
+        public UctrlMoveingInvoice(InternalWaybillViewModel viewModel):this()
         {
-            _member = member;
-            _user = user;
-            if (_member == null || _user == null)
+            _user = ApplicationManager.GetEsUser;
+            if (_user == null)
             {
                 return;
             }
-            DataContext = _viewModel = viewModel ?? new InternalWaybillInvoiceModel(_user, _member);
+            
             //if( viewModel==null || viewModel.Partner==null) _viewModel.Partner = MembersManager.GetDefaultParner(_member.Id, (long)MembersManager.PartnersTypes.Provider);
         }
 
@@ -111,26 +106,10 @@ namespace UserControls.Views
             var mi = sender as MenuItem;
             ChooseStock(mi == null ? 0 : HgConvert.ToInt64((mi).Tag));
         }
-        private void TxtCode_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl))
-            {
-                switch (e.Key)
-                {
-                    case Key.Enter:
-                        return;
-                        break;
-                }
-            }
-            if (e.Key == Key.Enter)
-            {
-                _viewModel.SetInvoiceItem(TxtCode.Text);
-                _viewModel.OnAddInvoiceItem(null);
-            }
-        }
+        
         private void CmMiChooseProductByName_Click(object sender, EventArgs e)
         {
-            var products = new ProductsManager().GetProducts(_member.Id);
+            var products = new ProductsManager().GetProducts(ApplicationManager.Member.Id);
             var selectedItems =
                 new ControlPanel.Controls.SelectItems(
                     products.Select(s => new ControlPanel.Controls.ItemsToSelect { DisplayName = string.Format("{0} ({1} {2})", s.Description, s.Code, s.Price), SelectedValue = s.Id }).ToList(),
@@ -143,7 +122,7 @@ namespace UserControls.Views
             {
                 return;
             }
-            _viewModel.SetInvoiceItem(product.Code);
+            //_viewModel.SetInvoiceItem(product.Code);
             TxtPrice.Focus();
             TxtPrice.SelectAll();
         }
@@ -154,9 +133,9 @@ namespace UserControls.Views
         }
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
-            if (_viewModel.Invoice.ApproveDate != null ||
-    MessageBox.Show("Ապրանքագիրը հաստատված չէ։ Դուք իսկապե՞ս ցանկանում եք փակել այն։", "Զգուշացում",
-        MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            //if (_viewModel.Invoice.ApproveDate != null ||
+    //MessageBox.Show("Ապրանքագիրը հաստատված չէ։ Դուք իսկապե՞ս ցանկանում եք փակել այն։", "Զգուշացում",
+        //MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 var tabitem = this.Parent as TabItem;
                 if (tabitem != null)
@@ -171,25 +150,24 @@ namespace UserControls.Views
 
         private void CmMiChooseFromStock_Click(object sender, EventArgs e)
         {
-            _viewModel.FromStock = SelectStock();
+            //_viewModel.FromStock = SelectStock();
         }
 
         private void CmMiChooseToStock_Click(object sender, EventArgs e)
         {
-            _viewModel.ToStock = SelectStock();
-            var parentTab = this.Parent as TabItem;
-            if (parentTab != null) parentTab.Header = Description +" - "+ (_viewModel.ToStock!=null?_viewModel.ToStock.Name:string.Empty);
+            //_viewModel.ToStock = SelectStock();
+            
         }
 
-        private StockModel SelectStock()
-        {
-            var stocks = StockManager.GetStocks(_member.Id);
-            if (stocks == null) return null;
-            if (stocks.Count == 1) { return _viewModel.FromStock = stocks.FirstOrDefault(); }
-            var selectItem = new ControlPanel.Controls.SelectItems(stocks.Select(s => new ControlPanel.Controls.ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), false);
-            if (selectItem.ShowDialog() != true || selectItem.SelectedItems.FirstOrDefault() == null) { return null; }
-            return stocks.FirstOrDefault(s => (long)selectItem.SelectedItems.FirstOrDefault().SelectedValue == s.Id);
-        }
+        //private StockModel SelectStock()
+        //{
+            //var stocks = StockManager.GetStocks(ApplicationManager.Member.Id);
+            //if (stocks == null) return null;
+            //if (stocks.Count == 1) { return _viewModel.FromStock = stocks.FirstOrDefault(); }
+            //var selectItem = new ControlPanel.Controls.SelectItems(stocks.Select(s => new ControlPanel.Controls.ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), false);
+            //if (selectItem.ShowDialog() != true || selectItem.SelectedItems.FirstOrDefault() == null) { return null; }
+            //return stocks.FirstOrDefault(s => (long)selectItem.SelectedItems.FirstOrDefault().SelectedValue == s.Id);
+        //}
         #endregion
 
     }
