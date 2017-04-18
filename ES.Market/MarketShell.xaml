@@ -19,10 +19,6 @@
         Icon="pack://application:,,,/Shared;component/Images/shopping_cart.Ico">
     <Window.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-
-            </ResourceDictionary.MergedDictionaries>
-
             <converters:GetInvocieParameterConverter x:Key="GetInvocieParameterConverter"/>
             <converters:UserRoleToBoolConverter x:Key="UserRoleToBoolConverter"/>
 
@@ -47,6 +43,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -54,16 +51,16 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Menu Grid.Column="1" Margin="1 0" VerticalAlignment="Top" Name="MenuShop" FontSize="11" Height="20">
-                <MenuItem Name="MiAdmin" Header="Admin"  
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Admin}}"
-                    Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                <MenuItem Header="Admin"  
+                          IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Admin}}"
+                          Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                     <MenuItem.Icon>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Safe.ico"/>
                     </MenuItem.Icon>
-                    <MenuItem Header="Կազմակերպությունների խմբագրում"></MenuItem>
-                    <MenuItem Header="Օգտագործողների խմբագրում"></MenuItem>
-                    <MenuItem Header="Հատուկ գործողություն" Click="MiExecute_Click"></MenuItem>
-                    <MenuItem Header="Ապրանքների բեռնում" Command="{Binding ImportProductsCommand}"></MenuItem>
+                    <MenuItem Header="Կազմակերպությունների խմբագրում"/>
+                    <MenuItem Header="Օգտագործողների խմբագրում"/>
+                    <MenuItem Header="Հատուկ գործողություն" Click="MiExecute_Click"/>
+                    <MenuItem Header="Ապրանքների բեռնում" Command="{Binding ImportProductsCommand}"/>
                 </MenuItem>
 
                 <MenuItem Header="Օգտագործող" 
@@ -71,12 +68,12 @@
                     <MenuItem.Icon>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/UserSettings.ico"/>
                     </MenuItem.Icon>
-                    <MenuItem Name="MiChangePassword" Header="Գաղտնաբառի փոփոխում" Command="{Binding ChangePasswordCommand}">
+                    <MenuItem Header="Գաղտնաբառի փոփոխում" Command="{Binding ChangePasswordCommand}">
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/ChangePassword.png"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Name="MiLogoff" Header="_Logoff _F9" Command="{Binding LogOutCommand}">
+                    <MenuItem Header="_Logoff _F9" Command="{Binding LogOutCommand}">
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/WindowsLogOff.png"/>
                         </MenuItem.Icon>
@@ -343,17 +340,36 @@
                         <MenuItem Header="Դեբիտորական պարտքեր (մանրամասն)"  Click="MiDebitViewDetile_Click"/>
                     </MenuItem>
                     <Separator/>
-                    <MenuItem Name="MiAccounting" Header="Հաշիվ" Visibility="Collapsed">
+                    <MenuItem Header="Հաշիվ"
+                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
+                              Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                         <MenuItem.Icon>
                             <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Cash-register.png"/>
                         </MenuItem.Icon>
-                        <Separator/>
                         <MenuItem Header="Դեբիտորական, կրեդիտորական պարտքերի դիտում">
                             <MenuItem Header="Ըստ պատվիրատուների" Click="MiDebitByPartners_Click"/>
                             <MenuItem Header="Մանրամասն" Click ="MiDebitDetile_Click"></MenuItem>
                             <MenuItem Header="Դեբիտորական պարտքի մարում ըստ պատվիրատուների" Click ="MiAccountingRepaymentDetile_Click"/>
                         </MenuItem>
-                        <Separator Margin="3"/>
+                        <MenuItem Header="Գործարք"
+                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+
+                            <MenuItem.Icon>
+                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Edit.ico"></Image>
+                            </MenuItem.Icon>
+                            <MenuItem Header="Ֆիքսված գործարք" Margin="3" Click="MiSingleAccountingRecords_Click" />
+                            <MenuItem Header="Բազմակի գործարքներ" Margin="3" Click="MiMultipleAccountingRecords_Click" />
+                            <Separator />
+                            <MenuItem Header="Իրացման ծախսեր" Margin="3" Click="MiCostOfSales_Click" />
+
+                            <MenuItem Header="Ծախսեր">
+                                <MenuItem Header="Իրացման ծախսեր" Margin="3" Click="MiCostOfSales_Click" />
+                                <MenuItem Header="Վարչական ծախսեր" Margin="3" />
+                                <MenuItem Header="Գործառնական այլ ծախսեր" Margin="3" />
+                            </MenuItem>
+                        </MenuItem>
+                        <Separator />
                         <MenuItem Header="1 Ոչ ընթացիկ ակտիվներ"></MenuItem>
                         <MenuItem Header="2 Ընթացիկ ակտիվներ">
                             <MenuItem Header="221 Դեբիտորական պարտքի մարում" Margin="3" Click="MiRepaymentOfReceivable_Click"/>
@@ -377,32 +393,14 @@
                         </MenuItem>
                         <MenuItem Header="8 Կառավարչական հաշվառման հաշիվներ"></MenuItem>
                         <MenuItem Header="9 Արտահաշվեկշռային հաշիվներ"></MenuItem>
-                        <Separator Margin="3"/>
-                        <MenuItem Header="Հաշվային պլան (դիտում)" Click="MiAccountingPlan_Click"></MenuItem>
-                        <Separator/>
-                        <MenuItem Name="MiAction" Header="Գործարք" Margin="3" Visibility="Collapsed">
-                            <MenuItem.Icon>
-                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Edit.ico"></Image>
-                            </MenuItem.Icon>
-                            <MenuItem Header="Ֆիքսված գործարք" Margin="3" Click="MiSingleAccountingRecords_Click" />
-                            <MenuItem Header="Բազմակի գործարքներ" Margin="3" Click="MiMultipleAccountingRecords_Click" />
-                            <Separator />
-                            <MenuItem Header="Իրացման ծախսեր" Margin="3" Click="MiCostOfSales_Click" />
-
-                            <MenuItem Header="Ծախսեր">
-                                <MenuItem Header="Իրացման ծախսեր" Margin="3" Click="MiCostOfSales_Click" />
-                                <MenuItem Header="Վարչական ծախսեր" Margin="3" />
-                                <MenuItem Header="Գործառնական այլ ծախսեր" Margin="3" />
-                            </MenuItem>
-                        </MenuItem>
                     </MenuItem>
                     <MenuItem Header="Վերծանում">
-                            <MenuItem.Icon>
-                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
-                            </MenuItem.Icon>
-                            <MenuItem Header="Հաշվային պլան" Click="MiViewAccountingPlan_Click"/>
-                            <Separator/>
-                        </MenuItem>
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="Հաշվային պլան" Click="MiViewAccountingPlan_Click"/>
+                        <MenuItem Header="Հաշվային պլան (մանրամասն)" Command="{Binding ViewAccountantTableCommand}" />
+                    </MenuItem>
                     <Separator Visibility="{Binding IsEcrAcivated, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <MenuItem Header="ՀԴՄ" Visibility="{Binding IsEcrAcivated, Converter={StaticResource BoolToVisibilityConverter}}">
                         <MenuItem.Icon>
@@ -495,7 +493,11 @@
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Edit.ico"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Name="MiManageServices" Header="Ծառայությունների խմբագրում" Visibility="Collapsed" Click="MiManageServices_Click" IsEnabled="False">
+                        <MenuItem Header="Ծառայությունների խմբագրում" 
+                                  Click="MiManageServices_Click"
+                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Edit.ico"/>
                             </MenuItem.Icon>
@@ -507,10 +509,16 @@
                         </MenuItem>
                     </MenuItem>
                     <MenuItem Name="MiProductOrder" Header="Պատվեր">
-                        <MenuItem Name="MiProductOrderByMinQuantity" Header="Ըստ մնացորդի" Click="MiProductOrderByMinQuantity_Click"></MenuItem>
-                        <MenuItem Name="MiProductOrderByProviders" Header="Դասակարգում ըստ մատակարարների" Click="MiProductOrderByProviders_Click" Visibility="Collapsed"></MenuItem>
-                        <MenuItem Name="MiProductOrderByBrands" Header="Ըստ ապրանքատեսակների"   Click="MiProductOrderByBrands_Click" Visibility="Collapsed"></MenuItem>
-                        <MenuItem Header="Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն)" Command="{Binding ProductOrderCommand}"></MenuItem>
+                        <MenuItem Name="MiProductOrderByMinQuantity" Header="Ըստ մնացորդի" Click="MiProductOrderByMinQuantity_Click"/>
+                        <MenuItem Header="Դասակարգում ըստ մատակարարների" 
+                                  Click="MiProductOrderByProviders_Click" 
+                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                        <MenuItem Header="Ըստ ապրանքատեսակների" 
+                                      Click="MiProductOrderByBrands_Click"
+                                      IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
+                                      Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                        <MenuItem Header="Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն)" Command="{Binding ProductOrderCommand}"/>
                     </MenuItem>
                     <MenuItem Header="Գույքագրում" 
                               IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
@@ -525,10 +533,17 @@
                                 <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit.png"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="Գույքագրման դիտում" Name="MiViewStockTaking" Command="{Binding StockTakingCommand}" CommandParameter="{Binding ProjectCreationEnum.View}" Click="MiViewStockTaking_OnClick">
-
+                        <MenuItem Header="Գույքագրման դիտում" Command="{Binding StockTakingCommand}" CommandParameter="{Binding ProjectCreationEnum.View}" 
+                                  Click="MiViewStockTaking_OnClick"
+                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                         </MenuItem>
-                        <MenuItem Header="Վերջին գույքագրման դիտում" Name="MiViewLastStockTaking" Command="{Binding StockTakingCommand}" CommandParameter="{Binding ProjectCreationEnum.ViewLast}" Click="MiViewLastStockTaking_OnClick">
+                        <MenuItem Header="Վերջին գույքագրման դիտում" 
+                                  Command="{Binding StockTakingCommand}" 
+                                  CommandParameter="{Binding ProjectCreationEnum.ViewLast}" 
+                                  Click="MiViewLastStockTaking_OnClick"
+                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}"
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
 
                         </MenuItem>
                         <MenuItem Header="Տվյալների դուրսգրում" Command="{Binding WriteOffProductsCommand}">
@@ -591,13 +606,15 @@
                                   IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
                         Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations1:ReportTypes.ShortReport}"/>
-                        <MenuItem Name="MiReport" Header="Ընդլայնված" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
-                              Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
-                              Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations1:ReportTypes.Report}"/>
+                        <MenuItem Header="Ընդլայնված" 
+                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
+                                  Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations1:ReportTypes.Report}"/>
                     </MenuItem>
+
                 </MenuItem>
-                <MenuItem x:Name="Help" Header="Օգնություն">
+
+                <MenuItem Header="Օգնություն">
                     <MenuItem.Icon>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Help.ico" />
                     </MenuItem.Icon>
@@ -661,13 +678,17 @@
                   IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
 
-                <MenuItem Name="MiControlPanel"  VerticalAlignment="Stretch" VerticalContentAlignment="Center" Height="20" Margin="0">
+                <MenuItem VerticalAlignment="Stretch" VerticalContentAlignment="Center" Height="20" Margin="0"
+                          IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
+                          Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                     <MenuItem.Header>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Settings.ico"/>
                     </MenuItem.Header>
 
-                    <MenuItem Name="MiAdvancedSettings" Header="Ընդհանուր դրույթներ" Visibility="Collapsed">
-                        <MenuItem Header="Բրենդների խմբագրում" Click="MiManageBrands_Click"></MenuItem>
+                    <MenuItem Header="Ընդհանուր դրույթներ"
+                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
+                              Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <MenuItem Header="Բրենդների խմբագրում" Click="MiManageBrands_Click"/>
                         <MenuItem Header="Ապրանքների տվյալների համաժամանակեցում" Command="{Binding SyncronizeProductsCommand}"
           IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
@@ -679,8 +700,13 @@
 
                     <Separator/>
 
-                    <MenuItem Name="MiAdministratorSettings" Header="Ադմինիստրատիվ դրույթներ" Visibility="Collapsed">
-                        <MenuItem Name="MiBackupData" Header="Տվյալների բազայի արխիվացում" Click="MiBackupData_Click"></MenuItem>
+                    <MenuItem Header="Ադմինիստրատիվ դրույթներ"
+                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
+                              Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <MenuItem Header="Տվյալների բազայի արխիվացում" Click="MiBackupData_Click"                          
+                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                        </MenuItem>
                     </MenuItem>
 
                     <MenuItem Header="Հաշվառման դրույթներ" >
@@ -956,7 +982,7 @@
                             </ControlTemplate>
                         </ToggleButton.Template>
                     </ToggleButton>
-                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal">
                         <Image Height="24" Width="24" Margin="5 0" VerticalAlignment="Center" Source="{Binding ServerPath}" ToolTip="{Binding ServerDescription}"/>
                         <Image Height="24" Width="24" Margin="5 0" VerticalAlignment="Center" Source="pack://application:,,,/Shared;component/Images/User_24x24_Dark.png" ToolTip="{Binding User.FullName}"/>
                     </StackPanel>

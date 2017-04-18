@@ -1393,12 +1393,12 @@ namespace ES.Market.ViewModels
                     AddDocument(new ShortReportViewModel());
                     break;
                 case ReportTypes.Report:
-                    var ui = new DataReports(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
+                    var ui = new DataReports();
                     ui.DataContext = new ReportsViewModel(ui);
                     ui.Show();
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("o", type, null);
+                    throw new ArgumentOutOfRangeException("type", type, null);
             }
         }
 

@@ -6,10 +6,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using ES.Business.Managers;
 using ES.Business.Models;
-using ES.Data.Model;
 using ES.Data.Models;
 using ES.Data.Models.Reports;
-using ES.DataAccess.Models;
 using ES.Shop.Controls;
 using UserControls.ControlPanel.Controls;
 using UserControls.ViewModels;
@@ -23,48 +21,12 @@ namespace ES.Market.Views.Reports.View
     /// </summary>
     public partial class DataReports : Window
     {
-        private List<MembersRoles> _userRoles;
-        public DataReports(EsUserModel user, EsMemberModel member)
+        
+        public DataReports()
         {
             InitializeComponent();
-            _member = member;
-            _user = user;
-            if (_member == null || _user == null)
-            {
-                return;
-            }
-            _userRoles = UsersManager.GetUserRoles(_user.UserId, _member.Id);
-            SetPermitions();
         }
-        private void SetPermitions()
-        {
-            var stocks = StockManager.GetStocks(_member.Id);
-            if (_userRoles.FirstOrDefault(s => s.RoleName == "Admin") != null)
-            {
-            }
-            if (_userRoles.FirstOrDefault(s => s.RoleName == "Director") != null)
-            {
-                MiSale.Visibility = MiProducts.Visibility = Visibility.Visible;
-            }
-            if (_userRoles.FirstOrDefault(s => s.RoleName == "Manager") != null)
-            {
-                MiSale.Visibility = MiProducts.Visibility = Visibility.Visible;
-            }
-            if (_userRoles.FirstOrDefault(s => s.RoleName == "SaleManager") != null)
-            {
-                MiSale.Visibility = MiProducts.Visibility = Visibility.Visible;
-            }
-            if (_userRoles.FirstOrDefault(s => s.RoleName == "Storekeeper") != null)
-            {
-            }
-            if (_userRoles.FirstOrDefault(s => s.RoleName == "Seller") != null)
-            {
-            }
-        }
-
         public const string Description = "Հաշվետվություններ";
-        private readonly EsMemberModel _member;
-        private readonly EsUserModel _user;
         #region Private methods
         private void LoadTab<T>(TableViewModel<T> model, string header)
         {
@@ -109,16 +71,16 @@ namespace ES.Market.Views.Reports.View
         #region FinanceReportUctrl Events
         private void BtnClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
         #endregion
         void MiViewSaleReportByStocks_Click(object sender, EventArgs e)
         {
-            var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(_member.Id), true);
+            var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Member.Id), true);
             var dateIntermediate = SelectManager.GetDateIntermediate();
             var invoiceItems =
                 InvoicesManager.GetInvoiceItemsByStocks(
-                InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, _member.Id)
+                InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Member.Id)
                     .Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice)
                         .Select(s => s.Id), stocks.Select(t => t.Id));
             var list = stocks.Select(s =>
@@ -150,11 +112,11 @@ namespace ES.Market.Views.Reports.View
         }
         void MiViewSaleReportDetileByStocks_Click(object sender, EventArgs e)
         {
-            var stocksIds = SelectItemsManager.SelectStocks(StockManager.GetStocks(_member.Id), true).Select(t => t.Id);
+            var stocksIds = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Member.Id), true).Select(t => t.Id);
             var dateIntermediate = SelectManager.GetDateIntermediate();
             var invoiceItems =
                 InvoicesManager.GetInvoiceItemsByStocks(
-                InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, _member.Id)
+                InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Member.Id)
                     .Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice)
                         .Select(s => s.Id), stocksIds);
             var list = invoiceItems.GroupBy(s => s.Code).Select(s =>
@@ -180,8 +142,8 @@ namespace ES.Market.Views.Reports.View
         {
             var products = SelectItemsManager.SelectProduct(true);
             var dateIntermediate = SelectManager.GetDateIntermediate();
-            var invoiceItems = InvoicesManager.GetInvoiceItemssByCode(products.Select(s => s.Code), dateIntermediate.Item1, dateIntermediate.Item2, _member.Id).OrderBy(s => s.InvoiceId);
-            var invoices = InvoicesManager.GetInvoices(invoiceItems.Select(s => s.InvoiceId).Distinct(), _member.Id);
+            var invoiceItems = InvoicesManager.GetInvoiceItemssByCode(products.Select(s => s.Code), dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Member.Id).OrderBy(s => s.InvoiceId);
+            var invoices = InvoicesManager.GetInvoices(invoiceItems.Select(s => s.InvoiceId).Distinct(), ApplicationManager.Member.Id);
             var list = invoiceItems.Select(s =>
                         new ProductProviderReportModel
                         {
@@ -208,7 +170,7 @@ namespace ES.Market.Views.Reports.View
         protected void MiViewSaleReportDetile_Click(object sender, EventArgs e)
         {
             var dateIntermediate = SelectManager.GetDateIntermediate();
-            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, _member.Id)
+            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Member.Id)
                     .Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).ToList();
 
             if (!invoices.Any())

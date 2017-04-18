@@ -131,6 +131,7 @@ namespace UserControls.ViewModels.Reports
                 if (value == _isSale) return;
                 _isSale = value; RaisePropertyChanged("IsSale");
                 RaisePropertyChanged("Invoices");
+                RaisePropertyChanged("SaleItems");
             }
         }
 
@@ -147,6 +148,7 @@ namespace UserControls.ViewModels.Reports
                 _isPurchase = value;
                 RaisePropertyChanged("IsPurchase");
                 RaisePropertyChanged("Invoices");
+                RaisePropertyChanged("SaleItems");
             }
         }
 
@@ -164,6 +166,7 @@ namespace UserControls.ViewModels.Reports
                 _isMove = value;
                 RaisePropertyChanged("IsMove");
                 RaisePropertyChanged("Invoices");
+                RaisePropertyChanged("SaleItems");
             }
         }
 
@@ -295,7 +298,11 @@ namespace UserControls.ViewModels.Reports
             {
                 return _invoiceItems == null
                     ? null
-                    : _invoiceItems.OrderBy(s => s.Code)
+                    : _invoiceItems
+                    //.Where(s => 
+                    //    (IsSale && (InvoiceType)s.Invoice.InvoiceTypeId == InvoiceType.SaleInvoice) ||
+                    //    (IsPurchase && (InvoiceType)s.Invoice.InvoiceTypeId == InvoiceType.PurchaseInvoice) ||
+                    //    (IsMove && (InvoiceType)s.Invoice.InvoiceTypeId == InvoiceType.MoveInvoice)).OrderBy(s => s.Code)
                         .GroupBy(s => s.Code + s.Price)
                         .Select(s => new ProductOrderItemsModel
                         {

@@ -504,6 +504,10 @@ namespace ES.Business.Managers
                     throw new ArgumentOutOfRangeException();
             }
         }
+        public static bool IsInRole(List<UserRoleEnum> types)
+        {
+            return types.Any(s => IsInRole(s));
+        }
         #endregion
     }
 

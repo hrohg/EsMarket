@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Data;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
@@ -24,8 +25,7 @@ namespace UserControls.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var type = (UserRoleEnum?)parameter;
-            return ApplicationManager.IsInRole(type);
+            return ApplicationManager.IsInRole(values.OfType<UserRoleEnum>().ToList());
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

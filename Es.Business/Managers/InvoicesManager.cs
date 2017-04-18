@@ -175,7 +175,7 @@ namespace ES.Business.Managers
                 Id = item.Id,
                 Index = item.Index,
                 InvoiceId = item.InvoiceId,
-                //Invoice = ConvertInvoice(item.Invoices, new PartnerModel()),
+                //Invoice = new InvoiceModel(),
                 ProductId = item.ProductId,
                 //Product = ProductsManager.Convert(item.Products),
                 ProductItemId = item.ProductItemId,
@@ -1682,7 +1682,9 @@ namespace ES.Business.Managers
                 {
                     if (startDate == null) startDate = DateTime.Today;
                     if (endDate == null) endDate = DateTime.Now;
-                    return db.InvoiceItems.Where(s => s.Invoices.MemberId == memberId && s.Invoices.ApproveDate >= startDate && s.Invoices.ApproveDate <= endDate).ToList();
+                    return db.InvoiceItems
+                        .Include(s=>s.Invoices)
+                        .Where(s => s.Invoices.MemberId == memberId && s.Invoices.ApproveDate >= startDate && s.Invoices.ApproveDate <= endDate).ToList();
                 }
             }
             catch (Exception ex)

@@ -21,8 +21,6 @@ using UserControls.Helpers;
 using UserControls.Interfaces;
 using UserControls.PriceTicketControl.ViewModels;
 using UserControls.ViewModels;
-using UserControls.ViewModels.StockTakeings;
-using UserControls.Views;
 using UserControls.Views.CustomControls;
 using ExportManager = ES.Business.Managers.ExportManager;
 using MessageBox = System.Windows.MessageBox;
@@ -38,67 +36,7 @@ namespace ES.Market
     /// </summary>
     public partial class MarketShell : Window
     {
-        #region Private properties
-        
-
-        private List<MembersRoles> _userRoles;
-        #endregion
-
         #region Private methods
-        private void SetPermitions()
-        {
-            var stocks = ApplicationManager.Instance.CashProvider.GetStocks;
-            
-            if (_userRoles.FirstOrDefault(s => s.RoleName == "Admin") != null)
-            {
-                MiAdmin.Visibility = Visibility.Visible;
-                MiAccounting.Visibility = MiAdministratorSettings.Visibility = MiAction.Visibility = Visibility.Visible;
-            }
-            if (_userRoles.FirstOrDefault(s => s.RoleName == "Director") != null)
-            {
-                MiViewStockTaking.IsEnabled =
-                    MiViewLastStockTaking.IsEnabled = true;
-                MiControlPanel.Visibility =
-                MiAccounting.Visibility =
-                MiAction.Visibility =
-                MiAdministratorSettings.Visibility =
-                 Visibility.Visible;
-            }
-
-            if (_userRoles.FirstOrDefault(s => s.RoleName == "Manager") != null)
-            {
-                MiAccounting.Visibility = Visibility.Visible;
-                MiViewStockTaking.IsEnabled =
-                   MiViewLastStockTaking.IsEnabled =
-                   MiManageServices.IsEnabled = true;
-                MiControlPanel.Visibility = MiReport.Visibility =
-                MiAdvancedSettings.Visibility = MiAdvancedSettings.Visibility = Visibility.Visible;
-            }
-            if (_userRoles.FirstOrDefault(s => s.RoleName == "SaleManager") != null)
-            {
-                MiViewStockTaking.IsEnabled =
-                 MiViewLastStockTaking.IsEnabled =true;
-                MiControlPanel.Visibility = MiReport.Visibility =
-
-                MiProductOrderByProviders.Visibility = MiProductOrderByBrands.Visibility = Visibility.Visible;
-            }
-            if (_userRoles.FirstOrDefault(s => s.RoleName == "Storekeeper") != null)
-            {
-                MiViewStockTaking.IsEnabled =
-                    MiViewLastStockTaking.IsEnabled =true;
-            }
-            if (_userRoles.FirstOrDefault(s => s.Id == (int)EsSettingsManager.MemberRoles.Seller || s.Id == (int)EsSettingsManager.MemberRoles.SeniorSeller) != null)
-            {
-                MiViewLastStockTaking.IsEnabled = true;
-            }
-        }
-        private void ConfigureComponent()
-        {
-            SetPermitions();
-            //if (_userRoles.FirstOrDefault(s => s.RoleName == "Seller") != null)
-            //{ LoadInvoiceTab(new InvoiceModel(_user, _member, (long)InvoiceType.SaleInvoice)); }
-        }
-
         private void LoadPackingListTab(long invoiceTypeId, bool? isAccepted = null)
         {
             var invoice = SelectItemsManager.SelectInvoice(invoiceTypeId, ApplicationManager.Instance.GetEsMember.Id, isAccepted, false).FirstOrDefault();
@@ -138,7 +76,6 @@ namespace ES.Market
         public MarketShell(ShellViewModel vm)
         {
             DataContext = vm;
-            _userRoles = ApplicationManager.Instance.UserRoles;
             if (ApplicationManager.Instance.GetEsMember == null || ApplicationManager.GetEsUser == null)
             {
                 MessageBox.Show("Ոչ արտոնագրված գործողություն։ Ծրագիրը կփակվի։ Խնդրում ենք արտոնագրել ծրագրային ապահովումը։",
@@ -147,7 +84,7 @@ namespace ES.Market
                 return;
             }
 
-            if (_userRoles == null || !_userRoles.Any())
+            if (ApplicationManager.Instance.UserRoles == null || !ApplicationManager.Instance.UserRoles.Any())
             {
                 MessageBox.Show("Ծրագիրը կփակվի, քանի որ դուք ոչ մի համակարգում ընդգրկված չեք։ Ընդգրկվելու համար խնդրում ենք դիմել տնօրինություն։ ");
                 Close();
@@ -162,8 +99,8 @@ namespace ES.Market
             UserControlSession.Inst.BEManager = DataManager.GetInstance();
 
             InitializeComponent();
-            ConfigureComponent();
         }
+
         private void WinShop_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var items = TabShop.Items;
@@ -186,6 +123,7 @@ namespace ES.Market
             }
 
         }
+
         #region Menu items
         
         #region Admin
@@ -279,6 +217,7 @@ namespace ES.Market
         }
 
         #endregion
+
         #region Cash desk
         private void MiDebitViewDetile_Click(object sender, EventArgs e)
         {
@@ -373,6 +312,7 @@ namespace ES.Market
 
         }
         #endregion
+
         #region AccountingRecords
         protected void MiViewAccountingPlan_Click(object sender, EventArgs e)
         {
@@ -597,6 +537,7 @@ namespace ES.Market
             accountingRecords1.Description = accountingRecords2.Description = accountingRecords.Description;
         }
         #endregion
+
         #region AccountingAccounts
 
         /// <summary>
@@ -646,6 +587,7 @@ namespace ES.Market
             ui.Show();
         }
         #endregion
+
         #region View
         /// <summary>
         /// Sale Packing List
@@ -803,8 +745,6 @@ namespace ES.Market
             //ExcelExportManager.ExportProducts(path.FileName);
         }
         #endregion
-
-
 
         #endregion
     }
