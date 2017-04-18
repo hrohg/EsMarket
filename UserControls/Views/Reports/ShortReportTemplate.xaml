@@ -15,19 +15,18 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="2*"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" CanVerticallyScroll="True">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" CanVerticallyScroll="True" MaxHeight="200">
                         <GroupBox Header="Վաճառք ըստ գնորդների" VerticalAlignment="Stretch">
                             <DataGrid ItemsSource="{Binding Customers}" AutoGenerateColumns="False" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False">
                                 <DataGrid.Columns>
