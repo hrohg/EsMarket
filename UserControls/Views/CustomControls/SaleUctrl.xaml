@@ -115,7 +115,7 @@
                             <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding ElementName=TxtCode, Path=Text}"/>
                         </TextBox.InputBindings>
                         <i:Interaction.Behaviors>
-                            <behaviors:TextBoxBehavior IsFocusOnLoad="True" IsSelectTextOnFocus="True" />
+                            <behaviors:TextBoxBehavior IsFocusOnLoad="True" IsSelectTextOnFocus="True" IsFocusOnKeyboardFocused="True" />
                         </i:Interaction.Behaviors>
                     </TextBox>
                     <Label Grid.Row="0" Content="Անվանում" VerticalAlignment="Center"  HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="150,0,0,0" FontSize="12"/>

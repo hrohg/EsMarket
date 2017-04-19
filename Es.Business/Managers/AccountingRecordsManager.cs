@@ -360,6 +360,7 @@ namespace ES.Business.Managers
                             .ToList();
 
                         var paid = repaymentAccountingRecords.Amount;
+                        if (exPartner.Debit < paid) return false;
                         exCashBox.Total += paid;
                         exPartner.Debit -= paid;
                         foreach (var item in accountingReceivable.Where(item => item != null))

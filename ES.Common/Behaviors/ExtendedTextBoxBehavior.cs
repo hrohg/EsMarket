@@ -45,7 +45,12 @@ namespace ES.Common.Behaviors
             set { SetValue(IsFocusOnTextChangedProperty, value); }
         }
 
-
+        public static readonly DependencyProperty IsFocusOnKeyboardFocusedProperty = DependencyProperty.Register("IsFocusOnKeyboardFocused", typeof(bool), typeof(TextBoxBehavior), new PropertyMetadata(false));
+        public bool IsFocusOnKeyboardFocused
+        {
+            get { return (bool)GetValue(IsFocusOnKeyboardFocusedProperty); }
+            set { SetValue(IsFocusOnKeyboardFocusedProperty, value); }
+        }
 
 
 
@@ -80,8 +85,12 @@ namespace ES.Common.Behaviors
             }
             if (IsFocusOnEnable) AssociatedObject.IsEnabledChanged += OnEnabledChanged;
             if (IsFocusOnTextChanged) AssociatedObject.TextChanged += TextChanged;
+            if (IsFocusOnKeyboardFocused)
+            {
+                AssociatedObject.GotKeyboardFocus += OnGotKeyboardFocus;
+            }
         }
-        
+
         protected override void OnDetaching()
         {
             if (IsFocusOnLoad) AssociatedObject.Loaded -= OnLoaded;
@@ -116,6 +125,10 @@ namespace ES.Common.Behaviors
             {
                 textBox.Focus();
             }
+        }
+        private void OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            OnFocus(sender as TextBox);
         }
         private static void IsLeaveOnEnterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

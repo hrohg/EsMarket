@@ -114,12 +114,7 @@ namespace UserControls.ViewModels.Invoices
         protected override bool SetQuantity(bool addSingle)
         {
             var exCount = ProductsManager.GetProductItemCount(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList(), Member.Id);
-            if (exCount == 0)
-            {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, string.Format("Անբավարար միջոցներ: Կոդ: {0} Տվյալ ապրանքատեսակից բավարար քանակ առկա չէ:", InvoiceItem.Code), MessageModel.MessageTypeEnum.Warning));
-                return false;
-            }
-            if (InvoiceItem.Quantity == null || InvoiceItem.Quantity == 0)
+            if (exCount > 0 && (InvoiceItem.Quantity == null || InvoiceItem.Quantity == 0))
             {
                 if (addSingle && exCount >= 1)
                 {
@@ -130,14 +125,15 @@ namespace UserControls.ViewModels.Invoices
                     InvoiceItem.Quantity = GetAddedItemCount(exCount, false);
                 }
             }
-            if (InvoiceItem.Quantity == null || InvoiceItem.Quantity <= 0)
+            if (exCount == 0 || InvoiceItem.Quantity > exCount)
             {
+                InvoiceItem.Quantity = null;
+                var message = string.Format("Անբավարար միջոցներ: Կոդ: {0} Տվյալ ապրանքատեսակից բավարար քանակ առկա չէ:", InvoiceItem.Code);
+                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, message, MessageModel.MessageTypeEnum.Warning));
+                MessageBox.Show(message, "Անբավարար միջոցներ");
                 return false;
             }
-            if (!(InvoiceItem.Quantity > exCount)) return true;
-            InvoiceItem.Quantity = null;
-            ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, string.Format("Անբավարար միջոցներ: Կոդ: {0} Տվյալ ապրանքատեսակից բավարար քանակ առկա չէ:", InvoiceItem.Code), MessageModel.MessageTypeEnum.Warning));
-            return false;
+            return InvoiceItem.Quantity != null && InvoiceItem.Quantity > 0;
         }
         private bool CanPrintEcrTicket(object o)
         {
