@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO.Packaging;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
@@ -37,8 +38,6 @@ namespace UserControls.ViewModels.Invoices
         private const string DenayChangePriceProperty = "DenayChangePrice";
         protected const string IsExpiringProperty = "IsExpiring";
 
-
-
         protected const string ShortTitleProperty = "ShortTitle";
 
         #endregion
@@ -48,10 +47,10 @@ namespace UserControls.ViewModels.Invoices
         /// </summary>
 
         #region Invoice view model private properties
-        private bool _isLoading;
+
         //private long userId;
         protected EsUserModel User;
-        protected EsMemberModel Member;
+        protected EsMemberModel Member; 
         private List<MembersRoles> _roles = new List<MembersRoles>();
 
 
@@ -69,6 +68,9 @@ namespace UserControls.ViewModels.Invoices
         /// </summary>
 
         #region InvoiceViewModel External properties
+
+        #region Is loading
+        private bool _isLoading;
         public override bool IsLoading
         {
             get
@@ -82,13 +84,36 @@ namespace UserControls.ViewModels.Invoices
                 RaisePropertyChanged("IsLoading");
             }
         }
+        #endregion Is loading
 
-        public bool DenayChangePrice { get { return (_roles.FirstOrDefault(s => s.RoleName == "Manager" || s.RoleName == "Director") == null) || InvoiceItem.Product==null; } }
+        #region Code
+        private string _code;
+
+        public string Code
+        {
+            get
+            {
+                return _code;
+            }
+            set
+            {
+                if (value == _code) return;
+                _code = value;
+                RaisePropertyChanged("Code");
+            }
+        }
+
+        #endregion Code
+
+        public bool DenayChangePrice { get { return (_roles.FirstOrDefault(s => s.RoleName == "Manager" || s.RoleName == "Director") == null) || InvoiceItem.Product == null; } }
 
         public InvoiceItemsModel InvoiceItem
         {
             get { return _invoiceItem; }
-            set { _invoiceItem = value; RaisePropertyChanged("InvoiceItem"); RaisePropertyChanged(IsExpiringProperty); }
+            set { _invoiceItem = value;
+                Code = InvoiceItem.Code;
+                RaisePropertyChanged("InvoiceItem"); 
+                RaisePropertyChanged(IsExpiringProperty); }
         }
 
 
@@ -178,7 +203,8 @@ namespace UserControls.ViewModels.Invoices
         {
             //ICommands
             RemoveInvoiceItemCommand = new RemoveInvoiceItemCommands(this);
-            SetInvoiceItemCommand = new RelayCommand<string>(OnSetInvoiceItem);
+
+
             //PrintInvoiceItemCommand = new PrintInvoiceItemCommands(this);
             //ExportInvoiceCommand = new ExportInvoiceItemCommands(this);
 
@@ -231,9 +257,9 @@ namespace UserControls.ViewModels.Invoices
         }
         protected virtual decimal GetPartnerPrice(EsProductModel product)
         {
-            return product!=null?
-                (product.Price ?? 0) * (product.Discount > 0 ? 
-                1 - (product.Discount ?? 0) / 100 : 1 - (Partner.Discount ?? 0) / 100):0;
+            return product != null ?
+                (product.Price ?? 0) * (product.Discount > 0 ?
+                1 - (product.Discount ?? 0) / 100 : 1 - (Partner.Discount ?? 0) / 100) : 0;
         }
         protected virtual bool SetQuantity(bool addSingle)
         {
@@ -438,14 +464,11 @@ namespace UserControls.ViewModels.Invoices
 
         public void OnSetProductItem(ProductItemModel productItem)
         {
+            if(!IsSelected) return;
             CreateNewInvoiceItem(productItem);
             OnAddInvoiceItem(InvoiceItem);
         }
-        public virtual void OnSetInvoiceItem(string code)
-        {
-            SetInvoiceItem(code);
-            OnAddInvoiceItem(null);
-        }
+
         public virtual void SetInvoiceItem(string code)
         {
             if (string.IsNullOrEmpty(code)) { return; }
@@ -456,20 +479,11 @@ namespace UserControls.ViewModels.Invoices
                 product = new ProductsManager().GetProductsByCodeOrBarcode(code.Substring(2, 5), Member.Id);
                 count = HgConvert.ToDecimal(code.Substring(7, 5)) / 1000;
             }
-            InvoiceItem = new InvoiceItemsModel();
+            InvoiceItem = new InvoiceItemsModel(Invoice, product);
             if (product != null)
             {
-                InvoiceItem.InvoiceId = Invoice.Id;
-                InvoiceItem.Product = product;
-                InvoiceItem.ProductId = product.Id;
-                InvoiceItem.ExpiryDate = product.ExpiryDays != null ? DateTime.Today.AddDays((int)product.ExpiryDays) : (DateTime?)null;
-                InvoiceItem.Code = product.Code;
-                InvoiceItem.Description = product.Description;
-                InvoiceItem.Mu = product.Mu;
                 InvoiceItem.Quantity = count;
                 InvoiceItem.Price = GetPartnerPrice(product);
-                InvoiceItem.Discount = product.Discount;
-                InvoiceItem.Note = product.Note;
             }
             else
             {
@@ -480,7 +494,7 @@ namespace UserControls.ViewModels.Invoices
             RaisePropertyChanged("InvoiceItem");
             RaisePropertyChanged(IsExpiringProperty);
         }
-        
+
         public bool CanEdit
         {
             get { return Invoice != null; }
@@ -726,7 +740,22 @@ namespace UserControls.ViewModels.Invoices
         #region Commands
         public ICommand RemoveInvoiceItemCommand { get; private set; }
 
-        public ICommand SetInvoiceItemCommand { get; private set; }
+        #region Set invoice item command
+        private ICommand _setInvoiceItemCommand;
+        public ICommand SetInvoiceItemCommand
+        {
+            get
+            {
+                return _setInvoiceItemCommand ?? (_setInvoiceItemCommand = new RelayCommand<string>(OnSetInvoiceItem));
+            }
+        }
+        protected virtual void OnSetInvoiceItem(string code)
+        {
+            SetInvoiceItem(code);
+            OnAddInvoiceItem(null);
+        }
+        #endregion Set invoice item command
+
         public ICommand AddInvoiceItemCommand { get { return new RelayCommand(OnAddInvoiceItem, CanAddInvoiceItem); } }
         public ICommand SaveInvoiceCommand { get { return new RelayCommand(OnSaveInvoice, CanSaveInvoice); } }
         public ICommand PrintInvoiceItemCommand { get; private set; }

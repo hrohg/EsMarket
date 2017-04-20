@@ -32,7 +32,6 @@
     <i:Interaction.Behaviors>
         <behaviors:EventToCommandBehavior Command="{Binding Path=KeyPressedCommand}" Event="KeyDown" PassArguments="True"/>
     </i:Interaction.Behaviors>
-
     <Grid Background="{StaticResource DefaultBackground}">
 
         <Grid.Resources>

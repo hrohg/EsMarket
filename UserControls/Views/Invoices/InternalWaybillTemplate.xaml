@@ -29,10 +29,11 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <GroupBox Grid.Column="0" Header="Ելքագրվող պահեստ" Margin="3">
+                                <GroupBox Header="Ելքագրվող պահեստ">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBox Grid.Column="0" Text="{Binding FromStock.Name}" IsReadOnly="True" >
@@ -42,16 +43,15 @@
                                                 </ContextMenu>
                                             </TextBox.ContextMenu>
                                         </TextBox>
-                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <Label Content="Ելքագրեց" Width="100" HorizontalContentAlignment="Right"/>
-                                            <TextBox Text="{Binding FromStock.Storekeeper.FullName, Mode=OneWay}" Width="200" FontSize="15"  IsReadOnly="True" HorizontalContentAlignment="Right"/>
-                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="Ելքագրեց" HorizontalAlignment="Right" Margin="0 0 1 0"/>
+                                        <TextBox Grid.Column="2" Text="{Binding FromStock.Storekeeper.FullName, Mode=OneWay}" Width="200" FontSize="15"  IsReadOnly="True" HorizontalContentAlignment="Right"/>
                                     </Grid>
                                 </GroupBox>
-                                <GroupBox Grid.Column="0" Header="Մուտքագրվող պահեստ" Margin="3">
+                                <GroupBox Header="Մուտքագրվող պահեստ">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBox Grid.Column="0" Text="{Binding ToStock.Name}" IsReadOnly="True" >
@@ -61,27 +61,31 @@
                                                 </ContextMenu>
                                             </TextBox.ContextMenu>
                                         </TextBox>
-                                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <Label Content="Ընդունեց" Width="100" HorizontalContentAlignment="Right"/>
-                                            <TextBox Text="{Binding ToStock.Storekeeper.FullName, Mode=OneWay}" Width="200" FontSize="15"  IsReadOnly="True" HorizontalContentAlignment="Right"/>
-                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="Ընդունեց" HorizontalAlignment="Right"/>
+                                        <TextBox Grid.Column="2" Text="{Binding ToStock.Storekeeper.FullName, Mode=OneWay}" Width="200" FontSize="15"  IsReadOnly="True" HorizontalContentAlignment="Right"/>
                                     </Grid>
                                 </GroupBox>
                             </StackPanel>
-                            <StackPanel Grid.Column="1">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Label Content="Ապրանքագիր" VerticalAlignment="Center" />
-                                    <TextBlock Text="{Binding Invoice.InvoiceNumber}" Foreground="Blue" Width="100" VerticalAlignment="Center"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Label Content="Գրանցման ամսաթիվ" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                    <TextBlock Text="{Binding Path=Invoice.CreateDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" Width="100" VerticalAlignment="Center"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Label Content="Հաստատված է" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                    <TextBlock Text="{Binding Invoice.ApproveDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" Width="100" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </StackPanel>
+                            <GroupBox Grid.Column="1" Header="Ապրանքագիր">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Համար" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Invoice.InvoiceNumber}" Foreground="Blue" VerticalAlignment="Center"/>
+                                <TextBox Grid.Row="1" Grid.Column="0" Text="Գրանցված է" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=Invoice.CreateDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Հաստատված է" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Invoice.ApproveDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" VerticalAlignment="Center"/>
+                                </Grid>
+                            </GroupBox>
                         </Grid>
 
                     </StackPanel>
@@ -94,9 +98,9 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" HorizontalAlignment="Left">
                         <Label Content="Կոդ"/>
-                        <TextBox Text="{Binding Path=InvoiceItem.Code, UpdateSourceTrigger=PropertyChanged}" Height="35" FontSize="20" VerticalAlignment="Center" Width="150" TabIndex="3">
+                        <TextBox Text="{Binding Path=Code, UpdateSourceTrigger=PropertyChanged}" Height="35" FontSize="14" VerticalAlignment="Center" Width="150" TabIndex="3">
                             <TextBox.InputBindings>
-                                <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding ElementName=TxtCode, Path=Text}"/>
+                                <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding Path=Code}"/>
                             </TextBox.InputBindings>
                             <i:Interaction.Behaviors>
                                 <behaviors:TextBoxBehavior IsFocusOnLoad="True" IsSelectTextOnFocus="True" />
@@ -145,9 +149,8 @@
                     <KeyBinding Key="Delete" Command="{Binding RemoveInvoiceItemCommand}" CommandParameter="{Binding DataContext.Id, RelativeSource={RelativeSource Self}}"/>
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>
-                    <DataGridTextColumn IsReadOnly="True" Header="Բրենդ" Binding="{Binding Product.Brand.BrandName}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding Index}"/>
                     <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" />
-                    <DataGridTextColumn IsReadOnly="True" Header="Բարկոդ" Binding="{Binding Barcode}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
                     <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}" />
@@ -174,7 +177,7 @@
                     </StackPanel>
                 </Grid>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                    <Menu Margin="3 0">
+                    <Menu Margin="3 0" VerticalAlignment="Center" VerticalContentAlignment="Center">
                         <MenuItem Header="Ապրանքների բեռնում">
                             <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
                             <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromMoveInvoiceCommand}"  />

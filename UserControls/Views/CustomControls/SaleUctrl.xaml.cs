@@ -36,14 +36,6 @@ namespace UserControls.Views.CustomControls
         //    //if(viewModel==null) return;
         //    //if (viewModel.Partner == null) _viewModel.Partner = MembersManager.GetDefaultParner(_member.Id, (long)MembersManager.PartnersTypes.Customer);
         }
-        private void CtrlInvoice_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (_member == null || _user == null)
-            {
-                return;
-            }
-            TxtCode.Focus();
-        }
         private void CtrlInvoice_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl))
@@ -61,8 +53,6 @@ namespace UserControls.Views.CustomControls
                         CmMiChooseProductByName_Click(null, null);
                         break;
                     case Key.N:
-                        TxtCode.Focus();
-                        TxtCode.SelectAll();
                         break;
                         //todo
                     //case Key.S:

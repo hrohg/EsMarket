@@ -246,6 +246,7 @@ namespace ES.Market.ViewModels
             #endregion Settings
 
         }
+
         private bool CanViewViewInternalWayBillCommands(ViewInvoicesEnum o)
         {
             switch (o)

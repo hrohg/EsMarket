@@ -7,10 +7,22 @@ namespace ES.Data.Models
     {
         public InvoiceItemsModel(InvoiceModel invoice)
         {
-            _invoiceId = invoice.Id;
+            Invoice = invoice;
         }
         public InvoiceItemsModel()
         {
+        }
+        public InvoiceItemsModel(InvoiceModel invoice, EsProductModel product):this(invoice)
+        {
+            if (product == null) return;
+            Product = product;
+            ProductId = product.Id;
+            ExpiryDate = product.ExpiryDays != null ? DateTime.Today.AddDays((int)product.ExpiryDays) : (DateTime?)null;
+            Code = product.Code;
+            Description = product.Description;
+            Mu = product.Mu;
+            Discount = product.Discount;
+            Note = product.Note;
         }
 
         #region Invoice items model properties
@@ -35,7 +47,6 @@ namespace ES.Data.Models
         #region Invoice items model private properties
         private Guid _id = Guid.NewGuid();
         private int? _index;
-        private Guid _invoiceId;
         private Guid _productId;
         private EsProductModel _product;
         private ProductItemModel _productItem;
@@ -62,8 +73,32 @@ namespace ES.Data.Models
                 OnPropertyChanged(IndexProperty);
             }
         }
-        public Guid InvoiceId { get { return _invoiceId; } set { _invoiceId = value; } }
-        public InvoiceModel Invoice { get; set; }
+
+        #region Invoice
+        private Guid _invoiceId;
+        public Guid InvoiceId
+        {
+            get { return _invoiceId; }
+            set
+            {
+                if (value == _invoiceId) return;
+                _invoiceId = value;
+                OnPropertyChanged("InvoiceId");
+            }
+        }
+        private InvoiceModel _invoice;
+        public InvoiceModel Invoice
+        {
+            get { return _invoice; }
+            set
+            {
+                _invoice = value;
+                InvoiceId = _invoice.Id;
+                OnPropertyChanged("Invoice");
+            }
+        }
+        #endregion Invoice
+
         public EsProductModel Product
         {
             get
@@ -115,7 +150,7 @@ namespace ES.Data.Models
                 _expiryDate = value; OnPropertyChanged(ExpiryDateProperty);
             }
         }
-        public decimal Percentage { get { return (Price == null || Price == 0 ? 100 : ((Product!=null?Product.Price:0) - Price) * 100 / Price) ?? 100; } }
+        public decimal Percentage { get { return (Price == null || Price == 0 ? 100 : ((Product != null ? Product.Price : 0) - Price) * 100 / Price) ?? 100; } }
         public decimal Amount { get { return (Quantity != null && Price != null) ? (decimal)Price * (decimal)Quantity : 0; } }
         public decimal? Discount { get { return _discount; } set { _discount = value; OnPropertyChanged(DiscountProperties); OnPropertyChanged(AmountProperty); } }
         public string Note { get { return _note; } set { _note = value; OnPropertyChanged(NoteProperties); } }

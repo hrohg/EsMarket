@@ -27,10 +27,6 @@ namespace UserControls.Views
         
         #region Events
         
-        private void CtrlInvoice_Loaded(object sender, RoutedEventArgs e)
-        {
-            TxtCode.Focus();
-        }
         private void CtrlInvoice_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl))
@@ -48,8 +44,6 @@ namespace UserControls.Views
                         CmMiChooseProductByName_Click(null, null);
                         break;
                     case Key.N:
-                        TxtCode.Focus();
-                        TxtCode.SelectAll();
                         break;
                     case Key.S:
                         //_viewModel.OnSaveInvoice(null);
@@ -114,12 +108,6 @@ namespace UserControls.Views
             TxtPrice.Focus();
             TxtPrice.SelectAll();
         }
-        private void BtnAddItem_Click(object sender, RoutedEventArgs e)
-        {
-            TxtCode.Focus();
-            TxtCode.SelectAll();
-        }
-        
         #endregion
 
         }

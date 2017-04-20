@@ -13,7 +13,7 @@
              MinWidth="800"
              mc:Ignorable="d"
              d:DesignHeight="300"
-             Name ="CtrlInvoice" Loaded="CtrlInvoice_Loaded" KeyUp="CtrlInvoice_KeyUp">
+             Name ="CtrlInvoice" KeyUp="CtrlInvoice_KeyUp">
     <UserControl.Resources>
         <Style x:Key="ThumbStyle" TargetType="{x:Type Thumb}" BasedOn="{StaticResource {x:Type Thumb}}">
             <Setter Property="Width" Value="8"/>
@@ -108,10 +108,9 @@
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="Կոդ"/>
-                <TextBox Grid.Column="0" Grid.Row="1" x:Name="TxtCode" FontSize="14" Text="{Binding Path=InvoiceItem.Code, UpdateSourceTrigger=PropertyChanged}"
-                   Width="150" TabIndex="3" KeyDown="TxtCode_KeyDown">
+                <TextBox Grid.Column="0" Grid.Row="1" FontSize="14" Text="{Binding Path=Code, UpdateSourceTrigger=PropertyChanged}" Width="150" TabIndex="3">
                     <TextBox.InputBindings>
-                        <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding ElementName=TxtCode, Path=Text}"/>
+                        <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding Path=Code}"/>
                     </TextBox.InputBindings>
                     <i:Interaction.Behaviors>
                         <behaviors:TextBoxBehavior IsFocusOnLoad="True" IsSelectTextOnFocus="True" />
@@ -148,7 +147,7 @@
                     </StackPanel>
 
                     <CheckBox Name="CbAddSingle" Content="Ավելացնել մեկական" IsChecked="{Binding BuyBySingle}" Margin="5" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Right" Focusable="False" TabIndex="4"/>
-                    <Button Name="BtnAddItem" Content="Ավելացնել" Width ="100" Padding="3" Command="{Binding AddInvoiceItemCommand}" Click="BtnAddItem_Click" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+                    <Button Name="BtnAddItem" Content="Ավելացնել" Width ="100" Padding="3" Command="{Binding AddInvoiceItemCommand}" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
                 </StackPanel>
             </Grid>
         </StackPanel>
