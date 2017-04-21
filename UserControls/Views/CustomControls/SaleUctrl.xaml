@@ -107,7 +107,7 @@
                         <RowDefinition/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Text="Կոդ"  VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="14"/>
+                    <TextBlock Grid.Row="0" Text="Կոդ"  VerticalAlignment="Center" FontSize="16"/>
                     <TextBox Grid.Row="1" Text="{Binding Path=Code, UpdateSourceTrigger=PropertyChanged}" 
                              FontSize="16" Width="150" TabIndex="1" 
                              VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="1">

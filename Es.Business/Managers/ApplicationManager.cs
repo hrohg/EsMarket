@@ -483,10 +483,10 @@ namespace ES.Business.Managers
                     return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.SaleManager) || IsInRole(UserRoleEnum.SaleManager);
                     break;
                 case UserRoleEnum.Seller:
-                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.Seller)|| IsInRole(UserRoleEnum.SeniorSeller);
+                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.Seller) || IsInRole(UserRoleEnum.SeniorSeller);
                     break;
                 case UserRoleEnum.Cashier:
-                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.Cashier ) || IsInRole(UserRoleEnum.SeniorCashier);
+                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.Cashier) || IsInRole(UserRoleEnum.SeniorCashier);
                     break;
                 case UserRoleEnum.SeniorCashier:
                     return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.SeniorCashier) || IsInRole(UserRoleEnum.Director);

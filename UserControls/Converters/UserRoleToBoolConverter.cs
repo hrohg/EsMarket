@@ -25,7 +25,7 @@ namespace UserControls.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            return ApplicationManager.IsInRole(values.OfType<UserRoleEnum>().ToList());
+            return values.Any(value => ApplicationManager.IsInRole((UserRoleEnum) value));
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

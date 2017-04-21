@@ -108,7 +108,7 @@
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Column="0" Grid.Row="0" Text="Կոդ"/>
-                <TextBox Grid.Column="0" Grid.Row="1" FontSize="14" Text="{Binding Path=Code, UpdateSourceTrigger=PropertyChanged}" Width="150" TabIndex="3">
+                <TextBox Grid.Column="0" Grid.Row="1" FontSize="16" Text="{Binding Path=Code, UpdateSourceTrigger=PropertyChanged}" Width="150" TabIndex="3">
                     <TextBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding Path=Code}"/>
                     </TextBox.InputBindings>

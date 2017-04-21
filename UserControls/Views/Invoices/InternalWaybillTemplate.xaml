@@ -80,7 +80,7 @@
                                 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Համար" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Invoice.InvoiceNumber}" Foreground="Blue" VerticalAlignment="Center"/>
-                                <TextBox Grid.Row="1" Grid.Column="0" Text="Գրանցված է" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Գրանցված է" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                 <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=Invoice.CreateDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" VerticalAlignment="Center"/>
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Հաստատված է" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                 <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Invoice.ApproveDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" VerticalAlignment="Center"/>
@@ -98,7 +98,7 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" HorizontalAlignment="Left">
                         <Label Content="Կոդ"/>
-                        <TextBox Text="{Binding Path=Code, UpdateSourceTrigger=PropertyChanged}" Height="35" FontSize="14" VerticalAlignment="Center" Width="150" TabIndex="3">
+                        <TextBox Text="{Binding Path=Code, UpdateSourceTrigger=PropertyChanged}" Height="35" FontSize="16" VerticalAlignment="Center" Width="150" TabIndex="3">
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding Path=Code}"/>
                             </TextBox.InputBindings>

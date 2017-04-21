@@ -62,7 +62,7 @@
                         </Grid.RowDefinitions>
                         <Label Grid.Row="0" Content="Կոդ"  VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="12"/>
                         <TextBox Grid.Row="1" Text="{Binding Path=Code, UpdateSourceTrigger=PropertyChanged}" 
-                                 Height="35" FontSize="14"  IsReadOnlyCaretVisible="True" Width="150" TabIndex="3" 
+                                 Height="35" FontSize="16"  IsReadOnlyCaretVisible="True" Width="150" TabIndex="3" 
                                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="1">
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding Path=Code}"/>
