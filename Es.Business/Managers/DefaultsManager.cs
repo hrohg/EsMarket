@@ -76,7 +76,7 @@ namespace ES.Business.Managers
                     {
                         esDefault = new EsDefaults
                         {
-                            Id = new Guid(),
+                            Id = Guid.NewGuid(),
                             Control = control,
                             ValueInGuid = valueInGuid,
                             ValueInLong = valueInLong,
