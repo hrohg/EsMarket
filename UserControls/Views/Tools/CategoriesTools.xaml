@@ -2,10 +2,23 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:tools="clr-namespace:UserControls.ViewModels.Tools"
                     xmlns:views="clr-namespace:UserControls.Views"
-                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
-    
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                    xmlns:controls="clr-namespace:UserControls.Controls"
+                    xmlns:res="clr-namespace:ResourceLibrary.Helper;assembly=ResourceLibrary">
+
     <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-    
+
+    <Style x:Key="ToggleButtonStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static res:ResourceKeys.NoChromeToggleButtonKey}}"/>
+
+    <Style x:Key="HelpImageStyle" TargetType="{x:Type Image}">
+        <Setter Property="Source" Value="pack://application:,,,/ResourceLibrary;component/Resources/Images/Help/Help_DarkGray_Icon.png"/>
+        <Setter Property="Width" Value="{Binding RelativeSource={RelativeSource Self}, Path = Source.PixelWidth}"/>
+        <Setter Property="Height" Value="{Binding RelativeSource={RelativeSource Self}, Path = Source.PixelHeight}"/>
+    </Style>
+
+    <Style x:Key="TextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+    </Style>
     <DataTemplate DataType="{x:Type tools:CategoriesToolsViewModel}">
         <Grid>
             <Grid>
@@ -41,10 +54,7 @@
                     </Button>
                 </StackPanel>
                 <TextBox VerticalAlignment="Top" Grid.Row="1" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Stretch" Height="25" FontSize="15" VerticalContentAlignment="Center" Width="Auto" BorderThickness="1" BorderBrush="Black"/>
-                <!--todo-->
-                <!--<Button VerticalAlignment="Top" Grid.Row="0" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" IsTabStop="False">
-                <Image Height="20" Width="20" Source="pack://application:,,,/Shared;component/Images/Search.png"></Image>
-            </Button>-->
+           
                 <Grid Grid.Row="2">
                     <Border Margin="10" BorderThickness="1">
                         <TreeView x:Name="TreeView" ItemsSource="{Binding Items}">
@@ -52,7 +62,7 @@
                                 <Style TargetType="{x:Type TreeViewItem}">
                                     <!--<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />-->
                                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                                    <Setter Property="FontWeight" Value="Normal" />
+                                    <Setter Property="FontWeight" Value="Normal"/>
                                     <Style.Triggers>
                                         <Trigger Property="IsSelected" Value="True">
                                             <Setter Property="FontWeight" Value="Bold" />
@@ -63,9 +73,41 @@
                             </TreeView.ItemContainerStyle>
                             <TreeView.ItemTemplate>
                                 <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                    <Border ToolTip="{Binding Description}">
-                                        <TextBlock Text="{Binding ShortDescription}" TextTrimming="CharacterEllipsis"/>
-                                    </Border>
+                                    <Grid x:Name="Grid" ToolTip="{Binding Description}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" MaxWidth="250">
+                                            <TextBlock x:Name="TextBlock" Text="{Binding ShortDescription}" Style="{StaticResource TextBlockStyle}"/>
+                                        </Border>
+                                        <Popup Grid.Column="1" x:Name="Popup" StaysOpen="False" PlacementTarget="{Binding ElementName=ToggleButton}" Placement="Bottom" 
+                                               MaxWidth="350" MaxHeight="100" MinWidth="250" MinHeight="50">
+                                            <Grid>
+                                                <Border BorderThickness="0" CornerRadius="5" Padding="1">
+                                                    <Border.Effect>
+                                                        <DropShadowEffect Direction="0" BlurRadius="15" ShadowDepth="7" RenderingBias="Quality" Color="Black" Opacity=".35"/>
+                                                    </Border.Effect>
+                                                    <TextBox Text="{Binding Description, Mode=OneWay}" Foreground="Black" IsReadOnly="True" TextWrapping="Wrap" FontSize="10" VerticalAlignment="Stretch" VerticalContentAlignment="Top"
+                                                             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"/>
+                                                </Border>
+                                            </Grid>
+                                        </Popup>
+                                        <ToggleButton Grid.Column="1" x:Name="ToggleButton" 
+                                                      Style="{StaticResource ToggleButtonStyle}" 
+                                                      IsChecked="{Binding ElementName=Popup, Path=IsOpen}">
+                                            <Image x:Name="Image" Style="{StaticResource HelpImageStyle}"/>
+                                        </ToggleButton>
+                                    </Grid>
+                                    <HierarchicalDataTemplate.Triggers>
+                                        <Trigger SourceName="ToggleButton" Property="IsChecked" Value="True">
+                                            <Setter TargetName="Image" Property="Source" Value="pack://application:,,,/ResourceLibrary;component/Resources/Images/Help/Help_Orange_Icon.png"/>
+                                        </Trigger>
+                                        <Trigger SourceName="Grid" Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Image" Property="Source" Value="pack://application:,,,/ResourceLibrary;component/Resources/Images/Help/Help_LightGray_Icon.png"/>
+                                            <Setter TargetName="TextBlock" Property="Foreground" Value="#ACB3BC"/>
+                                        </Trigger>
+                                    </HierarchicalDataTemplate.Triggers>
                                 </HierarchicalDataTemplate>
                             </TreeView.ItemTemplate>
                             <i:Interaction.Triggers>
@@ -81,7 +123,7 @@
                 </Grid>
 
             </Grid>
-            <views:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
+            <controls:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

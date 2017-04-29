@@ -6,7 +6,7 @@
         <ResourceDictionary Source="Documents/StockTakingTemplate.xaml"/>
 
         <ResourceDictionary Source="Reports/ShortReportTemplate.xaml"/>
-        <ResourceDictionary Source="View/PackingListForSaler.xaml"/>
+        <ResourceDictionary Source="View/Views/PackingListForSaler.xaml"/>
         <ResourceDictionary Source="Editors/ManageProducts.xaml"/>
         <ResourceDictionary Source="Editors/ManagePartners.xaml"/>
         
@@ -15,6 +15,7 @@
         
         <!--Views-->
         <ResourceDictionary Source="Accountant/View/ViewAccountantTableTemplate.xaml"/>
+        <ResourceDictionary Source="View/Views/ProductHistoryTemplate.xaml"/>
 
         <!--Settings-->
         <ResourceDictionary Source="Settings/SettingsTemplate.xaml"/>

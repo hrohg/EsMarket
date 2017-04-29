@@ -179,10 +179,10 @@
                             </DataGrid>
                         </Grid>
                     </Expander>
-                    <views:WaitingCover Grid.Row="1" Visibility="{Binding IsInvoiceItemsLoading, Converter={StaticResource BoolToVisibility}}" />
+                    <controls:WaitingCover Grid.Row="1" Visibility="{Binding IsInvoiceItemsLoading, Converter={StaticResource BoolToVisibility}}" />
                 </Grid>
             </Grid>
-            <views:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
+            <controls:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
         </Grid>
     </DataTemplate>
     

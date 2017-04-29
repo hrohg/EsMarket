@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:viewModels="clr-namespace:UserControls.ViewModels"
                     xmlns:helper="clr-namespace:CashReg.Helper;assembly=CashReg"
-                    xmlns:views="clr-namespace:UserControls.Views">
+                    xmlns:views="clr-namespace:UserControls.Views"
+                    xmlns:controls="clr-namespace:UserControls.Controls">
     
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     
@@ -263,7 +264,7 @@
                         </ScrollViewer>
                     </TabItem>
                 </TabControl>
-                <views:WaitingCover Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibility}}" />
+                <controls:WaitingCover Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibility}}" />
             </Grid>
         </DockPanel>
     </DataTemplate>

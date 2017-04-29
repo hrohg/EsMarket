@@ -32,7 +32,6 @@
         <EntityTypeShape EntityType="EsStockDBModel.Products" Width="1.5" PointX="3" PointY="28.25" />
         <EntityTypeShape EntityType="EsStockDBModel.SaleInCash" Width="1.5" PointX="3" PointY="19.125" />
         <EntityTypeShape EntityType="EsStockDBModel.StockTake" Width="1.5" PointX="0.75" PointY="1.125" />
-        <EntityTypeShape EntityType="EsStockDBModel.StockTakeItems" Width="1.5" PointX="3" PointY="1" />
         <EntityTypeShape EntityType="EsStockDBModel.SubAccountingPlan" Width="1.5" PointX="7.75" PointY="3.75" />
         <AssociationConnector Association="EsStockDBModel.FK_AccountsReceivable_EsMembers" />
         <AssociationConnector Association="EsStockDBModel.FK_AccountsReceivable_EsUsers" />
@@ -78,11 +77,12 @@
         <AssociationConnector Association="EsStockDBModel.FK_ProductOrderItems_ProductOrder" />
         <AssociationConnector Association="EsStockDBModel.FK_ProductOrderItems_ProductOrderItems" />
         <AssociationConnector Association="EsStockDBModel.FK_ProductOrderItems_Products" />
-        <AssociationConnector Association="EsStockDBModel.FK_StockTakingItems_StockTaking" />
         <EntityTypeShape EntityType="EsStockDBModel.EsCategories" Width="1.5" PointX="0.75" PointY="8.75" />
         <AssociationConnector Association="EsStockDBModel.FK_EsCategories_EsCategories" />
         <EntityTypeShape EntityType="EsStockDBModel.ProductCategories" Width="1.5" PointX="5.25" PointY="30.625" />
         <AssociationConnector Association="EsStockDBModel.FK_ProductCategories_Products" />
+        <EntityTypeShape EntityType="EsStockDBModel.StockTakeItems" Width="1.5" PointX="3" PointY="0.875" />
+        <AssociationConnector Association="EsStockDBModel.FK_StockTakingItems_StockTaking" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

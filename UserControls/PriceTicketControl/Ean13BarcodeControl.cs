@@ -1,11 +1,13 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Drawing;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Media;
+using ES.Common.Helpers;
 using Zen.Barcode;
 
 namespace UserControls.PriceTicketControl
 {
-    public class Ean13BarcodeControl: FrameworkElement
+    public class Ean13BarcodeControl : FrameworkElement
     {
         private static readonly BarcodeDraw BarcodeDraw = BarcodeDrawFactory.CodeEan13WithChecksum;
         static Ean13BarcodeControl()
@@ -31,8 +33,19 @@ namespace UserControls.PriceTicketControl
             get { return (double)GetValue(BarHeightProperty); }
             set { SetValue(BarHeightProperty, value); }
         }
+
+        #region Barcode Image
+        // Using a DependencyProperty as the backing store for Barcode.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty BarcodeImageProperty = DependencyProperty.Register("BarcodeImage", typeof(PictureBox), typeof(Ean13BarcodeControl));
+        public PictureBox BarcodeImage
+        {
+            get { return (PictureBox)GetValue(BarcodeImageProperty); }
+            set { SetValue(BarcodeImageProperty, value); }
+        }
+        #endregion Barcode Image
+
         public string Barcode
-        { 
+        {
             get { return (string)GetValue(BarcodeProperty); }
             set { SetValue(BarcodeProperty, value); }
         }
@@ -50,12 +63,29 @@ namespace UserControls.PriceTicketControl
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            var size = new Rect(0, 0, ActualWidth, ActualHeight);
-            drawingContext.DrawRectangle(Brushes.White, null, size);
+            var size = new Rect(0, 0, (int)ActualWidth, (int)ActualHeight);
+            drawingContext.DrawRectangle(null, null, size);
+            if (MinHeight == 0) MinHeight = BarHeight;
+            if (MaxHeight == 0) MaxHeight = BarHeight;
             if (!string.IsNullOrEmpty(Barcode))
             {
-                BarcodeDraw.Draw(drawingContext, Barcode, new BarcodeMetrics1d(BarMinWidth, BarMaxWidth, BarHeight), size);
+                BarcodeDraw.Draw(drawingContext, Barcode, new BarcodeMetrics1d(BarMinWidth, BarMaxWidth, MinHeight, MaxHeight), size);
+            //CreateBarcode(drawingContext);
             }
+            
+        }
+
+        private void CreateBarcode(DrawingContext dc)
+        {
+            var ean13 = new Ean13(Barcode);
+
+            Graphics g = BarcodeImage.CreateGraphics();
+
+            g.FillRectangle(new SolidBrush(System.Drawing.SystemColors.Control), new Rectangle(0, 0, (int)Width, (int)BarHeight));
+
+            ean13.Scale = 1; // scale;
+            ean13.DrawEan13Barcode(g, new System.Drawing.Point(0, 0));
+            g.Dispose();
         }
     }
 }

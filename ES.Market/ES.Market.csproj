@@ -130,14 +130,7 @@
     <Compile Include="Users\ChangePassword.xaml.cs">
       <DependentUpon>ChangePassword.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Reports\ViewModels\ProductHistoryViewModel.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Views\Reports\ViewModels\ReportsViewModel.cs" />
-    <Compile Include="Views\Reports\View\ProductsHistory.xaml.cs">
-      <DependentUpon>ProductsHistory.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Views\Reports\View\Reports.xaml.cs">
       <DependentUpon>Reports.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -206,10 +199,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Users\ChangePassword.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Reports\View\ProductsHistory.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

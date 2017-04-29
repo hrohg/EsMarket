@@ -17,7 +17,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Text="{Binding Path=Description}" FontSize="8" TextWrapping="Wrap"/>
-                <priceTicketControl:Ean13BarcodeControl Grid.Row="1" MinHeight="15"  BarHeight="60" BarMinWidth="1" BarMaxWidth="2" Margin="1" VerticalAlignment="Top"
+                <priceTicketControl:Ean13BarcodeControl Grid.Row="1" MinHeight="15" MaxHeight="20"  BarHeight="60" BarMinWidth="1" BarMaxWidth="2" Margin="1" VerticalAlignment="Top"
                                     Barcode="{Binding Path=Barcode}"/>
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="{Binding Path=Code}" FontSize="8" Margin="1 0"/>
@@ -41,7 +41,7 @@
                     </Grid.ColumnDefinitions>
                     
                     <Grid Grid.Column="0" VerticalAlignment="Center">
-                        <priceTicketControl:Ean13BarcodeControl MinHeight="15"  BarHeight="60" BarMinWidth="1" BarMaxWidth="2" Margin="1" VerticalAlignment="Top"
+                <priceTicketControl:Ean13BarcodeControl MinHeight="150" MaxHeight="200"  BarHeight="180" BarMinWidth="2" BarMaxWidth="4" Margin="1" VerticalAlignment="Top"
                                     Barcode="{Binding Path=Barcode}"/>
                     </Grid>
                     <Viewbox Grid.Column="1" Stretch="Fill" StretchDirection="Both">

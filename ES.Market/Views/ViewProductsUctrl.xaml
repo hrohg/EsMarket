@@ -6,6 +6,7 @@
              xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data"
              xmlns:views="clr-namespace:UserControls.Views;assembly=UserControls"
              xmlns:viewModels="clr-namespace:UserControls.ViewModels;assembly=UserControls"
+             xmlns:controls="clr-namespace:UserControls.Controls;assembly=UserControls"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
   <UserControl.Resources>
@@ -108,6 +109,6 @@
         <Button Content ="Տպել" Width="80" Command="{Binding PrintCommand}"/>
       </StackPanel>
     </Grid>
-    <views:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"/>
+    <controls:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"/>
   </Grid>
 </UserControl>

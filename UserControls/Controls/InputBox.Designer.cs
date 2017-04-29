@@ -1,4 +1,4 @@
-﻿namespace UserControls
+﻿namespace UserControls.Controls
 {
     partial class InputBox
     {

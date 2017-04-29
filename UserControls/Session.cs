@@ -2,11 +2,7 @@
 using System.Threading;
 using ES.Business.Managers;
 using ES.Common;
-using ES.Common;
-using ES.DataAccess;
 using ES.DataAccess.Models;
-using Shared;
-using Shared.Helpers;
 
 namespace UserControls
 {

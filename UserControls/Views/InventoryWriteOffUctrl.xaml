@@ -8,6 +8,7 @@
              xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
+             xmlns:controls="clr-namespace:UserControls.Controls"
 
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -198,6 +199,6 @@
                 </StackPanel>
             </StackPanel>
         </Grid>
-        <views:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <controls:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
     </Grid>
 </UserControl>

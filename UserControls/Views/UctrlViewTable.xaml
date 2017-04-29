@@ -9,6 +9,7 @@
              xmlns:views="clr-namespace:UserControls.Views"
              xmlns:models1="clr-namespace:ES.DataAccess.Models;assembly=ES.DataAccess"
              xmlns:converters="clr-namespace:UserControls.Converters"
+             xmlns:controls="clr-namespace:UserControls.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -508,6 +509,6 @@
                 <Button Content="Փակել" Click="BtnClose_Click" Margin="1" Visibility="{Binding IsShowCloseButton, Converter={StaticResource BoolToVisibility}}"/>
             </StackPanel>
         </Grid>
-        <views:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
+        <controls:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
     </Grid>
 </UserControl>

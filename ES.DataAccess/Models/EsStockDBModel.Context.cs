@@ -53,9 +53,9 @@ namespace ES.DataAccess.Models
         public virtual DbSet<Products> Products { get; set; }
         public virtual DbSet<SaleInCash> SaleInCash { get; set; }
         public virtual DbSet<StockTake> StockTake { get; set; }
-        public virtual DbSet<StockTakeItems> StockTakeItems { get; set; }
         public virtual DbSet<SubAccountingPlan> SubAccountingPlan { get; set; }
         public virtual DbSet<EsCategories> EsCategories { get; set; }
         public virtual DbSet<ProductCategories> ProductCategories { get; set; }
+        public virtual DbSet<StockTakeItems> StockTakeItems { get; set; }
     }
 }

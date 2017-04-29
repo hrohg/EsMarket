@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
 using ES.Business.Managers;
-using Shared.Helpers;
 using UserControls.ViewModels.Invoices;
 
 namespace UserControls.Commands
@@ -61,9 +60,7 @@ namespace UserControls.Commands
         }
     }
    
-    #region Import invoice command
     
-    #endregion
     #region Approve invoice command class
     public class ApproveMoveInvoiceCommands : ICommand
     {
@@ -175,10 +172,6 @@ namespace UserControls.Commands
         }
         #endregion
     }
-    #endregion
-   
-    #region Export invoice to Excel rus command
-    
     #endregion
     
 }

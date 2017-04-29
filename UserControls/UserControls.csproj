@@ -162,6 +162,7 @@
     <Compile Include="Interfaces\ITabItem.cs" />
     <Compile Include="PriceTicketControl\ViewModels\PriceTicketLargePriceVewModel.cs" />
     <Compile Include="PriceTicketControl\ViewModels\PriceTicketViewModelBase.cs" />
+    <Compile Include="ViewModels\SelectItemsViewModel.cs" />
     <Compile Include="ViewModels\AccountingPlanViewModel.cs" />
     <Compile Include="ViewModels\AccountingRecordsViewModel.cs" />
     <Compile Include="ViewModels\Documents\StartPageViewModel.cs" />
@@ -200,22 +201,22 @@
     <Compile Include="Views\CustomControls\UIListView.xaml.cs">
       <DependentUpon>UIListView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="InputBox.cs">
+    <Compile Include="Controls\InputBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="InputBox.Designer.cs">
+    <Compile Include="Controls\InputBox.Designer.cs">
       <DependentUpon>InputBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="InputPassword.xaml.cs">
+    <Compile Include="Controls\InputPassword.xaml.cs">
       <DependentUpon>InputPassword.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PasswordForRestore.xaml.cs">
+    <Compile Include="Controls\PasswordForRestore.xaml.cs">
       <DependentUpon>PasswordForRestore.xaml</DependentUpon>
     </Compile>
     <Compile Include="SelectCount.xaml.cs">
       <DependentUpon>SelectCount.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SelectItemsByCheck.xaml.cs">
+    <Compile Include="Controls\SelectItemsByCheck.xaml.cs">
       <DependentUpon>SelectItemsByCheck.xaml</DependentUpon>
     </Compile>
     <Compile Include="SelectItems.xaml.cs">
@@ -267,7 +268,8 @@
     <Compile Include="Views\CustomControls\SaleUctrl.xaml.cs">
       <DependentUpon>SaleUctrl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\WaitingCover.xaml.cs">
+    <Compile Include="Views\View\ProductHistoryViewModel.cs" />
+    <Compile Include="Controls\WaitingCover.xaml.cs">
       <DependentUpon>WaitingCover.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -409,11 +411,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="InputPassword.xaml">
+    <Page Include="Controls\InputPassword.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="PasswordForRestore.xaml">
+    <Page Include="Controls\PasswordForRestore.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -421,7 +423,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SelectItemsByCheck.xaml">
+    <Page Include="Controls\SelectItemsByCheck.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -469,7 +471,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\View\PackingListForSaler.xaml">
+    <Page Include="Views\View\Views\PackingListForSaler.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -477,7 +479,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\WaitingCover.xaml">
+    <Page Include="Views\View\Views\ProductHistoryTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\WaitingCover.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -499,7 +505,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="InputBox.resx">
+    <EmbeddedResource Include="Controls\InputBox.resx">
       <DependentUpon>InputBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -543,6 +549,10 @@
     <ProjectReference Include="..\ES.Data\ES.Data.csproj">
       <Project>{ce538c7e-ffee-4b16-a6e6-8b6e64f43e0f}</Project>
       <Name>ES.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Library\ResourceLibrary.csproj">
+      <Project>{51ce13e1-ad7e-4cbc-b907-4af2e39b26bb}</Project>
+      <Name>ResourceLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\Shared\Shared.csproj">
       <Project>{ec37832a-a5ee-41b9-bfaf-1929a7e43755}</Project>

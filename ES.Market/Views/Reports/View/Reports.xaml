@@ -4,6 +4,7 @@
         xmlns:views="clr-namespace:UserControls.Views;assembly=UserControls"
         xmlns:enumerations1="clr-namespace:ES.Common.Enumerations;assembly=ES.Common"
         xmlns:converters="clr-namespace:UserControls.Converters;assembly=UserControls"
+        xmlns:controls="clr-namespace:UserControls.Controls;assembly=UserControls"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         Title="Reports" Height="300" Width="300">
@@ -91,6 +92,6 @@
                 <Button Content="Փակել" Click="BtnClose_Click"/>
             </StackPanel>
         </Grid>
-        <views:WaitingCover Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibility}}" />
+        <controls:WaitingCover Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibility}}" />
     </Grid>
 </Window>

@@ -33,25 +33,16 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
-    <Reference Include="System.Activities" />
     <Reference Include="System.Core" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Activities" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Toolkit.WPF">
-      <HintPath>..\packages\Toolkit.WPF.1.0.5752.30721\lib\net40\Toolkit.WPF.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\FontsBehavior.cs" />
     <Compile Include="Behaviors\ListBoxSelectionBringIntoViewBehavior.cs" />
+    <Compile Include="Helper\ResourceKeys.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -112,18 +103,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ES.Common\ES.Common.csproj">
-      <Project>{7baa5615-1224-4f30-8e69-8ec0b3c1e5ab}</Project>
-      <Name>ES.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Shared\Shared.csproj">
-      <Project>{EC37832A-A5EE-41B9-BFAF-1929A7E43755}</Project>
-      <Name>Shared</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UserControls\UserControls.csproj">
-      <Project>{FB4CAC1B-F794-454C-AB58-908E3C679685}</Project>
-      <Name>UserControls</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Xceed.Wpf.AvalonDock\Xceed.Wpf.AvalonDock.csproj">
       <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
       <Name>Xceed.Wpf.AvalonDock</Name>
@@ -151,6 +130,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\Menu\PriceTicket.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Help\Help_DarkGray_Icon.png" />
+    <Resource Include="Resources\Images\Help\Help_LightGray_Icon.png" />
+    <Resource Include="Resources\Images\Help\Help_Orange_Icon.png" />
+    <Resource Include="Resources\Images\Help\Help_White_Icon.png" />
+    <Resource Include="Resources\Images\Refresh\Refresh_Icon_Mouseover9x9.png" />
+    <Resource Include="Resources\Images\Refresh\Refresh_Icon_Pressed9x9.png" />
+    <Resource Include="Resources\Images\Refresh\Refresh_Icon_Standard9x9.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

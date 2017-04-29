@@ -1,7 +1,6 @@
 ﻿using System.Windows;
-using ES.Common.Cultures;
 
-namespace UserControls
+namespace UserControls.Controls
 {
 	/// <summary>
 	/// Interaction logic for InputPassword.xaml

@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using ES.Common.Cultures;
 
-namespace UserControls
+namespace UserControls.Controls
 {
 	/// <summary>
 	/// Interaction logic for PasswordForRestore.xaml

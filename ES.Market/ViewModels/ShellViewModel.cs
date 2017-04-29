@@ -30,7 +30,6 @@ using ES.Shop.Config;
 using ES.Shop.Controls;
 using ES.Shop.Users;
 using ES.Shop.Views;
-using ES.Shop.Views.Reports.View;
 using ES.Shop.Views.Reports.ViewModels;
 using Shared.Helpers;
 using UserControls.PriceTicketControl;
@@ -38,9 +37,7 @@ using UserControls.ControlPanel.Controls;
 using UserControls.Enumerations;
 using UserControls.Helpers;
 using UserControls.Interfaces;
-using UserControls.PriceTicketControl;
 using UserControls.PriceTicketControl.Helper;
-using UserControls.PriceTicketControl.Implementations;
 using UserControls.PriceTicketControl.ViewModels;
 using UserControls.ViewModels;
 using UserControls.ViewModels.Documents;
@@ -55,8 +52,7 @@ using UserControls.ViewModels.StockTakeings;
 using UserControls.ViewModels.Tools;
 using UserControls.Views;
 using UserControls.Views.Accountant;
-using UserControls.Views.CustomControls;
-using Application = System.Windows.Application;
+using UserControls.Views.View;
 using ExportManager = ES.Business.Managers.ExportManager;
 using ItemsToSelect = UserControls.ControlPanel.Controls.ItemsToSelect;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
@@ -682,10 +678,10 @@ namespace ES.Market.ViewModels
             switch ((ExportForScale)o)
             {
                 case ExportForScale.ShtrixM:
-                    ExportManager.ExportPriceForShtrikhM(SelectItemsManager.SelectProductByCheck(_member.Id, true));
+                    ExportManager.ExportPriceForShtrikhM(SelectItemsManager.SelectProductByCheck(true));
                     break;
                 case ExportForScale.Custom:
-                    ExportManager.ExportPriceForScaleToXml(SelectItemsManager.SelectProductByCheck(_member.Id, true));
+                    ExportManager.ExportPriceForScaleToXml(SelectItemsManager.SelectProductByCheck(true));
                     break;
                 case ExportForScale.WaightsOnly:
                     ExportManager.ExportPriceForScaleToXml(new ProductsManager().GetProductsBy(ProductViewType.WeigthsOnly, _member.Id));
@@ -1416,7 +1412,7 @@ namespace ES.Market.ViewModels
 
         private void OnGetProductsHistory(object o)
         {
-            AddTabControl(new ProductsHistory(), new ProductHistoryViewModel());
+            AddDocument(new ProductHistoryViewModel());
         }
 
         private void OnViewPackingListForSaller(object o)

@@ -1,7 +1,7 @@
 ﻿
 using System.Windows.Controls;
 
-namespace UserControls.Views
+namespace UserControls.Controls
 {
     /// <summary>
     /// Interaction logic for WaitingCover.xaml

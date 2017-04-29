@@ -717,7 +717,7 @@ namespace ES.Market
 
         protected void MiExportPricelistShtrikhM_Click(object sender, EventArgs e)
         {
-            var products = SelectItemsManager.SelectProductByCheck(ApplicationManager.Instance.GetEsMember.Id, true);
+            var products = SelectItemsManager.SelectProductByCheck(true);
             ExportManager.ExportPriceForShtrikhM(products);
         }
         protected void MiViewPriceList_Click(object sender, EventArgs e)

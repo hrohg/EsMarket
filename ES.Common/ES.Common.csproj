@@ -108,6 +108,7 @@
     <Compile Include="Enumerations\Enums.cs" />
     <Compile Include="Enumerations\ProductEnums.cs" />
     <Compile Include="Enumerations\Scale.cs" />
+    <Compile Include="Helpers\Ean13.cs" />
     <Compile Include="Helpers\EventArgs.cs" />
     <Compile Include="Helpers\XmlManager.cs" />
     <Compile Include="HgConvert.cs" />

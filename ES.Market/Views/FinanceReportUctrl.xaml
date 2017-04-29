@@ -97,6 +97,6 @@
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
-        <views:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
+        <controls:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
     </Grid>
 </UserControl>

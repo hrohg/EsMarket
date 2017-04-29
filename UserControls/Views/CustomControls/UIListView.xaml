@@ -9,14 +9,14 @@
         </Grid.RowDefinitions>
         <DataGrid Name="DgView" Grid.Row="0" CanUserSortColumns="True" CanUserReorderColumns="True" AutoGenerateColumns="False" />
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="1">
-            <TextBlock x:Name="txtRowCount" Text="Քանակ" FontSize="10"/>
-            <TextBlock Text="LblCount" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+            <TextBlock Text="Քանակ" FontSize="10"/>
+            <TextBlock x:Name="txtRowCount" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
             <TextBlock Text="Գումար" FontSize="10"/>
-            <TextBlock Text="LblCount" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+            <TextBlock Text="" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
             <TextBlock Text="Պակասորդ" FontSize="10"/>
-            <TextBlock Text="LblCount" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+            <TextBlock Text="" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
             <TextBlock Text="Ավելցուկ" FontSize="10"/>
-            <TextBlock Text="LblCount" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+            <TextBlock Text="" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
             <Button Content ="Export to Excel" Width="100" Click="BtnExportToExcel_Click"/>
             <Button Content ="Տպել" Width="100" Click="BtnPrint_Click"/>
             <Button Content ="Close" Width="100" Click ="BtnClose_Click"/>

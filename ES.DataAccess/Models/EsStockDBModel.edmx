@@ -439,7 +439,7 @@
           <Property Name="Description" Type="ntext" />
           <Property Name="Quantity" Type="decimal" Precision="18" Scale="2" Nullable="false" />
           <Property Name="StockTakeQuantity" Type="decimal" Precision="18" Scale="2" />
-          <Property Name="StockTakeDate" Type="date" Nullable="false" />
+          <Property Name="StockTakeDate" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="SubAccountingPlan">
           <Key>
@@ -1341,7 +1341,6 @@
           <EntitySet Name="Products" EntityType="EsStockDBModel.Products" />
           <EntitySet Name="SaleInCash" EntityType="EsStockDBModel.SaleInCash" />
           <EntitySet Name="StockTake" EntityType="EsStockDBModel.StockTake" />
-          <EntitySet Name="StockTakeItems" EntityType="EsStockDBModel.StockTakeItems" />
           <EntitySet Name="SubAccountingPlan" EntityType="EsStockDBModel.SubAccountingPlan" />
           <AssociationSet Name="FK_AccountingRecords_EsMembers" Association="EsStockDBModel.FK_AccountingRecords_EsMembers">
             <End Role="EsMembers" EntitySet="EsMembers" />
@@ -1531,10 +1530,6 @@
             <End Role="Products" EntitySet="Products" />
             <End Role="ProductOrderItems" EntitySet="ProductOrderItems" />
           </AssociationSet>
-          <AssociationSet Name="FK_StockTakingItems_StockTaking" Association="EsStockDBModel.FK_StockTakingItems_StockTaking">
-            <End Role="StockTake" EntitySet="StockTake" />
-            <End Role="StockTakeItems" EntitySet="StockTakeItems" />
-          </AssociationSet>
           <EntitySet Name="EsCategories" EntityType="EsStockDBModel.EsCategories" />
           <AssociationSet Name="FK_EsCategories_EsCategories" Association="EsStockDBModel.FK_EsCategories_EsCategories">
             <End Role="EsCategories" EntitySet="EsCategories" />
@@ -1544,6 +1539,11 @@
           <AssociationSet Name="FK_ProductCategories_Products" Association="EsStockDBModel.FK_ProductCategories_Products">
             <End Role="Products" EntitySet="Products" />
             <End Role="ProductCategories" EntitySet="ProductCategories" />
+          </AssociationSet>
+          <EntitySet Name="StockTakeItems" EntityType="EsStockDBModel.StockTakeItems" />
+          <AssociationSet Name="FK_StockTakingItems_StockTaking" Association="EsStockDBModel.FK_StockTakingItems_StockTaking">
+            <End Role="StockTake" EntitySet="StockTake" />
+            <End Role="StockTakeItems" EntitySet="StockTakeItems" />
           </AssociationSet>
           </EntityContainer>
         <EntityType Name="AccountingPlan">
@@ -2018,24 +2018,6 @@
           <Property Name="CloserId" Type="Int64" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="StockTakeItems" Relationship="EsStockDBModel.FK_StockTakingItems_StockTaking" FromRole="StockTake" ToRole="StockTakeItems" />
-        </EntityType>
-        <EntityType Name="StockTakeItems">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="StockTakeId" Type="Guid" Nullable="false" />
-          <Property Name="ProductId" Type="Guid" />
-          <Property Name="CodeOrBarcode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ProductDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Mu" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="Price" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Quantity" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
-          <Property Name="StockTakeQuantity" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="StockTakeDate" Type="DateTime" Nullable="false" Precision="0" />
-          <NavigationProperty Name="StockTake" Relationship="EsStockDBModel.FK_StockTakingItems_StockTaking" FromRole="StockTakeItems" ToRole="StockTake" />
-          <Property Name="Index" Type="Int32" />
         </EntityType>
         <EntityType Name="SubAccountingPlan">
           <Key>
@@ -2614,18 +2596,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_StockTakingItems_StockTaking">
-          <End Type="EsStockDBModel.StockTake" Role="StockTake" Multiplicity="1" />
-          <End Type="EsStockDBModel.StockTakeItems" Role="StockTakeItems" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="StockTake">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="StockTakeItems">
-              <PropertyRef Name="StockTakeId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="EsCategories">
           <Key>
             <PropertyRef Name="Id" />
@@ -2672,6 +2642,36 @@
             </Principal>
             <Dependent Role="ProductCategories">
               <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="StockTakeItems">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Index" Type="Int32" />
+          <Property Name="StockTakeId" Type="Guid" Nullable="false" />
+          <Property Name="ProductId" Type="Guid" />
+          <Property Name="CodeOrBarcode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ProductDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Mu" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Quantity" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="StockTakeQuantity" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="StockTakeDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="StockTake" Relationship="EsStockDBModel.FK_StockTakingItems_StockTaking" FromRole="StockTakeItems" ToRole="StockTake" />
+        </EntityType>
+        <Association Name="FK_StockTakingItems_StockTaking">
+          <End Type="EsStockDBModel.StockTake" Role="StockTake" Multiplicity="1" />
+          <End Type="EsStockDBModel.StockTakeItems" Role="StockTakeItems" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StockTake">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="StockTakeItems">
+              <PropertyRef Name="StockTakeId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3106,24 +3106,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="StockTakeItems">
-            <EntityTypeMapping TypeName="EsStockDBModel.StockTakeItems">
-              <MappingFragment StoreEntitySet="StockTakeItems">
-                <ScalarProperty Name="Index" ColumnName="Index" />
-                <ScalarProperty Name="StockTakeDate" ColumnName="StockTakeDate" />
-                <ScalarProperty Name="StockTakeQuantity" ColumnName="StockTakeQuantity" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="Mu" ColumnName="Mu" />
-                <ScalarProperty Name="ProductDescription" ColumnName="ProductDescription" />
-                <ScalarProperty Name="CodeOrBarcode" ColumnName="CodeOrBarcode" />
-                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
-                <ScalarProperty Name="StockTakeId" ColumnName="StockTakeId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="SubAccountingPlan">
             <EntityTypeMapping TypeName="EsStockDBModel.SubAccountingPlan">
               <MappingFragment StoreEntitySet="SubAccountingPlan">
@@ -3158,6 +3140,24 @@
               <MappingFragment StoreEntitySet="ProductCategories">
                 <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
                 <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StockTakeItems">
+            <EntityTypeMapping TypeName="EsStockDBModel.StockTakeItems">
+              <MappingFragment StoreEntitySet="StockTakeItems">
+                <ScalarProperty Name="StockTakeDate" ColumnName="StockTakeDate" />
+                <ScalarProperty Name="StockTakeQuantity" ColumnName="StockTakeQuantity" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Mu" ColumnName="Mu" />
+                <ScalarProperty Name="ProductDescription" ColumnName="ProductDescription" />
+                <ScalarProperty Name="CodeOrBarcode" ColumnName="CodeOrBarcode" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="StockTakeId" ColumnName="StockTakeId" />
+                <ScalarProperty Name="Index" ColumnName="Index" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:helper="clr-namespace:CashReg.Helper;assembly=CashReg"
              xmlns:views="clr-namespace:UserControls.Views;assembly=UserControls"
+             xmlns:controls="clr-namespace:UserControls.Controls;assembly=UserControls"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="500">
     <UserControl.Resources>
@@ -266,7 +267,7 @@
                     </ScrollViewer>
                 </TabItem>
             </TabControl>
-            <views:WaitingCover Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibility}}" />
+            <controls:WaitingCover Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibility}}" />
         </Grid>
     </DockPanel>
 </UserControl>

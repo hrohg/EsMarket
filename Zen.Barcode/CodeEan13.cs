@@ -375,7 +375,7 @@ namespace Zen.Barcode
 			byte parity = parityTable[parityDigit - '0'];
 			if (Checksum != null)
 			{
-				//barcodeText += Checksum.GetChecksumChar(barcodeText);
+				barcodeText += Checksum.GetChecksumChar(barcodeText);
 			}
 			barcodeText = barcodeText.Substring(1);
 

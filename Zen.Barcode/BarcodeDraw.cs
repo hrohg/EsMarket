@@ -473,7 +473,8 @@ namespace Zen.Barcode
 	    /// An <see cref="ImageSource"/> object containing the rendered barcode.
 	    /// </returns>
 	    protected virtual void Draw1d(DrawingContext dc, string text, BarcodeMetrics1d metrics, Rect bounds)
-		{
+	    {
+	        //_checksum = text.Substring(text.Length);
 			// Determine number of pixels required for final image
 			Glyph[] barcode = GetFullBarcode(text);
             if (barcode == null) return;
@@ -512,8 +513,8 @@ namespace Zen.Barcode
             var height = maxBarHeight > bounds.Height ? bounds.Height : maxBarHeight;
             var width = totalImageWidth > bounds.Width ? bounds.Width : totalImageWidth;
 
-            var top = bounds.Top + (bounds.Height - height)/2d;
-            var left = bounds.Left + (bounds.Width - width)/2d;
+            var top = bounds.Top + (bounds.Height - height)/2;//2d;
+            var left = bounds.Left + (bounds.Width - width)/2;//2d;
             return new Rect(left, top, width, height);
         }
 

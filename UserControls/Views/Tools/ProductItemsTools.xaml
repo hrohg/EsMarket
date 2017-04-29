@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:tools="clr-namespace:UserControls.ViewModels.Tools"
-                    xmlns:views="clr-namespace:UserControls.Views">
+                    xmlns:views="clr-namespace:UserControls.Views"
+                    xmlns:controls="clr-namespace:UserControls.Controls">
     
     <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     
@@ -97,7 +98,7 @@
                     </ListView.ItemContainerStyle>
                 </ListView>
             </Grid>
-            <views:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
+            <controls:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

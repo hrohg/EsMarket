@@ -109,7 +109,6 @@ namespace UserControls.ViewModels.Invoices
         {
             if (!CanApprove(o)) return;
             Invoice.ApproverId = User.UserId;
-            Invoice.ApproveDate = DateTime.Now;
             Invoice.Approver = User.FullName;
             Invoice.ProviderName = Partner.FullName;
             if (ToStock == null)
@@ -125,7 +124,6 @@ namespace UserControls.ViewModels.Invoices
             Invoice.RecipientName = ToStock.FullName;
             if (InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), InvoicePaid)==null)
             {
-                Invoice.ApproveDate = null;
                 ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Գործողությունը հնարավոր չէ իրականացնել:", MessageModel.MessageTypeEnum.Warning)); return;
             }
             Invoice = InvoicesManager.GetInvoice(Invoice.Id, Invoice.MemberId);

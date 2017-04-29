@@ -4,7 +4,8 @@
                     xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
                     xmlns:views="clr-namespace:UserControls.Views"
                     xmlns:managers="clr-namespace:UserControls.ViewModels.Managers"
-                    xmlns:helpers="clr-namespace:Shared.Helpers;assembly=Shared">
+                    xmlns:helpers="clr-namespace:Shared.Helpers;assembly=Shared"
+                    xmlns:controls="clr-namespace:UserControls.Controls">
 
 
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
@@ -308,7 +309,7 @@
                     </extendedControls:ExtendedDataGrid>
                 </Grid>
             </Grid>
-            <views:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
+            <controls:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
         </Grid>
     </DataTemplate>
 </ResourceDictionary>
