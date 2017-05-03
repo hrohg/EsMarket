@@ -16,8 +16,8 @@
 
         #region Public properties
         public string Code { get { return _code; } }
-        public string OldPrice { get { return "Նախկին գին։ " + (_oldPrice??0) + " դր․"; } }
-        public string Price { get { return "Գին։" + (_price??0) + "դր․"; } }
+        public decimal OldPrice { get { return _oldPrice??0; } }
+        public decimal Price { get { return _price??0; } }
         public string BarcodeString { get { return _barcode; } }
         public string Description { get { return _description; } }
         #endregion

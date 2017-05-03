@@ -634,13 +634,13 @@ namespace ES.Market.ViewModels
             switch (syncronizeMode)
             {
                 case SyncronizeServersMode.DownloadMemberData:
-                    return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Admin");
+                    return ApplicationManager.IsInRole(UserRoleEnum.Admin) && ApplicationManager.IsEsServer;
                 case SyncronizeServersMode.DownloadUserData:
-                    return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director");
+                    return (ApplicationManager.IsInRole(UserRoleEnum.Admin) || ApplicationManager.IsInRole(UserRoleEnum.Director)) && ApplicationManager.IsEsServer;
                 case SyncronizeServersMode.DownloadBaseData:
-                    return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director");
+                    return (ApplicationManager.IsInRole(UserRoleEnum.Admin) || ApplicationManager.IsInRole(UserRoleEnum.Director)) && !ApplicationManager.IsEsServer;
                 case SyncronizeServersMode.SyncronizeBaseData:
-                    return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Admin" || s.RoleName == "Director" || s.RoleName == "Manager");
+                    return (ApplicationManager.IsInRole(UserRoleEnum.Admin) || ApplicationManager.IsInRole(UserRoleEnum.Manager)) && !ApplicationManager.IsEsServer;
                 case SyncronizeServersMode.None:
                     return false;
                 default:
@@ -1402,7 +1402,7 @@ namespace ES.Market.ViewModels
         private void OnViewProductsByStock(object o)
         {
             var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Instance.GetEsMember.Id), true);
-            AddTabControl(new ViewProductsUctrl(), new ProductItemsViewModel(stocks));
+            AddDocument(new ProductItemsViewModel(stocks));
         }
 
         private bool CanGetProductHistory(object o)

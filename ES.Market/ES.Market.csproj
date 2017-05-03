@@ -135,9 +135,6 @@
       <DependentUpon>Reports.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Views\ViewProductsUctrl.xaml.cs">
-      <DependentUpon>ViewProductsUctrl.xaml</DependentUpon>
-    </Compile>
     <Page Include="Config\ServerConfig.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -209,10 +206,6 @@
     <Page Include="Views\Theme.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\ViewProductsUctrl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

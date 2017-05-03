@@ -388,7 +388,6 @@ namespace ES.Business.Managers
         }
         private static List<AccountingRecords> TryGetAccountingRecords(DateTime beginDate, DateTime endDate)
         {
-            //endDate = endDate.Date.AddDays(1);
             var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
             {
@@ -397,7 +396,7 @@ namespace ES.Business.Managers
                     return db.AccountingRecords.Where(s =>
                         s.MemberId == memberId
                         && s.RegisterDate >= beginDate.Date
-                        && s.RegisterDate < endDate).ToList();
+                        && s.RegisterDate < endDate).OrderBy(s => s.RegisterDate).ToList();
                 }
                 catch (Exception)
                 {

@@ -1,4 +1,4 @@
-﻿<Window x:Class="ES.Shop.Edit.WinEditSubAccountinPlans"
+﻿<Window x:Class="ES.Market.Edit.WinEditSubAccountinPlans"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="WinEditSubAccountinPlans" Height="435" Width="447" WindowStartupLocation="CenterScreen">

@@ -63,16 +63,16 @@ namespace UserControls.PriceTicketControl
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            var size = new Rect(0, 0, (int)ActualWidth, (int)ActualHeight);
+            var width = ActualWidth/2;
+            var height = (int) ActualHeight;
+            var size = new Rect(0, 0, width, height);
             drawingContext.DrawRectangle(null, null, size);
             if (MinHeight == 0) MinHeight = BarHeight;
             if (MaxHeight == 0) MaxHeight = BarHeight;
             if (!string.IsNullOrEmpty(Barcode))
             {
                 BarcodeDraw.Draw(drawingContext, Barcode, new BarcodeMetrics1d(BarMinWidth, BarMaxWidth, MinHeight, MaxHeight), size);
-            //CreateBarcode(drawingContext);
             }
-            
         }
 
         private void CreateBarcode(DrawingContext dc)

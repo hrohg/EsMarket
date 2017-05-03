@@ -171,7 +171,7 @@
     <Compile Include="ViewModels\Invoices\PackingListViewModel.cs" />
     <Compile Include="ViewModels\Logs\LogViewModel.cs" />
     <Compile Include="ViewModels\Managers\ProductManagerViewModel.cs" />
-    <Compile Include="ViewModels\ProductItemsViewModel.cs" />
+    <Compile Include="Views\View\ProductItemsViewModel.cs" />
     <Compile Include="ViewModels\ReportExceptionViewModel.cs" />
     <Compile Include="ViewModels\ReportViewModel.cs" />
     <Compile Include="ViewModels\SaleProductsViewModel.cs" />
@@ -484,6 +484,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\WaitingCover.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\View\Views\ViewProductsTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

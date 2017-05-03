@@ -3,9 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:priceTicketControl="clr-namespace:UserControls.PriceTicketControl"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Margin="10">
+             d:DesignHeight="100" d:DesignWidth="300">
+    <Grid Margin="3">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
@@ -15,14 +16,28 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Path=Description}" FontSize="8" MaxHeight="20" TextWrapping="Wrap" Margin="0 0 20 0"/>
-        <Grid Grid.Row="1" Grid.Column="0" Margin="0 5 20 5" UseLayoutRounding="True">
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Path=Description}" FontSize="8" MaxHeight="25" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
+        <Grid Grid.Row="1" Grid.Column="0" Margin="0 5" UseLayoutRounding="True" VerticalAlignment="Center">
+            <priceTicketControl:Ean13BarcodeControl x:Name="BarcodeControl" 
+                                                    MinHeight="15"  
+                                                    BarHeight="20" 
+                                                    BarMinWidth="1" 
+                                                    BarMaxWidth="1" 
+                                                    Margin="0 0 -10 0" 
+                                                    VerticalAlignment="Top"
+                                                    Barcode="{Binding Path=BarcodeString}"/>
         </Grid>
-        <TextBlock Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Text="{Binding Path=Code}" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold" Margin="0 -25 -55 1" VerticalAlignment="Center">
-            <TextBlock.RenderTransform>
-                <RotateTransform Angle="90"/>
-            </TextBlock.RenderTransform>
-        </TextBlock>
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Path=Price, StringFormat='###,###.##'}" Margin="1 0" FontSize="9"/>
+        <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Margin="0 -15 0 -15">
+            <TextBlock Text="{Binding Path=Code}" HorizontalAlignment="Right" FontSize="18" FontWeight="Bold" Margin="0"
+                   VerticalAlignment="Center">
+                <TextBlock.LayoutTransform>
+                    <RotateTransform Angle="90"/>
+                </TextBlock.LayoutTransform>
+            </TextBlock>
+        </Grid>
+        <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
+            <TextBlock  Text="Գին։" FontSize="12"/> 
+            <TextBlock  Text="{Binding Path=Price, StringFormat={}{0:#,0.##}դր}" Margin="1 0" FontSize="12" FontWeight="Bold"/>
+        </StackPanel>
     </Grid>
 </UserControl>

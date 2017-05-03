@@ -95,7 +95,10 @@ namespace ES.Business.Models
         private string[] _descriptions = new string[911];
         private List<PartnerModel> _partners;
         private List<StockModel> _stocks;
+        #region Cashdesk
         private List<CashDesk> _cashDesk;
+        public List<CashDesk> CashDesks { get { return _cashDesk ?? (_cashDesk = CashDeskManager.GetCashDesks()); } }
+        #endregion Cashdesk
         #endregion Internal properties
 
         #region External properties
@@ -144,14 +147,14 @@ namespace ES.Business.Models
             _descriptions[712] = "Իրացման ծախսեր";
             _descriptions[714] = "Գործառնական այլ ծախսեր";
 
-//8 Կառավարչական հաշվառման հաշիվներ
+            //8 Կառավարչական հաշվառման հաշիվներ
 
-//9 Արտահաշվեկշռային հաշիվներ
+            //9 Արտահաշվեկշռային հաշիվներ
 
 
-            _partners = ApplicationManager.Instance.CashProvider.GetPartners;
-            _stocks = ApplicationManager.Instance.CashProvider.GetStocks;
-            _cashDesk = ApplicationManager.Instance.CashProvider.GetCashDesk;
+            //_partners = ApplicationManager.Instance.CashProvider.GetPartners;
+            //_stocks = ApplicationManager.Instance.CashProvider.GetStocks;
+            //_cashDesk = ApplicationManager.Instance.CashProvider.GetCashDesk;
         }
         #endregion Internal methods
 
@@ -168,13 +171,13 @@ namespace ES.Business.Models
             {
 
                 case 216:
-                    detile = Instance._stocks.Single(s => s.Id == longId).Description;
+                    detile = ApplicationManager.Instance.CashProvider.GetStocks.Single(s => s.Id == longId).Name;
                     break;
                 case 221:
-                    detile = Instance._partners.Single(s => s.Id == guidId).Description;
+                    detile = ApplicationManager.Instance.CashProvider.GetPartners.Single(s => s.Id == guidId).Description;
                     break;
                 case 251:
-                    detile = Instance._cashDesk.Single(s => s.Id == guidId).Description;
+                    detile = ApplicationManager.Instance.CashProvider.GetCashDesk.Single(s => s.Id == guidId).Name;
                     break;
                 default:
                     break;

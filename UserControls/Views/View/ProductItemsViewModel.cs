@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -10,14 +9,14 @@ using System.Windows.Input;
 using ES.Business.ExcelManager;
 using ES.Business.Managers;
 using ES.Common.Helpers;
+using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
 using UserControls.Helpers;
-using UserControls.Interfaces;
 
-namespace UserControls.ViewModels
+namespace UserControls.Views.View
 {
-    public class ProductItemsViewModel : ITabItem
+    public class ProductItemsViewModel : DocumentViewModel
     {
         #region Internal Properties
         private string _filterText=string.Empty;
@@ -29,15 +28,6 @@ namespace UserControls.ViewModels
         #endregion
 
         #region External properties
-        public string Title { get; set; }
-        public string Description
-        {
-            get;
-            set;
-        }
-
-        public bool IsModified { get; set; }
-
         public string FilterText
         {
             get
@@ -47,7 +37,7 @@ namespace UserControls.ViewModels
             set
             {
                 _filterText = value.ToLower();
-                OnPropertyChanged("FilterText");
+                RaisePropertyChanged("FilterText");
                 DisposeTimer();
                 _timer = new Timer(TimerElapsed, null, 300, 300);
             }
@@ -70,7 +60,7 @@ namespace UserControls.ViewModels
                     return;
                 }
                 _isLoading = value;
-                OnPropertyChanged("IsLoading");
+                RaisePropertyChanged("IsLoading");
             }
         }
 
@@ -106,7 +96,7 @@ namespace UserControls.ViewModels
         }
         private void TimerElapsed(object obj)
         {
-            OnPropertyChanged("Items");
+            RaisePropertyChanged("Items");
             DisposeTimer();
         }
         private void DisposeTimer()
@@ -137,11 +127,11 @@ namespace UserControls.ViewModels
                               ExistingQuantity = product.Sum(s => s.Quantity),
                               //Պահեստ = _stocks.First(t=>t.Id==product.Select(s=>s.StockId).FullName
                           }).ToList();
-            OnPropertyChanged("Items");
-            OnPropertyChanged("Count");
-            OnPropertyChanged("Quantity");
-            OnPropertyChanged("CostPrice");
-            OnPropertyChanged("Price");
+            RaisePropertyChanged("Items");
+            RaisePropertyChanged("Count");
+            RaisePropertyChanged("Quantity");
+            RaisePropertyChanged("CostPrice");
+            RaisePropertyChanged("Price");
             IsLoading = false;
         }
 
@@ -194,11 +184,7 @@ namespace UserControls.ViewModels
             ctrl.Content = dgCtrl;
             PrintManager.PrintPreview(ctrl, "Print product list", true);
         }
-        private void OnClose(object o)
-        {
-            ApplicationManager.OnTabItemClose(o);
-        }
-
+        
         #endregion
 
         #region External methods
@@ -208,19 +194,6 @@ namespace UserControls.ViewModels
         public ICommand UpdateCommand { get { return new RelayCommand(OnUpdate); } }
         public ICommand ExportCommand { get { return new RelayCommand(OnExport, CanExport); } }
         public ICommand PrintCommand { get { return new RelayCommand(OnPrint, CanPrint); } }
-        public ICommand CloseCommand { get { return new RelayCommand(OnClose); } }
-        #endregion
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
         #endregion
         
     }

@@ -528,7 +528,6 @@ namespace ES.Business.Managers
                             userOnServer.Mobile = user.Mobile;
                             userOnServer.LastActivityDate = user.LastActivityDate;
                             userOnServer.ClubSixteenId = user.ClubSixteenId;
-
                         }
                         else
                         {
