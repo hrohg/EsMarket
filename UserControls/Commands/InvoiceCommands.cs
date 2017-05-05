@@ -115,35 +115,7 @@ namespace UserControls.Commands
         #endregion
     }
 #endregion
-    #region AddItemsFromPurchaseInvoice
-        public class AddItemsFromInvoiceCommands : ICommand
-        {
-            #region Properties
-            private InvoiceViewModel _viewModel;
-            private InvoiceType _type;
-            public event EventHandler CanExecuteChanged
-            {
-                add { CommandManager.RequerySuggested += value; }
-                remove { CommandManager.RequerySuggested -= value; }
-            }
-            #endregion
-            public AddItemsFromInvoiceCommands(InvoiceViewModel viewModel, InvoiceType type)
-            {
-                _viewModel = viewModel;
-                _type = type;
-            }
-            #region Methods
-            public bool CanExecute(object o)
-            {
-                return _viewModel.CanAddItemsFromPurchaseInvoice();
-            }
-            public void Execute(object o)
-            {
-                _viewModel.AddItemsFromExistingInvoice(_type);
-            }
-            #endregion
-        }
-    #endregion
+    
     #region AddItemsFromStockInvoice
     public class AddItemsFromStocksCommand : ICommand
     {

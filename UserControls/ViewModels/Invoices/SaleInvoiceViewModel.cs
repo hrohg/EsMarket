@@ -234,7 +234,7 @@ namespace UserControls.ViewModels.Invoices
         {
             if (!CanPrintInvoice(printSize)) { return; }
             var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
-            var ctrl = new SaleInvoiceView(new SaleInvocieTicketViewModel(Invoice, InvoiceItems.ToList(), StockManager.GetStock(Invoice.FromStockId, Invoice.MemberId), InvoicePaid, Member));
+            var ctrl = new SaleInvoiceView(new SaleInvocieTicketViewModel(Invoice, InvoiceItems.ToList(), StockManager.GetStock(Invoice.FromStockId), InvoicePaid, Member));
 
             switch (printSize)
             {
@@ -360,7 +360,7 @@ namespace UserControls.ViewModels.Invoices
             {
                 PrintInvoiceTicket(responceReceiptModel);
             }
-            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id, Member.Id).OrderBy(s => s.Index));
+            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
             AccountsReceivable = new AccountsReceivableModel(Invoice.Id, Partner.Id, User.UserId, Invoice.MemberId, true);
             return;
         }

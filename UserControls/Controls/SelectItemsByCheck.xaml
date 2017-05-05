@@ -18,12 +18,12 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
         <DataTemplate DataType="{x:Type viewModels:SelectItemsViewModel}">
             <DataGrid ItemsSource="{Binding Items}"
                 VerticalAlignment="Stretch" MouseDoubleClick="LvItems_MouseDoubleClick" KeyDown="LvItems_KeyDown" AutoGenerateColumns="False" CanUserAddRows="False">
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn  Header=".." Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">
+                    <DataGridTemplateColumn  Header=".." Width="Auto" CanUserSort="True" SortMemberPath="IsChecked">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type controls:ItemsToSelectByCheck}">
                                 <CheckBox x:Name="Part_CheckBox" IsChecked="{Binding Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3"/>
@@ -39,13 +39,75 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn  Header="Անվանում" Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">
+                    <DataGridTemplateColumn  Header="Անվանում" Width="Auto" CanUserSort="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type controls:ItemsToSelectByCheck}">
                                 <TextBlock Text="{Binding Path = Description}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModels:SelectProductItemsViewModel}">
+            <DataGrid ItemsSource="{Binding Items}"
+                VerticalAlignment="Stretch" MouseDoubleClick="LvItems_MouseDoubleClick" KeyDown="LvItems_KeyDown" AutoGenerateColumns="False" CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn  Header="Կոդ" Width="Auto" CanUserSort="True" SortMemberPath="Code">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type controls:ProductItemsToSelect}">
+                                <TextBlock Text="{Binding Path = Code}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  Header="Անվանում" Width="Auto" CanUserSort="True" SortMemberPath="Description">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type controls:ProductItemsToSelect}">
+                                <TextBlock Text="{Binding Path = Description}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Քանակ" Binding="{Binding Quantity, StringFormat={}{0: #,#.##}}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModels:SelectProductItemsByCheckViewModel}">
+            <DataGrid ItemsSource="{Binding Items}"
+                VerticalAlignment="Stretch" MouseDoubleClick="LvItems_MouseDoubleClick" KeyDown="LvItems_KeyDown" AutoGenerateColumns="False" CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn  Header=".." Width="Auto" CanUserSort="True" SortMemberPath="IsChecked">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type controls:ProductItemsByCheck}">
+                                <CheckBox x:Name="Part_CheckBox" IsChecked="{Binding Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3"/>
+                                <DataTemplate.Triggers>
+                                    <!--<MultiTrigger>
+                                        <MultiTrigger.Conditions>
+                                            <Condition Property="IsMouseOver" Value="True"/>
+                                            <Condition SourceName="Part_CheckBox" Property="IsChecked" Value="True"/>
+                                        </MultiTrigger.Conditions>
+                                        <Setter TargetName="Part_CheckBox" Property="IsChecked" Value="true" />
+                                    </MultiTrigger>-->
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  Header="Կոդ" Width="Auto" CanUserSort="True" SortMemberPath="Code">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type controls:ProductItemsByCheck}">
+                                <TextBlock Text="{Binding Path = Code}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  Header="Անվանում" Width="Auto" CanUserSort="True" SortMemberPath="Description">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type controls:ProductItemsByCheck}">
+                                <TextBlock Text="{Binding Path = Description}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Քանակ" Binding="{Binding Quantity, StringFormat={}{0: #,#.##}}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </DataTemplate>

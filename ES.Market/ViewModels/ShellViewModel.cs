@@ -26,11 +26,10 @@ using ES.Data.Models.EsModels;
 using ES.DataAccess.Models;
 using ES.Market.Commands;
 using ES.Market.Views.Reports.View;
+using ES.Market.Views.Reports.ViewModels;
 using ES.Shop.Config;
 using ES.Shop.Controls;
 using ES.Shop.Users;
-using ES.Shop.Views;
-using ES.Shop.Views.Reports.ViewModels;
 using Shared.Helpers;
 using UserControls.PriceTicketControl;
 using UserControls.ControlPanel.Controls;
@@ -261,22 +260,21 @@ namespace ES.Market.ViewModels
         }
         private void OnViewViewInternalWayBillCommands(ViewInvoicesEnum o)
         {
-            ITabItem viewModel = null;
+            DocumentViewModel vm = null;
             switch (o)
             {
                 case ViewInvoicesEnum.None:
-                    viewModel = new ViewInternalWayBillViewModel(o);
+                    vm = new ViewInternalWayBillViewModel(o);
                     break;
                 case ViewInvoicesEnum.ByStock:
                     break;
                 case ViewInvoicesEnum.ByDetiles:
-                    viewModel = new InternalWayBillDetileViewModel(o);
+                    vm = new InternalWayBillDetileViewModel(o);
                     break;
                 default:
                     break;
             }
-            var tabControl = new UctrlViewTable { DataContext = viewModel };
-            AddTabControl(tabControl, viewModel);
+            AddDocument(vm);
         }
 
         #region Add remove documents and tools
@@ -327,9 +325,9 @@ namespace ES.Market.ViewModels
             if (vm is InvoiceViewModel)
             {
                 ProductItemsToolsViewModel.OnProductItemSelected -= ((InvoiceViewModel)vm).OnSetProductItem;
-            } if (vm is StockTakeViewModel)
+            } if (vm is StockTakeManagerViewModel)
             {
-                ProductItemsToolsViewModel.OnProductItemSelected -= ((StockTakeViewModel)vm).OnSetProductItem;
+                ProductItemsToolsViewModel.OnProductItemSelected -= ((StockTakeManagerViewModel)vm).OnSetProductItem;
             }
         }
 
@@ -500,9 +498,9 @@ namespace ES.Market.ViewModels
                 {
                     ProductItemsToolsViewModel.OnProductItemSelected += ((InvoiceViewModel)vm).OnSetProductItem;
                 }
-                if (vm is StockTakeViewModel)
+                if (vm is StockTakeManagerViewModel)
                 {
-                    ProductItemsToolsViewModel.OnProductItemSelected += ((StockTakeViewModel)vm).OnSetProductItem;
+                    ProductItemsToolsViewModel.OnProductItemSelected += ((StockTakeManagerViewModel)vm).OnSetProductItem;
                 }
                 OnCreateProductItemsTools(ProductItemsToolsViewModel);
                 return;
@@ -516,8 +514,8 @@ namespace ES.Market.ViewModels
                 return;
             }
             //CreateLibraryBrowser();
-           
-            
+
+
             if (vm is ProductOrderViewModel)
             {
                 nextTab = tabShop.Items.Add(new TabItem
@@ -548,72 +546,42 @@ namespace ES.Market.ViewModels
             }
         }
 
-        private bool CanGetStockTaking(object o)
+        private StockTakeModel GetOpeningStockTake(bool isClosed = false)
         {
-            var projectMode = o as ProjectCreationEnum?;
-            if (projectMode == null) return false;
-            switch (projectMode)
+            List<StockTakeModel> stockTakes;
+            if (isClosed)
             {
-                case ProjectCreationEnum.New:
-                    return _userRoles.Any(s => s.RoleName == "Director" || s.RoleName == "Manager" || s.RoleName == "Storekeeper");
-                    break;
-                case ProjectCreationEnum.Edit:
-                    return _userRoles.Any(s => s.RoleName == "Director" || s.RoleName == "Manager" || s.RoleName == "Storekeeper" || s.RoleName == "SaleManager");
-                    break;
+                var dateIntermediate = SelectManager.GetDateIntermediate();
+                if (dateIntermediate == null)
+                {
+                    MessageBox.Show("Գործողությունն ընդհատված է։", "Թերի տվյալներ", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return null;
+                }
+                var startDate = (DateTime)dateIntermediate.Item1;
+                var endDate = (DateTime)dateIntermediate.Item2;
+                stockTakes = StockTakeManager.GetStockTakeByCreateDate(startDate, endDate);
+                if (stockTakes == null || !stockTakes.Any())
+                {
+                    MessageBox.Show("Տվյալ ժամանակահատվածում հաշվառում չի իրականացվել։", "Թերի տվյալներ", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return null;
+                }
             }
-            return true;
-        }
+            else
+            {
+                stockTakes = StockTakeManager.GetOpeningStockTakes();
+            }
 
-        private void OnGetStockTaking(object o)
-        {
-            var projectMode = o as ProjectCreationEnum?;
-            if (projectMode == null) return;
-            StockTakeModel stockTake = null;
-            StockTakeViewModel vm = null;
-            switch (projectMode)
-            {
-                case ProjectCreationEnum.New:
-                    if (MessageBox.Show("Դուք իսկապե՞ս ցանկանում եք ստեղծել նոր գույքագրում:", "Նոր գույքագրման ստեղծում", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
-                    {
-                        return;
-                    }
-                    var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(_member.Id));
-                    if (stocks.Count == 0)
-                    {
-                        ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Պահեստի բացակայում", MessageModel.MessageTypeEnum.Warning));
-                        return;
-                    }
-                    stockTake = StockTakeManager.CreateStockTaking(stocks.First().Id, _user.UserId, _member.Id);
-                    break;
-                case ProjectCreationEnum.Edit:
-                    stockTake = GetOpeningStockTake();
-                    break;
-                default:
-                    break;
-            }
-            if (stockTake == null)
-            {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Գործողությունն ընդհատված է։", MessageModel.MessageTypeEnum.Warning));
-                return;
-            }
-            vm = new StockTakeViewModel(stockTake);
-            AddInvoiceDocument(vm);
-        }
-
-        private StockTakeModel GetOpeningStockTake()
-        {
-            var openingStockTaking = StockTakeManager.GetOpeningStockTakes(_member.Id);
-            if (openingStockTaking == null || openingStockTaking.Count == 0)
+            if (stockTakes == null || !stockTakes.Any())
             {
                 ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Բաց գույքագրում առկա չէ։", MessageModel.MessageTypeEnum.Warning));
                 return null;
             }
-            var selectItemId = SelectManager.GetSelectedItem(openingStockTaking.OrderByDescending(s => s.CreateDate).Select(s => new ItemsToSelect
+            var selectItemId = SelectManager.GetSelectedItem(stockTakes.OrderByDescending(s => s.CreateDate).Select(s => new ItemsToSelect
             {
                 DisplayName = s.StockTakeName + " " + s.CreateDate,
                 SelectedValue = s.Id
             }).ToList(), false).Select(s => (Guid)s.SelectedValue).FirstOrDefault();
-            return openingStockTaking.FirstOrDefault(s => s.Id == selectItemId);
+            return stockTakes.FirstOrDefault(s => s.Id == selectItemId);
         }
 
         private void OnChangeServerSettings(object o)
@@ -1050,16 +1018,16 @@ namespace ES.Market.ViewModels
                     return null;
                 case InvoiceState.New:
                     return null;
-                    
+
                 case InvoiceState.Accepted:
                     return InvoicesManager.GetInvoicesDescriptions(type, count, ApplicationManager.Instance.GetEsMember.Id);
-                    
+
                 case InvoiceState.Saved:
                     return InvoicesManager.GetUnacceptedInvoicesDescriptions(type, ApplicationManager.Instance.GetEsMember.Id);
-                    
+
                 case InvoiceState.Approved:
                     return InvoicesManager.GetInvoicesDescriptions(type, ApplicationManager.Instance.GetEsMember.Id);
-                    
+
             }
             return null;
         }
@@ -1290,14 +1258,14 @@ namespace ES.Market.ViewModels
 
         private void OnGetProductOrder(object o)
         {
-            var viewModel = new ProductOrderBySaleViewModel(null);
-            AddTabControl(new UctrlViewTable { DataContext = viewModel }, viewModel);
+            var vm = new ProductOrderBySaleViewModel(null);
+            AddDocument(vm);
         }
 
         private void OnGetSaleProducts(object o)
         {
-            var viewModel = new SaleProductsViewModel(null);
-            AddTabControl(new UctrlViewTable { DataContext = viewModel }, viewModel);
+            var vm = new SaleProductsViewModel(null);
+            AddDocument(vm);
         }
 
         private void OnWriteOffProducts(object o)
@@ -1343,7 +1311,7 @@ namespace ES.Market.ViewModels
                 return;
             }
             var vm = new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
-            vm.ToStock = StockManager.GetStock(stockId, ApplicationManager.Instance.GetEsMember.Id);
+            vm.ToStock = StockManager.GetStock(stockId);
             vm.Invoice.Notes = notes;
             foreach (var item in items)
             {
@@ -1366,7 +1334,7 @@ namespace ES.Market.ViewModels
         {
             var stockTake = GetOpeningStockTake();
             if (stockTake == null) return;
-            var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id, ApplicationManager.Instance.GetEsMember.Id);
+            var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id);
             CreateWriteOffInvoice(stockTakeItems.Where(s => s.Balance < 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, -s.Balance ?? 0)).ToList(), stockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
         }
 
@@ -1374,7 +1342,7 @@ namespace ES.Market.ViewModels
         {
             var stockTake = GetOpeningStockTake();
             if (stockTake == null) return;
-            var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id, ApplicationManager.Instance.GetEsMember.Id);
+            var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id);
             CreateWriteInInvoice(stockTakeItems.Where(s => s.Balance > 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, s.Balance ?? 0)).ToList(), stockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
         }
 
@@ -1639,7 +1607,7 @@ namespace ES.Market.ViewModels
         private void OnViewAccountantTable(object obj)
         {
             var dates = SelectManager.GetDateIntermediate();
-            if(dates==null) return;
+            if (dates == null) return;
             AddInvoiceDocument(new ViewAccountantTableViewModel(dates.Item1, dates.Item2));
         }
 
@@ -1817,10 +1785,106 @@ namespace ES.Market.ViewModels
 
         public ICommand PrintPriceTicketCommand { get; private set; }
 
+        #region Stock tacking
+        private ICommand _stockTakingCommand;
         public ICommand StockTakingCommand
         {
-            get { return new RelayCommand(OnGetStockTaking, CanGetStockTaking); }
+            get { return _stockTakingCommand ?? (_stockTakingCommand = new RelayCommand<ProjectCreationEnum?>(OnGetStockTaking, CanGetStockTaking)); }
         }
+        private bool CanGetStockTaking(ProjectCreationEnum? e)
+        {
+            if (e == null) return false;
+            switch (e.Value)
+            {
+                case ProjectCreationEnum.New:
+                    return ApplicationManager.IsInRole(UserRoleEnum.Director) || ApplicationManager.IsInRole(UserRoleEnum.SaleManager) || ApplicationManager.IsInRole(UserRoleEnum.StockKeeper);
+                    break;
+                case ProjectCreationEnum.Edit:
+                    return ApplicationManager.IsInRole(UserRoleEnum.Director) || ApplicationManager.IsInRole(UserRoleEnum.SaleManager) || ApplicationManager.IsInRole(UserRoleEnum.StockKeeper);
+                    break;
+                case ProjectCreationEnum.EditLast:
+                    break;
+                case ProjectCreationEnum.View:
+                    return ApplicationManager.IsInRole(UserRoleEnum.Director) || ApplicationManager.IsInRole(UserRoleEnum.SaleManager) || ApplicationManager.IsInRole(UserRoleEnum.StockKeeper);
+                    break;
+                case ProjectCreationEnum.ViewLast:
+                    return ApplicationManager.IsInRole(UserRoleEnum.Director) || ApplicationManager.IsInRole(UserRoleEnum.SaleManager) || ApplicationManager.IsInRole(UserRoleEnum.StockKeeper);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            return true;
+        }
+
+        private void OnGetStockTaking(ProjectCreationEnum? e)
+        {
+            if (e == null || !CanGetStockTaking(e)) return;
+            StockTakeModel stockTake = null;
+            StockTakeBaseViewModel vm = null;
+            switch (e.Value)
+            {
+                case ProjectCreationEnum.New:
+                    if (MessageBox.Show("Դուք իսկապե՞ս ցանկանում եք ստեղծել նոր գույքագրում:", "Նոր գույքագրման ստեղծում", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                    {
+                        return;
+                    }
+                    var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(_member.Id));
+                    if (stocks.Count == 0)
+                    {
+                        ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Պահեստի բացակայում", MessageModel.MessageTypeEnum.Warning));
+                        return;
+                    }
+                    stockTake = StockTakeManager.CreateStockTaking(stocks.First().Id, _user.UserId, _member.Id);
+                    vm = new StockTakeManagerViewModel(stockTake);
+                    break;
+                case ProjectCreationEnum.Edit:
+                    stockTake = GetOpeningStockTake();
+                    if (stockTake != null)
+                    {
+                        vm = new StockTakeManagerViewModel(stockTake);
+                    }
+                    break;
+                case ProjectCreationEnum.EditLast:
+                    break;
+                case ProjectCreationEnum.View:
+                    stockTake = GetOpeningStockTake(true);
+                    if (stockTake != null)
+                    {
+                        vm = new StockTakeViewModel(stockTake);
+                    }
+                    break;
+                case ProjectCreationEnum.ViewLast:
+                    stockTake = GetLastStockTake();
+                    if (stockTake != null)
+                    {
+                        if (stockTake.ClosedDate.HasValue)
+                            vm = new StockTakeManagerViewModel(stockTake);
+                        else
+                            vm = new StockTakeViewModel(stockTake);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if (stockTake == null)
+            {
+                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Գործողությունն ընդհատված է։", MessageModel.MessageTypeEnum.Warning));
+                return;
+            }
+            AddInvoiceDocument(vm);
+        }
+
+        private StockTakeModel GetLastStockTake()
+        {
+            var stockTaking = StockTakeManager.GetLastStockTake();
+            if (stockTaking == null)
+            {
+                MessageBox.Show("Որևէ հաշվառում չի հայտնաբերվել։", "Հաշվառում", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return null;
+            }
+            return stockTaking;
+        }
+        #endregion Stock tacking
 
         public ICommand ChangeServerSettingsCommand
         {
@@ -1841,16 +1905,18 @@ namespace ES.Market.ViewModels
         {
             get { return new RelayCommand(OnSyncronizeProducts); }
         }
+
         #region Edit users command
+
         private ICommand _editUsersCommand;
+
         public ICommand EditUsersCommand
         {
-            get
-            {
-                return _editUsersCommand ?? (_editUsersCommand = new RelayCommand(OnEditUsers, CanEditUserCommand));
-            }
+            get { return _editUsersCommand ?? (_editUsersCommand = new RelayCommand(OnEditUsers, CanEditUserCommand)); }
         }
+
         #endregion Edit users command
+
         public ICommand CheckConnectionCommand { get; private set; }
 
         #endregion Settings

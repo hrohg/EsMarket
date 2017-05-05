@@ -6,18 +6,18 @@ using UserControls.Controls;
 
 namespace UserControls.ViewModels
 {
-    public class SelectItemsViewModel : ViewModelBase
+    public class SelectItemsViewModelBase<T> : ViewModelBase
     {
         #region Internal properties
         Timer _timer = null;
-        private List<ItemsToSelectByCheck> _items;
+        private List<T> _items;
         #endregion Internal properties
 
         #region External properties
 
-        public List<ItemsToSelectByCheck> Items
+        public virtual List<T> Items
         {
-            get { return _items != null ? _items.Where(s => string.IsNullOrEmpty(s.Description) || string.IsNullOrEmpty(Filter) || s.Description.ToLower().Contains(Filter.ToLower())).ToList() : new List<ItemsToSelectByCheck>(); }
+            get { return _items ?? new List<T>(); }
             set
             {
                 _items = value;
@@ -61,10 +61,10 @@ namespace UserControls.ViewModels
 
         #region Constructors
 
-        public SelectItemsViewModel(List<ItemsToSelectByCheck> items, string title = "Ընտրել")
+        public SelectItemsViewModelBase(List<T> items, string title = "Ընտրել")
         {
             Initialize();
-            Items = items ?? new List<ItemsToSelectByCheck>();
+            Items = items ?? new List<T>();
             Title = title;
         }
         #endregion Constructors
@@ -92,7 +92,149 @@ namespace UserControls.ViewModels
 
         #region External methods
 
+        public virtual List<T> GetItems()
+        {
+            return Items;
+        }
+        #endregion External methods
+    }
+    public class SelectItemsViewModel : SelectItemsViewModelBase<ItemsToSelectByCheck>
+    {
+        #region Internal properties
+        #endregion Internal properties
+
+        #region External properties
+
+        public override List<ItemsToSelectByCheck> Items
+        {
+            get { return base.Items.Where(s => string.IsNullOrEmpty(s.Description) || string.IsNullOrEmpty(Filter) || s.Description.ToLower().Contains(Filter.ToLower())).ToList(); }
+            set
+            {
+                base.Items = value;
+                RaisePropertyChanged("Items");
+            }
+        }
+
+        #endregion External properties
+
+        #region Constructors
+
+        public SelectItemsViewModel(List<ItemsToSelectByCheck> items, string title = "Ընտրել"):base(items, title)
+        {
+            Initialize();
+        }
+        #endregion Constructors
+
+        #region Internal methods
+        private void Initialize()
+        {
+
+        }
+        #endregion Internal methods
+
+        #region External methods
+
         public List<ItemsToSelectByCheck> GetCheckedItems()
+        {
+            return Items.Where(s => s.IsChecked).ToList();
+        }
+        #endregion External methods
+    }
+
+    public class SelectProductItemsViewModel : SelectItemsViewModelBase<ProductItemsToSelect>
+    {
+        #region Internal properties
+        #endregion Internal properties
+
+        #region External properties
+        public override List<ProductItemsToSelect> Items
+        {
+            get
+            {
+                return
+                    base.Items.Where(s =>
+                            string.IsNullOrEmpty(s.Description) || string.IsNullOrEmpty(Filter) ||
+                            s.Description.ToLower().Contains(Filter.ToLower()) ||
+                            s.Code.ToLower().Contains(Filter.ToLower())).ToList();
+            }
+            set
+            {
+                base.Items = value;
+                RaisePropertyChanged("Items");
+            }
+        }
+        #endregion External properties
+
+        #region Constructors
+
+        public SelectProductItemsViewModel(List<ProductItemsToSelect> items, string title = "Ընտրել")
+            : base(items, title)
+        {
+            Initialize();
+        }
+        #endregion Constructors
+
+        #region Internal methods
+
+        private void Initialize()
+        {
+
+        }
+        #endregion Internal methods
+
+        #region External methods
+
+        public override List<ProductItemsToSelect> GetItems()
+        {
+            return Items.Where(s => s.Quantity > 0 ).ToList();
+        }
+        #endregion External methods
+    }
+
+    public class SelectProductItemsByCheckViewModel : SelectItemsViewModelBase<ProductItemsByCheck>
+    {
+        #region Internal properties
+        #endregion Internal properties
+
+        #region External properties
+        public override List<ProductItemsByCheck> Items
+        {
+            get
+            {
+                return
+                    base.Items.Where(s =>
+                            string.IsNullOrEmpty(s.Description) || string.IsNullOrEmpty(Filter) ||
+                            s.Description.ToLower().Contains(Filter.ToLower()) ||
+                            s.Code.ToLower().Contains(Filter.ToLower())).ToList();
+            }
+            set
+            {
+                base.Items = value;
+                RaisePropertyChanged("Items");
+            }
+        }
+        #endregion External properties
+
+        #region Constructors
+
+        public SelectProductItemsByCheckViewModel(List<ProductItemsByCheck> items, string title = "Ընտրել")
+            : base(items, title)
+        {
+            Initialize();
+        }
+        #endregion Constructors
+
+        #region Internal methods
+
+        private void Initialize()
+        {
+
+        }
+        #endregion Internal methods
+
+        #region External methods
+
+        public override List<ProductItemsByCheck> GetItems()
         {
             return Items.Where(s => s.IsChecked).ToList();
         }

@@ -9,6 +9,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
              xmlns:controls="clr-namespace:UserControls.Controls"
+             xmlns:managers="clr-namespace:ES.Business.Managers;assembly=ES.Business"
 
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -171,7 +172,7 @@
                                 <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceToXmlCommand}"  />
                                 <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" />
                                 <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}" />
-                                <MenuItem Header="Արտահանել Ctrl+E" Command="{Binding ExportInvoiceCommand}" />
+                                <MenuItem Header="Արտահանել Ctrl+E" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}" />
                             </MenuItem>
                             <MenuItem Header="Ներմուծել">
                                 <MenuItem Header="Ներմուծել" Command="{Binding ImportInvoiceCommand}"  />
@@ -179,14 +180,13 @@
                                 <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" />
                                 <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}" />
                             </MenuItem>
-
                             <Separator/>
                             <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>
                         </MenuItem>
                         <MenuItem Header="Ապրանքների բեռնում">
                             <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
-                            <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromMoveInvoiceCommand}"  />
-                            <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromPurchaseInvoiceCommand}" />
+                            <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"  CommandParameter="{x:Static managers:InvoiceType.MoveInvoice}"/>
+                            <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"  CommandParameter="{x:Static managers:InvoiceType.PurchaseInvoice}"/>
                         </MenuItem>
                     </Menu>
                     <Button Content="Հիշել" Width="80"

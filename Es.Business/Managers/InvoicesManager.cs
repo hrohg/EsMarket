@@ -269,8 +269,9 @@ namespace ES.Business.Managers
                 return new List<Invoices>();
             }
         }
-        private static List<Invoices> TryGetInvoices(InvoiceType invoiceType, long memberId)
+        private static List<Invoices> TryGetInvoices(InvoiceType invoiceType)
         {
+            var memberId = ApplicationManager.Member.Id;
             try
             {
                 using (var db = GetDataContext())
@@ -1764,10 +1765,10 @@ namespace ES.Business.Managers
             return TryGetInvoices(ids, memberId).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).OrderByDescending(s => s.CreateDate).ToList();
         }
 
-        public static List<InvoiceModel> GetInvoices(InvoiceType invoiceType, long memberId)
+        public static List<InvoiceModel> GetInvoices(InvoiceType invoiceType)
         {
-            var partners = PartnersManager.GetPartner(memberId);
-            return TryGetInvoices(invoiceType, memberId).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).OrderByDescending(s => s.CreateDate).ToList();
+            var partners = PartnersManager.GetPartner(ApplicationManager.Member.Id);
+            return TryGetInvoices(invoiceType).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).OrderByDescending(s => s.CreateDate).ToList();
         }
 
         public static List<InvoiceModel> GetInvoices(InvoiceType invoiceType, int? maxInvoiceCount, long memberId)
@@ -1795,7 +1796,7 @@ namespace ES.Business.Managers
             return TryGetInvoices(startDate, endDate, memberId).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).ToList();
         }
 
-        public static List<InvoiceItemsModel> GetInvoiceItems(Guid invoiceId, long memberId)
+        public static List<InvoiceItemsModel> GetInvoiceItems(Guid invoiceId)
         {
             var items = new List<InvoiceItemsModel>();
             foreach (var newItem in TryGetInvoiceItems(invoiceId).Select(Convert))

@@ -152,9 +152,9 @@ namespace ES.Business.Helpers
                 : new List<ProductModel>();
 
         }
-        public static List<InvoiceModel> SelectInvoice(long invoiceTypeId, long memberid, bool? isApproved = null, bool selectMultiple=false)
+        public static List<InvoiceModel> SelectInvoice(long invoiceTypeId, bool? isApproved = null, bool selectMultiple=false)
         {
-            var items = InvoicesManager.GetInvoices((InvoiceType)invoiceTypeId, memberid);
+            var items = InvoicesManager.GetInvoices((InvoiceType)invoiceTypeId);
             if (items == null) return new List<InvoiceModel>();
             if (isApproved != null)
             {
@@ -187,9 +187,9 @@ namespace ES.Business.Helpers
             }
             return new List<InvoiceModel>();
         }
-        public static List<InvoiceItemsModel> SelectInvoiceItems(Guid invoiceId, long memberId, bool selectMultiple = false)
+        public static List<InvoiceItemsModel> SelectInvoiceItems(Guid invoiceId, bool selectMultiple = false)
         {
-            var invoiceItems = InvoicesManager.GetInvoiceItems(invoiceId, memberId);
+            var invoiceItems = InvoicesManager.GetInvoiceItems(invoiceId);
             if(invoiceItems == null || invoiceItems.Count==0) {return new List<InvoiceItemsModel>();}
             var ui = new SelectItemsByCheck(invoiceItems.Select(ii => new ProductToSelectByCheck(ii.Id, ii.Code, ii.Description, ii.Quantity)).ToList(), selectMultiple);
             ui.ShowDialog();
@@ -205,9 +205,9 @@ namespace ES.Business.Helpers
             }
             return invoiceItems.Where(ii =>ii.Quantity>0).ToList();
         }
-        public static List<InvoiceItemsModel> SelectProductItems(List<long> stockId, long memberId, bool selectMultiple = false)
+        public static List<InvoiceItemsModel> SelectProductItems(List<long> stockId, bool selectMultiple = false)
         {
-            var productItems = new ProductsManager().GetProductItemsFromStocks(stockId,memberId);
+            var productItems = new ProductsManager().GetProductItemsFromStocks(stockId);
             if (productItems == null || productItems.Count == 0) { return new List<InvoiceItemsModel>(); }
             var ui = new SelectItemsByCheck(productItems.Select(pi => new ProductToSelectByCheck(pi.Id, pi.Product.Code, pi.Product.Description, pi.Quantity)).ToList(), selectMultiple);
             ui.ShowDialog();

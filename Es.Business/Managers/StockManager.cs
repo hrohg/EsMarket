@@ -65,14 +65,15 @@ namespace ES.Business.Managers
             return TryGetStocks(ids,memberId).Select(Convert);
 
         }
-        public static StockModel GetStock(long? id, long memberId)
+        public static StockModel GetStock(long? id)
         {
-            return Convert(TryGetStock(id, memberId));
+            return Convert(TryGetStock(id));
         }
         #endregion
         #region Private methods
-        private static EsStock TryGetStock(long? stockId, long memberId)
+        private static EsStock TryGetStock(long? stockId)
         {
+            var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
             {
                 try

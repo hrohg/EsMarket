@@ -127,7 +127,7 @@ namespace UserControls.ViewModels.Invoices
                 ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Գործողությունը հնարավոր չէ իրականացնել:", MessageModel.MessageTypeEnum.Warning)); return;
             }
             Invoice = InvoicesManager.GetInvoice(Invoice.Id, Invoice.MemberId);
-            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id, Member.Id).OrderBy(s => s.Index));
+            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
             IsModified = false;
         }
         protected override void OnPrintInvoice(PrintModeEnum printSize)
@@ -136,7 +136,7 @@ namespace UserControls.ViewModels.Invoices
             var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
             var ctrl =
                 new PurchaseInvoiceLargeView(new PurchaseInvocieTicketViewModel(Invoice, InvoiceItems.ToList(),
-                    StockManager.GetStock(Invoice.ToStockId, Invoice.MemberId), InvoicePaid));
+                    StockManager.GetStock(Invoice.ToStockId), InvoicePaid));
             PrintManager.PrintPreview(ctrl, "Print purchase invoice", true);
         }
         #endregion

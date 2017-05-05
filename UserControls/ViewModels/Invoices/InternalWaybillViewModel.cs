@@ -35,7 +35,7 @@ namespace UserControls.ViewModels.Invoices
         {
             if (!CanPrintInvoice(printSize)) { return; }
             var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
-            var ctrl = new MoveInvoiceView(new MoveInvocieTicketViewModel(Invoice, InvoiceItems.ToList(), StockManager.GetStock(Invoice.FromStockId, Invoice.MemberId), StockManager.GetStock(Invoice.ToStockId, Invoice.MemberId)));
+            var ctrl = new MoveInvoiceView(new MoveInvocieTicketViewModel(Invoice, InvoiceItems.ToList(), StockManager.GetStock(Invoice.FromStockId), StockManager.GetStock(Invoice.ToStockId)));
             PrintManager.PrintPreview(ctrl, "Print move invoice", true);
         }
         public override bool CanApprove(object o)
@@ -78,8 +78,8 @@ namespace UserControls.ViewModels.Invoices
 
         private void Initialize()
         {
-            FromStock = StockManager.GetStock(Invoice.FromStockId, Member.Id);
-            ToStock = StockManager.GetStock(Invoice.ToStockId, Member.Id);
+            FromStock = StockManager.GetStock(Invoice.FromStockId);
+            ToStock = StockManager.GetStock(Invoice.ToStockId);
             Invoice.InvoiceTypeId = (int)InvoiceType.MoveInvoice;
             IsModified = false;
         }
@@ -90,7 +90,7 @@ namespace UserControls.ViewModels.Invoices
         }
         protected override decimal GetPartnerPrice(EsProductModel product)
         {
-            return product != null ? (product.CostPrice ?? 0) : 0;
+            return product != null ? (product.Price ?? 0) : 0;
 
         }
         #endregion

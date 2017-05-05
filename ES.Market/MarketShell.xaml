@@ -522,30 +522,27 @@
                     <MenuItem Header="Գույքագրում" 
                               IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <MenuItem Header="Նոր գույքագրման ստեղծում" Command="{Binding StockTakingCommand}" CommandParameter="{x:Static enumerations1:ProjectCreationEnum.New}">
-                            <MenuItem.Icon>
-                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Header="Չփակված գույքաքրման խմբագրում" Command="{Binding StockTakingCommand}" CommandParameter="{x:Static enumerations1:ProjectCreationEnum.Edit}">
-                            <MenuItem.Icon>
-                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/edit.png"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Header="Գույքագրման դիտում" Command="{Binding StockTakingCommand}" CommandParameter="{Binding ProjectCreationEnum.View}" 
-                                  Click="MiViewStockTaking_OnClick"
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
-                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <MenuItem Header="Գույքագրման դիտում" Command="{Binding StockTakingCommand}" CommandParameter="{x:Static enumerations1:ProjectCreationEnum.View}" 
+                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
                         </MenuItem>
                         <MenuItem Header="Վերջին գույքագրման դիտում" 
                                   Command="{Binding StockTakingCommand}" 
-                                  CommandParameter="{Binding ProjectCreationEnum.ViewLast}" 
-                                  Click="MiViewLastStockTaking_OnClick"
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}"
-                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
-
+                                  CommandParameter="{x:Static enumerations1:ProjectCreationEnum.ViewLast}" 
+                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
                         </MenuItem>
-                        <MenuItem Header="Տվյալների դուրսգրում" Command="{Binding WriteOffProductsCommand}">
+                        <MenuItem Header="Չփակված գույքաքրման խմբագրում" Command="{Binding StockTakingCommand}" CommandParameter="{x:Static enumerations1:ProjectCreationEnum.Edit}">
+                            <MenuItem.Icon>
+                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit.png"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <Separator/>
+                        <MenuItem Header="Նոր գույքագրման ստեղծում" Command="{Binding StockTakingCommand}" CommandParameter="{x:Static enumerations1:ProjectCreationEnum.New}">
+                            <MenuItem.Icon>
+                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <Separator/>
+                        <MenuItem Header="Տվյալների դուրսգրում" Command="{Binding WriteOffProductsCommand}" Visibility="Collapsed">
                         </MenuItem>
                         <MenuItem Header="Պակասորդի դուրսգրում" Command="{Binding WriteOffStockTakingCommand}">
                         </MenuItem>

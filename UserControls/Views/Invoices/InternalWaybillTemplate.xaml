@@ -4,7 +4,8 @@
                     xmlns:invoices="clr-namespace:UserControls.ViewModels.Invoices"
                     xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common">
+                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
+                    xmlns:managers="clr-namespace:ES.Business.Managers;assembly=ES.Business">
 
     <DataTemplate DataType="{x:Type invoices:InternalWaybillViewModel}">
         <Grid>
@@ -180,8 +181,8 @@
                     <Menu Margin="3 0" VerticalAlignment="Center" VerticalContentAlignment="Center">
                         <MenuItem Header="Ապրանքների բեռնում">
                             <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
-                            <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromMoveInvoiceCommand}"  />
-                            <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromPurchaseInvoiceCommand}" />
+                            <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"  CommandParameter="{x:Static managers:InvoiceType.MoveInvoice}" />
+                            <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"  CommandParameter="{x:Static managers:InvoiceType.PurchaseInvoice}"/>
                         </MenuItem>
                         <MenuItem Header="...">
                             <MenuItem.Icon>
@@ -193,7 +194,7 @@
                             <MenuItem Header="Հաստատել Ctrl+Shift+A" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
                             <Separator/>
                             <MenuItem Header="Ներմուծել" Command="{Binding ImportInvoiceCommand}"/>
-                            <MenuItem Header="Արտահանել" Command="{Binding ExportInvoiceCommand}"/>
+                            <MenuItem Header="Արտահանել" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
                             <Separator/>
                             <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>
                         </MenuItem>
@@ -202,7 +203,7 @@
                         Command="{Binding SaveInvoiceCommand}"
                         ToolTip="Հիշել Ctrl+S"/>
                     <Button Content="Հաստատել" Width="80"
-                        Command="{Binding ApproveInvoiceAndCloseCommand}" 
+                        Command="{Binding ApproveInvoiceAndCloseCommand}"
                         CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"
                         ToolTip="Հաստատել (Փակել) Ctrl+F5"/>
                 </StackPanel>

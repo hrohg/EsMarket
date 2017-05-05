@@ -10,15 +10,15 @@ using System.Windows.Input;
 using ES.Business.ExcelManager;
 using ES.Business.Managers;
 using ES.Common.Helpers;
+using ES.Common.ViewModels.Base;
 using ES.Data.Models;
 using Shared.Helpers;
 using UserControls.ControlPanel.Controls;
 using UserControls.Helpers;
-using UserControls.Interfaces;
 
 namespace UserControls.ViewModels
 {
-    public class TableViewModel<T> : ITabItem
+    public class TableViewModel<T> : DocumentViewModel
     {
         #region Constants
 

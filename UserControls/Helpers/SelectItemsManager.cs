@@ -177,9 +177,9 @@ namespace UserControls.Helpers
                 : new List<ProductModel>();
 
         }
-        public static List<InvoiceModel> SelectInvoice(long invoiceTypeId, long memberid, bool? isApproved = null, bool selectMultiple = false)
+        public static List<InvoiceModel> SelectInvoice(long invoiceTypeId, bool? isApproved = null, bool selectMultiple = false)
         {
-            var items = InvoicesManager.GetInvoices((InvoiceType)invoiceTypeId, memberid);
+            var items = InvoicesManager.GetInvoices((InvoiceType)invoiceTypeId);
             if (items == null) return new List<InvoiceModel>();
             if (isApproved != null)
             {
@@ -213,38 +213,52 @@ namespace UserControls.Helpers
             }
             return new List<InvoiceModel>();
         }
-        public static List<InvoiceItemsModel> SelectInvoiceItems(Guid invoiceId, long memberId, bool selectMultiple = false)
+        public static List<InvoiceItemsModel> SelectInvoiceItems(Guid invoiceId, bool selectMultiple = false)
         {
-            var invoiceItems = InvoicesManager.GetInvoiceItems(invoiceId, memberId);
-            if (invoiceItems == null || invoiceItems.Count == 0) { return new List<InvoiceItemsModel>(); }
-            var ui = new SelectItemsByCheck(invoiceItems.Select(ii => new ProductToSelectByCheck(ii.Id, ii.Code, ii.Description, ii.Quantity)).ToList(), selectMultiple);
-            ui.ShowDialog();
-            if (ui.DialogResult == null || ui.DialogResult == false)
+            var items = InvoicesManager.GetInvoiceItems(invoiceId);
+            if (items == null || items.Count == 0) { return new List<InvoiceItemsModel>(); }
+            var vm = new SelectProductItemsViewModel(items.Select(ii => new ProductItemsToSelect { Id = ii.Id, Code = ii.Code, Description = ii.Description, Quantity = ii.Quantity ?? 0 }).ToList(), "Ընտրել ապրանքները");
+            var selectedItems = new SelectItemsByCheck
             {
-                return new List<InvoiceItemsModel>();
-            }
-            var selectedItems = ui.SelectedProductItems.Where(si => si.Count != null && si.Count > 0).ToList();
-            foreach (var ii in invoiceItems)
+                DataContext = vm
+            };
+            var resoult = selectedItems.ShowDialog();
+            if (resoult == null || resoult.Value == false) return null;
+            var checkedItems = vm.GetItems();
+            var list = new List<InvoiceItemsModel>();
+            foreach (var checkedItem in checkedItems)
             {
-                ii.Quantity = selectedItems.SingleOrDefault(si => si.GuidId == ii.Id) != null ?
-                    selectedItems.Where(si => si.GuidId == ii.Id).Select(si => si.Count).SingleOrDefault() : 0;
+                var item = items.Single(i => i.Id == checkedItem.Id);
+                item.Quantity = checkedItem.Quantity;
+                list.Add(item);
             }
-            return invoiceItems.Where(ii => ii.Quantity > 0).ToList();
+            return list;
         }
-        public static List<InvoiceItemsModel> SelectProductItems(List<long> stockId, long memberId, bool selectMultiple = false)
+        public static List<InvoiceItemsModel> SelectProductItemsFromStock(List<long> stockId, bool selectMultiple = false)
         {
-            var productItems = new ProductsManager().GetProductItemsFromStocks(stockId, memberId);
-            if (productItems == null || productItems.Count == 0) { return new List<InvoiceItemsModel>(); }
-            var ui = new SelectItemsByCheck(productItems.Select(pi => new ProductToSelectByCheck((Guid)pi.Id, pi.Product.Code, pi.Product.Description, pi.Quantity)).ToList(), selectMultiple);
-            ui.ShowDialog();
-            if (ui.DialogResult == null || ui.DialogResult == false)
-            {
-                return new List<InvoiceItemsModel>();
-            }
-
-            var selectedItems = ui.SelectedProductItems.Where(si => si.Count != null && si.Count > 0).ToList();
+            var items = new ProductsManager().GetProductItemsFromStocks(stockId); ;
+            if (items == null || items.Count == 0) { return new List<InvoiceItemsModel>(); }
+            var vm = new SelectProductItemsByCheckViewModel(
+                        items.Select(
+                            ii =>
+                                new ProductItemsByCheck
+                                {
+                                    Id = ii.Id,
+                                    Code = ii.Product.Code,
+                                    Description = ii.Product.Description,
+                                    Quantity = ii.Quantity
+                                }).ToList(), "Ընտրել ապրանքները");
+            var selectedItems = new SelectItemsByCheck
+                {
+                    DataContext = vm
+                };
+                var resoult = selectedItems.ShowDialog();
+                if (resoult == null || resoult.Value == false) return null;
+                var checkedItems = vm.GetItems();
+                items = checkedItems.Select(item => items.Single(ii => ii.Id == item.Id)).ToList();
+            
             var invoiceItems = new List<InvoiceItemsModel>();
-            foreach (var ii in productItems)
+            foreach (var ii in items)
             {
                 if (ii.Product == null) { continue; }
                 var invoiceItem = new InvoiceItemsModel
@@ -258,15 +272,15 @@ namespace UserControls.Helpers
                     Mu = ii.Product.Mu,
                     CostPrice = ii.CostPrice,
                     Price = ii.Product.Price,
-                    Quantity = selectedItems.SingleOrDefault(si => si.GuidId == ii.Id) != null ?
-                    selectedItems.Where(si => si.GuidId == ii.Id).Select(si => si.Count).SingleOrDefault() : 0,
+                    Quantity = checkedItems.SingleOrDefault(si => si.Id == ii.Id) != null ?
+                    checkedItems.Where(si => si.Id == ii.Id).Select(si => si.Quantity).SingleOrDefault() : 0,
                     Discount = ii.Product.Discount,
                     Note = ii.Product.Note
                 };
                 if (invoiceItem.Quantity == 0) { continue; }
                 invoiceItems.Add(invoiceItem);
             }
-            return invoiceItems.Where(ii => ii.Quantity > 0).ToList();
+            return invoiceItems.ToList();
         }
         #region Select SubAccounting
         public static List<SubAccountingPlanModel> SelectSubAccountingPlan(List<SubAccountingPlanModel> items, bool allowMultipleSelect = false, string title = "Ընտրել")

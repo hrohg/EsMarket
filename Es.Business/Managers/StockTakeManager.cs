@@ -94,17 +94,17 @@ namespace ES.Business.Managers
         {
             return ConvertStockTake(TryGetStockTake(id, memberId));
         }
-        public static StockTakeModel GetLastStockTake(long memberId)
+        public static StockTakeModel GetLastStockTake()
         {
-            return ConvertStockTake(TryGetLastStockTake(memberId));
+            return ConvertStockTake(TryGetLastStockTake());
         }
-        public static List<StockTakeModel> GetOpeningStockTakes(long memberId)
+        public static List<StockTakeModel> GetOpeningStockTakes()
         {
-            return TryGetOpeningStockTakes(memberId).Select(ConvertStockTake).ToList();
+            return TryGetOpeningStockTakes().Select(ConvertStockTake).ToList();
         }
-        public static List<StockTakeModel> GetStockTakeByCreateDate(DateTime startDate, DateTime endDate, long memberId)
+        public static List<StockTakeModel> GetStockTakeByCreateDate(DateTime startDate, DateTime endDate)
         {
-            return TryGetStockTakeByCreateDate(startDate, endDate, memberId).Select(ConvertStockTake).ToList();
+            return TryGetStockTakeByCreateDate(startDate, endDate).Select(ConvertStockTake).ToList();
         }
         public static StockTakeModel CreateStockTaking(long stockId, long creatorId, long memberId)
         {
@@ -117,9 +117,9 @@ namespace ES.Business.Managers
         {
             return ConvertStockTakeItem(TryGetStockTakeItem(stockTakeId, codeOrBarcode, memberId));
         }
-        public static List<StockTakeItemsModel> GetStockTakeItems(Guid stockTakingId, long memberId)
+        public static List<StockTakeItemsModel> GetStockTakeItems(Guid stockTakingId)
         {
-            return TryGetStockTakeItems(stockTakingId, memberId).Select(ConvertStockTakeItem).ToList();
+            return TryGetStockTakeItems(stockTakingId).Select(ConvertStockTakeItem).ToList();
         }
         public static bool EditStockTakeItems(StockTakeItemsModel item, long? stockId, long memberId)
         {
@@ -150,10 +150,11 @@ namespace ES.Business.Managers
                 return null;
             }
         }
-        private static StockTake TryGetLastStockTake(long memberId)
+        private static StockTake TryGetLastStockTake()
         {
             try
             {
+                var memberId = ApplicationManager.Member.Id;
                 using (var db = GetDataContext())
                 {
                     return db.StockTake.Where(s => s.MemberId == memberId).OrderByDescending(s => s.CreateDate).FirstOrDefault();
@@ -164,10 +165,11 @@ namespace ES.Business.Managers
                 return null;
             }
         }
-        private static List<StockTake> TryGetOpeningStockTakes(long memberId)
+        private static List<StockTake> TryGetOpeningStockTakes()
         {
             try
             {
+                var memberId = ApplicationManager.Member.Id;
                 using (var db = GetDataContext())
                 {
                     return db.StockTake.Where(s => s.MemberId == memberId && s.ClosedDate == null).ToList();
@@ -178,13 +180,14 @@ namespace ES.Business.Managers
                 return new List<StockTake>();
             }
         }
-        private static List<StockTake> TryGetStockTakeByCreateDate(DateTime startDate, DateTime endDate, long memberid)
+        private static List<StockTake> TryGetStockTakeByCreateDate(DateTime startDate, DateTime endDate)
         {
             try
             {
+                var memberid = ApplicationManager.Member.Id;
                 using (var db = GetDataContext())
                 {
-                    return db.StockTake.Where(s => s.CreateDate >= startDate && s.CreateDate <= endDate && s.MemberId == memberid).ToList();
+                    return db.StockTake.Where(s => ((s.ClosedDate == null && s.CreateDate <= endDate) || (s.ClosedDate != null && s.ClosedDate.Value >= startDate && s.ClosedDate.Value <= endDate)) && s.MemberId == memberid).ToList();
                 }
             }
             catch (Exception)
@@ -259,10 +262,11 @@ namespace ES.Business.Managers
                 return null;
             }
         }
-        private static List<StockTakeItems> TryGetStockTakeItems(Guid stockTakingId, long memberId)
+        private static List<StockTakeItems> TryGetStockTakeItems(Guid stockTakingId)
         {
             try
             {
+                var memberId = ApplicationManager.Member.Id;
                 using (var db = GetDataContext())
                 {
                     return

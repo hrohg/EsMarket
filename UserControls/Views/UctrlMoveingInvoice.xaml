@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:filter="clr-namespace:Shared.Helpers;assembly=Shared"
              xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
+             xmlns:managers="clr-namespace:ES.Business.Managers;assembly=ES.Business"
              MinHeight="500"
              MinWidth="800"
              mc:Ignorable="d" 
@@ -170,8 +171,8 @@
                 <Menu Margin="3 0">
                     <MenuItem Header="Ապրանքների բեռնում">
                         <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
-                        <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromMoveInvoiceCommand}"  />
-                        <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromPurchaseInvoiceCommand}" />
+                        <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"  CommandParameter="{x:Static managers:InvoiceType.MoveInvoice}"/>
+                        <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"  CommandParameter="{x:Static managers:InvoiceType.PurchaseInvoice}"/>
                     </MenuItem>
                     <MenuItem Header="...">
                         <MenuItem.Icon>
@@ -183,7 +184,7 @@
                         <MenuItem Header="Հաստատել Ctrl+Shift+A" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
                         <Separator/>
                         <MenuItem Header="Ներմուծել" Command="{Binding ImportInvoiceCommand}"/>
-                        <MenuItem Header="Արտահանել" Command="{Binding ExportInvoiceCommand}"/>
+                        <MenuItem Header="Արտահանել" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
                         <Separator/>
                         <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>
                     </MenuItem>

@@ -54,7 +54,6 @@ namespace UserControls.ViewModels.Products
             get;
             set;
         }
-
         public bool IsModified { get; set; }
 
         public bool IsLoading

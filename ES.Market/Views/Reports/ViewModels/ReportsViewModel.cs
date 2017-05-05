@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
+using ES.Common.ViewModels.Base;
 using ES.Data.Models.Reports;
 using Shared.Helpers;
-using UserControls.ControlPanel.Controls;
 using UserControls.Interfaces;
 using UserControls.ViewModels;
-using UserControls.ViewModels.Invoices;
 using UserControls.Views;
 
-namespace ES.Shop.Views.Reports.ViewModels
+namespace ES.Market.Views.Reports.ViewModels
 {
     public class ReportsViewModel : INotifyPropertyChanged
     {
@@ -84,7 +82,7 @@ namespace ES.Shop.Views.Reports.ViewModels
             });
             tab.SelectedIndex = nextTab;
         }
-        private void AddTab(UserControl control, ITabItem vm)
+        private void AddTab(UserControl control, DocumentViewModel vm)
         {
             var tab = _parentTabControl.FindChild<TabControl>();
             if (tab == null || vm == null) { return; }
@@ -115,7 +113,7 @@ namespace ES.Shop.Views.Reports.ViewModels
         private void OnViewViewInternalWayBillCommands(ViewInvoicesEnum o)
         {
 
-            ITabItem viewModel = null;
+            DocumentViewModel viewModel = null;
             switch (o)
             {
                 case ViewInvoicesEnum.None:
@@ -135,7 +133,7 @@ namespace ES.Shop.Views.Reports.ViewModels
 
         private void OnViewSale(ViewInvoicesEnum type)
         {
-            ITabItem viewModel = null;
+            DocumentViewModel viewModel = null;
             switch (type)
             {
                 case ViewInvoicesEnum.None:

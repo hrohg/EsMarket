@@ -50,7 +50,7 @@ namespace UserControls.ViewModels.Invoices
 
         //private long userId;
         protected EsUserModel User;
-        protected EsMemberModel Member; 
+        protected EsMemberModel Member;
         private List<MembersRoles> _roles = new List<MembersRoles>();
 
 
@@ -110,10 +110,13 @@ namespace UserControls.ViewModels.Invoices
         public InvoiceItemsModel InvoiceItem
         {
             get { return _invoiceItem; }
-            set { _invoiceItem = value;
+            set
+            {
+                _invoiceItem = value;
                 Code = InvoiceItem.Code;
-                RaisePropertyChanged("InvoiceItem"); 
-                RaisePropertyChanged(IsExpiringProperty); }
+                RaisePropertyChanged("InvoiceItem");
+                RaisePropertyChanged(IsExpiringProperty);
+            }
         }
 
 
@@ -214,8 +217,6 @@ namespace UserControls.ViewModels.Invoices
             //ExportInvoiceToXmlRusCommand = new ExportInvoiceToXmlRusCommands(this);
 
             ApproveMoveInvoiceCommand = new ApproveMoveInvoiceCommands(this);
-            AddItemsFromPurchaseInvoiceCommand = new AddItemsFromInvoiceCommands(this, InvoiceType.PurchaseInvoice);
-            AddItemsFromMoveInvoiceCommand = new AddItemsFromInvoiceCommands(this, InvoiceType.MoveInvoice);
             AddItemsFromStocksCommand = new AddItemsFromStocksCommand(this, InvoiceType.MoveInvoice);
             ApproveInvoiceAndCloseCommand = new ApproveCloseInvoiceCommands(this);
 
@@ -464,7 +465,7 @@ namespace UserControls.ViewModels.Invoices
 
         public void OnSetProductItem(ProductItemModel productItem)
         {
-            if(!IsSelected) return;
+            if (!IsSelected) return;
             CreateNewInvoiceItem(productItem);
             OnAddInvoiceItem(InvoiceItem);
         }
@@ -687,7 +688,7 @@ namespace UserControls.ViewModels.Invoices
                     MessageBoxButton.OK, MessageBoxImage.Error); return;
             }
             Invoice = InvoicesManager.GetInvoice(Invoice.Id, Invoice.MemberId);
-            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id, Member.Id).OrderBy(s => s.Index));
+            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
             IsModified = false;
         }
 
@@ -697,25 +698,7 @@ namespace UserControls.ViewModels.Invoices
             MessageBox.Show(string.Format("Շնորհավորում ենք դուք շահել եք։ \n Ապրանքագիր։ {0} \n Ամսաթիվ։ {1} \n Պատվիրատու։ {2}",
                 invoice.InvoiceNumber, invoice.ApproveDate, invoice.RecipientName), "Շահում", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
-        #region AddItemsFromPurchaseInvoiceCommands
-        public bool CanAddItemsFromPurchaseInvoice()
-        {
-            return Invoice.ApproveDate == null;
-        }
-        public void AddItemsFromExistingInvoice(InvoiceType type)
-        {
-            var invoice = SelectItemsManager.SelectInvoice((long)type, Member.Id, null, false).FirstOrDefault();
-            if (invoice == null) return;
-            var invoiceItems = SelectItemsManager.SelectInvoiceItems(invoice.Id, 0);
-            foreach (var ii in invoiceItems.ToList())
-            {
-                var newInvocieItem = GetInvoiceItem(ii.Code);
-                newInvocieItem.Quantity = ii.Quantity;
-                InvoiceItems.Add(newInvocieItem);
-            }
 
-        }
-        #endregion
         #region AddItemsFromStocksCommands
         public bool CanAddItemsFromStocks()
         {
@@ -725,10 +708,12 @@ namespace UserControls.ViewModels.Invoices
         {
             var stock = SelectItemsManager.SelectStocks(StockManager.GetStocks(Member.Id), false).FirstOrDefault();
             if (stock == null) return;
-            var invoiceItems = SelectItemsManager.SelectProductItems(new List<long>() { stock.Id }, Member.Id);
+            var invoiceItems = SelectItemsManager.SelectProductItemsFromStock(new List<long> { stock.Id });
+            if(invoiceItems==null) return;
             foreach (var ii in invoiceItems)
             {
                 var newInvocieItem = GetInvoiceItem(ii.Code);
+                if(newInvocieItem==null) continue;
                 newInvocieItem.Quantity = ii.Quantity;
                 InvoiceItems.Add(newInvocieItem);
             }
@@ -766,8 +751,39 @@ namespace UserControls.ViewModels.Invoices
         public ICommand ExportInvoiceToExcelRusCommand { get; private set; }
         public ICommand ExportInvoiceToXmlRusCommand { get; private set; }
         public ICommand ApproveMoveInvoiceCommand { get; private set; }
-        public ICommand AddItemsFromPurchaseInvoiceCommand { get; private set; }
-        public ICommand AddItemsFromMoveInvoiceCommand { get; private set; }
+        #region Add Items From Invoice Command
+        private ICommand _addItemsFromInvoiceCommand;
+
+        public ICommand AddItemsFromInvoiceCommand
+        {
+            get
+            {
+                return _addItemsFromInvoiceCommand ??
+                       (_addItemsFromInvoiceCommand = new RelayCommand<InvoiceType?>(OnAddItemsFromInvoice, CanAddItemsFromInvoice));
+            }
+        }
+
+        private bool CanAddItemsFromInvoice(InvoiceType? type)
+        {
+            return Invoice.ApproveDate == null;
+        }
+        private void OnAddItemsFromInvoice(InvoiceType? type)
+        {
+            if(!type.HasValue) return;
+            var invoice = SelectItemsManager.SelectInvoice((long)type.Value).FirstOrDefault();
+            if (invoice == null) return;
+            var invoiceItems = SelectItemsManager.SelectInvoiceItems(invoice.Id);
+            if (invoiceItems == null) return;
+            foreach (var ii in invoiceItems.ToList())
+            {
+                var newInvocieItem = GetInvoiceItem(ii.Code);
+                if (newInvocieItem == null) continue;
+                newInvocieItem.Quantity = ii.Quantity;
+                InvoiceItems.Add(newInvocieItem);
+            }
+
+        }
+        #endregion Add Items From Invoice Command
         public ICommand AddItemsFromStocksCommand { get; private set; }
         public ICommand ApproveInvoiceAndCloseCommand { get; private set; }
 

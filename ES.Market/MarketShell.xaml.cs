@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,7 +8,6 @@ using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Data.Enumerations;
 using ES.Data.Models;
-using ES.DataAccess.Models;
 using ES.Market.Edit;
 using ES.Market.ViewModels;
 using ES.Market.Views;
@@ -39,7 +37,7 @@ namespace ES.Market
         #region Private methods
         private void LoadPackingListTab(long invoiceTypeId, bool? isAccepted = null)
         {
-            var invoice = SelectItemsManager.SelectInvoice(invoiceTypeId, ApplicationManager.Instance.GetEsMember.Id, isAccepted, false).FirstOrDefault();
+            var invoice = SelectItemsManager.SelectInvoice(invoiceTypeId, isAccepted, false).FirstOrDefault();
             if (invoice == null)
             {
                 MessageBox.Show("Ապրանքագիր չի հայտնաբերվել։");
@@ -130,7 +128,6 @@ namespace ES.Market
         private void MiExecute_Click(object sender, EventArgs e)
         {
             ExecuteManager.ExecuteTest();
-            //EslUpdateManager.UpdateDataFromServer(_member.Id);
         }
        
         #endregion
@@ -628,60 +625,6 @@ namespace ES.Market
         #endregion
 
         #region Control Panel
-        #region Releate
-        private void MiViewStockTaking_OnClick(object sender, EventArgs e)
-        {
-            var dateIntermediate = SelectManager.GetDateIntermediate();
-            if (dateIntermediate == null)
-            {
-                MessageBox.Show("Գործողությունն ընդհատված է։", "Թերի տվյալներ", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            var startDate = (DateTime)dateIntermediate.Item1;
-            var endDate = (DateTime)dateIntermediate.Item2;
-            var stockTakes = StockTakeManager.GetStockTakeByCreateDate(startDate, endDate, ApplicationManager.Instance.GetEsMember.Id);
-            if (stockTakes == null || stockTakes.Count == 0)
-            {
-                MessageBox.Show("Տվյալ ժամանակահատվածում հաշվառում չի իրականացվել։", "Թերի տվյալներ", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            var selectItemId = SelectManager.GetSelectedItem(stockTakes.Select(s =>
-                            new ItemsToSelect
-                            {
-                                DisplayName = s.StockTakeName + " " + s.CreateDate,
-                                SelectedValue = s.Id
-                            }).ToList(), false).Select(s => (Guid)s.SelectedValue).FirstOrDefault();
-            var stockTake = stockTakes.FirstOrDefault(s => s.Id == selectItemId);
-            if (stockTake == null)
-            {
-                MessageBox.Show("Գործողությունն ընդհատված է։", "Թերի տվյալներ", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            //var nextTab = TabShop.Items.Add(new TabItem
-            //{
-            //    Header = "Գույքագրում",
-            //    Content = new StockTakingUctrl(new StockTakeViewModel(stockTake, ApplicationManager.Instance.GetEsMember.Id)),
-            //    AllowDrop = true
-            //});
-            //TabShop.SelectedIndex = nextTab;
-        }
-        private void MiViewLastStockTaking_OnClick(object sender, EventArgs e)
-        {
-            var stockTaking = StockTakeManager.GetLastStockTake(ApplicationManager.Instance.GetEsMember.Id);
-            if (stockTaking == null)
-            {
-                MessageBox.Show("Տվյալ ժամանակահատվածում հաշվառում չի իրականացվել։", "Թերի տվյալներ", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            //var nextTab = TabShop.Items.Add(new TabItem
-            //{
-            //    Header = "Գույքագրում",
-            //    Content = new StockTakingUctrl(new StockTakeViewModel(stockTaking, ApplicationManager.Instance.GetEsMember.Id)),
-            //    AllowDrop = true
-            //});
-            //TabShop.SelectedIndex = nextTab;
-        }
-        #endregion
 
         protected void MiBackupData_Click(object sender, EventArgs e)
         {

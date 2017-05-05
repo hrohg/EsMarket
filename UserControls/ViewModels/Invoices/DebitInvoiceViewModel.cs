@@ -86,7 +86,7 @@ namespace UserControls.ViewModels.Invoices
             else
             {
                 Invoice = invoice;
-                InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id, Member.Id).OrderBy(s => s.Index));
+                InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
                 IsModified = false;
             }
             IsLoading = false;

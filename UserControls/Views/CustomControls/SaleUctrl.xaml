@@ -9,6 +9,7 @@
          xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
          xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
          xmlns:converters="clr-namespace:UserControls.Converters"
+         xmlns:managers="clr-namespace:ES.Business.Managers;assembly=ES.Business"
          MinHeight="450"
          MinWidth="700"
          Width="Auto"
@@ -284,8 +285,8 @@
                             <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}"  Visibility="Collapsed"/>
                             <MenuItem Header="Ապրանքների բեռնում">
                                 <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
-                                <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromMoveInvoiceCommand}"  />
-                                <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromPurchaseInvoiceCommand}" />
+                                <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceType.MoveInvoice}" />
+                                <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceType.PurchaseInvoice}"/>
                             </MenuItem>
                         </MenuItem>
                         <MenuItem Header="Արտահանել">

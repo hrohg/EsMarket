@@ -55,10 +55,10 @@ namespace UserControls.ViewModels.Invoices
                 if (value == null) return;
                 _invoice = value;
                 RaisePropertyChanged(InvoiceProperty);
-                FromStock = _invoice.FromStockId != null ? StockManager.GetStock(_invoice.FromStockId, _invoice.MemberId) : null;
-                ToStock = _invoice.ToStockId != null ? StockManager.GetStock(_invoice.ToStockId, _invoice.MemberId) : null;
+                FromStock = _invoice.FromStockId != null ? StockManager.GetStock(_invoice.FromStockId) : null;
+                ToStock = _invoice.ToStockId != null ? StockManager.GetStock(_invoice.ToStockId) : null;
                 Partner = Invoice.Partner ?? PartnersManager.GetPartner(Invoice.PartnerId, Invoice.MemberId);
-                var invoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id, Member.Id).OrderBy(s => s.Index));
+                var invoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
                 InvoiceItems = new ObservableCollection<InvoiceItemsModel>();
                 _invoiceItems.CollectionChanged += OnInvoiceItemsChanged;
                 foreach (var invoiceItemsModel in invoiceItems)

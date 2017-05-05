@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
 using ES.Business.ExcelManager;
 using ES.Business.FileManager;
 using ES.Business.Helpers;
@@ -21,7 +17,6 @@ using ES.Data.Models;
 using ES.Data.Models.EsModels;
 using Shared.Helpers;
 using UserControls.PriceTicketControl;
-using UserControls.Commands;
 using UserControls.Helpers;
 using UserControls.PriceTicketControl.ViewModels;
 
@@ -84,7 +79,7 @@ namespace UserControls.ViewModels.Managers
             }
             set
             {
-                _filterText = value.ToLower();
+                _filterText = value;
                 RaisePropertyChanged("FilterText");
                 DisposeTimer();
                 _timer = new Timer(TimerElapsed, null, 300, 300);

@@ -98,24 +98,24 @@
                                     </Grid.RowDefinitions>
                                     <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Margin="0 1" HorizontalAlignment="Right">
                                         <TextBlock Text="Ինքնարժեք" />
-                                        <TextBox Name="TxtCostPrice" Text="{Binding Product.CostPrice, UpdateSourceTrigger=PropertyChanged, StringFormat='######.##', TargetNullValue=''}" Width="80" TabIndex="6" HorizontalContentAlignment="Right"/>
+                                        <TextBox Name="TxtCostPrice" Text="{Binding Product.CostPrice, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}, TargetNullValue=''}" Width="80" TabIndex="6" HorizontalContentAlignment="Right"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0 1">
                                         <Label Content="Վաճառքի տոկոս" HorizontalContentAlignment="Right" Width="120"/>
-                                        <TextBox Text="{Binding Product.ProfitPercent, UpdateSourceTrigger=PropertyChanged, StringFormat='###,###.##', TargetNullValue=''}" Width="50" TabIndex="7" HorizontalContentAlignment="Right"/>
+                                        <TextBox Text="{Binding Product.ProfitPercent, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}, TargetNullValue=''}" Width="50" TabIndex="7" HorizontalContentAlignment="Right"/>
                                         <Label Content="Վաճառքի գին" HorizontalContentAlignment="Right" Width="120"/>
-                                        <TextBox Name="TxtPrice" Text="{Binding Path = Product.Price, UpdateSourceTrigger=PropertyChanged,StringFormat='###,###.##', TargetNullValue='', Mode=TwoWay}" Width="80" TabIndex="7" HorizontalContentAlignment="Right"/>
+                                        <TextBox Name="TxtPrice" Text="{Binding Path = Product.Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}, TargetNullValue='', Mode=TwoWay}" Width="80" TabIndex="7" HorizontalContentAlignment="Right"/>
                                         <Label Content="Զեղչ %" HorizontalContentAlignment="Right" Width="70"/>
-                                        <TextBox Name="TxtDiscount" Text="{Binding Product.Discount, UpdateSourceTrigger=PropertyChanged, StringFormat='###,###.##', TargetNullValue=''}" Width="50" TabIndex="8" HorizontalContentAlignment="Right" />
+                                        <TextBox Name="TxtDiscount" Text="{Binding Product.Discount, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}, TargetNullValue=''}" Width="50" TabIndex="8" HorizontalContentAlignment="Right" />
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0 1">
                                         <Label Content="Մեծածախ տոկոս" HorizontalContentAlignment="Right" Width="120"/>
-                                        <TextBox Text="{Binding Product.DealerProfitPercent, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat='###,###.##'}" Width="50" TabIndex="8" HorizontalContentAlignment="Right"/>
+                                        <TextBox Text="{Binding Product.DealerProfitPercent, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat={}{0:#,#.##}}" Width="50" TabIndex="8" HorizontalContentAlignment="Right"/>
 
                                         <Label Content="Մեծածախ գին" HorizontalContentAlignment="Right" Width="120"/>
-                                        <TextBox Name="TxtDealerPrice" Text="{Binding Product.DealerPrice, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat='###,###.##'}" Width="80" TabIndex="9" HorizontalContentAlignment="Right" />
+                                        <TextBox Name="TxtDealerPrice" Text="{Binding Product.DealerPrice, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat={}{0:#,#.##}}" Width="80" TabIndex="9" HorizontalContentAlignment="Right" />
                                         <Label Content="Զեղչ %" HorizontalContentAlignment="Right" Width="70"/>
-                                        <TextBox Name="TxtDealerDiscount" Text="{Binding Product.DealerDiscount, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat='###,###.##'}" Width="50" TabIndex="10" HorizontalContentAlignment="Right" />
+                                        <TextBox Name="TxtDealerDiscount" Text="{Binding Product.DealerDiscount, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat={}{0:#,#.##}}" Width="50" TabIndex="10" HorizontalContentAlignment="Right" />
                                     </StackPanel>
                                 </Grid>
                             </Border>
@@ -173,9 +173,9 @@
                                 </Grid.RowDefinitions>
                                 <Label Grid.Row="0" Grid.Column="0" Content="Մինիմալ քանակ" HorizontalContentAlignment="Right" Width="120" IsTabStop ="False" TabIndex="9"/>
                                 <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0 1">
-                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Product.MinQuantity, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat='###,###.##'}" Width="80" TabIndex="6" HorizontalContentAlignment="Right"/>
+                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Product.MinQuantity, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" Width="80" TabIndex="6" HorizontalContentAlignment="Right"/>
                                     <TextBlock  Text="Պիտանելիության ժամկետ (օր)" HorizontalAlignment="Right" TextWrapping="Wrap" />
-                                    <TextBox  Text="{Binding Product.ExpiryDays, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat='### ###'}" TabIndex="11" Width="50" HorizontalContentAlignment="Right" HorizontalAlignment="Left"/>
+                                    <TextBox  Text="{Binding Product.ExpiryDays, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" TabIndex="11" Width="50" HorizontalContentAlignment="Right" HorizontalAlignment="Left"/>
                                 </StackPanel>
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Նշումներ" HorizontalAlignment="Right"/>
                                 <TextBox Grid.Row="1" Grid.Column="1" Name="TxtNotes" Text="{Binding Product.Note, UpdateSourceTrigger=PropertyChanged}" Height="50" AcceptsReturn="True" TextWrapping="Wrap" TabIndex="5"/>
@@ -281,7 +281,7 @@
                     <DataGridTemplateColumn  Header="Առկա քանակ" Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=ExistingQuantity, StringFormat='###,##0.###'}" Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
+                                <TextBlock Text="{Binding Path=ExistingQuantity, StringFormat={}{0:#,0.##}}" Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -292,13 +292,13 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Binding="{Binding Path=CostPrice, StringFormat='###,###.##'}" Header="Ինքնարժեք" Width="Auto" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Path=DealerProfitPercent, StringFormat='###,###.##'}" Header="Մեծածախ տոկոս" Width="Auto" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Path=DealerPrice, StringFormat='###,###.##'}" Header="Մեծածախ գին" Width="Auto" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Path=DealerDiscount, StringFormat='###,###.##'}" Header="Մեծածախ զեղչ" Width="Auto" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Path=ProfitPercent, StringFormat='###,###.##'}" Header="Մանրածախ տոկոս" Width="Auto" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Path=Price, StringFormat='###,###.##'}" Header="Մանրածախ գին" Width="Auto" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Path=Discount, StringFormat='###,###.##'}" Header="Զեղչ" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=CostPrice, StringFormat={}{0:#,#.##}}" Header="Ինքնարժեք" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=DealerProfitPercent, StringFormat={}{0:#,#.##}}" Header="Մեծածախ տոկոս" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=DealerPrice, StringFormat={}{0:#,#.##}}" Header="Մեծածախ գին" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=DealerDiscount, StringFormat={}{0:#,#.##}}" Header="Մեծածախ զեղչ" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=ProfitPercent, StringFormat={}{0:#,#.##}}" Header="Մանրածախ տոկոս" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=Price, StringFormat={}{0:#,#.##}}" Header="Մանրածախ գին" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=Discount, StringFormat={}{0:#,#.##}}" Header="Զեղչ" Width="Auto" IsReadOnly="True"/>
                     <DataGridTextColumn Binding="{Binding Path=Note}" Header="Նշումներ" Width="Auto" IsReadOnly="True"/>
                     <DataGridTemplateColumn Header="Edit" Visibility="Collapsed">
                         <DataGridTemplateColumn.CellTemplate>

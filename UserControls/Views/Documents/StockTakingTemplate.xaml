@@ -5,7 +5,95 @@
                     xmlns:stockTakeings="clr-namespace:UserControls.ViewModels.StockTakeings"
                     xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+
     <DataTemplate DataType="{x:Type stockTakeings:StockTakeViewModel}">
+        <Grid>
+            <Grid.InputBindings>
+                <KeyBinding Gesture="Ctrl+P" Command="{Binding PrintCommand}"/>
+                <KeyBinding Gesture="Ctrl+Shift+X" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
+            </Grid.InputBindings>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Menu Grid.Row="0">
+                <MenuItem Header="Գույքագրում">
+                    <MenuItem Header="Դիտել" Command="{Binding ViewDetilesCommand}"/>
+                    <MenuItem Header="Տպել" CommandTarget="Ctrl+P" Command="{Binding PrintCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="Փակել" Command="{Binding CloseCommand}"/>
+                </MenuItem>
+            </Menu>
+            <StackPanel Grid.Row="1" HorizontalAlignment="Right" Margin="0 10">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                    <TextBlock Text="Գույքագրում" FontSize="10" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding StockTake.StockTakeName}" Foreground="Blue" Margin ="1 0 5 0" VerticalAlignment="Center" />
+                    <TextBlock Text="Սկիզբ" FontSize="10" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Path=StockTake.CreateDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" Margin="1 0 5 0" VerticalAlignment="Center" />
+                    <TextBlock Text ="Ավարտ" FontSize="10"/>
+                    <TextBlock Text ="{Binding StockTake.ClosedDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" Margin ="1 0 5 0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" >
+                    <TextBlock Text="Պահեստ" FontSize="10" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Path=Stock.Name}" Margin="1 0 5 0" Foreground="Blue" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                    <TextBlock Text="Գույքագրող" FontSize="10" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Path=Creator.FullName}" Margin="1 0 5 0" Foreground="Blue" VerticalAlignment="Center" />
+                </StackPanel>
+            </StackPanel>
+
+            <Border Grid.Row="3" BorderThickness="1" CornerRadius="3" BorderBrush="#D5DFE5" Margin="0 1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBox Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger = PropertyChanged}" Margin="3 5"/>
+                    <extendedControls:ExtendedDataGrid Grid.Row="1" ItemsSource="{Binding StockTakeItems}"
+                                                       AlternatingRowBackground ="GhostWhite" AlternationCount="2"
+                  SelectedItem="{Binding SelectedItem}"
+                  VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="18" Margin="1" >
+                        <DataGrid.Resources>
+                            <Style x:Key="CellRightAlign">
+                                <Setter Property="Control.HorizontalAlignment" Value="Right" />
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding Index}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding CodeOrBarcode}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding ProductDescription}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Առկա է պահեստում" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Առկա է" Binding="{Binding Path=StockTakeQuantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Հաշվեկշիռ" Binding="{Binding Path=Balance, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Ընդամենը" Binding="{Binding Path=Amount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Գույքագրման ամսաթիվ" Binding="{Binding Path=StockTakeDate}" CellStyle="{StaticResource CellRightAlign}"/>
+                            <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Description}" />
+                        </DataGrid.Columns>
+                    </extendedControls:ExtendedDataGrid>
+                    <GroupBox Grid.Row="2" Header="Նշումներ">
+                        <TextBox Text="{Binding StockTake.Description}" Height="50" TextWrapping="Wrap" AcceptsReturn="True" IsReadOnly="True"/>
+                    </GroupBox>
+                    <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Text="Գումար" FontSize="10"/>
+                        <TextBlock Text="{Binding Amount, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                        <TextBlock Text="Պակասորդ" FontSize="10"/>
+                        <TextBlock Text="{Binding Deficit, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                        <TextBlock Text="Ավելցուկ" FontSize="10"/>
+                        <TextBlock Text="{Binding Surplace, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                        <TextBlock Text="Ընդամենը" FontSize="10"/>
+                        <TextBlock Text="{Binding Total, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type stockTakeings:StockTakeManagerViewModel}">
         <Grid>
             <Grid.InputBindings>
                 <KeyBinding Gesture="Ctrl+F" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
@@ -25,13 +113,13 @@
             </Grid.RowDefinitions>
             <Menu Grid.Row="0">
                 <MenuItem Header="Գույքագրում">
-                    <MenuItem Header="Ներմուծել" Command="{Binding ImportInvoiceCommand}"/>
-                    <MenuItem Header="Արտահանել" Command="{Binding ExportToExcelCommand}"/>
+                    <MenuItem Header="Ներմուծել" Command="{Binding ImportCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
+                    <MenuItem Header="Արտահանել" Command="{Binding ExportCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
                     <Separator/>
                     <MenuItem Header="Տպել" CommandTarget="Ctrl+P" Command="{Binding PrintCommand}"/>
                     <Separator/>
                     <MenuItem Header="Չհաշվառվածների ավելացում" Command="{Binding GetUnavailableProductItemsCommand}"/>
-                    <MenuItem Header="Ամփոփել" Command="{Binding CompletedStockTakingCommand}" ToolTip="Փակել գործող գույքագրումը: Այն այլևս հնարավոր չի լինի փոփոխել:"/>
+                    <MenuItem Header="Ամփոփել" Command="{Binding CompletedCommand}" ToolTip="Փակել գործող գույքագրումը: Այն այլևս հնարավոր չի լինի փոփոխել:"/>
                     <Separator/>
                     <MenuItem Header="Փակել" Command="{Binding CloseCommand}"/>
                 </MenuItem>
@@ -149,7 +237,7 @@
                             <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding CodeOrBarcode}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding ProductDescription}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
-                            <DataGridTextColumn IsReadOnly="False" Header="Առկա է պահեստում" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Առկա է պահեստում" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Առկա է" Binding="{Binding Path=StockTakeQuantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Հաշվեկշիռ" Binding="{Binding Path=Balance, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Ընդամենը" Binding="{Binding Path=Amount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
@@ -174,4 +262,5 @@
             </Border>
         </Grid>
     </DataTemplate>
+
 </ResourceDictionary>

@@ -138,4 +138,21 @@ namespace UserControls.Controls
         public object Value;
         public bool IsChecked { get; set; }
     }
+
+    public class ProductItemsToSelect
+    {
+        public string Code { get; set; }
+        public string Description { get; set; }
+        public decimal Quantity { get; set; }
+        public Guid Id { get; set; }
+    }
+
+    public class ProductItemsByCheck
+    {
+        public bool IsChecked { get; set; }
+        public string Code { get; set; }
+        public string Description { get; set; }
+        public decimal Quantity { get; set; }
+        public Guid Id { get; set; }
+    }
 }

@@ -222,7 +222,36 @@ namespace ES.Business.Managers
             //_products.Add(exItem.Id, exItem);
             return exItem;
         }
-
+        public static ProductModel ConvertLight(Products item)
+        {
+            if (item == null) return null;
+            var exItem = new ProductModel(item.EsMemberId, item.LastModifierId, item.IsEnable);
+            exItem.Id = item.Id;
+            exItem.Code = item.Code;
+            exItem.Barcode = item.Barcode;
+            exItem.HcdCs = item.HCDCS;
+            exItem.Description = item.Description;
+            exItem.Mu = item.Mu;
+            exItem.IsWeight = item.IsWeight;
+            exItem.Note = item.Note;
+            exItem.CostPrice = item.CostPrice;
+            exItem.OldPrice = item.OldPrice;
+            exItem.Price = item.Price;
+            exItem.Discount = item.Discount;
+            exItem.DealerPrice = item.DealerPrice;
+            exItem.DealerDiscount = item.DealerDiscount;
+            exItem.MinQuantity = item.MinQuantity;
+            exItem.ExpiryDays = item.ExpiryDays;
+            exItem.ImagePath = item.ImagePath;
+            exItem.IsEnabled = item.IsEnable;
+            exItem.BrandId = item.BrandId;
+            //exItem.Brand = item.Brand;
+            exItem.EsMemberId = item.EsMemberId;
+            //exItem.EsMember = item.EsMember;
+            exItem.LastModifierId = item.LastModifierId;
+            //_products.Add(exItem.Id, exItem);
+            return exItem;
+        }
         private static Products Convert(ProductModel item)
         {
             if (item == null) return null;
@@ -304,7 +333,7 @@ namespace ES.Business.Managers
         }
         public List<ProductModel> GetProducts(long memberId)
         {
-            return TryGetProducts(memberId).Select(Convert).ToList();
+            return TryGetProducts().Select(Convert).ToList();
         }
         public List<ProductModel> GetProductsShortData(long memberId)
         {
@@ -377,10 +406,10 @@ namespace ES.Business.Managers
             var products = GetProducts(memberId);
             return TryGetAllProductItems(memberId).Select(s => Convert(s, products)).ToList();
         }
-        public List<ProductItemModel> GetProductItemsFromStocks(List<long> stockIds, long memberId)
+        public List<ProductItemModel> GetProductItemsFromStocks(List<long> stockIds)
         {
-            var products = GetProducts(memberId);
-            return TryGetProductItemsFromStocks(stockIds, memberId).Select(s => Convert(s, products)).ToList();
+            var products = GetProducts(ApplicationManager.Member.Id);
+            return TryGetProductItemsFromStocks(stockIds).Select(s => Convert(s, products)).ToList();
         }
         public List<ProductItemModel> GetUnavailableProductItems(List<Guid> productItemIds, long memberId)
         {
@@ -519,7 +548,14 @@ namespace ES.Business.Managers
             exItem.Id = item.Id;
             exItem.MemberId = item.MemberId;
             exItem.ProductId = item.ProductId;
-            exItem.Product = products != null ? products.SingleOrDefault(s => s.Id == item.ProductId) : Convert(item.Products);
+            if (products != null)
+            {
+                exItem.Product = products.SingleOrDefault(s => s.Id == item.ProductId);
+            }
+            if (exItem.Product == null)
+            {
+                exItem.Product = ConvertLight(item.Products);
+            }
             exItem.DeliveryInvoiceId = item.DeliveryInvoiceId;
             exItem.StockId = item.StockId;
             exItem.ReservedById = item.ReservedById;
@@ -722,8 +758,9 @@ namespace ES.Business.Managers
 
             }
         }
-        private static List<Products> TryGetProducts(long memberId)
+        private static List<Products> TryGetProducts()
         {
+            var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
             {
                 try
@@ -1091,8 +1128,9 @@ namespace ES.Business.Managers
                     .Where(s => s.Invoices.MemberId == memberId && invoiceIds.Contains(s.InvoiceId)).Select(s => s.ProductItems).ToList();
             }
         }
-        private static List<ProductItems> TryGetProductItemsFromStocks(List<long> stockIds, long memberId)
+        private static List<ProductItems> TryGetProductItemsFromStocks(List<long> stockIds)
         {
+            var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
             {
                 return db.ProductItems
