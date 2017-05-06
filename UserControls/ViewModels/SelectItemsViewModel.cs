@@ -186,7 +186,7 @@ namespace UserControls.ViewModels
 
         public override List<ProductItemsToSelect> GetItems()
         {
-            return Items.Where(s => s.Quantity > 0 ).ToList();
+            return Items.Where(s =>s.IsChecked).ToList();
         }
         #endregion External methods
     }

@@ -23,7 +23,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Menu Grid.Row ="0">
-                <MenuItem Header="Վաճառք" Visibility="Collapsed"
+                <MenuItem Header="Վաճառք"
                           IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
                     <MenuItem Header="Դիտում" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.None}"/>
                     <MenuItem Header="Վաճառքի մանրամասն վերլուծություն" Click="MiViewSaleReportDetile_Click"></MenuItem>

@@ -36,11 +36,11 @@ namespace UserControls.ViewModels.StockTakeings
         private StockTakeModel _stockTake;
         public StockTakeModel StockTake { get { return _stockTake; } set { _stockTake = value; RaisePropertyChanged("Title"); } }
 
-        private ObservableCollection<StockTakeItemsModel> _stockTakeItems = new ObservableCollection<StockTakeItemsModel>();
-        public ObservableCollection<StockTakeItemsModel> StockTakeItems
+        private List<StockTakeItemsModel> _stockTakeItems;
+        public List<StockTakeItemsModel> StockTakeItems
         {
-            get { return new ObservableCollection<StockTakeItemsModel>(_stockTakeItems.Where(s => (s.CodeOrBarcode + s.ProductDescription).ToLower().Contains(Filter != null ? Filter.ToLower() : string.Empty)).ToList()); }
-            set { _stockTakeItems = value; }
+            get { return _stockTakeItems!=null? _stockTakeItems.Where(s => (s.CodeOrBarcode + s.ProductDescription).ToLower().Contains(Filter != null ? Filter.ToLower() : string.Empty)).ToList(): (_stockTakeItems = new List<StockTakeItemsModel>()); }
+            set { _stockTakeItems = value; RaisePropertyChanged(StockTakeItemsProperty); }
         }
         #endregion Stock take
 
@@ -83,7 +83,6 @@ namespace UserControls.ViewModels.StockTakeings
             StockTake = stockTake;
             Stock = StockManager.GetStock(stockTake.StockId);
             Creator = UsersManager.GetEsUser(StockTake.CreatorId);
-            StockTakeItems = new ObservableCollection<StockTakeItemsModel>(StockTakeManager.GetStockTakeItems(stockTake.Id));
             Initialize();
         }
         #endregion //Constructors
@@ -95,8 +94,15 @@ namespace UserControls.ViewModels.StockTakeings
             Title = string.Format("Գույքագրում {0}", StockTake.StockTakeName);
             Description = "Գույքագրում";
             IsActive = true;
+            new Thread(LoadStockTakeItemsAsync).Start();
         }
 
+        private void LoadStockTakeItemsAsync()
+        {
+            IsLoading = true;
+            StockTakeItems = StockTakeManager.GetStockTakeItems(StockTake.Id);
+            IsLoading = false;
+        }
         private void DisposeTimer()
         {
             if (_timer != null)
@@ -117,14 +123,14 @@ namespace UserControls.ViewModels.StockTakeings
         #region Import
 
         private ICommand _importCommand;
-        public ICommand ImportCommand { get { return _importCommand ?? (_importCommand = new RelayCommand(OnImport, CanImport)); } }
+        public ICommand ImportCommand { get { return _importCommand ?? (_importCommand = new RelayCommand<ExportImportEnum?>(OnImport, CanImport)); } }
 
-        private bool CanImport(object obj)
+        private bool CanImport(ExportImportEnum? e)
         {
             return false;
         }
 
-        private void OnImport(object obj)
+        private void OnImport(ExportImportEnum? e)
         {
 
         }
@@ -136,7 +142,7 @@ namespace UserControls.ViewModels.StockTakeings
         public ICommand ExportCommand { get { return _exportCommand ?? (_exportCommand = new RelayCommand<ExportImportEnum?>(OnExport, CanExport)); } }
         private bool CanExport(ExportImportEnum? e)
         {
-            return StockTakeItems.Count > 0;
+            return StockTakeItems.Any();
         }
         private void OnExport(ExportImportEnum? e)
         {
@@ -363,7 +369,7 @@ namespace UserControls.ViewModels.StockTakeings
             StockTakeItem = null;
             CodeOrBarcode = null;
             RaisePropertyChanged(StockTakeItemProperty);
-            StockTakeItems = new ObservableCollection<StockTakeItemsModel>(StockTakeManager.GetStockTakeItems(StockTake.Id));
+            StockTakeItems = StockTakeManager.GetStockTakeItems(StockTake.Id);
             RaisePropertyChanged(StockTakeItemsProperty);
 
             RaisePropertyChanged("Count");
@@ -396,7 +402,7 @@ namespace UserControls.ViewModels.StockTakeings
                 return;
             }
             if (!StockTakeManager.RemoveStoCkakeItem(SelectedItem.Id, _memberId)) { return; }
-            StockTakeItems = new ObservableCollection<StockTakeItemsModel>(StockTakeManager.GetStockTakeItems(StockTake.Id));
+            StockTakeItems = StockTakeManager.GetStockTakeItems(StockTake.Id);
             RaisePropertyChanged(StockTakeItemsProperty);
         }
         #endregion RemoveStockTakingItemCommand

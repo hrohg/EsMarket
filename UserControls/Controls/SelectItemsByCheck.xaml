@@ -54,6 +54,22 @@
             <DataGrid ItemsSource="{Binding Items}"
                 VerticalAlignment="Stretch" MouseDoubleClick="LvItems_MouseDoubleClick" KeyDown="LvItems_KeyDown" AutoGenerateColumns="False" CanUserAddRows="False">
                 <DataGrid.Columns>
+                    <DataGridTemplateColumn  Header=".." Width="Auto" CanUserSort="True" SortMemberPath="IsChecked">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type controls:ProductItemsToSelect}">
+                                <CheckBox x:Name="Part_CheckBox" IsChecked="{Binding Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3"/>
+                                <DataTemplate.Triggers>
+                                    <!--<MultiTrigger>
+                                        <MultiTrigger.Conditions>
+                                            <Condition Property="IsMouseOver" Value="True"/>
+                                            <Condition SourceName="Part_CheckBox" Property="IsChecked" Value="True"/>
+                                        </MultiTrigger.Conditions>
+                                        <Setter TargetName="Part_CheckBox" Property="IsChecked" Value="true" />
+                                    </MultiTrigger>-->
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTemplateColumn  Header="Կոդ" Width="Auto" CanUserSort="True" SortMemberPath="Code">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type controls:ProductItemsToSelect}">
@@ -65,6 +81,13 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type controls:ProductItemsToSelect}">
                                 <TextBlock Text="{Binding Path = Description}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  Header="Գին" Width="Auto" CanUserSort="True" SortMemberPath="Price">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type controls:ProductItemsToSelect}">
+                                <TextBlock Text="{Binding Path = Price, StringFormat={}{0: #,#.##}}" HorizontalAlignment="Right"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -104,6 +127,13 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type controls:ProductItemsByCheck}">
                                 <TextBlock Text="{Binding Path = Description}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn  Header="Գին" Width="Auto" CanUserSort="True" SortMemberPath="Price">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type controls:ProductItemsByCheck}">
+                                <TextBlock Text="{Binding Path = Price, StringFormat={}{0: #,#.##}}" HorizontalAlignment="Right"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

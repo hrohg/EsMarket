@@ -245,7 +245,10 @@
                             <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Description}" />
                         </DataGrid.Columns>
                     </extendedControls:ExtendedDataGrid>
-                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <GroupBox Grid.Row="2" Header="Նշումներ">
+                        <TextBox Text="{Binding StockTake.Description}" Height="50" TextWrapping="Wrap" AcceptsReturn="True"/>
+                    </GroupBox>
+                    <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
                         <TextBlock Text="Գումար" FontSize="10"/>
                         <TextBlock Text="{Binding Amount, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
                         <TextBlock Text="Պակասորդ" FontSize="10"/>
@@ -255,9 +258,6 @@
                         <TextBlock Text="Ընդամենը" FontSize="10"/>
                         <TextBlock Text="{Binding Total, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
                     </StackPanel>
-                    <GroupBox Grid.Row="3" Header="Նշումներ">
-                        <TextBox Text="{Binding StockTake.Description}" Height="50" TextWrapping="Wrap" AcceptsReturn="True"/>
-                    </GroupBox>
                 </Grid>
             </Border>
         </Grid>

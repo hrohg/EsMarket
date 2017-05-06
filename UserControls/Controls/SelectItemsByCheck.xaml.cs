@@ -141,9 +141,11 @@ namespace UserControls.Controls
 
     public class ProductItemsToSelect
     {
+        public bool IsChecked { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }
         public decimal Quantity { get; set; }
+        public decimal? Price { get; set; }
         public Guid Id { get; set; }
     }
 
@@ -153,6 +155,7 @@ namespace UserControls.Controls
         public string Code { get; set; }
         public string Description { get; set; }
         public decimal Quantity { get; set; }
+        public decimal? Price { get; set; }
         public Guid Id { get; set; }
     }
 }

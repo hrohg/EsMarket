@@ -217,7 +217,7 @@ namespace UserControls.Helpers
         {
             var items = InvoicesManager.GetInvoiceItems(invoiceId);
             if (items == null || items.Count == 0) { return new List<InvoiceItemsModel>(); }
-            var vm = new SelectProductItemsViewModel(items.Select(ii => new ProductItemsToSelect { Id = ii.Id, Code = ii.Code, Description = ii.Description, Quantity = ii.Quantity ?? 0 }).ToList(), "Ընտրել ապրանքները");
+            var vm = new SelectProductItemsViewModel(items.Select(ii => new ProductItemsToSelect { Id = ii.Id, Code = ii.Code, Description = ii.Description, Quantity = ii.Quantity ?? 0 , Price = ii.Product.Price, IsChecked = true}).ToList(), "Ընտրել ապրանքները");
             var selectedItems = new SelectItemsByCheck
             {
                 DataContext = vm
@@ -236,7 +236,7 @@ namespace UserControls.Helpers
         }
         public static List<InvoiceItemsModel> SelectProductItemsFromStock(List<long> stockId, bool selectMultiple = false)
         {
-            var items = new ProductsManager().GetProductItemsFromStocks(stockId); ;
+            var items = new ProductsManager().GetProductItemsFromStocks(stockId);
             if (items == null || items.Count == 0) { return new List<InvoiceItemsModel>(); }
             var vm = new SelectProductItemsByCheckViewModel(
                         items.Select(

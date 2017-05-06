@@ -468,26 +468,7 @@ namespace ES.Market.ViewModels
             _messages.Add(message);
             OnPropertyChanged(MessagesProperty);
         }
-
-        protected void AddTabControl(UserControl control, ITabItem vm)
-        {
-            int nextTab;
-            var tabShop = _parentTabControl.FindChild<TabControl>();
-            if (tabShop == null || control == null || vm == null)
-            {
-                return;
-            }
-
-            nextTab = tabShop.Items.Add(new TabItem
-            {
-                Content = control,
-                DataContext = vm,
-                AllowDrop = true
-            });
-            tabShop.SelectedIndex = nextTab;
-            _parentTabControl.UpdateLayout();
-        }
-
+        
         private void AddInvoiceDocument(object vm)
         {
             if (vm is DocumentViewModel)

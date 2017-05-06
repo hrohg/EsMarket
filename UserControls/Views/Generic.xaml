@@ -1,5 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:base="clr-namespace:ES.Common.ViewModels.Base;assembly=ES.Common"
+                    xmlns:controls="clr-namespace:UserControls.Controls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Documents/StartPageTemplate.xaml"/>
         <ResourceDictionary Source="Documents/InvoiceTemplates.xaml"/>
@@ -27,4 +29,10 @@
         <ResourceDictionary Source="Tools/CategoriesTools.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
+    <DataTemplate DataType="{x:Type base:DocumentViewModel}">
+        <Grid>
+            <ContentPresenter />
+            <controls:WaitingCover Visibility="Visible" />
+        </Grid>
+    </DataTemplate>
 </ResourceDictionary>

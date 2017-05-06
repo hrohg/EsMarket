@@ -41,10 +41,9 @@ namespace UserControls.ViewModels.Managers
         private long _userId { get { return ApplicationManager.GetEsUser.UserId; } }
         private ProductModel _product;
         private List<ProductModel> _products;
-        private string _filterText;
         Timer _timer = null;
         private ProductModel _productOnBufer;
-        
+
         #endregion
 
         #region External properties
@@ -65,12 +64,13 @@ namespace UserControls.ViewModels.Managers
             get
             {
                 return string.IsNullOrEmpty(FilterText) ? _products :
-                     _products.Where(s => (s.Code + s.Barcode + s.Description + s.Price + s.CostPrice + s.Note).ToLower().Contains(FilterText)
+                     _products.Where(s => (s.Code + s.Barcode + s.Description + s.Price + s.CostPrice + s.Note).ToLower().Contains(FilterText.ToLower())
                          || s.ProductGroups.Any(t => t.Barcode.ToLower().Contains(FilterText.ToLower()))).ToList();
             }
             set { _products = value; RaisePropertyChanged(ProductsProperty); }
         }
-
+        #region Filter
+        private string _filterText;
         public string FilterText
         {
             get
@@ -85,7 +85,7 @@ namespace UserControls.ViewModels.Managers
                 _timer = new Timer(TimerElapsed, null, 300, 300);
             }
         }
-
+        #endregion Filter
         public string ChangeProductActivityDescription { get { return Product != null && Product.IsEnabled ? "Պասիվացում" : "Ակտիվացում"; } }
         public string ProductGroupDescription
         {
@@ -279,7 +279,7 @@ namespace UserControls.ViewModels.Managers
                 if (Application.Current != null)
                 {
                     Application.Current.Dispatcher.BeginInvoke(new Action(() => { Products = ApplicationManager.Instance.CashProvider.Products; }));
-                    
+
                 }
                 ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Ապրանքների բեռնումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success));
                 NotifyEditedProducts();
@@ -302,7 +302,7 @@ namespace UserControls.ViewModels.Managers
                     {
                         return;
                     }
-                     result = XmlManager.Save(Products, filePath);
+                    result = XmlManager.Save(Products, filePath);
                     break;
                 case ExportImportEnum.Excel:
                     result = ExcelExportManager.ExportProducts(Products);

@@ -751,6 +751,7 @@ namespace UserControls.ViewModels.Invoices
         public ICommand ExportInvoiceToExcelRusCommand { get; private set; }
         public ICommand ExportInvoiceToXmlRusCommand { get; private set; }
         public ICommand ApproveMoveInvoiceCommand { get; private set; }
+
         #region Add Items From Invoice Command
         private ICommand _addItemsFromInvoiceCommand;
 
@@ -784,6 +785,7 @@ namespace UserControls.ViewModels.Invoices
 
         }
         #endregion Add Items From Invoice Command
+
         public ICommand AddItemsFromStocksCommand { get; private set; }
         public ICommand ApproveInvoiceAndCloseCommand { get; private set; }
 

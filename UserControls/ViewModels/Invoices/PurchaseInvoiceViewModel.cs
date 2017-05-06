@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
@@ -54,6 +55,7 @@ namespace UserControls.ViewModels.Invoices
         {
             Initialize();
         }
+
         #region Internal methods
 
         private void Initialize()
@@ -81,7 +83,11 @@ namespace UserControls.ViewModels.Invoices
             return product!=null? (product.CostPrice??0):0;
             
         }
-
+        protected override void OnInvoiceItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnInvoiceItemPropertyChanged(sender, e);
+            InvoicePaid.Paid = InvoiceItems.Sum(s => (s.Price ?? 0) * (s.Quantity ?? 0));
+        }
         #endregion
 
         #region External Methods
