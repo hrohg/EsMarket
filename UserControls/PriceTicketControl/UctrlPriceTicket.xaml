@@ -23,7 +23,8 @@
                                     Barcode="{Binding Path=Barcode}"/>
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="{Binding Path=Code}" FontSize="8" Margin="1 0"/>
-                    <TextBlock Text="{Binding Path=Price, StringFormat={}{0:#,0.##}դր․}" Margin="1 0" FontSize="9"/>
+                    <TextBlock Text="{Binding Path=Price, StringFormat={}{0:#,0.##}}" Margin="1 0" FontSize="9"/>
+                    <TextBlock Text="դր․"/>
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -38,19 +39,21 @@
 
                 <TextBlock Grid.Row="0" Text="{Binding Path=Description}" TextWrapping="WrapWithOverflow" FontSize="8" Margin="1 0" VerticalAlignment="Top" TextTrimming="CharacterEllipsis" MaxHeight="25"/>
 
-                <priceTicketControl:Ean13BarcodeControl Grid.Row="1" MinHeight="15" MaxHeight="20"  BarHeight="20" BarMinWidth="1" 
+                <priceTicketControl:Ean13BarcodeControl Grid.Row="1" MinHeight="20" MaxHeight="20"  BarHeight="20" BarMinWidth="1" 
                                                         Width="105" 
-                                                        BarMaxWidth="1" Margin="1" VerticalAlignment="Center" HorizontalAlignment="Center"
-                                    Barcode="{Binding Path=Barcode}" SnapsToDevicePixels="True"/>
+                                                        BarMaxWidth="1.5" Margin="1" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                        Barcode="{Binding Path=Barcode}" SnapsToDevicePixels="True"/>
                 <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="{Binding Path=Code}"/>
                     <Viewbox Grid.Column="1" VerticalAlignment="Stretch" StretchDirection="Both" Stretch="Fill" HorizontalAlignment="Right">
-                        <TextBlock Text="{Binding Path=Price, StringFormat={}{0:#,0.##}դր}"  FontSize="12" FontWeight="Bold" VerticalAlignment="Stretch"/>
+                        <TextBlock Text="{Binding Path=Price, StringFormat={}{0:#,0.##}}"  FontSize="16" FontWeight="Bold" VerticalAlignment="Stretch"/>
                     </Viewbox>
+                    <TextBlock Grid.Column="2" Text="դր․"/>
                 </Grid>
             </Grid>
         </DataTemplate>

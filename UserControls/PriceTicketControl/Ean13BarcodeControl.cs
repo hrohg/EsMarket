@@ -63,7 +63,7 @@ namespace UserControls.PriceTicketControl
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            var width = ActualWidth/2;
+            var width = 40; //ActualWidth/2;
             var height = (int) ActualHeight;
             var size = new Rect(0, 0, width, height);
             drawingContext.DrawRectangle(null, null, size);
