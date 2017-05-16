@@ -8,6 +8,7 @@
              xmlns:enumerations="clr-namespace:ES.Data.Enumerations;assembly=ES.Data"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
+             xmlns:popup="clr-namespace:UserControls.Controls.Popup"
 
              MinHeight="500"
              MinWidth="800"
@@ -178,11 +179,11 @@
                 <DataGridTextColumn IsReadOnly="True" Header="Բարկոդ" Binding="{Binding Product.Barcode, Mode=OneWay}" />
                 <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description, Mode=OneWay}" />
                 <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" />
-                <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, TargetNullValue='', StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}" />
-                <DataGridTextColumn IsReadOnly="False" Header="Գնման գին" Binding="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, TargetNullValue='', StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}" />
-                <DataGridTextColumn IsReadOnly="False" Header="Վաճառք" Binding="{Binding Path=Product.Price, Mode=OneWay, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}" />
-                <DataGridTextColumn IsReadOnly="False" Header="Տոկոս" Binding="{Binding Path=Percentage, Mode=OneWay, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}" />
-                <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, Mode=OneWay, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}"/>
+                <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, TargetNullValue='', StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}" />
+                <DataGridTextColumn IsReadOnly="False" Header="Գնման գին" Binding="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, TargetNullValue='', StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}" />
+                <DataGridTextColumn IsReadOnly="False" Header="Վաճառք" Binding="{Binding Path=Product.Price, Mode=OneWay, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}" />
+                <DataGridTextColumn IsReadOnly="False" Header="Տոկոս" Binding="{Binding Path=Percentage, Mode=OneWay, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}" />
+                <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, Mode=OneWay, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
                 <DataGridTextColumn IsReadOnly="True" Header="Պիտանի է մինչև" Binding="{Binding Path=ExpiryDate, Mode=OneWay, StringFormat=dd.MM.yyyy}" />
                 <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
             </DataGrid.Columns>
@@ -273,8 +274,8 @@
             </Expander>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                 <TextBlock Text="Եկամտաբերություն %"/>
-                <TextBlock Text="{Binding ActualPercentage, StringFormat={}{0:#,#.##}}"/>
-                <!--<popup:DraggablePopup IsOpen="{Binding ElementName=Part_ToggleButton, Path=IsChecked}" StaysOpen="False" AllowsTransparency="True">
+                <TextBlock Text="{Binding ActualPercentage, StringFormat={}{0:#,0.##}}"/>
+                <popup:DraggablePopup IsOpen="{Binding ElementName=PartToggleButton, Path=IsChecked}" StaysOpen="False" AllowsTransparency="True">
                     <Border Background="Yellow" MinWidth="200" MinHeight="100">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -298,31 +299,31 @@
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Ընդամենը "/>
-                                        <TextBlock Text="{Binding ProductQuantity, Mode=OneWay, StringFormat={}{0:#,#.##}}"  Foreground="Green"/>
+                                        <TextBlock Text="{Binding ProductQuantity, Mode=OneWay, StringFormat={}{0:#,0.##}}"  Foreground="Green"/>
                                         <TextBlock Text=" հատ ապրանք"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Ընդամենը վաճառքի գումար"/>
-                                        <TextBlock Text="{Binding Invoice.Amount, StringFormat={}{0:#,#.##}, Mode=OneWay}" Foreground="Green"/>
+                                        <TextBlock Text="{Binding Invoice.Amount, StringFormat={}{0:#,0.##}, Mode=OneWay}" Foreground="Green"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Որից ինքնարժեք"/>
-                                        <TextBlock Text="{Binding Invoice.Total, StringFormat={}{0:#,#.##}, Mode=OneWay}" Foreground="Green"/>
+                                        <TextBlock Text="{Binding Invoice.Total, StringFormat={}{0:#,0.##}, Mode=OneWay}" Foreground="Green"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="հասույթ"/>
-                                        <TextBlock Text="{Binding InvoiceProfit, StringFormat={}{0:#,#.##}, Mode=OneWay}" Foreground="Green"/>
+                                        <TextBlock Text="{Binding InvoiceProfit, StringFormat={}{0:#,0.##}, Mode=OneWay}" Foreground="Green"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Եկամտաբերություն "/>
-                                        <TextBlock Text="{Binding ActualPercentage, StringFormat={}{0:#,#.##}, Mode=OneWay}" Foreground="Green"/>
+                                        <TextBlock Text="{Binding ActualPercentage, StringFormat={}{0:#,0.##}, Mode=OneWay}" Foreground="Green"/>
                                         <TextBlock Text=" տոկոս"/>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>
                         </Grid>
                     </Border>
-                </popup:DraggablePopup>-->
+                </popup:DraggablePopup>
                 <Menu Margin="3 0">
                     <MenuItem Header="...">
                         <MenuItem.Icon>
@@ -338,7 +339,7 @@
                         <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>
                     </MenuItem>
                 </Menu>
-                <ToggleButton Content="Մանրամասն" Width="80" />
+                <ToggleButton x:Name="PartToggleButton" Content="Մանրամասն" Width="80" />
                 <Button Content="Հիշել" Width="80"
                         Command="{Binding SaveInvoiceCommand}"
                         ToolTip="Հիշել Ctrl+S"/>

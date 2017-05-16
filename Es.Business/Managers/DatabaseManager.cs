@@ -439,7 +439,7 @@ namespace ES.Business.Managers
                         var exItem = db.EsInvoiceTypes.SingleOrDefault(s => s.Id == item.Id);
                         if (exItem == null)
                         {
-                            db.EsInvoiceTypes.Add(new EsInvoiceTypes()
+                            db.EsInvoiceTypes.Add(new EsInvoiceTypes
                             {
                                 Id = item.Id,
                                 Name = item.Name,
@@ -457,7 +457,7 @@ namespace ES.Business.Managers
                         var exItem = db.EsPartnersTypes.SingleOrDefault(s => s.Id == item.Id);
                         if (exItem == null)
                         {
-                            db.EsPartnersTypes.Add(new EsPartnersTypes()
+                            db.EsPartnersTypes.Add(new EsPartnersTypes
                             {
                                 Id = item.Id,
                                 Description = item.Description

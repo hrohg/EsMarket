@@ -157,7 +157,7 @@ namespace UserControls.ViewModels.Invoices
         }
         public decimal ProductQuantity { get { return InvoiceItems.Sum(s => s.Quantity ?? 0); } }
         public decimal InvoiceProfit { get { return Invoice.Amount - Invoice.Total; } }
-        public decimal ActualPercentage { get { return InvoiceItems.Sum(s => s.Percentage) / (ProductCount != 0 ? ProductCount : 1); } }
+        public decimal ActualPercentage { get { return InvoicePaid.Total.HasValue && InvoicePaid.Total != 0 ? InvoiceProfit * 100 / InvoicePaid.Total.Value : 100; } }
         #endregion
 
         #region Constructors
