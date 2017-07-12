@@ -110,7 +110,7 @@ namespace UserControls.Views.View
         private void Update(object o)
         {
             IsLoading = true;
-            _productItems = new ProductsManager().GetProductItems(ApplicationManager.Instance.GetEsMember.Id);
+            _productItems = new ProductsManager().GetProductItems(ApplicationManager.Instance.GetMember.Id);
             if (_stocks != null)
                 _productItems = _productItems.Where(pi => pi.StockId != null && _stocks.Select(s => s.Id).ToList().Contains((long)pi.StockId)).ToList();
             _items = (from item in _productItems

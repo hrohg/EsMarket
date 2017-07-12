@@ -1,29 +1,19 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Windows.Media;
+using System.Drawing;
+using ES.Common.Enumerations;
 
-namespace ES.Business.Models
+namespace ES.Common.Models
 {
-    public class MessageModel : INotifyPropertyChanged
+    public class MessageModel
     {
-        public enum MessageTypeEnum
-        {
-            Information = 1,
-            Success = 2,
-            Error = 3,
-            Warning = 4
-        }
-
         #region Properties
 
-        private const string DateProperty = "Date";
-        private const string MessageProperty = "Message";
         #endregion
 
         #region Internal properties
 
         private DateTime _date = DateTime.Now;
-        private string _message;
+
         #endregion
 
         #region External properties
@@ -32,19 +22,10 @@ namespace ES.Business.Models
             get { return _date; }
             set
             {
-                if (_date == value) { return; }
-                _date = value;
+               _date = value;
             }
         }
-        public string Message
-        {
-            get { return _message; }
-            set
-            {
-                if (_message == value) { return; }
-                _message = value;
-            }
-        }
+        public string Message { get; set; }
 
         public MessageTypeEnum MessageType { get; set; }
 
@@ -73,19 +54,7 @@ namespace ES.Business.Models
         }
 
         #endregion
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-        #endregion
-
+        
         public MessageModel(DateTime date, string message, MessageTypeEnum type)
         {
             Date = date;

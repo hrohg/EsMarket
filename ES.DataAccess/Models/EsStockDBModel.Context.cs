@@ -30,7 +30,10 @@ namespace ES.DataAccess.Models
         public virtual DbSet<AccountsReceivable> AccountsReceivable { get; set; }
         public virtual DbSet<Brands> Brands { get; set; }
         public virtual DbSet<CashDesk> CashDesk { get; set; }
+        public virtual DbSet<EsCategories> EsCategories { get; set; }
         public virtual DbSet<EsDefaults> EsDefaults { get; set; }
+        public virtual DbSet<EsInvoiceItemsArchive> EsInvoiceItemsArchive { get; set; }
+        public virtual DbSet<ESInvoicesArchive> ESInvoicesArchive { get; set; }
         public virtual DbSet<EsInvoiceTypes> EsInvoiceTypes { get; set; }
         public virtual DbSet<EsMembers> EsMembers { get; set; }
         public virtual DbSet<EsMembersAccounts> EsMembersAccounts { get; set; }
@@ -46,6 +49,7 @@ namespace ES.DataAccess.Models
         public virtual DbSet<MembersRoles> MembersRoles { get; set; }
         public virtual DbSet<MemberUsersRoles> MemberUsersRoles { get; set; }
         public virtual DbSet<Partners> Partners { get; set; }
+        public virtual DbSet<ProductCategories> ProductCategories { get; set; }
         public virtual DbSet<ProductGroup> ProductGroup { get; set; }
         public virtual DbSet<ProductItems> ProductItems { get; set; }
         public virtual DbSet<ProductOrder> ProductOrder { get; set; }
@@ -53,9 +57,8 @@ namespace ES.DataAccess.Models
         public virtual DbSet<Products> Products { get; set; }
         public virtual DbSet<SaleInCash> SaleInCash { get; set; }
         public virtual DbSet<StockTake> StockTake { get; set; }
-        public virtual DbSet<SubAccountingPlan> SubAccountingPlan { get; set; }
-        public virtual DbSet<EsCategories> EsCategories { get; set; }
-        public virtual DbSet<ProductCategories> ProductCategories { get; set; }
         public virtual DbSet<StockTakeItems> StockTakeItems { get; set; }
+        public virtual DbSet<SubAccountingPlan> SubAccountingPlan { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
     }
 }

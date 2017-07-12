@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Common.Helpers;
+using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
@@ -104,7 +105,7 @@ namespace UserControls.ViewModels.Settings
         private void Load()
         {
             SelectedEsUser = null;
-            EsUsers = new ObservableCollection<EsUserModel>(UsersManager.GetEsUsers(ApplicationManager.Instance.GetEsMember.Id));
+            EsUsers = new ObservableCollection<EsUserModel>(UsersManager.GetEsUsers(ApplicationManager.Instance.GetMember.Id));
             UsersRoles = UsersManager.GetUsersRoles();
             Roles = UsersManager.GetMemberRoles().Select(s => new UserRole(s)).ToList();
         }
@@ -136,7 +137,7 @@ namespace UserControls.ViewModels.Settings
         }
         private void OnEditUser(object o)
         {
-            var memberId = ApplicationManager.Instance.GetEsMember.Id;
+            var memberId = ApplicationManager.Instance.GetMember.Id;
             if (UsersManager.EditUser(SelectedEsUser, Roles.Where(s => s.IsSelected).Select(s =>
                 new MemberUsersRoles
                 {

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
+using ES.Common.Managers;
 using ES.DataAccess.Models;
 using UserControls.Commands;
 
@@ -124,7 +125,7 @@ namespace UserControls.ViewModels
             {
                 _debitId = value;
                 AccountingRecord.Debit = DebitId ?? 0;
-                SubDebits = DebitId != null ? new ObservableCollection<SubAccountingPlanModel>(SubAccountingPlanManager.GetSubAccountingPlanModels((int)DebitId, 0, ApplicationManager.Instance.GetEsMember.Id, true)) : new ObservableCollection<SubAccountingPlanModel>();
+                SubDebits = DebitId != null ? new ObservableCollection<SubAccountingPlanModel>(SubAccountingPlanManager.GetSubAccountingPlanModels((int)DebitId, 0, ApplicationManager.Instance.GetMember.Id, true)) : new ObservableCollection<SubAccountingPlanModel>();
                 OnPropertyChanged(DebitIdProperty);
                 if (CreditId == null) OnPropertyChanged(CreditsProperty);
                 OnPropertyChanged("CanSelectDebit");
@@ -137,7 +138,7 @@ namespace UserControls.ViewModels
             {
                 _creditId = value;
                 AccountingRecord.Credit = CreditId ?? 0;
-                SubCredits = CreditId != null ? new ObservableCollection<SubAccountingPlanModel>(SubAccountingPlanManager.GetSubAccountingPlanModels(0, (int)CreditId, ApplicationManager.Instance.GetEsMember.Id, true)) : new ObservableCollection<SubAccountingPlanModel>();
+                SubCredits = CreditId != null ? new ObservableCollection<SubAccountingPlanModel>(SubAccountingPlanManager.GetSubAccountingPlanModels(0, (int)CreditId, ApplicationManager.Instance.GetMember.Id, true)) : new ObservableCollection<SubAccountingPlanModel>();
                 OnPropertyChanged(CreditIdProperty);
                 if (DebitId == null) OnPropertyChanged(DebitsProperty);
                 OnPropertyChanged("CanSelectCredit");

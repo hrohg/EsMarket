@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 using ES.Business.Managers;
+using ES.Common.Managers;
 using ES.Market.ViewModels;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets.Views;
@@ -78,11 +79,11 @@ namespace ES.Market.Commands
         }
         public bool CanExecute(object parameter)
         {
-            return !string.IsNullOrEmpty(ApplicationManager.ActivePrinter);
+            return !string.IsNullOrEmpty(ApplicationManager.Settings.MemberSettings.ActiveSalePrinter);
         }
         public void Execute(object parameter)
         {
-            PrintManager.PrintOnActivePrinter(new ReceiptTicketSmall(null), ApplicationManager.ActivePrinter);
+            PrintManager.PrintOnActivePrinter(new ReceiptTicketSmall(null), ApplicationManager.Settings.MemberSettings.ActiveSalePrinter);
         }
     }
     #endregion

@@ -111,7 +111,6 @@
     <Compile Include="Commands\ProductCommand.cs" />
     <Compile Include="Commands\ProductOrderCommands.cs" />
     <Compile Include="Commands\ServicesCommands.cs" />
-    <Compile Include="Commands\SettingsCommands.cs" />
     <Compile Include="ControlPanel\Controls\CtrlAccountingRecords.xaml.cs">
       <DependentUpon>CtrlAccountingRecords.xaml</DependentUpon>
     </Compile>

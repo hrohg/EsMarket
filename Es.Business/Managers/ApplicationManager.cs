@@ -4,10 +4,11 @@ using System.Data.Entity.Core.EntityClient;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Controls;
-using CashReg.Helper;
-using ES.Business.Models;
+using ES.Business.Helpers;
 using ES.Common;
 using ES.Common.Enumerations;
+using ES.Common.Managers;
+using ES.Common.Models;
 using ES.Data.Model;
 using ES.DataAccess.Models;
 
@@ -20,6 +21,7 @@ namespace ES.Business.Managers
 
         #region Internal fields
         private static DataServer _server;
+        private readonly MessageManager _messageManager;
         #endregion Internal fields
 
         #region Internal properties
@@ -28,26 +30,24 @@ namespace ES.Business.Managers
         private static EsUserModel _esUser = new EsUserModel();
         private static List<MembersRoles> _userRoles;
         private static LocalManager _cashProvider;
-        private static bool _localMode = false;
-        private static string _connectionString;
-        private static List<ScaleModel> _weighers;
-        private static MessageManager _messageManager;
-        private static bool _isEcrActivated;
+        private static Common.Managers.MessageManager _mesManager;
+
         #endregion
-        private string CreateConnectionString(string server, string databaseName, string userName, string password)
-        {
-            var builder = new SqlConnectionStringBuilder
-            {
-                DataSource = server, // server address
-                InitialCatalog = databaseName, // database name
-                IntegratedSecurity = false, // server auth(false)/win auth(true)
-                MultipleActiveResultSets = false, // activate/deactivate MARS
-                PersistSecurityInfo = true, // hide login credentials
-                UserID = userName, // user name
-                Password = password // password
-            };
-            return builder.ConnectionString;
-        }
+
+        //private string CreateConnectionString(string server, string databaseName, string userName, string password)
+        //{
+        //    var builder = new SqlConnectionStringBuilder
+        //    {
+        //        DataSource = server, // server address
+        //        InitialCatalog = databaseName, // database name
+        //        IntegratedSecurity = false, // server auth(false)/win auth(true)
+        //        MultipleActiveResultSets = false, // activate/deactivate MARS
+        //        PersistSecurityInfo = true, // hide login credentials
+        //        UserID = userName, // user name
+        //        Password = password // password
+        //    };
+        //    return builder.ConnectionString;
+        //}
         private static string CreateConnectionString(string host, string catalog)
         {
             SqlConnectionStringBuilder sqlBuilder = new SqlConnectionStringBuilder
@@ -75,8 +75,17 @@ namespace ES.Business.Managers
 
         #region External properties
         public static bool IsEsServer { get; private set; }
-        public static string dbName { get { return _server != null ? _server.Database : string.Empty; } }
-        public EsMemberModel GetEsMember { get { return _member; } }
+
+        #region Settings
+        private SettingsContainer _settings;
+        public static SettingsContainer Settings
+        {
+            get { return _insatance._settings ?? (_insatance._settings = new SettingsContainer()); }
+        }
+        #endregion Settings
+
+        public static string DbName { get { return _server != null ? _server.Database : string.Empty; } }
+        public EsMemberModel GetMember { get { return _member; } }
 
         public EsMembersAccountsModel GetEsMembersAccounts
         {
@@ -84,7 +93,7 @@ namespace ES.Business.Managers
             {
                 if (_member == null)
                 {
-                    _membersAccounts = MembersManager.GetMembersAccounts(GetEsMember.Id);
+                    _membersAccounts = MembersManager.GetMembersAccounts(GetMember.Id);
                 }
                 return _membersAccounts;
             }
@@ -92,15 +101,18 @@ namespace ES.Business.Managers
 
         public static EsMemberModel Member
         {
-            get { return Instance.GetEsMember; }
+            get { return Instance.GetMember; }
         }
         public EsMemberModel SetEsMember
         {
             set
             {
                 _member = value;
-                UserRoles = UsersManager.GetUserRoles(GetEsUser.UserId, GetEsMember.Id);
-                ResetMemberData();
+                if (_member != null)
+                {
+                    UserRoles = UsersManager.GetUserRoles(GetEsUser.UserId, GetMember.Id);
+                    ResetMemberData();
+                }
             }
         }
 
@@ -382,30 +394,14 @@ namespace ES.Business.Managers
             // Initialize the connection string builder for the
             // underlying provider.
         }
-        public static string ConnectionString { get { return _connectionString; } set { _connectionString = value; } }
-        public static bool LocalMode { get { return _localMode; } set { _localMode = value; } }
-        public static bool SaleBySingle { get; set; }
-        public static bool BuyBySingle { get; set; }
-        public static string ActivePrinter { get; set; }
-        public static string SalePrinter { get; set; }
-        public static string BarcodePrinter { get; set; }
-        public static string DefaultPrinter { get; set; }
-        public static CashDesk GetThisDesk { get; set; }
-        public static List<ScaleModel> Weighers { get { if (_weighers == null) { _weighers = new List<ScaleModel>(); } return _weighers; } set { _weighers = value; } }
-        public static MessageManager MessageManager { get { if (_messageManager == null) { _messageManager = new MessageManager(); } return _messageManager; } set { _messageManager = value; } }
-        public static EcrSettings EcrSettings { get; set; }
-
-        public static bool IsEcrActivated
-        {
-            get { return EcrSettings != null && _isEcrActivated; }
-            set { _isEcrActivated = value; }
-        }
+        public static string ConnectionString { get; set; }
         public LocalManager CashProvider
         {
             get { return _cashProvider ?? (_cashProvider = new LocalManager()); }
             set { _cashProvider = value; }
         }
-        
+        public static LocalManager CashManager { get { return Instance.CashProvider; } }
+        public static MessageManager MessageManager { get { return _insatance._messageManager; } }
         #endregion
 
         #region Constructors
@@ -416,13 +412,26 @@ namespace ES.Business.Managers
         }
         public ApplicationManager()
         {
-
+            _messageManager = new MessageManager();
+            Initialize();
         }
         #endregion Constructors
 
         #region Internal methods
+
+        private void Initialize()
+        {
+            _messageManager.MessageReceived += OnMessageReceived;
+        }
+
+        private void OnMessageReceived(string message, MessageTypeEnum type)
+        {
+            MessageManager.OnMessage(message, type);
+        }
+
         private void ResetMemberData()
         {
+            Settings.LoadMemberSettings();
             CashProvider = new LocalManager();
         }
         #endregion
@@ -432,13 +441,7 @@ namespace ES.Business.Managers
         {
             return new Uri(string.Format("{0}{1}/{2}", "pack://application:,,,/Shared;", "component/Images/Server", IsEsServer ? "CloudServer.ico" : "LocalServer.ico"));
         }
-        public static void LoadConfigData(long memberId)
-        {
-            //ECR
-            var ecrConfig = ConfigSettings.GetEcrConfig();
-            EcrSettings = ecrConfig != null ? ecrConfig.EcrSettings : new EcrSettings();
-            IsEcrActivated = ecrConfig != null && ecrConfig.IsActive;
-        }
+
         public static void OnTabItemClose(object o)
         {
             var tabControl = o as TabControl;
@@ -455,7 +458,7 @@ namespace ES.Business.Managers
 
         public void AddMessageToLog(MessageModel log)
         {
-            MessageManager.OnNewMessage(log);
+            MessageManager.OnMessage(log);
             var handler = ReveiveLogEvent;
             if (handler != null) handler(log);
         }
@@ -507,6 +510,11 @@ namespace ES.Business.Managers
         public static bool IsInRole(List<UserRoleEnum> types)
         {
             return types.Any(s => IsInRole(s));
+        }
+
+        public static void ReloadSettings()
+        {
+            _insatance._settings = new SettingsContainer();
         }
         #endregion
     }

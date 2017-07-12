@@ -7,9 +7,10 @@ using System.Windows.Data;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common;
+using ES.Common.Enumerations;
+using ES.Common.Managers;
 using ES.Data.Model;
 using ES.Data.Models;
-using ES.Common;
 using Shared.Helpers;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
@@ -71,7 +72,7 @@ namespace UserControls.ViewModels.Invoices
             }
 
             IsModified = false;
-            BuyBySingle = ApplicationManager.BuyBySingle;
+            BuyBySingle = ApplicationManager.Settings.MemberSettings.PurchaseBySingle;
         }
         protected override void OnGetProduct(object o)
         {
@@ -80,8 +81,8 @@ namespace UserControls.ViewModels.Invoices
         }
         protected override decimal GetPartnerPrice(EsProductModel product)
         {
-            return product!=null? (product.CostPrice??0):0;
-            
+            return product != null ? (product.CostPrice ?? 0) : 0;
+
         }
         protected override void OnInvoiceItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -114,27 +115,49 @@ namespace UserControls.ViewModels.Invoices
         public override void OnApprove(object o)
         {
             if (!CanApprove(o)) return;
+
             Invoice.ApproverId = User.UserId;
             Invoice.Approver = User.FullName;
+
+            InvoicePaid.PartnerId = Invoice.PartnerId;
             Invoice.ProviderName = Partner.FullName;
+
             if (ToStock == null)
             {
                 ToStock = SelectItemsManager.SelectStocks(StockManager.GetStocks(Member.Id), false).FirstOrDefault();
             }
             if (ToStock == null)
             {
-                MessageBox.Show("Պահեստ ընտրված չէ: Խնդրում ենք խմբագրել նոր պահեստ:", "Գործողության ընդհատում",
-                    MessageBoxButton.OK, MessageBoxImage.Error); return;
+                MessageBox.Show("Պահեստ ընտրված չէ: Խնդրում ենք խմբագրել նոր պահեստ:", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Error); 
+                return;
             }
             Invoice.ToStockId = ToStock.Id;
             Invoice.RecipientName = ToStock.FullName;
-            if (InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), InvoicePaid)==null)
+
+            var cashDesk = SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.PurchaseCashDesks).SingleOrDefault();
+            InvoicePaid.CashDeskId = cashDesk != null ? cashDesk.Id : (Guid?)null;
+
+            var bankAccount = SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.PurchaseBankAccounts).SingleOrDefault();
+            InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
+            var invoice = InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), InvoicePaid);
+            if (invoice == null)
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Գործողությունը հնարավոր չէ իրականացնել:", MessageModel.MessageTypeEnum.Warning)); return;
+                Invoice.AcceptDate = Invoice.ApproveDate = null;
+                MessageManager.OnMessage("Գործողությունը հնարավոր չէ իրականացնել:", MessageTypeEnum.Warning); 
+                return;
             }
-            Invoice = InvoicesManager.GetInvoice(Invoice.Id, Invoice.MemberId);
+            Invoice = invoice;
             InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
             IsModified = false;
+            MessageManager.OnMessage(string.Format("Ապրանքագիր {0} հաստատված է։", Invoice.InvoiceNumber), MessageTypeEnum.Success);
+        }
+        public override void OnApproveAndClose(object o)
+        {
+            OnApprove(o);
+            if (Invoice.ApproveDate != null)
+            {
+                OnClose(o);
+            }
         }
         protected override void OnPrintInvoice(PrintModeEnum printSize)
         {

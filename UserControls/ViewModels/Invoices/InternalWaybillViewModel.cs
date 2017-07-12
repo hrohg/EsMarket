@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
-using System.ServiceModel;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using ES.Business.Managers;
-using ES.Business.Models;
+using ES.Common.Enumerations;
 using ES.Common.Helpers;
+using ES.Common.Managers;
+using ES.Common.Models;
 using ES.Data.Model;
 using ES.Data.Models;
 using Shared.Helpers;
@@ -49,7 +50,7 @@ namespace UserControls.ViewModels.Invoices
         {
             if (!CanApprove(o))
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Գործողության ընդհատում: Գործողությունը հնարավոր չէ իրականացնել:", MessageModel.MessageTypeEnum.Warning));
+                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Գործողության ընդհատում: Գործողությունը հնարավոր չէ իրականացնել:", MessageTypeEnum.Warning));
                 return;
             }
             base.OnApprove(o);
@@ -114,7 +115,7 @@ namespace UserControls.ViewModels.Invoices
             {
                 InvoiceItem.Quantity = null;
                 var message = string.Format("Անբավարար միջոցներ: Կոդ: {0} Տվյալ ապրանքատեսակից բավարար քանակ առկա չէ:", InvoiceItem.Code);
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, message, MessageModel.MessageTypeEnum.Warning));
+                MessageManager.OnMessage(new MessageModel(DateTime.Now, message, MessageTypeEnum.Warning));
                 MessageBox.Show(message, "Անբավարար միջոցներ");
                 return false;
             }

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using ES.Business.Managers;
+using ES.Common.Managers;
 
 namespace ES.Business.Models
 {
@@ -59,7 +60,7 @@ namespace ES.Business.Models
             set
             {
                 debit = value; SubDebits =
-                    new ObservableCollection<SubAccountingPlanModel>(SubAccountingPlanManager.GetSubAccountingPlanModels(Debit.Id, ApplicationManager.Instance.GetEsMember.Id, true));
+                    new ObservableCollection<SubAccountingPlanModel>(SubAccountingPlanManager.GetSubAccountingPlanModels(Debit.Id, ApplicationManager.Instance.GetMember.Id, true));
             }
         }
         public ObservableCollection<AccountingAccounts> Credits { get { return credits; } set { credits = value; OnPropertyChanged(DebitsProperty); } }
@@ -72,7 +73,7 @@ namespace ES.Business.Models
                 credit = value; OnPropertyChanged(CreditsProperty);
                 SubCredits =
                     new ObservableCollection<SubAccountingPlanModel>(
-                        SubAccountingPlanManager.GetSubAccountingPlanModels(Credit.Id, ApplicationManager.Instance.GetEsMember.Id, true));
+                        SubAccountingPlanManager.GetSubAccountingPlanModels(Credit.Id, ApplicationManager.Instance.GetMember.Id, true));
             }
         }
         #endregion

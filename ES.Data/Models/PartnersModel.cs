@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using ES.Data.Enumerations;
 using ES.Data.Model;
 
 namespace ES.Data.Models
@@ -73,6 +74,10 @@ namespace ES.Data.Models
         {
             get { return _partnersTypeId; }
             set { _partnersTypeId = value; OnPropertyChanged(PartnersTypeIdProperty); }
+        }
+        public PartnerType PartnerTypeEnum
+        {
+            get { return PartnersTypeId!=null? (PartnerType) PartnersTypeId: PartnerType.None; }
         }
         public PartnerTypeModel PartnersType { get { return _partnerType; } set { _partnerType = value; } }
         public long? EsUserId { get { return _esUserId; } set { _esUserId = value; } }

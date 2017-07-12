@@ -59,6 +59,7 @@
     <Reference Include="System.Xaml" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -83,6 +84,7 @@
     <Compile Include="Helpers\SelectItemsByCheck.xaml.cs">
       <DependentUpon>SelectItemsByCheck.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\SettingsContainer.cs" />
     <Compile Include="Managers\AccountingRecordsManager.cs" />
     <Compile Include="Managers\ApplicationManager.cs" />
     <Compile Include="Managers\CashDeskManager.cs" />
@@ -94,7 +96,6 @@
     <Compile Include="Managers\ExecuteManager.cs" />
     <Compile Include="Managers\ExportManager.cs" />
     <Compile Include="Managers\InvoicesManager.cs" />
-    <Compile Include="Managers\MessageManager.cs" />
     <Compile Include="Managers\PartnersManager.cs" />
     <Compile Include="Helpers\SelectItemsManager.cs" />
     <Compile Include="Managers\ReportManager.cs" />
@@ -102,9 +103,6 @@
     <Compile Include="Managers\StockTakeManager.cs" />
     <Compile Include="Models\AccountingPlanRecordsModel.cs" />
     <Compile Include="Models\AccountingRecordsModel.cs" />
-    <Compile Include="Models\ApplicationModel.cs" />
-    <Compile Include="Models\DefaultConfigModel.cs" />
-    <Compile Include="Models\ECRModel.cs" />
     <Compile Include="Models\FinanceReportModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\ProductOrderItemsModel.cs" />
@@ -124,7 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ES.Common\ES.Common.csproj">
-      <Project>{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}</Project>
+      <Project>{7baa5615-1224-4f30-8e69-8ec0b3c1e5ab}</Project>
       <Name>ES.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\ES.DataAccess\ES.DataAccess.csproj">

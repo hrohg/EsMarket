@@ -1,17 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Windows.Controls;
 using System.Windows.Input;
 using ES.Business.Managers;
-using ES.Business.Models;
+using ES.Common.Enumerations;
 using ES.Common.Helpers;
+using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
 using ES.DataAccess.Models;
 using UserControls.Commands;
-using UserControls.Interfaces;
 
 namespace UserControls.ViewModels.Partners
 {
@@ -20,7 +18,7 @@ namespace UserControls.ViewModels.Partners
         #region Properties
         private const string PartnerProperties = "Partner";
         private const string PartnersProperty = "Partners";
-        private const string FilterProperty = "Filter";
+        
         #endregion
 
         #region Private properties
@@ -28,12 +26,6 @@ namespace UserControls.ViewModels.Partners
         #endregion
 
         #region Public properties
-        public bool IsLoading
-        {
-            get;
-            set;
-        }
-
         #region Partners
         private PartnerModel _partner;
         private ObservableCollection<PartnerModel> _partners;
@@ -101,9 +93,14 @@ namespace UserControls.ViewModels.Partners
         {
             if (CanSetDefault(partner))
             {
-                ApplicationManager.MessageManager.OnNewMessage(PartnersManager.SetDefault(partner)
-                    ? new MessageModel("Գործողության բարեհաջող ավարտ։", MessageModel.MessageTypeEnum.Success)
-                    : new MessageModel("Գործողության ձախողում։", MessageModel.MessageTypeEnum.Warning));
+                if (PartnersManager.SetDefault(partner))
+                {
+                    MessageManager.OnMessage("Գործողության բարեհաջող ավարտ։", MessageTypeEnum.Success);
+                }
+                else
+                {
+                    MessageManager.OnMessage("Գործողության ձախողում։", MessageTypeEnum.Warning);
+                }
             }
         }
         #endregion
@@ -117,7 +114,7 @@ namespace UserControls.ViewModels.Partners
 
         public void GetNewPartner()
         {
-            Partner = new PartnerModel(ApplicationManager.Instance.GetEsMember.Id);
+            Partner = new PartnerModel(ApplicationManager.Instance.GetMember.Id);
             RaisePropertyChanged(PartnerProperties);
         }
         public bool CanAddPartner()

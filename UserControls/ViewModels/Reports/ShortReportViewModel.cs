@@ -9,6 +9,7 @@ using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common.Helpers;
+using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;

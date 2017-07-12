@@ -12,6 +12,7 @@ using ES.Business.ExcelManager;
 using ES.Business.FileManager;
 using ES.Business.Managers;
 using ES.Common.Helpers;
+using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
@@ -26,7 +27,7 @@ namespace UserControls.ViewModels.Invoices
         #endregion Internal fields
 
         #region Internal properties
-        protected EsMemberModel Member { get { return ApplicationManager.Instance.GetEsMember; } }
+        protected EsMemberModel Member { get { return ApplicationManager.Instance.GetMember; } }
         protected EsUserModel User { get { return ApplicationManager.GetEsUser; } }
 
         protected bool IsInvocieValid
@@ -173,7 +174,7 @@ namespace UserControls.ViewModels.Invoices
         public InvoiceViewModelBase(Guid id)
             : this()
         {
-            Invoice = InvoicesManager.GetInvoice(id, ApplicationManager.Instance.GetEsMember.Id);
+            Invoice = InvoicesManager.GetInvoice(id, ApplicationManager.Instance.GetMember.Id);
             Initialize();
         }
         #endregion Constructors
@@ -182,7 +183,7 @@ namespace UserControls.ViewModels.Invoices
         private void Initialize()
         {
             Title = "Ապրանքագիր";
-            if (Invoice == null) Invoice = new InvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember);
+            if (Invoice == null) Invoice = new InvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember);
             PrintInvoiceCommand = new RelayCommand<PrintModeEnum>(OnPrintInvoice, CanPrintInvoice);
             ImportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnImportInvoice, CanImportInvoice);
             ExportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnExportInvoice, CanExportInvoice);

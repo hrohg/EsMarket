@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
+using ES.Common.Managers;
 using ES.DataAccess.Models;
 using UserControls.Commands;
 
@@ -117,7 +118,7 @@ namespace UserControls.ViewModels
         public AccountingPlanViewModel()
         {
             _accountingPlans = AccountingRecordsManager.GetAccountingPlan();
-            _subAccountingPlans = SubAccountingPlanManager.GetSubAccountingPlanModels(ApplicationManager.Instance.GetEsMember.Id);
+            _subAccountingPlans = SubAccountingPlanManager.GetSubAccountingPlanModels(ApplicationManager.Instance.GetMember.Id);
             SubAccountingPlan = new SubAccountingPlanModel();
             SetCommands();
         }

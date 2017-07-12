@@ -7,13 +7,14 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
-namespace ES.Common.Helpers
+namespace ES.Common.Managers
 {
     public class XmlManager
     {
         #region Extention Method
 
         #endregion
+
         #region Converters
         public static XElement Convert(XmlElement element)
         {
@@ -53,6 +54,7 @@ namespace ES.Common.Helpers
             }
         }
         #endregion
+
         #region Serialize and Deserialize
         public static XmlElement SerializeToXmlElement(object o)
         {
@@ -79,15 +81,16 @@ namespace ES.Common.Helpers
             }
         }
         #endregion
+
         #region Private properties
-        private string _FileName = @"ESLConfig.Xml";
-        private string _FilePath = Application.StartupPath;
+        private readonly string _fileName = @"ESConfig.Xml";
+        private readonly string _filePath = Application.StartupPath;
         #endregion
         #region Public properties
 
         public string GetFilePath
         {
-            get { return string.Format("{0}{1}{2}", _FilePath, @"\", _FileName); }
+            get { return string.Format("{0}{1}{2}", _filePath, @"\", _fileName); }
         }
 
         #endregion
@@ -98,20 +101,20 @@ namespace ES.Common.Helpers
 
         public XmlManager(string fileName)
         {
-            _FileName = fileName;
+            if (!string.IsNullOrEmpty(fileName)) { _fileName = fileName; }
         }
 
         public XmlManager(string filePath, string fileName)
         {
-            _FilePath = filePath;
-            _FileName = fileName;
+            _filePath = filePath;
+            _fileName = fileName;
         }
         #region Public Methods
         public string GetElementInnerText(string element)
         {
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Elements(XmlTagItems.Root);
                 var xEl = root.Descendants().FirstOrDefault(s => s.Name == element);
                 if (xEl != null)
@@ -129,13 +132,13 @@ namespace ES.Common.Helpers
         {
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Elements(XmlTagItems.Root);
                 var xEl = root.Descendants().FirstOrDefault(s => s.Name == element);
                 if (xEl != null)
                 {
                     xEl.Value = value;
-                    xDoc.Save(_FileName);
+                    xDoc.Save(_fileName);
                 }
             }
             catch (Exception)
@@ -148,7 +151,7 @@ namespace ES.Common.Helpers
         {
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Elements(XmlTagItems.Root);
                 var xEl = root.Descendants().FirstOrDefault(s => s.Name == element);
                 if (xEl == null)
@@ -177,7 +180,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Elements(XmlTagItems.Root);
                 var xEl = root.Descendants().FirstOrDefault(s => s.Name == element);
                 if (xEl != null)
@@ -192,7 +195,7 @@ namespace ES.Common.Helpers
                         stock.SetAttributeValue(XmlSettingsItem.MemberProperty, item.Member);
                         xEl.Add(stock);
                     }
-                    xDoc.Save(_FileName);
+                    xDoc.Save(_fileName);
                     return true;
                 }
                 else
@@ -210,7 +213,7 @@ namespace ES.Common.Helpers
         {
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Elements("Settings");
                 var xEl = root.Descendants().FirstOrDefault(s => s.Name == element);
                 if (xEl != null)
@@ -224,7 +227,7 @@ namespace ES.Common.Helpers
                     var stock = new XElement("Stock");
                     stock.SetAttributeValue("Key", 122);
                     xEl.Add(stock);
-                    xDoc.Save(_FileName);
+                    xDoc.Save(_fileName);
                 }
 
                 //root.AppendChild(stocks);
@@ -249,7 +252,7 @@ namespace ES.Common.Helpers
         {
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Elements("Settings");
                 var xEl = root.Descendants().FirstOrDefault(s => s.Name == control);
                 if (xEl != null)
@@ -257,7 +260,7 @@ namespace ES.Common.Helpers
                     var stock = new XElement("Stock");
                     stock.SetAttributeValue("Key", 120);
                     xEl.Add(stock);
-                    xDoc.Save(_FileName);
+                    xDoc.Save(_fileName);
                 }
             }
             catch (Exception)
@@ -274,7 +277,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Elements(XmlTagItems.Root);
                 var xEl = root.Descendants().FirstOrDefault(s => s.Name == element);
                 if (xEl != null)
@@ -289,7 +292,7 @@ namespace ES.Common.Helpers
                         stock.SetAttributeValue(XmlSettingsItem.MemberProperty, item.Member);
                         xEl.Add(stock);
                     }
-                    xDoc.Save(_FileName);
+                    xDoc.Save(_fileName);
                     return true;
                 }
                 else
@@ -312,7 +315,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Element(XmlTagItems.Root);
                 if (root == null)
                 {
@@ -335,7 +338,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Element(XmlTagItems.Root);
                 if (root == null)
                 {
@@ -363,7 +366,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Element(XmlTagItems.Root);
                 if (root == null)
                 {
@@ -392,7 +395,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Element(XmlTagItems.Root);
                 if (root == null)
                 {
@@ -421,7 +424,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Element(XmlTagItems.Root);
                 if (root == null)
                 {
@@ -450,7 +453,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Element(XmlTagItems.Root);
                 if (root == null)
                 {
@@ -479,7 +482,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Element(XmlTagItems.Root);
                 if (root == null)
                 {
@@ -508,7 +511,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Element(XmlTagItems.Root);
                 if (root == null)
                 {
@@ -527,7 +530,7 @@ namespace ES.Common.Helpers
                     el.Remove();
                 }
                 xEl.Add(xElement);
-                xDoc.Save(_FileName);
+                xDoc.Save(_fileName);
                 return true;
             }
             catch (Exception)
@@ -544,7 +547,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Element(XmlTagItems.Root);
                 if (root == null)
                 {
@@ -561,7 +564,7 @@ namespace ES.Common.Helpers
                 if (xEls.All(s => s.Value != xElement.Value))
                 {
                     xEl.Add(xElement);
-                    xDoc.Save(_FileName);
+                    xDoc.Save(_fileName);
                 }
                 return true;
             }
@@ -579,7 +582,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Element(XmlTagItems.Root);
                 if (root == null)
                 {
@@ -595,7 +598,7 @@ namespace ES.Common.Helpers
                 if (el != null)
                 {
                     el.Remove();
-                    xDoc.Save(_FileName);
+                    xDoc.Save(_fileName);
                     return true;
                 }
                 return false;
@@ -614,7 +617,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Element(XmlTagItems.Root);
                 if (root == null)
                 {
@@ -634,7 +637,7 @@ namespace ES.Common.Helpers
                 }
                 xElement.SetAttributeValue("MemberId", memberId);
                 xEl.Add(xElement);
-                xDoc.Save(_FileName);
+                xDoc.Save(_fileName);
                 return true;
             }
             catch (Exception)
@@ -651,7 +654,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Element(XmlTagItems.Root);
                 if (root == null)
                 {
@@ -671,7 +674,7 @@ namespace ES.Common.Helpers
                 }
                 xElement.SetAttributeValue("key", key);
                 xEl.Add(xElement);
-                xDoc.Save(_FileName);
+                xDoc.Save(_fileName);
                 return true;
             }
             catch (Exception)
@@ -688,7 +691,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Elements(XmlTagItems.Root);
                 var xEl = root.Descendants().FirstOrDefault(s => s.Name == element);
                 if (xEl != null)
@@ -702,7 +705,7 @@ namespace ES.Common.Helpers
                         stock.SetAttributeValue(XmlSettingsItem.MemberProperty, item.Member);
                         xEl.Add(stock);
                     }
-                    xDoc.Save(_FileName);
+                    xDoc.Save(_fileName);
                     return true;
                 }
                 else
@@ -724,7 +727,7 @@ namespace ES.Common.Helpers
             }
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var root = xDoc.Element(XmlTagItems.Root);
                 if (root == null)
                 {
@@ -742,7 +745,7 @@ namespace ES.Common.Helpers
                 {
                     el.Remove();
                 }
-                xDoc.Save(_FileName);
+                xDoc.Save(_fileName);
                 return true;
             }
             catch (Exception)
@@ -755,7 +758,7 @@ namespace ES.Common.Helpers
         {
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var rootPath = xDoc.Elements(XmlTagItems.Root);
                 var rootEl = rootPath.Descendants().FirstOrDefault(s => s.Name == root);
                 if (rootEl == null) { return new List<XmlSettingsItem>(); }
@@ -782,7 +785,7 @@ namespace ES.Common.Helpers
         {
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var rootPath = xDoc.Elements(XmlTagItems.Root);
                 var rootEl = rootPath.Descendants().FirstOrDefault(s => s.Name == root);
                 if (rootEl == null) { return new List<XmlSettingsItem>(); }
@@ -814,7 +817,7 @@ namespace ES.Common.Helpers
         {
             try
             {
-                var xDoc = XDocument.Load(_FileName);
+                var xDoc = XDocument.Load(_fileName);
                 var rootPath = xDoc.Elements(XmlTagItems.Root);
                 var rootEl = rootPath.Descendants().FirstOrDefault(s => s.Name == root);
                 if (rootEl == null) { return new List<XmlSettingsItem>(); }
@@ -858,7 +861,7 @@ namespace ES.Common.Helpers
             XmlSerializer serializer = new XmlSerializer(o.GetType());
 
             // Create a new StreamWriter
-            
+
             TextWriter writer = new StreamWriter(filePath);
 
             // Serialize the file
@@ -871,7 +874,7 @@ namespace ES.Common.Helpers
 
         public static T Read<T>(String path)
         {
-            var data = Read(path, typeof (T));
+            var data = Read(path, typeof(T));
             return (T)data;
         }
 
@@ -914,7 +917,7 @@ namespace ES.Common.Helpers
         /// Settings
         /// </summary>
         public const string Root = "Settings";
-        public const string Users = "Users";
+        
         public const string Login = "Login";
         public const string Logins = "Logins";
         public const string LocalMode = "LocalMode";

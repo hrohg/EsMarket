@@ -24,12 +24,12 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0"  Orientation="Horizontal" HorizontalAlignment="Right" Margin="1">
-                            <Label HorizontalContentAlignment="Right" Width="100" Content="Պատվիրատու"/>
-                            <ComboBox Width="200" ItemsSource="{Binding PartnersTypes}" SelectedValue="{Binding Partner.PartnersTypeId}" 
+                            <Label HorizontalContentAlignment="Right" Width="100" Content="Պատվիրատուի խումբ"/>
+                            <ComboBox Width="200" ItemsSource="{Binding PartnersTypes}" SelectedValue="{Binding Partner.PartnersTypeId}"
                         DisplayMemberPath="Description" SelectedValuePath="Id"/>
                         </StackPanel>
                         <StackPanel Grid.Row="1"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <Label HorizontalContentAlignment="Right" Width="100" Content="Club 16 ID"/>
+                            <Label HorizontalContentAlignment="Right" Width="100" Content="ID"/>
                             <TextBox Width="230" Text="{Binding Partner.ClubSixteenId}" Height="25" HorizontalContentAlignment="Center"/>
                             <Button Width="68" Content="Հարցում" Margin="1" IsEnabled="False" VerticalContentAlignment="Center"/>
                         </StackPanel>

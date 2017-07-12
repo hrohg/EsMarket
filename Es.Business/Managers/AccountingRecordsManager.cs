@@ -4,7 +4,9 @@ using System.Linq;
 using System.Transactions;
 using ES.Business.Helpers;
 using ES.Business.Models;
+using ES.Common.Managers;
 using ES.DataAccess.Models;
+using Microsoft.Office.Interop.Excel;
 
 namespace ES.Business.Managers
 {
@@ -154,7 +156,9 @@ namespace ES.Business.Managers
                     return "Տրված ընթացիկ կանխավճարներ";
                     break;
                 case (long)AccountingPlan.CashDesk:
-                    return CashDeskManager.GetCashDesk(guidId, ApplicationManager.Instance.GetEsMember.Id).Name;
+                    if (guidId == null) return "Անհայտ դրամարկղ";
+                    var cashDesk = CashDeskManager.GetCashDesk(guidId.Value);
+                    return cashDesk!=null? cashDesk.Name:"Անհայտ դրամարկղ";
                     break;
                 case (long)AccountingPlan.Accounts:
                     return "Հաշվարկային հաշիվ";

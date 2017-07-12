@@ -1,33 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common;
-using ES.Common.Helpers;
 using ES.Data.Enumerations;
 using ES.Data.Model;
 using ES.Data.Models;
-using ES.Common;
+using ES.Common.Managers;
+using ES.Common.Models;
 using ES.DataAccess.Models;
 using UserControls.Controls;
 using UserControls.ViewModels;
+using ItemsToSelectByCheck = UserControls.Controls.ItemsToSelectByCheck;
 using ProductModel = ES.Business.Models.ProductModel;
+using SelectItemsByCheck = UserControls.Controls.SelectItemsByCheck;
 
 namespace UserControls.Helpers
 {
     public class SelectItemsManager
     {
-        public static DataServer SelectServer(List<DataServer> servers = null)
+        public static List<DataServer> SelectServers(List<DataServer> servers = null)
         {
             if (servers == null)
             {
-                servers = ConfigSettings.GetDataServers();
-            }
-            if (servers.Count < 2) { return servers.FirstOrDefault(); }
+                servers = DataServerSettings.GetDataServers();
+             }
+            if (servers.Count < 2) { return servers; }
             var selectItem = new SelectItems(servers.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1})", s.Description, s.Name), SelectedValue = s.Name }).ToList(), false, "Ընտրել սերվեր");
             if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return null; }
-            return servers.FirstOrDefault(s => selectItem.SelectedItems.Select(t => t.SelectedValue).Contains(s.Name));
+            return servers.Where(s => selectItem.SelectedItems.Select(t => t.SelectedValue).Contains(s.Name)).ToList();
         }
         public static List<XmlSettingsItem> SelectServer(List<XmlSettingsItem> servers)
         {
@@ -48,7 +51,7 @@ namespace UserControls.Helpers
         }
         public static List<PartnerModel> SelectPartners(bool allowMultipleSelect = false, string title = "Ընտրել")
         {
-            var partners = PartnersManager.GetPartners(ApplicationManager.Instance.GetEsMember.Id);
+            var partners = PartnersManager.GetPartners(ApplicationManager.Instance.GetMember.Id);
             if (partners == null || partners.Count == 0) return new List<PartnerModel>();
             if (partners.Count == 1) { return partners; }
             var selectItem = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), allowMultipleSelect, title);
@@ -57,7 +60,7 @@ namespace UserControls.Helpers
         }
         public static List<PartnerType> SelectPartnersTypes(bool allowMultipleSelect = false, string title = "Ընտրել")
         {
-            var partnerTypes = PartnersManager.GetPartnersTypes(ApplicationManager.Instance.GetEsMember.Id);
+            var partnerTypes = PartnersManager.GetPartnersTypes(ApplicationManager.Instance.GetMember.Id);
             if (partnerTypes == null || partnerTypes.Count == 0) return new List<PartnerType>();
             if (partnerTypes.Count == 1) { return partnerTypes.Select(s => (PartnerType)s.Id).ToList(); }
             var selectItem = new SelectItems(partnerTypes.Select(s => new ItemsToSelect { DisplayName = s.Description, SelectedValue = s.Id }).ToList(), allowMultipleSelect, title);
@@ -83,11 +86,10 @@ namespace UserControls.Helpers
             }
             return new List<EsMemberModel>();
         }
-        public static List<CashDesk> SelectDefaultCashDesks(bool? isCash, bool allowMultipleChoise, string title)
+        public static List<CashDesk> SelectDefaultSaleCashDesks(bool? isCash, bool allowMultipleChoise, string title)
         {
-            var cashDesks = CashDeskManager.GetDefaultCashDesks(isCash).ToList();
-            if (cashDesks.Count == 0) return new List<CashDesk>();
-            if (cashDesks.Count == 1) return cashDesks;
+            var cashDesks = isCash.HasValue && isCash.Value ? SelectCashDesks(ApplicationManager.Settings.MemberSettings.SaleCashDesks): SelectCashDesks(ApplicationManager.Settings.MemberSettings.SaleBankAccounts);
+            if (cashDesks.Count < 2) return cashDesks;
             var ui = new SelectItems(cashDesks.Select(s => new ItemsToSelect { DisplayName = s.Name, SelectedValue = s.Id }).ToList(), allowMultipleChoise, title);
             if (ui.ShowDialog() == true && ui.SelectedItems != null)
             {
@@ -97,7 +99,19 @@ namespace UserControls.Helpers
         }
         public static List<CashDesk> SelectCashDesks(bool? isCash, long memberId, bool allowMultipleChoise, string title)
         {
-            var cashDesks = CashDeskManager.TryGetCashDesk(isCash, memberId);
+            var cashDesks = CashDeskManager.GetCashDesks(isCash);
+            if (cashDesks == null || cashDesks.Count == 0) return new List<CashDesk>();
+            if (cashDesks.Count == 1) return cashDesks;
+            var ui = new SelectItems(cashDesks.Select(s => new ItemsToSelect { DisplayName = s.Name, SelectedValue = s.Id }).ToList(), allowMultipleChoise, title);
+            if (ui.ShowDialog() == true && ui.SelectedItems != null)
+            {
+                return cashDesks.Where(s => ui.SelectedItems.Select(t => (Guid)t.SelectedValue).Contains(s.Id)).ToList();
+            }
+            return new List<CashDesk>();
+        }
+        public static List<CashDesk> SelectCashDesks(List<Guid> ids, bool allowMultipleChoise=false, string title = "Ընտրել դրամարկղ")
+        {
+            var cashDesks = CashDeskManager.GetCashDesks(ids);
             if (cashDesks == null || cashDesks.Count == 0) return new List<CashDesk>();
             if (cashDesks.Count == 1) return cashDesks;
             var ui = new SelectItems(cashDesks.Select(s => new ItemsToSelect { DisplayName = s.Name, SelectedValue = s.Id }).ToList(), allowMultipleChoise, title);

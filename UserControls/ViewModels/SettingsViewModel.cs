@@ -1,285 +1,295 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Management;
 using System.Threading;
-using System.Windows.Forms;
+using System.Windows;
 using System.Windows.Input;
 using CashReg;
 using CashReg.Helper;
+using CashReg.Interfaces;
 using ES.Business.Helpers;
 using ES.Business.Managers;
-using ES.Business.Models;
-using ES.Common;
+using ES.Common.Enumerations;
 using ES.Common.Helpers;
+using ES.Common.Managers;
+using ES.Common.Models;
 using ES.Common.ViewModels.Base;
-using UserControls.Commands;
-using Application = System.Windows.Application;
 
 namespace UserControls.ViewModels
 {
     public class SettingsViewModel : DocumentViewModel
     {
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName)
+        #region Internal properties
+
+        #region Settings
+        private SettingsContainer _settings;
+        private SettingsContainer Settings
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
+            get
             {
-                handler(this, new PropertyChangedEventArgs(propertyName));
+                return _settings ?? (_settings = new SettingsContainer());
             }
         }
-        #endregion
+        #endregion Settings
 
-        #region Properties
+        #endregion Internal properties
 
-        private const string SaleBySingleProperty = "SaleBySingle";
-        private const string BuyBySingleProperty = "BuyBySingel";
-        /// <summary>
-        /// Other
-        /// </summary>
-        private const string OfflineModeProperty = "OfflineMode";
-        #endregion
+        #region External properties
 
-        #region Private properties
-        private long _memberId;
-        private List<ItemsForChoose> _stocks;
-        private List<ItemsForChoose> _cashDesks;
-        private bool _saleBySingle = false;
-        private bool _buyBySingle = false;
-        private bool _offlineMode = false;
+        #region IsInProgress
         private bool _isInProgress;
-        #endregion
+        public bool IsInProgress
+        {
+            get { return _isInProgress; }
+            set { if (_isInProgress == value) return; _isInProgress = value; RaisePropertyChanged("IsInProgress"); }
+        }
+        #endregion IsIngrogress
 
-        #region Public Properties
-        public string Title { get; set; }
-        public bool IsLoading { get { return _isInProgress; } set { if (_isInProgress == value) return; _isInProgress = value; OnPropertyChanged("IsLoading"); } }
-        public string Description { get; set; }
-        public bool IsModified { get; set; }
-        public bool IsInProgress { get { return _isInProgress; } set { if (_isInProgress == value) return; _isInProgress = value; OnPropertyChanged("IsInProgress"); } }
-        public List<ItemsForChoose> Stocks { get { return _stocks; } }
-        public List<ItemsForChoose> CashDesks { get { return _cashDesks; } }
-        public bool SaleBySingle { get { return _saleBySingle; } set { _saleBySingle = value; OnPropertyChanged(SaleBySingleProperty); } }
-        public bool BuyBySingle { get { return _buyBySingle; } set { _buyBySingle = value; OnPropertyChanged(BuyBySingleProperty); } }
-        public bool LocalMode { get { return _offlineMode; } set { _offlineMode = value; OnPropertyChanged(OfflineModeProperty); } }
-        /// <summary>
-        /// Printers
-        /// </summary>
-        /// <param name="memberId"></param>
-        public string SalePrinter { get; set; }
-        public ObservableCollection<ItemsForChoose> SalePrinters { get; set; }
-        public string BarcodePrinter { get; set; }
-        public ObservableCollection<ItemsForChoose> BarcodePrinters { get; set; }
-        /// <summary>
-        /// ECR
-        /// </summary>
+        public bool HasBankAccounts { get { return ApplicationManager.CashManager.GetBankAccounts.Any(); } }
+
+        #region Member settings
+
+        #region General
+
+        #region Barcode printer
+        private List<ItemsForChoose> _lablePrinters;
+        public List<ItemsForChoose> LablePrinters
+        {
+            get { return _lablePrinters ?? new List<ItemsForChoose>(); }
+            set
+            {
+                _lablePrinters = value;
+            }
+        }
+        #endregion Barcode printers
+
+        #region Is work in offline mode
+        public bool LocalMode { get { return _settings.MemberSettings.IsOfflineMode; } set { _settings.MemberSettings.IsOfflineMode = value; RaisePropertyChanged("OfflineMode"); } }
+        #endregion Is work in offline mode
+
+        #endregion General
+
+        #region Sale
+
+        #region Sale stocks
+        private List<ItemsForChoose> _saleStocks;
+        public List<ItemsForChoose> SaleStocks
+        {
+            get
+            {
+                return _saleStocks ?? (_saleStocks = ApplicationManager.CashManager.GetStocks.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.ActiveSaleStocks.Contains(s.Id)) }).ToList());
+            }
+        }
+        #endregion Sale stocks
+
+        #region Sale cash desks
+        private List<ItemsForChoose> _saleCashDesks;
+        public List<ItemsForChoose> SaleCashDesks
+        {
+            get { return _saleCashDesks ?? (_saleCashDesks = ApplicationManager.CashManager.GetCashDesk.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.SaleCashDesks.Contains(s.Id)) }).ToList()); }
+        }
+        #endregion Sale cash desks
+
+        #region Sale bank accounts
+        private List<ItemsForChoose> _saleBankAccounts;
+        public List<ItemsForChoose> SaleBankAccounts
+        {
+            get { return _saleBankAccounts ?? (_saleBankAccounts = ApplicationManager.CashManager.GetBankAccounts.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.SaleBankAccounts.Contains(s.Id)) }).ToList()); }
+        }
+        #endregion Sale bank accounts
+
+        #region Sale printer
+        private List<ItemsForChoose> _salePrinters;
+        public List<ItemsForChoose> SalePrinters
+        {
+            get
+            {
+                return _salePrinters ?? (_salePrinters = new List<ItemsForChoose>());
+            }
+            set { _salePrinters = value; }
+        }
+        #endregion Sale printer
+
+        public bool SaleBySingle { get { return Settings.MemberSettings.SaleBySingle; } set { Settings.MemberSettings.SaleBySingle = value; RaisePropertyChanged("SaleBySingle"); } }
+        public bool IsPrintSaleTicket { get { return Settings.MemberSettings.IsPrintSaleTicket; } set { Settings.MemberSettings.IsPrintSaleTicket = value; RaisePropertyChanged("IsPrintSaleTicket"); } }
+        
+
+        #endregion Sale
+
+        #region Purchase
+
+        #region Purchase strocks
+        private List<ItemsForChoose> _purchaseStocks;
+        public List<ItemsForChoose> PurchaseStocks
+        {
+            get
+            {
+                return _purchaseStocks ?? (_purchaseStocks = ApplicationManager.CashManager.GetStocks.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.ActivePurchaseStocks.Contains(s.Id)) }).ToList());
+            }
+        }
+        #endregion Purchase stocks
+
+        #region Purchase cash desks
+        private List<ItemsForChoose> _purchaseCashDesks;
+        public List<ItemsForChoose> PurchaseCashDesks
+        {
+            get { return _purchaseCashDesks ?? (_purchaseCashDesks = ApplicationManager.CashManager.GetCashDesk.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.PurchaseCashDesks.Contains(s.Id)) }).ToList()); }
+        }
+        #endregion Purchase cash desks
+
+        #region Purchase bank accounts
+        private List<ItemsForChoose> _purchaseBankAccounts;
+        public List<ItemsForChoose> PurchaseBankAccounts
+        {
+            get { return _purchaseBankAccounts ?? (_purchaseBankAccounts = ApplicationManager.CashManager.GetBankAccounts.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.PurchaseBankAccounts.Contains(s.Id)) }).ToList()); }
+        }
+        #endregion Purchase bank accounts
+
+        public bool PurchaseBySingle { get { return Settings.MemberSettings.PurchaseBySingle; } set { Settings.MemberSettings.PurchaseBySingle = value; RaisePropertyChanged("PurchaseBySingle"); } }
+        #endregion Purchase
+
         #region ECR settings
-        public EcrConfig EcrConfig { get; set; }
+        //public EcrSettings EcrSettings { get; set; }
+        public EcrConfig EcrSettings { get { return Settings.MemberSettings.EcrConfig; } }
+
         public bool CanActivateEcr
         {
             get
             {
-                var canActivateEcr = EcrConfig != null && !string.IsNullOrEmpty(EcrConfig.EcrSettings.Ip) && EcrConfig.EcrSettings.Port > 0 &&
-                       !string.IsNullOrEmpty(EcrConfig.EcrSettings.Password) &&
-                       EcrConfig.EcrSettings.EcrCashier != null && EcrConfig.EcrSettings.EcrCashier.Cashier > 0 && !string.IsNullOrEmpty(EcrConfig.EcrSettings.EcrCashier.Pin) &&
-                       EcrConfig.EcrSettings.CashierDepartment != null;
-                if (!canActivateEcr && EcrConfig != null)
+                var canActivateEcr = EcrSettings != null && !string.IsNullOrEmpty(EcrSettings.Ip) && EcrSettings.Port > 0 &&
+                       !string.IsNullOrEmpty(EcrSettings.Password) &&
+                       EcrSettings.EcrCashier != null && EcrSettings.EcrCashier.Cashier > 0 && !string.IsNullOrEmpty(EcrSettings.EcrCashier.Pin) &&
+                       EcrSettings.CashierDepartment != null;
+                if (!canActivateEcr && EcrSettings != null)
                 {
-                    EcrConfig.IsActive = false;
-                    OnPropertyChanged("IsEcrActivated");
+                    EcrSettings.IsActive = false;
+                    RaisePropertyChanged("IsEcrActive");
                 }
                 return canActivateEcr;
             }
         }
-        #endregion
-        #endregion
-        public SettingsViewModel(long memberId)
+        #endregion ECR settings
+
+        #endregion Member Settings
+
+        #region General settings
+
+        
+        #endregion Destop settings
+
+        #endregion External properties
+
+        #region Constructors
+        public SettingsViewModel()
+        {
+            Initialize();
+        }
+        #endregion Constructors
+
+        #region Internal methods
+
+        private void Initialize()
         {
             Title = "Կարգաբերումներ";
-            _memberId = memberId;
             LoadProperties();
-            SetCommands();
         }
-        #region Private methods
         #region Settings
-        private bool CanSetDefaultSettings(object o)
-        {
-            return true;
-        }
-        private void OnSetDefaultSettings(object o)
-        {
-            MessageModel message;
-            var xml = new XmlManager();
-            if (!xml.SetElementInnerText(SaleBySingle.ToString(), XmlTagItems.SaleBySingle))
-            {
-                message = new MessageModel("Վաճառքի կարգաբերումներ խմբագրումը ձախողվել է:", MessageModel.MessageTypeEnum.Warning);
-            }
-            else
-            {
-                ApplicationManager.SaleBySingle = SaleBySingle;
-                message = new MessageModel("Վաճառքի կարգաբերումներ խմբագրումն իրականացվել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success);
-            }
-            ApplicationManager.MessageManager.OnNewMessage(message);
-            if (!xml.SetElementInnerText(BuyBySingle.ToString(), XmlTagItems.BuyBySingle))
-            {
-                message = new MessageModel("Գնման կարգաբերումներ խմբագրումը ձախողվել է:", MessageModel.MessageTypeEnum.Warning);
-            }
-            else
-            {
-                ApplicationManager.BuyBySingle = BuyBySingle;
-                message = new MessageModel("Գնման կարգաբերումներ խմբագրումն իրականացվել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success);
-            }
-            ApplicationManager.MessageManager.OnNewMessage(message);
-
-        }
         #endregion
         private void LoadProperties()
         {
-            var xml = new XmlManager();
-            List<XmlSettingsItem> selected;
-            selected = xml.GetItemsByControl(XmlTagItems.SaleStocks);
-            _stocks = StockManager.GetStocks(_memberId).Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (selected.SingleOrDefault(t => t.Value.ToString() == s.Id.ToString()) != null) }).ToList();
-            selected = xml.GetItemsByControl(XmlTagItems.SaleCashDesks);
-            _cashDesks = CashDeskManager.TryGetCashDesk(_memberId, true).
-            Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (selected.SingleOrDefault(t => t.Value.ToString() == s.Id.ToString()) != null) }).ToList();
-            SaleBySingle = HgConvert.ToBoolean(xml.GetElementInnerText(XmlTagItems.SaleBySingle));
-            BuyBySingle = HgConvert.ToBoolean(xml.GetElementInnerText(XmlTagItems.BuyBySingle));
-            LocalMode = HgConvert.ToBoolean(xml.GetElementInnerText(XmlTagItems.LocalMode));
-            //Ecr Settings
-            var ecrConfig = ConfigSettings.GetEcrConfig();
-            EcrConfig = ecrConfig ?? new EcrConfig();
-            if (EcrConfig.EcrSettings != null && EcrConfig.EcrSettings.CashierDepartment != null)
-            {
-                EcrConfig.EcrSettings.CashierDepartment = EcrConfig.EcrSettings.TypeOfOperatorDeps.FirstOrDefault(s => s.Id == EcrConfig.EcrSettings.CashierDepartment.Id);
-            }
-            EcrConfig.IsActive = ecrConfig != null && ecrConfig.IsActive;
-            //Printers
-            SalePrinter = ApplicationManager.SalePrinter;
-            BarcodePrinter = ApplicationManager.BarcodePrinter;
+            Settings.MemberSettings = MemberSettings.GetSettings(ApplicationManager.Member.Id);
 
+            //Ecr Settings
+            //var ecrConfig = ConfigSettings.GetEcrConfig();
+            //EcrModel = ApplicationManager.Settings.MemberSettings.EcrModel; //ecrConfig ?? new EcrConfig();
+            if (EcrSettings.CashierDepartment != null)
+            {
+                EcrSettings.CashierDepartment = EcrSettings.TypeOfOperatorDeps.FirstOrDefault(s => s.Id == EcrSettings.CashierDepartment.Id);
+            }
+            //EcrSettings.IsActive = ecrConfig != null && ecrConfig.IsActive ApplicationManager.Settings.MemberSettings.IsEcrActivated;
+            //Printers
             var printerQuery = new ManagementObjectSearcher("SELECT * from Win32_Printer");
-            SalePrinters = new ObservableCollection<ItemsForChoose>();
-            BarcodePrinters = new ObservableCollection<ItemsForChoose>();
+
+            LablePrinters = new List<ItemsForChoose>();
+            SalePrinters = new List<ItemsForChoose>();
             foreach (var printer in printerQuery.Get())
             {
                 var name = printer.GetPropertyValue("Name");
                 var status = printer.GetPropertyValue("Status");
                 var isDefault = printer.GetPropertyValue("Default");
-                var isNetworkPrinter = printer.GetPropertyValue("Network");
+                //var isNetworkPrinter = printer.GetPropertyValue("Network");
                 SalePrinters.Add(new ItemsForChoose()
                 {
                     Data = string.Format("{0} Status:{1}{2}", name, status, isDefault is bool && (bool)isDefault ? " (Default)" : ""),
                     Value = name,
-                    IsChecked = string.Equals(name, SalePrinter)
+                    IsChecked = string.Equals(name, Settings.MemberSettings.ActiveSalePrinter)
                 });
-                BarcodePrinters.Add(new ItemsForChoose()
+                LablePrinters.Add(new ItemsForChoose()
                 {
                     Data = string.Format("{0} Status:{1}{2}", name, status, isDefault is bool && (bool)isDefault ? " (Default)" : ""),
                     Value = name,
-                    IsChecked = string.Equals(name, BarcodePrinter)
+                    IsChecked = string.Equals(name, Settings.MemberSettings.ActiveLablePrinter)
                 });
             }
-
-        }
-        private void SetCommands()
-        {
-            SetSaleFromStockCommand = new SetSaleFromStock(this);
-            SetCashDeskCommand = new SetCashDesk(this);
-            SetApplicationSettingsCommand = new SetApplicationSettings(this);
         }
 
-        private void ExecuteEcrAction(EcrExecuiteActions actionMode)
-        {
-            IsInProgress = true;
-            var ecrserver = new EcrServer(EcrConfig.EcrSettings);
-            MessageModel message = null;
-            switch (actionMode)
-            {
-                case EcrExecuiteActions.CheckConnection:
-                    message = ecrserver.TryConnection() ? new MessageModel("Կապի ստուգումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageModel.MessageTypeEnum.Warning);
-                    break;
-                case EcrExecuiteActions.OperatorLogin:
-                    message = ecrserver.TryOperatorLogin() ? new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success)
-                        : new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageTypeEnum.Warning);
-                    break;
-                case EcrExecuiteActions.GetOperatorsAndDepList:
-                    var operatorDeps = ecrserver.GetUsersDepsList();
-                    if (operatorDeps == null)
-                    {
-                        message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageTypeEnum.Warning);
-                    }
-                    else
-                    {
-                        EcrConfig.EcrSettings.TypeOfOperatorDeps = operatorDeps.d;
-                        EcrConfig.EcrSettings.CashierDepartment = EcrConfig.EcrSettings.TypeOfOperatorDeps.FirstOrDefault();
-                        OnPropertyChanged("EcrSettings");
-                        message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success);
-                    }
-                    break;
-                case EcrExecuiteActions.CheckEcrConnection:
-                    message = ecrserver.TryEcrConnection() ? new MessageModel("ՀԴՄ կապի ստուգումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageModel.MessageTypeEnum.Warning);
-                    break;
-                case EcrExecuiteActions.Zero:
-                    break;
-                case EcrExecuiteActions.LogoutOperator:
-                    break;
-                case EcrExecuiteActions.PrintReceiptTicket:
-                    break;
-                case EcrExecuiteActions.PrintLatestTicket:
-                    break;
-                case EcrExecuiteActions.PrintReturnTicket:
-                    break;
-                case EcrExecuiteActions.PrintEcrReport:
-                    break;
-                case EcrExecuiteActions.PrintReportX:
-                    break;
-                case EcrExecuiteActions.PrintReportZ:
-                    break;
-                case EcrExecuiteActions.ManageHeaderAndFooter:
-                    break;
-                case EcrExecuiteActions.ManageLogo:
-                    break;
-                default:
-                    message = null;
-                    break;
-            }
-            if (message != null)
-            {
-                if (Application.Current != null)
-                {
-                    Application.Current.Dispatcher.Invoke(new Action(() => ApplicationManager.MessageManager.OnNewMessage(message)));
-                }
-            }
-            IsInProgress = false;
-        }
+        #endregion Internal methods
 
-        private void OnSaveEcrSettings(object o)
+        #region External methods
+
+        #endregion External methods
+
+        #region Commands
+
+        #region Save command
+        private ICommand _saveCommand;
+        public ICommand SaveCommand { get { return _saveCommand ?? (_saveCommand = new RelayCommand(OnSave)); } }
+        private void OnSave(object obj)
         {
-            if (ConfigSettings.SetEcrConfig(XmlTagItems.Ecr, EcrConfig))
+            //General
+            _settings.MemberSettings.ActiveLablePrinter = LablePrinters.Where(s => s.IsChecked).Select(s => (string)s.Value).SingleOrDefault();
+
+            //Sale
+            _settings.MemberSettings.ActiveSaleStocks = SaleStocks.Where(s => s.IsChecked).Select(s => (long)s.Value).ToList();
+            _settings.MemberSettings.SaleCashDesks = SaleCashDesks.Where(s => s.IsChecked).Select(s => (Guid)s.Value).ToList();
+            _settings.MemberSettings.SaleBankAccounts = SaleBankAccounts.Where(s => s.IsChecked).Select(s => (Guid)s.Value).ToList();
+            _settings.MemberSettings.ActiveSalePrinter = SalePrinters.Where(s => s.IsChecked).Select(s => (string)s.Value).SingleOrDefault();
+
+            //Purchase
+            _settings.MemberSettings.ActivePurchaseStocks = PurchaseStocks.Where(s => s.IsChecked).Select(s => (long)s.Value).ToList();
+            _settings.MemberSettings.PurchaseCashDesks = PurchaseCashDesks.Where(s => s.IsChecked).Select(s => (Guid)s.Value).ToList();
+            _settings.MemberSettings.PurchaseBankAccounts = PurchaseBankAccounts.Where(s => s.IsChecked).Select(s => (Guid)s.Value).ToList();
+
+            //Logins
+            
+            //Ecr
+            
+            if (Settings.Save())
             {
-                ApplicationManager.EcrSettings = EcrConfig.EcrSettings;
-                ApplicationManager.IsEcrActivated = EcrConfig.IsActive;
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("ՀԴՄ -ի գրանցումն իրականացել է հաջողությամբ։", MessageModel.MessageTypeEnum.Success));
+                Settings.LoadMemberSettings();
+                MessageManager.OnMessage("Կարգավորումների գրանցումն իրականացել է հաջողությամբ:");
             }
             else
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("ՀԴՄ-ի գրանցումը ձախողվել է։", MessageModel.MessageTypeEnum.Warning));
+                MessageManager.OnMessage("Կարգավորումների գրանցումը ձախողվել է:", MessageTypeEnum.Warning);
             }
         }
+        #endregion Save command
+
+        #region Ecr commands
+        public ICommand ExecuteEcrActionCommand { get { return new RelayCommand<EcrExecuiteActions>(OnExecuteEcrAction, CanExecuteEcrAction); } }
         private bool CanExecuteEcrAction(EcrExecuiteActions actionMode)
         {
             switch (actionMode)
             {
                 case EcrExecuiteActions.CheckConnection:
-                    return EcrConfig.EcrSettings != null && !string.IsNullOrEmpty(EcrConfig.EcrSettings.Ip) && EcrConfig.EcrSettings.Port != null;
+                    return EcrSettings != null && !string.IsNullOrEmpty(EcrSettings.Ip) && EcrSettings.Port != null;
                 case EcrExecuiteActions.OperatorLogin:
                 case EcrExecuiteActions.GetOperatorsAndDepList:
-                    return EcrConfig.EcrSettings != null && !string.IsNullOrEmpty(EcrConfig.EcrSettings.Ip) && EcrConfig.EcrSettings.Port != null && EcrConfig.EcrSettings.EcrCashier != null && !string.IsNullOrEmpty(EcrConfig.EcrSettings.EcrCashier.Pin);
+                    return EcrSettings != null && !string.IsNullOrEmpty(EcrSettings.Ip) && EcrSettings.Port != null && EcrSettings.EcrCashier != null && !string.IsNullOrEmpty(EcrSettings.EcrCashier.Pin);
                 case EcrExecuiteActions.CheckEcrConnection:
-                    return EcrConfig.IsActive && EcrConfig.EcrServiceSettings.IsActive && !string.IsNullOrEmpty(EcrConfig.EcrServiceSettings.Ip) && EcrConfig.EcrServiceSettings.Port > 0;
+                    return EcrSettings.IsActive && EcrSettings.EcrServiceSettings.IsActive && !string.IsNullOrEmpty(EcrSettings.EcrServiceSettings.Ip) && EcrSettings.EcrServiceSettings.Port > 0;
                 case EcrExecuiteActions.Zero:
                     break;
                 case EcrExecuiteActions.LogoutOperator:
@@ -314,98 +324,95 @@ namespace UserControls.ViewModels
             var td = new Thread(() => ExecuteEcrAction(o));
             td.Start();
         }
-        #endregion
+        private void ExecuteEcrAction(EcrExecuiteActions actionMode)
+        {
+            IsInProgress = true;
+            var ecrserver = new EcrServer(EcrSettings);
+            MessageModel message = null;
+            if (actionMode == EcrExecuiteActions.CheckConnection)
+            {
+                message = ecrserver.TryConnection()
+                    ? new MessageModel("Կապի ստուգումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success)
+                    : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageTypeEnum.Warning);
+            }
+            else if (actionMode == EcrExecuiteActions.OperatorLogin)
+            {
+                message = ecrserver.TryOperatorLogin()
+                    ? new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումն իրականացել է հաջողությամբ:",
+                        MessageTypeEnum.Success)
+                    : new MessageModel(
+                        "ՀԴՄ օպերատորի մուտքի ստուգումը ձախողվել է:" +
+                        string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode),
+                        MessageTypeEnum.Warning);
+            }
+            else if (actionMode == EcrExecuiteActions.GetOperatorsAndDepList)
+            {
+                var operatorDeps = ecrserver.GetUsersDepsList();
+                if (operatorDeps == null)
+                {
+                    message =
+                        new MessageModel(
+                            "ՀԴՄ օպերատորի բաժինների ստացումը ձախողվել է:" +
+                            string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode),
+                            MessageTypeEnum.Warning);
+                }
+                else
+                {
+                    EcrSettings.TypeOfOperatorDeps = operatorDeps.d.Select(s=>(Department)s).ToList();
+                    EcrSettings.CashierDepartment = EcrSettings.TypeOfOperatorDeps.FirstOrDefault();
+                    RaisePropertyChanged("EcrSettings");
+                    message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումն իրականացել է հաջողությամբ:",
+                        MessageTypeEnum.Success);
+                }
+            }
+            else if (actionMode == EcrExecuiteActions.CheckEcrConnection)
+            {
+                message = ecrserver.TryEcrConnection()
+                    ? new MessageModel("ՀԴՄ կապի ստուգումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success)
+                    : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageTypeEnum.Warning);
+            }
+            else if (actionMode == EcrExecuiteActions.Zero)
+            {
+            }
+            else if (actionMode == EcrExecuiteActions.LogoutOperator)
+            {
+            }
+            else if (actionMode == EcrExecuiteActions.PrintReceiptTicket)
+            {
+            }
+            else if (actionMode == EcrExecuiteActions.PrintLatestTicket)
+            {
+            }
+            else if (actionMode == EcrExecuiteActions.PrintReturnTicket)
+            {
+            }
+            else if (actionMode == EcrExecuiteActions.PrintEcrReport)
+            {
+            }
+            else if (actionMode == EcrExecuiteActions.PrintReportX)
+            {
+            }
+            else if (actionMode == EcrExecuiteActions.PrintReportZ)
+            {
+            }
+            else if (actionMode == EcrExecuiteActions.ManageHeaderAndFooter)
+            {
+            }
+            else if (actionMode == EcrExecuiteActions.ManageLogo)
+            {
+            }
+            if (message != null)
+            {
+                if (Application.Current != null)
+                {
+                    Application.Current.Dispatcher.Invoke(new Action(() => MessageManager.OnMessage(message)));
+                }
+            }
+            IsInProgress = false;
+        }
+        #endregion Ecr commands
 
-        #region Public methods
-        public bool CanSetSaleFromStock()
-        {
-            return (Stocks != null && Stocks.Count > 0);
-        }
-        public void SetSaleFromStock()
-        {
-            var xml = new XmlManager();
-            if (xml.SetStockItemsByControl(Stocks.Where(s => s.IsChecked)
-                        .Select(s => new XmlSettingsItem { Key = XmlTagItems.Store, Data = s.Data, Value = s.Value, Member = _memberId })
-                        .ToList(), XmlTagItems.SaleStocks))
-            {
-                MessageBox.Show("Գրանցումն իրականացվել է հաջողությամբ։");
-            }
-            else
-            {
-                MessageBox.Show("Գրանցման ժամանակ տեղի է ունեցել սխալ։", "Գրանցման սխալ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-        }
-        public bool CanSetChashDesk()
-        {
-            return (CashDesks != null && CashDesks.Count > 0);
-        }
-        public void SetCashDesk()
-        {
-            var xml = new XmlManager();
-            if (xml.SetStockItemsByControl(
-                    CashDesks.Where(s => s.IsChecked)
-                        .Select(s => new XmlSettingsItem { Key = XmlTagItems.CashDesk, Data = s.Data, Value = s.Value, Member = _memberId })
-                        .ToList(), XmlTagItems.SaleCashDesks))
-            {
-                MessageBox.Show("Գրանցումն իրականացվել է հաջողությամբ։");
-            }
-            else
-            {
-                MessageBox.Show("Գրանցման ժամանակ տեղի է ունեցել սխալ։", "Գրանցման սխալ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-        }
-        public bool CanSetApplicationSettings()
-        {
-            return true;
-        }
+        #endregion Commands
 
-        public void SetApplicationSettiongs()
-        {
-            var xml = new XmlManager();
-            if (!xml.SetElementInnerText(LocalMode.ToString(), XmlTagItems.LocalMode))
-            {
-                MessageBox.Show("Գրանցման ժամանակ տեղի է ունեցել սխալ։", "Գրանցման սխալ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            ApplicationManager.LocalMode = LocalMode;
-        }
-        public void OnSetPrinters()
-        {
-            var xml = new XmlManager();
-            var salePrinter = SalePrinters.FirstOrDefault(s => s.IsChecked);
-            var barcodePrinter = BarcodePrinters.FirstOrDefault(s => s.IsChecked);
-
-            if (xml.SetElementInnerText(salePrinter != null ? salePrinter.Value.ToString() : "", XmlTagItems.SalePrinter))
-            {
-                ApplicationManager.SalePrinter = salePrinter != null ? (string)salePrinter.Value : string.Empty;
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Վաճառքի տպիչի գրանցում:", MessageModel.MessageTypeEnum.Success));
-            }
-            else
-            {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Վաճառքի տպիչի գրանցման ձախողում:", MessageModel.MessageTypeEnum.Warning));
-            }
-
-            if (xml.SetElementInnerText(barcodePrinter != null ? barcodePrinter.Value.ToString() : "", XmlTagItems.BarcodePrinter))
-            {
-                ApplicationManager.BarcodePrinter = barcodePrinter != null ? (string)barcodePrinter.Value : string.Empty;
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Գնապիտակի տպիչի գրանցում:", MessageModel.MessageTypeEnum.Success));
-            }
-            else
-            {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Գնապիտակի տպիչի գրանցման ձախողում:", MessageModel.MessageTypeEnum.Warning));
-            }
-        }
-        #endregion
-
-        #region ICommands
-        public ICommand SetSaleFromStockCommand { get; private set; }
-        public ICommand SetCashDeskCommand { get; private set; }
-        public ICommand SetDefaultSettingsCommand { get { return new RelayCommand(OnSetDefaultSettings, CanSetDefaultSettings); } }
-        public ICommand SetApplicationSettingsCommand { get; private set; }
-        public ICommand SetPrintersCommand { get { return new SetPrintersCommand(this); } }
-        public ICommand SetEcrSettingsCommand { get { return new RelayCommand(OnSaveEcrSettings); } }
-        public ICommand ExecuteEcrActionCommand { get { return new RelayCommand<EcrExecuiteActions>(OnExecuteEcrAction, CanExecuteEcrAction); } }
-
-        #endregion
     }
 }

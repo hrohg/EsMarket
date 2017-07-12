@@ -2,6 +2,7 @@
 {
     public enum PartnerType
     {
+        None,
         Provider = 1,
         Dealer = 2,
         Customer = 3,

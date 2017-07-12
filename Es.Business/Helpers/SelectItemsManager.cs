@@ -5,6 +5,8 @@ using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common;
 using ES.Common.Helpers;
+using ES.Common.Managers;
+using ES.Common.Models;
 using ES.Data.Enumerations;
 using ES.Data.Model;
 using ES.Data.Models;
@@ -42,7 +44,7 @@ namespace ES.Business.Helpers
         }
         public static List<PartnerModel> SelectPartners(bool allowMultipleSelect = false, string title = "Ընտրել")
         {
-            var partners = PartnersManager.GetPartners(ApplicationManager.Instance.GetEsMember.Id);
+            var partners = PartnersManager.GetPartners(ApplicationManager.Instance.GetMember.Id);
             if (partners == null || partners.Count == 0) return new List<PartnerModel>();
             if (partners.Count == 1) { return partners; }
             var selectItem = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), allowMultipleSelect,title);
@@ -51,7 +53,7 @@ namespace ES.Business.Helpers
         }
         public static List<PartnerType> SelectPartnersTypes(bool allowMultipleSelect = false,  string title = "Ընտրել")
         {
-            var partnerTypes = PartnersManager.GetPartnersTypes(ApplicationManager.Instance.GetEsMember.Id);
+            var partnerTypes = PartnersManager.GetPartnersTypes(ApplicationManager.Instance.GetMember.Id);
             if (partnerTypes == null || partnerTypes.Count == 0) return new List<PartnerType>();
             if (partnerTypes.Count == 1) { return partnerTypes.Select(s=>(PartnerType)s.Id).ToList(); }
             var selectItem = new SelectItems(partnerTypes.Select(s => new ItemsToSelect { DisplayName = s.Description, SelectedValue = s.Id }).ToList(), allowMultipleSelect, title);
@@ -77,21 +79,10 @@ namespace ES.Business.Helpers
             }
             return new List<EsMemberModel>();
         }
-        public static List<CashDesk> SelectDefaultCashDesks(bool? isCash, long memberId, bool allowMultipleChoise, string title)
-        {
-            var cashDesks = CashDeskManager.GetDefaultCashDesks(isCash).ToList();
-            if (cashDesks.Count == 0) return new List<CashDesk>();
-            if (cashDesks.Count == 1) return cashDesks;
-            var ui = new SelectItems(cashDesks.Select(s => new ItemsToSelect { DisplayName = s.Name, SelectedValue = s.Id }).ToList(), allowMultipleChoise, title);
-            if (ui.ShowDialog() == true && ui.SelectedItems != null)
-            {
-                return cashDesks.Where(s => ui.SelectedItems.Select(t => (Guid)t.SelectedValue).Contains(s.Id)).ToList();
-            }
-            return new List<CashDesk>();
-        }
+        
         public static List<CashDesk> SelectCashDesks(bool? isCash, long memberId, bool allowMultipleChoise, string title)
         {
-            var cashDesks = CashDeskManager.TryGetCashDesk(isCash, memberId);
+            var cashDesks = CashDeskManager.GetCashDesks(isCash);
             if (cashDesks == null || cashDesks.Count == 0) return new List<CashDesk>();
             if (cashDesks.Count == 1) return cashDesks;
             var ui = new SelectItems(cashDesks.Select(s => new ItemsToSelect { DisplayName = s.Name, SelectedValue = s.Id }).ToList(), allowMultipleChoise,title);

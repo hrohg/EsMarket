@@ -60,7 +60,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn  Header="Գանձապահ" Width="Auto" CanUserSort="True" SortMemberPath="Amount">
+                    <DataGridTemplateColumn  Header="Գանձապահ" Width="Auto" CanUserSort="True" SortMemberPath="Cashier.FullName">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type models1:AccountingRecordsModel}">
                                 <Grid>
@@ -69,7 +69,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn  Header="Նշումներ" Width="Auto" CanUserSort="True">
+                    <DataGridTemplateColumn  Header="Նշումներ" Width="Auto" CanUserSort="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type models1:AccountingRecordsModel}">
                                 <Grid>

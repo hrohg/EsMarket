@@ -11,6 +11,8 @@ using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
+using ES.Common.Managers;
+using ES.Common.Models;
 using ES.Data.Enumerations;
 using ES.Data.Models;
 using ES.Data.Models.Reports;
@@ -56,9 +58,9 @@ namespace UserControls.ViewModels
         {
             IsInProgress = true;
             var dateIntermediate = SelectManager.GetDateIntermediate();
-            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetEsMember.Id);
+            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetMember.Id);
             var invoiceItems = InvoicesManager.GetInvoiceItems(invoices.Select(s => s.Id));
-            var productItems = new ProductsManager().GetProductItems(ApplicationManager.Instance.GetEsMember.Id);
+            var productItems = new ProductsManager().GetProductItems(ApplicationManager.Instance.GetMember.Id);
             var productOrder = new List<object>(productItems.GroupBy(s => s.Product).Select(s =>
                 new ProductOrderModel
                 {
@@ -154,8 +156,8 @@ namespace UserControls.ViewModels
             if (reports == null || reports.Count == 0)
             {
                 Application.Current.Dispatcher.BeginInvoke(new Action(()=>
-                    ApplicationManager.MessageManager.OnNewMessage
-                    (new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information))));
+                    MessageManager.OnMessage
+                    (new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information))));
                 return;
             }
             ViewList = new ObservableCollection<IInvoiceReport>(reports);
@@ -211,9 +213,9 @@ namespace UserControls.ViewModels
             {
                 _items = value.ToList();
 
-                OnPropertyChanged("ViewList");
-                OnPropertyChanged("Count");
-                OnPropertyChanged("Total");
+                RaisePropertyChanged("ViewList");
+                RaisePropertyChanged("Count");
+                RaisePropertyChanged("Total");
             }
         }
         #endregion
@@ -223,7 +225,6 @@ namespace UserControls.ViewModels
             : base()
         {
             _invoiceTypes = invoiceTypes;
-            Title = Description = "Հաշվետվություն ըստ ապրանքագրերի";
             IsShowUpdateButton = true;
             Initialize();
         }
@@ -232,18 +233,19 @@ namespace UserControls.ViewModels
         #region Internal methods
         private void Initialize()
         {
+            Title = Description = "Հաշվետվություն ըստ ապրանքագրերի";
             OnUpdate(null);
         }
 
         private void Update(Tuple<DateTime, DateTime> dateIntermediate)
         {
             IsLoading = true;
-            OnPropertyChanged(IsInProgressProperty);
+            RaisePropertyChanged(IsInProgressProperty);
 
-            var reports = InvoicesManager.GetInvoicesReports(dateIntermediate.Item1, dateIntermediate.Item2, _invoiceTypes, ApplicationManager.Instance.GetEsMember.Id);
+            var reports = InvoicesManager.GetInvoicesReports(dateIntermediate.Item1, dateIntermediate.Item2, _invoiceTypes, ApplicationManager.Instance.GetMember.Id);
             if (reports == null || reports.Count == 0)
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information));
+                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
                 return;
             }
             ViewList = new ObservableCollection<IInvoiceReport>(reports);
@@ -251,7 +253,7 @@ namespace UserControls.ViewModels
             //TotalCount = (double)_items.Sum(s => s.Quantity ?? 0);
             Total = (double)ViewList.Sum(i => i.Sale ?? 0);
             IsLoading = false;
-            OnPropertyChanged(IsInProgressProperty);
+            RaisePropertyChanged(IsInProgressProperty);
         }
 
         protected override void OnUpdate(object o)
@@ -260,7 +262,7 @@ namespace UserControls.ViewModels
             Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
             if (dateIntermediate == null) return;
             Description = string.Format("Հաշվետվություն ըստ ապրանքագրերի {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
-            OnPropertyChanged("Description");
+            RaisePropertyChanged("Description");
             var thread = new Thread(() => Update(dateIntermediate));
             thread.Start();
         }
@@ -296,9 +298,9 @@ namespace UserControls.ViewModels
             protected set
             {
                 _items = value.ToList();
-                OnPropertyChanged("ViewList");
-                OnPropertyChanged("Count");
-                OnPropertyChanged("Total");
+                RaisePropertyChanged("ViewList");
+                RaisePropertyChanged("Count");
+                RaisePropertyChanged("Total");
             }
         }
         #endregion
@@ -323,7 +325,7 @@ namespace UserControls.ViewModels
         private void Update(Tuple<DateTime, DateTime> dateIntermediate)
         {
             IsLoading = true;
-            OnPropertyChanged(IsInProgressProperty);
+            RaisePropertyChanged(IsInProgressProperty);
             List<InvoiceReportByPartner> reports = null;
             switch (_viewInvoicesEnum)
             {
@@ -342,7 +344,7 @@ namespace UserControls.ViewModels
 
                     if (partners != null && partners.Count > 0)
                     {
-                        reports = InvoicesManager.GetSaleInvoicesReportsByPartners(dateIntermediate.Item1, dateIntermediate.Item2, InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList(), ApplicationManager.Instance.GetEsMember.Id);
+                        reports = InvoicesManager.GetSaleInvoicesReportsByPartners(dateIntermediate.Item1, dateIntermediate.Item2, InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList(), ApplicationManager.Instance.GetMember.Id);
                     }
                     break;
                 case ViewInvoicesEnum.ByPartnerType:
@@ -354,7 +356,7 @@ namespace UserControls.ViewModels
 
                     if (partnerTypes != null && partnerTypes.Count > 0)
                     {
-                        reports = InvoicesManager.GetSaleInvoicesReportsByPartnerTypes(dateIntermediate.Item1, dateIntermediate.Item2, InvoiceType.SaleInvoice, partnerTypes, ApplicationManager.Instance.GetEsMember.Id);
+                        reports = InvoicesManager.GetSaleInvoicesReportsByPartnerTypes(dateIntermediate.Item1, dateIntermediate.Item2, InvoiceType.SaleInvoice, partnerTypes, ApplicationManager.Instance.GetMember.Id);
                     }
                     break;
                 default:
@@ -362,7 +364,7 @@ namespace UserControls.ViewModels
             }
             if (reports == null || reports.Count == 0)
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information));
+                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
             }
             else
             {
@@ -375,7 +377,7 @@ namespace UserControls.ViewModels
                 Total = (double)reports.Sum(i => i.Sale ?? 0);
             }
             IsLoading = false;
-            OnPropertyChanged(IsInProgressProperty);
+            RaisePropertyChanged(IsInProgressProperty);
 
         }
 
@@ -383,7 +385,7 @@ namespace UserControls.ViewModels
         {
             if (reports == null || reports.Count == 0)
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information));
+                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
             }
             else
             {
@@ -396,7 +398,7 @@ namespace UserControls.ViewModels
                 Total = (double)reports.Sum(i => i.Sale ?? 0);
             }
             IsLoading = false;
-            OnPropertyChanged(IsInProgressProperty);
+            RaisePropertyChanged(IsInProgressProperty);
         }
         protected override void OnUpdate(object o)
         {
@@ -404,7 +406,7 @@ namespace UserControls.ViewModels
             Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
             if (dateIntermediate == null) return;
             Description = string.Format("Հաշվետվություն ըստ ապրանքագրերի {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
-            OnPropertyChanged("Description");
+            RaisePropertyChanged("Description");
             var thread = new Thread(() => Update(dateIntermediate));
             thread.Start();
         }

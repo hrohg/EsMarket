@@ -45,6 +45,10 @@ namespace ES.Common.ViewModels.Base
 
         #endregion
 
+        public virtual int TotalRows { get; set; }
+        public virtual double TotalCount { get; set; }
+        public virtual double Total { get; set; }
+
         #endregion External properties
 
         #region Constructors

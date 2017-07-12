@@ -10,6 +10,7 @@ using System.Windows.Input;
 using ES.Business.ExcelManager;
 using ES.Business.Managers;
 using ES.Common.Helpers;
+using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
 using Shared.Helpers;
@@ -38,38 +39,11 @@ namespace UserControls.ViewModels
         #endregion
 
         #region External Properties
-        public string Title { get { return _title; } set { _title = value; OnPropertyChanged("Title"); } }
-
-        public string Description
-        {
-            get { return _description; }
-            set
-            {
-                _description = value;
-                OnPropertyChanged("Description");
-            }
-        }
-        public int TotalRows { get { return _totalRows; } set { _totalRows = value; OnPropertyChanged("TotalRows"); } }
-        public double TotalCount { get { return _totalCount; } set { _totalCount = value; OnPropertyChanged("TotalCount"); } }
-        public virtual double Total { get { return _total; } set { _total = value; OnPropertyChanged("Total"); } }
-        public bool IsModified { get; set; }
-
-        public bool IsLoading
-        {
-            get
-            {
-                return _isLoading;
-            }
-            set
-            {
-                if (IsLoading == value)
-                {
-                    return;
-                }
-                _isLoading = value;
-                OnPropertyChanged("IsLoading");
-            }
-        }
+        
+        public override int TotalRows { get { return _totalRows; } set { _totalRows = value; RaisePropertyChanged("TotalRows"); } }
+        public override double TotalCount { get { return _totalCount; } set { _totalCount = value; RaisePropertyChanged("TotalCount"); } }
+        public override double Total { get { return _total; } set { _total = value; RaisePropertyChanged("Total"); } }
+        
         public bool IsShowNulls
         {
             get
@@ -89,7 +63,7 @@ namespace UserControls.ViewModels
         #endregion
 
         #region Constructors
-        public TableViewModel(List<T> list)
+        public TableViewModel(List<T> list):this()
         {
             ViewList = new ObservableCollection<T>(list);
             IsShowUpdateButton = true;
@@ -97,18 +71,17 @@ namespace UserControls.ViewModels
         }
         public TableViewModel()
         {
-
+            Initialize();
         }
         #endregion
 
+        #region Internal methods
 
-
-        #region internal methods
-
-        private void OnClose(object o)
+        private void Initialize()
         {
-            ApplicationManager.OnTabItemClose(o);
+            ViewList = new ObservableCollection<T>();
         }
+
         protected virtual bool CanExportToExcel(object o) { return ViewList != null && ViewList.Count >= 0; }
         protected virtual void OnExportToExcel(object o)
         {
@@ -189,20 +162,23 @@ namespace UserControls.ViewModels
         public ProductOrderBySaleViewModel(object o)
             : base()
         {
-            Title = Description = "Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն)";
             IsShowUpdateButton = true;
-            OnUpdate(o);
+            Initialize(o);
         }
 
         #region Internal methods
 
+        private void Initialize(object o)
+        {
+            OnUpdate(o);
+        }
         private void Update(Tuple<DateTime, DateTime> dateIntermediate)
         {
             IsLoading = true;
             IsLoading = true; OnPropertyChanged(IsInProgressProperty);
-            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetEsMember.Id).Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice);
+            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetMember.Id).Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice);
             var invoiceItems = InvoicesManager.GetInvoiceItems(invoices.Select(s => s.Id));
-            var productItems = new ProductsManager().GetProductItems(ApplicationManager.Instance.GetEsMember.Id);
+            var productItems = new ProductsManager().GetProductItems(ApplicationManager.Instance.GetMember.Id);
             var productOrder = invoiceItems.GroupBy(s => s.ProductId).Where(s => s.FirstOrDefault() != null).Select(s =>
                 new ProductOrderModel
                 {

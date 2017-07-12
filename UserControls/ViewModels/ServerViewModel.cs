@@ -1,29 +1,65 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Collections.Generic;
+using System.Security;
 using System.Windows.Input;
-using ES.Business.Managers;
-using ES.Business.Models;
+using ES.Business.Helpers;
 using ES.Common;
 using ES.Common.Helpers;
-using ES.Common;
+using ES.Common.Enumerations;
+using ES.Common.Managers;
+using ES.Common.Models;
+using ES.Common.ViewModels.Base;
 
 namespace UserControls.ViewModels
 {
-    public class ServerViewModel : INotifyPropertyChanged
+    public class ServerViewModel : ViewModelBase
     {
+        #region Internal properties
+        private SecureString _snPassword;
+        private SecureString _srPassword;
+        #endregion Internal properties
+
         #region Internal properties
 
         #endregion
         #region External properties
         public DataServer DataServer { get; set; }
+        public bool IsShowPassword { get
+        {
+            return false;// ApplicationManager.IsInRole(UserRoleEnum.Admin); 
+        } }
+
+        public string Password { get; private set; }
+
+        public SecureString SnPassword
+        {
+            get { return _snPassword; }
+            set { _snPassword = value; RaisePropertyChanged("SnPassword"); }
+        }
+
+        public SecureString SrPassword
+        {
+            get { return _srPassword; }
+            set { _srPassword = value; RaisePropertyChanged("RepeatedPassword"); }
+        }
+
         #endregion
 
         public ServerViewModel(DataServer server)
         {
             DataServer = server;
+            Initialize();
         }
         #region Internal methods
+
+        private void Initialize()
+        {
+            Password = DataServer.Password;
+            SnPassword = SrPassword = DataServer.Password.ToSecureString();
+
+        }
         #endregion
+
         #region External methods
 
         public bool CanSave(object o)
@@ -31,19 +67,19 @@ namespace UserControls.ViewModels
             {
                 return !string.IsNullOrEmpty(DataServer.Description) &&
                        !string.IsNullOrEmpty(DataServer.Name) &&
-                       !string.IsNullOrEmpty(DataServer.Database);
+                       !string.IsNullOrEmpty(DataServer.Database) &&
+                       SnPassword.ToUnsecureString() == SrPassword.ToUnsecureString();
             }
         }
         public void OnSave(object o)
         {
-            if (!ConfigSettings.SetDataServer(DataServer))
+            DataServer.Password = SnPassword.ToUnsecureString();
+            if (!DataServerSettings.SetDataServer(new List<DataServer>(){ DataServer}))
             {
-                ApplicationManager.MessageManager.OnNewMessage(
-                new MessageModel("Գրանցումը ձախողվել է։", MessageModel.MessageTypeEnum.Warning));
+                MessageManager.OnMessage("Գրանցումը ձախողվել է։", MessageTypeEnum.Warning);
                 return;
             }
-            ApplicationManager.MessageManager.OnNewMessage(
-                new MessageModel("Գրանցումն իրականացել է հաջողությամբ։",  MessageModel.MessageTypeEnum.Success));
+            MessageManager.OnMessage("Գրանցումն իրականացել է հաջողությամբ։", MessageTypeEnum.Success);
             if (ClosingEvent != null)
             {
                 ClosingEvent(this, EventArgs.Empty);
@@ -58,20 +94,10 @@ namespace UserControls.ViewModels
             }
         }
         #endregion
+
         #region Commands
         public ICommand OkButtonCommand { get { return new RelayCommand(OnSave, CanSave); } }
         public ICommand CancelButtonCommand { get { return new RelayCommand(OnCancel); } }
-        #endregion
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
         #endregion
     }
 }

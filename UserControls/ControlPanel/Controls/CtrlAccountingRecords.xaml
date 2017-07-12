@@ -48,7 +48,7 @@
             </GroupBox.Header>
             <Grid>
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <TextBox Text="{Binding Path=AccountingRecords.Description}"  AllowDrop="True" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
+                    <TextBox Text="{Binding Path=AccountingRecord.Description}"  AllowDrop="True" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
                 </ScrollViewer>
             </Grid>
         </GroupBox>

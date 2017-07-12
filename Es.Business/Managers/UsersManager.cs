@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using ES.Business.Helpers;
+using ES.Common.Managers;
 using ES.Data.Model;
 using ES.Data.Models;
 using ES.DataAccess.Models;
@@ -302,7 +303,7 @@ namespace ES.Business.Managers
         }
         private static List<MemberUsersRoles> TryGetMembersUsersRoles()
         {
-            var memberId = ApplicationManager.Instance.GetEsMember.Id;
+            var memberId = ApplicationManager.Instance.GetMember.Id;
             using (var db = GetDataContext())
             {
                 try

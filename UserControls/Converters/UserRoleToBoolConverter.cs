@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Data;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
+using ES.Common.Managers;
 
 namespace UserControls.Converters
 {

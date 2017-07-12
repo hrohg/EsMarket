@@ -54,7 +54,7 @@ namespace ES.Business.ExcelManager
             //var nextRow = 2;
             try
             {
-                var memberId = ApplicationManager.Instance.GetEsMember.Id;
+                var memberId = ApplicationManager.Instance.GetMember.Id;
                 var userId = ApplicationManager.GetEsUser.UserId;
                 var range = xlWSh.UsedRange;
                 //while (!string.IsNullOrEmpty(xlWSh.Cells[nextRow, 1].Text))

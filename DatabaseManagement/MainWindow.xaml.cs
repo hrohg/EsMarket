@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Common.Cultures;
+using ES.Common.Managers;
 using Shared.Helpers;
 using UserControls;
 using UserControls.Controls;
@@ -70,7 +71,7 @@ namespace DatabaseManagement
             //if (!Session.Inst.BEManager.CreateDatabaseBackup(backupFilePath, DatabaseManager.GetConnectionString(), ref errorMessage))
             var connectionString = !(ApplicationManager.IsEsServer) ? ApplicationManager.ConnectionString : string.Empty;
             //if (!Session.Inst.BEManager.CreateDatabaseBackup(backupFilePath, connectionString, ref errorMessage))
-            if (DatabaseManager.CreateDatabaseBackup(backupFilePath, ApplicationManager.dbName, ref errorMessage))
+            if (DatabaseManager.CreateDatabaseBackup(backupFilePath, ApplicationManager.DbName, ref errorMessage))
             {
                 Cursor = null;
                 //MessageBox.Show(CultureResources.Inst["ArchiveIsNotCompletedTryLater"], CultureResources.Inst["ArchiveError"], MessageBoxButton.OK, MessageBoxImage.Error);

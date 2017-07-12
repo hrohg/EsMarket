@@ -1,25 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security;
-using System.Windows;
 using System.Windows.Input;
-using System.Xml.Linq;
 using ES.Business.Managers;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Common;
+using ES.Common.Managers;
+using ES.Common.Models;
 
 namespace ES.Login
 {
     public class LoginViewModel : ViewModelBase
     {
         #region Events
-
         public delegate void LoginingDelegate();
-        public event LoginingDelegate OnLogining;
+        public event LoginingDelegate LoginEvent;
 
-        public delegate void LoginDelegate(EsUserModel esUser);
+        public delegate void LoginDelegate(EsUserModel esUser, string login);
         public event LoginDelegate OnLogin;
 
         public delegate void Closed(bool isTerminated);
@@ -126,43 +125,18 @@ namespace ES.Login
 
         private void Initialize()
         {
-            LoginCommnd = new RelayCommand(OnLoginCompleted, CanLogin);
-            CloseCommnd = new RelayCommand<bool?>(OnClose);
-            SetLogins();
-        }
-
-        private bool CanLogin(object o)
-        {
-            return !string.IsNullOrEmpty(Login) && Password != null && Password.Length > 0;
-        }
-
-        private void OnLoginCompleted(object o)
-        {
-            //while (!ApplicationManager.CreateConnectionString(UserControls.Helpers.SelectItemsManager.SelectServer(ConfigSettings.GetDataServers())))
-            //{
-            //    //Breack
-            //    OnBrowseServerSettings();
-            //    var configServer = new ServerConfig(new ServerViewModel(new DataServer()));
-            //    configServer.ShowDialog();
-            //    //this.Hide(); 
-            //    return;
-            //}
-            OnTryLogin();
-        }
-
-        private void OnClose(bool? o)
-        {
-            var handler = OnClosed;
-            if (handler != null) handler(o ?? true);
+            
         }
 
         private void OnTryLogin()
         {
-            var loginingHandler = OnLogining;
-            if (loginingHandler != null) loginingHandler();
+            var logiHandler = LoginEvent;
+            if (logiHandler != null) logiHandler();
             LoginMessage = string.Empty;
 
-            while (!ApplicationManager.CreateConnectionString(UserControls.Helpers.SelectItemsManager.SelectServer(_servers)))
+            var servers = UserControls.Helpers.SelectItemsManager.SelectServers(_servers);
+            if(servers==null) return;
+            while (!ApplicationManager.CreateConnectionString(servers.FirstOrDefault()))
             {
                 var handler = OnClosed;
                 if (handler != null) handler(true);
@@ -181,33 +155,56 @@ namespace ES.Login
             if (user == null)
             {
                 LoginMessage = "Սխալ մուտքային տվյալներ:";
-                loginedHandler(null);
+                loginedHandler(null, null);
             }
             else
             {
-                var xml = new XmlManager();
-                var login = new XElement(XmlTagItems.Login);
-                login.Value = Login;
-                xml.SetXmlElement(XmlTagItems.Users, login);
-                var loginUser = new XElement(XmlTagItems.Login) { Value = Login };
-                xml.AddXmlElement(XmlTagItems.Logins, loginUser);
-                SetLogins();
-
-                loginedHandler(user);
+                loginedHandler(user, Login);
                 //TxtPassword.Focus();
             }
-        }
-
-        private void SetLogins()
-        {
-            var logins = new XmlManager().GetXmlElements(XmlTagItems.Logins).ToList();
-            Logins = logins.Select(s => s.Value).ToList();
         }
         #endregion Internal methods
 
         #region Commands
-        public ICommand LoginCommnd { get; private set; }
-        public ICommand CloseCommnd { get; private set; }
+        private ICommand _loginCommand;
+        public ICommand LoginCommnd
+        {
+            get
+            {
+                return _loginCommand ?? (_loginCommand = new RelayCommand(OnLoginCompleted, CanLogin));
+            }
+        }
+        private bool CanLogin(object o)
+        {
+            return !string.IsNullOrEmpty(Login) && Password != null && Password.Length > 0;
+        }
+        private void OnLoginCompleted(object o)
+        {
+            //while (!ApplicationManager.CreateConnectionString(UserControls.Helpers.SelectItemsManager.SelectServer(ConfigSettings.GetDataServers())))
+            //{
+            //    //Breack
+            //    OnBrowseServerSettings();
+            //    var configServer = new ServerConfig(new ServerViewModel(new DataServer()));
+            //    configServer.ShowDialog();
+            //    //this.Hide(); 
+            //    return;
+            //}
+            OnTryLogin();
+        }
+
+        private ICommand _closeCommand;
+        public ICommand CloseCommnd
+        {
+            get
+            {
+                return _closeCommand ?? (_closeCommand = new RelayCommand<bool?>(OnClose));
+            }
+        }
+        private void OnClose(bool? o)
+        {
+            var handler = OnClosed;
+            if (handler != null) handler(o ?? true);
+        }
         #endregion Commands
     }
 }

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using ES.Business.Managers;
+using ES.Common.Managers;
 using ES.DataAccess.Models;
 using Shared.Helpers;
 using UserControls.ControlPanel.Controls;
@@ -44,7 +45,7 @@ namespace UserControls.ViewModels
             IsLoading = true;
             OnPropertyChanged(IsInProgressProperty);
             IsLoading = true; OnPropertyChanged(IsInProgressProperty);
-            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetEsMember.Id).Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice);
+            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetMember.Id).Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice);
             var invoiceItems = InvoicesManager.GetInvoiceItems(invoices.Select(s => s.Id));
             _items = invoiceItems.GroupBy(s => s.ProductId).Where(s => s.FirstOrDefault() != null).Select(s =>
                 new InvoiceItems

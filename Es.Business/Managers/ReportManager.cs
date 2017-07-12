@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using CashReg.Helper;
 using ES.Business.Helpers;
+using ES.Common.Managers;
 using ES.Data.Models;
 using ES.DataAccess.Models;
 
@@ -18,7 +19,7 @@ namespace ES.Business.Managers
                 try
                 {
                     return
-                        db.Invoices.Where(s => s.MemberId == ApplicationManager.Instance.GetEsMember.Id && s.ApproveDate != null && s.ApproveDate >= startDate && s.ApproveDate <= endDate)
+                        db.Invoices.Where(s => s.MemberId == ApplicationManager.Instance.GetMember.Id && s.ApproveDate != null && s.ApproveDate >= startDate && s.ApproveDate <= endDate)
                             .Select(s => new InvoiceModel
                             {
                                 Id = s.Id,

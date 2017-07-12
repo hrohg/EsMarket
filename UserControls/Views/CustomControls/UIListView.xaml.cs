@@ -16,7 +16,7 @@ namespace UserControls.Views.CustomControls
     public partial class UIListView : Window
     {
         private readonly IEnumerable<object> _list; 
-        public UIListView(IEnumerable<object> list, string title = "Վերծանում")
+        public UIListView(IEnumerable<object> list, string title = "Վերծանում", double total = 0)
         {
             InitializeComponent();
             _list = list;
@@ -34,6 +34,7 @@ namespace UserControls.Views.CustomControls
             DgView.ItemsSource = itemsSource;
             DgView.ItemsSource = itemsSource.ToList();
             txtRowCount.Text = _list.Count().ToString();
+            txtTotal.Text = total.ToString("N");
             Title = title;
         }
 

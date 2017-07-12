@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using ES.Business.Managers;
-using ES.Business.Models;
+using ES.Common.Enumerations;
+using ES.Common.Managers;
 using ES.Data.Model;
 using ES.Data.Models;
-using UserControls.Helpers;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Invoices
@@ -63,10 +63,10 @@ namespace UserControls.ViewModels.Invoices
         {
             if (!CanApprove(o))
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Գործողության ձախողում:", MessageModel.MessageTypeEnum.Warning));
+                MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);
                 return;
             }
-            var fromStocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Instance.GetEsMember.Id));
+            var fromStocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Instance.GetMember.Id));
             if (fromStocks == null || fromStocks.Count == 0) return;
             var td = new Thread(() => Approve(fromStocks.Select(s => s.Id).ToList()));
             td.Start();
@@ -81,7 +81,7 @@ namespace UserControls.ViewModels.Invoices
             if (invoice == null)
             {
                 Invoice.AcceptDate = Invoice.ApproveDate = null;
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Գործողության ձախողում:", MessageModel.MessageTypeEnum.Warning));
+                MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);
             }
             else
             {

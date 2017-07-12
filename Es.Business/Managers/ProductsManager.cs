@@ -8,6 +8,7 @@ using ES.Business.Helpers;
 using ES.Business.Models;
 using ES.Common;
 using ES.Common.Enumerations;
+using ES.Common.Managers;
 using ES.Data.Models;
 using ES.Data.Models.EsModels;
 using ES.DataAccess.Models;
@@ -896,7 +897,7 @@ namespace ES.Business.Managers
         {
             using (var db = GetDataContext())
             {
-                var memberId = ApplicationManager.Instance.GetEsMember.Id;
+                var memberId = ApplicationManager.Instance.GetMember.Id;
                 var userId = ApplicationManager.GetEsUser.UserId;
                 try
                 {
@@ -904,7 +905,7 @@ namespace ES.Business.Managers
                     {
                         if (db.Products.Count(s =>s.EsMemberId==memberId && (s.Code == item.Code || (!string.IsNullOrEmpty(s.Barcode) && s.Barcode == item.Barcode) || (!string.IsNullOrEmpty(item.Barcode) && s.ProductGroup.Any(t => t.Barcode == item.Barcode)))) > 1)
                         {
-                            ApplicationManager.MessageManager.OnNewMessage(new MessageModel(string.Format("Barcode-ի կրկնություն։ Ապրանքի խմբագրումը չի իրականացել։ \n Կոդ։ {0} \nԲարկոդ: {1}", item.Code, item.Barcode), MessageModel.MessageTypeEnum.Warning));
+                            MessageManager.OnMessage(string.Format("Barcode-ի կրկնություն։ Ապրանքի խմբագրումը չի իրականացել։ \n Կոդ։ {0} \nԲարկոդ: {1}", item.Code, item.Barcode), MessageTypeEnum.Warning);
                         }
                         var exItem = db.Products.SingleOrDefault(s => s.Code == item.Code && s.EsMemberId == memberId);
                         if (exItem != null)
@@ -954,7 +955,7 @@ namespace ES.Business.Managers
             {
                 if (db.Products.Count(s => s.Code == item.Code || (!string.IsNullOrEmpty(s.Barcode) && s.Barcode == item.Barcode) || (!string.IsNullOrEmpty(item.Barcode) && s.ProductGroup.Any(t => t.Barcode == item.Barcode))) > 1)
                 {
-                    ApplicationManager.MessageManager.OnNewMessage(new MessageModel(string.Format("Barcode-ի կրկնություն։ Ապրանքի խմբագրումը չի իրականացել։ \n Կոդ։ {0} \nԲարկոդ: {1}", item.Code, item.Barcode), MessageModel.MessageTypeEnum.Warning));
+                    MessageManager.OnMessage(string.Format("Barcode-ի կրկնություն։ Ապրանքի խմբագրումը չի իրականացել։ \n Կոդ։ {0} \nԲարկոդ: {1}", item.Code, item.Barcode), MessageTypeEnum.Warning);
                     return false;
                 }
                 var exItem = db.Products.SingleOrDefault(s => s.Code == item.Code && s.EsMemberId == item.EsMemberId);

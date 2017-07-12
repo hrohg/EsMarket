@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using System.Xml.Linq;
 using ES.Common.Helpers;
+using ES.Common.Managers;
 
 namespace ES.Login
 {

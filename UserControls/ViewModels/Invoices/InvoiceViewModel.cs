@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO.Packaging;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
@@ -11,9 +10,10 @@ using CashReg.Models;
 using ES.Business.ExcelManager;
 using ES.Business.Helpers;
 using ES.Business.Managers;
-using ES.Business.Models;
 using ES.Common;
+using ES.Common.Enumerations;
 using ES.Common.Helpers;
+using ES.Common.Managers;
 using ES.Data.Enumerations;
 using ES.Data.Model;
 using ES.Data.Models;
@@ -173,7 +173,7 @@ namespace UserControls.ViewModels.Invoices
         {
             User = user;
             Member = member;
-            Invoice = InvoicesManager.GetInvoice(id, ApplicationManager.Instance.GetEsMember.Id);
+            Invoice = InvoicesManager.GetInvoice(id, ApplicationManager.Instance.GetMember.Id);
             Initialize();
         }
         #endregion
@@ -184,8 +184,8 @@ namespace UserControls.ViewModels.Invoices
         {
 
             IsClosable = true;
-            SaleBySingle = ApplicationManager.BuyBySingle;
-            BuyBySingle = ApplicationManager.BuyBySingle;
+            SaleBySingle = ApplicationManager.Settings.MemberSettings.PurchaseBySingle;
+            BuyBySingle = ApplicationManager.Settings.MemberSettings.PurchaseBySingle;
             SetModels();
             SetICommands();
             IsModified = false;
@@ -274,7 +274,7 @@ namespace UserControls.ViewModels.Invoices
         #region Set Partner
         protected virtual void OnGetPartner(object o)
         {
-            var partners = o is PartnerType ? PartnersManager.GetPartner(ApplicationManager.Instance.GetEsMember.Id, (PartnerType)o) : PartnersManager.GetPartners(ApplicationManager.Instance.GetEsMember.Id);
+            var partners = o is PartnerType ? PartnersManager.GetPartner(ApplicationManager.Instance.GetMember.Id, (PartnerType)o) : PartnersManager.GetPartners(ApplicationManager.Instance.GetMember.Id);
             if (partners.Count == 0) return;
             var selectedItems = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName + " " + s.Mobile, SelectedValue = s.Id }).ToList(), false);
             selectedItems.ShowDialog();
@@ -488,7 +488,7 @@ namespace UserControls.ViewModels.Invoices
             }
             else
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(string.Format("{0} կոդով ապրանք չի հայտնաբերվել:", code), MessageModel.MessageTypeEnum.Warning));
+                MessageManager.OnMessage(string.Format("{0} կոդով ապրանք չի հայտնաբերվել:", code), MessageTypeEnum.Warning);
                 MessageBox.Show(string.Format("{0} կոդով ապրանք չի հայտնաբերվել:", code), "Սխալ ապա կոդ", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
@@ -557,17 +557,17 @@ namespace UserControls.ViewModels.Invoices
         {
             if (!CanSaveInvoice(o))
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Գործողությունը հնարավոր չէ իրականացնել:Գործողության ընդհատում:", MessageModel.MessageTypeEnum.Warning));
+                MessageManager.OnMessage("Գործողությունը հնարավոր չէ իրականացնել:Գործողության ընդհատում:", MessageTypeEnum.Warning);
                 return;
             }
             if (InvoicesManager.SaveInvoice(Invoice, new List<InvoiceItemsModel>(InvoiceItems)))
             {
                 Invoice = InvoicesManager.GetInvoice(Invoice.Id, Invoice.MemberId);
                 IsModified = false;
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Գրանցումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success));
+                MessageManager.OnMessage("Գրանցումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
                 return;
             }
-            ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Գործողությունը հնարավոր չէ իրականացնել:Գործողության ընդհատում:", MessageModel.MessageTypeEnum.Warning));
+            MessageManager.OnMessage("Գործողությունը հնարավոր չէ իրականացնել:Գործողության ընդհատում:", MessageTypeEnum.Warning);
         }
         public virtual bool CanApprove(object o)
         {
@@ -626,48 +626,11 @@ namespace UserControls.ViewModels.Invoices
                 MessageBox.Show("Գործողությունը հնարավոր չէ իրականացնել:", "Գործողության ընդհատում",
                     MessageBoxButton.OK, MessageBoxImage.Error); return;
             }
-            var xml = new XmlManager();
             Invoice.ApproverId = User.UserId;
             Invoice.Approver = User.FullName;
-            InvoicePaid.CashDeskId = xml.GetItemsByControl(XmlTagItems.SaleCashDesks).Select(s => HgConvert.ToGuid(s.Value)).SingleOrDefault();
-            InvoicePaid.CashDeskForTicketId = CashDeskManager.TryGetCashDesk(false, Invoice.MemberId).Select(s => s.Id).FirstOrDefault();
+
             InvoicePaid.PartnerId = Invoice.PartnerId;
-            switch (Invoice.InvoiceTypeId)
-            {
-                case (long)InvoiceType.PurchaseInvoice:
-                    var stock = SelectItemsManager.SelectStocks(StockManager.GetStocks(Member.Id), false).FirstOrDefault();
-                    if (stock == null)
-                    {
-                        MessageBox.Show("Պահեստ ընտրված չէ: Խնդրում ենք խմբագրել նոր պահեստ:", "Գործողության ընդհատում",
-                            MessageBoxButton.OK, MessageBoxImage.Error); return;
-                    }
-                    ToStock = stock;
-                    var purchaseInvoice = InvoicesManager.ApproveInvoice(Invoice, new List<InvoiceItemsModel>(InvoiceItems), InvoicePaid);
-                    if (purchaseInvoice == null)
-                    {
-                        Invoice.ApproveDate = null;
-                        MessageBox.Show("Գործողությունն իրականացման ժամանակ տեղի է ունեցել սխալ:", "Գործողության ընդհատում",
-                            MessageBoxButton.OK, MessageBoxImage.Error); return;
-                    }
-                    Invoice = purchaseInvoice;
-                    ApplicationManager.MessageManager.OnNewMessage(new MessageModel((DateTime)purchaseInvoice.ApproveDate, string.Format("Ապրանքագիր {0} հաստատված է։", purchaseInvoice.InvoiceNumber), MessageModel.MessageTypeEnum.Success));
-                    break;
-                case (long)InvoiceType.SaleInvoice:
-                    Invoice.RecipientName = Partner.FullName;
-                    var invoice = InvoicesManager.ApproveSaleInvoice(Invoice, InvoiceItems.ToList(), FromStocks.Select(s => s.Id), InvoicePaid);
-                    if (invoice == null)
-                    {
-                        Invoice.ApproveDate = null;
-                        MessageBox.Show("Գործողությունը հնարավոր չէ իրականացնել:", "Գործողության ընդհատում",
-                            MessageBoxButton.OK, MessageBoxImage.Error); return;
-                    }
-                    ApplicationManager.MessageManager.OnNewMessage(new MessageModel((DateTime)invoice.ApproveDate, string.Format("Ապրանքագիր {0} հաստատված է։", invoice.InvoiceNumber), MessageModel.MessageTypeEnum.Success));
-                    break;
-                default:
-                    AccountsReceivable = new AccountsReceivableModel(Invoice.Id, Partner.Id, User.UserId, Invoice.MemberId, null);
-                    break;
-            }
-            OnClose(o);
+            Invoice.RecipientName = Partner.FullName;
         }
         public bool CanApproveMoveInvoice()
         {

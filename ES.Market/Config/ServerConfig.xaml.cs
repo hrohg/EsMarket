@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using UserControls.ViewModels;
 
-namespace ES.Shop.Config
+namespace ES.Market.Config
 {
     /// <summary>
     /// Interaction logic for ServerConfig.xaml

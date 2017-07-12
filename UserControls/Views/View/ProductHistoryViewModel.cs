@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using ES.Business.Managers;
+using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
 using UserControls.ControlPanel.Controls;
@@ -59,8 +60,9 @@ namespace UserControls.Views.View
         {
             Initialize();
             var date = SelectManager.GetDateIntermediate();
+            if(date==null) return;
             var products = Helpers.SelectItemsManager.SelectProductByCheck(true);
-            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetProductHistory(products.Select(s => s.Id).ToList(), date.Item1, date.Item2, ApplicationManager.Instance.GetEsMember.Id));
+            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetProductHistory(products.Select(s => s.Id).ToList(), date.Item1, date.Item2, ApplicationManager.Instance.GetMember.Id));
         }
         #endregion Constructors
 

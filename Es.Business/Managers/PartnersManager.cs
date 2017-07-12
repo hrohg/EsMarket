@@ -166,7 +166,7 @@ namespace ES.Business.Managers
         {
             if(partner==null || partner.PartnersTypeId==null) return false;
             string controlKey;
-            switch ((PartnerType)partner.PartnersTypeId)
+            switch (partner.PartnerTypeEnum)
             {
                 case PartnerType.Provider:
                     controlKey = DefaultControls.Provider;
@@ -176,6 +176,9 @@ namespace ES.Business.Managers
                     break;
                 case PartnerType.Customer:
                     controlKey = DefaultControls.Customer;
+                    break;
+                case PartnerType.Branch:
+                    controlKey = DefaultControls.Branch;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("type", partner.PartnersTypeId, null);

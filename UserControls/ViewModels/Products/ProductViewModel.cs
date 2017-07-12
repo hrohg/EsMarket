@@ -13,6 +13,7 @@ using ES.Business.Models;
 using ES.Common;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
+using ES.Common.Managers;
 using ES.Data.Models;
 using UserControls.PriceTicketControl;
 using UserControls.Commands;
@@ -37,7 +38,7 @@ namespace UserControls.ViewModels.Products
         #endregion
 
         #region Private properties
-        private long _memberId { get { return ApplicationManager.Instance.GetEsMember.Id; } }
+        private long _memberId { get { return ApplicationManager.Instance.GetMember.Id; } }
         private long _userId { get { return ApplicationManager.GetEsUser.UserId; } }
         private ProductModel _product;
         private List<ProductModel> _products;
@@ -68,7 +69,7 @@ namespace UserControls.ViewModels.Products
         }
         public ProductModel Product
         {
-            get { return _product ?? new ProductModel(ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId, true); }
+            get { return _product ?? new ProductModel(ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId, true); }
             set
             {
                 if (value == _product) return;
@@ -205,8 +206,8 @@ namespace UserControls.ViewModels.Products
         private void OnGetProduct(object o)
         {
             if (!CanGetProduct(o)) { return; }
-            var product = new ProductsManager().GetProductsByCodeOrBarcode(o as string, ApplicationManager.Instance.GetEsMember.Id);
-            Product = product ?? new ProductModel(ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId, true) { Code = o as string };
+            var product = new ProductsManager().GetProductsByCodeOrBarcode(o as string, ApplicationManager.Instance.GetMember.Id);
+            Product = product ?? new ProductModel(ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId, true) { Code = o as string };
         }
         private bool CanGenerateBarcode(object o)
         {
@@ -250,18 +251,18 @@ namespace UserControls.ViewModels.Products
             var products = ExcelImportManager.ImportProducts(filePath);
             if (products == null)
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Ապրանքների բեռնումն ընդհատվել է:", MessageModel.MessageTypeEnum.Error));
+                MessageManager.OnMessage("Ապրանքների բեռնումն ընդհատվել է:", MessageTypeEnum.Error);
                 return;
             }
             if (ProductsManager.EditProducts(products))
             {
                 ApplicationManager.Instance.CashProvider.UpdateCash();
                 Products = ApplicationManager.Instance.CashProvider.Products;
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Ապրանքների բեռնումն իրականացել է հաջողությամբ:", MessageModel.MessageTypeEnum.Success));
+                MessageManager.OnMessage("Ապրանքների բեռնումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
             }
             else
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Ապրանքների խմբագրումն ընդհատվել է:", MessageModel.MessageTypeEnum.Warning));
+                MessageManager.OnMessage("Ապրանքների խմբագրումն ընդհատվել է:", MessageTypeEnum.Warning);
             }
         }
         #endregion
@@ -351,18 +352,18 @@ namespace UserControls.ViewModels.Products
                 {
                     _products.Add(product);
                     //LoadProducts();
-                    ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Ապրանքի ավելացումն իրականացել է հաջողությամբ։", MessageModel.MessageTypeEnum.Information));
+                    MessageManager.OnMessage("Ապրանքի ավելացումն իրականացել է հաջողությամբ։", MessageTypeEnum.Information);
                 }
                 else
                 {
                     ProductsManager.CopyProduct(Products.SingleOrDefault(s => s.Id == product.Id), product);
-                    ApplicationManager.MessageManager.OnNewMessage(new MessageModel(string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումն իրականացել է հաջողությամբ։", product.Code, product.Description), MessageModel.MessageTypeEnum.Success));
+                    MessageManager.OnMessage(string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումն իրականացել է հաջողությամբ։", product.Code, product.Description), MessageTypeEnum.Success);
                 }
                 ApplicationManager.Instance.CashProvider.UpdateProducts(_products);
             }
             else
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումը ձախողվել է։", Product.Code, Product.Description), MessageModel.MessageTypeEnum.Error));
+                MessageManager.OnMessage(string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումը ձախողվել է։", Product.Code, Product.Description), MessageTypeEnum.Error);
             }
         }
         public void DeleteProduct(Guid id)
@@ -434,19 +435,19 @@ namespace UserControls.ViewModels.Products
         {
             get
             {
-                return ProductsManager.GetNextProductCode(ApplicationManager.Instance.GetEsMember.Id); //_products.Count + 1;
+                return ProductsManager.GetNextProductCode(ApplicationManager.Instance.GetMember.Id); //_products.Count + 1;
                 //if (!string.IsNullOrEmpty(Product.Code)) Int32.TryParse(Product.Code, out next);
                 //return next;
             }
         }
         public void GetProductBy(ProductViewType? type)
         {
-            Products = new ProductsManager().GetProductsBy(type ?? ProductViewType.ByActive, ApplicationManager.Instance.GetEsMember.Id);
+            Products = new ProductsManager().GetProductsBy(type ?? ProductViewType.ByActive, ApplicationManager.Instance.GetMember.Id);
         }
         public bool CanChangeProductEnabled { get { return Product != null && _products.Any(s => s.Id == Product.Id); } }
         public void ChangeProductEnabled()
         {
-            if (ProductsManager.ChangeProductEnabled(Product.Id, ApplicationManager.Instance.GetEsMember.Id))
+            if (ProductsManager.ChangeProductEnabled(Product.Id, ApplicationManager.Instance.GetMember.Id))
             {
                 Product.IsEnabled = !Product.IsEnabled;
                 OnPropertyChanged(ProductProperty); OnPropertyChanged(ProductsProperty);

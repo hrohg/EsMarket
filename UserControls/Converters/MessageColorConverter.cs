@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using ES.Business.Models;
+using ES.Common.Enumerations;
 
 namespace UserControls.Converters
 {
@@ -12,22 +13,22 @@ namespace UserControls.Converters
     {
         public Object Convert(Object value, Type targetType, Object parameter, CultureInfo culture)
         {
-            if (targetType != typeof(MessageModel.MessageTypeEnum))
+            if (targetType != typeof(MessageTypeEnum))
             { return Color.Black;}
-            var type = (MessageModel.MessageTypeEnum)value;
+            var type = (MessageTypeEnum)value;
             
             switch (type)
             {
-                case MessageModel.MessageTypeEnum.Information:
+                case MessageTypeEnum.Information:
                     return Color.Blue;
                     break;
-                case MessageModel.MessageTypeEnum.Success:
+                case MessageTypeEnum.Success:
                     return Color.Green;
                     break;
-                case MessageModel.MessageTypeEnum.Error:
+                case MessageTypeEnum.Error:
                     return Color.Red;
                     break;
-                case MessageModel.MessageTypeEnum.Warning:
+                case MessageTypeEnum.Warning:
                     return Color.Purple;
                     break;
                 default:

@@ -8,6 +8,7 @@ using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common.Helpers;
+using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
@@ -165,7 +166,7 @@ namespace UserControls.ViewModels.StockTakeings
         }
         private void OnViewDetiles(object o)
         {
-            var products = new ProductsManager().GetProducts(ApplicationManager.Instance.GetEsMember.Id);
+            var products = new ProductsManager().GetProducts(ApplicationManager.Instance.GetMember.Id);
             var detile = from s in StockTakeItems
                          join t in products on s.ProductId equals t.Id
                          select new
@@ -251,7 +252,7 @@ namespace UserControls.ViewModels.StockTakeings
         public StockTakeManagerViewModel(StockTakeModel stockTake)
             : base(stockTake)
         {
-            _memberId = ApplicationManager.Instance.GetEsMember.Id;
+            _memberId = ApplicationManager.Instance.GetMember.Id;
             Initialize();
         }
         #endregion //Constructors

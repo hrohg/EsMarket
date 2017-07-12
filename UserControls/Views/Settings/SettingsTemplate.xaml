@@ -2,158 +2,252 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:viewModels="clr-namespace:UserControls.ViewModels"
                     xmlns:helper="clr-namespace:CashReg.Helper;assembly=CashReg"
-                    xmlns:views="clr-namespace:UserControls.Views"
-                    xmlns:controls="clr-namespace:UserControls.Controls">
-    
+                    xmlns:controls="clr-namespace:UserControls.Controls"
+                    xmlns:helpers="clr-namespace:ES.Business.Helpers;assembly=ES.Business">
+
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-    
+
     <DataTemplate DataType="{x:Type viewModels:SettingsViewModel}">
-        <DockPanel LastChildFill="False">
-            <DockPanel.InputBindings>
+        <Grid>
+            <Grid.InputBindings>
                 <KeyBinding Gesture="Ctrl+Shift+X" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
-            </DockPanel.InputBindings>
-            <Grid DockPanel.Dock="Top">
-                <TabControl Grid.Row="0" Margin="10">
+            </Grid.InputBindings>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TabControl Grid.Row="0">
                     <TabItem Header="Հիմնական">
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <Expander Grid.Row="0" Header="Վաճառք" Margin="3" IsExpanded="True">
+                                
+                                <GroupBox Grid.Row="1" Header="Գնապիտակի տպիչ">
+                                    <Grid x:Name="Grid_PriceTicketPrinter">
+                                        <ItemsControl  ItemsSource="{Binding Path = LablePrinters}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
+                                                    <RadioButton Content="{Binding Path=Data}" IsChecked="{Binding Path=IsChecked}" GroupName="BarcodePrinters" Margin ="5"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid_PriceTicketPrinter, Path=ActualWidth}"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </Grid>
+                                </GroupBox>
+                                
+                                <GroupBox Grid.Row="2" Header="ՀԴՄ սերվիս">
+                                    <Grid>
+                                        <Grid.Resources>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Margin" Value="3"/>
+                                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                            </Style>
+                                            <Style TargetType="{x:Type TextBox}">
+                                                <Setter Property="Margin" Value="3"/>
+                                                <Setter Property="Width" Value="300"/>
+                                                <Setter Property="Height" Value="25"/>
+                                                <Setter Property="HorizontalAlignment" Value="Left"/>
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            </Style>
+                                        </Grid.Resources>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="200"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="ՀԴՄ-ի սերվերի տվյալներ"/>
+                                        <Grid Grid.Row="1" Grid.Column="1" IsEnabled="{Binding  EcrSettings.IsActive}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox Grid.Column="0" Text="{Binding EcrSettings.EcrServiceSettings.Ip}"/>
+                                            <TextBox Grid.Column="1" Text="{Binding EcrSettings.EcrServiceSettings.Port, TargetNullValue=0}" Width="50" HorizontalContentAlignment="Right"/>
+                                            <CheckBox Grid.Column="2" IsChecked="{Binding EcrSettings.EcrServiceSettings.IsActive}" Content="Ակտիվացնել" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Grid>
+                                </GroupBox>
+                                
+                                <GroupBox Grid.Row="3" Header="Այլ">
                                     <StackPanel>
-                                        <DockPanel LastChildFill="False" Margin="5">
-
-                                            <Grid DockPanel.Dock="Top">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                <Label Grid.Row="0" Content="Վաճառակետ"/>
-                                                <Separator Grid.Row="0" Margin="150,3,3,3" VerticalAlignment="Center" />
-                                            </Grid>
-                                            <ScrollViewer HorizontalScrollBarVisibility="Auto" MinHeight="50">
-                                                <ItemsControl Grid.Row="1" Name="IcStock" ItemsSource="{Binding Path = Stocks}">
-                                                    <ItemsControl.ItemTemplate >
-                                                        <DataTemplate>
-                                                            <CheckBox Content="{Binding Path=Data}" IsChecked="{Binding Path=IsChecked}" Margin ="3"/>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <StackPanel Orientation="Horizontal" Margin="5"/>
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                </ItemsControl>
-                                            </ScrollViewer>
-                                            <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right">
-                                                <Button Content="Հիշել" Command="{Binding Path=SetSaleFromStockCommand}" Width="100"/>
-                                            </StackPanel>
-                                        </DockPanel>
-
-                                        <DockPanel LastChildFill="False" Margin="5">
-                                            <Grid DockPanel.Dock="Top">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                <Label Grid.Row="0" Content="Դրամարկղ"/>
-                                                <Separator Grid.Row="0" Margin="150,3,3,3" VerticalAlignment="Center" />
-                                            </Grid>
-                                            <ItemsControl Grid.Row="1" ItemsSource="{Binding Path = CashDesks}">
-                                                <ItemsControl.ItemTemplate >
-                                                    <DataTemplate>
-                                                        <RadioButton Content="{Binding Path=Data}" IsChecked="{Binding Path=IsChecked}" GroupName="CashDesk" Margin ="3"/>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <StackPanel Orientation="Horizontal" Margin="5"/>
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                            </ItemsControl>
-                                            <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right">
-                                                <Button Content="Հիշել" Command="{Binding Path=SetCashDeskCommand}" Width="100" Margin="3"/>
-                                            </StackPanel>
-                                        </DockPanel>
+                                        <CheckBox IsChecked="{Binding LocalMode}" Content="Աշխատել լոկալ ռեժիմում" Margin="5"/>
                                     </StackPanel>
-                                </Expander>
-                                <Expander Grid.Row="1" Header="Լռելայն կարգաբերումներ" Margin="3" IsExpanded="True">
-                                    <ScrollViewer HorizontalScrollBarVisibility="Auto" MinHeight="50" Margin="0 10">
-                                        <StackPanel Margin="5">
-                                            <Separator Margin="150,3,3,3" VerticalAlignment="Center" />
-                                            <CheckBox IsChecked="{Binding SaleBySingle}" Content="Վաճառել մեկական"/>
-                                            <CheckBox IsChecked="{Binding BuyBySingle}" Content="Գնել մեկական"/>
-                                            <StackPanel HorizontalAlignment="Right">
-                                                <Button Content="Հիշել" Command="{Binding Path=SetDefaultSettingsCommand}" Width="100"/>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </ScrollViewer>
-                                </Expander>
-                                <Expander Grid.Row="2" Header="Այլ" Margin="3" IsExpanded="True">
-                                    <ScrollViewer HorizontalScrollBarVisibility="Auto" MinHeight="50" Margin="0 10">
-                                        <StackPanel Margin="5">
-                                            <Separator Grid.Row="0" Margin="150,3,3,3" VerticalAlignment="Center" />
-                                            <CheckBox IsChecked="{Binding LocalMode}" Content="Աշխատել լոկալ ռեժիմում"/>
-                                            <StackPanel HorizontalAlignment="Right">
-                                                <Button Content="Հիշել" Command="{Binding Path=SetApplicationSettingsCommand}" Width="100"/>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </ScrollViewer>
-                                </Expander>
+                                </GroupBox>
                             </Grid>
                         </ScrollViewer>
                     </TabItem>
-                    <TabItem Header="Տպիչներ">
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <TabItem Header="Վաճառք">
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                             <Grid>
-                                <StackPanel>
-                                    <Expander Header="Վաճառքի տպիչ" Margin="3" IsExpanded="True">
-                                        <StackPanel>
-                                            <DockPanel LastChildFill="False" Margin="5">
-                                                <ItemsControl ItemsSource="{Binding Path = SalePrinters}">
-                                                    <ItemsControl.ItemTemplate >
-                                                        <DataTemplate>
-                                                            <RadioButton Content="{Binding Path=Data}" IsChecked="{Binding Path=IsChecked}"  GroupName="SalePrinters" Margin ="3"/>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <StackPanel Orientation="Horizontal" Margin="5"/>
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                </ItemsControl>
-                                            </DockPanel>
-                                        </StackPanel>
-                                    </Expander>
-                                    <Expander Header="Գնապիտակի տպիչ" Margin="3" IsExpanded="True">
-                                        <StackPanel Margin="5">
-                                            <ItemsControl ItemsSource="{Binding Path = BarcodePrinters}">
-                                                <ItemsControl.ItemTemplate >
-                                                    <DataTemplate>
-                                                        <RadioButton Content="{Binding Path=Data}" IsChecked="{Binding Path=IsChecked}" GroupName="BarcodePrinters" Margin ="3"/>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <StackPanel Orientation="Horizontal" Margin="5"/>
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                            </ItemsControl>
-                                        </StackPanel>
-                                    </Expander>
-                                    <StackPanel HorizontalAlignment="Right">
-                                        <Button Content="Խմբագրել" Command="{Binding Path=SetPrintersCommand}" Width="100"/>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <GroupBox Grid.Row="0" Header="Վաճառակետ">
+                                    <Grid x:Name="Grid_Department">
+                                        <ItemsControl  ItemsSource="{Binding Path = SaleStocks}">
+                                            <ItemsControl.ItemTemplate >
+                                                <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
+                                                    <CheckBox Content="{Binding Path=Data}" IsChecked="{Binding Path=IsChecked}" Margin ="5"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid_Department, Path=ActualWidth}"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </Grid>
+                                </GroupBox>
+                                <GroupBox Grid.Row="1" Header="Կանխիկ դրամարկղ">
+                                    <Grid>
+                                        <ItemsControl  ItemsSource="{Binding Path = SaleCashDesks}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
+                                                    <CheckBox Content="{Binding Path=Data}" IsChecked="{Binding Path=IsChecked}" Margin ="5"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid, Path=ActualWidth}"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </Grid>
+                                </GroupBox>
+                                <GroupBox Grid.Row="2" Header="Անկանխիկ դրամարկղ" Visibility="{Binding HasBankAccounts, Converter={StaticResource BoolToVisibility}}">
+                                    <Grid>
+                                        <ItemsControl  ItemsSource="{Binding Path = SaleBankAccounts}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
+                                                    <CheckBox Content="{Binding Path=Data}" IsChecked="{Binding Path=IsChecked}" Margin ="5"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid, Path=ActualWidth}"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </Grid>
+                                </GroupBox>
+                                <GroupBox Grid.Row="3" Header="Տպիչ">
+                                    <Grid>
+                                        <ItemsControl  ItemsSource="{Binding Path = SalePrinters}">
+                                            <ItemsControl.ItemTemplate >
+                                                <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
+                                                    <RadioButton Content="{Binding Path=Data}" IsChecked="{Binding Path=IsChecked}"  GroupName="SalePrinters" Margin ="5"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid_SalePrinter, Path=ActualWidth}"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </Grid>
+                                </GroupBox>
+                                <GroupBox Grid.Row="4" Header="Լռելայն կարգաբերումներ">
+                                    <StackPanel>
+                                        <CheckBox IsChecked="{Binding SaleBySingle}" Content="Վաճառել մեկական" Margin="5"/>
+                                        <CheckBox IsChecked="{Binding IsPrintSaleTicket}" Content="Տպել վաճառքի ապրանքագիր" Margin="5"/>
+                                        <CheckBox IsChecked="{Binding EcrSettings.IsActive}" Content="Ակտիվացնել կապը ՀԴՄ-ի հետ" Margin="5"/>
                                     </StackPanel>
-                                </StackPanel>
+                                </GroupBox>
+                            </Grid>
+                        </ScrollViewer>
+                    </TabItem>
+                    <TabItem Header="Գնում">
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <GroupBox Grid.Row="0" Header="Պահեստ">
+                                    <Grid>
+                                        <ItemsControl  ItemsSource="{Binding Path = PurchaseStocks}">
+                                            <ItemsControl.ItemTemplate >
+                                                <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
+                                                    <CheckBox Content="{Binding Path=Data}" IsChecked="{Binding Path=IsChecked}" Margin ="5"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid_Department, Path=ActualWidth}"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </Grid>
+                                </GroupBox>
+                                <GroupBox Grid.Row="1" Header="Կանխիկ դրամարկղ">
+                                    <Grid>
+                                        <ItemsControl  ItemsSource="{Binding Path = PurchaseCashDesks}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
+                                                    <CheckBox Content="{Binding Path=Data}" IsChecked="{Binding Path=IsChecked}" Margin ="5"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid, Path=ActualWidth}"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </Grid>
+                                </GroupBox>
+                                <GroupBox Grid.Row="2" Header="Անկանխիկ դրամարկղ" Visibility="{Binding HasBankAccounts, Converter={StaticResource BoolToVisibility}}">
+                                    <Grid>
+                                        <ItemsControl  ItemsSource="{Binding Path = PurchaseBankAccounts}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
+                                                    <CheckBox Content="{Binding Path=Data}" IsChecked="{Binding Path=IsChecked}" Margin ="5"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid, Path=ActualWidth}"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </Grid>
+                                </GroupBox>
+                                <GroupBox Grid.Row="3" Header="Լռելայն կարգաբերումներ">
+                                    <StackPanel>
+                                        <CheckBox IsChecked="{Binding PurchaseBySingle}" Content="Գնել մեկական" Margin="5"/>
+                                    </StackPanel>
+                                </GroupBox>
                             </Grid>
                         </ScrollViewer>
                     </TabItem>
                     <TabItem Header="ՀԴՄ կարգաբերում">
                         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                            <Grid>
+                            <Grid Width="Auto" HorizontalAlignment="Center">
                                 <StackPanel>
-                                    <Border Margin="100 10" Padding="10" BorderThickness=".5" BorderBrush="Black">
+                                    <GroupBox Header="ՀԴՄ կարգաբերումներ">
                                         <Grid>
                                             <Grid.Resources>
                                                 <Style TargetType="{x:Type TextBlock}">
@@ -175,8 +269,8 @@
                                                 </Style>
                                             </Grid.Resources>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="200"/>
                                                 <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="2*"/>
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition/>
@@ -190,82 +284,46 @@
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
                                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Սերվեր IP"/>
-                                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding EcrConfig.EcrSettings.Ip}"/>
+                                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding EcrSettings.Ip}"/>
                                             <TextBlock Grid.Row="1" Grid.Column="0" Text="Սերվեր Port"/>
-                                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EcrConfig.EcrSettings.Port}" Width="100" HorizontalContentAlignment="Right"/>
+                                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EcrSettings.Port}" Width="100" HorizontalContentAlignment="Right"/>
                                             <TextBlock Grid.Row="2" Grid.Column="0" Text="PublicKey"/>
-                                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding EcrConfig.EcrSettings.Password}"/>
+                                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding EcrSettings.Password}"/>
                                             <TextBlock Grid.Row="3" Grid.Column="0" Text="Գրանցման համար"/>
-                                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding EcrConfig.EcrSettings.Crn}"/>
+                                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding EcrSettings.Crn}"/>
                                             <TextBlock Grid.Row="4" Grid.Column="0" Text="Օպերատոր"/>
-                                            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding EcrConfig.EcrSettings.EcrCashier.Cashier}" Width="100" HorizontalContentAlignment="Right"/>
+                                            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding EcrSettings.EcrCashier.Cashier}" Width="100" HorizontalContentAlignment="Right"/>
                                             <TextBlock Grid.Row="5" Grid.Column="0" Text="Գաղտնաբառ"/>
-                                            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding EcrConfig.EcrSettings.EcrCashier.Pin}"/>
+                                            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding EcrSettings.EcrCashier.Pin}"/>
                                             <TextBlock Grid.Row="6" Grid.Column="0" Text="Հարկման տեսակը"/>
                                             <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal">
-                                                <ComboBox  ItemsSource="{Binding EcrConfig.EcrSettings.TypeOfOperatorDeps, Mode=OneWay}" DisplayMemberPath="Description" SelectedValuePath="id" 
-                                                       SelectedItem="{Binding EcrConfig.EcrSettings.CashierDepartment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  
+                                                <ComboBox  ItemsSource="{Binding EcrSettings.TypeOfOperatorDeps, Mode=OneWay}" DisplayMemberPath="Description" SelectedValuePath="id" 
+                                                       SelectedItem="{Binding EcrSettings.CashierDepartment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  
                                                        IsReadOnly="True" MinWidth="100" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
                                                 <Button Content="Բեռնել" Command="{Binding Path=ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.GetOperatorsAndDepList}" Margin="3" Padding="5 0"/>
                                             </StackPanel>
                                             <TextBlock Grid.Row="7" Grid.Column="0" Text="Տպել կտրոնը արտաքին տպիչով"/>
-                                            <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding EcrConfig.EcrSettings.UseExternalPrinter}" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
+                                            <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding EcrSettings.UseExternalPrinter}" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
                                             <TextBlock Grid.Row="8" Grid.Column="0" Text="Առևտրի ծրագիր IP" HorizontalAlignment="Right"/>
-                                            <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding EcrConfig.EcrSettings.ApplicationIp}"/>
+                                            <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding EcrSettings.ApplicationIp}"/>
                                         </Grid>
-                                    </Border>
-                                    <Border Margin="100 10" Padding="10" BorderThickness=".5" BorderBrush="Black">
-                                        <Grid>
-                                            <Grid.Resources>
-                                                <Style TargetType="{x:Type TextBlock}">
-                                                    <Setter Property="Margin" Value="3"/>
-                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
-                                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                                </Style>
-                                                <Style TargetType="{x:Type TextBox}">
-                                                    <Setter Property="Margin" Value="3"/>
-                                                    <Setter Property="Width" Value="300"/>
-                                                    <Setter Property="Height" Value="25"/>
-                                                    <Setter Property="HorizontalAlignment" Value="Left"/>
-                                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                                </Style>
-                                            </Grid.Resources>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="200"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Ակտիվացնել կապը ՀԴՄ-ի հետ"/>
-                                            <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding EcrConfig.IsActive}" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="ՀԴՄ-ի սերվերի տվյալներ"/>
-                                            <Grid Grid.Row="1" Grid.Column="1" IsEnabled="{Binding EcrConfig.IsActive}">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                <TextBox Grid.Column="0" Text="{Binding EcrConfig.EcrServiceSettings.Ip}"/>
-                                                <TextBox Grid.Column="1" Text="{Binding EcrConfig.EcrServiceSettings.Port, TargetNullValue=0}" Width="50" HorizontalContentAlignment="Right"/>
-                                                <CheckBox Grid.Column="2" IsChecked="{Binding EcrConfig.EcrServiceSettings.IsActive}" Content="Ակտիվացնել" VerticalAlignment="Center"/>
-                                            </Grid>
-                                        </Grid>
-                                    </Border>
+                                    </GroupBox>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <Button Content="Կապի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.CheckConnection}" Margin="3" Padding="5 0"/>
-                                        <Button Content="ՀԴՄ-ի հետ կապի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.CheckEcrConnection}" Margin="3" Padding="5 0"/>
-                                        <Button Content="ՀԴՄ-ի օպերատորի մուտքի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.OperatorLogin}" Margin="3" Padding="5 0"/>
-                                        <Button Content="Խմբագրել" Command="{Binding Path=SetEcrSettingsCommand}" Width="100" Margin="3"/>
+                                        <Button Content="Կապի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" MinWidth="100" CommandParameter="{x:Static helper:EcrExecuiteActions.CheckConnection}"/>
+                                        <Button Content="ՀԴՄ կապի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" MinWidth="100" CommandParameter="{x:Static helper:EcrExecuiteActions.CheckEcrConnection}"/>
+                                        <Button Content="Օպերատորի մուտքի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" MinWidth="100" CommandParameter="{x:Static helper:EcrExecuiteActions.OperatorLogin}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>
                         </ScrollViewer>
                     </TabItem>
                 </TabControl>
-                <controls:WaitingCover Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibility}}" />
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Հիշել" Width="80" Command="{Binding SaveCommand}"/>
+                </StackPanel>
             </Grid>
-        </DockPanel>
+            <controls:WaitingCover Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibility}}" />
+        </Grid>
     </DataTemplate>
+    
 </ResourceDictionary>

@@ -7,6 +7,7 @@ using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
+using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models.Reports;
 using Shared.Helpers;
@@ -67,7 +68,7 @@ namespace ES.Market.Views.Reports.ViewModels
 
         private List<InvoiceReport> UpdateSallByCustomers(Tuple<DateTime, DateTime> dateIntermediate)
         {
-            return InvoicesManager.GetSaleByPartners(dateIntermediate, ApplicationManager.Instance.GetEsMember.Id);
+            return InvoicesManager.GetSaleByPartners(dateIntermediate, ApplicationManager.Instance.GetMember.Id);
         }
         private void AddTab<T>(TableViewModel<T> vm)
         {

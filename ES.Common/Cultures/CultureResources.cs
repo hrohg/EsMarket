@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Security.Policy;
 using System.Threading;
 using System.Windows;
 using System.Windows.Data;
@@ -184,10 +185,5 @@ namespace ES.Common.Cultures
     		EventHandler handler = CultureChanged;
     		if (handler != null) handler(null, new EventArgs());
     	}
-
-    	public static void SaveSelectedLanguage(string language)
-        {
-            SettingsContainer.SaveSelectedLanguage(language);
-        }
     }
 }

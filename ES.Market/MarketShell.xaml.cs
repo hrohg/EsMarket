@@ -6,6 +6,9 @@ using System.Windows.Forms;
 using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Business.Models;
+using ES.Common.Enumerations;
+using ES.Common.Managers;
+using ES.Common.Models;
 using ES.Data.Enumerations;
 using ES.Data.Models;
 using ES.Market.Edit;
@@ -46,7 +49,7 @@ namespace ES.Market
             var nextTab = TabShop.Items.Add(new TabItem
             {
                 Header = "Ապրանքների ցուցակ" + (" - " + invoice.InvoiceNumber),
-                Content = new PackingListUctrl(invoice, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetEsMember),
+                Content = new PackingListUctrl(invoice, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember),
                 AllowDrop = true
             });
             TabShop.SelectedIndex = nextTab;
@@ -74,7 +77,7 @@ namespace ES.Market
         public MarketShell(ShellViewModel vm)
         {
             DataContext = vm;
-            if (ApplicationManager.Instance.GetEsMember == null || ApplicationManager.GetEsUser == null)
+            if (ApplicationManager.Instance.GetMember == null || ApplicationManager.GetEsUser == null)
             {
                 MessageBox.Show("Ոչ արտոնագրված գործողություն։ Ծրագիրը կփակվի։ Խնդրում ենք արտոնագրել ծրագրային ապահովումը։",
                  "Արտոնագրային սխալ", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -89,7 +92,7 @@ namespace ES.Market
                 return;
             }
 
-            if (ApplicationManager.Instance.GetEsMember == null || ApplicationManager.GetEsUser == null)
+            if (ApplicationManager.Instance.GetMember == null || ApplicationManager.GetEsUser == null)
             {
                 this.Close();
                 return;
@@ -135,15 +138,14 @@ namespace ES.Market
         #region Product order
         protected void MiProductOrderByMinQuantity_Click(object sender, EventArgs e)
         {
-            var products = ProductsManager.GetProductOrderByProduct(ApplicationManager.Instance.GetEsMember.Id);
+            var products = ProductsManager.GetProductOrderByProduct(ApplicationManager.Instance.GetMember.Id);
             if (products == null || products.Count == 0)
             {
                 MessageBox.Show("Նշված տվյալներով պատվեր չի հայտնաբերվել");
                 return;
             }
             var ui =
-                new UIListView(
-                    products.Select(
+                new UIListView(products.Select(
                         s =>
                             new
                             {
@@ -158,16 +160,15 @@ namespace ES.Market
         }
         protected void MiProductOrderByProviders_Click(object sender, EventArgs e)
         {
-            var products = ProductsManager.GetProductOrderByProduct(ApplicationManager.Instance.GetEsMember.Id);
+            var products = ProductsManager.GetProductOrderByProduct(ApplicationManager.Instance.GetMember.Id);
             if (products == null || products.Count == 0)
             {
                 MessageBox.Show("Նշված տվյալներով պատվեր չի հայտնաբերվել");
                 return;
             }
-            var partners = PartnersManager.GetPartner(ApplicationManager.Instance.GetEsMember.Id);
+            var partners = PartnersManager.GetPartner(ApplicationManager.Instance.GetMember.Id);
             var ui =
-                new UIListView(
-                    products.Select(
+                new UIListView(products.Select(
                         s =>
                         {
                             var firstOrDefault = partners.FirstOrDefault(t => t.Id == s.ProviderId);
@@ -188,16 +189,15 @@ namespace ES.Market
         }
         protected void MiProductOrderByBrands_Click(object sender, EventArgs e)
         {
-            var brands = SelectItemsManager.SelectBrands(ProductsManager.GetBrands(ApplicationManager.Instance.GetEsMember.Id), true);
-            var products = ProductsManager.GetProductOrderByBrands(brands, ApplicationManager.Instance.GetEsMember.Id);
+            var brands = SelectItemsManager.SelectBrands(ProductsManager.GetBrands(ApplicationManager.Instance.GetMember.Id), true);
+            var products = ProductsManager.GetProductOrderByBrands(brands, ApplicationManager.Instance.GetMember.Id);
             if (products == null || products.Count == 0)
             {
                 MessageBox.Show("Նշված տվյալներով պատվեր չի հայտնաբերվել");
                 return;
             }
             var ui =
-                new UIListView(
-                    products.Select(
+                new UIListView(products.Select(
                         s =>
                             new
                             {
@@ -218,7 +218,7 @@ namespace ES.Market
         #region Cash desk
         private void MiDebitViewDetile_Click(object sender, EventArgs e)
         {
-            var partners = PartnersManager.GetPartners(ApplicationManager.Instance.GetEsMember.Id);
+            var partners = PartnersManager.GetPartners(ApplicationManager.Instance.GetMember.Id);
             string content, title;
             title = "Դեբիտորական պարտքի դիտում";
             if (partners == null)
@@ -227,8 +227,8 @@ namespace ES.Market
                 MessageBox.Show(content, title, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            var view = new UIListView(partners.Where(s => s.Debit != null && s.Debit != 0)
-                        .Select(s => new { Գործընկեր = s.Description, Դեբիտորական_պարտք = s.Debit }));
+            var list = partners.Where(s => s.Debit != 0).Select(s => new {Գործընկեր = s.Description, Դեբիտորական_պարտք = s.Debit}).ToList();
+            var view = new UIListView(list, "Դեբիտորական պարտքի դիտում", (double)list.Sum(s=>s.Դեբիտորական_պարտք) );
             view.Show();
         }
 
@@ -237,7 +237,7 @@ namespace ES.Market
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Member.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
             accountingRecords.Credit = (long)AccountingRecordsManager.AccountingPlan.AccountingReceivable;
-            var cashDesk = SelectItemsManager.SelectDefaultCashDesks(null, false, "Ընտրել դրամարկղ").FirstOrDefault();
+            var cashDesk = SelectItemsManager.SelectDefaultSaleCashDesks(null, false, "Ընտրել դրամարկղ").FirstOrDefault();
             if (cashDesk == null)
             {
                 MessageBox.Show("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
@@ -298,7 +298,7 @@ namespace ES.Market
         //todo
         private PartnerModel SelectPartner(PartnerType partnerTypeId = 0)
         {
-            var partners = partnerTypeId != 0 ? PartnersManager.GetPartner(ApplicationManager.Instance.GetEsMember.Id, partnerTypeId) : PartnersManager.GetPartners(ApplicationManager.Instance.GetEsMember.Id);
+            var partners = partnerTypeId != 0 ? PartnersManager.GetPartner(ApplicationManager.Instance.GetMember.Id, partnerTypeId) : PartnersManager.GetPartners(ApplicationManager.Instance.GetMember.Id);
             if (partners.Count == 0) return null;
             var selectedItems =
                 new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName + " " + s.Mobile, SelectedValue = s.Id }).ToList(), false);
@@ -333,11 +333,11 @@ namespace ES.Market
         //251
         protected void MiTransferIntoCashDesk_Click(object sender, EventArgs e)
         {
-            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId);
+            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
             accountingRecords.Credit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
-            var fromCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetEsMember.Id, false, "Ընտրել ելքագրվող դրամարկղը").FirstOrDefault();
-            var toCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetEsMember.Id, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
+            var fromCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetMember.Id, false, "Ընտրել ելքագրվող դրամարկղը").FirstOrDefault();
+            var toCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetMember.Id, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
             if (fromCashDesk == null || toCashDesk == null)
             {
                 MessageBox.Show("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
@@ -366,7 +366,8 @@ namespace ES.Market
             }
             accountingRecords.DebitGuidId = toCashDesk.Id;
             accountingRecords.CreditGuidId = fromCashDesk.Id;
-            if (AccountingRecordsManager.SetCashTransfer(accountingRecords, ApplicationManager.Instance.GetEsMember.Id))
+            
+            if (AccountingRecordsManager.SetCashTransfer(accountingRecords, ApplicationManager.Instance.GetMember.Id))
             {
                 MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
             }
@@ -378,11 +379,11 @@ namespace ES.Market
         //311
         protected void MiAddEquityBase_Click(object sender, EventArgs e)
         {
-            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId);
+            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
             accountingRecords.Credit = (long)AccountingRecordsManager.AccountingPlan.EquityBase;
-            var fromUser = SelectItemsManager.SelectUser(ApplicationManager.Instance.GetEsMember.Id, false, "Ընտրել ներդրող").FirstOrDefault();
-            var toCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetEsMember.Id, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
+            var fromUser = SelectItemsManager.SelectUser(ApplicationManager.Instance.GetMember.Id, false, "Ընտրել ներդրող").FirstOrDefault();
+            var toCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetMember.Id, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
             if (fromUser == null || toCashDesk == null)
             {
                 MessageBox.Show("Թերի տվյալներ");
@@ -400,7 +401,7 @@ namespace ES.Market
                 repaymentAccountingRecord.Amount == 0) return;
             accountingRecords.DebitGuidId = toCashDesk.Id;
             accountingRecords.CreditLongId = fromUser.UserId;
-            if (AccountingRecordsManager.SetEquityBase(accountingRecords, ApplicationManager.Instance.GetEsMember.Id))
+            if (AccountingRecordsManager.SetEquityBase(accountingRecords, ApplicationManager.Instance.GetMember.Id))
             {
                 MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
             }
@@ -412,11 +413,11 @@ namespace ES.Market
         //521
         protected void MiRepaymentOfDebts_Click(object sender, EventArgs e)
         {
-            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId);
+            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (long)AccountingRecordsManager.AccountingPlan.PurchasePayables;
             accountingRecords.Credit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
             var partner = SelectItemsManager.SelectPartners(false, "Ընտրել գործընկեր դրամարկղը").FirstOrDefault();
-            var fromCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetEsMember.Id, false, "Ընտրել ելքագրվող դրամարկղը").FirstOrDefault();
+            var fromCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetMember.Id, false, "Ընտրել ելքագրվող դրամարկղը").FirstOrDefault();
             if (partner == null || fromCashDesk == null)
             {
                 MessageBox.Show("Թերի տվյալներ");
@@ -444,7 +445,7 @@ namespace ES.Market
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            if (AccountingRecordsManager.SetRepaymentOfDebts(accountingRecords, ApplicationManager.Instance.GetEsMember.Id))
+            if (AccountingRecordsManager.SetRepaymentOfDebts(accountingRecords, ApplicationManager.Instance.GetMember.Id))
             {
                 MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
             }
@@ -456,17 +457,16 @@ namespace ES.Market
         //523
         protected void MiReceivedInAdvance_Click(object sender, EventArgs e)
         {
-            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId);
+            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
             accountingRecords.Credit = (long)AccountingRecordsManager.AccountingPlan.ReceivedInAdvance;
-            var cashDesk = SelectItemsManager.SelectDefaultCashDesks(null, false, "Ընտրել դրամարկղ").FirstOrDefault();
+            var cashDesk = SelectItemsManager.SelectDefaultSaleCashDesks(null, false, "Ընտրել դրամարկղ").FirstOrDefault();
             if (cashDesk == null)
             {
                 MessageBox.Show("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
                 return;
             }
             accountingRecords.DebitGuidId = cashDesk.Id;
-            //var partners = PartnersManager.GetPartners(_member.Id);
             var partner = SelectPartner();
             if (partner == null)
             {
@@ -497,29 +497,29 @@ namespace ES.Market
         protected void MiCostOfSales_Salary_Click(object sender, EventArgs e)
         {
             var costOfSales = SelectItemsManager.SelectSubAccountingPlan(
-                SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingRecordsManager.AccountingPlan.Debit_For_Salary, ApplicationManager.Instance.GetEsMember.Id, true), false, "Ընտրել");
+                SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingRecordsManager.AccountingPlan.Debit_For_Salary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել");
             var debitForSalary = SelectItemsManager.SelectSubAccountingPlan(
-                SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingRecordsManager.AccountingPlan.Debit_For_Salary, ApplicationManager.Instance.GetEsMember.Id, true), false, "Ընտրել աշխատակից");
-            var cashDesk = SelectItemsManager.SelectCashDesks(true, ApplicationManager.Instance.GetEsMember.Id, false, "Ընտրել դրամարկղ");
+                SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingRecordsManager.AccountingPlan.Debit_For_Salary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել աշխատակից");
+            var cashDesk = SelectItemsManager.SelectCashDesks(true, ApplicationManager.Instance.GetMember.Id, false, "Ընտրել դրամարկղ");
 
             if (costOfSales.First() == null || debitForSalary.First() == null || cashDesk.First() == null)
             {
                 return;
             }
 
-            var accountingRecords1 = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId);
+            var accountingRecords1 = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords1.Debit = (long)AccountingRecordsManager.AccountingPlan.CostOfSales;
             accountingRecords1.DebitGuidId = costOfSales.First().Id;
             accountingRecords1.Credit = (long)AccountingRecordsManager.AccountingPlan.Debit_For_Salary;
             accountingRecords1.CreditGuidId = debitForSalary.First().Id;
 
-            var accountingRecords2 = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId);
+            var accountingRecords2 = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords2.Debit = (long)AccountingRecordsManager.AccountingPlan.Debit_For_Salary;
             accountingRecords2.DebitGuidId = debitForSalary.First().Id;
             accountingRecords2.Credit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
             accountingRecords2.CreditGuidId = cashDesk.First().Id;
 
-            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId);
+            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (long)AccountingRecordsManager.AccountingPlan.CostOfSales;
             accountingRecords.DebitGuidId = debitForSalary.First().Id;
             accountingRecords.Credit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
@@ -537,11 +537,6 @@ namespace ES.Market
 
         #region AccountingAccounts
 
-        /// <summary>
-        /// View detiles
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         protected void MiSingleAccountingRecords_Click(object sender, EventArgs e)
         {
             new CtrlSingleAccountingRecords((int)AccountingRecordsManager.AccountingPlan.CostOfSales, (int)AccountingRecordsManager.AccountingPlan.CashDesk).Show();
@@ -552,7 +547,7 @@ namespace ES.Market
         }
         private void MiDebitByPartners_Click(object sender, EventArgs e)
         {
-            var debits = PartnersManager.GetPartners(ApplicationManager.Instance.GetEsMember.Id);
+            var debits = PartnersManager.GetPartners(ApplicationManager.Instance.GetMember.Id);
             var ui = new UIListView(debits.Where(s => s.Debit > 0 || s.Credit > 0).Select(s => new { Գործընկեր = s.FullName, Կանխավճար = s.Credit, Պարտք = s.Debit }).ToList());
             ui.Show();
         }
@@ -561,19 +556,15 @@ namespace ES.Market
             var partner = SelectPartner();
             if (partner == null) return;
             var accountReceivable = PartnersManager.GetAccountsReceivable(partner.Id);
-            var ui = new UIListView(accountReceivable.Select(s => new
+            var list = accountReceivable.Select(s => new
             {
                 Ամսաթիվ = s.Date.ToString("dd.MM.yyyy"),
                 Պարտք = s.Amount,
                 Վճարված = s.PaidAmount,
-                Վերջնաժամկետ = s.ExpairyDate != null ? ((DateTime)s.ExpairyDate).ToString("dd.MM.yyyy") : string.Empty
-            }).ToList(), partner.FullName);
+                Վերջնաժամկետ = s.ExpairyDate != null ? ((DateTime) s.ExpairyDate).ToString("dd.MM.yyyy") : string.Empty
+            }).ToList();
+            var ui = new UIListView(list, partner.FullName, (double)list.Sum(s=>s.Պարտք));
             ui.Show();
-        }
-        private void MiAccountingPlan_Click(object sender, EventArgs e)
-        {
-            var ctrlAccountingPlan = new CtrlAccountingRecords(ApplicationManager.Instance.GetEsMember.Id, ApplicationManager.GetEsUser.UserId);
-            ctrlAccountingPlan.Show();
         }
         protected void MiAccountingRepaymentDetile_Click(object sender, EventArgs e)
         {
@@ -616,7 +607,7 @@ namespace ES.Market
             var nextTab = TabShop.Items.Add(new TabItem
             {
                 Header = "Ծառայությունների խմբագրում",
-                Content = new UctrlEditServices(ApplicationManager.Instance.GetEsMember.Id),
+                Content = new UctrlEditServices(ApplicationManager.Instance.GetMember.Id),
                 AllowDrop = true
 
             });
@@ -632,9 +623,9 @@ namespace ES.Market
         }
         protected void MiManageBrands_Click(object sender, EventArgs e)
         {
-            ApplicationManager.MessageManager.OnNewMessage(EditManager.UpdateBrandsManager(ApplicationManager.Instance.GetEsMember.Id)
-                ? new MessageModel(DateTime.Now, "Խմբագրումն իրականացել է հաջողությամբ։", MessageModel.MessageTypeEnum.Success)
-                : new MessageModel(DateTime.Now, "Խմբագրումը ձախողվել է։", MessageModel.MessageTypeEnum.Warning));
+            MessageManager.OnMessage(EditManager.UpdateBrandsManager(ApplicationManager.Instance.GetMember.Id)
+                ? new MessageModel(DateTime.Now, "Խմբագրումն իրականացել է հաջողությամբ։", MessageTypeEnum.Success)
+                : new MessageModel(DateTime.Now, "Խմբագրումը ձախողվել է։", MessageTypeEnum.Warning));
         }
 
         protected void MiUpdateMainProvisions_Click(object sender, EventArgs e)
@@ -665,7 +656,7 @@ namespace ES.Market
         }
         protected void MiViewPriceList_Click(object sender, EventArgs e)
         {
-            var products = new ProductsManager().GetProducts(ApplicationManager.Instance.GetEsMember.Id);
+            var products = new ProductsManager().GetProducts(ApplicationManager.Instance.GetMember.Id);
             new UIListView(products.Select(s => new { Կոդ = s.Code, Անվանում = s.Description, Չմ = s.Mu, Մեծածախ = s.DealerPrice, Մանրածախ = s.Price })
                 , "Գնացուցակ").Show();
         }

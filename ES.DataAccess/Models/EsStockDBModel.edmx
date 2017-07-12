@@ -93,6 +93,52 @@
           <Property Name="ValueInLong" Type="bigint" />
           <Property Name="MemberId" Type="bigint" Nullable="false" />
         </EntityType>
+        <EntityType Name="EsInvoiceItemsArchive">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="EsInvoiceID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ESProductID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProductItemID" Type="uniqueidentifier" />
+          <Property Name="Quantity" Type="decimal" Precision="12" Scale="2" />
+          <Property Name="Price" Type="decimal" Precision="12" Scale="2" />
+          <Property Name="Discount" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="Description" Type="nvarchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="ESInvoicesArchive">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="InvoiceTypeID" Type="int" Nullable="false" />
+          <Property Name="InvoiceNumber" Type="nvarchar" MaxLength="25" Nullable="false" />
+          <Property Name="FromStockID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ToStockID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" Nullable="false" />
+          <Property Name="CreatorID" Type="uniqueidentifier" />
+          <Property Name="Creator" Type="nvarchar" MaxLength="250" />
+          <Property Name="ApproveDate" Type="datetime" />
+          <Property Name="ApproverID" Type="uniqueidentifier" />
+          <Property Name="Approver" Type="nvarchar" MaxLength="250" />
+          <Property Name="AcceptDate" Type="datetime" />
+          <Property Name="AccepterID" Type="uniqueidentifier" />
+          <Property Name="Accepter" Type="nvarchar" MaxLength="250" />
+          <Property Name="ProviderName" Type="nvarchar" MaxLength="250" />
+          <Property Name="ProviderJuridicalAddress" Type="nvarchar" MaxLength="250" />
+          <Property Name="ProviderAddress" Type="nvarchar" MaxLength="250" />
+          <Property Name="ProviderBank" Type="nvarchar" MaxLength="250" />
+          <Property Name="ProviderBankAccount" Type="nvarchar" MaxLength="50" />
+          <Property Name="ProviderTaxRegistration" Type="nvarchar" MaxLength="12" />
+          <Property Name="RecipientName" Type="nvarchar" MaxLength="250" />
+          <Property Name="RecipientJuridicalAddress" Type="nvarchar" MaxLength="250" />
+          <Property Name="RecipientAddress" Type="nvarchar" MaxLength="250" />
+          <Property Name="RecipientBank" Type="nvarchar" MaxLength="250" />
+          <Property Name="RecipientBankAccount" Type="nvarchar" MaxLength="50" />
+          <Property Name="RecipientTaxRegistration" Type="nvarchar" MaxLength="12" />
+          <Property Name="Discount" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="Description" Type="nvarchar" MaxLength="500" />
+        </EntityType>
         <EntityType Name="EsInvoiceTypes">
           <Key>
             <PropertyRef Name="Id" />
@@ -453,6 +499,16 @@
           <Property Name="Amount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
           <Property Name="MemberId" Type="bigint" Nullable="false" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
         <Association Name="FK_AccountingRecords_EsMembers">
           <End Role="EsMembers" Type="Self.EsMembers" Multiplicity="1" />
@@ -1062,6 +1118,8 @@
           <EntitySet Name="CashDesk" EntityType="Self.CashDesk" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EsCategories" EntityType="Self.EsCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EsDefaults" EntityType="Self.EsDefaults" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EsInvoiceItemsArchive" EntityType="Self.EsInvoiceItemsArchive" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ESInvoicesArchive" EntityType="Self.ESInvoicesArchive" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EsInvoiceTypes" EntityType="Self.EsInvoiceTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EsMembers" EntityType="Self.EsMembers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EsMembersAccounts" EntityType="Self.EsMembersAccounts" Schema="dbo" store:Type="Tables" />
@@ -1087,6 +1145,7 @@
           <EntitySet Name="StockTake" EntityType="Self.StockTake" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="StockTakeItems" EntityType="Self.StockTakeItems" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubAccountingPlan" EntityType="Self.SubAccountingPlan" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_AccountingRecords_EsMembers" Association="Self.FK_AccountingRecords_EsMembers">
             <End Role="EsMembers" EntitySet="EsMembers" />
             <End Role="AccountingRecords" EntitySet="AccountingRecords" />
@@ -1318,7 +1377,10 @@
           <EntitySet Name="AccountsReceivable" EntityType="EsStockDBModel.AccountsReceivable" />
           <EntitySet Name="Brands" EntityType="EsStockDBModel.Brands" />
           <EntitySet Name="CashDesk" EntityType="EsStockDBModel.CashDesk" />
+          <EntitySet Name="EsCategories" EntityType="EsStockDBModel.EsCategories" />
           <EntitySet Name="EsDefaults" EntityType="EsStockDBModel.EsDefaults" />
+          <EntitySet Name="EsInvoiceItemsArchive" EntityType="EsStockDBModel.EsInvoiceItemsArchive" />
+          <EntitySet Name="ESInvoicesArchive" EntityType="EsStockDBModel.ESInvoicesArchive" />
           <EntitySet Name="EsInvoiceTypes" EntityType="EsStockDBModel.EsInvoiceTypes" />
           <EntitySet Name="EsMembers" EntityType="EsStockDBModel.EsMembers" />
           <EntitySet Name="EsMembersAccounts" EntityType="EsStockDBModel.EsMembersAccounts" />
@@ -1334,6 +1396,7 @@
           <EntitySet Name="MembersRoles" EntityType="EsStockDBModel.MembersRoles" />
           <EntitySet Name="MemberUsersRoles" EntityType="EsStockDBModel.MemberUsersRoles" />
           <EntitySet Name="Partners" EntityType="EsStockDBModel.Partners" />
+          <EntitySet Name="ProductCategories" EntityType="EsStockDBModel.ProductCategories" />
           <EntitySet Name="ProductGroup" EntityType="EsStockDBModel.ProductGroup" />
           <EntitySet Name="ProductItems" EntityType="EsStockDBModel.ProductItems" />
           <EntitySet Name="ProductOrder" EntityType="EsStockDBModel.ProductOrder" />
@@ -1341,7 +1404,9 @@
           <EntitySet Name="Products" EntityType="EsStockDBModel.Products" />
           <EntitySet Name="SaleInCash" EntityType="EsStockDBModel.SaleInCash" />
           <EntitySet Name="StockTake" EntityType="EsStockDBModel.StockTake" />
+          <EntitySet Name="StockTakeItems" EntityType="EsStockDBModel.StockTakeItems" />
           <EntitySet Name="SubAccountingPlan" EntityType="EsStockDBModel.SubAccountingPlan" />
+          <EntitySet Name="sysdiagrams" EntityType="EsStockDBModel.sysdiagrams" />
           <AssociationSet Name="FK_AccountingRecords_EsMembers" Association="EsStockDBModel.FK_AccountingRecords_EsMembers">
             <End Role="EsMembers" EntitySet="EsMembers" />
             <End Role="AccountingRecords" EntitySet="AccountingRecords" />
@@ -1381,6 +1446,10 @@
           <AssociationSet Name="FK_SaleInCash_CashDesk" Association="EsStockDBModel.FK_SaleInCash_CashDesk">
             <End Role="CashDesk" EntitySet="CashDesk" />
             <End Role="SaleInCash" EntitySet="SaleInCash" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EsCategories_EsCategories" Association="EsStockDBModel.FK_EsCategories_EsCategories">
+            <End Role="EsCategories" EntitySet="EsCategories" />
+            <End Role="EsCategories1" EntitySet="EsCategories" />
           </AssociationSet>
           <AssociationSet Name="FK_ESInvoices_InvoiceTypes" Association="EsStockDBModel.FK_ESInvoices_InvoiceTypes">
             <End Role="EsInvoiceTypes" EntitySet="EsInvoiceTypes" />
@@ -1506,6 +1575,10 @@
             <End Role="MembersRoles" EntitySet="MembersRoles" />
             <End Role="MemberUsersRoles" EntitySet="MemberUsersRoles" />
           </AssociationSet>
+          <AssociationSet Name="FK_ProductCategories_Products" Association="EsStockDBModel.FK_ProductCategories_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProductCategories" EntitySet="ProductCategories" />
+          </AssociationSet>
           <AssociationSet Name="FK_ProductGroup_Products" Association="EsStockDBModel.FK_ProductGroup_Products">
             <End Role="Products" EntitySet="Products" />
             <End Role="ProductGroup" EntitySet="ProductGroup" />
@@ -1530,17 +1603,6 @@
             <End Role="Products" EntitySet="Products" />
             <End Role="ProductOrderItems" EntitySet="ProductOrderItems" />
           </AssociationSet>
-          <EntitySet Name="EsCategories" EntityType="EsStockDBModel.EsCategories" />
-          <AssociationSet Name="FK_EsCategories_EsCategories" Association="EsStockDBModel.FK_EsCategories_EsCategories">
-            <End Role="EsCategories" EntitySet="EsCategories" />
-            <End Role="EsCategories1" EntitySet="EsCategories" />
-          </AssociationSet>
-          <EntitySet Name="ProductCategories" EntityType="EsStockDBModel.ProductCategories" />
-          <AssociationSet Name="FK_ProductCategories_Products" Association="EsStockDBModel.FK_ProductCategories_Products">
-            <End Role="Products" EntitySet="Products" />
-            <End Role="ProductCategories" EntitySet="ProductCategories" />
-          </AssociationSet>
-          <EntitySet Name="StockTakeItems" EntityType="EsStockDBModel.StockTakeItems" />
           <AssociationSet Name="FK_StockTakingItems_StockTaking" Association="EsStockDBModel.FK_StockTakingItems_StockTaking">
             <End Role="StockTake" EntitySet="StockTake" />
             <End Role="StockTakeItems" EntitySet="StockTakeItems" />
@@ -1601,6 +1663,22 @@
           <NavigationProperty Name="EsMembers" Relationship="EsStockDBModel.FK_CashDesk_CashDesk" FromRole="CashDesk" ToRole="EsMembers" />
           <NavigationProperty Name="SaleInCash" Relationship="EsStockDBModel.FK_SaleInCash_CashDesk" FromRole="CashDesk" ToRole="SaleInCash" />
         </EntityType>
+        <EntityType Name="EsCategories">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="ParentId" Type="Guid" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="HCDCS" Type="String" MaxLength="12" FixedLength="false" Unicode="true" />
+          <Property Name="Logo" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="LastModificationDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LastModifierId" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="EsCategories1" Relationship="EsStockDBModel.FK_EsCategories_EsCategories" FromRole="EsCategories" ToRole="EsCategories1" />
+          <NavigationProperty Name="EsCategories2" Relationship="EsStockDBModel.FK_EsCategories_EsCategories" FromRole="EsCategories1" ToRole="EsCategories" />
+        </EntityType>
         <EntityType Name="EsDefaults">
           <Key>
             <PropertyRef Name="Id" />
@@ -1610,6 +1688,52 @@
           <Property Name="ValueInGuid" Type="Guid" />
           <Property Name="ValueInLong" Type="Int64" />
           <Property Name="MemberId" Type="Int64" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EsInvoiceItemsArchive">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="EsInvoiceID" Type="Guid" Nullable="false" />
+          <Property Name="ESProductID" Type="Guid" Nullable="false" />
+          <Property Name="ProductItemID" Type="Guid" />
+          <Property Name="Quantity" Type="Decimal" Precision="12" Scale="2" />
+          <Property Name="Price" Type="Decimal" Precision="12" Scale="2" />
+          <Property Name="Discount" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ESInvoicesArchive">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Guid" Nullable="false" />
+          <Property Name="InvoiceTypeID" Type="Int32" Nullable="false" />
+          <Property Name="InvoiceNumber" Type="String" Nullable="false" MaxLength="25" FixedLength="false" Unicode="true" />
+          <Property Name="FromStockID" Type="Guid" Nullable="false" />
+          <Property Name="ToStockID" Type="Guid" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatorID" Type="Guid" />
+          <Property Name="Creator" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ApproveDate" Type="DateTime" Precision="3" />
+          <Property Name="ApproverID" Type="Guid" />
+          <Property Name="Approver" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="AcceptDate" Type="DateTime" Precision="3" />
+          <Property Name="AccepterID" Type="Guid" />
+          <Property Name="Accepter" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderJuridicalAddress" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderAddress" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderBank" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderBankAccount" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderTaxRegistration" Type="String" MaxLength="12" FixedLength="false" Unicode="true" />
+          <Property Name="RecipientName" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="RecipientJuridicalAddress" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="RecipientAddress" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="RecipientBank" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="RecipientBankAccount" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="RecipientTaxRegistration" Type="String" MaxLength="12" FixedLength="false" Unicode="true" />
+          <Property Name="Discount" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="EsInvoiceTypes">
           <Key>
@@ -1878,6 +2002,15 @@
           <NavigationProperty Name="EsPartnersTypes" Relationship="EsStockDBModel.FK_Partners_EsPartnersTypes" FromRole="Partners" ToRole="EsPartnersTypes" />
           <NavigationProperty Name="EsUsers" Relationship="EsStockDBModel.FK_Partners_EsUsers" FromRole="Partners" ToRole="EsUsers" />
         </EntityType>
+        <EntityType Name="ProductCategories">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="ProductId" Type="Guid" Nullable="false" />
+          <Property Name="CategoryId" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="Products" Relationship="EsStockDBModel.FK_ProductCategories_Products" FromRole="ProductCategories" ToRole="Products" />
+        </EntityType>
         <EntityType Name="ProductGroup">
           <Key>
             <PropertyRef Name="Id" />
@@ -1983,10 +2116,10 @@
           <NavigationProperty Name="EsMembers" Relationship="EsStockDBModel.FK_Products_EsMembers" FromRole="Products" ToRole="EsMembers" />
           <NavigationProperty Name="EsUsers" Relationship="EsStockDBModel.FK_Products_EsUsers" FromRole="Products" ToRole="EsUsers" />
           <NavigationProperty Name="InvoiceItems" Relationship="EsStockDBModel.FK_InvoiceItems_Products" FromRole="Products" ToRole="InvoiceItems" />
+          <NavigationProperty Name="ProductCategories" Relationship="EsStockDBModel.FK_ProductCategories_Products" FromRole="Products" ToRole="ProductCategories" />
           <NavigationProperty Name="ProductGroup" Relationship="EsStockDBModel.FK_ProductGroup_Products" FromRole="Products" ToRole="ProductGroup" />
           <NavigationProperty Name="ProductItems" Relationship="EsStockDBModel.FK_ProductItems_Products" FromRole="Products" ToRole="ProductItems" />
           <NavigationProperty Name="ProductOrderItems" Relationship="EsStockDBModel.FK_ProductOrderItems_Products" FromRole="Products" ToRole="ProductOrderItems" />
-          <NavigationProperty Name="ProductCategories" Relationship="EsStockDBModel.FK_ProductCategories_Products" FromRole="Products" ToRole="ProductCategories" />
         </EntityType>
         <EntityType Name="SaleInCash">
           <Key>
@@ -2019,6 +2152,24 @@
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="StockTakeItems" Relationship="EsStockDBModel.FK_StockTakingItems_StockTaking" FromRole="StockTake" ToRole="StockTakeItems" />
         </EntityType>
+        <EntityType Name="StockTakeItems">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Index" Type="Int32" />
+          <Property Name="StockTakeId" Type="Guid" Nullable="false" />
+          <Property Name="ProductId" Type="Guid" />
+          <Property Name="CodeOrBarcode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ProductDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Mu" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Quantity" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="StockTakeQuantity" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="StockTakeDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="StockTake" Relationship="EsStockDBModel.FK_StockTakingItems_StockTaking" FromRole="StockTakeItems" ToRole="StockTake" />
+        </EntityType>
         <EntityType Name="SubAccountingPlan">
           <Key>
             <PropertyRef Name="Id" />
@@ -2031,6 +2182,16 @@
           <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
           <Property Name="MemberId" Type="Int64" Nullable="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         <Association Name="FK_AccountingRecords_EsMembers">
           <End Type="EsStockDBModel.EsMembers" Role="EsMembers" Multiplicity="1" />
@@ -2149,6 +2310,18 @@
             </Principal>
             <Dependent Role="SaleInCash">
               <PropertyRef Name="CashDeskId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EsCategories_EsCategories">
+          <End Type="EsStockDBModel.EsCategories" Role="EsCategories" Multiplicity="0..1" />
+          <End Type="EsStockDBModel.EsCategories" Role="EsCategories1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EsCategories">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EsCategories1">
+              <PropertyRef Name="ParentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2524,6 +2697,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ProductCategories_Products">
+          <End Type="EsStockDBModel.Products" Role="Products" Multiplicity="1" />
+          <End Type="EsStockDBModel.ProductCategories" Role="ProductCategories" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProductCategories">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ProductGroup_Products">
           <End Type="EsStockDBModel.Products" Role="Products" Multiplicity="1" />
           <End Type="EsStockDBModel.ProductGroup" Role="ProductGroup" Multiplicity="*" />
@@ -2596,73 +2781,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="EsCategories">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="ParentId" Type="Guid" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="HCDCS" Type="String" MaxLength="12" FixedLength="false" Unicode="true" />
-          <Property Name="Logo" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <Property Name="LastModificationDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="LastModifierId" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="EsCategories1" Relationship="EsStockDBModel.FK_EsCategories_EsCategories" FromRole="EsCategories" ToRole="EsCategories1" />
-          <NavigationProperty Name="EsCategories2" Relationship="EsStockDBModel.FK_EsCategories_EsCategories" FromRole="EsCategories1" ToRole="EsCategories" />
-        </EntityType>
-        <Association Name="FK_EsCategories_EsCategories">
-          <End Type="EsStockDBModel.EsCategories" Role="EsCategories" Multiplicity="0..1" />
-          <End Type="EsStockDBModel.EsCategories" Role="EsCategories1" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="EsCategories">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="EsCategories1">
-              <PropertyRef Name="ParentId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="ProductCategories">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="ProductId" Type="Guid" Nullable="false" />
-          <Property Name="CategoryId" Type="Int64" Nullable="false" />
-          <NavigationProperty Name="Products" Relationship="EsStockDBModel.FK_ProductCategories_Products" FromRole="ProductCategories" ToRole="Products" />
-        </EntityType>
-        <Association Name="FK_ProductCategories_Products">
-          <End Type="EsStockDBModel.Products" Role="Products" Multiplicity="1" />
-          <End Type="EsStockDBModel.ProductCategories" Role="ProductCategories" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Products">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="ProductCategories">
-              <PropertyRef Name="ProductId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="StockTakeItems">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="Index" Type="Int32" />
-          <Property Name="StockTakeId" Type="Guid" Nullable="false" />
-          <Property Name="ProductId" Type="Guid" />
-          <Property Name="CodeOrBarcode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ProductDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Mu" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
-          <Property Name="Price" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Quantity" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
-          <Property Name="StockTakeQuantity" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="StockTakeDate" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="StockTake" Relationship="EsStockDBModel.FK_StockTakingItems_StockTaking" FromRole="StockTakeItems" ToRole="StockTake" />
-        </EntityType>
         <Association Name="FK_StockTakingItems_StockTaking">
           <End Type="EsStockDBModel.StockTake" Role="StockTake" Multiplicity="1" />
           <End Type="EsStockDBModel.StockTakeItems" Role="StockTakeItems" Multiplicity="*" />
@@ -2750,6 +2868,21 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="EsCategories">
+            <EntityTypeMapping TypeName="EsStockDBModel.EsCategories">
+              <MappingFragment StoreEntitySet="EsCategories">
+                <ScalarProperty Name="LastModifierId" ColumnName="LastModifierId" />
+                <ScalarProperty Name="LastModificationDate" ColumnName="LastModificationDate" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Logo" ColumnName="Logo" />
+                <ScalarProperty Name="HCDCS" ColumnName="HCDCS" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="EsDefaults">
             <EntityTypeMapping TypeName="EsStockDBModel.EsDefaults">
               <MappingFragment StoreEntitySet="EsDefaults">
@@ -2758,6 +2891,54 @@
                 <ScalarProperty Name="ValueInGuid" ColumnName="ValueInGuid" />
                 <ScalarProperty Name="Control" ColumnName="Control" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EsInvoiceItemsArchive">
+            <EntityTypeMapping TypeName="EsStockDBModel.EsInvoiceItemsArchive">
+              <MappingFragment StoreEntitySet="EsInvoiceItemsArchive">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="ProductItemID" ColumnName="ProductItemID" />
+                <ScalarProperty Name="ESProductID" ColumnName="ESProductID" />
+                <ScalarProperty Name="EsInvoiceID" ColumnName="EsInvoiceID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ESInvoicesArchive">
+            <EntityTypeMapping TypeName="EsStockDBModel.ESInvoicesArchive">
+              <MappingFragment StoreEntitySet="ESInvoicesArchive">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="RecipientTaxRegistration" ColumnName="RecipientTaxRegistration" />
+                <ScalarProperty Name="RecipientBankAccount" ColumnName="RecipientBankAccount" />
+                <ScalarProperty Name="RecipientBank" ColumnName="RecipientBank" />
+                <ScalarProperty Name="RecipientAddress" ColumnName="RecipientAddress" />
+                <ScalarProperty Name="RecipientJuridicalAddress" ColumnName="RecipientJuridicalAddress" />
+                <ScalarProperty Name="RecipientName" ColumnName="RecipientName" />
+                <ScalarProperty Name="ProviderTaxRegistration" ColumnName="ProviderTaxRegistration" />
+                <ScalarProperty Name="ProviderBankAccount" ColumnName="ProviderBankAccount" />
+                <ScalarProperty Name="ProviderBank" ColumnName="ProviderBank" />
+                <ScalarProperty Name="ProviderAddress" ColumnName="ProviderAddress" />
+                <ScalarProperty Name="ProviderJuridicalAddress" ColumnName="ProviderJuridicalAddress" />
+                <ScalarProperty Name="ProviderName" ColumnName="ProviderName" />
+                <ScalarProperty Name="Accepter" ColumnName="Accepter" />
+                <ScalarProperty Name="AccepterID" ColumnName="AccepterID" />
+                <ScalarProperty Name="AcceptDate" ColumnName="AcceptDate" />
+                <ScalarProperty Name="Approver" ColumnName="Approver" />
+                <ScalarProperty Name="ApproverID" ColumnName="ApproverID" />
+                <ScalarProperty Name="ApproveDate" ColumnName="ApproveDate" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
+                <ScalarProperty Name="CreatorID" ColumnName="CreatorID" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="ToStockID" ColumnName="ToStockID" />
+                <ScalarProperty Name="FromStockID" ColumnName="FromStockID" />
+                <ScalarProperty Name="InvoiceNumber" ColumnName="InvoiceNumber" />
+                <ScalarProperty Name="InvoiceTypeID" ColumnName="InvoiceTypeID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -2986,6 +3167,15 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="ProductCategories">
+            <EntityTypeMapping TypeName="EsStockDBModel.ProductCategories">
+              <MappingFragment StoreEntitySet="ProductCategories">
+                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="ProductGroup">
             <EntityTypeMapping TypeName="EsStockDBModel.ProductGroup">
               <MappingFragment StoreEntitySet="ProductGroup">
@@ -3106,44 +3296,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="SubAccountingPlan">
-            <EntityTypeMapping TypeName="EsStockDBModel.SubAccountingPlan">
-              <MappingFragment StoreEntitySet="SubAccountingPlan">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="SubAccountingPlanId" ColumnName="SubAccountingPlanId" />
-                <ScalarProperty Name="AccountingPlanId" ColumnName="AccountingPlanId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="EsCategories">
-            <EntityTypeMapping TypeName="EsStockDBModel.EsCategories">
-              <MappingFragment StoreEntitySet="EsCategories">
-                <ScalarProperty Name="LastModifierId" ColumnName="LastModifierId" />
-                <ScalarProperty Name="LastModificationDate" ColumnName="LastModificationDate" />
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="Logo" ColumnName="Logo" />
-                <ScalarProperty Name="HCDCS" ColumnName="HCDCS" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ProductCategories">
-            <EntityTypeMapping TypeName="EsStockDBModel.ProductCategories">
-              <MappingFragment StoreEntitySet="ProductCategories">
-                <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
-                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="StockTakeItems">
             <EntityTypeMapping TypeName="EsStockDBModel.StockTakeItems">
               <MappingFragment StoreEntitySet="StockTakeItems">
@@ -3159,6 +3311,31 @@
                 <ScalarProperty Name="StockTakeId" ColumnName="StockTakeId" />
                 <ScalarProperty Name="Index" ColumnName="Index" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SubAccountingPlan">
+            <EntityTypeMapping TypeName="EsStockDBModel.SubAccountingPlan">
+              <MappingFragment StoreEntitySet="SubAccountingPlan">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="MemberId" ColumnName="MemberId" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="SubAccountingPlanId" ColumnName="SubAccountingPlanId" />
+                <ScalarProperty Name="AccountingPlanId" ColumnName="AccountingPlanId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="EsStockDBModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

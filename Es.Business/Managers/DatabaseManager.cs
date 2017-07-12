@@ -7,6 +7,10 @@ using System.Transactions;
 using ES.Business.Helpers;
 using ES.Business.Models;
 using ES.Common;
+using ES.Common.Enumerations;
+using ES.Common.Helpers;
+using ES.Common.Managers;
+using ES.Common.Models;
 using ES.DataAccess.Models;
 
 namespace ES.Business.Managers
@@ -291,7 +295,7 @@ namespace ES.Business.Managers
         #region Internal methods
         private static bool TryDownloadMemberData(long memberId)
         {
-            var server = SelectItemsManager.SelectServer(ConfigSettings.GetDataServers());
+            var server = SelectItemsManager.SelectServer(DataServerSettings.GetDataServers());
             if (server == null) return false;
             using (var db = GetDataContext(CreateConnectionString(server)))
             {
@@ -324,7 +328,7 @@ namespace ES.Business.Managers
         }
         private static bool TryDownloadUserData(long memberId)
         {
-            var server = SelectItemsManager.SelectServer(ConfigSettings.GetDataServers());
+            var server = SelectItemsManager.SelectServer(DataServerSettings.GetDataServers());
             if (server == null) return false;
             using (var db = GetDataContext(CreateConnectionString(server)))
             {
@@ -433,35 +437,41 @@ namespace ES.Business.Managers
                     #endregion
 
                     #region Download Invoice types
-                    var invoiceTypes = dbServer.EsInvoiceTypes;
+                    MessageManager.OnMessage("Downloading invoices data");
+
+                    var invoiceTypes = dbServer.EsInvoiceTypes.ToList();
                     foreach (var item in invoiceTypes)
                     {
                         var exItem = db.EsInvoiceTypes.SingleOrDefault(s => s.Id == item.Id);
                         if (exItem == null)
                         {
-                            db.EsInvoiceTypes.Add(new EsInvoiceTypes
+                            exItem = new EsInvoiceTypes
                             {
                                 Id = item.Id,
                                 Name = item.Name,
                                 Description = item.Description
-                            });
+                            };
+                            db.EsInvoiceTypes.Add(exItem);
                         }
                     }
                     db.SaveChanges();
                     #endregion
 
                     #region Download Partner types
-                    var partnerTypes = dbServer.EsPartnersTypes;
+                    MessageManager.OnMessage("Downloading partners data");
+
+                    var partnerTypes = dbServer.EsPartnersTypes.ToList();
                     foreach (var item in partnerTypes)
                     {
                         var exItem = db.EsPartnersTypes.SingleOrDefault(s => s.Id == item.Id);
                         if (exItem == null)
                         {
-                            db.EsPartnersTypes.Add(new EsPartnersTypes
+                            var partnerType = new EsPartnersTypes
                             {
                                 Id = item.Id,
                                 Description = item.Description
-                            });
+                            };
+                            db.EsPartnersTypes.Add(partnerType);
                         }
                     }
                     db.SaveChanges();
@@ -474,12 +484,13 @@ namespace ES.Business.Managers
                         var exItem = db.MembersRoles.SingleOrDefault(s => s.Id == item.Id);
                         if (exItem == null)
                         {
-                            db.MembersRoles.Add(new MembersRoles
+                            exItem = new MembersRoles
                             {
                                 Id = item.Id,
-                                RoleName = item.RoleName,
-                                Description = item.Description
-                            });
+                                Description = item.Description,
+                                RoleName = item.RoleName
+                            };
+                            db.MembersRoles.Add(exItem);
                         }
                         else
                         {
@@ -490,8 +501,9 @@ namespace ES.Business.Managers
                     db.SaveChanges();
                     #endregion Download roles
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    MessageManager.OnMessage(ex.InnerException != null && ex.InnerException.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, MessageTypeEnum.Warning);
                     return false;
                 }
                 dbServer.Dispose();
@@ -543,7 +555,7 @@ namespace ES.Business.Managers
                     dbServer.SaveChanges();
                     db.SaveChanges();
                     #endregion
-                    //#region Syncronize user member role
+                    #region Syncronize user member role
                     //foreach (var user in users)
                     //{
                     //    var userOnServer = usersOnServer.SingleOrDefault(s => s.UserId == user.UserId);
@@ -591,7 +603,7 @@ namespace ES.Business.Managers
                     //    }
                     //}
                     //db.SaveChanges();
-                    //#endregion
+                    #endregion
                     #region Syncronize CashDesks
                     var cashDesks = dbServer.CashDesk.Where(s => s.MemberId == memberId);
                     foreach (var item in cashDesks)
@@ -690,8 +702,9 @@ namespace ES.Business.Managers
                     db.SaveChanges();
                     #endregion
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    MessageManager.OnMessage(ex.InnerException != null && ex.InnerException.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message, MessageTypeEnum.Warning);
                     return false;
                 }
                 dbServer.Dispose();
@@ -763,7 +776,7 @@ namespace ES.Business.Managers
                 }
                 catch (Exception ex)
                 {
-                    ApplicationManager.MessageManager.OnNewMessage(new MessageModel(ex.Message, MessageModel.MessageTypeEnum.Information));
+                    MessageManager.OnMessage(ex.InnerException != null && ex.InnerException.InnerException != null ? ex.InnerException.InnerException.Message : ex.InnerException != null ? ex.InnerException.Message : ex.Message);
                     return false;
                 }
             }
@@ -823,11 +836,16 @@ namespace ES.Business.Managers
 
         public static void SyncronizeProducts()
         {
-            ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Տվյալների համաժամանակեցումն սկսված է։", MessageModel.MessageTypeEnum.Success));
-            ApplicationManager.MessageManager.OnNewMessage(TrySyncronizeProducts()
-                ? new MessageModel("Տվյալների համաժամանակեցումն ավարտվել է հաջողությամբ է։",
-                    MessageModel.MessageTypeEnum.Success)
-                : new MessageModel("Տվյալների համաժամանակեցումը ձախողվել է։", MessageModel.MessageTypeEnum.Warning));
+            MessageManager.OnMessage("Տվյալների համաժամանակեցումն սկսված է։", MessageTypeEnum.Success);
+            if (TrySyncronizeProducts())
+            {
+                MessageManager.OnMessage("Տվյալների համաժամանակեցումն ավարտվել է հաջողությամբ է։", MessageTypeEnum.Success);
+            }
+            else
+            {
+                MessageManager.OnMessage("Տվյալների համաժամանակեցումը ձախողվել է։", MessageTypeEnum.Warning);
+            }
+
         }
 
         #region Backup Restore
@@ -875,6 +893,8 @@ namespace ES.Business.Managers
                     }
                     catch (Exception ex)
                     {
+                        MessageManager.OnMessage(ex.InnerException != null && ex.InnerException.InnerException != null ? ex.InnerException.InnerException.Message : ex.Message);
+
                         return false;
                     }
                     ts.Complete();

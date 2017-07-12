@@ -6,6 +6,8 @@ using System.Transactions;
 using System.Windows;
 using ES.Business.Helpers;
 using ES.Business.Models;
+using ES.Common.Enumerations;
+using ES.Common.Managers;
 using ES.Data.Enumerations;
 using ES.Data.Model;
 using ES.Data.Models;
@@ -864,8 +866,7 @@ namespace ES.Business.Managers
                     var exPartner = db.Partners.SingleOrDefault(s => s.EsMemberId == invoice.MemberId && s.Id == invoicePaid.PartnerId);
                     if (exPartner == null)
                     {
-                        ApplicationManager.MessageManager.OnNewMessage(
-                            new MessageModel("Պատվիրատու ընտրված չէ։ Ընտրեք պատվիրատու և փորձեք կրկին։", MessageModel.MessageTypeEnum.Warning));
+                        MessageManager.OnMessage("Պատվիրատու ընտրված չէ։ Ընտրեք պատվիրատու և փորձեք կրկին։", MessageTypeEnum.Warning);
                         return null;
                     }
                     if (exPartner.Credit == null) exPartner.Credit = 0;
@@ -896,11 +897,10 @@ namespace ES.Business.Managers
 
                     if (invoicePaid.Paid != null && invoicePaid.Paid > 0)
                     {
-                        var cashDesk = CashDeskManager.GetDefaultSaleCashDesk(invoice.MemberId);
-                        var exCashDesk = cashDesk != null ? db.CashDesk.SingleOrDefault(s => s.Id == cashDesk.Id && s.MemberId == invoice.MemberId) : null;
+                        var exCashDesk = invoicePaid != null && invoicePaid.CashDeskId != null ? db.CashDesk.SingleOrDefault(s => s.Id == invoicePaid.CashDeskId && s.MemberId == invoice.MemberId) : null;
                         if (exCashDesk == null)
                         {
-                            ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Դրամարկղ ընտրված չէ։ Ընտրեք դրամարկղ և փորձեք կրկին։", MessageModel.MessageTypeEnum.Warning));
+                            MessageManager.OnMessage("Դրամարկղ ընտրված չէ։ Ընտրեք դրամարկղ և փորձեք կրկին։", MessageTypeEnum.Warning);
                             return null;
                         }
                         amount = (invoicePaid.Paid - invoicePaid.Change ?? 0);
@@ -947,7 +947,7 @@ namespace ES.Business.Managers
                         var exCashDeskByCheck = (cashDeskByCheck != null) ? db.CashDesk.SingleOrDefault(s => s.Id == cashDeskByCheck.Id && s.MemberId == invoice.MemberId) : null;
                         if (exCashDeskByCheck == null)
                         {
-                            ApplicationManager.MessageManager.OnNewMessage(new MessageModel("Անկանխիկ դրամարկղ ընտրված չէ։", MessageModel.MessageTypeEnum.Warning));
+                            MessageManager.OnMessage("Անկանխիկ դրամարկղ ընտրված չէ։", MessageTypeEnum.Warning);
                             return null;
                         }
                         // 251 - 221 Register in AccountingRecoords
@@ -1071,7 +1071,7 @@ namespace ES.Business.Managers
                     }
                     catch (Exception ex)
                     {
-                        ApplicationManager.MessageManager.OnNewMessage(new MessageModel(ex.Message, MessageModel.MessageTypeEnum.Warning));
+                        MessageManager.OnMessage(ex.Message, MessageTypeEnum.Warning);
                         return null;
                     }
                     #endregion
@@ -1130,7 +1130,7 @@ namespace ES.Business.Managers
                     }
                     catch (Exception ex)
                     {
-                        ApplicationManager.MessageManager.OnNewMessage(new MessageModel(ex.Message, MessageModel.MessageTypeEnum.Warning));
+                        MessageManager.OnMessage(ex.Message, MessageTypeEnum.Warning);
                         return null;
                     }
                     #endregion
@@ -1180,7 +1180,7 @@ namespace ES.Business.Managers
                     }
                     catch (Exception ex)
                     {
-                        ApplicationManager.MessageManager.OnNewMessage(new MessageModel(ex.Message, MessageModel.MessageTypeEnum.Warning));
+                        MessageManager.OnMessage(ex.Message, MessageTypeEnum.Warning);
                         return null;
                     }
                     // 714 - 216 Register cost price in AccountingRecoords
@@ -1208,7 +1208,7 @@ namespace ES.Business.Managers
                     }
                     catch (Exception ex)
                     {
-                        ApplicationManager.MessageManager.OnNewMessage(new MessageModel(ex.Message, MessageModel.MessageTypeEnum.Warning));
+                        MessageManager.OnMessage(ex.Message, MessageTypeEnum.Warning);
                         return null;
                     }
                     
@@ -1625,7 +1625,7 @@ namespace ES.Business.Managers
 
         private static FinanceReportModel TryGetInvoicesFinance(DateTime? startDate, DateTime? endDate)
         {
-            long memberId = ApplicationManager.Instance.GetEsMember.Id;
+            long memberId = ApplicationManager.Instance.GetMember.Id;
             try
             {
                 using (var db = GetDataContext())
@@ -1676,7 +1676,7 @@ namespace ES.Business.Managers
         }
         private static List<InvoiceItems> TryGetInvoiceItems(DateTime? startDate, DateTime? endDate)
         {
-            var memberId = ApplicationManager.Instance.GetEsMember.Id;
+            var memberId = ApplicationManager.Instance.GetMember.Id;
             try
             {
                 using (var db = GetDataContext())

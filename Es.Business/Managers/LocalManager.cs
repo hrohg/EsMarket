@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using ES.Business.Models;
+using ES.Common.Managers;
 using ES.Data.Model;
 using ES.Data.Models;
 using ES.DataAccess.Models;
@@ -12,7 +13,7 @@ namespace ES.Business.Managers
     public class LocalManager
     {
         #region Private properties
-        private EsMemberModel Member { get { return ApplicationManager.Instance.GetEsMember; } }
+        private EsMemberModel Member { get { return ApplicationManager.Instance.GetMember; } }
         private readonly object _locker = new object();
         private bool LocalMode = false;
 
@@ -44,8 +45,26 @@ namespace ES.Business.Managers
 
         #region Cash desks
 
-        private List<CashDesk> _cashDesk;
-        public List<CashDesk> GetCashDesk { get { return _cashDesk ?? (_cashDesk = CashDeskManager.GetCashDesks()); } }
+        private List<CashDesk> _cashDesks;
+
+        public List<CashDesk> GetCashDesk
+        {
+            get
+            {
+                if (_cashDesks == null) _cashDesks = CashDeskManager.GetCashDesks();
+                return _cashDesks.Where(s=>s.IsCash).ToList();
+            }
+        }
+
+        public List<CashDesk> GetBankAccounts
+        {
+            get
+            {
+                if (_cashDesks == null) _cashDesks = CashDeskManager.GetCashDesks();
+                return _cashDesks.Where(s => !s.IsCash).ToList();
+            }
+        }
+
         #endregion Cash desks
 
         #region Products
@@ -157,7 +176,7 @@ namespace ES.Business.Managers
             }
         }
         public LocalManager()
-            : this(ApplicationManager.LocalMode)
+            : this(ApplicationManager.Settings.MemberSettings.IsOfflineMode)
         {
 
         }

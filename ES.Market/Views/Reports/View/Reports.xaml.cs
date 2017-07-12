@@ -6,6 +6,9 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using ES.Business.Managers;
 using ES.Business.Models;
+using ES.Common.Enumerations;
+using ES.Common.Managers;
+using ES.Common.Models;
 using ES.Data.Models;
 using ES.Data.Models.Reports;
 using ES.Shop.Controls;
@@ -102,7 +105,7 @@ namespace ES.Market.Views.Reports.View
             });
             if (list.Count == 0)
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information));
+                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
                 return;
             }
             var viewModel = new TableViewModel<InvoiceReport>(list);
@@ -131,7 +134,7 @@ namespace ES.Market.Views.Reports.View
                         }).ToList();
             if (list.Count == 0)
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information));
+                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
                 return;
             }
             var viewModel = new TableViewModel<InvoiceReportModel>(list){IsShowCloseButton = true};
@@ -158,7 +161,7 @@ namespace ES.Market.Views.Reports.View
                         }).ToList();
             if (list.Count == 0)
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information));
+                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
                 return;
             }
             var viewModel = new TableViewModel<ProductProviderReportModel>(list);
@@ -175,7 +178,7 @@ namespace ES.Market.Views.Reports.View
 
             if (!invoices.Any())
             {
-                ApplicationManager.MessageManager.OnNewMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageModel.MessageTypeEnum.Information));
+                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
                 return;
             }
             LoadCartTab(invoices, "ReportByStocks");
