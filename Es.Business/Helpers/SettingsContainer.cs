@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
+using CashReg.Helper;
+using CashReg.Interfaces;
 using ES.Business.Managers;
 using ES.Common;
 using ES.Common.Enumerations;
@@ -480,7 +482,10 @@ namespace ES.Business.Helpers
 
             //MemberSettings
             var memberSettings = MemberSettings.GetSettings(memberId);
-            //memberSettings.EcrConfig = ConfigSettings.GetEcrConfig();
+            EcrSettings conf = ConfigSettings.GetEcrConfig(filePath.FileName);
+
+            memberSettings.EcrConfig = EcrConfig.Convert(conf);
+            memberSettings.EcrConfig.Password = conf.Password;
 
 
             if (MemberSettings.Save(memberSettings, ApplicationManager.Member.Id))

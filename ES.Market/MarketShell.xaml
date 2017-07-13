@@ -63,8 +63,8 @@
                         <MenuItem Header="Ապրանքների բեռնում" Command="{Binding ImportProductsCommand}"/>
                     </MenuItem>
                     <Separator/>
-                    <MenuItem Header="Preparing and upgrade">
-                        <MenuItem Header="Upgrade (in plan)" Command="{Binding ConvertConfigFileCommand}" IsEnabled="False"/>
+                    <MenuItem Header="Թարմացում">
+                        <MenuItem Header="Թարմացնել (պլանավորված է)" Command="{Binding ConvertConfigFileCommand}" IsEnabled="False"/>
                         <MenuItem Header="Convert config file (for betta version only)" Command="{Binding ConvertConfigFileCommand}"/>
                     </MenuItem>
                 </MenuItem>

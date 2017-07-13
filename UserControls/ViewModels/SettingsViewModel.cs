@@ -350,8 +350,7 @@ namespace UserControls.ViewModels
                 var operatorDeps = ecrserver.GetUsersDepsList();
                 if (operatorDeps == null)
                 {
-                    message =
-                        new MessageModel(
+                    message = new MessageModel(
                             "ՀԴՄ օպերատորի բաժինների ստացումը ձախողվել է:" +
                             string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode),
                             MessageTypeEnum.Warning);

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CashReg.Helper;
+using CashReg.Interfaces;
 using ES.Common.Managers;
 using ES.Common.Models;
 
@@ -12,10 +14,11 @@ namespace ES.Common
             var xmlServers = new XmlManager(filePath).GetXmlElements(XmlTagItems.EsServers);
             return xmlServers != null ? xmlServers.Select(s => XmlManager.DeserializeFromXmlElement<DataServer>(XmlManager.Convert(s))).ToList() : new List<DataServer>();
         }
-        public static EcrConfig GetEcrConfig(string filePath)
+        public static EcrSettings GetEcrConfig(string filePath)
         {
             var xElement = new XmlManager(filePath).GetXmlElement(XmlTagItems.EcrConfig);
-            return XmlManager.DeserializeFromXmlElement<EcrConfig>(XmlManager.Convert(xElement)) ?? new EcrConfig();
+            var settings = XmlManager.DeserializeFromXmlElement<EcrSettings>(XmlManager.Convert(xElement.Element("EcrSettings"))) ?? new EcrSettings();
+            return settings;
         }
     }
 
