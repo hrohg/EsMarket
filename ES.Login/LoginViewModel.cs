@@ -6,8 +6,6 @@ using ES.Business.Managers;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
-using ES.Common;
-using ES.Common.Managers;
 using ES.Common.Models;
 
 namespace ES.Login

@@ -97,6 +97,7 @@ namespace ES.Common.Managers
 
         public XmlManager()
         {
+            
         }
 
         public XmlManager(string fileName)

@@ -36,7 +36,8 @@ namespace ES.Business.DataUtilities
             try
             {
                 DbConnection retval = GetFactory().CreateConnection();
-                retval.ConnectionString = ConfigurationManager.ConnectionStrings[EslServerConnectionProvider].ConnectionString;
+                var connectionProvider = ConfigurationManager.ConnectionStrings[EslServerConnectionProvider];
+                retval.ConnectionString = connectionProvider!=null? connectionProvider.ConnectionString: string.Empty;
                 return retval;
             }
             catch (Exception)
@@ -60,7 +61,9 @@ namespace ES.Business.DataUtilities
             try
             {
                 DbConnection retval = GetFactory().CreateConnection();
-                retval.ConnectionString = ConfigurationManager.ConnectionStrings[EslConnectionString].ConnectionString;
+                var connectionString = ConfigurationManager.ConnectionStrings[EslConnectionString];
+                if(connectionString== null) return null;
+                retval.ConnectionString = connectionString.ConnectionString;
                 return retval;
             }
             catch (Exception)

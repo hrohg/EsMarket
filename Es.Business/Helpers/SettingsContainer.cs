@@ -39,7 +39,7 @@ namespace ES.Business.Helpers
 
         public bool Save()
         {
-            if (!File.Exists(Path)) return false;
+            if (string.IsNullOrEmpty(System.IO.Path.GetDirectoryName(Path))) return false;
             FileStream fs = new FileStream(Path, FileMode.OpenOrCreate);
             BinaryFormatter formatter = new BinaryFormatter();
             try
@@ -465,7 +465,8 @@ namespace ES.Business.Helpers
                 MessageManager.OnMessage("Սերվերների տվյալների խմբագրումը ձախողվել է։", MessageTypeEnum.Warning);
             }
             //General settings
-            var logins = new XmlManager(filePath.FileName).GetXmlElements(XmlTagItems.Logins).Select(s => s.Value).ToList();
+            var xmlLogins = new XmlManager(filePath.FileName).GetXmlElements(XmlTagItems.Logins);
+            var logins = xmlLogins!=null? xmlLogins.Select(s => s.Value).ToList():new List<string>();
             var generalSettings = GeneralSettings.LoadGeneralSettings();
             generalSettings.LastLogins = logins.ToList();
             if (GeneralSettings.SaveGeneralSettings(generalSettings))
@@ -479,7 +480,7 @@ namespace ES.Business.Helpers
 
             //MemberSettings
             var memberSettings = MemberSettings.GetSettings(memberId);
-            memberSettings.EcrConfig = ConfigSettings.GetEcrConfig();
+            //memberSettings.EcrConfig = ConfigSettings.GetEcrConfig();
 
 
             if (MemberSettings.Save(memberSettings, ApplicationManager.Member.Id))

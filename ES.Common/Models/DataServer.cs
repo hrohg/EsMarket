@@ -1,5 +1,8 @@
-﻿namespace ES.Common.Models
+﻿using System;
+
+namespace ES.Common.Models
 {
+    [Serializable]
     public class DataServer
     {
         #region Internal properties

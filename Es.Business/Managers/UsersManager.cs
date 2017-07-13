@@ -284,7 +284,18 @@ namespace ES.Business.Managers
         {
             using (var db = GetDataContext())
             {
-                return db.MemberUsersRoles.Where(s => s.EsUserId == userId && s.MemberId == memberId).GroupBy(s => s.MemberRoleId).Select(s => s.Select(t => t.MembersRoles).FirstOrDefault()).ToList();
+                try
+                {
+                    return
+                        db.MemberUsersRoles.Where(s => s.EsUserId == userId && s.MemberId == memberId)
+                            .GroupBy(s => s.MemberRoleId)
+                            .Select(s => s.Select(t => t.MembersRoles).FirstOrDefault())
+                            .ToList();
+                }
+                catch
+                {
+                    return new List<MembersRoles>();
+                }
             }
         }
         private static List<MembersRoles> TryGetMembersRoles()

@@ -12,9 +12,9 @@ namespace ES.Common
             var xmlServers = new XmlManager(filePath).GetXmlElements(XmlTagItems.EsServers);
             return xmlServers != null ? xmlServers.Select(s => XmlManager.DeserializeFromXmlElement<DataServer>(XmlManager.Convert(s))).ToList() : new List<DataServer>();
         }
-        public static EcrConfig GetEcrConfig()
+        public static EcrConfig GetEcrConfig(string filePath)
         {
-            var xElement = new XmlManager().GetXmlElement(XmlTagItems.EcrConfig);
+            var xElement = new XmlManager(filePath).GetXmlElement(XmlTagItems.EcrConfig);
             return XmlManager.DeserializeFromXmlElement<EcrConfig>(XmlManager.Convert(xElement)) ?? new EcrConfig();
         }
     }

@@ -7,7 +7,6 @@ using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Common;
 using ES.Common.Helpers;
-using ES.Common.Managers;
 using ES.Data.Model;
 using ES.Login;
 using ES.Market.ViewModels;

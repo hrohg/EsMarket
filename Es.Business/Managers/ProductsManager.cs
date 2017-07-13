@@ -670,7 +670,13 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    return db.ProductItems.Where(s => s.MemberId == memberId && s.StockId != null && fromStocks.Contains((long)s.StockId) && s.ProductId == productId).Sum(s => s.Quantity);
+                    var items =
+                        db.ProductItems.Where(
+                            s =>
+                                s.MemberId == memberId &&
+                                (fromStocks == null || !fromStocks.Any() || productId==null ||
+                                 (s.StockId != null && fromStocks.Any(t=>t==s.StockId.Value) && s.ProductId == productId.Value)));
+                    return items.Sum(s => s.Quantity);
                 }
                 catch (Exception)
                 {
