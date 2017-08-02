@@ -88,12 +88,22 @@ namespace ES.Market.ViewModels
         private EsMemberModel _member;
         private List<MembersRoles> _userRoles;
         private bool _isLocalMode;
-        private bool _isEcrActivated;
+
         private ObservableCollection<MessageModel> _messages = new ObservableCollection<MessageModel>();
         private UctrlLibraryBrowser _libraryBrowser;
         private bool _isLoading;
         private bool _isCashUpdateing;
+        private DocumentViewModel _activeTab;
 
+        public DocumentViewModel ActiveTab
+        {
+            get { return _activeTab; }
+            set
+            {
+                _activeTab = value;
+                RaisePropertyChanged("AddSingleVisibility");
+            }
+        }
         #region Log
         private LogViewModel _logViewModel;
 
@@ -128,9 +138,9 @@ namespace ES.Market.ViewModels
         public ObservableCollection<ToolsViewModel> Tools { get; set; }
         #endregion Avalon dock
 
-        public EsUserModel User { get { return _user; } set { _user = value; OnPropertyChanged(UserProperty); } }
-        public EsMemberModel Member { get { return _member; } set { _member = value; OnPropertyChanged(MemberProperty); } }
-        public List<MembersRoles> UserRoles { get { return _userRoles; } set { _userRoles = value; OnPropertyChanged(UserRolesProperty); } }
+        public EsUserModel User { get { return _user; } set { _user = value; RaisePropertyChanged(UserProperty); } }
+        public EsMemberModel Member { get { return _member; } set { _member = value; RaisePropertyChanged(MemberProperty); } }
+        public List<MembersRoles> UserRoles { get { return _userRoles; } set { _userRoles = value; RaisePropertyChanged(UserRolesProperty); } }
         public string ProcessDescription { get; set; }
         public bool IsCashUpdateing
         {
@@ -138,7 +148,7 @@ namespace ES.Market.ViewModels
             set
             {
                 if (_isCashUpdateing == value) _isCashUpdateing = value;
-                OnPropertyChanged("IsCashUpdateing");
+                RaisePropertyChanged("IsCashUpdateing");
             }
         }
         public bool IsLoading
@@ -154,12 +164,12 @@ namespace ES.Market.ViewModels
                     return;
                 }
                 _isLoading = value;
-                OnPropertyChanged("IsLoading");
+                RaisePropertyChanged("IsLoading");
             }
         }
-        public bool IsLocalMode { get { return _isLocalMode; } set { _isLocalMode = value; OnPropertyChanged(IsLocalModeProperty); } }
+        public bool IsLocalMode { get { return _isLocalMode; } set { _isLocalMode = value; RaisePropertyChanged(IsLocalModeProperty); } }
         public ObservableCollection<InvoiceViewModel> Invoices = new ObservableCollection<InvoiceViewModel>();
-        public ObservableCollection<MessageModel> Messages { get { return new ObservableCollection<MessageModel>(_messages.OrderByDescending(s => s.Date)); } set { _messages = value; OnPropertyChanged(MessagesProperty); OnPropertyChanged(MessageProperty); } }
+        public ObservableCollection<MessageModel> Messages { get { return new ObservableCollection<MessageModel>(_messages.OrderByDescending(s => s.Date)); } set { _messages = value; RaisePropertyChanged(MessagesProperty); RaisePropertyChanged(MessageProperty); } }
         public MessageModel Message { get { return Messages.LastOrDefault(); } }
         public string ServerDescription { get { return ApplicationManager.IsEsServer ? string.Format("{0}: {1}", "Cloud", Member.FullName) : string.Format("{0}: {1}", "Local server", Member.FullName); } }
         public string ServerPath
@@ -169,6 +179,30 @@ namespace ES.Market.ViewModels
                 return ApplicationManager.GetServerPath().OriginalString;
             }
         }
+
+        #region Toolbar
+
+        public Visibility AddSingleVisibility
+        {
+            get
+            {
+                return ActiveTab is InvoiceViewModel ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        public bool IsSingle { get; set; }
+        
+        private bool _isSalePrinterActive;
+        public bool IsSalePrinterActive
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(ApplicationManager.Settings.MemberSettings.ActiveSalePrinter) && _isSalePrinterActive;
+            }
+            set { _isSalePrinterActive = value; RaisePropertyChanged("IsSalePrinterActive"); }
+        }
+        #endregion Toolbar
+
         #endregion
 
         #region Constructors
@@ -189,11 +223,12 @@ namespace ES.Market.ViewModels
             Member = ApplicationManager.Instance.GetMember;
             UserRoles = ApplicationManager.Instance.UserRoles;
             IsLocalMode = ApplicationManager.Settings.MemberSettings.IsOfflineMode;
-            
+
             Documents = new ObservableCollection<DocumentViewModel>();
             Tools = new ObservableCollection<ToolsViewModel>();
             ApplicationManager.MessageManager.NewMessageReceived += OnNewMessage;
             Tools.Add(LogViewModel);
+            AddDocument(new SaleInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Member));
             AddDocument(new StartPageViewModel(this));
             ApplicationManager.Instance.CashProvider.UpdateCash();
             InitializeCommands();
@@ -271,16 +306,16 @@ namespace ES.Market.ViewModels
                 //todo: Activate document
                 exDocument.IsActive = true;
                 exDocument.IsSelected = true;
-                exDocument.OnActiveTabChangeEvent += OnActiveTabChange;
-
                 return;
             }
             AddDocument(vm);
+
         }
 
-        private void OnActiveTabChange(DocumentViewModel document, ActivityChangedEventArgs e)
+        private void OnActiveTabChanged(DocumentViewModel document, ActivityChangedEventArgs e)
         {
             Documents.Select(s => s.IsActive = (s == document && e.Value));
+            ActiveTab = document;
         }
 
         private void AddDocument(DocumentViewModel vm)
@@ -289,9 +324,11 @@ namespace ES.Market.ViewModels
             {
                 vm.OnClosed += OnRemoveDocument;
             }
+            vm.ActiveTabChangedEvent += OnActiveTabChanged;
             vm.IsActive = true;
             vm.IsSelected = true;
             Documents.Add(vm);
+
         }
         private void OnRemoveDocument(PaneViewModel vm)
         {
@@ -299,7 +336,7 @@ namespace ES.Market.ViewModels
             vm.OnClosed -= OnRemoveDocument;
             if (vm is DocumentViewModel)
             {
-                ((DocumentViewModel)vm).OnActiveTabChangeEvent -= OnActiveTabChange;
+                ((DocumentViewModel)vm).ActiveTabChangedEvent -= OnActiveTabChanged;
             }
 
             Documents.Remove((DocumentViewModel)vm);
@@ -451,7 +488,7 @@ namespace ES.Market.ViewModels
         {
             LogViewModel.AddLog(message);
             _messages.Add(message);
-            OnPropertyChanged(MessagesProperty);
+            RaisePropertyChanged(MessagesProperty);
         }
 
         private void AddInvoiceDocument(object vm)
@@ -559,7 +596,7 @@ namespace ES.Market.ViewModels
         private void OnRemoveServerSettings(object o)
         {
             var dataServer = SelectItemsManager.SelectServers(DataServerSettings.GetDataServers());
-            if(dataServer==null) return;
+            if (dataServer == null) return;
             DataServerSettings.RemoveDataServer(dataServer);
         }
 
@@ -1123,7 +1160,7 @@ namespace ES.Market.ViewModels
                     {
                         throw;
                     }
-                    var memberSettings =ApplicationManager.Settings.MemberSettings;
+                    var memberSettings = ApplicationManager.Settings.MemberSettings;
                     memberSettings.EcrConfig.ExcelFilePath = Path.GetDirectoryName(filePath);
                     MemberSettings.Save(memberSettings, memberSettings.MemberId);
                     break;
@@ -1461,10 +1498,13 @@ namespace ES.Market.ViewModels
         #region ConvertConfigFileCommand
 
         private ICommand _convertConfigFileCommand;
-        public ICommand ConvertConfigFileCommand { get
+        public ICommand ConvertConfigFileCommand
         {
-            return _convertConfigFileCommand ?? (_convertConfigFileCommand = new RelayCommand(OnConvertConfigFile));
-        } }
+            get
+            {
+                return _convertConfigFileCommand ?? (_convertConfigFileCommand = new RelayCommand(OnConvertConfigFile));
+            }
+        }
 
         private void OnConvertConfigFile(object obj)
         {
@@ -1626,9 +1666,21 @@ namespace ES.Market.ViewModels
 
         #endregion
 
-        /// <summary>
-        /// Managers
-        /// </summary>
+        private ICommand _correctProductsCommand;
+        public ICommand CorrectProductsCommand { get { return _correctProductsCommand?? (_correctProductsCommand=new RelayCommand(OnCorrectProducts, CanCorrectProducts));} }
+
+        private bool CanCorrectProducts(object obj)
+        {
+            return ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
+        }
+
+        private void OnCorrectProducts(object obj)
+        {
+            var vm = new CorrectProductsViewModel();
+            AddDocument(vm);
+            vm.OnProductEdited += ProductItemsToolsViewModel.UpdateProducts;
+        }
+
         public ICommand ManageProductsCommand
         {
             get { return new RelayCommand(OnManageProducts, CanManageProcucts); }
@@ -1744,7 +1796,7 @@ namespace ES.Market.ViewModels
         public void OnSetCategory(EsCategoriesModel category)
         {
             var activeDocument = Documents.FirstOrDefault(s => s.IsActive);
-            var productManager = activeDocument as ProductManagerViewModel;
+            var productManager = activeDocument as ProductManagerViewModelBase;
             if (productManager != null)
             {
                 productManager.SetProductCategory(category);
@@ -1888,6 +1940,7 @@ namespace ES.Market.ViewModels
 
         private ICommand _editUsersCommand;
 
+
         public ICommand EditUsersCommand
         {
             get { return _editUsersCommand ?? (_editUsersCommand = new RelayCommand(OnEditUsers, CanEditUserCommand)); }
@@ -1905,7 +1958,7 @@ namespace ES.Market.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void OnPropertyChanged(string propertyName)
+        public void RaisePropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)

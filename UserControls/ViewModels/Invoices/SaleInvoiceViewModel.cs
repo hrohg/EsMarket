@@ -73,12 +73,21 @@ namespace UserControls.ViewModels.Invoices
                 if (value == _isEcrActivated) return;
                 _isEcrActivated = value;
                 RaisePropertyChanged("IsEcrActivated");
+                RaisePropertyChanged("EcrButtonTooltip");
             }
         }
+        public string EcrButtonTooltip { get { return IsEcrActivated ? "ՀԴՄ ակտիվ է" : "ՀԴՄ պասիվ է"; } }
+
         #endregion IsEcrActivated
 
         #region IsPrintTicket
-
+        public bool CanPrintTicket
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(ApplicationManager.Settings.MemberSettings.ActiveSalePrinter);
+            }
+        }
         private bool _isPrintTicket;
         public bool IsPrintTicket
         {
@@ -91,8 +100,11 @@ namespace UserControls.ViewModels.Invoices
                 if (value == _isPrintTicket) return;
                 _isPrintTicket = value;
                 RaisePropertyChanged("IsPrintTicket");
+                RaisePropertyChanged("SalePrinterButtonTooltip");
             }
         }
+        public string SalePrinterButtonTooltip { get { return IsPrintTicket ? "Վաճառքի տպիչն ակտիվ է:" : "Վաճառքի տպիչը պասիվ է:"; } }
+
         #endregion IsPrintTicket
         #endregion
 
@@ -121,7 +133,7 @@ namespace UserControls.ViewModels.Invoices
                 var provideDefault = ApplicationManager.Instance.CashProvider.GetEsDefaults(DefaultControls.Customer);
                 Partner = provideDefault == null ? ApplicationManager.Instance.CashProvider.GetPartners.FirstOrDefault() : ApplicationManager.Instance.CashProvider.GetPartners.FirstOrDefault(s => s.Id == provideDefault.ValueInGuid);
             } IsModified = false;
-            SaleBySingle = ApplicationManager.Settings.MemberSettings.SaleBySingle;
+            AddBySingle = ApplicationManager.Settings.MemberSettings.SaleBySingle;
             PrintEcrTicketCommand = new RelayCommand(OnPrintEcrTicket, CanPrintEcrTicket);
             IsPrintTicket = ApplicationManager.Settings.MemberSettings.IsPrintSaleTicket;
             IsEcrActivated = ApplicationManager.Settings.MemberSettings.IsEcrActivated;
@@ -310,7 +322,7 @@ namespace UserControls.ViewModels.Invoices
             {
                 return;
             }
-            if (!SetQuantity(SaleBySingle))
+            if (!SetQuantity(AddBySingle))
             {
                 return;
             }
@@ -363,10 +375,10 @@ namespace UserControls.ViewModels.Invoices
 
             var cashDesk = SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.SaleCashDesks).SingleOrDefault();
             InvoicePaid.CashDeskId = cashDesk != null ? cashDesk.Id : (Guid?)null;
-            
+
             var bankAccount = SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.SaleBankAccounts).SingleOrDefault();
             InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
-            
+
             var invoice = InvoicesManager.ApproveSaleInvoice(Invoice, InvoiceItems.ToList(), FromStocks.Select(s => s.Id), InvoicePaid);
             if (invoice == null)
             {
@@ -410,7 +422,7 @@ namespace UserControls.ViewModels.Invoices
                 }
                 else
                 {
-                    MessageManager.OnMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումը ձախողվել է:  {0}", ecrManager!=null? string.Format("{0} ({1})", ecrManager.ActionDescription, ecrManager.ActionCode): string.Empty), MessageTypeEnum.Warning));
+                    MessageManager.OnMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումը ձախողվել է:  {0}", ecrManager != null ? string.Format("{0} ({1})", ecrManager.ActionDescription, ecrManager.ActionCode) : string.Empty), MessageTypeEnum.Warning));
                     //return false;
                 }
             }

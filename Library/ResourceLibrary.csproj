@@ -74,6 +74,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Resources\MenuItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Resources\Tabs.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -139,6 +143,27 @@
     <Resource Include="Resources\Images\Refresh\Refresh_Icon_Mouseover9x9.png" />
     <Resource Include="Resources\Images\Refresh\Refresh_Icon_Pressed9x9.png" />
     <Resource Include="Resources\Images\Refresh\Refresh_Icon_Standard9x9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Invoice\Approve.png" />
+    <Resource Include="Resources\Images\Invoice\Approve_Green.png" />
+    <Resource Include="Resources\Images\Barcode\BarcodeScanner.png" />
+    <Resource Include="Resources\Images\Cash\CashWidrow.png" />
+    <Resource Include="Resources\Images\Menu\DropDownMenu.png" />
+    <Resource Include="Resources\Images\Printer\Printer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Cash\CashRegister.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Invoice\Save.png" />
+    <Resource Include="Resources\Images\Invoice\Save_Green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Comments.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

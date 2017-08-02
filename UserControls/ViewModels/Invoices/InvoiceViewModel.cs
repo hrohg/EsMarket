@@ -144,10 +144,15 @@ namespace UserControls.ViewModels.Invoices
             get { return _invoicePaid; }
             set { _invoicePaid = value; }
         }
-        public bool SaleBySingle { get; set; }
         public bool MoveBySingle { get; set; }
-        public bool BuyBySingle { get; set; }
+        private bool _addBySingle;
+        public bool AddBySingle
+        {
+            get { return _addBySingle; }
+            set { _addBySingle = value; RaisePropertyChanged("AddBySingle"); RaisePropertyChanged("AddSingleTooltip"); }
+        }
 
+        public string AddSingleTooltip { get { return AddBySingle ? "Ավելացնել մեկական" : "Ավելացնել բազմակի"; } }
         public int ProductCount
         {
             get
@@ -184,8 +189,6 @@ namespace UserControls.ViewModels.Invoices
         {
 
             IsClosable = true;
-            SaleBySingle = ApplicationManager.Settings.MemberSettings.PurchaseBySingle;
-            BuyBySingle = ApplicationManager.Settings.MemberSettings.PurchaseBySingle;
             SetModels();
             SetICommands();
             IsModified = false;
@@ -672,11 +675,11 @@ namespace UserControls.ViewModels.Invoices
             var stock = SelectItemsManager.SelectStocks(StockManager.GetStocks(Member.Id), false).FirstOrDefault();
             if (stock == null) return;
             var invoiceItems = SelectItemsManager.SelectProductItemsFromStock(new List<long> { stock.Id });
-            if(invoiceItems==null) return;
+            if (invoiceItems == null) return;
             foreach (var ii in invoiceItems)
             {
                 var newInvocieItem = GetInvoiceItem(ii.Code);
-                if(newInvocieItem==null) continue;
+                if (newInvocieItem == null) continue;
                 newInvocieItem.Quantity = ii.Quantity;
                 InvoiceItems.Add(newInvocieItem);
             }
@@ -733,7 +736,7 @@ namespace UserControls.ViewModels.Invoices
         }
         private void OnAddItemsFromInvoice(InvoiceType? type)
         {
-            if(!type.HasValue) return;
+            if (!type.HasValue) return;
             var invoice = SelectItemsManager.SelectInvoice((long)type.Value).FirstOrDefault();
             if (invoice == null) return;
             var invoiceItems = SelectItemsManager.SelectInvoiceItems(invoice.Id);

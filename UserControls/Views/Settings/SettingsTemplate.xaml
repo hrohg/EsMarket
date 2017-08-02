@@ -297,9 +297,16 @@
                                             <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding EcrSettings.EcrCashier.Pin}"/>
                                             <TextBlock Grid.Row="6" Grid.Column="0" Text="Հարկման տեսակը"/>
                                             <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal">
-                                                <ComboBox  ItemsSource="{Binding EcrSettings.TypeOfOperatorDeps, Mode=OneWay}" DisplayMemberPath="Description" SelectedValuePath="id" 
-                                                       SelectedItem="{Binding EcrSettings.CashierDepartment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  
-                                                       IsReadOnly="True" MinWidth="100" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
+                                                <ComboBox
+                                                    ItemsSource="{Binding EcrSettings.TypeOfOperatorDeps}"
+                                                    DisplayMemberPath="Description"
+                                                    SelectedValuePath="Id"
+                                                    SelectedValue="{Binding EcrSettings.SelectedDepartmentId}"
+                                                    IsReadOnly="True"
+                                                    MinWidth="100" 
+                                                    HorizontalAlignment="Left" 
+                                                    Margin="1" 
+                                                    VerticalAlignment="Center"/>
                                                 <Button Content="Բեռնել" Command="{Binding Path=ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.GetOperatorsAndDepList}" Margin="3" Padding="5 0"/>
                                             </StackPanel>
                                             <TextBlock Grid.Row="7" Grid.Column="0" Text="Տպել կտրոնը արտաքին տպիչով"/>

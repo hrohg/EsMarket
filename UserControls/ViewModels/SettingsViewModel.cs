@@ -203,10 +203,6 @@ namespace UserControls.ViewModels
             //Ecr Settings
             //var ecrConfig = ConfigSettings.GetEcrConfig();
             //EcrModel = ApplicationManager.Settings.MemberSettings.EcrModel; //ecrConfig ?? new EcrConfig();
-            if (EcrSettings.CashierDepartment != null)
-            {
-                EcrSettings.CashierDepartment = EcrSettings.TypeOfOperatorDeps.FirstOrDefault(s => s.Id == EcrSettings.CashierDepartment.Id);
-            }
             //EcrSettings.IsActive = ecrConfig != null && ecrConfig.IsActive ApplicationManager.Settings.MemberSettings.IsEcrActivated;
             //Printers
             var printerQuery = new ManagementObjectSearcher("SELECT * from Win32_Printer");

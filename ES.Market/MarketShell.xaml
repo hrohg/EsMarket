@@ -18,6 +18,7 @@
         WindowState="Maximized" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Shared;component/Images/shopping_cart.Ico">
     <Window.Resources>
+
         <ResourceDictionary>
             <converters:GetInvocieParameterConverter x:Key="GetInvocieParameterConverter"/>
             <converters:UserRoleToBoolConverter x:Key="UserRoleToBoolConverter"/>
@@ -28,6 +29,7 @@
             <SolidColorBrush x:Key="StatusBarBackground" Color="#DC6E0A"/>
 
         </ResourceDictionary>
+
     </Window.Resources>
     <i:Interaction.Behaviors>
         <behaviors:EventToCommandBehavior Command="{Binding Path=KeyPressedCommand}" Event="KeyDown" PassArguments="True"/>
@@ -494,7 +496,8 @@
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Edit.ico"/>
                         </MenuItem.Icon>
-                        <MenuItem Header="Ապրանքների խմբագրում" Command="{Binding ManageProductsCommand}">
+                        <MenuItem Header="Ապրանքների խմբագրում" Command="{Binding CorrectProductsCommand}"/>
+                        <MenuItem Header="Ապրանքների խմբագրում, ավելացում" Command="{Binding ManageProductsCommand}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Edit.ico"/>
                             </MenuItem.Icon>
@@ -918,7 +921,7 @@
                     <Setter Property="Foreground" Value="White"/>
                 </Style>
             </Border.Resources>
-            <Grid>
+            <Grid UseLayoutRounding="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
@@ -938,6 +941,8 @@
 
             </CheckBox.Triggers>
           </CheckBox>-->
+
+
                     <Button Margin="5 0" Command="{Binding RefreshCashCommand}" Background="Transparent" BorderThickness="0" ToolTip="Թարմացնել" ClickMode="Press">
                         <Button.Template>
                             <ControlTemplate>
@@ -962,10 +967,10 @@
                     <ToggleButton IsChecked="{Binding IsLocalMode}" Margin="5 0">
                         <ToggleButton.Template>
                             <ControlTemplate>
-                                <Image x:Name="Image" Height="24" Width="24" Source="pack://application:,,,/Shared;component/Images/Server/Server_Online_Light.png" ToolTip="Առցանց ռեժիմ"/>
+                                <Image x:Name="Image" Height="24" Width="24" Source="pack://application:,,,/Shared;component/Images/Server/Server_Offline_Dark.png" ToolTip="Առցանց ռեժիմ"/>
                                 <ControlTemplate.Triggers>
                                     <DataTrigger Binding="{Binding IsLocalMode}" Value="True">
-                                        <Setter TargetName="Image" Property="Source" Value="pack://application:,,,/Shared;component/Images/Server/Server_Offline_Dark.png"/>
+                                        <Setter TargetName="Image" Property="Source" Value="pack://application:,,,/Shared;component/Images/Server/Server_Online_Light.png"/>
                                         <Setter TargetName="Image" Property="ToolTip" Value="Լոկալ ռեժիմ"/>
                                     </DataTrigger>
                                 </ControlTemplate.Triggers>

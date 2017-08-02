@@ -72,7 +72,7 @@ namespace UserControls.ViewModels.Invoices
             }
 
             IsModified = false;
-            BuyBySingle = ApplicationManager.Settings.MemberSettings.PurchaseBySingle;
+            AddBySingle = ApplicationManager.Settings.MemberSettings.PurchaseBySingle;
         }
         protected override void OnGetProduct(object o)
         {
@@ -99,7 +99,7 @@ namespace UserControls.ViewModels.Invoices
         public override void OnAddInvoiceItem(object o)
         {
             if (!CanAddInvoiceItem(o)) { return; }
-            if (!SetQuantity(BuyBySingle)) { return; }
+            if (!SetQuantity(AddBySingle)) { return; }
             base.OnAddInvoiceItem(o);
             InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
             RaisePropertyChanged("InvoicePaid");

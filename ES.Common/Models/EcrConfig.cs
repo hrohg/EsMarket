@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 using System.Xml.Serialization;
 using CashReg.Helper;
 using CashReg.Interfaces;
@@ -109,10 +112,25 @@ namespace ES.Common.Models
             set { _typeOfOperatorDeps = value; }
         }
 
+        [XmlIgnore]
+        public int SelectedDepartmentId
+        {
+            get { return CashierDepartment != null ? CashierDepartment.Id : -1; }
+            set
+            {
+                _cashierDepartment = TypeOfOperatorDeps.Any()
+                    ? TypeOfOperatorDeps.SingleOrDefault(s => s.Id == value)
+                    : null;
+            }
+        }
         public Department CashierDepartment
         {
-            get { return _cashierDepartment; }
-            set { _cashierDepartment = value; }
+            get { return _cashierDepartment != null && TypeOfOperatorDeps.Any()? TypeOfOperatorDeps.SingleOrDefault(s => s.Id == _cashierDepartment.Id) : null; }
+            set
+            {
+                if (value == null) { return; }
+                _cashierDepartment = value; 
+            }
         }
 
         public bool UseExternalPrinter
@@ -181,5 +199,7 @@ namespace ES.Common.Models
             };
         }
         #endregion External methods
+
+        
     }
 }

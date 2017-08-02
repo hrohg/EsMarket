@@ -38,7 +38,7 @@ namespace ES.Common.ViewModels.Base
                 if (IsActive != value)
                 {
                     base.IsActive = value;
-                    HandleActiveTabChanges(this);
+                    if (IsActive) OnActiveTabChanges(this);
                 }
             }
         }
@@ -62,11 +62,11 @@ namespace ES.Common.ViewModels.Base
         #region Events
 
         #region Active tab changing
-        public delegate void ActiveTabChange(DocumentViewModel document, ActivityChangedEventArgs e);
-        public event ActiveTabChange OnActiveTabChangeEvent;
-        private void HandleActiveTabChanges(DocumentViewModel document)
+        public delegate void ActiveTabChanged(DocumentViewModel document, ActivityChangedEventArgs e);
+        public event ActiveTabChanged ActiveTabChangedEvent;
+        private void OnActiveTabChanges(DocumentViewModel document)
         {
-            if (OnActiveTabChangeEvent != null) OnActiveTabChangeEvent(document, new ActivityChangedEventArgs(IsActive));
+            if (ActiveTabChangedEvent != null) ActiveTabChangedEvent(document, new ActivityChangedEventArgs(IsActive));
         }
         #endregion Active tab changing
 
