@@ -137,11 +137,11 @@ namespace ES.Business.Helpers
         public string LastSelectedLanguage { get; set; }
         public string ActiveLablePrinter { get; set; }
         public bool IsOfflineMode { get; set; }
+        public bool NotifyAboutIncomingInvoices { get; set; }
         public string ImportingFilePath { get; set; }
         #endregion General
 
         #region Sale
-
         private List<long> _activeSaleStocks;
         public List<long> ActiveSaleStocks
         {

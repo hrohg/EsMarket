@@ -68,6 +68,8 @@ namespace UserControls.ViewModels
         public bool LocalMode { get { return _settings.MemberSettings.IsOfflineMode; } set { _settings.MemberSettings.IsOfflineMode = value; RaisePropertyChanged("OfflineMode"); } }
         #endregion Is work in offline mode
 
+        public bool NotifyAboutIncomingInvoices { get { return _settings.MemberSettings.NotifyAboutIncomingInvoices; } set { _settings.MemberSettings.NotifyAboutIncomingInvoices = value; RaisePropertyChanged("NotifyAboutIncomingInvoices"); } }
+
         #endregion General
 
         #region Sale
@@ -264,6 +266,7 @@ namespace UserControls.ViewModels
             if (Settings.Save())
             {
                 Settings.LoadMemberSettings();
+                ApplicationManager.ReloadSettings();
                 MessageManager.OnMessage("Կարգավորումների գրանցումն իրականացել է հաջողությամբ:");
             }
             else

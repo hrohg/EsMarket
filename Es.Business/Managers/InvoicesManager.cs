@@ -495,24 +495,21 @@ namespace ES.Business.Managers
 
         private static Invoices TryApprovePurchaseInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, long stockId, InvoicePaid invoicePaid)
         {
+            //decimal amount = 0;
             
-            CashDesk selCashDesk = null;
-            CashDesk selCashDeskByCheck = null;
-            decimal amount = 0;
-            
-            amount = (invoicePaid.Paid - invoicePaid.Change) ?? 0;
-            if (amount > 0)
-            {
-                selCashDesk = SelectItemsManager.SelectCashDesks(true, invoice.MemberId, false, "Ընտրել դրամարկղը որտեղից վճարվել է գումարը։").FirstOrDefault();
-                if (selCashDesk == null) return null;
-            }
+            //amount = (invoicePaid.Paid - invoicePaid.Change) ?? 0;
+            //if (amount > 0)
+            //{
+            //    selCashDesk = SelectItemsManager.SelectCashDesks(true, invoice.MemberId, false, "Ընտրել դրամարկղը որտեղից վճարվել է գումարը։").FirstOrDefault();
+            //    if (selCashDesk == null) return null;
+            //}
 
-            amount = invoicePaid.ByCheck ?? 0;
-            if (amount > 0)
-            {
-                selCashDeskByCheck = SelectItemsManager.SelectCashDesks(false, invoice.MemberId, false, "Ընտրել հաշիվը որտեղից փոխանցվել է գումարը։").FirstOrDefault();
-                if (selCashDeskByCheck == null) return null;
-            }
+            //amount = invoicePaid.ByCheck ?? 0;
+            //if (amount > 0)
+            //{
+            //    selCashDeskByCheck = SelectItemsManager.SelectCashDesks(false, invoice.MemberId, false, "Ընտրել հաշիվը որտեղից փոխանցվել է գումարը։").FirstOrDefault();
+            //    if (selCashDeskByCheck == null) return null;
+            //}
 
             using (var transaction = new TransactionScope())
             {
@@ -606,42 +603,42 @@ namespace ES.Business.Managers
                     #region Add Purchase 216 - 521
 
                     // 216 - 521 Register in AccountingRecoords Accounting Receivable
-                    amount = invoice.Summ;
+                    //decimal amount = invoice.Summ;
                     var apAccountingRecords = new AccountingRecords
                     {
                         Id = Guid.NewGuid(),
                         RegisterDate = (DateTime)invoice.ApproveDate,
-                        Amount = amount,
-                        Debit = (int)AccountingRecordsManager.AccountingPlan.Purchase,
+                        Amount = invoice.Summ,
+                        Debit = (int)AccountingPlanEnum.Purchase,
                         DebitLongId = invoice.ToStockId,
-                        Credit = (int)AccountingRecordsManager.AccountingPlan.PurchasePayables,
+                        Credit = (int)AccountingPlanEnum.PurchasePayables,
                         CreditGuidId = exPartner.Id,
                         Description = invoice.InvoiceNumber,
                         MemberId = invoice.MemberId,
                         RegisterId = (long)invoice.ApproverId,
                     };
                     db.AccountingRecords.Add(apAccountingRecords);
-                    exPartner.Credit += amount;
+                    exPartner.Credit += invoice.Summ;
 
                     #endregion
 
                     #region Paid 521 - 251
 
-                    amount = (invoicePaid.Paid - invoicePaid.Change ?? 0);
+                    decimal amount = invoicePaid.ByCash;
                     if (amount > 0)
                     {
-                        if (selCashDesk == null) return null;
-                        var exCashDesk = db.CashDesk.SingleOrDefault(s => s.Id == selCashDesk.Id && s.MemberId == invoice.MemberId);
-
+                        if (invoicePaid.CashDeskId == null) return null;
+                        var exCashDesk = db.CashDesk.SingleOrDefault(s => s.Id == invoicePaid.CashDeskId && s.MemberId == invoice.MemberId);
+                        if (exCashDesk == null) return null;
                         // 521 - 251 Register in AccountingRecoords
                         var cpAccountingRecords = new AccountingRecords
                         {
                             Id = Guid.NewGuid(),
                             RegisterDate = (DateTime)invoice.ApproveDate,
                             Amount = amount,
-                            Debit = (int)AccountingRecordsManager.AccountingPlan.PurchasePayables,
+                            Debit = (int)AccountingPlanEnum.PurchasePayables,
                             DebitGuidId = exPartner.Id,
-                            Credit = (int)AccountingRecordsManager.AccountingPlan.CashDesk,
+                            Credit = (int)AccountingPlanEnum.CashDesk,
                             CreditGuidId = exCashDesk.Id,
                             Description = invoice.InvoiceNumber,
                             MemberId = invoice.MemberId,
@@ -662,8 +659,8 @@ namespace ES.Business.Managers
                     amount = invoicePaid.ByCheck ?? 0;
                     if (amount > 0)
                     {
-                        if (selCashDeskByCheck == null) return null;
-                        var exCashDeskByCheck = db.CashDesk.SingleOrDefault(s => s.Id == selCashDeskByCheck.Id && s.MemberId == invoice.MemberId);
+                        if (invoicePaid.CashDeskForTicketId == null) return null;
+                        var exCashDeskByCheck = db.CashDesk.SingleOrDefault(s => s.Id == invoicePaid.CashDeskForTicketId && s.MemberId == invoice.MemberId);
                         if (exCashDeskByCheck == null)
                         {
                             return null;
@@ -674,9 +671,9 @@ namespace ES.Business.Managers
                             Id = Guid.NewGuid(),
                             RegisterDate = (DateTime)invoice.ApproveDate,
                             Amount = amount,
-                            Debit = (int)AccountingRecordsManager.AccountingPlan.PurchasePayables,
+                            Debit = (int)AccountingPlanEnum.PurchasePayables,
                             DebitGuidId = exPartner.Id,
-                            Credit = (int)AccountingRecordsManager.AccountingPlan.CashDesk,
+                            Credit = (int)AccountingPlanEnum.CashDesk,
                             CreditGuidId = exCashDeskByCheck.Id,
                             Description = invoice.InvoiceNumber,
                             MemberId = invoice.MemberId,
@@ -700,9 +697,9 @@ namespace ES.Business.Managers
                             Id = Guid.NewGuid(),
                             RegisterDate = (DateTime)invoice.ApproveDate,
                             Amount = amount,
-                            Debit = (int)AccountingRecordsManager.AccountingPlan.PurchasePayables,
+                            Debit = (int)AccountingPlanEnum.PurchasePayables,
                             DebitGuidId = exPartner.Id,
-                            Credit = (int)AccountingRecordsManager.AccountingPlan.Prepayments,
+                            Credit = (int)AccountingPlanEnum.Prepayments,
                             CreditGuidId = exPartner.Id,
                             Description = invoice.InvoiceNumber,
                             MemberId = invoice.MemberId,
@@ -732,11 +729,6 @@ namespace ES.Business.Managers
 
         private static Invoices TryApproveSaleInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, IEnumerable<long> fromStockIds, InvoicePaid invoicePaid)
         {
-            CashDesk cashDeskByCheck = null;
-            if (invoicePaid.ByCheck != null && invoicePaid.ByCheck > 0)
-            {
-                cashDeskByCheck = SelectItemsManager.SelectCashDesks(false, invoice.MemberId, false, "Ընտրել հաշիվը որտեղ փոխանցվել է գումարը։").FirstOrDefault();
-            }
             using (var transaction = new TransactionScope())
             {
                 using (var db = GetDataContext())
@@ -851,8 +843,8 @@ namespace ES.Business.Managers
                         Id = Guid.NewGuid(),
                         RegisterDate = (DateTime)invoice.ApproveDate,
                         Amount = costPrice,
-                        Debit = (long)AccountingRecordsManager.AccountingPlan.CostPrice,
-                        Credit = (long)AccountingRecordsManager.AccountingPlan.Purchase,
+                        Debit = (long)AccountingPlanEnum.CostPrice,
+                        Credit = (long)AccountingPlanEnum.Purchase,
                         Description = invoice.InvoiceNumber,
                         MemberId = invoice.MemberId,
                         RegisterId = (long)invoice.ApproverId,
@@ -875,27 +867,26 @@ namespace ES.Business.Managers
                     #region Accounting Receivable
 
                     // 221 - 611 Register in AccountingRecoords Accounting Receivable
-                    var amount = invoice.Summ;
                     var apAccountingRecords = new AccountingRecords
                     {
                         Id = Guid.NewGuid(),
                         RegisterDate = (DateTime)invoice.ApproveDate,
-                        Amount = amount,
-                        Debit = (int)AccountingRecordsManager.AccountingPlan.AccountingReceivable,
+                        Amount = invoice.Summ,
+                        Debit = (int)AccountingPlanEnum.AccountingReceivable,
                         DebitGuidId = exPartner.Id,
-                        Credit = (int)AccountingRecordsManager.AccountingPlan.Proceeds,
+                        Credit = (int)AccountingPlanEnum.Proceeds,
                         Description = invoice.InvoiceNumber,
                         MemberId = invoice.MemberId,
                         RegisterId = (long)invoice.ApproverId,
                     };
                     db.AccountingRecords.Add(apAccountingRecords);
-                    exPartner.Debit += amount;
+                    exPartner.Debit += invoice.Summ;
 
                     #endregion
 
                     #region Cash
 
-                    if (invoicePaid.Paid != null && invoicePaid.Paid > 0)
+                    if (invoicePaid.Paid != null && invoicePaid.ByCash > 0)
                     {
                         var exCashDesk = invoicePaid != null && invoicePaid.CashDeskId != null ? db.CashDesk.SingleOrDefault(s => s.Id == invoicePaid.CashDeskId && s.MemberId == invoice.MemberId) : null;
                         if (exCashDesk == null)
@@ -903,24 +894,24 @@ namespace ES.Business.Managers
                             MessageManager.OnMessage("Դրամարկղ ընտրված չէ։ Ընտրեք դրամարկղ և փորձեք կրկին։", MessageTypeEnum.Warning);
                             return null;
                         }
-                        amount = (invoicePaid.Paid - invoicePaid.Change ?? 0);
+                        
                         // 251 - 221 Register in AccountingRecoords
                         var cpAccountingRecords = new AccountingRecords
                         {
                             Id = Guid.NewGuid(),
                             RegisterDate = (DateTime)invoice.ApproveDate,
-                            Amount = amount,
-                            Debit = (int)AccountingRecordsManager.AccountingPlan.CashDesk,
+                            Amount = invoicePaid.ByCash,
+                            Debit = (int)AccountingPlanEnum.CashDesk,
                             DebitGuidId = exCashDesk.Id,
-                            Credit = (int)AccountingRecordsManager.AccountingPlan.AccountingReceivable,
+                            Credit = (int)AccountingPlanEnum.AccountingReceivable,
                             CreditGuidId = invoice.PartnerId,
                             Description = invoice.InvoiceNumber,
                             MemberId = invoice.MemberId,
                             RegisterId = (long)invoice.ApproverId,
                         };
                         db.AccountingRecords.Add(cpAccountingRecords);
-                        exCashDesk.Total += amount;
-                        exPartner.Debit -= amount;
+                        exCashDesk.Total += invoicePaid.ByCash;
+                        exPartner.Debit -= invoicePaid.ByCash;
                         //Change in CashDesk add to SaleInCash
 
                         var newSaleInCash = new SaleInCash
@@ -929,7 +920,7 @@ namespace ES.Business.Managers
                             CashDeskId = exCashDesk.Id,
                             InvoiceId = invoice.Id,
                             Date = (DateTime)invoice.ApproveDate,
-                            Amount = amount,
+                            Amount = invoicePaid.ByCash,
                             Notes = invoice.Notes,
                             CashierId = (long)invoice.ApproverId,
                             AccountingRecordsId = cpAccountingRecords.Id
@@ -941,10 +932,9 @@ namespace ES.Business.Managers
 
                     #region ByCheck
 
-                    amount = invoicePaid.ByCheck ?? 0;
-                    if (amount > 0)
+                    if ((invoicePaid.ByCheck ?? 0) > 0)
                     {
-                        var exCashDeskByCheck = (cashDeskByCheck != null) ? db.CashDesk.SingleOrDefault(s => s.Id == cashDeskByCheck.Id && s.MemberId == invoice.MemberId) : null;
+                        var exCashDeskByCheck = (invoicePaid.CashDeskForTicketId != null) ? db.CashDesk.SingleOrDefault(s => s.Id == invoicePaid.CashDeskForTicketId && s.MemberId == invoice.MemberId) : null;
                         if (exCashDeskByCheck == null)
                         {
                             MessageManager.OnMessage("Անկանխիկ դրամարկղ ընտրված չէ։", MessageTypeEnum.Warning);
@@ -955,18 +945,18 @@ namespace ES.Business.Managers
                         {
                             Id = Guid.NewGuid(),
                             RegisterDate = (DateTime)invoice.ApproveDate,
-                            Amount = amount,
-                            Debit = (int)AccountingRecordsManager.AccountingPlan.CashDesk,
+                            Amount = (invoicePaid.ByCheck ?? 0),
+                            Debit = (int)AccountingPlanEnum.CashDesk,
                             DebitGuidId = (Guid)exCashDeskByCheck.Id,
-                            Credit = (int)AccountingRecordsManager.AccountingPlan.AccountingReceivable,
+                            Credit = (int)AccountingPlanEnum.AccountingReceivable,
                             CreditGuidId = invoice.PartnerId,
                             Description = invoice.InvoiceNumber,
                             MemberId = invoice.MemberId,
                             RegisterId = (long)invoice.ApproverId,
                         };
                         db.AccountingRecords.Add(accountingRecords);
-                        exCashDeskByCheck.Total += amount;
-                        exPartner.Debit -= amount;
+                        exCashDeskByCheck.Total += (invoicePaid.ByCheck ?? 0);
+                        exPartner.Debit -= (invoicePaid.ByCheck ?? 0);
                         //Change in CashDesk add to SaleInCash
                         var newSaleInCashByCheck = new SaleInCash
                         {
@@ -974,7 +964,7 @@ namespace ES.Business.Managers
                             CashDeskId = exCashDeskByCheck.Id,
                             InvoiceId = invoice.Id,
                             Date = (DateTime)invoice.ApproveDate,
-                            Amount = amount,
+                            Amount = (invoicePaid.ByCheck ?? 0),
                             Notes = invoice.Notes,
                             CashierId = (long)invoice.ApproverId
                         };
@@ -985,32 +975,30 @@ namespace ES.Business.Managers
 
                     #region Add ReceivedPrepayment
 
-                    amount = invoicePaid.ReceivedPrepayment ?? 0;
-                    if (amount > 0)
+                    if ((invoicePaid.ReceivedPrepayment ?? 0) > 0)
                     {
                         // 221 - 523 Register in AccountingRecoords
                         var accountingRecords = new AccountingRecords
                         {
                             Id = Guid.NewGuid(),
                             RegisterDate = (DateTime)invoice.ApproveDate,
-                            Amount = amount,
-                            Debit = (int)AccountingRecordsManager.AccountingPlan.AccountingReceivable,
-                            Credit = (int)AccountingRecordsManager.AccountingPlan.ReceivedInAdvance,
+                            Amount = invoicePaid.ReceivedPrepayment ?? 0,
+                            Debit = (int)AccountingPlanEnum.AccountingReceivable,
+                            Credit = (int)AccountingPlanEnum.ReceivedInAdvance,
                             Description = invoice.InvoiceNumber,
                             MemberId = invoice.MemberId,
                             RegisterId = (long)invoice.ApproverId,
                         };
                         db.AccountingRecords.Add(accountingRecords);
-                        exPartner.Debit -= amount;
-                        exPartner.Credit -= amount;
+                        exPartner.Debit -= invoicePaid.ReceivedPrepayment ?? 0;
+                        exPartner.Credit -= invoicePaid.ReceivedPrepayment ?? 0;
                     }
 
                     #endregion
 
                     #region Add AccountsReceivable
 
-                    amount = invoicePaid.AccountsReceivable ?? 0;
-                    if (amount > 0)
+                    if ((invoicePaid.AccountsReceivable ?? 0) > 0)
                     {
                         //Change in CashDesk add to SaleInCash
                         var newAccountsReceivable = new AccountsReceivable()
@@ -1018,7 +1006,7 @@ namespace ES.Business.Managers
                             Id = Guid.NewGuid(),
                             InvoiceId = invoice.Id,
                             Date = (DateTime)invoice.ApproveDate,
-                            Amount = amount,
+                            Amount = invoicePaid.AccountsReceivable ?? 0,
                             Notes = invoice.Notes,
                             CashierId = (long)invoice.ApproverId,
                             MemberId = invoice.MemberId,
@@ -1189,8 +1177,8 @@ namespace ES.Business.Managers
                         Id = Guid.NewGuid(),
                         RegisterDate = (DateTime)invoice.ApproveDate,
                         Amount = costPrice,
-                        Debit = (long)AccountingRecordsManager.AccountingPlan.OtherOperationalExpenses,
-                        Credit = (long)AccountingRecordsManager.AccountingPlan.Purchase,
+                        Debit = (long)AccountingPlanEnum.OtherOperationalExpenses,
+                        Credit = (long)AccountingPlanEnum.Purchase,
                         Description = invoice.InvoiceNumber,
                         MemberId = invoice.MemberId,
                         RegisterId = (long)invoice.ApproverId,
@@ -1338,9 +1326,9 @@ namespace ES.Business.Managers
                         Id = Guid.NewGuid(),
                         RegisterDate = (DateTime)invoice.ApproveDate,
                         Amount = costPrice,
-                        Debit = (int)AccountingRecordsManager.AccountingPlan.Purchase,
+                        Debit = (int)AccountingPlanEnum.Purchase,
                         DebitLongId = invoice.ToStockId,
-                        Credit = (int)AccountingRecordsManager.AccountingPlan.Purchase,
+                        Credit = (int)AccountingPlanEnum.Purchase,
                         CreditLongId = invoice.FromStockId,
                         Description = invoice.InvoiceNumber,
                         MemberId = invoice.MemberId,
@@ -1837,7 +1825,6 @@ namespace ES.Business.Managers
         public static InvoiceModel ApproveSaleInvoice(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems, IEnumerable<long> stockIds, InvoicePaid invoicePaid)
         {
             invoice.ApproveDate = DateTime.Now;
-            //invoice.ApproveDate = invoice.CreateDate;
             return ConvertInvoice(TryApproveSaleInvoice(ConvertInvoice(invoice), invoiceItems.Select(Convert).ToList(), stockIds, invoicePaid), ApplicationManager.Instance.CashProvider.GetPartners.SingleOrDefault(p => p.Id == invoice.PartnerId));
         }
 

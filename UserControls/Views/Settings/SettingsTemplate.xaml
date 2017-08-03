@@ -87,6 +87,7 @@
                                 <GroupBox Grid.Row="3" Header="Այլ">
                                     <StackPanel>
                                         <CheckBox IsChecked="{Binding LocalMode}" Content="Աշխատել լոկալ ռեժիմում" Margin="5"/>
+                                        <CheckBox IsChecked="{Binding NotifyAboutIncomingInvoices}" Content="Տեղեկացնել ստացված մուտքային ապրանքագրերի մասին" Margin="5"/>
                                     </StackPanel>
                                 </GroupBox>
                             </Grid>

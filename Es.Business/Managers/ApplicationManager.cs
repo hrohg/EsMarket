@@ -515,6 +515,7 @@ namespace ES.Business.Managers
         public static void ReloadSettings()
         {
             _insatance._settings = new SettingsContainer();
+            _insatance._settings.LoadMemberSettings();
         }
         #endregion
     }

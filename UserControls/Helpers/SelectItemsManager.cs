@@ -4,7 +4,6 @@ using System.Linq;
 using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Business.Models;
-using ES.Common;
 using ES.Data.Enumerations;
 using ES.Data.Model;
 using ES.Data.Models;
@@ -87,8 +86,18 @@ namespace UserControls.Helpers
             return new List<EsMemberModel>();
         }
         public static List<CashDesk> SelectDefaultSaleCashDesks(bool? isCash, bool allowMultipleChoise, string title)
-        {
-            var cashDesks = isCash.HasValue && isCash.Value ? SelectCashDesks(ApplicationManager.Settings.MemberSettings.SaleCashDesks): SelectCashDesks(ApplicationManager.Settings.MemberSettings.SaleBankAccounts);
+        { 
+            List<Guid> cashDeskIds = new List<Guid>();
+            if (isCash.HasValue)
+            {
+                cashDeskIds = isCash.Value ? ApplicationManager.Settings.MemberSettings.SaleCashDesks : ApplicationManager.Settings.MemberSettings.SaleBankAccounts;
+            }
+            else
+            {
+                cashDeskIds.AddRange(ApplicationManager.Settings.MemberSettings.SaleCashDesks);
+                cashDeskIds.AddRange(ApplicationManager.Settings.MemberSettings.SaleBankAccounts);
+            }
+            var cashDesks = SelectCashDesks(cashDeskIds);
             if (cashDesks.Count < 2) return cashDesks;
             var ui = new SelectItems(cashDesks.Select(s => new ItemsToSelect { DisplayName = s.Name, SelectedValue = s.Id }).ToList(), allowMultipleChoise, title);
             if (ui.ShowDialog() == true && ui.SelectedItems != null)
@@ -306,5 +315,18 @@ namespace UserControls.Helpers
             return items.Where(s => selectItem.SelectedItems.Select(t => (Guid)t.SelectedValue).Contains(s.Id)).ToList();
         }
         #endregion
+
+        public static PartnerModel SelectPartner(PartnerType partnerTypeId = 0)
+        {
+            var partners = partnerTypeId != 0 ? PartnersManager.GetPartner(ApplicationManager.Instance.GetMember.Id, partnerTypeId) : PartnersManager.GetPartners(ApplicationManager.Instance.GetMember.Id);
+            if (partners.Count == 0) return null;
+            var selectedItems =
+                new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName + " " + s.Mobile, SelectedValue = s.Id }).ToList(), false);
+            selectedItems.ShowDialog();
+            if (selectedItems.DialogResult == null || selectedItems.DialogResult != true || selectedItems.SelectedItems == null)
+            { return null; }
+            return partners.FirstOrDefault(s => selectedItems.SelectedItems.Select(t => t.SelectedValue).ToList().Contains(s.Id));
+
+        }
     }
 }

@@ -666,16 +666,13 @@ namespace ES.Business.Managers
         }
         private static decimal TryGetProductItemCount(Guid? productId, List<long> fromStocks, long memberId)
         {
+            if (!productId.HasValue || fromStocks == null) return 0;
             using (var db = GetDataContext())
             {
                 try
                 {
-                    var items =
-                        db.ProductItems.Where(
-                            s =>
-                                s.MemberId == memberId &&
-                                (fromStocks == null || !fromStocks.Any() || productId==null ||
-                                 (s.StockId != null && fromStocks.Any(t=>t==s.StockId.Value) && s.ProductId == productId.Value)));
+                    var items = db.ProductItems.Where(s =>
+                            s.MemberId == memberId && s.StockId != null && fromStocks.Any(t=>t==s.StockId.Value && s.ProductId == productId.Value));
                     return items.Sum(s => s.Quantity);
                 }
                 catch (Exception)

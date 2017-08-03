@@ -4,52 +4,50 @@ using System.Linq;
 using System.Transactions;
 using ES.Business.Helpers;
 using ES.Business.Models;
-using ES.Common.Managers;
 using ES.DataAccess.Models;
-using Microsoft.Office.Interop.Excel;
 
 namespace ES.Business.Managers
 {
+    public enum AccountingPlanEnum
+    {
+        //1 Ոչ ընթացիկ ակտիվներ
+        //2 Ընթացիկ ակտիվներ
+        //Ապրանքներ
+        Purchase = 216,
+        //Դեբիտորական պարտքեր վաճառքի գծով
+        AccountingReceivable = 221,
+        //Տրված ընթացիկ կանխավճարներ
+        Prepayments = 224,
+        //Դրամարկղ
+        CashDesk = 251,
+        //Հաշվարկային հաշիվ
+        Accounts = 252,
+        //3 Սեփական կապիտալ
+        //Կանոնադրական կապիտալ
+        EquityBase = 311,
+        //4 Ոչ ընթացիկ պարտավորություններ
+        //5 Ընթացիկ պարտավորություններ
+        //Կրեդիտորական պերտքեր գնումների գծով
+        PurchasePayables = 521,
+        //Ստացված կանխավճարներ
+        ReceivedInAdvance = 523,
+        //
+        Debit_For_Salary = 527,
+        //6 Եկամուտներ
+        //Հասույթ
+        Proceeds = 611,
+        //7 Ծախսեր
+        //711 Իրացված արտադրանքի, ապրանքների, աշխատանքների, ծառայությունների ինքնարժեք
+        CostPrice = 711,
+        //Իրացման ծախսեր
+        CostOfSales = 712,
+        OtherOperationalExpenses = 714,
+        //8 Կառավարչական հաշվառման հաշիվներ
+        //9 Արտահաշվեկշռային հաշիվներ
+
+    }
     public class AccountingRecordsManager : BaseManager
     {
-        public enum AccountingPlan
-        {
-            //1 Ոչ ընթացիկ ակտիվներ
-            //2 Ընթացիկ ակտիվներ
-            //Ապրանքներ
-            Purchase = 216,
-            //Դեբիտորական պարտքեր վաճառքի գծով
-            AccountingReceivable = 221,
-            //Տրված ընթացիկ կանխավճարներ
-            Prepayments = 224,
-            //Դրամարկղ
-            CashDesk = 251,
-            //Հաշվարկային հաշիվ
-            Accounts = 252,
-            //3 Սեփական կապիտալ
-            //Կանոնադրական կապիտալ
-            EquityBase = 311,
-            //4 Ոչ ընթացիկ պարտավորություններ
-            //5 Ընթացիկ պարտավորություններ
-            //Կրեդիտորական պերտքեր գնումների գծով
-            PurchasePayables = 521,
-            //Ստացված կանխավճարներ
-            ReceivedInAdvance = 523,
-            //
-            Debit_For_Salary = 527,
-            //6 Եկամուտներ
-            //Հասույթ
-            Proceeds = 611,
-            //7 Ծախսեր
-            //711 Իրացված արտադրանքի, ապրանքների, աշխատանքների, ծառայությունների ինքնարժեք
-            CostPrice = 711,
-            //Իրացման ծախսեր
-            CostOfSales = 712,
-            OtherOperationalExpenses = 714,
-            //8 Կառավարչական հաշվառման հաշիվներ
-            //9 Արտահաշվեկշռային հաշիվներ
-
-        }
         #region Converters
         private static AccountingRecordsModel Convert(AccountingRecords item)
         {
@@ -87,6 +85,7 @@ namespace ES.Business.Managers
             };
         }
         #endregion
+
         #region public properties
         public static string GetAccountingRecordsDescription(long key)
         {
@@ -95,42 +94,42 @@ namespace ES.Business.Managers
                 //1
 
                 //2 Ընթացիկ ակտիվներ
-                case (long)AccountingPlan.Purchase:
+                case (long)AccountingPlanEnum.Purchase:
                     return "Ապրանքի ձեռքբերում";
                     break;
-                case (long)AccountingPlan.AccountingReceivable:
+                case (long)AccountingPlanEnum.AccountingReceivable:
                     return "Դեբիտորական պարտքեր վաճառքի գծով";
                     break;
-                case (long)AccountingPlan.Prepayments:
+                case (long)AccountingPlanEnum.Prepayments:
                     return "Տրված ընթացիկ կանխավճարներ";
                     break;
-                case (long)AccountingPlan.CashDesk:
+                case (long)AccountingPlanEnum.CashDesk:
                     return "Դրամարկղ";
                     break;
-                case (long)AccountingPlan.Accounts:
+                case (long)AccountingPlanEnum.Accounts:
                     return "Հաշվարկային հաշիվ";
                     break;
                 //3 Սեփական կապիտալ
-                case (long)AccountingPlan.EquityBase:
+                case (long)AccountingPlanEnum.EquityBase:
                     return "Կանոնադրական կապիտալ";
                     break;
                 //5 Ընթացիկ պարտավորություններ
-                case (long)AccountingPlan.PurchasePayables:
+                case (long)AccountingPlanEnum.PurchasePayables:
                     return "Կրեդիտորական պերտքեր գնումների գծով";
                     break;
-                case (long)AccountingPlan.ReceivedInAdvance:
+                case (long)AccountingPlanEnum.ReceivedInAdvance:
                     return "Ստացված կանխավճարներ";
                     break;
-                case (long)AccountingPlan.Proceeds:
+                case (long)AccountingPlanEnum.Proceeds:
                     return "Հասույթ";
                     break;
                 //7
                 //711
-                case (long)AccountingPlan.CostPrice:
+                case (long)AccountingPlanEnum.CostPrice:
                     return "Իրացված արտադրանքի, ապրանքների, աշխատանքների, ծառայությունների ինքնարժեք";
                     break;
                 //712
-                case (long)AccountingPlan.CostOfSales:
+                case (long)AccountingPlanEnum.CostOfSales:
                     return "Իրացման ծախսեր";
                     break;
                 //Unknown
@@ -146,44 +145,44 @@ namespace ES.Business.Managers
                 //1
 
                 //2 Ընթացիկ ակտիվներ
-                case (long)AccountingPlan.Purchase:
+                case (long)AccountingPlanEnum.Purchase:
                     return "Ապրանքի ձեռքբերում";
                     break;
-                case (long)AccountingPlan.AccountingReceivable:
+                case (long)AccountingPlanEnum.AccountingReceivable:
                     return "Դեբիտորական պարտքեր վաճառքի գծով";
                     break;
-                case (long)AccountingPlan.Prepayments:
+                case (long)AccountingPlanEnum.Prepayments:
                     return "Տրված ընթացիկ կանխավճարներ";
                     break;
-                case (long)AccountingPlan.CashDesk:
+                case (long)AccountingPlanEnum.CashDesk:
                     if (guidId == null) return "Անհայտ դրամարկղ";
                     var cashDesk = CashDeskManager.GetCashDesk(guidId.Value);
                     return cashDesk!=null? cashDesk.Name:"Անհայտ դրամարկղ";
                     break;
-                case (long)AccountingPlan.Accounts:
+                case (long)AccountingPlanEnum.Accounts:
                     return "Հաշվարկային հաշիվ";
                     break;
                 //3 Սեփական կապիտալ
-                case (long)AccountingPlan.EquityBase:
+                case (long)AccountingPlanEnum.EquityBase:
                     return "Կանոնադրական կապիտալ";
                     break;
                 //5 Ընթացիկ պարտավորություններ
-                case (long)AccountingPlan.PurchasePayables:
+                case (long)AccountingPlanEnum.PurchasePayables:
                     return "Կրեդիտորական պերտքեր գնումների գծով";
                     break;
-                case (long)AccountingPlan.ReceivedInAdvance:
+                case (long)AccountingPlanEnum.ReceivedInAdvance:
                     return "Ստացված կանխավճարներ";
                     break;
-                case (long)AccountingPlan.Proceeds:
+                case (long)AccountingPlanEnum.Proceeds:
                     return "Հասույթ";
                     break;
                 //7
                 //711
-                case (long)AccountingPlan.CostPrice:
+                case (long)AccountingPlanEnum.CostPrice:
                     return "Իրացված արտադրանքի, ապրանքների, աշխատանքների, ծառայությունների ինքնարժեք";
                     break;
                 //712
-                case (long)AccountingPlan.CostOfSales:
+                case (long)AccountingPlanEnum.CostOfSales:
                     return "Իրացման ծախսեր";
                     break;
                 //Unknown
@@ -243,6 +242,7 @@ namespace ES.Business.Managers
             return TrySetEquityBase(Convert(accountingRecords), memberId);
         }
         #endregion
+
         #region private properties
         private static bool TryAddAccountingRecords(AccountingRecords item)
         {

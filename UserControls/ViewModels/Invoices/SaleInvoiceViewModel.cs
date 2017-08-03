@@ -2,13 +2,10 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.Hosting;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using CashReg;
-using CashReg.Helper;
-using CashReg.Interfaces;
 using CashReg.Models;
 using ES.Business.ExcelManager;
 using ES.Business.FileManager;
@@ -16,14 +13,12 @@ using ES.Business.Helpers;
 using ES.Data.Model;
 using ES.Data.Models;
 using ES.Business.Managers;
-using ES.Business.Models;
 using ES.Common;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Data.Enumerations;
-using ES.DataAccess.Models;
 using Shared.Helpers;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
@@ -125,8 +120,7 @@ namespace UserControls.ViewModels.Invoices
 
         private void Initialize()
         {
-            var xml = new XmlManager();
-            FromStocks = StockManager.GetStocks(xml.GetItemsByControl(XmlTagItems.SaleStocks).Select(s => HgConvert.ToInt64(s.Value)).ToList(), Member.Id).ToList();
+            FromStocks = StockManager.GetStocks(ApplicationManager.Settings.MemberSettings.ActiveSaleStocks.ToList(), Member.Id).ToList();
             Invoice.InvoiceTypeId = (int)InvoiceType.SaleInvoice;
             if (Partner == null)
             {
@@ -366,17 +360,17 @@ namespace UserControls.ViewModels.Invoices
                 MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);
                 return;
             }
-            var xml = new XmlManager();
+            
             Invoice.ApproverId = User.UserId;
             Invoice.Approver = User.FullName;
 
             InvoicePaid.PartnerId = Invoice.PartnerId;
             Invoice.RecipientName = Partner.FullName;
 
-            var cashDesk = SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.SaleCashDesks).SingleOrDefault();
+            var cashDesk = InvoicePaid.Paid>0? SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.SaleCashDesks).SingleOrDefault(): null;
             InvoicePaid.CashDeskId = cashDesk != null ? cashDesk.Id : (Guid?)null;
 
-            var bankAccount = SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.SaleBankAccounts).SingleOrDefault();
+            var bankAccount = InvoicePaid.ByCheck>0? SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.SaleBankAccounts).SingleOrDefault():null;
             InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
 
             var invoice = InvoicesManager.ApproveSaleInvoice(Invoice, InvoiceItems.ToList(), FromStocks.Select(s => s.Id), InvoicePaid);
@@ -386,6 +380,8 @@ namespace UserControls.ViewModels.Invoices
                 MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);
                 return;
             }
+            ApplicationManager.CashManager.UpdatePartners();
+            Partner = ApplicationManager.CashManager.GetPartners.SingleOrDefault(s=>s.Id==Partner.Id);
             //CheckForPrize(Invoice);
             ResponseReceiptModel responceReceiptModel = null;
             if (ApplicationManager.Settings.MemberSettings.IsEcrActivated && CanPrintEcrTicket(o))
@@ -429,7 +425,7 @@ namespace UserControls.ViewModels.Invoices
             Invoice = invoice;
             IsModified = false;
 
-            if (!string.IsNullOrEmpty(ApplicationManager.Settings.MemberSettings.ActiveSalePrinter) && (!ApplicationManager.Settings.MemberSettings.IsEcrActivated || ApplicationManager.Settings.MemberSettings.EcrConfig.UseExternalPrinter))
+            if (IsPrintTicket && (!ApplicationManager.Settings.MemberSettings.IsEcrActivated || ApplicationManager.Settings.MemberSettings.EcrConfig.UseExternalPrinter))
             {
                 PrintInvoiceTicket(responceReceiptModel);
             }

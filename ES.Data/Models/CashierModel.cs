@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace ES.Data.Model
+namespace ES.Data.Models
 {
     public class InvoicePaid : INotifyPropertyChanged
     {
@@ -42,6 +42,7 @@ namespace ES.Data.Model
                 OnPropertyChanged(ChangeProperty);
             }
         }
+        public decimal ByCash { get { return (Paid ?? 0) - (Change ?? 0); } }
         public decimal? ByCheck
         {
             get

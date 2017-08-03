@@ -343,7 +343,7 @@
                               IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Cashier}}"/>
                     <Separator/>
                     <MenuItem Header="Պատվիրատու">
-                        <MenuItem Header="221 Դեբիտորական պարտքի մարում" Click="MiRepaymentOfReceivable_Click"/>
+                        <MenuItem Header="221 Դեբիտորական պարտքի մարում" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.AccountingReceivable}"/>
                         <Separator/>
                         <MenuItem Header="Դեբիտորական պարտքեր (մանրամասն)"  Click="MiDebitViewDetile_Click"/>
                     </MenuItem>
@@ -378,9 +378,11 @@
                             </MenuItem>
                         </MenuItem>
                         <Separator />
-                        <MenuItem Header="1 Ոչ ընթացիկ ակտիվներ"></MenuItem>
+                        <MenuItem Header="1 Ոչ ընթացիկ ակտիվներ">
+                            
+                        </MenuItem>
                         <MenuItem Header="2 Ընթացիկ ակտիվներ">
-                            <MenuItem Header="221 Դեբիտորական պարտքի մարում" Margin="3" Click="MiRepaymentOfReceivable_Click"/>
+                            <MenuItem Header="221 Դեբիտորական պարտքի մարում" Margin="3" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.AccountingReceivable}"/>
                             <MenuItem Header="251 Գումարի փոխանցում դրամարկղում" Margin="3" Click="MiTransferIntoCashDesk_Click"/>
                         </MenuItem>
                         <MenuItem Header="3 Սեփական կապիտալ">
@@ -388,8 +390,8 @@
                         </MenuItem>
                         <MenuItem Header="4 Ոչ ընթացիկ պարտավորություններ"></MenuItem>
                         <MenuItem Header="5 Ընթացիկ պարտավորություններ">
-                            <MenuItem Header="521 Կրեդիտորական պարտքերի մարում" Margin="3" Click="MiRepaymentOfDebts_Click"/>
-                            <MenuItem Header="523 Ստացված կանխավճարներ" Margin="3" Click="MiReceivedInAdvance_Click"/>
+                            <MenuItem Header="521 Կրեդիտորական պարտքերի մարում" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.PurchasePayables}"/>
+                            <MenuItem Header="523 Ստացված կանխավճարներ" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.ReceivedInAdvance}"/>
                         </MenuItem>
                         <MenuItem Header="6 Եկամուտներ"></MenuItem>
                         <MenuItem Header="7 Ծախսեր">

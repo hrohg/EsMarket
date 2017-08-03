@@ -232,69 +232,7 @@ namespace ES.Market
             view.Show();
         }
 
-        private void MiRepaymentOfReceivable_Click(object sender, EventArgs e)
-        {
-            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Member.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords.Debit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
-            accountingRecords.Credit = (long)AccountingRecordsManager.AccountingPlan.AccountingReceivable;
-            var cashDesk = SelectItemsManager.SelectDefaultSaleCashDesks(null, false, "Ընտրել դրամարկղ").FirstOrDefault();
-            if (cashDesk == null)
-            {
-                MessageBox.Show("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
-                return;
-            }
-            accountingRecords.DebitGuidId = cashDesk.Id;
-            var partner = SelectPartner();
-            if (partner == null)
-            {
-                MessageBox.Show("Գործընկեր ընտրված չէ։", "Թերի տվյալներ");
-                return;
-            }
-            accountingRecords.CreditGuidId = partner.Id;
-            var ctrlAccountingRecords =
-                new CtrlAccountingRecords(new AccountingRecordsViewModel(accountingRecords,
-                    "Դեբիտորական պարտքի մարում \n Գործընկեր։ " + partner.FullName + "\n" +
-                    "Դեբտորական պարտք։ " + (partner.Debit != null ? partner.Debit.ToString() : "0") + "\n" +
-                    "Կերդիտորական պարտք։ " + (partner.Credit != null ? partner.Credit.ToString() : "0")));
-            ctrlAccountingRecords.ShowDialog();
-            var repaymentAccountingRecord = ctrlAccountingRecords.AccountingRecord;
-            repaymentAccountingRecord.DebitGuidId = cashDesk.Id;
-            repaymentAccountingRecord.CreditGuidId = partner.Id;
-            if (!ctrlAccountingRecords.Result || repaymentAccountingRecord == null ||
-                repaymentAccountingRecord.Amount == 0) return;
-            var depositAccountingRecords = new AccountingRecordsModel(date: repaymentAccountingRecord.RegisterDate,
-                memberId: repaymentAccountingRecord.MemberId, registerId: repaymentAccountingRecord.RegisterId)
-            {
-                Amount = 0,
-                Description = repaymentAccountingRecord.Description,
-                Debit = (long)AccountingRecordsManager.AccountingPlan.CashDesk,
-                Credit = (long)AccountingRecordsManager.AccountingPlan.ReceivedInAdvance,
-                DebitGuidId = repaymentAccountingRecord.DebitGuidId,
-                CreditGuidId = repaymentAccountingRecord.CreditGuidId,
-            };
-
-            if (repaymentAccountingRecord.Amount > partner.Debit)
-            {
-                if (MessageBox.Show(
-                    "Վճարվել է " + (repaymentAccountingRecord.Amount - partner.Debit) + " դրամ ավել։ \n" +
-                    "Ավելացնել " + (repaymentAccountingRecord.Amount - partner.Debit) + " դրամ որպես կանխավճար։",
-                    "Գերավճար", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
-                {
-                    return;
-                }
-                depositAccountingRecords.Amount = repaymentAccountingRecord.Amount - partner.Debit;
-            }
-            repaymentAccountingRecord.Amount -= depositAccountingRecords.Amount;
-            if (AccountingRecordsManager.SetPartnerPayment(depositeAccountRecords: depositAccountingRecords,
-                repaymentAccountingRecords: repaymentAccountingRecord))
-            {
-                MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
-            }
-            else
-            {
-                MessageBox.Show("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
-            }
-        }
+        
         //todo
         private PartnerModel SelectPartner(PartnerType partnerTypeId = 0)
         {
@@ -334,8 +272,8 @@ namespace ES.Market
         protected void MiTransferIntoCashDesk_Click(object sender, EventArgs e)
         {
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords.Debit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
-            accountingRecords.Credit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
+            accountingRecords.Debit = (long)AccountingPlanEnum.CashDesk;
+            accountingRecords.Credit = (long)AccountingPlanEnum.CashDesk;
             var fromCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetMember.Id, false, "Ընտրել ելքագրվող դրամարկղը").FirstOrDefault();
             var toCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetMember.Id, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
             if (fromCashDesk == null || toCashDesk == null)
@@ -380,8 +318,8 @@ namespace ES.Market
         protected void MiAddEquityBase_Click(object sender, EventArgs e)
         {
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords.Debit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
-            accountingRecords.Credit = (long)AccountingRecordsManager.AccountingPlan.EquityBase;
+            accountingRecords.Debit = (long)AccountingPlanEnum.CashDesk;
+            accountingRecords.Credit = (long)AccountingPlanEnum.EquityBase;
             var fromUser = SelectItemsManager.SelectUser(ApplicationManager.Instance.GetMember.Id, false, "Ընտրել ներդրող").FirstOrDefault();
             var toCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetMember.Id, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
             if (fromUser == null || toCashDesk == null)
@@ -410,96 +348,21 @@ namespace ES.Market
                 MessageBox.Show("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
             }
         }
-        //521
-        protected void MiRepaymentOfDebts_Click(object sender, EventArgs e)
-        {
-            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords.Debit = (long)AccountingRecordsManager.AccountingPlan.PurchasePayables;
-            accountingRecords.Credit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
-            var partner = SelectItemsManager.SelectPartners(false, "Ընտրել գործընկեր դրամարկղը").FirstOrDefault();
-            var fromCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetMember.Id, false, "Ընտրել ելքագրվող դրամարկղը").FirstOrDefault();
-            if (partner == null || fromCashDesk == null)
-            {
-                MessageBox.Show("Թերի տվյալներ");
-                return;
-            }
-            accountingRecords.CreditGuidId = fromCashDesk.Id;
-            accountingRecords.DebitGuidId = partner.Id;
-            var description = "Գործընկեր։ " + partner.FullName + "։ Կրեդիտորական պարտք։" + partner.Credit + " դր․" + "\n" +
-                "Ելքագրվող դրամարկդ։ " + fromCashDesk.Name + " առկա է։ " + fromCashDesk.Total + " դր․";
-            var ui = new CtrlAccountingRecords(new AccountingRecordsViewModel(accountingRecords, description));
-            ui.ShowDialog();
-
-            var accountingRecord = ui.AccountingRecord;
-            if (!ui.Result || accountingRecord == null ||
-                accountingRecords.Amount == 0) return;
-            if (accountingRecords.Amount > fromCashDesk.Total)
-            {
-                MessageBox.Show("Գործողությունն ընդհատված է։ Վճարվել է ավելի շատ քան առկա է։", "Գործողության ընդհատում",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            if (accountingRecords.Amount > partner.Credit)
-            {
-                MessageBox.Show("Գործողությունն ընդհատված է։ Վճարվել է ավելի շատ քան կրեդիտորական պարտքն է։", "Գործողության ընդհատում",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            if (AccountingRecordsManager.SetRepaymentOfDebts(accountingRecords, ApplicationManager.Instance.GetMember.Id))
-            {
-                MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
-            }
-            else
-            {
-                MessageBox.Show("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
-            }
-        }
-        //523
-        protected void MiReceivedInAdvance_Click(object sender, EventArgs e)
-        {
-            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords.Debit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
-            accountingRecords.Credit = (long)AccountingRecordsManager.AccountingPlan.ReceivedInAdvance;
-            var cashDesk = SelectItemsManager.SelectDefaultSaleCashDesks(null, false, "Ընտրել դրամարկղ").FirstOrDefault();
-            if (cashDesk == null)
-            {
-                MessageBox.Show("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
-                return;
-            }
-            accountingRecords.DebitGuidId = cashDesk.Id;
-            var partner = SelectPartner();
-            if (partner == null)
-            {
-                MessageBox.Show("Գործընկեր ընտրված չէ։", "Թերի տվյալներ");
-                return;
-            }
-            accountingRecords.CreditGuidId = partner.Id;
-            var ctrlAccountingRecords = new CtrlAccountingRecords(new AccountingRecordsViewModel(accountingRecords,
-                "Կանխավճար \n" +
-                "Գործընկեր։ " + partner.FullName + "\n" +
-                 "Դեբտորական պարտք։ " + (partner.Debit != null ? partner.Debit.ToString() : "0") + "\n" +
-                    "Կերդիտորական պարտք։ " + (partner.Credit != null ? partner.Credit.ToString() : "0")));
-            ctrlAccountingRecords.ShowDialog();
-            var receivedInAdvance = ctrlAccountingRecords.AccountingRecord;
-            receivedInAdvance.CreditGuidId = partner.Id;
-            receivedInAdvance.DebitGuidId = cashDesk.Id;
-            if (!ctrlAccountingRecords.Result || receivedInAdvance == null || receivedInAdvance.Amount == 0) return;
-            AccountingRecordsManager.SetPartnerPayment(depositeAccountRecords: receivedInAdvance,
-                repaymentAccountingRecords: null);
-        }
+        
+        
 
         //712
         protected void MiCostOfSales_Click(object sender, EventArgs e)
         {
-            new CtrlSingleAccountingRecords((int)AccountingRecordsManager.AccountingPlan.CostOfSales, (int)AccountingRecordsManager.AccountingPlan.CashDesk).Show();
+            new CtrlSingleAccountingRecords((int)AccountingPlanEnum.CostOfSales, (int)AccountingPlanEnum.CashDesk).Show();
         }
 
         protected void MiCostOfSales_Salary_Click(object sender, EventArgs e)
         {
             var costOfSales = SelectItemsManager.SelectSubAccountingPlan(
-                SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingRecordsManager.AccountingPlan.Debit_For_Salary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել");
+                SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingPlanEnum.Debit_For_Salary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել");
             var debitForSalary = SelectItemsManager.SelectSubAccountingPlan(
-                SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingRecordsManager.AccountingPlan.Debit_For_Salary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել աշխատակից");
+                SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingPlanEnum.Debit_For_Salary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել աշխատակից");
             var cashDesk = SelectItemsManager.SelectCashDesks(true, ApplicationManager.Instance.GetMember.Id, false, "Ընտրել դրամարկղ");
 
             if (costOfSales.First() == null || debitForSalary.First() == null || cashDesk.First() == null)
@@ -508,21 +371,21 @@ namespace ES.Market
             }
 
             var accountingRecords1 = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords1.Debit = (long)AccountingRecordsManager.AccountingPlan.CostOfSales;
+            accountingRecords1.Debit = (long)AccountingPlanEnum.CostOfSales;
             accountingRecords1.DebitGuidId = costOfSales.First().Id;
-            accountingRecords1.Credit = (long)AccountingRecordsManager.AccountingPlan.Debit_For_Salary;
+            accountingRecords1.Credit = (long)AccountingPlanEnum.Debit_For_Salary;
             accountingRecords1.CreditGuidId = debitForSalary.First().Id;
 
             var accountingRecords2 = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords2.Debit = (long)AccountingRecordsManager.AccountingPlan.Debit_For_Salary;
+            accountingRecords2.Debit = (long)AccountingPlanEnum.Debit_For_Salary;
             accountingRecords2.DebitGuidId = debitForSalary.First().Id;
-            accountingRecords2.Credit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
+            accountingRecords2.Credit = (long)AccountingPlanEnum.CashDesk;
             accountingRecords2.CreditGuidId = cashDesk.First().Id;
 
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords.Debit = (long)AccountingRecordsManager.AccountingPlan.CostOfSales;
+            accountingRecords.Debit = (long)AccountingPlanEnum.CostOfSales;
             accountingRecords.DebitGuidId = debitForSalary.First().Id;
-            accountingRecords.Credit = (long)AccountingRecordsManager.AccountingPlan.CashDesk;
+            accountingRecords.Credit = (long)AccountingPlanEnum.CashDesk;
             accountingRecords.CreditGuidId = cashDesk.First().Id;
 
             var ctrlAccountingRecords = new CtrlAccountingRecords(new AccountingRecordsViewModel(accountingRecords, ""), false, false);
@@ -539,7 +402,7 @@ namespace ES.Market
 
         protected void MiSingleAccountingRecords_Click(object sender, EventArgs e)
         {
-            new CtrlSingleAccountingRecords((int)AccountingRecordsManager.AccountingPlan.CostOfSales, (int)AccountingRecordsManager.AccountingPlan.CashDesk).Show();
+            new CtrlSingleAccountingRecords((int)AccountingPlanEnum.CostOfSales, (int)AccountingPlanEnum.CashDesk).Show();
         }
         protected void MiMultipleAccountingRecords_Click(object sender, EventArgs e)
         {
@@ -570,7 +433,7 @@ namespace ES.Market
         {
             var partner = SelectPartner();
             if (partner == null) return;
-            var repayment = AccountingRecordsManager.GetAccountingRecords((long)AccountingRecordsManager.AccountingPlan.CashDesk, (long)AccountingRecordsManager.AccountingPlan.AccountingReceivable);
+            var repayment = AccountingRecordsManager.GetAccountingRecords((long)AccountingPlanEnum.CashDesk, (long)AccountingPlanEnum.AccountingReceivable);
             var ui = new UIListView(repayment.Where(s => s.CreditGuidId == partner.Id).Select(s => new { Ամսաթիվ = s.RegisterDate, Վճարված = s.Amount, Նշումներ = s.Description }).ToList(), partner.FullName);
             ui.Show();
         }

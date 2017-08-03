@@ -77,7 +77,6 @@ namespace ES.Market.ViewModels
         private const string MemberProperty = "Member";
         private const string UserRolesProperty = "UserRoles";
         private const string IsLocalModeProperty = "IsLocalMode";
-        private const string PrintCashReceiptProperty = "PrintCashReceipt";
         private const string MessagesProperty = "Messages";
         private const string MessageProperty = "Message";
         #endregion
@@ -228,7 +227,6 @@ namespace ES.Market.ViewModels
             Tools = new ObservableCollection<ToolsViewModel>();
             ApplicationManager.MessageManager.NewMessageReceived += OnNewMessage;
             Tools.Add(LogViewModel);
-            AddDocument(new SaleInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Member));
             AddDocument(new StartPageViewModel(this));
             ApplicationManager.Instance.CashProvider.UpdateCash();
             InitializeCommands();
@@ -1629,6 +1627,83 @@ namespace ES.Market.ViewModels
             AddInvoiceDocument(new ViewAccountantTableViewModel(dates.Item1, dates.Item2));
         }
 
+        private ICommand _accountingActionCommand;
+        public ICommand AccountingActionCommand { get { return _accountingActionCommand ?? (_accountingActionCommand = new RelayCommand<AccountingPlanEnum>(OnAccountingAction, CanExecuteAccountingAction)); } }
+
+        public bool CanExecuteAccountingAction(AccountingPlanEnum accountingPlan)
+        {
+            switch (accountingPlan)
+            {
+                case AccountingPlanEnum.Purchase:
+                    break;
+                case AccountingPlanEnum.AccountingReceivable:
+                    break;
+                case AccountingPlanEnum.Prepayments:
+                    break;
+                case AccountingPlanEnum.CashDesk:
+                    break;
+                case AccountingPlanEnum.Accounts:
+                    break;
+                case AccountingPlanEnum.EquityBase:
+                    break;
+                case AccountingPlanEnum.PurchasePayables:
+                    break;
+                case AccountingPlanEnum.ReceivedInAdvance:
+                    break;
+                case AccountingPlanEnum.Debit_For_Salary:
+                    break;
+                case AccountingPlanEnum.Proceeds:
+                    break;
+                case AccountingPlanEnum.CostPrice:
+                    break;
+                case AccountingPlanEnum.CostOfSales:
+                    break;
+                case AccountingPlanEnum.OtherOperationalExpenses:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("accountingPlan", accountingPlan, null);
+            }
+            return ApplicationManager.IsInRole(UserRoleEnum.Cashier);
+        }
+
+        public void OnAccountingAction(AccountingPlanEnum accountingPlan)
+        {
+            switch (accountingPlan)
+            {
+                case AccountingPlanEnum.Purchase:
+                    break;
+                case AccountingPlanEnum.AccountingReceivable:
+                    AccountingActionManager.RepaymentOfReceivable();
+                    break;
+                case AccountingPlanEnum.Prepayments:
+                    break;
+                case AccountingPlanEnum.CashDesk:
+                    break;
+                case AccountingPlanEnum.Accounts:
+                    break;
+                case AccountingPlanEnum.EquityBase:
+                    break;
+                case AccountingPlanEnum.PurchasePayables:
+                    AccountingActionManager.RepaymentOfDebts();
+                    break;
+                case AccountingPlanEnum.ReceivedInAdvance:
+                    AccountingActionManager.ReceivedInAdvance();
+                    break;
+                case AccountingPlanEnum.Debit_For_Salary:
+                    break;
+                case AccountingPlanEnum.Proceeds:
+                    break;
+                case AccountingPlanEnum.CostPrice:
+                    break;
+                case AccountingPlanEnum.CostOfSales:
+                    break;
+                case AccountingPlanEnum.OtherOperationalExpenses:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("accountingPlan", accountingPlan, null);
+            }
+        }
+
         #endregion CashDesk
 
         #region Data
@@ -1645,14 +1720,14 @@ namespace ES.Market.ViewModels
         public ICommand ViewInternalWayBillCommands { get; private set; }
 
         #region View Packing List For Saller Command
+
         private ICommand _viewPackingListForSallerCommand;
+
         public ICommand ViewPackingListForSallerCommand
         {
-            get
-            {
-                return _viewPackingListForSallerCommand ?? (_viewPackingListForSallerCommand = new RelayCommand(OnViewPackingListForSaller));
-            }
+            get { return _viewPackingListForSallerCommand ?? (_viewPackingListForSallerCommand = new RelayCommand(OnViewPackingListForSaller)); }
         }
+
         #endregion View Packing List For Saller Command
 
         #endregion View
@@ -1667,7 +1742,11 @@ namespace ES.Market.ViewModels
         #endregion
 
         private ICommand _correctProductsCommand;
-        public ICommand CorrectProductsCommand { get { return _correctProductsCommand?? (_correctProductsCommand=new RelayCommand(OnCorrectProducts, CanCorrectProducts));} }
+
+        public ICommand CorrectProductsCommand
+        {
+            get { return _correctProductsCommand ?? (_correctProductsCommand = new RelayCommand(OnCorrectProducts, CanCorrectProducts)); }
+        }
 
         private bool CanCorrectProducts(object obj)
         {
@@ -1723,14 +1802,17 @@ namespace ES.Market.ViewModels
         #region Help
 
         #region OpenCarculatorCommand
+
         public ICommand OpenCarculatorCommand
         {
             get { return new RelayCommand(OnOpenCalc); }
         }
+
         public void OnOpenCalc(object obj)
         {
             Process.Start("calc");
         }
+
         #endregion OpenCarculatorCommand
 
         public ICommand PrintSampleInvoiceCommand
@@ -1772,7 +1854,6 @@ namespace ES.Market.ViewModels
             ToolsViewModel tool = null;
             switch (toolsEnum)
             {
-
                 case ToolsEnum.Log:
                     tool = new LogViewModel();
                     AddTools<LogViewModel>(tool, false);
@@ -1783,14 +1864,12 @@ namespace ES.Market.ViewModels
                     break;
                 case ToolsEnum.Categories:
                     tool = new CategoriesToolsViewModel();
-                    ((CategoriesToolsViewModel)tool).OnSetCategory += OnSetCategory;
+                    ((CategoriesToolsViewModel) tool).OnSetCategory += OnSetCategory;
                     AddTools<CategoriesToolsViewModel>(tool, false);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("toolsEnum", toolsEnum, null);
             }
-
-
         }
 
         public void OnSetCategory(EsCategoriesModel category)
@@ -1802,6 +1881,7 @@ namespace ES.Market.ViewModels
                 productManager.SetProductCategory(category);
             }
         }
+
         #endregion Categories tools
 
         #endregion Help
@@ -1816,11 +1896,14 @@ namespace ES.Market.ViewModels
         public ICommand PrintPriceTicketCommand { get; private set; }
 
         #region Stock tacking
+
         private ICommand _stockTakingCommand;
+
         public ICommand StockTakingCommand
         {
             get { return _stockTakingCommand ?? (_stockTakingCommand = new RelayCommand<ProjectCreationEnum?>(OnGetStockTaking, CanGetStockTaking)); }
         }
+
         private bool CanGetStockTaking(ProjectCreationEnum? e)
         {
             if (e == null) return false;
@@ -1914,6 +1997,7 @@ namespace ES.Market.ViewModels
             }
             return stockTaking;
         }
+
         #endregion Stock tacking
 
         public ICommand ChangeServerSettingsCommand

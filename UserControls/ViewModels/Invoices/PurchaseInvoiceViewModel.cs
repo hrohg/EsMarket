@@ -139,6 +139,7 @@ namespace UserControls.ViewModels.Invoices
 
             var bankAccount = SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.PurchaseBankAccounts).SingleOrDefault();
             InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
+
             var invoice = InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), InvoicePaid);
             if (invoice == null)
             {

@@ -154,9 +154,33 @@
                         </StackPanel>
                     </Grid>
                     <Border Grid.Column="2" Style="{StaticResource SeparatorStyle}" Margin="0 10"/>
-                    <StackPanel Grid.Column="3">
+                    <Grid Grid.Column="3">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
                         <TextBlock Text="Դրամարկղ" Style="{StaticResource HeaderStyle}"/>
-                    </StackPanel>
+                        <TextBlock Grid.Row="1" Text="Աշխատանք դրամարկղի հետ:" Style="{StaticResource DescriptionStyle}"/>
+                        <StackPanel Grid.Row="2" Margin="15">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Seller}}">
+                                                <Hyperlink TextDecorations="None" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers:AccountingPlanEnum.AccountingReceivable}">
+                                                    <TextBlock Text="221 Դեբիտորական պարտքի մարում" Style="{StaticResource LinkStyle}"/>
+                                                    </Hyperlink>
+                                                </TextBlock>
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.SaleManager}}">
+                                                <Hyperlink TextDecorations="None" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers:AccountingPlanEnum.PurchasePayables}">
+                                                    <TextBlock Text="521 Կրեդիտորական պարտքերի մարում" Style="{StaticResource LinkStyle}"/>
+                                                    </Hyperlink>
+                                                </TextBlock>
+                            <TextBlock Margin="0 4 0 0">
+                                                <Hyperlink TextDecorations="None" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers:AccountingPlanEnum.ReceivedInAdvance}">
+                                                    <TextBlock Text="523 Ստացված կանխավճարներ" Style="{StaticResource LinkStyle}"/>
+                                                    </Hyperlink>
+                                                </TextBlock>
+                        </StackPanel>
+
+                    </Grid>
                     <Border Grid.Column="4" Style="{StaticResource SeparatorStyle}" Margin="0 10"/>
                     <Grid Grid.Column="5">
                         <Grid.RowDefinitions>
