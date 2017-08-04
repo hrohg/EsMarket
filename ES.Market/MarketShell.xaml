@@ -398,8 +398,8 @@
                             <MenuItem Header="712 Իրացման ծախսեր" Margin="3" Click="MiCostOfSales_Click" >
                                 <MenuItem Header="Աշխատավարձ" Margin="3" Click="MiCostOfSales_Salary_Click" />
                             </MenuItem>
-                            <MenuItem Header="713 Վարչական ծախսեր" Margin="3" />
-                            <MenuItem Header="714 Գործառնական այլ ծախսեր" Margin="3" />
+                            <MenuItem Header="713 Վարչական ծախսեր"/>
+                            <MenuItem Header="714 Գործառնական այլ ծախսեր"/>
                         </MenuItem>
                         <MenuItem Header="8 Կառավարչական հաշվառման հաշիվներ"></MenuItem>
                         <MenuItem Header="9 Արտահաշվեկշռային հաշիվներ"></MenuItem>

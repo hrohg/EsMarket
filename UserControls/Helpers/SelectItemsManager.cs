@@ -97,6 +97,10 @@ namespace UserControls.Helpers
                 cashDeskIds.AddRange(ApplicationManager.Settings.MemberSettings.SaleCashDesks);
                 cashDeskIds.AddRange(ApplicationManager.Settings.MemberSettings.SaleBankAccounts);
             }
+            if (!cashDeskIds.Any())
+            {
+                cashDeskIds.AddRange(CashDeskManager.GetCashDesks().Select(s=>s.Id));
+            }
             var cashDesks = SelectCashDesks(cashDeskIds);
             if (cashDesks.Count < 2) return cashDesks;
             var ui = new SelectItems(cashDesks.Select(s => new ItemsToSelect { DisplayName = s.Name, SelectedValue = s.Id }).ToList(), allowMultipleChoise, title);

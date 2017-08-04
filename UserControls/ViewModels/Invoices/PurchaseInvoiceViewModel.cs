@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using ES.Business.Managers;
-using ES.Business.Models;
 using ES.Common;
 using ES.Common.Enumerations;
 using ES.Common.Managers;
@@ -110,7 +109,8 @@ namespace UserControls.ViewModels.Invoices
                 && InvoicePaid.IsPaid
                 && InvoicePaid.Change <= (InvoicePaid.Paid ?? 0)
                 && Partner != null
-                && (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit;
+                && (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit
+                && ApplicationManager.IsInRole(UserRoleEnum.Manager);
         }
         public override void OnApprove(object o)
         {

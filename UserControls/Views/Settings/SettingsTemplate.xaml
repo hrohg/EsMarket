@@ -293,9 +293,9 @@
                                             <TextBlock Grid.Row="3" Grid.Column="0" Text="Գրանցման համար"/>
                                             <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding EcrSettings.Crn}"/>
                                             <TextBlock Grid.Row="4" Grid.Column="0" Text="Օպերատոր"/>
-                                            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding EcrSettings.EcrCashier.Cashier}" Width="100" HorizontalContentAlignment="Right"/>
+                                            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding EcrSettings.EcrCashier.Cashier, UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalContentAlignment="Right"/>
                                             <TextBlock Grid.Row="5" Grid.Column="0" Text="Գաղտնաբառ"/>
-                                            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding EcrSettings.EcrCashier.Pin}"/>
+                                            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding EcrSettings.EcrCashier.Pin, UpdateSourceTrigger=PropertyChanged}"/>
                                             <TextBlock Grid.Row="6" Grid.Column="0" Text="Հարկման տեսակը"/>
                                             <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal">
                                                 <ComboBox

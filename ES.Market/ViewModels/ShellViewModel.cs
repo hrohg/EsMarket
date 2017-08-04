@@ -225,7 +225,7 @@ namespace ES.Market.ViewModels
 
             Documents = new ObservableCollection<DocumentViewModel>();
             Tools = new ObservableCollection<ToolsViewModel>();
-            ApplicationManager.MessageManager.NewMessageReceived += OnNewMessage;
+            ApplicationManager.MessageManager.MessageReceived += OnNewMessage;
             Tools.Add(LogViewModel);
             AddDocument(new StartPageViewModel(this));
             ApplicationManager.Instance.CashProvider.UpdateCash();

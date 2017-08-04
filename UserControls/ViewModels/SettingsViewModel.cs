@@ -167,6 +167,7 @@ namespace UserControls.ViewModels
                 {
                     EcrSettings.IsActive = false;
                     RaisePropertyChanged("IsEcrActive");
+
                 }
                 return canActivateEcr;
             }

@@ -298,8 +298,7 @@ namespace UserControls.ViewModels.Invoices
                 new SelectItems(products.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1} {2})", s.Description, s.Code, s.Price), SelectedValue = s.Id }).ToList(), false);
             selectedItems.SearchKey = o is FiltersUsage && ((FiltersUsage)o) == FiltersUsage.WithFilters ? ProductSearchKey : string.Empty;
             var product = (selectedItems.ShowDialog() == true && selectedItems.SelectedItems != null)
-                ? products.FirstOrDefault(
-                    s => selectedItems.SelectedItems.Select(t => t.SelectedValue).ToList().Contains(s.Id))
+                ? products.FirstOrDefault(s => selectedItems.SelectedItems.Select(t => t.SelectedValue).ToList().Contains(s.Id))
                 : null;
             ProductSearchKey = selectedItems.SearchKey;
             if (product == null)

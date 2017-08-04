@@ -412,7 +412,7 @@ namespace ES.Business.Managers
         }
         public ApplicationManager()
         {
-            _messageManager = new MessageManager();
+            _messageManager = MessageManager.Manager;
             Initialize();
         }
         #endregion Constructors
@@ -421,12 +421,12 @@ namespace ES.Business.Managers
 
         private void Initialize()
         {
-            _messageManager.MessageReceived += OnMessageReceived;
+            
         }
 
         private void OnMessageReceived(string message, MessageTypeEnum type)
         {
-            MessageManager.OnMessage(message, type);
+            MessageManager.OnMessage(new MessageModel(message, type));
         }
 
         private void ResetMemberData()
