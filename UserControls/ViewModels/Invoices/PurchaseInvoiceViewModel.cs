@@ -128,23 +128,27 @@ namespace UserControls.ViewModels.Invoices
             }
             if (ToStock == null)
             {
-                MessageBox.Show("Պահեստ ընտրված չէ: Խնդրում ենք խմբագրել նոր պահեստ:", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Error); 
+                MessageBox.Show("Պահեստ ընտրված չէ: Խնդրում ենք խմբագրել նոր պահեստ:", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             Invoice.ToStockId = ToStock.Id;
             Invoice.RecipientName = ToStock.FullName;
-
-            var cashDesk = SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.PurchaseCashDesks).SingleOrDefault();
-            InvoicePaid.CashDeskId = cashDesk != null ? cashDesk.Id : (Guid?)null;
-
-            var bankAccount = SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.PurchaseBankAccounts).SingleOrDefault();
-            InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
+            if (InvoicePaid.ByCash > 0)
+            {
+                var cashDesk = SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.PurchaseCashDesks).SingleOrDefault();
+                InvoicePaid.CashDeskId = cashDesk != null ? cashDesk.Id : (Guid?)null;
+            }
+            if (InvoicePaid.ByCheck > 0)
+            {
+                var bankAccount = SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.PurchaseBankAccounts).SingleOrDefault();
+                InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
+            }
 
             var invoice = InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), InvoicePaid);
             if (invoice == null)
             {
                 Invoice.AcceptDate = Invoice.ApproveDate = null;
-                MessageManager.OnMessage("Գործողությունը հնարավոր չէ իրականացնել:", MessageTypeEnum.Warning); 
+                MessageManager.OnMessage("Գործողությունը հնարավոր չէ իրականացնել:", MessageTypeEnum.Warning);
                 return;
             }
             Invoice = invoice;

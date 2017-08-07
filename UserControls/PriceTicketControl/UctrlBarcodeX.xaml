@@ -5,29 +5,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:priceTicketControl="clr-namespace:UserControls.PriceTicketControl"
              mc:Ignorable="d" 
-             d:DesignHeight="100" d:DesignWidth="300">
+             d:DesignHeight="60" d:DesignWidth="120" Width="120">
     <Grid Margin="3">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Path=Description}" FontSize="8" MaxHeight="25" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
-        <Grid Grid.Row="1" Grid.Column="0" Margin="0 5" UseLayoutRounding="True" VerticalAlignment="Center">
-            <priceTicketControl:Ean13BarcodeControl x:Name="BarcodeControl" 
-                                                    MinHeight="15"  
-                                                    BarHeight="20" 
-                                                    BarMinWidth="1" 
-                                                    BarMaxWidth="1" 
-                                                    Margin="0 0 -10 0" 
-                                                    VerticalAlignment="Top"
-                                                    Barcode="{Binding Path=BarcodeString}"/>
-        </Grid>
-        <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Margin="0 -15 0 -15">
+        <Grid Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Margin="0 -15 0 -15">
             <TextBlock Text="{Binding Path=Code}" HorizontalAlignment="Right" FontSize="18" FontWeight="Bold" Margin="0"
                    VerticalAlignment="Center">
                 <TextBlock.LayoutTransform>
@@ -35,6 +25,19 @@
                 </TextBlock.LayoutTransform>
             </TextBlock>
         </Grid>
+        <Grid Grid.Row="1" Grid.Column="0" x:Name="BarcodeGrid" Margin="0 5" UseLayoutRounding="True" VerticalAlignment="Center">
+            <priceTicketControl:Ean13BarcodeControl x:Name="BarcodeControl" 
+                                                    MinHeight="15" 
+                                                    Height="20"
+                                                    BarHeight="20" 
+                                                    BarMinWidth="1" 
+                                                    BarMaxWidth="1" 
+                                                    Margin="0 0 0 0" 
+                                                    Width="{Binding ElementName=BarcodeGrid, Path=ActualWidth}"
+                                                    VerticalAlignment="Top"
+                                                    Barcode="{Binding Path=BarcodeString}" SnapsToDevicePixels="True"/>
+        </Grid>
+
         <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
             <TextBlock  Text="Գին։" FontSize="12"/> 
             <TextBlock  Text="{Binding Path=Price, StringFormat={}{0:#,0.##}դր}" Margin="1 0" FontSize="12" FontWeight="Bold"/>
