@@ -29,11 +29,11 @@ namespace ES.Business.Helpers
         }
 
         #endregion
-        public BarCodeGenerator(string productCode, long memberId)
+        public BarCodeGenerator(string productCode)
         {
             GenerateBarcode(countryCode:null, manufacturerCode: null, productCode: productCode);
         }
-        public BarCodeGenerator(long productCode, long memberId)
+        public BarCodeGenerator(long productCode)
         {
             GenerateBarcode(countryCode: null, manufacturerCode: ((int)productCode/100000).ToString(), productCode: (productCode != 0 ? ((int)(productCode%100000)).ToString() : null));
         }
@@ -78,7 +78,7 @@ namespace ES.Business.Helpers
             //ProductCode
             if (productCode == null) { return; }
             _productCode = string.Empty;
-            var code = productCode.ToString();
+            var code = productCode;
             foreach (var next in code)
             {
                 ProductCode += next;
@@ -92,7 +92,7 @@ namespace ES.Business.Helpers
         }
         private string CalculateChecksumDigit()
         {
-            string sTemp = CountryCode + ManufacturerCode.ToString() + ProductCode.ToString();
+            string sTemp = CountryCode + ManufacturerCode + ProductCode;
             int iSum = 0;
             int iDigit = 0;
 

@@ -6,7 +6,6 @@ using System.Threading;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Managers;
-using ES.Data.Model;
 using ES.Data.Models;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
@@ -19,15 +18,13 @@ namespace UserControls.ViewModels.Invoices
         #region External properties
         public override string Title { get { return "Դուրսգրման ակտ"; } }
         #endregion
-        public InventoryWriteOffViewModel(EsUserModel user, EsMemberModel member)
-            : base(user, member)
+        public InventoryWriteOffViewModel()
         {
             Invoice.InvoiceTypeId = (int)InvoiceType.InventoryWriteOff;
             Initialize();
         }
 
-        public InventoryWriteOffViewModel(Guid id, EsUserModel user, EsMemberModel member)
-            : base(id, user, member)
+        public InventoryWriteOffViewModel(Guid id): base(id)
         {
             Initialize();
         }

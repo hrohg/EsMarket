@@ -67,7 +67,7 @@ namespace UserControls.Helpers
         }
         public bool PrintReceiptFromExcel(EsUserModel user, EsMemberModel member, long memberId)
         {
-            var model = new SaleInvoiceViewModel(user, member);
+            var model = new SaleInvoiceViewModel();
             if (!model.PrintReceiptFromExcel())
             {
                 MessageBox.Show("Գործողությունն ընդհատված է։ \nՏվյալները կարդալու ժամանակ տեղի է ունեցել սխալ։ Տվյալները թերի են կամ ոչ Լիարժեք։", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -107,7 +107,7 @@ namespace UserControls.Helpers
         }
         public bool PrintReceiptFromExcel(EsUserModel user, EsMemberModel member)
         {
-            var model = new SaleInvoiceViewModel(user, member);
+            var model = new SaleInvoiceViewModel();
             if (!model.PrintReceiptFromExcel())
             {
                 MessageBox.Show("Գործողությունն ընդհատված է։ \nՏվյալները կարդալու ժամանակ տեղի է ունեցել սխալ։ Տվյալները թերի են կամ ոչ Լիարժեք։", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);

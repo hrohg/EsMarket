@@ -30,7 +30,6 @@ namespace UserControls.ViewModels.Documents
         #endregion Constructors
 
         #region Internal methods
-
         private void Initialize()
         {
             Title = "Գլխավոր";
@@ -51,10 +50,11 @@ namespace UserControls.ViewModels.Documents
         {
             _parent.OnGetReport(type);
         }
+
         #endregion Internal methods
 
         #region External methods
-
+        
         #endregion External methods
 
         #region Commands

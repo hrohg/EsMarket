@@ -3,12 +3,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Data;
 using ES.Business.Managers;
 using ES.Common;
 using ES.Common.Enumerations;
 using ES.Common.Managers;
-using ES.Data.Model;
 using ES.Data.Models;
 using Shared.Helpers;
 using UserControls.Helpers;
@@ -45,13 +43,11 @@ namespace UserControls.ViewModels.Invoices
         }
 
         #endregion
-        public PurchaseInvoiceViewModel(EsUserModel user, EsMemberModel member)
-            : base(user, member)
+        public PurchaseInvoiceViewModel()
         {
             Initialize();
         }
-        public PurchaseInvoiceViewModel(Guid id, EsUserModel user, EsMemberModel member)
-            : base(id, user, member)
+        public PurchaseInvoiceViewModel(Guid id): base(id)
         {
             Initialize();
         }
@@ -91,10 +87,6 @@ namespace UserControls.ViewModels.Invoices
         #endregion
 
         #region External Methods
-        public override bool CanAddInvoiceItem(object o)
-        {
-            return base.CanAddInvoiceItem(o);
-        }
         public override void OnAddInvoiceItem(object o)
         {
             if (!CanAddInvoiceItem(o)) { return; }
@@ -124,7 +116,7 @@ namespace UserControls.ViewModels.Invoices
 
             if (ToStock == null)
             {
-                ToStock = SelectItemsManager.SelectStocks(StockManager.GetStocks(Member.Id), false).FirstOrDefault();
+                ToStock = SelectItemsManager.SelectStocks(StockManager.GetStocks(Member.Id)).FirstOrDefault();
             }
             if (ToStock == null)
             {
@@ -135,12 +127,12 @@ namespace UserControls.ViewModels.Invoices
             Invoice.RecipientName = ToStock.FullName;
             if (InvoicePaid.ByCash > 0)
             {
-                var cashDesk = SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.PurchaseCashDesks).SingleOrDefault();
+                var cashDesk = SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.MemberSettings.PurchaseCashDesks).SingleOrDefault();
                 InvoicePaid.CashDeskId = cashDesk != null ? cashDesk.Id : (Guid?)null;
             }
             if (InvoicePaid.ByCheck > 0)
             {
-                var bankAccount = SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.PurchaseBankAccounts).SingleOrDefault();
+                var bankAccount = SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.MemberSettings.PurchaseBankAccounts).SingleOrDefault();
                 InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
             }
 
@@ -167,7 +159,7 @@ namespace UserControls.ViewModels.Invoices
         protected override void OnPrintInvoice(PrintModeEnum printSize)
         {
             if (!CanPrintInvoice(printSize)) { return; }
-            var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
+            //var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
             var ctrl =
                 new PurchaseInvoiceLargeView(new PurchaseInvocieTicketViewModel(Invoice, InvoiceItems.ToList(),
                     StockManager.GetStock(Invoice.ToStockId), InvoicePaid));

@@ -357,7 +357,7 @@
                         <MenuItem Header="Դեբիտորական, կրեդիտորական պարտքերի դիտում">
                             <MenuItem Header="Ըստ պատվիրատուների" Click="MiDebitByPartners_Click"/>
                             <MenuItem Header="Մանրամասն" Click ="MiDebitDetile_Click"></MenuItem>
-                            <MenuItem Header="Դեբիտորական պարտքի մարում ըստ պատվիրատուների" Click ="MiAccountingRepaymentDetile_Click"/>
+                            <MenuItem Header="Դեբիտորական պարտքի դիտում ըստ պատվիրատուների" Command ="{Binding ViewAccountingRepaymentByPartnersCommand}"/>
                         </MenuItem>
                         <MenuItem Header="Գործարք"
                                   IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
@@ -382,8 +382,8 @@
                             
                         </MenuItem>
                         <MenuItem Header="2 Ընթացիկ ակտիվներ">
-                            <MenuItem Header="221 Դեբիտորական պարտքի մարում" Margin="3" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.AccountingReceivable}"/>
-                            <MenuItem Header="251 Գումարի փոխանցում դրամարկղում" Margin="3" Click="MiTransferIntoCashDesk_Click"/>
+                            <MenuItem Header="221 Դեբիտորական պարտքի մարում" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.AccountingReceivable}"/>
+                            <MenuItem Header="251 Գումարի փոխանցում դրամարկղում" Click="MiTransferIntoCashDesk_Click"/>
                         </MenuItem>
                         <MenuItem Header="3 Սեփական կապիտալ">
                             <MenuItem Header="311 Կանոնադրական կապիտալի համալրում" Click="MiAddEquityBase_Click"/>
@@ -395,8 +395,8 @@
                         </MenuItem>
                         <MenuItem Header="6 Եկամուտներ"></MenuItem>
                         <MenuItem Header="7 Ծախսեր">
-                            <MenuItem Header="712 Իրացման ծախսեր" Margin="3" Click="MiCostOfSales_Click" >
-                                <MenuItem Header="Աշխատավարձ" Margin="3" Click="MiCostOfSales_Salary_Click" />
+                            <MenuItem Header="712 Իրացման ծախսեր" Click="MiCostOfSales_Click" >
+                                <MenuItem Header="Աշխատավարձ" Click="MiCostOfSales_Salary_Click" />
                             </MenuItem>
                             <MenuItem Header="713 Վարչական ծախսեր"/>
                             <MenuItem Header="714 Գործառնական այլ ծախսեր"/>
@@ -408,8 +408,10 @@
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
                         </MenuItem.Icon>
-                        <MenuItem Header="Հաշվային պլան" Click="MiViewAccountingPlan_Click"/>
-                        <MenuItem Header="Հաշվային պլան (մանրամասն)" Command="{Binding ViewAccountantTableCommand}" />
+                        <MenuItem Header="Հաշվային պլան" Command="{Binding ViewAccountantTableCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.None}"/>
+                        <Separator/>
+                        <MenuItem Header="Դրամարկղ" Command="{Binding ViewAccountantTableCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.CashDesk}"/>
+
                     </MenuItem>
                     <Separator Visibility="{Binding IsEcrAcivated, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <MenuItem Header="ՀԴՄ" Visibility="{Binding IsEcrAcivated, Converter={StaticResource BoolToVisibilityConverter}}">

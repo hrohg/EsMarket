@@ -104,13 +104,11 @@ namespace UserControls.ViewModels.Invoices
         #endregion
 
         #region Constructors
-        public SaleInvoiceViewModel(EsUserModel user, EsMemberModel member)
-            : base(user, member)
+        public SaleInvoiceViewModel()
         {
             Initialize();
         }
-        public SaleInvoiceViewModel(Guid id, EsUserModel user, EsMemberModel member)
-            : base(id, user, member)
+        public SaleInvoiceViewModel(Guid id): base(id)
         {
             Initialize();
         }
@@ -367,10 +365,10 @@ namespace UserControls.ViewModels.Invoices
             InvoicePaid.PartnerId = Invoice.PartnerId;
             Invoice.RecipientName = Partner.FullName;
 
-            var cashDesk = InvoicePaid.Paid>0? SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.SaleCashDesks).SingleOrDefault(): null;
+            var cashDesk = InvoicePaid.Paid>0? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.MemberSettings.SaleCashDesks).SingleOrDefault(): null;
             InvoicePaid.CashDeskId = cashDesk != null ? cashDesk.Id : (Guid?)null;
 
-            var bankAccount = InvoicePaid.ByCheck>0? SelectItemsManager.SelectCashDesks(ApplicationManager.Settings.MemberSettings.SaleBankAccounts).SingleOrDefault():null;
+            var bankAccount = InvoicePaid.ByCheck>0? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.MemberSettings.SaleBankAccounts).SingleOrDefault():null;
             InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
 
             var invoice = InvoicesManager.ApproveSaleInvoice(Invoice, InvoiceItems.ToList(), FromStocks.Select(s => s.Id), InvoicePaid);

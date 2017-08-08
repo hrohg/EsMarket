@@ -249,33 +249,33 @@ namespace ES.Market
         #endregion
 
         #region AccountingRecords
-        protected void MiViewAccountingPlan_Click(object sender, EventArgs e)
-        {
-            var ctrl = new SelectDateIntermediate();
-            ctrl.ShowDialog();
-            if (ctrl.DialogResult != true) { return; }
-            var accountingRecords = AccountingRecordsManager.GetAccountingRecords(beginDate: ctrl.StartDate ?? DateTime.Now, endDate: ctrl.EndDate ?? DateTime.Now);
-            var uiReport = new UIListView(accountingRecords.Select(s =>
-                new
-                {
-                    Ամսաթիվ = s.RegisterDate,
-                    Դեբետ = AccountingRecordsManager.GetAccountingRecordsDescription(s.Debit),
-                    Դեբետ_Անվանում = AccountingRecordsManager.GetAccountingRecordsDescription(s.Debit, s.DebitGuidId, s.DebitLongId),
-                    Կրեդիտ = AccountingRecordsManager.GetAccountingRecordsDescription(s.Credit),
-                    Կրեդիտ_Անվանում = AccountingRecordsManager.GetAccountingRecordsDescription(s.Credit, s.CreditGuidId, s.CreditLongId),
-                    Գումար = s.Amount,
-                    Նշումներ = s.Description
-                }));
-            uiReport.Show();
-        }
+        //protected void MiViewAccountingPlan_Click(object sender, EventArgs e)
+        //{
+        //    var ctrl = new SelectDateIntermediate();
+        //    ctrl.ShowDialog();
+        //    if (ctrl.DialogResult != true) { return; }
+        //    var accountingRecords = AccountingRecordsManager.GetAccountingRecords(beginDate: ctrl.StartDate ?? DateTime.Now, endDate: ctrl.EndDate ?? DateTime.Now);
+        //    var uiReport = new UIListView(accountingRecords.Select(s =>
+        //        new
+        //        {
+        //            Ամսաթիվ = s.RegisterDate,
+        //            Դեբետ = AccountingRecordsManager.GetAccountingRecordsDescription(s.Debit),
+        //            Դեբետ_Անվանում = AccountingRecordsManager.GetAccountingRecordsDescription(s.Debit, s.DebitGuidId, s.DebitLongId),
+        //            Կրեդիտ = AccountingRecordsManager.GetAccountingRecordsDescription(s.Credit),
+        //            Կրեդիտ_Անվանում = AccountingRecordsManager.GetAccountingRecordsDescription(s.Credit, s.CreditGuidId, s.CreditLongId),
+        //            Գումար = s.Amount,
+        //            Նշումներ = s.Description
+        //        }));
+        //    uiReport.Show();
+        //}
         //251
         protected void MiTransferIntoCashDesk_Click(object sender, EventArgs e)
         {
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (long)AccountingPlanEnum.CashDesk;
             accountingRecords.Credit = (long)AccountingPlanEnum.CashDesk;
-            var fromCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetMember.Id, false, "Ընտրել ելքագրվող դրամարկղը").FirstOrDefault();
-            var toCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetMember.Id, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
+            var fromCashDesk = SelectItemsManager.SelectCashDesks(null, false, "Ընտրել ելքագրվող դրամարկղը").FirstOrDefault();
+            var toCashDesk = SelectItemsManager.SelectCashDesks(null, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
             if (fromCashDesk == null || toCashDesk == null)
             {
                 MessageBox.Show("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
@@ -321,7 +321,7 @@ namespace ES.Market
             accountingRecords.Debit = (long)AccountingPlanEnum.CashDesk;
             accountingRecords.Credit = (long)AccountingPlanEnum.EquityBase;
             var fromUser = SelectItemsManager.SelectUser(ApplicationManager.Instance.GetMember.Id, false, "Ընտրել ներդրող").FirstOrDefault();
-            var toCashDesk = SelectItemsManager.SelectCashDesks(null, ApplicationManager.Instance.GetMember.Id, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
+            var toCashDesk = SelectItemsManager.SelectCashDesks(null, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
             if (fromUser == null || toCashDesk == null)
             {
                 MessageBox.Show("Թերի տվյալներ");
@@ -363,7 +363,7 @@ namespace ES.Market
                 SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingPlanEnum.Debit_For_Salary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել");
             var debitForSalary = SelectItemsManager.SelectSubAccountingPlan(
                 SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingPlanEnum.Debit_For_Salary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել աշխատակից");
-            var cashDesk = SelectItemsManager.SelectCashDesks(true, ApplicationManager.Instance.GetMember.Id, false, "Ընտրել դրամարկղ");
+            var cashDesk = SelectItemsManager.SelectCashDesks(true, false);
 
             if (costOfSales.First() == null || debitForSalary.First() == null || cashDesk.First() == null)
             {
@@ -427,14 +427,6 @@ namespace ES.Market
                 Վերջնաժամկետ = s.ExpairyDate != null ? ((DateTime) s.ExpairyDate).ToString("dd.MM.yyyy") : string.Empty
             }).ToList();
             var ui = new UIListView(list, partner.FullName, (double)list.Sum(s=>s.Պարտք));
-            ui.Show();
-        }
-        protected void MiAccountingRepaymentDetile_Click(object sender, EventArgs e)
-        {
-            var partner = SelectPartner();
-            if (partner == null) return;
-            var repayment = AccountingRecordsManager.GetAccountingRecords((long)AccountingPlanEnum.CashDesk, (long)AccountingPlanEnum.AccountingReceivable);
-            var ui = new UIListView(repayment.Where(s => s.CreditGuidId == partner.Id).Select(s => new { Ամսաթիվ = s.RegisterDate, Վճարված = s.Amount, Նշումներ = s.Description }).ToList(), partner.FullName);
             ui.Show();
         }
         #endregion

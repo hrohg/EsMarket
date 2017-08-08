@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -71,11 +72,24 @@ namespace ES.Market
                 if (_market == null)
                 {
                     _market = new MarketShell(ShellVm);
+                    Market.Closing += OnClosing;
                     Market.Closed += OnMarketClosed;
                 }
                 return _market;
             }
         }
+
+        private void OnClosing(object sender, CancelEventArgs e)
+        {
+            var dataContext = ((Window)sender).DataContext as ShellViewModel;
+            if (dataContext == null) return;
+            if (!dataContext.Close())
+            {
+                e.Cancel = true;
+                return;
+            }
+        }
+
         #endregion Market window
 
         #endregion Internal properties
@@ -122,7 +136,7 @@ namespace ES.Market
                 ApplicationManager.CreateConnectionString(null);
                 OnTryLogin();
                 if (Application.Current != null) Application.Current.Shutdown();
-                
+
             }
             catch (Exception ex)
             {

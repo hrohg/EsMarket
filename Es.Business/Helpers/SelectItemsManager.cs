@@ -78,7 +78,7 @@ namespace ES.Business.Helpers
             return new List<EsMemberModel>();
         }
         
-        public static List<CashDesk> SelectCashDesks(bool? isCash, long memberId, bool allowMultipleChoise, string title)
+        public static List<CashDesk> SelectCashDesks(bool? isCash, bool allowMultipleChoise = false, string title = "Ընտրել դրամարկղ")
         {
             var cashDesks = CashDeskManager.GetCashDesks(isCash);
             if (cashDesks == null || cashDesks.Count == 0) return new List<CashDesk>();

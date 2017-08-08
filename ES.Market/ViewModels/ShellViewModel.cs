@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -54,8 +55,11 @@ using UserControls.ViewModels.StockTakeings;
 using UserControls.ViewModels.Tools;
 using UserControls.Views;
 using UserControls.Views.Accountant;
+using UserControls.Views.CustomControls;
 using UserControls.Views.View;
+using Color = System.Windows.Media.Color;
 using ExportManager = ES.Business.Managers.ExportManager;
+using Image = System.Windows.Controls.Image;
 using ItemsToSelect = UserControls.ControlPanel.Controls.ItemsToSelect;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
@@ -693,7 +697,7 @@ namespace ES.Market.ViewModels
             {
                 return;
             }
-            var product = SelectItemsManager.SelectProduct().FirstOrDefault();
+            var product = SelectItemsManager.SelectProduct(ApplicationManager.CashManager.Products.Where(s=>!string.IsNullOrEmpty(s.Barcode)).ToList()).FirstOrDefault();
             if (product == null) return;
             UserControl priceTicket = null;
             switch (printPriceTicketEnum)
@@ -711,6 +715,20 @@ namespace ES.Market.ViewModels
                     //    DataContext = new PriceTicketLargePriceVewModel(product.Code, product.Barcode, product.Description,product.Price, null)
                     //};
                     //priceTicket.Show();
+
+        //            Barcode barcode = new Barcode()
+        //{
+        //    IncludeLabel = true,
+        //    Alignment = AlignmentPositions.CENTER,
+        //    Width = 300,
+        //    Height = 100,
+        //    RotateFlipType = RotateFlipType.RotateNoneFlipNone,
+        //    BackColor = Brushes.White,
+        //    ForeColor = Brushes.Black,
+        //};
+
+                    //var img = barcode.Encode(TYPE.EAN13, product.Barcode);
+                    
                     priceTicket = new UctrlPriceTicket(new PriceTicketLargePriceVewModel(product.Code, product.Barcode, product.Description, product.Price, null));
                     break;
                 case null:
@@ -718,6 +736,7 @@ namespace ES.Market.ViewModels
                 default:
                     throw new ArgumentOutOfRangeException("printPriceTicketEnum", printPriceTicketEnum, null);
             }
+            
             PrintManager.PrintPreview(priceTicket, "Գնապիտակ", HgConvert.ToBoolean(printPriceTicketEnum));
 
             //if (HgConvert.ToBoolean(o))
@@ -732,7 +751,16 @@ namespace ES.Market.ViewModels
             //    pb.Close();
             //}
         }
-
+        public bool Close()
+        {
+            for(int last = Documents.Count-1; last>=0; --last)
+            {
+                Documents[last].IsActive = true;
+                Documents[last].IsSelected = true;
+                if (!Documents[last].Close()) return false;
+            }
+            return true;
+        }
         #endregion
 
         #region Command methods
@@ -1283,7 +1311,7 @@ namespace ES.Market.ViewModels
                 OnNewMessage(new MessageModel(DateTime.Now, "Դուրսգրման ենթակա ապրանք գոյություն չունի:", MessageTypeEnum.Information));
                 return;
             }
-            var vm = new InventoryWriteOffViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember);
+            var vm = new InventoryWriteOffViewModel();
             vm.Invoice.FromStockId = stockId;
             vm.Invoice.Notes = notes;
             foreach (var item in items)
@@ -1310,7 +1338,7 @@ namespace ES.Market.ViewModels
                 OnNewMessage(new MessageModel(DateTime.Now, "Մուտքագրման ենթակա ապրանք գոյություն չունի:", MessageTypeEnum.Information));
                 return;
             }
-            var vm = new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember);
+            var vm = new PurchaseInvoiceViewModel();
             vm.ToStock = StockManager.GetStock(stockId);
             vm.Invoice.Notes = notes;
             foreach (var item in items)
@@ -1538,16 +1566,16 @@ namespace ES.Market.ViewModels
                         switch (type)
                         {
                             case InvoiceType.SaleInvoice:
-                                AddInvoiceDocument(new SaleInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember));
+                                AddInvoiceDocument(new SaleInvoiceViewModel());
                                 break;
                             case InvoiceType.MoveInvoice:
-                                AddInvoiceDocument(new InternalWaybillViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember));
+                                AddInvoiceDocument(new InternalWaybillViewModel());
                                 break;
                             case InvoiceType.PurchaseInvoice:
-                                AddInvoiceDocument(new PurchaseInvoiceViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember));
+                                AddInvoiceDocument(new PurchaseInvoiceViewModel());
                                 break;
                             case InvoiceType.InventoryWriteOff:
-                                AddInvoiceDocument(new InventoryWriteOffViewModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember));
+                                AddInvoiceDocument(new InventoryWriteOffViewModel());
                                 break;
                             default:
                                 break;
@@ -1574,18 +1602,18 @@ namespace ES.Market.ViewModels
                     switch ((InvoiceType)invoiceModel.InvoiceTypeId)
                     {
                         case InvoiceType.SaleInvoice:
-                            vm = new SaleInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember);
+                            vm = new SaleInvoiceViewModel(invoiceModel.Id);
                             break;
                         case InvoiceType.MoveInvoice:
-                            vm = new InternalWaybillViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember);
+                            vm = new InternalWaybillViewModel(invoiceModel.Id);
                             break;
                         case InvoiceType.PurchaseInvoice:
-                            vm = new PurchaseInvoiceViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember);
+                            vm = new PurchaseInvoiceViewModel(invoiceModel.Id);
                             break;
                         case InvoiceType.ProductOrder:
                             break;
                         case InvoiceType.InventoryWriteOff:
-                            vm = new InventoryWriteOffViewModel(invoiceModel.Id, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember);
+                            vm = new InventoryWriteOffViewModel(invoiceModel.Id);
                             break;
                         case InvoiceType.Statement:
                             break;
@@ -1612,23 +1640,33 @@ namespace ES.Market.ViewModels
             get { return new RelayCommand(OnGetCashDeskInfo); }
         }
 
+        #region View report
         private ICommand _viewAccountantTableCommand;
         public ICommand ViewAccountantTableCommand
         {
             get
             {
-                return _viewAccountantTableCommand ?? (_viewAccountantTableCommand = new RelayCommand(OnViewAccountantTable));
+                return _viewAccountantTableCommand ?? (_viewAccountantTableCommand = new RelayCommand<AccountingPlanEnum>(OnViewAccountantTable));
             }
         }
-        private void OnViewAccountantTable(object obj)
+        private void OnViewAccountantTable(AccountingPlanEnum accountingPlanEnum)
         {
             var dates = SelectManager.GetDateIntermediate();
             if (dates == null) return;
-            AddInvoiceDocument(new ViewAccountantTableViewModel(dates.Item1, dates.Item2));
+            var vm = new ViewAccountantTableViewModel(dates.Item1, dates.Item2);
+            AddInvoiceDocument(vm);
+            vm.UpdateAccountingRecords(accountingPlanEnum);
         }
+       
+        #endregion View report
+
 
         private ICommand _accountingActionCommand;
-        public ICommand AccountingActionCommand { get { return _accountingActionCommand ?? (_accountingActionCommand = new RelayCommand<AccountingPlanEnum>(OnAccountingAction, CanExecuteAccountingAction)); } }
+
+        public ICommand AccountingActionCommand
+        {
+            get { return _accountingActionCommand ?? (_accountingActionCommand = new RelayCommand<AccountingPlanEnum>(OnAccountingAction, CanExecuteAccountingAction)); }
+        }
 
         public bool CanExecuteAccountingAction(AccountingPlanEnum accountingPlan)
         {
@@ -1668,40 +1706,21 @@ namespace ES.Market.ViewModels
 
         public void OnAccountingAction(AccountingPlanEnum accountingPlan)
         {
-            switch (accountingPlan)
-            {
-                case AccountingPlanEnum.Purchase:
-                    break;
-                case AccountingPlanEnum.AccountingReceivable:
-                    AccountingActionManager.RepaymentOfReceivable();
-                    break;
-                case AccountingPlanEnum.Prepayments:
-                    break;
-                case AccountingPlanEnum.CashDesk:
-                    break;
-                case AccountingPlanEnum.Accounts:
-                    break;
-                case AccountingPlanEnum.EquityBase:
-                    break;
-                case AccountingPlanEnum.PurchasePayables:
-                    AccountingActionManager.RepaymentOfDebts();
-                    break;
-                case AccountingPlanEnum.ReceivedInAdvance:
-                    AccountingActionManager.ReceivedInAdvance();
-                    break;
-                case AccountingPlanEnum.Debit_For_Salary:
-                    break;
-                case AccountingPlanEnum.Proceeds:
-                    break;
-                case AccountingPlanEnum.CostPrice:
-                    break;
-                case AccountingPlanEnum.CostOfSales:
-                    break;
-                case AccountingPlanEnum.OtherOperationalExpenses:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("accountingPlan", accountingPlan, null);
-            }
+            AccountingActionManager.Action(accountingPlan);
+        }
+
+        private ICommand _viewAccountingRepaymentByPartnersCommand;
+        public ICommand ViewAccountingRepaymentByPartnersCommand { get { return _viewAccountingRepaymentByPartnersCommand ?? (_viewAccountingRepaymentByPartnersCommand = new RelayCommand(OnViewAccountingRepaymentByPartners)); } }
+
+        private void OnViewAccountingRepaymentByPartners(object obj)
+        {
+            var partners = SelectItemsManager.SelectPartners(true).Select(s=>s.Id).ToList();
+            if(!partners.Any()) return;
+            var dates = SelectManager.GetDateIntermediate();
+            if (dates == null) return;
+            var repayment = AccountingRecordsManager.GetAccountingRecords(dates.Item1, dates.Item2, (long)AccountingPlanEnum.CashDesk, (long)AccountingPlanEnum.AccountingReceivable);
+            var ui = new UIListView(repayment.Where(s => (s.CreditGuidId != null && partners.Contains(s.CreditGuidId.Value))).Select(s => new { Ամսաթիվ = s.RegisterDate, Վճարված = s.Amount, Նշումներ = s.Description }).ToList()) { Title = "Դեբիտորական պարտքի մարում ըստ պատվիրատուների" };
+            ui.Show();
         }
 
         #endregion CashDesk

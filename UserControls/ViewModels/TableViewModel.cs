@@ -10,7 +10,6 @@ using System.Windows.Input;
 using ES.Business.ExcelManager;
 using ES.Business.Managers;
 using ES.Common.Helpers;
-using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
 using Shared.Helpers;
@@ -104,7 +103,6 @@ namespace UserControls.ViewModels
         public ICommand ExportToExcelCommand { get { return new RelayCommand(OnExportToExcel, CanExportToExcel); } }
         public ICommand PrintCommand { get { return new RelayCommand(OnPrint, CanPrint); } }
         public ICommand UpdateCommand { get { return new RelayCommand(OnUpdate); } }
-        public ICommand CloseCommand { get { return new RelayCommand(OnClose); } }
         #endregion
 
         #region INotifyPropertyChanged

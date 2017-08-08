@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using ES.Common.Helpers;
 using Zen.Barcode;
-using Brushes = System.Windows.Media.Brushes;
 
 namespace UserControls.PriceTicketControl
 {
@@ -58,31 +57,31 @@ namespace UserControls.PriceTicketControl
         {
             var ctl = sender as Ean13BarcodeControl;
             if (ctl == null) return;
-
+            
             ctl.InvalidateVisual();
         }
 
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-            var width = 40;// ActualWidth;
-            var height = (int) ActualHeight;
-            var size = new Rect(0, 0, width, ActualHeight);
-            drawingContext.DrawRectangle(Brushes.White, null, size);
-            if (!string.IsNullOrEmpty(Barcode))
-            {
-                BarcodeDraw.Draw(drawingContext, Barcode, new BarcodeMetrics1d(.8, 1, 40), size);
-            }
-            //var width = 40; //ActualWidth/2;
+            //var width = 40;// ActualWidth;
             //var height = (int) ActualHeight;
-            //var size = new Rect(0, 0, width, height);
-            //drawingContext.DrawRectangle(null, null, size);
-            //if (MinHeight == 0) MinHeight = BarHeight;
-            //if (MaxHeight == 0) MaxHeight = BarHeight;
+            //var size = new Rect(0, 0, width, ActualHeight);
+            //drawingContext.DrawRectangle(Brushes.White, null, size);
             //if (!string.IsNullOrEmpty(Barcode))
             //{
-            //    BarcodeDraw.Draw(drawingContext, Barcode, new BarcodeMetrics1d(BarMinWidth, BarMaxWidth, MinHeight, MaxHeight), size);
+            //    BarcodeDraw.Draw(drawingContext, Barcode, new BarcodeMetrics1d(1, 2, 40), size);
             //}
+            var width = ActualWidth;
+            var height = (int)ActualHeight;
+            var size = new Rect(0, 0, width, height);
+            drawingContext.DrawRectangle(null, null, size);
+            if (MinHeight == 0) MinHeight = BarHeight;
+            if (MaxHeight == 0) MaxHeight = BarHeight;
+            if (!string.IsNullOrEmpty(Barcode))
+            {
+                BarcodeDraw.Draw(drawingContext, Barcode, new BarcodeMetrics1d(BarMinWidth, BarMaxWidth, MinHeight, MaxHeight), size);
+            }
         }
 
         private void CreateBarcode(DrawingContext dc)
@@ -90,9 +89,9 @@ namespace UserControls.PriceTicketControl
             var ean13 = new Ean13(Barcode);
 
             Graphics g = BarcodeImage.CreateGraphics();
-
+            
             g.FillRectangle(new SolidBrush(System.Drawing.SystemColors.Control), new Rectangle(0, 0, (int)Width, (int)BarHeight));
-
+            
             ean13.Scale = 1; // scale;
             ean13.DrawEan13Barcode(g, new System.Drawing.Point(0, 0));
             g.Dispose();

@@ -717,8 +717,7 @@ namespace Zen.Barcode
 			{
 				BarGlyph glyph = (BarGlyph)barcode[index];
 
-				RenderBar(index, glyph, dc, bounds, ref barOffset, barMinHeight,
-					barMinWidth, barMaxWidth);
+				RenderBar(index, glyph, dc, bounds, ref barOffset, barMinHeight, barMinWidth, barMaxWidth);
 
 				// Account for inter glyph spacing
 				barOffset += interGlyphSpace;

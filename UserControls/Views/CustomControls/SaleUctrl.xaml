@@ -26,8 +26,8 @@
             <KeyBinding Gesture="Ctrl+Shift+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Small}"/>
             <KeyBinding Gesture="F9" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
             <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveInvoiceCommand}"/>
-            <KeyBinding Gesture="F5" Command="{Binding ApproveInvoiceCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
-            <KeyBinding Gesture="Ctrl+F5" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
+            <KeyBinding Gesture="F6" Command="{Binding ApproveInvoiceCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
+            <KeyBinding Gesture="F5" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
         </Grid.InputBindings>
         <Grid.ContextMenu>
             <ContextMenu>

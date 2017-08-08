@@ -18,7 +18,7 @@ namespace ES.Market.Views
             _user = user;
             _member = member;
             InitializeComponent();
-            DataContext = new InvoiceViewModel(invoice.Id, _user, _member);
+            DataContext = new InvoiceViewModel(invoice.Id);
         }
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {

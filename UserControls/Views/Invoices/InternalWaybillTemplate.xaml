@@ -14,7 +14,8 @@
                 <KeyBinding Gesture="Ctrl+Shift+F" Modifiers="Ctrl" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithFilters}"/>
                 <KeyBinding Gesture="Ctrl+Shift+X" Modifiers="Ctrl" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
                 <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveInvoiceCommand}"/>
-                <KeyBinding Gesture="Ctrl+Shift+A" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
+                <KeyBinding Gesture="F6" Command="{Binding ApproveInvoiceCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
+                <KeyBinding Gesture="F5" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
             </Grid.InputBindings>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

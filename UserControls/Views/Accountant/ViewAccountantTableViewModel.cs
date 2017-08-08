@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Media;
+using System.Windows.Input;
+using ES.Business.ExcelManager;
+using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Business.Models;
+using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 
 namespace UserControls.Views.Accountant
@@ -22,8 +23,14 @@ namespace UserControls.Views.Accountant
 
         #region External properties
 
+        #region Dates
+
+        DateTime StartDate { get; set; }
+        DateTime EndDate { get; set; }
+        #endregion Dates
+
         #region Filters
-        Timer _timer = null;
+        Timer _timer;
         private string _filterText;
         public string Filter
         {
@@ -61,6 +68,7 @@ namespace UserControls.Views.Accountant
         }
         #endregion Filters
 
+
         public List<AccountingPlanRecordsModel> AccountingPlan
         {
             get
@@ -68,7 +76,7 @@ namespace UserControls.Views.Accountant
                 return _accountingPlan ?? (_accountingPlan = new List<AccountingPlanRecordsModel>());
             }
         }
-        public List<AccountingRecordsModel> AccountingRecords { get { return _accountingRecords; } }
+        public List<AccountingRecordsModel> AccountingRecords { get { return _accountingRecords ?? new List<AccountingRecordsModel>(); } }
 
         public List<AccountingRecordsModel> Items
         {
@@ -83,24 +91,102 @@ namespace UserControls.Views.Accountant
 
         public ViewAccountantTableViewModel(DateTime? startDate, DateTime? endDate)
         {
-            Initialize(startDate ?? DateTime.Today, endDate ?? DateTime.Now);
+            StartDate = startDate ?? DateTime.Today;
+            EndDate = endDate ?? DateTime.Today.AddDays(1);
+            Initialize();
         }
         #endregion Constructors
 
         #region Internal methods
 
-        private void Initialize(DateTime startDate, DateTime endDate)
+        private void Initialize()
         {
             Title = "Հվային պլանի վերծանում ";
-            _accountingRecords = AccountingRecordsManager.GetAccountingRecords(startDate, endDate);
+
+        }
+        private void OnUpdateAccountingRecords(AccountingPlanEnum accountingPlanEnum)
+        {
+            switch (accountingPlanEnum)
+            {
+                case AccountingPlanEnum.None:
+                    new Thread(delegate()
+                    {
+                        _accountingRecords = AccountingRecordsManager.GetAccountingRecords(StartDate, EndDate);
+                        OnUpdate();
+                    }).Start();
+                    break;
+                case AccountingPlanEnum.Purchase:
+                    break;
+                case AccountingPlanEnum.AccountingReceivable:
+                    break;
+                case AccountingPlanEnum.Prepayments:
+                    break;
+                case AccountingPlanEnum.CashDesk:
+                    var cashDesks = SelectItemsManager.SelectCashDesks(null, true).Select(s => s.Id).ToList();
+
+                    new Thread(delegate(){
+                        var list = AccountingRecordsManager.GetAccountingRecords(StartDate, EndDate, new List<int> { (int)accountingPlanEnum });
+                        _accountingRecords = list.Where(s => (s.DebitGuidId != null && cashDesks.Contains(s.DebitGuidId.Value)) ||
+                                    (s.CreditGuidId != null && cashDesks.Contains(s.CreditGuidId.Value))).ToList();
+                                             OnUpdate();
+                    }).Start();
+                    break;
+                case AccountingPlanEnum.Accounts:
+                    break;
+                case AccountingPlanEnum.EquityBase:
+                    break;
+                case AccountingPlanEnum.PurchasePayables:
+                    break;
+                case AccountingPlanEnum.ReceivedInAdvance:
+                    break;
+                case AccountingPlanEnum.Debit_For_Salary:
+                    break;
+                case AccountingPlanEnum.Proceeds:
+                    break;
+                case AccountingPlanEnum.CostPrice:
+                    break;
+                case AccountingPlanEnum.CostOfSales:
+                    break;
+                case AccountingPlanEnum.OtherOperationalExpenses:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("accountingPlanEnum", accountingPlanEnum, null);
+            }
+            
+        }
+
+        private void OnUpdate()
+        {
+            if (Application.Current != null)
+            {
+                RaisePropertyChanged("Items");
+            }
         }
         #endregion Internal methods
 
         #region External methods
+
+        public void UpdateAccountingRecords(AccountingPlanEnum accountingPlanEnum)
+        {
+            OnUpdateAccountingRecords(accountingPlanEnum);
+        }
+
         #endregion External methods
 
         #region Commands
+
+        private ICommand _exportToExcelCommand;
+
+        public ICommand ExportToExcelCommand
+        {
+            get { return _exportToExcelCommand ?? (_exportToExcelCommand = new RelayCommand(OnExportToExcel)); }
+        }
+
+        private void OnExportToExcel(object obj)
+        {
+            ExcelExportManager.ExportList(AccountingRecords);
+        }
+
         #endregion Commands
     }
-    
 }

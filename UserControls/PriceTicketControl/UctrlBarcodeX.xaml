@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:priceTicketControl="clr-namespace:UserControls.PriceTicketControl"
              mc:Ignorable="d" 
-             d:DesignHeight="60" d:DesignWidth="120" Width="120">
+             d:DesignHeight="100" d:DesignWidth="200">
     <Grid Margin="3">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -26,18 +26,16 @@
             </TextBlock>
         </Grid>
         <Grid Grid.Row="1" Grid.Column="0" x:Name="BarcodeGrid" Margin="0 5" UseLayoutRounding="True" VerticalAlignment="Center">
-            <priceTicketControl:Ean13BarcodeControl x:Name="BarcodeControl" 
-                                                    MinHeight="15" 
+            <priceTicketControl:Ean13BarcodeControl x:Name="BarcodeControl"
+                                                    MinHeight="20" 
                                                     Height="20"
-                                                    BarHeight="20" 
+                                                    BarHeight="25" 
                                                     BarMinWidth="1" 
                                                     BarMaxWidth="1" 
-                                                    Margin="0 0 0 0" 
-                                                    Width="{Binding ElementName=BarcodeGrid, Path=ActualWidth}"
+                                                    Width="95"
                                                     VerticalAlignment="Top"
                                                     Barcode="{Binding Path=BarcodeString}" SnapsToDevicePixels="True"/>
         </Grid>
-
         <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
             <TextBlock  Text="Գին։" FontSize="12"/> 
             <TextBlock  Text="{Binding Path=Price, StringFormat={}{0:#,0.##}դր}" Margin="1 0" FontSize="12" FontWeight="Bold"/>

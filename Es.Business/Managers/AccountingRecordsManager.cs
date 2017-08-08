@@ -10,6 +10,7 @@ namespace ES.Business.Managers
 {
     public enum AccountingPlanEnum
     {
+        None = 0,
         //1 Ոչ ընթացիկ ակտիվներ
         //2 Ընթացիկ ակտիվներ
         //Ապրանքներ
@@ -205,9 +206,13 @@ namespace ES.Business.Managers
         {
             return TryGetAccountingRecords(beginDate, endDate).Select(Convert).ToList();
         }
-        public static List<AccountingRecordsModel> GetAccountingRecords(long debit, long credit)
+        public static List<AccountingRecordsModel> GetAccountingRecords(DateTime beginDate, DateTime endDate, List<int> plans)
         {
-            return TryGetAccountingRecords(debit, credit).Select(Convert).ToList();
+            return TryGetAccountingRecords(beginDate, endDate, plans).Select(Convert).ToList();
+        }
+        public static List<AccountingRecordsModel> GetAccountingRecords(DateTime beginDate, DateTime endDate, long debit, long credit)
+        {
+            return TryGetAccountingRecords(beginDate, endDate, debit, credit).Select(Convert).ToList();
         }
         public static List<ES.DataAccess.Models.AccountingPlan> GetAccountingPlan()
         {
@@ -408,7 +413,7 @@ namespace ES.Business.Managers
                 }
             }
         }
-        private static List<AccountingRecords> TryGetAccountingRecords(long debit, long credit)
+        private static List<AccountingRecords> TryGetAccountingRecords(DateTime beginDate, DateTime endDate, List<int> plans)
         {
             var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
@@ -417,6 +422,26 @@ namespace ES.Business.Managers
                 {
                     return db.AccountingRecords.Where(s =>
                         s.MemberId == memberId
+                        && s.RegisterDate >= beginDate.Date
+                        && s.RegisterDate < endDate && (plans.Contains((int)s.Debit) || plans.Contains((int)s.Credit))).OrderBy(s => s.RegisterDate).ToList();
+                }
+                catch (Exception)
+                {
+                    return new List<AccountingRecords>();
+                }
+            }
+        }
+        private static List<AccountingRecords> TryGetAccountingRecords(DateTime beginDate, DateTime endDate, long debit, long credit)
+        {
+            var memberId = ApplicationManager.Member.Id;
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    return db.AccountingRecords.Where(s =>
+                        s.MemberId == memberId
+                        && s.RegisterDate >= beginDate
+                        && s.RegisterDate < endDate
                         && s.Debit == debit
                         && s.Credit == credit).ToList();
                 }

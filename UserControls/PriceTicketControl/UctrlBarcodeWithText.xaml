@@ -5,12 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:barcodes="clr-namespace:UserControls.PriceTicketControl"
              mc:Ignorable="d" 
-             d:DesignHeight="50" d:DesignWidth="100" Width="100">
+             d:DesignHeight="50" d:DesignWidth="113" Width="113">
     <Grid>
-        <StackPanel Margin ="1">
+        <StackPanel>
             <TextBlock Text="{Binding Path=Description}" FontSize="8" TextWrapping="Wrap"/>
             <Grid UseLayoutRounding="True">
-            <barcodes:Ean13BarcodeControl x:Name="BarcodeControl" MinHeight="15"  BarHeight="20" BarMinWidth="1" BarMaxWidth="2" Margin="1" VerticalAlignment="Center"
+                <barcodes:Ean13BarcodeControl x:Name="BarcodeControl" MinHeight="20"  BarHeight="25" BarMinWidth="1" BarMaxWidth="2" 
+                                              VerticalAlignment="Center"
                                     Barcode="{Binding Path=BarcodeString}" SnapsToDevicePixels="True"/></Grid>
             <Grid  HorizontalAlignment="Stretch">
                 <TextBlock Text="{Binding Path=Code}" FontSize="8" Margin="1 0" HorizontalAlignment="Center"/>

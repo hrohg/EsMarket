@@ -13,5 +13,9 @@ namespace UserControls.PriceTicketControl
             InitializeComponent();
             DataContext = viewModel;
         }
+        public UctrlBarcodeX()
+        {
+            InitializeComponent();
+        }
     }
 }

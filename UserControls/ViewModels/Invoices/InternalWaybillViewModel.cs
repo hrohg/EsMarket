@@ -64,13 +64,11 @@ namespace UserControls.ViewModels.Invoices
             }
         }
         #endregion
-        public InternalWaybillViewModel(EsUserModel user, EsMemberModel member)
-            : base(user, member)
+        public InternalWaybillViewModel()
         {
             Initialize();
         }
-        public InternalWaybillViewModel(Guid id, EsUserModel user, EsMemberModel member)
-            : base(id, user, member)
+        public InternalWaybillViewModel(Guid id): base(id)
         {
             Initialize();
         }

@@ -11,7 +11,7 @@ namespace UserControls.Helpers
     public class AccountingActionManager
     {
         //221
-        public static void RepaymentOfReceivable()
+        private static void RepaymentOfReceivable()
         {
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Member.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (long)AccountingPlanEnum.CashDesk;
@@ -75,7 +75,7 @@ namespace UserControls.Helpers
             }
         }
         //521
-        public static void RepaymentOfDebts()
+        private static void RepaymentOfDebts()
         {
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (long)AccountingPlanEnum.PurchasePayables;
@@ -119,7 +119,7 @@ namespace UserControls.Helpers
             }
         }
         //523
-        public static void ReceivedInAdvance()
+        private static void ReceivedInAdvance()
         {
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (long)AccountingPlanEnum.CashDesk;
@@ -150,6 +150,46 @@ namespace UserControls.Helpers
             if (!ctrlAccountingRecords.Result || receivedInAdvance == null || receivedInAdvance.Amount == 0) return;
             AccountingRecordsManager.SetPartnerPayment(depositeAccountRecords: receivedInAdvance,
                 repaymentAccountingRecords: null);
+        }
+
+        public static void Action(AccountingPlanEnum accountingPlan)
+        {
+            switch (accountingPlan)
+            {
+                case AccountingPlanEnum.None:
+                    break;
+                case AccountingPlanEnum.Purchase:
+                    break;
+                case AccountingPlanEnum.AccountingReceivable:
+                    RepaymentOfReceivable();
+                    break;
+                case AccountingPlanEnum.Prepayments:
+                    break;
+                case AccountingPlanEnum.CashDesk:
+                    break;
+                case AccountingPlanEnum.Accounts:
+                    break;
+                case AccountingPlanEnum.EquityBase:
+                    break;
+                case AccountingPlanEnum.PurchasePayables:
+                    RepaymentOfDebts();
+                    break;
+                case AccountingPlanEnum.ReceivedInAdvance:
+                    ReceivedInAdvance();
+                    break;
+                case AccountingPlanEnum.Debit_For_Salary:
+                    break;
+                case AccountingPlanEnum.Proceeds:
+                    break;
+                case AccountingPlanEnum.CostPrice:
+                    break;
+                case AccountingPlanEnum.CostOfSales:
+                    break;
+                case AccountingPlanEnum.OtherOperationalExpenses:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("accountingPlan", accountingPlan, null);
+            }
         }
     }
 }

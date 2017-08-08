@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:filter="clr-namespace:Shared.Helpers;assembly=Shared"
-             xmlns:views="clr-namespace:UserControls.Views"
              xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
@@ -23,6 +22,7 @@
                 <KeyBinding Gesture="Ctrl+Shift+F" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
                 <KeyBinding Gesture="Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
                 <KeyBinding Gesture="Ctrl+Shift+X" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
+           
             </Grid.InputBindings>
             <Grid.ContextMenu>
                 <ContextMenu>

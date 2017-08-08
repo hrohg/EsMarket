@@ -101,7 +101,7 @@ namespace UserControls.Helpers
             {
                 cashDeskIds.AddRange(CashDeskManager.GetCashDesks().Select(s=>s.Id));
             }
-            var cashDesks = SelectCashDesks(cashDeskIds);
+            var cashDesks = SelectCashDesksByIds(cashDeskIds);
             if (cashDesks.Count < 2) return cashDesks;
             var ui = new SelectItems(cashDesks.Select(s => new ItemsToSelect { DisplayName = s.Name, SelectedValue = s.Id }).ToList(), allowMultipleChoise, title);
             if (ui.ShowDialog() == true && ui.SelectedItems != null)
@@ -122,7 +122,19 @@ namespace UserControls.Helpers
             }
             return new List<CashDesk>();
         }
-        public static List<CashDesk> SelectCashDesks(List<Guid> ids, bool allowMultipleChoise=false, string title = "Ընտրել դրամարկղ")
+        public static List<CashDesk> SelectCashDesks(bool? isCash, bool allowMultipleChoise = false, string title = "Ընտրել դրամարկղ")
+        {
+            var cashDesks = CashDeskManager.GetCashDesks(isCash);
+            if (cashDesks == null || cashDesks.Count == 0) return new List<CashDesk>();
+            if (cashDesks.Count == 1) return cashDesks;
+            var ui = new SelectItems(cashDesks.Select(s => new ItemsToSelect { DisplayName = s.Name, SelectedValue = s.Id }).ToList(), allowMultipleChoise, title);
+            if (ui.ShowDialog() == true && ui.SelectedItems != null)
+            {
+                return cashDesks.Where(s => ui.SelectedItems.Select(t => (Guid)t.SelectedValue).Contains(s.Id)).ToList();
+            }
+            return new List<CashDesk>();
+        }
+        public static List<CashDesk> SelectCashDesksByIds(List<Guid> ids, bool allowMultipleChoise=false, string title = "Ընտրել դրամարկղ")
         {
             var cashDesks = CashDeskManager.GetCashDesks(ids);
             if (cashDesks == null || cashDesks.Count == 0) return new List<CashDesk>();
@@ -177,6 +189,10 @@ namespace UserControls.Helpers
         public static List<ProductModel> SelectProduct(bool multipleChoose = false)
         {
             var products = ApplicationManager.Instance.CashProvider.Products.ToList();
+            return SelectProduct(products, multipleChoose);
+        }
+        public static List<ProductModel> SelectProduct(List<ProductModel> products, bool multipleChoose = false)
+        {
             if (products.Count < 2) return products;
             var selectedItems = new SelectItems(products.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1} {2} {3})", s.Description, s.Code, s.Barcode, s.Price), SelectedValue = s.Id }).ToList(), false, "Ընտրել արտահանվող ապրանքները");
             return (selectedItems.ShowDialog() == true && selectedItems.SelectedItems != null)

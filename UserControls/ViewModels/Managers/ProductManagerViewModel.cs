@@ -203,12 +203,12 @@ namespace UserControls.ViewModels.Managers
             if (!CanGenerateBarcode(o)) { return; }
             if (!string.IsNullOrEmpty(Product.Barcode)) { return; }
             var nextCode = GetNextCode;
-            Product.Barcode = new BarCodeGenerator(nextCode, MemberId).Barcode;
+            Product.Barcode = new BarCodeGenerator(nextCode).Barcode;
             var code = !string.IsNullOrEmpty(Product.Code) ? Product.Code : Product.Barcode.Substring(7, 5);
             while (Products.FirstOrDefault(s => s.Id != Product.Id && (s.Barcode == Product.Barcode || s.Code == code)) != null)
             {
                 nextCode--;
-                Product.Barcode = new BarCodeGenerator(nextCode, memberId: MemberId).Barcode;
+                Product.Barcode = new BarCodeGenerator(nextCode).Barcode;
                 code = !string.IsNullOrEmpty(Product.Code) ? Product.Code : Product.Barcode.Substring(7, 5);
             }
             if (string.IsNullOrEmpty(Product.Code))

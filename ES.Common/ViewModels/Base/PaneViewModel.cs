@@ -216,15 +216,21 @@ namespace ES.Common.ViewModels.Base
         {
             return IsClosable;
         }
-        protected virtual void OnClose(object o)
+        protected void OnClose(object o)
         {
-            if (!CanClose(o)) return;
-            var handle = OnClosed;
-            if (handle != null) handle(this);
+            if (CanClose(o))
+                Close();
         }
         #endregion Internal methods
 
         #region External methods
+
+        public virtual bool Close()
+        {
+            var handle = OnClosed;
+            if (handle != null) handle(this);
+            return true;
+        }
         #endregion External methods
 
         #region Commands

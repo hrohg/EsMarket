@@ -15,6 +15,11 @@
             </Grid.RowDefinitions>
             <TextBox Grid.Row="1" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}"/>
             <DataGrid Grid.Row="2" ItemsSource="{Binding Items}" AutoGenerateColumns="False">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Արտահանել Excel" Command="{Binding ExportToExcelCommand}"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
                 <DataGrid.Columns>
                     <DataGridTemplateColumn  Header="Գրանցման ամսաթիվ" Width="Auto" CanUserSort="True" SortMemberPath="RegisterDate">
                         <DataGridTemplateColumn.CellTemplate>

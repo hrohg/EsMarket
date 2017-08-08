@@ -22,7 +22,7 @@ namespace UserControls.Views
         }
         public PurchaseUctrl(EsUserModel user, EsMemberModel member, PurchaseInvoiceViewModel viewModel):this()
         {
-            DataContext = viewModel ?? new PurchaseInvoiceViewModel(user, member);
+            DataContext = viewModel ?? new PurchaseInvoiceViewModel();
         }
         
         #region Events

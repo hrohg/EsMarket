@@ -349,7 +349,7 @@ namespace Zen.Barcode
 			Match m = Regex.Match(text, @"^\s*(?<barcode>[0-9]{13})\s*$");
 			if (!m.Success)
 			{
-			    //MessageBox.Show("Սխալ բարկոդ։");
+                //MessageBox.Show("Սխալ բարկոդ։");
 			    return null;
 			}
 			string barcodeText = m.Groups["barcode"].Value;
@@ -373,7 +373,7 @@ namespace Zen.Barcode
 			//	after calculating the checksum
 			char parityDigit = barcodeText[0];
 			byte parity = parityTable[parityDigit - '0'];
-			if (Checksum != null)
+			if (Checksum != null && barcodeText.Length<13)
 			{
 				barcodeText += Checksum.GetChecksumChar(barcodeText);
 			}
