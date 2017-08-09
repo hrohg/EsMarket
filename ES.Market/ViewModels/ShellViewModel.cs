@@ -194,7 +194,7 @@ namespace ES.Market.ViewModels
         }
 
         public bool IsSingle { get; set; }
-        
+
         private bool _isSalePrinterActive;
         public bool IsSalePrinterActive
         {
@@ -697,7 +697,7 @@ namespace ES.Market.ViewModels
             {
                 return;
             }
-            var product = SelectItemsManager.SelectProduct(ApplicationManager.CashManager.Products.Where(s=>!string.IsNullOrEmpty(s.Barcode)).ToList()).FirstOrDefault();
+            var product = SelectItemsManager.SelectProduct(ApplicationManager.CashManager.Products.Where(s => !string.IsNullOrEmpty(s.Barcode)).ToList()).FirstOrDefault();
             if (product == null) return;
             UserControl priceTicket = null;
             switch (printPriceTicketEnum)
@@ -716,27 +716,30 @@ namespace ES.Market.ViewModels
                     //};
                     //priceTicket.Show();
 
-        //            Barcode barcode = new Barcode()
-        //{
-        //    IncludeLabel = true,
-        //    Alignment = AlignmentPositions.CENTER,
-        //    Width = 300,
-        //    Height = 100,
-        //    RotateFlipType = RotateFlipType.RotateNoneFlipNone,
-        //    BackColor = Brushes.White,
-        //    ForeColor = Brushes.Black,
-        //};
+                    //            Barcode barcode = new Barcode()
+                    //{
+                    //    IncludeLabel = true,
+                    //    Alignment = AlignmentPositions.CENTER,
+                    //    Width = 300,
+                    //    Height = 100,
+                    //    RotateFlipType = RotateFlipType.RotateNoneFlipNone,
+                    //    BackColor = Brushes.White,
+                    //    ForeColor = Brushes.Black,
+                    //};
 
                     //var img = barcode.Encode(TYPE.EAN13, product.Barcode);
-                    
+
                     priceTicket = new UctrlPriceTicket(new PriceTicketLargePriceVewModel(product.Code, product.Barcode, product.Description, product.Price, null));
+                    break;
+                case PrintPriceTicketEnum.PriceOnly:
+                    priceTicket = new UctrlPriceTicket(new PriceTicketVewModel(product.Code, product.Barcode, string.Format("{0} ({1})", product.Description, product.Code), product.Price, null));
                     break;
                 case null:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("printPriceTicketEnum", printPriceTicketEnum, null);
             }
-            
+
             PrintManager.PrintPreview(priceTicket, "Գնապիտակ", HgConvert.ToBoolean(printPriceTicketEnum));
 
             //if (HgConvert.ToBoolean(o))
@@ -753,7 +756,7 @@ namespace ES.Market.ViewModels
         }
         public bool Close()
         {
-            for(int last = Documents.Count-1; last>=0; --last)
+            for (int last = Documents.Count - 1; last >= 0; --last)
             {
                 Documents[last].IsActive = true;
                 Documents[last].IsSelected = true;
@@ -1657,7 +1660,7 @@ namespace ES.Market.ViewModels
             AddInvoiceDocument(vm);
             vm.UpdateAccountingRecords(accountingPlanEnum);
         }
-       
+
         #endregion View report
 
 
@@ -1714,8 +1717,8 @@ namespace ES.Market.ViewModels
 
         private void OnViewAccountingRepaymentByPartners(object obj)
         {
-            var partners = SelectItemsManager.SelectPartners(true).Select(s=>s.Id).ToList();
-            if(!partners.Any()) return;
+            var partners = SelectItemsManager.SelectPartners(true).Select(s => s.Id).ToList();
+            if (!partners.Any()) return;
             var dates = SelectManager.GetDateIntermediate();
             if (dates == null) return;
             var repayment = AccountingRecordsManager.GetAccountingRecords(dates.Item1, dates.Item2, (long)AccountingPlanEnum.CashDesk, (long)AccountingPlanEnum.AccountingReceivable);
@@ -1883,7 +1886,7 @@ namespace ES.Market.ViewModels
                     break;
                 case ToolsEnum.Categories:
                     tool = new CategoriesToolsViewModel();
-                    ((CategoriesToolsViewModel) tool).OnSetCategory += OnSetCategory;
+                    ((CategoriesToolsViewModel)tool).OnSetCategory += OnSetCategory;
                     AddTools<CategoriesToolsViewModel>(tool, false);
                     break;
                 default:

@@ -46,7 +46,7 @@
                 <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="{Binding Path=Code}"/>
@@ -54,6 +54,31 @@
                         <TextBlock Text="{Binding Path=Price, StringFormat={}{0:#,0.##}}"  FontSize="16" FontWeight="Bold" VerticalAlignment="Stretch"/>
                     </Viewbox>
                     <TextBlock Grid.Column="2" Text="դր․"/>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModels:PriceTicketVewModel}">
+            <Grid UseLayoutRounding="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="{Binding Path=Header}" FontSize="8" MaxHeight="20"/>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Viewbox Grid.Column="0" Stretch="Fill" StretchDirection="Both">
+                        <TextBlock Text="{Binding Path=Price, StringFormat={}{0:#,0.##}}"  FontSize="16" FontWeight="Bold" VerticalAlignment="Stretch"/>
+                    </Viewbox>
+                    <TextBlock Grid.Column="1" Text="դր․" FontSize="16" VerticalAlignment="Bottom"/>
+                </Grid>
+                <Grid Grid.Row="2">
+                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
                 </Grid>
             </Grid>
         </DataTemplate>

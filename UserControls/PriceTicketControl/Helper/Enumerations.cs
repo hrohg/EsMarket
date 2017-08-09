@@ -8,6 +8,7 @@ namespace UserControls.PriceTicketControl.Helper
     public enum PrintPriceTicketEnum
     {
         Normal,
+        PriceOnly,
         Small,
         Large,
         LargePrice

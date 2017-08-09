@@ -12,4 +12,11 @@ namespace UserControls.PriceTicketControl.ViewModels
 
         }
     }
+    public class PriceTicketVewModel:PriceTicketViewModelBase
+    {
+        public PriceTicketVewModel(string code, string barcode, string description, decimal? price, decimal? oldPrice) : base(code, barcode, description, price, oldPrice)
+        {
+
+        }
+    }
 }

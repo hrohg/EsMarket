@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ES.Common.ViewModels.Base;
+﻿using ES.Common.ViewModels.Base;
 
 namespace UserControls.PriceTicketControl.ViewModels
 {
@@ -91,6 +87,8 @@ namespace UserControls.PriceTicketControl.ViewModels
         }
 
         #endregion Description
+
+        public string Header { get; set; }
 
         #endregion External properties
 
