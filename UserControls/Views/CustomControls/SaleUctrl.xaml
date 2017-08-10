@@ -10,6 +10,7 @@
          xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
          xmlns:converters="clr-namespace:UserControls.Converters"
          xmlns:managers="clr-namespace:ES.Business.Managers;assembly=ES.Business"
+         xmlns:popup="clr-namespace:UserControls.Controls.Popup"
          MinHeight="450"
          MinWidth="700"
          Width="Auto"
@@ -48,7 +49,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <GroupBox Grid.Column="0">
+                <GroupBox Grid.Column="0" Visibility="Collapsed">
                     <GroupBox.Header>
                         <TextBlock Text="Պատվիրատու" FontSize="10"/>
                     </GroupBox.Header>
@@ -90,17 +91,79 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Ապրանքագիր" FontSize="10" HorizontalAlignment="Right"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Invoice.InvoiceNumber}" Foreground="Blue" Width="100" Margin ="1"/>
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Ստեղծված է" HorizontalAlignment="Right" FontSize="10"/>
-                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Path=Invoice.CreateDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" Width="100" Margin ="1"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Ապրանքագիր" FontSize="10" HorizontalAlignment="Right" ToolTip="{Binding Path=Invoice.CreateDate, StringFormat='dd.MM.yyyy'}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Invoice.InvoiceNumber}" Foreground="Blue" Width="100" Margin ="1" HorizontalAlignment="Left"/>
+                        <!--<TextBlock Grid.Row="2" Grid.Column="0" Text="Ստեղծված է" HorizontalAlignment="Right" FontSize="10"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Path=Invoice.CreateDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" Width="100" Margin ="1" HorizontalAlignment="Left"/>-->
                         <TextBlock  Grid.Row="3" Grid.Column="0" Text="Հաստատված է" VerticalAlignment="Center" FontSize="10" HorizontalAlignment="Right"/>
-                        <TextBlock  Grid.Row="3" Grid.Column="1" Text="{Binding Invoice.ApproveDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" Width="100" Margin ="1"/>
+                        <TextBlock  Grid.Row="3" Grid.Column="1" Text="{Binding Invoice.ApproveDate, StringFormat='dd.MM.yyyy'}" Foreground="Blue" Width="100" Margin ="1" HorizontalAlignment="Left"/>
+                        <TextBlock  Grid.Row="4" Grid.Column="0" Text="Պատվիրատու" VerticalAlignment="Center" FontSize="10" HorizontalAlignment="Right"/>
+                        <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
+                            <TextBlock   Text="{Binding Partner.Description}" Foreground="Blue" Width="100" Margin ="1"/>
+                            <Menu Margin="3 0">
+                                <MenuItem Background="Transparent">
+                                    <MenuItem.Header>
+                                        <Image Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu.png" Width="16" Height="16"/>
+                                    </MenuItem.Header>
+                                    <MenuItem Header="Ընտրել պատվիրատու" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Customer}"></MenuItem>
+                                    <MenuItem Header="Ընտրել գործընկեր" Command="{Binding GetPartnerCommand}"/>
+                                    <MenuItem Header="Ընտրել մատակարար" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Provider}"></MenuItem>
+                                    <MenuItem Header="Ընտրել դիլլեր" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Dealer}"></MenuItem>
+                                    <MenuItem Header="Ընտրել Մասնաճյուղ" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Branch}"></MenuItem>
+                                </MenuItem>
+                            </Menu>
+                            <popup:DraggablePopup IsOpen="{Binding ElementName=ParentToggleButton, Path=IsChecked}" StaysOpen="False" AllowsTransparency="True">
+                                <Border Background="LightBlue" MinWidth="200" MinHeight="100" CornerRadius="2 2 0 0" BorderThickness="1" BorderBrush="#FFFF9901">
+                                    <StackPanel Margin="5">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Partner.Description}" FontSize="10" FontWeight="Bold"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Հեռախոս" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Partner.Mobile}" Foreground="Blue" Margin ="1" HorizontalAlignment="Left"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="էլ. փոստ" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Partner.Email}" Foreground="Blue" Margin ="1" HorizontalAlignment="Left"/>
+                                        </Grid>
+                                        <Separator/>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Կանխավճար" FontSize="10" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Partner.Credit, StringFormat={}{0:#,0.##}}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Դեբետ" FontSize="10" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Partner.Debit, StringFormat={}{0:#,0.##}}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Մաքսիմալ դեբիտորական պարտք" FontSize="10" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Partner.MaxDebit, StringFormat={}{0:#,0.##}, TargetNullValue='0'}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Զեղչ" FontSize="10" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Partner.Discount, StringFormat={}{0:#,0.##}%}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </popup:DraggablePopup>
+                            <ToggleButton x:Name="ParentToggleButton" Style="{DynamicResource InformationToggleButtinStyle}" Margin="3 0"/>
+                        </StackPanel>
                     </Grid>
                 </GroupBox>
             </Grid>
