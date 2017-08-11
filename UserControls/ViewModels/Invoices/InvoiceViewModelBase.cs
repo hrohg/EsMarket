@@ -6,13 +6,11 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using ES.Business.ExcelManager;
 using ES.Business.FileManager;
 using ES.Business.Managers;
 using ES.Common.Helpers;
-using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
@@ -30,17 +28,14 @@ namespace UserControls.ViewModels.Invoices
         protected EsMemberModel Member { get { return ApplicationManager.Instance.GetMember; } }
         protected EsUserModel User { get { return ApplicationManager.GetEsUser; } }
 
-        protected bool IsInvocieValid
+        protected bool IsInvoiceValid
         {
             get
             {
                 return Invoice != null && InvoiceItems != null && InvoiceItems.Count > 0;
             }
         }
-        protected bool IsInvocieAppoved
-        {
-            get { return Invoice != null && Invoice.ApproveDate != null; }
-        }
+
         #endregion Internal properties
 
         #region External properties
@@ -156,6 +151,13 @@ namespace UserControls.ViewModels.Invoices
         }
         #endregion Partner
 
+        public bool IsInvoiceApproved
+        {
+            get
+            {
+                return Invoice != null && Invoice.ApproveDate!=null;
+            }
+        }
         #endregion External properties
 
         public override string Description
@@ -225,12 +227,12 @@ namespace UserControls.ViewModels.Invoices
         #region Print invoice
         protected virtual bool CanPrintInvoice(PrintModeEnum printSize)
         {
-            return IsInvocieValid;
+            return IsInvoiceValid;
         }
         protected virtual void OnPrintInvoice(PrintModeEnum printSize)
         {
-            if (!CanPrintInvoice(printSize)) { return; }
-            var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
+            //if (!CanPrintInvoice(printSize)) { return; }
+            //var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
             //var ctrl = new InvoicePreview(new ReceiptTicketViewModel(new ResponseReceiptModel()));
             //PrintManager.PrintPreview(ctrl, "Print invoice", true);
             //PrintManager.PrintOnActivePrinter(new ReceiptTicketSmall(new ReceiptTicketViewModel(new ResponceReceiptModel()){Invocie = Invoice, InvoiceItems = InvoiceItems.ToList(), InvoicePaid = InvoicePaid}), ApplicationManager.ActivePrinter);
@@ -241,7 +243,7 @@ namespace UserControls.ViewModels.Invoices
         #region Import
         protected virtual bool CanImportInvoice(ExportImportEnum importFrom)
         {
-            return IsInvocieValid && !IsInvocieAppoved;
+            return IsInvoiceValid && !IsInvoiceApproved;
         }
         protected virtual void OnImportInvoice(ExportImportEnum importFrom)
         {
@@ -250,8 +252,8 @@ namespace UserControls.ViewModels.Invoices
             {
                 var invoiceObject = ExcelImportManager.ImportInvoice(filePath);
                 if (invoiceObject == null) return;
-                var importInvoice = invoiceObject.Item1 as InvoiceModel;
-                var importInvoiceItems = invoiceObject.Item2 as List<InvoiceItemsModel>;
+                var importInvoice = invoiceObject.Item1;
+                var importInvoiceItems = invoiceObject.Item2;
                 if (importInvoice == null || importInvoiceItems == null) return;
                 Invoice = new InvoiceModel(User, Member, Invoice.InvoiceTypeId);
                 Invoice.CreateDate = importInvoice.CreateDate;
@@ -283,7 +285,7 @@ namespace UserControls.ViewModels.Invoices
         #region Export
         protected virtual bool CanExportInvoice(ExportImportEnum exportTo)
         {
-            return IsInvocieValid;
+            return IsInvoiceValid;
         }
         protected virtual void OnExportInvoice(ExportImportEnum exportTo)
         {

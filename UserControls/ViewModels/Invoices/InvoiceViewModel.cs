@@ -15,7 +15,6 @@ using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Data.Enumerations;
-using ES.Data.Model;
 using ES.Data.Models;
 using ES.DataAccess.Models;
 using Shared.Helpers;
@@ -31,9 +30,7 @@ namespace UserControls.ViewModels.Invoices
 {
     public class InvoiceViewModel : InvoiceViewModelBase
     {
-        /// <summary>
-        /// Initalize a new instance of the ProductViewModel class.
-        /// </summary>
+
         #region Properties
         private const string DenayChangePriceProperty = "DenayChangePrice";
         protected const string IsExpiringProperty = "IsExpiring";
@@ -41,10 +38,6 @@ namespace UserControls.ViewModels.Invoices
         protected const string ShortTitleProperty = "ShortTitle";
 
         #endregion
-
-        /// <summary>
-        /// Invoice view model private properties
-        /// </summary>
 
         #region Invoice view model private properties
         private List<MembersRoles> _roles = new List<MembersRoles>();
@@ -54,10 +47,6 @@ namespace UserControls.ViewModels.Invoices
 
         protected string ProductSearchKey;
         #endregion
-
-        /// <summary>
-        /// InvoiceViewModel public properties
-        /// </summary>
 
         #region InvoiceViewModel External properties
 
@@ -155,6 +144,8 @@ namespace UserControls.ViewModels.Invoices
         public decimal ProductQuantity { get { return InvoiceItems.Sum(s => s.Quantity ?? 0); } }
         public decimal InvoiceProfit { get { return Invoice.Amount - Invoice.Total; } }
         public decimal ActualPercentage { get { return InvoicePaid.Total.HasValue && InvoicePaid.Total != 0 ? InvoiceProfit * 100 / InvoicePaid.Total.Value : 100; } }
+        public string PartnerFilter { get; set; }
+        public string InvoiceStateTooltip { get { return IsInvoiceApproved ? string.Format("Հաստատված է {0}", Invoice.ApproveDate) : "Հաստատված չէ"; } }
         #endregion
 
         #region Constructors
@@ -211,9 +202,6 @@ namespace UserControls.ViewModels.Invoices
             AddItemsFromStocksCommand = new AddItemsFromStocksCommand(this, InvoiceType.MoveInvoice);
             ApproveInvoiceAndCloseCommand = new ApproveCloseInvoiceCommands(this);
 
-
-
-            GetPartnerCommand = new RelayCommand(OnGetPartner);
             GetProductCommand = new RelayCommand(OnGetProduct);
 
             CleanInvoiceIemsCommand = new RelayCommand(OnCleanInvoiceItems, CanCleanInvoiceItems);
@@ -263,16 +251,6 @@ namespace UserControls.ViewModels.Invoices
         public delegate void ShowProductsPane();
         public event ShowProductsPane ShowProducts;
         #region Set Partner
-        protected virtual void OnGetPartner(object o)
-        {
-            var partners = o is PartnerType ? PartnersManager.GetPartner(ApplicationManager.Instance.GetMember.Id, (PartnerType)o) : PartnersManager.GetPartners(ApplicationManager.Instance.GetMember.Id);
-            if (partners.Count == 0) return;
-            var selectedItems = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName + " " + s.Mobile, SelectedValue = s.Id }).ToList(), false);
-            selectedItems.ShowDialog();
-            if (selectedItems.DialogResult == null || selectedItems.DialogResult != true || selectedItems.SelectedItems == null) return;
-            SetPartner(partners.FirstOrDefault(s => selectedItems.SelectedItems.Select(t => t.SelectedValue).ToList().Contains(s.Id)));
-        }
-
         public void SetPartner(PartnerModel partner)
         {
             Partner = partner;
@@ -354,15 +332,15 @@ namespace UserControls.ViewModels.Invoices
             if (product == null && code.Substring(0, 1) == "2" && code.Length == 13)
             {
                 new ProductsManager().GetProductsByCodeOrBarcode(code.Substring(2, 5), Member.Id);
-                count = HgConvert.ToDecimal((code.Substring(7, 5)))/1000;
+                count = HgConvert.ToDecimal((code.Substring(7, 5))) / 1000;
             }
             switch (Invoice.InvoiceTypeId)
             {
-                case (long) InvoiceType.SaleInvoice:
-                case (long) InvoiceType.MoveInvoice:
+                case (long)InvoiceType.SaleInvoice:
+                case (long)InvoiceType.MoveInvoice:
                     return GetSaleInvoiceItem(product, count);
                     break;
-                case (long) InvoiceType.PurchaseInvoice:
+                case (long)InvoiceType.PurchaseInvoice:
                     return GetPurchaseInvoiceItem(product);
                     break;
                 default:
@@ -379,7 +357,16 @@ namespace UserControls.ViewModels.Invoices
             }
             return new InvoiceItemsModel
             {
-                InvoiceId = Invoice.Id, Product = product, ProductId = product.Id, Code = product.Code, Description = product.Description, Mu = product.Mu, Quantity = 0, Price = product.CostPrice, Discount = product.Discount, Note = product.Note
+                InvoiceId = Invoice.Id,
+                Product = product,
+                ProductId = product.Id,
+                Code = product.Code,
+                Description = product.Description,
+                Mu = product.Mu,
+                Quantity = 0,
+                Price = product.CostPrice,
+                Discount = product.Discount,
+                Note = product.Note
             };
         }
 
@@ -391,7 +378,17 @@ namespace UserControls.ViewModels.Invoices
             }
             return new InvoiceItemsModel
             {
-                InvoiceId = Invoice.Id, Product = product, ProductId = product.Id, Code = product.Code, Description = product.Description, Mu = product.Mu, Quantity = count, Price = GetPartnerPrice(product), CostPrice = product.CostPrice, Discount = product.Discount, Note = product.Note
+                InvoiceId = Invoice.Id,
+                Product = product,
+                ProductId = product.Id,
+                Code = product.Code,
+                Description = product.Description,
+                Mu = product.Mu,
+                Quantity = count,
+                Price = GetPartnerPrice(product),
+                CostPrice = product.CostPrice,
+                Discount = product.Discount,
+                Note = product.Note
             };
         }
 
@@ -400,9 +397,17 @@ namespace UserControls.ViewModels.Invoices
             if (!IsSelected || productItem == null || productItem.Product == null) return;
             InvoiceItem = new InvoiceItemsModel
             {
-                InvoiceId = Invoice.Id, Product = productItem.Product, ProductItemId = productItem.Id != Guid.Empty ? productItem.Id : (Guid?) null, ProductId = productItem.ProductId,
+                InvoiceId = Invoice.Id,
+                Product = productItem.Product,
+                ProductItemId = productItem.Id != Guid.Empty ? productItem.Id : (Guid?)null,
+                ProductId = productItem.ProductId,
                 //ExpiryDate = product.ExpiryDays != null ? DateTime.Today.AddDays((int)product.ExpiryDays) : (DateTime?)null;
-                Code = productItem.Product.Code, Description = productItem.Product.Description, Mu = productItem.Product.Mu, Price = GetPartnerPrice(productItem.Product), Discount = productItem.Product.Discount, Note = productItem.Product.Note
+                Code = productItem.Product.Code,
+                Description = productItem.Product.Description,
+                Mu = productItem.Product.Mu,
+                Price = GetPartnerPrice(productItem.Product),
+                Discount = productItem.Product.Discount,
+                Note = productItem.Product.Note
             };
             RaisePropertyChanged(IsExpiringProperty);
             RaisePropertyChanged("InvoiceItem");
@@ -426,7 +431,7 @@ namespace UserControls.ViewModels.Invoices
             if (product == null && code.Substring(0, 1) == "2" && code.Length == 13)
             {
                 product = new ProductsManager().GetProductsByCodeOrBarcode(code.Substring(2, 5), Member.Id);
-                count = HgConvert.ToDecimal(code.Substring(7, 5))/1000;
+                count = HgConvert.ToDecimal(code.Substring(7, 5)) / 1000;
             }
             InvoiceItem = new InvoiceItemsModel(Invoice, product);
             if (product != null)
@@ -484,7 +489,7 @@ namespace UserControls.ViewModels.Invoices
 
         public virtual bool CanRemoveInvoiceItem()
         {
-            return Invoice.ApproveDate == null && SelectedInvoiceItem != null && (ApplicationManager.Instance.UserRoles.Any(s => s.Id == (int) EsSettingsManager.MemberRoles.SeniorSeller || s.Id == (int) EsSettingsManager.MemberRoles.Manager));
+            return Invoice.ApproveDate == null && SelectedInvoiceItem != null && (ApplicationManager.Instance.UserRoles.Any(s => s.Id == (int)EsSettingsManager.MemberRoles.SeniorSeller || s.Id == (int)EsSettingsManager.MemberRoles.Manager));
         }
 
         public virtual void RemoveInvoiceItem()
@@ -551,7 +556,7 @@ namespace UserControls.ViewModels.Invoices
             {
                 InvoiceItems.Add(item);
             }
-            Invoice.Total = InvoiceItems.Sum(s => (s.Price ?? 0)*(s.Quantity ?? 0));
+            Invoice.Total = InvoiceItems.Sum(s => (s.Price ?? 0) * (s.Quantity ?? 0));
             return true;
         }
 
@@ -637,7 +642,7 @@ namespace UserControls.ViewModels.Invoices
         {
             var stock = SelectItemsManager.SelectStocks(StockManager.GetStocks(Member.Id), false).FirstOrDefault();
             if (stock == null) return;
-            var invoiceItems = SelectItemsManager.SelectProductItemsFromStock(new List<long> {stock.Id});
+            var invoiceItems = SelectItemsManager.SelectProductItemsFromStock(new List<long> { stock.Id });
             if (invoiceItems == null) return;
             foreach (var ii in invoiceItems)
             {
@@ -737,7 +742,7 @@ namespace UserControls.ViewModels.Invoices
         private void OnAddItemsFromInvoice(InvoiceType? type)
         {
             if (!type.HasValue) return;
-            var invoice = SelectItemsManager.SelectInvoice((long) type.Value).FirstOrDefault();
+            var invoice = SelectItemsManager.SelectInvoice((long)type.Value).FirstOrDefault();
             if (invoice == null) return;
             var invoiceItems = SelectItemsManager.SelectInvoiceItems(invoice.Id);
             if (invoiceItems == null) return;
@@ -755,9 +760,51 @@ namespace UserControls.ViewModels.Invoices
         public ICommand AddItemsFromStocksCommand { get; private set; }
         public ICommand ApproveInvoiceAndCloseCommand { get; private set; }
 
-        public ICommand GetPartnerCommand { get; private set; }
+
         public ICommand GetProductCommand { get; private set; }
         public ICommand CleanInvoiceIemsCommand { get; private set; }
+
+        #region Partner commands
+
+        private ICommand _getPartnerCommand;
+        public ICommand GetPartnerCommand { get { return _getPartnerCommand ?? (_getPartnerCommand = new RelayCommand<PartnerType?>(OnGetPartner, CanGetPartner)); } }
+
+        private bool CanGetPartner(PartnerType? partnerType)
+        {
+            return !Invoice.IsApproved;
+        }
+
+        protected virtual void OnGetPartner(PartnerType? partnerType)
+        {
+            var partners = partnerType.HasValue? PartnersManager.GetPartner(partnerType.Value) : PartnersManager.GetPartners();
+            SetPrtners(partners);
+        }
+        private ICommand _findPartnerCommand;
+        public ICommand FindPartnerCommand { get { return _findPartnerCommand ?? (_findPartnerCommand = new RelayCommand<string>(OnFindPartner, CanFindPartner)); } }
+
+        private bool CanFindPartner(string filter)
+        {
+            return true; //!string.IsNullOrEmpty(PartnerFilter);
+        }
+
+        private void OnFindPartner(string filter)
+        {
+            var partners = PartnersManager.GetPartners().Where(s => string.IsNullOrEmpty(filter) ||
+                s.FullName.ToLower().Contains(filter.ToLower()) || 
+                (!string.IsNullOrEmpty(s.Mobile) && s.Mobile.ToLower().Contains(filter.ToLower()) ||
+                (!string.IsNullOrEmpty(s.Email) && s.Email.ToLower().Contains(s.Email.ToLower())) ||
+                (!string.IsNullOrEmpty(s.ClubSixteenId) && s.ClubSixteenId.ToLower().Contains(s.ClubSixteenId.ToLower())
+                ))).ToList();
+            SetPrtners(partners);
+        }
+
+        private void SetPrtners(List<PartnerModel> partners)
+        {
+            var partner = SelectItemsManager.SelectPartners(partners, false).FirstOrDefault();
+            if (partner == null) return;
+            SetPartner(partner);
+        }
+        #endregion Partner commands
 
         #endregion Commands
     }

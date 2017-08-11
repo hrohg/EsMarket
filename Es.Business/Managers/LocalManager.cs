@@ -14,7 +14,7 @@ namespace ES.Business.Managers
         #region Private properties
         private EsMemberModel Member { get { return ApplicationManager.Instance.GetMember; } }
         private readonly object _locker = new object();
-        private bool LocalMode = false;
+        private readonly bool _localMode;
 
         private List<StockModel> _stocks;
         private List<EsDefaults> _esDefaults;
@@ -37,7 +37,7 @@ namespace ES.Business.Managers
 
         public List<PartnerModel> GetPartners
         {
-            get { return _partners ?? (_partners = PartnersManager.GetPartners(Member.Id)); }
+            get { return _partners ?? (_partners = PartnersManager.GetPartners()); }
         }
 
         #endregion Partners
@@ -73,7 +73,7 @@ namespace ES.Business.Managers
         {
             get
             {
-                if (!LocalMode || _productItems == null) _productItems = new ProductsManager().GetProductItems(Member.Id);
+                if (!_localMode || _productItems == null) _productItems = new ProductsManager().GetProductItems(Member.Id);
                 return _productItems.Select(s => s.Product as ProductModel).ToList();
             }
             set { _products = value; }
@@ -82,7 +82,7 @@ namespace ES.Business.Managers
         {
             get
             {
-                if (!LocalMode || _productItems == null)
+                if (!_localMode || _productItems == null)
                     _productItems = new ProductsManager().GetProductItems(Member.Id);
                 return _productItems;
             }
@@ -95,7 +95,7 @@ namespace ES.Business.Managers
         {
             get
             {
-                if (!LocalMode || _productResidues == null)
+                if (!_localMode || _productResidues == null)
                     _productResidues = ProductsManager.GeProductResidues(Member.Id);
                 return _productResidues;
             }
@@ -139,7 +139,7 @@ namespace ES.Business.Managers
         {
             get
             {
-                if (!LocalMode || _stocks == null)
+                if (!_localMode || _stocks == null)
                 {
                     _stocks = StockManager.GetStocks(Member.Id);
                 }
@@ -168,7 +168,7 @@ namespace ES.Business.Managers
         #region Constructors
         public LocalManager(bool isOffline)
         {
-            LocalMode = isOffline;
+            _localMode = isOffline;
             if (isOffline)
             {
                 UpdateCash();
@@ -193,7 +193,7 @@ namespace ES.Business.Managers
             _isPartnersUpdating = true;
             lock (_locker)
             {
-                _partners = PartnersManager.GetPartners(Member.Id);
+                _partners = PartnersManager.GetPartners();
             }
             _isPartnersUpdating = false;
         }

@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using ES.Business.Managers;
-using ES.Business.Models;
 using ES.Common.Enumerations;
 using ES.Common.Managers;
 using ES.Common.Models;
@@ -146,7 +145,7 @@ namespace ES.Market.Views.Reports.View
             var products = SelectItemsManager.SelectProduct(true);
             var dateIntermediate = SelectManager.GetDateIntermediate();
             var invoiceItems = InvoicesManager.GetInvoiceItemssByCode(products.Select(s => s.Code), dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Member.Id).OrderBy(s => s.InvoiceId);
-            var invoices = InvoicesManager.GetInvoices(invoiceItems.Select(s => s.InvoiceId).Distinct(), ApplicationManager.Member.Id);
+            var invoices = InvoicesManager.GetInvoices(invoiceItems.Select(s => s.InvoiceId).Distinct());
             var list = invoiceItems.Select(s =>
                         new ProductProviderReportModel
                         {

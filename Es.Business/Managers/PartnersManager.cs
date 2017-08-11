@@ -108,17 +108,17 @@ namespace ES.Business.Managers
         {
             return Convert(TryGetPartner(id, esMemberId));
         }
-        public static List<PartnerModel> GetPartners(long esMemberId)
+        public static List<PartnerModel> GetPartners()
         {
-            return TryGetPartners(esMemberId).Select(Convert).OrderBy(s => s.FullName).ToList();
+            return TryGetPartners().Select(Convert).OrderBy(s => s.FullName).ToList();
         }
         public static List<PartnerModel> GetPartners(List<Guid> ids)
         {
             return TryGetPartners(ids).Select(Convert).OrderBy(s => s.FullName).ToList();
         }
-        public static PartnerModel GetDefaultPartner(long esMemberId, PartnerType partnerTypeId)
+        public static PartnerModel GetDefaultPartner(PartnerType partnerTypeId)
         {
-            return TryGetPartners(esMemberId, partnerTypeId).Select(Convert).FirstOrDefault();
+            return TryGetPartners(partnerTypeId).Select(Convert).FirstOrDefault();
         }
         public static PartnerModel GetDefaultParnerByInvoiceType(long esMemberId, InvoiceType invoiceTypeId)
         {
@@ -132,13 +132,13 @@ namespace ES.Business.Managers
                     return null;
             }
         }
-        public static List<PartnerModel> GetPartner(long esMemberId)
+        public static List<PartnerModel> GetPartner()
         {
-            return TryGetPartners(esMemberId).Select(Convert).OrderBy(s => s.FullName).ToList();
+            return TryGetPartners().Select(Convert).OrderBy(s => s.FullName).ToList();
         }
-        public static List<PartnerModel> GetPartner(long esMemberId, PartnerType partnerTypeId)
+        public static List<PartnerModel> GetPartner(PartnerType partnerTypeId)
         {
-            return TryGetPartners(esMemberId, partnerTypeId).Select(Convert).OrderBy(s => s.FullName).ToList();
+            return TryGetPartners(partnerTypeId).Select(Convert).OrderBy(s => s.FullName).ToList();
         }
         public static bool AddPartner(PartnerModel item)
         {
@@ -221,8 +221,9 @@ namespace ES.Business.Managers
 
             }
         }
-        private static List<Partners> TryGetPartners(long memberId)
+        private static List<Partners> TryGetPartners()
         {
+            var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
             {
                 try
@@ -238,8 +239,9 @@ namespace ES.Business.Managers
 
             }
         }
-        private static List<Partners> TryGetPartners(long memberId, PartnerType partnerTypeId)
+        private static List<Partners> TryGetPartners(PartnerType partnerTypeId)
         {
+            var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
             {
                 try

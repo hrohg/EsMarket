@@ -32,7 +32,7 @@
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="Header">
             <Setter.Value>
-                    <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/DropDownMenu.png" Width="24" Height="24"/>
+                    <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu_24x24.png" Width="24" Height="24"/>
             </Setter.Value>
         </Setter>
     </Style>
@@ -43,7 +43,7 @@
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="Header">
             <Setter.Value>
-                <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu.png" Width="16" Height="16"/>
+                <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu_16x16.png" Width="16" Height="16"/>
             </Setter.Value>
         </Setter>
     </Style>

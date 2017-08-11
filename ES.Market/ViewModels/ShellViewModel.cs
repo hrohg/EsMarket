@@ -1227,7 +1227,7 @@ namespace ES.Market.ViewModels
         private void OnGetCashDeskInfo(object o)
         {
             var cashDesks = CashDeskManager.GetCashDesks();
-            var partners = PartnersManager.GetPartners(_member.Id);
+            var partners = PartnersManager.GetPartners();
 
             if (cashDesks == null || cashDesks.Count == 0)
             {

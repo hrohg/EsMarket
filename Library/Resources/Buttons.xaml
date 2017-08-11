@@ -131,6 +131,21 @@
         </Setter>
     </Style>
 
+    <Style x:Key="FindTextBoxButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource NoChromeButton}">
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Find/Find_16x16.png" Width="16" Height="16"/>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsPressed, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                            <Setter TargetName="Image" Property="Opacity" Value="0.3"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="AddSingleToggleButtinStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static res:ResourceKeys.NoChromeToggleButtonKey}}">
         <Setter Property="ToolTip" Value="{Binding AddSingleTooltip}"/>
         <Setter Property="ContentTemplate">
@@ -208,7 +223,7 @@
             <Setter.Value>
                 <DataTemplate>
                     <StackPanel SnapsToDevicePixels="True" Orientation="Horizontal">
-                        <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Information/Information.png" Width="16" Height="16"/>
+                        <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Information/Information_16x16.png" Width="16" Height="16"/>
                     </StackPanel>
                     <DataTemplate.Triggers>
                         <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="false">

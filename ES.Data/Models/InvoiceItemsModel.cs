@@ -88,6 +88,8 @@ namespace ES.Data.Models
             }
         }
         private InvoiceModel _invoice;
+        private bool _isApproved;
+
         public InvoiceModel Invoice
         {
             get { return _invoice; }
@@ -155,6 +157,7 @@ namespace ES.Data.Models
         public decimal Amount { get { return (Quantity != null && Price != null) ? (decimal)Price * (decimal)Quantity : 0; } }
         public decimal? Discount { get { return _discount; } set { _discount = value; OnPropertyChanged(DiscountProperties); OnPropertyChanged(AmountProperty); } }
         public string Note { get { return _note; } set { _note = value; OnPropertyChanged(NoteProperties); } }
+        
         #endregion
 
         #region INotifyPropertyChanged

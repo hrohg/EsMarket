@@ -666,7 +666,7 @@
                     </MenuItem>
                     <MenuItem Header="Տպել գնապիտակ">
                         <MenuItem.Icon>
-                            <Image Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/PriceTicket.png"/>
+                            <Image Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Price/PriceTicket.png"/>
                         </MenuItem.Icon>                        
                         <MenuItem Header="Տպել գնապիտակ" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.PriceOnly}"/>
                         <MenuItem Header="Տպել գնապիտակ S" Click ="MiPrintBarcode_Click">

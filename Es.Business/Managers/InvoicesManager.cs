@@ -242,8 +242,9 @@ namespace ES.Business.Managers
                 return null;
             }
         }
-        private static List<Invoices> TryGetInvoices(IEnumerable<Guid> ids, long memberId)
+        private static List<Invoices> TryGetInvoices(IEnumerable<Guid> ids)
         {
+            var memberId = ApplicationManager.Member.Id;
             try
             {
                 using (var db = GetDataContext())
@@ -1746,40 +1747,40 @@ namespace ES.Business.Managers
             return ConvertInvoice(invoice, PartnersManager.GetPartner(invoice.PartnerId, memberId));
         }
 
-        public static List<InvoiceModel> GetInvoices(IEnumerable<Guid> ids, long memberId)
+        public static List<InvoiceModel> GetInvoices(IEnumerable<Guid> ids)
         {
-            var partners = PartnersManager.GetPartner(memberId);
-            return TryGetInvoices(ids, memberId).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).OrderByDescending(s => s.CreateDate).ToList();
+            var partners = PartnersManager.GetPartner();
+            return TryGetInvoices(ids).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).OrderByDescending(s => s.CreateDate).ToList();
         }
 
         public static List<InvoiceModel> GetInvoices(InvoiceType invoiceType)
         {
-            var partners = PartnersManager.GetPartner(ApplicationManager.Member.Id);
+            var partners = PartnersManager.GetPartner();
             return TryGetInvoices(invoiceType).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).OrderByDescending(s => s.CreateDate).ToList();
         }
 
         public static List<InvoiceModel> GetInvoices(InvoiceType invoiceType, int? maxInvoiceCount, long memberId)
         {
-            var partners = PartnersManager.GetPartner(memberId);
+            var partners = PartnersManager.GetPartner();
             return TryGetInvoices(invoiceType, maxInvoiceCount, memberId).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).OrderByDescending(s => s.CreateDate).ToList();
         }
 
         public static List<InvoiceModel> GetApprovedInvoices(InvoiceType invoiceType, int? maxInvoiceCount, long memberId)
         {
-            var partners = PartnersManager.GetPartner(memberId);
+            var partners = PartnersManager.GetPartner();
             return TryGetApprovedInvoices(invoiceType, maxInvoiceCount, memberId).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).OrderByDescending(s => s.CreateDate).ToList();
         }
 
         public static List<InvoiceModel> GetInvoices(DateTime startDate, DateTime endDate, long memberId)
         {
             var invoices = TryGetInvoices(startDate, endDate, memberId);
-            var partners = PartnersManager.GetPartner(memberId);
+            var partners = PartnersManager.GetPartner();
             return invoices.Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).ToList();
         }
 
         public static List<InvoiceModel> GetInvoicesProv(DateTime startDate, DateTime endDate, long memberId)
         {
-            var partners = PartnersManager.GetPartner(memberId);
+            var partners = PartnersManager.GetPartner();
             return TryGetInvoices(startDate, endDate, memberId).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).ToList();
         }
 
@@ -2065,7 +2066,7 @@ namespace ES.Business.Managers
 
         public static List<InvoiceModel> GetUnacceptedInvoicesDescriptions(InvoiceType invoiceType, long memberId)
         {
-            var partners = PartnersManager.GetPartner(memberId);
+            var partners = PartnersManager.GetPartner();
             return TryGetUnaccepedInvoicesDescriptions(invoiceType, memberId).OrderByDescending(s => s.CreateDate).ToList();
         }
 

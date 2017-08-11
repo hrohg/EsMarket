@@ -40,7 +40,7 @@ namespace UserControls.Helpers
             return servers.Where(s => selectItem.SelectedItems.Select(t => t.SelectedValue).Contains(s.Key)).ToList();
         }
 
-        public static List<PartnerModel> SelectPartners(List<PartnerModel> partners, bool allowMultipleSelect, string title)
+        public static List<PartnerModel> SelectPartners(List<PartnerModel> partners, bool allowMultipleSelect, string title= "Ընտրել գործընկեր")
         {
             if (partners == null || partners.Count == 0) return new List<PartnerModel>();
             if (partners.Count == 1) { return partners; }
@@ -50,12 +50,8 @@ namespace UserControls.Helpers
         }
         public static List<PartnerModel> SelectPartners(bool allowMultipleSelect = false, string title = "Ընտրել")
         {
-            var partners = PartnersManager.GetPartners(ApplicationManager.Instance.GetMember.Id);
-            if (partners == null || partners.Count == 0) return new List<PartnerModel>();
-            if (partners.Count == 1) { return partners; }
-            var selectItem = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), allowMultipleSelect, title);
-            if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return new List<PartnerModel>(); }
-            return partners.Where(s => selectItem.SelectedItems.Select(t => (Guid)t.SelectedValue).Contains(s.Id)).ToList();
+            var partners = PartnersManager.GetPartners();
+            return SelectPartners(partners, allowMultipleSelect, title);
         }
         public static List<PartnerType> SelectPartnersTypes(bool allowMultipleSelect = false, string title = "Ընտրել")
         {
@@ -338,10 +334,9 @@ namespace UserControls.Helpers
 
         public static PartnerModel SelectPartner(PartnerType partnerTypeId = 0)
         {
-            var partners = partnerTypeId != 0 ? PartnersManager.GetPartner(ApplicationManager.Instance.GetMember.Id, partnerTypeId) : PartnersManager.GetPartners(ApplicationManager.Instance.GetMember.Id);
+            var partners = partnerTypeId != 0 ? PartnersManager.GetPartner(partnerTypeId) : PartnersManager.GetPartners();
             if (partners.Count == 0) return null;
-            var selectedItems =
-                new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName + " " + s.Mobile, SelectedValue = s.Id }).ToList(), false);
+            var selectedItems = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName + " " + s.Mobile, SelectedValue = s.Id }).ToList(), false);
             selectedItems.ShowDialog();
             if (selectedItems.DialogResult == null || selectedItems.DialogResult != true || selectedItems.SelectedItems == null)
             { return null; }

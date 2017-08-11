@@ -166,7 +166,7 @@ namespace ES.Market
                 MessageBox.Show("Նշված տվյալներով պատվեր չի հայտնաբերվել");
                 return;
             }
-            var partners = PartnersManager.GetPartner(ApplicationManager.Instance.GetMember.Id);
+            var partners = PartnersManager.GetPartner();
             var ui =
                 new UIListView(products.Select(
                         s =>
@@ -218,7 +218,7 @@ namespace ES.Market
         #region Cash desk
         private void MiDebitViewDetile_Click(object sender, EventArgs e)
         {
-            var partners = PartnersManager.GetPartners(ApplicationManager.Instance.GetMember.Id);
+            var partners = PartnersManager.GetPartners();
             string content, title;
             title = "Դեբիտորական պարտքի դիտում";
             if (partners == null)
@@ -236,7 +236,7 @@ namespace ES.Market
         //todo
         private PartnerModel SelectPartner(PartnerType partnerTypeId = 0)
         {
-            var partners = partnerTypeId != 0 ? PartnersManager.GetPartner(ApplicationManager.Instance.GetMember.Id, partnerTypeId) : PartnersManager.GetPartners(ApplicationManager.Instance.GetMember.Id);
+            var partners = partnerTypeId != 0 ? PartnersManager.GetPartner(partnerTypeId) : PartnersManager.GetPartners();
             if (partners.Count == 0) return null;
             var selectedItems =
                 new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName + " " + s.Mobile, SelectedValue = s.Id }).ToList(), false);
@@ -410,7 +410,7 @@ namespace ES.Market
         }
         private void MiDebitByPartners_Click(object sender, EventArgs e)
         {
-            var debits = PartnersManager.GetPartners(ApplicationManager.Instance.GetMember.Id);
+            var debits = PartnersManager.GetPartners();
             var ui = new UIListView(debits.Where(s => s.Debit > 0 || s.Credit > 0).Select(s => new { Գործընկեր = s.FullName, Կանխավճար = s.Credit, Պարտք = s.Debit }).ToList());
             ui.Show();
         }

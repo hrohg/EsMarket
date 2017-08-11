@@ -110,7 +110,7 @@ namespace ES.Data.Models
         public long MemberId { get { return _memberId; } set { _memberId = value; } }
         public long? FromStockId { get; set; }
         public long? ToStockId { get; set; }
-        public DateTime? ApproveDate { get { return _approveDate; } set { _approveDate = value; OnPropertyChanged(ApproveDateProperty); } }
+        public DateTime? ApproveDate { get { return _approveDate; } set { _approveDate = value; OnPropertyChanged(ApproveDateProperty); OnPropertyChanged("IsApproved"); } }
         public long? ApproverId { get; set; }
         public string Approver { get; set; }
         public DateTime? AcceptDate { get; set; }
@@ -127,11 +127,19 @@ namespace ES.Data.Models
         public string RecipientBankAccount { get; set; }
         public string RecipientTaxRegistration { get; set; }
         private string _note;
+        private bool _isApproved;
+
         public string Notes
         {
             get { return _note; }
             set { _note = value; OnPropertyChanged("Notes"); }
         }
+
+        public bool IsApproved
+        {
+            get { return ApproveDate != null; }
+        }
+
         #endregion
 
         #region INotifyPropertyChanged
