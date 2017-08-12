@@ -32,7 +32,7 @@ namespace UserControls.ViewModels
             protected set
             {
                 _items = value.ToList();
-                OnPropertyChanged("ViewList");
+                RaisePropertyChanged("ViewList");
             }
         }
         #endregion
@@ -55,13 +55,13 @@ namespace UserControls.ViewModels
         private void Update(Tuple<DateTime, DateTime> dateIntermediate)
         {
             IsLoading = true;
-            OnPropertyChanged(IsInProgressProperty);
+            RaisePropertyChanged(IsInProgressProperty);
             ViewList = new ObservableCollection<InternalWayBillDetilesModel>(InvoicesManager.GetWillBillByDetile(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetMember.Id));
             TotalRows = _items.Count;
             TotalCount = (double)_items.Sum(s => s.Quantity ?? 0);
             Total = (double)_items.Sum(i => (i.Quantity ?? 0) * (i.Price ?? 0));
             IsLoading = false;
-            OnPropertyChanged(IsInProgressProperty);
+            RaisePropertyChanged(IsInProgressProperty);
         }
         protected override void OnUpdate(object o)
         {
@@ -99,9 +99,9 @@ namespace UserControls.ViewModels
             protected set
             {
                 _items = value.ToList();
-                OnPropertyChanged("ViewList");
-                OnPropertyChanged("Count");
-                OnPropertyChanged("Total");
+                RaisePropertyChanged("ViewList");
+                RaisePropertyChanged("Count");
+                RaisePropertyChanged("Total");
             }
         }
         public int Count { get { return _items.Count; } }
@@ -126,12 +126,12 @@ namespace UserControls.ViewModels
         private void Update(Tuple<DateTime, DateTime> dateIntermediate)
         {
             IsLoading = true;
-            OnPropertyChanged(IsInProgressProperty);
+            RaisePropertyChanged(IsInProgressProperty);
             ViewList = new ObservableCollection<InternalWayBillModel>(InvoicesManager.GetWillBill(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetMember.Id));
             TotalRows = _items.Count;
             //TotalCount = (double)_items.Sum(s => s.Quantity ?? 0);
             IsLoading = false;
-            OnPropertyChanged(IsInProgressProperty);
+            RaisePropertyChanged(IsInProgressProperty);
         }
         protected override void OnUpdate(object o)
         {

@@ -193,12 +193,7 @@ namespace ES.Market
                     {
                         Shutdown();
                     }
-
                 }
-
-
-
-
             }
         }
 

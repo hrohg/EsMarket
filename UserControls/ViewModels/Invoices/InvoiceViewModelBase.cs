@@ -151,13 +151,6 @@ namespace UserControls.ViewModels.Invoices
         }
         #endregion Partner
 
-        public bool IsInvoiceApproved
-        {
-            get
-            {
-                return Invoice != null && Invoice.ApproveDate!=null;
-            }
-        }
         #endregion External properties
 
         public override string Description
@@ -243,7 +236,7 @@ namespace UserControls.ViewModels.Invoices
         #region Import
         protected virtual bool CanImportInvoice(ExportImportEnum importFrom)
         {
-            return IsInvoiceValid && !IsInvoiceApproved;
+            return IsInvoiceValid && !Invoice.IsApproved;
         }
         protected virtual void OnImportInvoice(ExportImportEnum importFrom)
         {

@@ -10,9 +10,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
                 <TextBox Name="TxtSearchText" VerticalAlignment="Top" Grid.Row="0"  HorizontalAlignment="Stretch" Height="25" FontSize="15" VerticalContentAlignment="Center" Width="Auto" BorderThickness="1" BorderBrush="Black" TextChanged="TxtSearchText_Changed" KeyDown="TxtSearchText_KeyDown"/>
-                <Button VerticalAlignment="Top" Grid.Row="0" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" Click="BtnSearch_Click" IsTabStop="False">
-                    <Image Height="20" Width="20" Source="pack://application:,,,/Shared;component/Images/Search.png"/>
-                </Button>
+        <Button VerticalAlignment="Top" Grid.Row="0" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" Click="BtnSearch_Click" IsTabStop="False" Style="{DynamicResource FindTextBoxButtonStyle}" Margin="1 0"/>
         <ListView Name="LvItems" Grid.Row="1" VerticalAlignment="Stretch" MouseDoubleClick="LvItems_MouseDoubleClick" KeyDown="LvItems_KeyDown"/>
             <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5">
                 <Button Margin="1" Width="80" Content="Ընտրել" Click="BtnAccept_Click"/>

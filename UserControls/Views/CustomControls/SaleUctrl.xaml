@@ -11,6 +11,7 @@
          xmlns:converters="clr-namespace:UserControls.Converters"
          xmlns:managers="clr-namespace:ES.Business.Managers;assembly=ES.Business"
          xmlns:popup="clr-namespace:UserControls.Controls.Popup"
+         xmlns:controls="clr-namespace:ES.Common.Controls;assembly=ES.Common"
          MinHeight="450"
          MinWidth="700"
          Width="Auto"
@@ -33,9 +34,12 @@
         </Grid.InputBindings>
         <Grid.ContextMenu>
             <ContextMenu>
-                <MenuItem Header="Հիշել" InputGestureText="Ctrl+S" Command="{Binding SaveInvoiceCommand}"></MenuItem>
+                <MenuItem Header="Վճարել" InputGestureText="Ctrl+E" Command="{Binding PaidInvoiceCommand}"/>
+                <Separator/>
+                <MenuItem Header="Հիշել" InputGestureText="Ctrl+S" Command="{Binding SaveInvoiceCommand}"/>
                 <MenuItem Header="Հաստատել" InputGestureText="F5" Command="{Binding ApproveInvoiceCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabItem}}" Tag="1"/>
                 <MenuItem Header="Հաստատել (Փակել)" InputGestureText="Ctrl+F5" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabItem}}" Tag="1"/>
+                <Separator/>
                 <MenuItem Header="Տպել" InputGestureText="Ctrl+P" Tag="2" IsEnabled="False" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
             </ContextMenu>
         </Grid.ContextMenu>
@@ -76,18 +80,17 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Partner.Description}" Foreground="Blue" VerticalAlignment="Center"/>
                     <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Menu Margin="3 0">
-                            <MenuItem Background="Transparent" Margin="0" Height="16" Width="16">
-                                <MenuItem.Header>
-                                    <Image Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu_16x16.png" Width="16" Height="16"/>
-                                </MenuItem.Header>
-                                <MenuItem Header="Ընտրել պատվիրատու" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Customer}"></MenuItem>
-                                <MenuItem Header="Ընտրել գործընկեր" Command="{Binding GetPartnerCommand}"/>
-                                <MenuItem Header="Ընտրել մատակարար" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Provider}"></MenuItem>
-                                <MenuItem Header="Ընտրել դիլլեր" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Dealer}"></MenuItem>
-                                <MenuItem Header="Ընտրել Մասնաճյուղ" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Branch}"></MenuItem>
-                            </MenuItem>
-                        </Menu>
+                        <controls:DropDownMenuButton Style="{DynamicResource DropDownMenuSmallButtonStyle}">
+                            <controls:DropDownMenuButton.DropDownContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Ընտրել պատվիրատու" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Customer}"/>
+                                    <MenuItem Header="Ընտրել գործընկեր" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.None}"/>
+                                    <MenuItem Header="Ընտրել մատակարար" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Provider}"/>
+                                    <MenuItem Header="Ընտրել դիլլեր" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Dealer}"/>
+                                    <MenuItem Header="Ընտրել Մասնաճյուղ" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Branch}"/>
+                                </ContextMenu>
+                            </controls:DropDownMenuButton.DropDownContextMenu>
+                        </controls:DropDownMenuButton>
                         <popup:DraggablePopup IsOpen="{Binding ElementName=ParentToggleButton, Path=IsChecked}" StaysOpen="False" AllowsTransparency="True">
                             <Border Background="LightBlue" MinWidth="200" MinHeight="100" CornerRadius="2 2 0 0" BorderThickness="1" BorderBrush="#FFFF9901">
                                 <StackPanel Margin="5">
@@ -132,10 +135,23 @@
                                 </StackPanel>
                             </Border>
                         </popup:DraggablePopup>
-                        <ToggleButton x:Name="ParentToggleButton" Style="{DynamicResource InformationToggleButtinStyle}" Margin="3 0"/>
+                        <ToggleButton x:Name="ParentToggleButton" Style="{DynamicResource InformationToggleButtinStyle}" Margin="1 0"/>
                     </StackPanel>
-                    <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding PartnerFilter}" MinWidth="150" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
-                    <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Style="{DynamicResource FindTextBoxButtonStyle}"/>
+                    <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="PartnerFilterTextBox" Text="{Binding PartnerFilter}" MinWidth="250" HorizontalAlignment="Stretch">
+                    <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding FindPartnerCommand}" CommandParameter="{Binding ElementName=PartnerFilterTextBox, Path=Text}"/>
+                    </TextBox.InputBindings>    
+                    <TextBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Ընտրել պատվիրատու" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Customer}"/>
+                                <MenuItem Header="Ընտրել գործընկեր" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.None}"/>
+                                <MenuItem Header="Ընտրել մատակարար" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Provider}"/>
+                                <MenuItem Header="Ընտրել դիլլեր" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Dealer}"/>
+                                <MenuItem Header="Ընտրել Մասնաճյուղ" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Branch}"/>
+                            </ContextMenu>
+                        </TextBox.ContextMenu>
+                    </TextBox>
+                    <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Style="{DynamicResource FindTextBoxButtonStyle}" Command="{Binding FindPartnerCommand}" CommandParameter="{Binding ElementName=PartnerFilterTextBox, Path=Text}" Margin="1 0"/>
                 </Grid>
             </GroupBox>
             <GroupBox Grid.Column="2">
@@ -149,7 +165,7 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Text="{Binding Invoice.InvoiceNumber}" Foreground="Blue" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Image Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Invoice/Approval_16x16_Green.png" Visibility="{Binding Converter={StaticResource BoolToVisibilityConverter}, Path=IsInvoiceApproved}" Width="16" Height="16" ToolTip="{Binding InvoiceStateTooltip}"/>
+                        <Image Source="{Binding InvocieStateImageState.Normal}" Width="16" Height="16" ToolTip="{Binding InvoiceStateTooltip}"/>
                     </StackPanel>
                 </Grid>
             </GroupBox>
@@ -355,7 +371,40 @@
                         Command="{Binding ApproveInvoiceAndCloseCommand}" 
                         CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"
                         ToolTip="Հաստատել (Փակել) Ctrl+F5" Margin="3 0"/>
-                    <Menu>
+                    <controls:DropDownMenuButton Style="{DynamicResource DropDownMenuButtonStyle}">
+                        <controls:DropDownMenuButton.DropDownContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"  />
+                                <MenuItem Header="Հաստատել" Command="{Binding ApproveInvoiceCommand}"  />
+                                <Separator/>
+                                <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
+                                <MenuItem Header="Տպել վաճառքի կտրոն Ctrl+Shift+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Small}"/>
+                                <MenuItem Header="Տպել ՀԴՄ կտրոն" Command="{Binding PrintEcrTicketCommand}"/>
+                                <Separator/>
+                                <MenuItem Header="Բեռնել">
+                                    <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceToXmlCommand}"/>
+                                    <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ImportInvoiceCommand}"/>
+                                    <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" Visibility="Collapsed"/>
+                                    <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}"  Visibility="Collapsed"/>
+                                    <MenuItem Header="Ապրանքների բեռնում">
+                                        <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
+                                        <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceType.MoveInvoice}" />
+                                        <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceType.PurchaseInvoice}"/>
+                                    </MenuItem>
+                                </MenuItem>
+                                <MenuItem Header="Արտահանել">
+                                    <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceToXmlCommand}"/>
+                                    <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ExportInvoiceToExcelCommand}"/>
+                                    <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" Visibility="Collapsed"/>
+                                    <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}" Visibility="Collapsed"/>
+                                    <MenuItem Header="Արտահանել Ctrl+E" Command="{Binding ExportInvoiceCommand}" Visibility="Collapsed"/>
+                                </MenuItem>
+                                <Separator/>
+                                <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>
+                            </ContextMenu>
+                        </controls:DropDownMenuButton.DropDownContextMenu>
+                    </controls:DropDownMenuButton>
+                    <Menu Visibility="Collapsed">
                         <MenuItem>
                             <MenuItem.Header>
                                 <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu_24x24.png" Width="24" Height="24"/>

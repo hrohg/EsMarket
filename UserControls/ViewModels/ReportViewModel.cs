@@ -58,7 +58,7 @@ namespace UserControls.ViewModels
         {
             IsInProgress = true;
             var dateIntermediate = SelectManager.GetDateIntermediate();
-            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetMember.Id);
+            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2);
             var invoiceItems = InvoicesManager.GetInvoiceItems(invoices.Select(s => s.Id));
             var productItems = new ProductsManager().GetProductItems(ApplicationManager.Instance.GetMember.Id);
             var productOrder = new List<object>(productItems.GroupBy(s => s.Product).Select(s =>
@@ -124,9 +124,9 @@ namespace UserControls.ViewModels
             {
                 _items = value.ToList();
 
-                OnPropertyChanged("ViewList");
-                OnPropertyChanged("Count");
-                OnPropertyChanged("Total");
+                RaisePropertyChanged("ViewList");
+                RaisePropertyChanged("Count");
+                RaisePropertyChanged("Total");
             }
         }
         #endregion
@@ -149,7 +149,7 @@ namespace UserControls.ViewModels
         private void OnUpdateAsync(Tuple<DateTime, DateTime> dateIntermediate)
         {
             IsLoading = true;
-            OnPropertyChanged(IsInProgressProperty);
+            RaisePropertyChanged(IsInProgressProperty);
             var handle = OnUpdate;
             if (handle == null) return;
             var reports = handle(dateIntermediate);
@@ -165,7 +165,7 @@ namespace UserControls.ViewModels
             //TotalCount = (double)_items.Sum(s => s.Quantity ?? 0);
             Total = (double)ViewList.Sum(i => i.Sale ?? 0);
             IsLoading = false;
-            OnPropertyChanged(IsInProgressProperty);
+            RaisePropertyChanged(IsInProgressProperty);
         }
 
         public void Update()
@@ -174,7 +174,7 @@ namespace UserControls.ViewModels
             Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
             if (dateIntermediate == null) return;
             Description = string.Format("Հաշվետվություն {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
-            OnPropertyChanged("Description");
+            RaisePropertyChanged("Description");
             var thread = new Thread(() => OnUpdateAsync(dateIntermediate));
             thread.Start();
         }

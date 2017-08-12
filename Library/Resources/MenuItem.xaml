@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:ES.Common.Controls;assembly=ES.Common">
+
     <Style x:Key="NoChromeMenuItem" TargetType="{x:Type MenuItem}">
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="Background" Value="Transparent"/>
@@ -25,14 +26,14 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style x:Key="MoreMenuItemStyle" TargetType="{x:Type MenuItem}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="Header">
             <Setter.Value>
-                    <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu_24x24.png" Width="24" Height="24"/>
+                <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu_24x24.png" Width="24" Height="24"/>
             </Setter.Value>
         </Setter>
     </Style>
@@ -44,6 +45,72 @@
         <Setter Property="Header">
             <Setter.Value>
                 <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu_16x16.png" Width="16" Height="16"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ResultViewSmallImageStyle" TargetType="{x:Type Image}">
+        <Setter Property="Width" Value="16"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Source" Value="../Resources/Images/Menu/Menu_16x16.png"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ToggleButton}}, Path=IsPressed}" Value="True">
+                <Setter Property="Opacity" Value=".3"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ToggleButton}}, Path=IsMouseOver}" Value="True">
+                <Setter Property="Opacity" Value=".3"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ToggleButton}}, Path=IsChecked}" Value="True">
+                <Setter Property="Opacity" Value=".7"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="ResultViewImageStyle" TargetType="{x:Type Image}">
+        <Setter Property="Width" Value="16"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Source" Value="../Resources/Images/Menu/Menu_24x24.png"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ToggleButton}}, Path=IsPressed}" Value="True">
+                <Setter Property="Opacity" Value=".3"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ToggleButton}}, Path=IsMouseOver}" Value="True">
+                <Setter Property="Opacity" Value=".3"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ToggleButton}}, Path=IsChecked}" Value="True">
+                <Setter Property="Opacity" Value=".7"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="DropDownMenuSmallButtonStyle" TargetType="{x:Type controls:DropDownMenuButton}">
+        <Setter Property="Margin" Value="0 0 2 0"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Width" Value="16"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border BorderThickness="1" BorderBrush="Black">
+                        <Image Style="{StaticResource ResultViewSmallImageStyle}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DropDownMenuButtonStyle" TargetType="{x:Type controls:DropDownMenuButton}">
+        <Setter Property="Margin" Value="0 0 2 0"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Width" Value="24"/>
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border BorderThickness="1" BorderBrush="Black">
+                        <Image Style="{StaticResource ResultViewImageStyle}"/>
+                    </Border>
+                </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>

@@ -43,9 +43,9 @@ namespace UserControls.ViewModels
         private void Update(Tuple<DateTime, DateTime> dateIntermediate)
         {
             IsLoading = true;
-            OnPropertyChanged(IsInProgressProperty);
-            IsLoading = true; OnPropertyChanged(IsInProgressProperty);
-            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetMember.Id).Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice);
+            RaisePropertyChanged(IsInProgressProperty);
+            IsLoading = true; RaisePropertyChanged(IsInProgressProperty);
+            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice);
             var invoiceItems = InvoicesManager.GetInvoiceItems(invoices.Select(s => s.Id));
             _items = invoiceItems.GroupBy(s => s.ProductId).Where(s => s.FirstOrDefault() != null).Select(s =>
                 new InvoiceItems
@@ -59,14 +59,14 @@ namespace UserControls.ViewModels
                     Note = s.First().Product.Note
                 }).ToList();
             _items = _items.OrderBy(s => s.Code).ThenBy(s => s.Description).ThenBy(s => s.Code).ToList();
-            OnPropertyChanged("ViewList");
+            RaisePropertyChanged("ViewList");
             TotalRows = _items.Count;
             TotalCount = (double) _items.Sum(s => s.Quantity??0);
             Total = (double) _items.Sum(i => (i.Quantity ?? 0)*(i.Price??0));
             IsLoading = false;
-            OnPropertyChanged(IsInProgressProperty);
+            RaisePropertyChanged(IsInProgressProperty);
             IsLoading = false;
-            OnPropertyChanged(IsInProgressProperty);
+            RaisePropertyChanged(IsInProgressProperty);
         }
         protected override void OnUpdate(object o)
         {

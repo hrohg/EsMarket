@@ -82,7 +82,7 @@ namespace ES.Market.Views.Reports.View
             var dateIntermediate = SelectManager.GetDateIntermediate();
             var invoiceItems =
                 InvoicesManager.GetInvoiceItemsByStocks(
-                InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Member.Id)
+                InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2)
                     .Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice)
                         .Select(s => s.Id), stocks.Select(t => t.Id));
             var list = stocks.Select(s =>
@@ -118,7 +118,7 @@ namespace ES.Market.Views.Reports.View
             var dateIntermediate = SelectManager.GetDateIntermediate();
             var invoiceItems =
                 InvoicesManager.GetInvoiceItemsByStocks(
-                InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Member.Id)
+                InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2)
                     .Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice)
                         .Select(s => s.Id), stocksIds);
             var list = invoiceItems.GroupBy(s => s.Code).Select(s =>
@@ -172,7 +172,7 @@ namespace ES.Market.Views.Reports.View
         protected void MiViewSaleReportDetile_Click(object sender, EventArgs e)
         {
             var dateIntermediate = SelectManager.GetDateIntermediate();
-            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Member.Id)
+            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2)
                     .Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).ToList();
 
             if (!invoices.Any())

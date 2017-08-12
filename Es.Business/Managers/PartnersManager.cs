@@ -136,9 +136,9 @@ namespace ES.Business.Managers
         {
             return TryGetPartners().Select(Convert).OrderBy(s => s.FullName).ToList();
         }
-        public static List<PartnerModel> GetPartner(PartnerType partnerTypeId)
+        public static List<PartnerModel> GetPartner(PartnerType partnerType)
         {
-            return TryGetPartners(partnerTypeId).Select(Convert).OrderBy(s => s.FullName).ToList();
+            return TryGetPartners(partnerType).Select(Convert).OrderBy(s => s.FullName).ToList();
         }
         public static bool AddPartner(PartnerModel item)
         {
@@ -239,7 +239,7 @@ namespace ES.Business.Managers
 
             }
         }
-        private static List<Partners> TryGetPartners(PartnerType partnerTypeId)
+        private static List<Partners> TryGetPartners(PartnerType partnerType)
         {
             var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
@@ -249,7 +249,7 @@ namespace ES.Business.Managers
                     return db.Partners
                                         .Include(s => s.EsMembers)
                                         .Include(s => s.EsPartnersTypes)
-                                        .Where(s => s.EsMemberId == memberId && s.EsPartnersTypeId == (long)partnerTypeId)
+                                        .Where(s => s.EsMemberId == memberId && (partnerType ==PartnerType.None || s.EsPartnersTypeId == (long)partnerType))
                                         .ToList();
                 }
                 catch (Exception)

@@ -144,8 +144,15 @@ namespace UserControls.ViewModels.Invoices
         public decimal ProductQuantity { get { return InvoiceItems.Sum(s => s.Quantity ?? 0); } }
         public decimal InvoiceProfit { get { return Invoice.Amount - Invoice.Total; } }
         public decimal ActualPercentage { get { return InvoicePaid.Total.HasValue && InvoicePaid.Total != 0 ? InvoiceProfit * 100 / InvoicePaid.Total.Value : 100; } }
-        public string PartnerFilter { get; set; }
-        public string InvoiceStateTooltip { get { return IsInvoiceApproved ? string.Format("Հաստատված է {0}", Invoice.ApproveDate) : "Հաստատված չէ"; } }
+
+        public string PartnerFilter
+        {
+            get { return _partnerFilter; }
+            set { _partnerFilter = value; RaisePropertyChanged("PartnerFilter"); }
+        }
+
+        public ImageState InvocieStateImageState { get { return ImageHelper.GetInvoiceStateImage(Invoice.IsApproved); } }
+        public string InvoiceStateTooltip { get { return Invoice.IsApproved ? string.Format("Հաստատված է {0}", Invoice.ApproveDate) : "Հաստատված չէ"; } }
         #endregion
 
         #region Constructors
@@ -510,7 +517,7 @@ namespace UserControls.ViewModels.Invoices
 
         public bool CanSaveInvoice(object o)
         {
-            return Invoice.ApproveDate == null && InvoiceItems.Count != 0;
+            return Invoice.ApproveDate == null && InvoiceItems.Count != 0 && IsModified;
         }
 
         public virtual void OnSaveInvoice(object o)
@@ -767,19 +774,19 @@ namespace UserControls.ViewModels.Invoices
         #region Partner commands
 
         private ICommand _getPartnerCommand;
-        public ICommand GetPartnerCommand { get { return _getPartnerCommand ?? (_getPartnerCommand = new RelayCommand<PartnerType?>(OnGetPartner, CanGetPartner)); } }
+        public ICommand GetPartnerCommand { get { return _getPartnerCommand ?? (_getPartnerCommand = new RelayCommand<PartnerType>(OnGetPartner, CanGetPartner)); } }
 
-        private bool CanGetPartner(PartnerType? partnerType)
+        private bool CanGetPartner(PartnerType partnerType)
         {
             return !Invoice.IsApproved;
         }
-
-        protected virtual void OnGetPartner(PartnerType? partnerType)
+        protected virtual void OnGetPartner(PartnerType partnerType)
         {
-            var partners = partnerType.HasValue? PartnersManager.GetPartner(partnerType.Value) : PartnersManager.GetPartners();
+            var partners = PartnersManager.GetPartner(partnerType);
             SetPrtners(partners);
         }
         private ICommand _findPartnerCommand;
+        private string _partnerFilter;
         public ICommand FindPartnerCommand { get { return _findPartnerCommand ?? (_findPartnerCommand = new RelayCommand<string>(OnFindPartner, CanFindPartner)); } }
 
         private bool CanFindPartner(string filter)
@@ -792,19 +799,37 @@ namespace UserControls.ViewModels.Invoices
             var partners = PartnersManager.GetPartners().Where(s => string.IsNullOrEmpty(filter) ||
                 s.FullName.ToLower().Contains(filter.ToLower()) || 
                 (!string.IsNullOrEmpty(s.Mobile) && s.Mobile.ToLower().Contains(filter.ToLower()) ||
-                (!string.IsNullOrEmpty(s.Email) && s.Email.ToLower().Contains(s.Email.ToLower())) ||
-                (!string.IsNullOrEmpty(s.ClubSixteenId) && s.ClubSixteenId.ToLower().Contains(s.ClubSixteenId.ToLower())
+                (!string.IsNullOrEmpty(s.Email) && s.Email.ToLower().Contains(filter.ToLower())) ||
+                (!string.IsNullOrEmpty(s.ClubSixteenId) && s.ClubSixteenId.ToLower().Contains(filter.ToLower())
                 ))).ToList();
-            SetPrtners(partners);
+            if (SetPrtners(partners)) PartnerFilter = string.Empty;
         }
 
-        private void SetPrtners(List<PartnerModel> partners)
+        private bool SetPrtners(List<PartnerModel> partners)
         {
             var partner = SelectItemsManager.SelectPartners(partners, false).FirstOrDefault();
-            if (partner == null) return;
+            if (partner == null) return false;
             SetPartner(partner);
+            return true;
         }
         #endregion Partner commands
+
+        #region Paid command
+
+        private ICommand _paidInvoiceCommand;
+        public ICommand PaidInvoiceCommand { get { return _paidInvoiceCommand??(_paidInvoiceCommand = new RelayCommand(OnPaidInvoice, CanPaidInvoice));} }
+
+        private bool CanPaidInvoice(object obj)
+        {
+            return !Invoice.IsApproved;
+        }
+
+        protected virtual void OnPaidInvoice(object obj)
+        {
+            InvoicePaid.Paid = Invoice.Total;
+        }
+
+        #endregion Paid command
 
         #endregion Commands
     }

@@ -25,7 +25,6 @@ namespace UserControls.ControlPanel.Controls
             if (window.DialogResult == null || !(bool)window.DialogResult)
             {
                 return null;
-                return new Tuple<DateTime, DateTime>(window.StartDate??DateTime.Today, window.EndDate!=null?window.EndDate.Value.AddDays(1):DateTime.Now);
             }
             return new Tuple<DateTime, DateTime>(window.StartDate ?? DateTime.Today, window.EndDate != null ? window.EndDate.Value.AddDays(1) : DateTime.Now);
         }

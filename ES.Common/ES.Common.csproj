@@ -97,6 +97,7 @@
     <Compile Include="Behaviors\FocusPreviousElementBehaviors.cs" />
     <Compile Include="Behaviors\GetFocusBehavior.cs" />
     <Compile Include="Behaviors\ExtendedTextBoxBehavior.cs" />
+    <Compile Include="Controls\DropDownMenuButton.cs" />
     <Compile Include="Controls\ExtendedLayoutAnchorablePane.cs" />
     <Compile Include="Controls\ExtendedLayoutDocumentPane.cs" />
     <Compile Include="Controls\ExtendedLayoutDocumentPaneGroup.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Enumerations\ProductEnums.cs" />
     <Compile Include="Enumerations\Scale.cs" />
     <Compile Include="Helpers\Ean13.cs" />
+    <Compile Include="Helpers\ImageState.cs" />
     <Compile Include="Models\EcrConfig.cs" />
     <Compile Include="Helpers\EventArgs.cs" />
     <Compile Include="Helpers\ObservableMruCollectio.cs" />

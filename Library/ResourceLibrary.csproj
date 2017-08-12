@@ -107,6 +107,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ES.Common\ES.Common.csproj">
+      <Project>{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}</Project>
+      <Name>ES.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Xceed.Wpf.AvalonDock\Xceed.Wpf.AvalonDock.csproj">
       <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
       <Name>Xceed.Wpf.AvalonDock</Name>
@@ -179,7 +183,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\Information\Information_16x16.png" />
-    <Resource Include="Resources\Images\Invoice\Approval_16x16_Green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Invoice\Document_Information_16x16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Invoice\Document_Accept_16x16.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

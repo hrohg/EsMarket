@@ -53,7 +53,7 @@ namespace UserControls.ViewModels
             {
                 if (value == _isShowNulls) { return; }
                 _isShowNulls = value;
-                OnPropertyChanged("ViewList");
+                RaisePropertyChanged("ViewList");
             }
         }
         public bool IsShowUpdateButton { get; set; }
@@ -64,7 +64,7 @@ namespace UserControls.ViewModels
         #region Constructors
         public TableViewModel(List<T> list):this()
         {
-            ViewList = new ObservableCollection<T>(list);
+            Initialize();
             IsShowUpdateButton = true;
             IsShowCloseButton = true;
         }
@@ -81,14 +81,14 @@ namespace UserControls.ViewModels
             ViewList = new ObservableCollection<T>();
         }
 
-        protected virtual bool CanExportToExcel(object o) { return ViewList != null && ViewList.Count >= 0; }
+        protected virtual bool CanExportToExcel(object o) { return ViewList != null && ViewList.Any(); }
         protected virtual void OnExportToExcel(object o)
         {
             if (!CanExportToExcel(o)) { return; }
         }
         protected virtual void OnUpdate(object o)
         { }
-        protected virtual bool CanPrint(object o) { return o != null && ViewList != null && ViewList.Count >= 0; }
+        protected virtual bool CanPrint(object o) { return o != null && ViewList != null && ViewList.Any(); }
         protected virtual void OnPrint(object o)
         {
             if (!CanPrint(o)) { return; }
@@ -100,21 +100,13 @@ namespace UserControls.ViewModels
         #endregion
 
         #region Commands
-        public ICommand ExportToExcelCommand { get { return new RelayCommand(OnExportToExcel, CanExportToExcel); } }
-        public ICommand PrintCommand { get { return new RelayCommand(OnPrint, CanPrint); } }
-        public ICommand UpdateCommand { get { return new RelayCommand(OnUpdate); } }
-        #endregion
 
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
+        private ICommand _exportToExcelCommand;
+        public ICommand ExportToExcelCommand { get { return _exportToExcelCommand?? (_exportToExcelCommand = new RelayCommand(OnExportToExcel, CanExportToExcel)); } }
+        private ICommand _printCommand;
+        public ICommand PrintCommand { get { return _printCommand ?? (_printCommand = new RelayCommand(OnPrint, CanPrint)); } }
+        private ICommand _updateCommand;
+        public ICommand UpdateCommand { get { return _updateCommand ?? (_updateCommand = new RelayCommand(OnUpdate)); } }
         #endregion
     }
 
@@ -172,10 +164,9 @@ namespace UserControls.ViewModels
         }
         private void Update(Tuple<DateTime, DateTime> dateIntermediate)
         {
-            IsLoading = true;
-            IsLoading = true; OnPropertyChanged(IsInProgressProperty);
-            var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetMember.Id).Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice);
-            var invoiceItems = InvoicesManager.GetInvoiceItems(invoices.Select(s => s.Id));
+
+            var invoices = InvoicesManager.GetInvoices((DateTime)dateIntermediate.Item1, (DateTime)dateIntermediate.Item2);
+            var invoiceItems = InvoicesManager.GetInvoiceItems(invoices.Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice).Select(s => s.Id));
             var productItems = new ProductsManager().GetProductItems(ApplicationManager.Instance.GetMember.Id);
             var productOrder = invoiceItems.GroupBy(s => s.ProductId).Where(s => s.FirstOrDefault() != null).Select(s =>
                 new ProductOrderModel
@@ -205,19 +196,20 @@ namespace UserControls.ViewModels
             TotalRows = _items.Count;
             TotalCount = (double)_items.Sum(s => s.ExistingQuantity);
             Total = (double)_items.Sum(i => i.Amount);
-            OnPropertyChanged("ViewList");
+            RaisePropertyChanged("ViewList");
             IsLoading = false;
-            OnPropertyChanged(IsInProgressProperty);
-            IsLoading = false;
+            RaisePropertyChanged(IsInProgressProperty);
+            
         }
         protected override void OnUpdate(object o)
         {
             base.OnUpdate(o);
             Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
-
+            if (dateIntermediate==null) return;
             Description = string.Format("Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն) {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
             var thread = new Thread(() => Update(dateIntermediate));
             thread.Start();
+            IsLoading = true;
         }
         protected override void OnExportToExcel(object o)
         {

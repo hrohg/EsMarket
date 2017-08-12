@@ -185,6 +185,12 @@ namespace UserControls.ViewModels.Invoices
 
             return InvoiceItem.Quantity != null && InvoiceItem.Quantity > 0;
         }
+
+        protected override void OnPaidInvoice(object obj)
+        {
+            //todo open cashdesk
+            base.OnPaidInvoice(obj);
+        }
         private bool CanPrintEcrTicket(object o)
         {
             return string.IsNullOrEmpty(Invoice.RecipientTaxRegistration) && ApplicationManager.Settings.MemberSettings.IsEcrActivated;
