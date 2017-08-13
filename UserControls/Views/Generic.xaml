@@ -6,15 +6,17 @@
         <ResourceDictionary Source="Documents/StartPageTemplate.xaml"/>
         <ResourceDictionary Source="Documents/InvoiceTemplates.xaml"/>
         <ResourceDictionary Source="Documents/StockTakingTemplate.xaml"/>
-
+        <!--Reports-->
         <ResourceDictionary Source="Reports/ShortReportTemplate.xaml"/>
+        <ResourceDictionary Source="Reports/ProductOrderTemplate.xaml"/>
+        
         <ResourceDictionary Source="View/Views/PackingListForSaler.xaml"/>
         <ResourceDictionary Source="Editors/ManageProducts.xaml"/>
         <ResourceDictionary Source="Editors/ManagePartners.xaml"/>
-        
+
         <!--Invoices-->
         <ResourceDictionary Source="Invoices/InternalWaybillTemplate.xaml"/>
-        
+
         <!--Views-->
         <ResourceDictionary Source="Accountant/View/ViewAccountantTableTemplate.xaml"/>
         <ResourceDictionary Source="View/Views/ProductHistoryTemplate.xaml"/>

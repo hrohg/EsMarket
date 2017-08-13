@@ -18,7 +18,8 @@ using UserControls.Helpers;
 
 namespace UserControls.ViewModels
 {
-    public class TableViewModel<T> : DocumentViewModel
+    public class TableViewModelBase : DocumentViewModel { }
+    public class TableViewModel<T> : TableViewModelBase
     {
         #region Constants
 
@@ -149,18 +150,19 @@ namespace UserControls.ViewModels
         }
 
         #endregion
-        public ProductOrderBySaleViewModel(object o)
+        public ProductOrderBySaleViewModel()
             : base()
         {
             IsShowUpdateButton = true;
-            Initialize(o);
+            Initialize();
         }
 
         #region Internal methods
 
-        private void Initialize(object o)
+        private void Initialize()
         {
-            OnUpdate(o);
+            IsClosable = true;
+            OnUpdate(null);
         }
         private void Update(Tuple<DateTime, DateTime> dateIntermediate)
         {
@@ -206,7 +208,7 @@ namespace UserControls.ViewModels
             base.OnUpdate(o);
             Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
             if (dateIntermediate==null) return;
-            Description = string.Format("Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն) {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
+            Title = Description = string.Format("Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն) {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
             var thread = new Thread(() => Update(dateIntermediate));
             thread.Start();
             IsLoading = true;

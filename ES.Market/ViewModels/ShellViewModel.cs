@@ -1289,7 +1289,7 @@ namespace ES.Market.ViewModels
 
         private void OnGetProductOrder(object o)
         {
-            var vm = new ProductOrderBySaleViewModel(null);
+            var vm = new ProductOrderBySaleViewModel();
             AddDocument(vm);
         }
 
