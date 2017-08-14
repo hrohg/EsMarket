@@ -206,7 +206,7 @@ namespace ES.Business.Helpers
             }
         }
         public bool PurchaseBySingle { get; set; }
-
+        public bool IsPrintPurchaseInvoice { get; set; }
         #endregion Purchase
 
         #region Ecr settings

@@ -239,6 +239,7 @@
                                 <GroupBox Grid.Row="3" Header="Լռելայն կարգաբերումներ">
                                     <StackPanel>
                                         <CheckBox IsChecked="{Binding PurchaseBySingle}" Content="Գնել մեկական" Margin="5"/>
+                                        <CheckBox IsChecked="{Binding IsPrintPurchaseInvoice}" Content="Տպել գնման ապրանքագիր" Margin="5"/>
                                     </StackPanel>
                                 </GroupBox>
                             </Grid>

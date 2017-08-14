@@ -63,7 +63,7 @@
             </DockPanel>
             <Separator/>
         </StackPanel>
-        <extendedControls:ExtendedDataGrid Grid.Row="1" x:Name="DgInvoiceItems"   ItemsSource="{Binding Services}" SelectedItem="{Binding SelectedService}" VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="14" >
+        <extendedControls:ExtendedDataGrid Grid.Row="1" ItemsSource="{Binding Services}" SelectedItem="{Binding SelectedService}" VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="14" >
             <DataGrid.Resources>
                 <Style x:Key="CellRightAlign">
                     <Setter Property="Control.HorizontalAlignment" Value="Right" />

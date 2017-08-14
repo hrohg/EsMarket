@@ -18,7 +18,10 @@ using UserControls.Helpers;
 
 namespace UserControls.ViewModels
 {
-    public class TableViewModelBase : DocumentViewModel { }
+    public class TableViewModelBase : DocumentViewModel
+    {
+        public TableViewModelBase() { }
+    }
     public class TableViewModel<T> : TableViewModelBase
     {
         #region Constants
@@ -150,8 +153,7 @@ namespace UserControls.ViewModels
         }
 
         #endregion
-        public ProductOrderBySaleViewModel()
-            : base()
+        public ProductOrderBySaleViewModel(): base()
         {
             IsShowUpdateButton = true;
             Initialize();

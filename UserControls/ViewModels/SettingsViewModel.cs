@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Input;
 using CashReg;
 using CashReg.Helper;
-using CashReg.Interfaces;
 using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
@@ -115,7 +114,7 @@ namespace UserControls.ViewModels
 
         public bool SaleBySingle { get { return Settings.MemberSettings.SaleBySingle; } set { Settings.MemberSettings.SaleBySingle = value; RaisePropertyChanged("SaleBySingle"); } }
         public bool IsPrintSaleTicket { get { return Settings.MemberSettings.IsPrintSaleTicket; } set { Settings.MemberSettings.IsPrintSaleTicket = value; RaisePropertyChanged("IsPrintSaleTicket"); } }
-        
+
 
         #endregion Sale
 
@@ -149,6 +148,14 @@ namespace UserControls.ViewModels
         #endregion Purchase bank accounts
 
         public bool PurchaseBySingle { get { return Settings.MemberSettings.PurchaseBySingle; } set { Settings.MemberSettings.PurchaseBySingle = value; RaisePropertyChanged("PurchaseBySingle"); } }
+        public bool IsPrintPurchaseInvoice
+        {
+            get { return Settings.MemberSettings.IsPrintPurchaseInvoice; }
+            set
+            {
+                Settings.MemberSettings.IsPrintPurchaseInvoice = value; RaisePropertyChanged("IsPrintPurchaseInvoice");
+            }
+        }
         #endregion Purchase
 
         #region ECR settings
@@ -178,7 +185,7 @@ namespace UserControls.ViewModels
 
         #region General settings
 
-        
+
         #endregion Destop settings
 
         #endregion External properties
@@ -261,9 +268,9 @@ namespace UserControls.ViewModels
             _settings.MemberSettings.PurchaseBankAccounts = PurchaseBankAccounts.Where(s => s.IsChecked).Select(s => (Guid)s.Value).ToList();
 
             //Logins
-            
+
             //Ecr
-            
+
             if (Settings.Save())
             {
                 Settings.LoadMemberSettings();
@@ -357,7 +364,7 @@ namespace UserControls.ViewModels
                 }
                 else
                 {
-                    EcrSettings.TypeOfOperatorDeps = operatorDeps.d.Select(s=>(Department)s).ToList();
+                    EcrSettings.TypeOfOperatorDeps = operatorDeps.d.Select(s => (Department)s).ToList();
                     EcrSettings.CashierDepartment = EcrSettings.TypeOfOperatorDeps.FirstOrDefault();
                     RaisePropertyChanged("EcrSettings");
                     message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումն իրականացել է հաջողությամբ:",
