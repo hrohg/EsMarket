@@ -544,7 +544,7 @@ namespace UserControls.ViewModels.Invoices
         }
         public virtual bool CanApprove(object o)
         {
-            return CanSaveInvoice(o);
+            return Invoice.ApproveDate == null && InvoiceItems.Count != 0;
         }
 
         public void PrintInvoice(bool isPrice, bool isPrint = true)
