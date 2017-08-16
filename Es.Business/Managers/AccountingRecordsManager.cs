@@ -47,8 +47,25 @@ namespace ES.Business.Managers
         //9 Արտահաշվեկշռային հաշիվներ
 
     }
+
+    public enum AccountingActionsEnum
+    {
+        None = 0,
+        CashDesk = AccountingPlanEnum.CashDesk,
+        Partner = 1,
+        AccountingReceivable = AccountingPlanEnum.AccountingReceivable,
+        Prepayments = AccountingPlanEnum.Prepayments,
+        PurchasePayables = AccountingPlanEnum.PurchasePayables,
+        ReceivedInAdvance = AccountingPlanEnum.ReceivedInAdvance,
+
+
+    }
     public class AccountingRecordsManager : BaseManager
     {
+        #region Internal fields
+        private static readonly long MemberId = ApplicationManager.Member.Id;
+        #endregion Internal fields
+
         #region Converters
         private static AccountingRecordsModel Convert(AccountingRecords item)
         {
@@ -71,7 +88,7 @@ namespace ES.Business.Managers
             if (item == null) return null;
             return new AccountingRecords
             {
-                Id = item.Id, 
+                Id = item.Id,
                 MemberId = item.MemberId,
                 RegisterId = item.RegisterId,
                 RegisterDate = item.RegisterDate,
@@ -86,6 +103,10 @@ namespace ES.Business.Managers
             };
         }
         #endregion
+
+        #region Constructors
+
+        #endregion Constructors
 
         #region public properties
         public static string GetAccountingRecordsDescription(long key)
@@ -139,7 +160,7 @@ namespace ES.Business.Managers
                     break;
             }
         }
-        public static string GetAccountingRecordsDescription(long key, Guid? guidId, long? longId )
+        public static string GetAccountingRecordsDescription(long key, Guid? guidId, long? longId)
         {
             switch (key)
             {
@@ -158,7 +179,7 @@ namespace ES.Business.Managers
                 case (long)AccountingPlanEnum.CashDesk:
                     if (guidId == null) return "Անհայտ դրամարկղ";
                     var cashDesk = CashDeskManager.GetCashDesk(guidId.Value);
-                    return cashDesk!=null? cashDesk.Name:"Անհայտ դրամարկղ";
+                    return cashDesk != null ? cashDesk.Name : "Անհայտ դրամարկղ";
                     break;
                 case (long)AccountingPlanEnum.Accounts:
                     return "Հաշվարկային հաշիվ";
@@ -276,7 +297,7 @@ namespace ES.Business.Managers
                     {
                         var fromCashdesk = db.CashDesk.Single(s => s.Id == accountingRecords.CreditGuidId && s.MemberId == memberId);
                         var partner = db.Partners.Single(s => s.Id == accountingRecords.DebitGuidId && s.EsMemberId == memberId);
-                        if (partner.Credit == null) { partner.Credit=0;}
+                        if (partner.Credit == null) { partner.Credit = 0; }
                         fromCashdesk.Total -= accountingRecords.Amount;
                         partner.Credit -= accountingRecords.Amount;
                         db.AccountingRecords.Add(accountingRecords);
@@ -353,14 +374,14 @@ namespace ES.Business.Managers
             {
                 using (var db = GetDataContext())
                 {
-                    var partnerId = depositeAccountRecords != null? depositeAccountRecords.CreditGuidId: repaymentAccountingRecords != null ? repaymentAccountingRecords.CreditGuidId : null;
-                    var cashBoxId = depositeAccountRecords != null? depositeAccountRecords.DebitGuidId: repaymentAccountingRecords != null ? repaymentAccountingRecords.DebitGuidId : null;
+                    var partnerId = depositeAccountRecords != null ? depositeAccountRecords.CreditGuidId : repaymentAccountingRecords != null ? repaymentAccountingRecords.CreditGuidId : null;
+                    var cashBoxId = depositeAccountRecords != null ? depositeAccountRecords.DebitGuidId : repaymentAccountingRecords != null ? repaymentAccountingRecords.DebitGuidId : null;
                     var exPartner = db.Partners.SingleOrDefault(s => s.EsMemberId == memberId && s.Id == partnerId);
                     var exCashBox = db.CashDesk.SingleOrDefault(s => s.MemberId == memberId && s.Id == cashBoxId);
-                    if (exPartner == null || exCashBox==null) return false;
-                    if (exPartner.Debit == null) {exPartner.Debit = 0;}
-                    if (exPartner.Credit == null) {exPartner.Credit = 0;}
-                    
+                    if (exPartner == null || exCashBox == null) return false;
+                    if (exPartner.Debit == null) { exPartner.Debit = 0; }
+                    if (exPartner.Credit == null) { exPartner.Credit = 0; }
+
                     if (repaymentAccountingRecords != null)
                     {
                         var accountingReceivable = db.AccountsReceivable
@@ -375,7 +396,7 @@ namespace ES.Business.Managers
                         foreach (var item in accountingReceivable.Where(item => item != null))
                         {
                             if (item.PaidAmount == null) item.PaidAmount = 0;
-                            var value = ((item.Amount - item.PaidAmount) > paid)? paid: item.Amount - (decimal)item.PaidAmount;
+                            var value = ((item.Amount - item.PaidAmount) > paid) ? paid : item.Amount - (decimal)item.PaidAmount;
 
                             item.PaidAmount += value;
                             paid -= value;
@@ -444,6 +465,24 @@ namespace ES.Business.Managers
                         && s.RegisterDate < endDate
                         && s.Debit == debit
                         && s.Credit == credit).ToList();
+                }
+                catch (Exception)
+                {
+                    return new List<AccountingRecords>();
+                }
+            }
+        }
+        private static List<AccountingRecords> TryGetAccountingRecords(DateTime beginDate, DateTime endDate, List<Guid> ids)
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    return db.AccountingRecords.Where(s =>
+                        s.MemberId == MemberId
+                        && s.RegisterDate >= beginDate
+                        && s.RegisterDate < endDate
+                        && ((s.DebitGuidId!=null && ids.Contains((Guid)s.DebitGuidId)) || (s.CreditGuidId!=null && ids.Contains((Guid)s.CreditGuidId)))).ToList();
                 }
                 catch (Exception)
                 {
@@ -522,6 +561,11 @@ namespace ES.Business.Managers
             }
         }
         #endregion
+
+        public static List<AccountingRecordsModel> GetAccountingRecordsByPartner(DateTime beginDate, DateTime endDate, List<Guid> partners)
+        {
+            return TryGetAccountingRecords(beginDate, endDate, partners).Select(Convert).ToList();
+        }
     }
 
     public class AccountingAccounts
@@ -531,7 +575,7 @@ namespace ES.Business.Managers
         public string Key { get; set; }
     }
 
-    public class SubAccountingPlanManager:BaseManager
+    public class SubAccountingPlanManager : BaseManager
     {
         #region Converters
 
@@ -611,7 +655,7 @@ namespace ES.Business.Managers
         #endregion
         #region Public methods
 
-        public static List<SubAccountingPlanModel> GetSubAccountingPlanModels(long memberId, bool? isActive=null)
+        public static List<SubAccountingPlanModel> GetSubAccountingPlanModels(long memberId, bool? isActive = null)
         {
             return GetSubAccountingPlans(memberId, isActive).Select(Convert).ToList();
         }

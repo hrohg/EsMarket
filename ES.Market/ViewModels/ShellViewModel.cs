@@ -1649,10 +1649,10 @@ namespace ES.Market.ViewModels
         {
             get
             {
-                return _viewAccountantTableCommand ?? (_viewAccountantTableCommand = new RelayCommand<AccountingPlanEnum>(OnViewAccountantTable));
+                return _viewAccountantTableCommand ?? (_viewAccountantTableCommand = new RelayCommand<AccountingActionsEnum>(OnViewAccountantTable));
             }
         }
-        private void OnViewAccountantTable(AccountingPlanEnum accountingPlanEnum)
+        private void OnViewAccountantTable(AccountingActionsEnum accountingPlanEnum)
         {
             var dates = SelectManager.GetDateIntermediate();
             if (dates == null) return;

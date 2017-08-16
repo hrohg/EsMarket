@@ -101,56 +101,54 @@ namespace UserControls.Views.Accountant
 
         private void Initialize()
         {
-            Title = "Հվային պլանի վերծանում ";
-
+            Title = string.Format("Հաշվային պլանի վերծանում {0} - {1}", StartDate, EndDate);
         }
-        private void OnUpdateAccountingRecords(AccountingPlanEnum accountingPlanEnum)
+        private void OnUpdateAccountingRecords(AccountingActionsEnum actionEnum)
         {
-            switch (accountingPlanEnum)
+            List<Guid> guidIds;
+            switch (actionEnum)
             {
-                case AccountingPlanEnum.None:
+                case AccountingActionsEnum.None:
                     new Thread(delegate()
                     {
                         _accountingRecords = AccountingRecordsManager.GetAccountingRecords(StartDate, EndDate);
                         OnUpdate();
                     }).Start();
                     break;
-                case AccountingPlanEnum.Purchase:
+                case AccountingActionsEnum.PurchasePayables:
+                case AccountingActionsEnum.ReceivedInAdvance:
+                case AccountingActionsEnum.AccountingReceivable:
+                case AccountingActionsEnum.Prepayments:
+                    guidIds = SelectItemsManager.SelectPartners(true).Select(s => s.Id).ToList();
+                    new Thread(delegate()
+                    {
+                        var list = AccountingRecordsManager.GetAccountingRecords(StartDate, EndDate, new List<int> { (int)actionEnum });
+                        _accountingRecords = list.Where(s => (s.DebitGuidId != null && guidIds.Contains(s.DebitGuidId.Value)) ||
+                                    (s.CreditGuidId != null && guidIds.Contains(s.CreditGuidId.Value))).ToList();
+                        OnUpdate();
+                    }).Start();
                     break;
-                case AccountingPlanEnum.AccountingReceivable:
-                    break;
-                case AccountingPlanEnum.Prepayments:
-                    break;
-                case AccountingPlanEnum.CashDesk:
+                case AccountingActionsEnum.CashDesk:
                     var cashDesks = SelectItemsManager.SelectCashDesks(null, true).Select(s => s.Id).ToList();
 
                     new Thread(delegate(){
-                        var list = AccountingRecordsManager.GetAccountingRecords(StartDate, EndDate, new List<int> { (int)accountingPlanEnum });
+                        var list = AccountingRecordsManager.GetAccountingRecords(StartDate, EndDate, new List<int> { (int)actionEnum });
                         _accountingRecords = list.Where(s => (s.DebitGuidId != null && cashDesks.Contains(s.DebitGuidId.Value)) ||
                                     (s.CreditGuidId != null && cashDesks.Contains(s.CreditGuidId.Value))).ToList();
                                              OnUpdate();
                     }).Start();
                     break;
-                case AccountingPlanEnum.Accounts:
-                    break;
-                case AccountingPlanEnum.EquityBase:
-                    break;
-                case AccountingPlanEnum.PurchasePayables:
-                    break;
-                case AccountingPlanEnum.ReceivedInAdvance:
-                    break;
-                case AccountingPlanEnum.Debit_For_Salary:
-                    break;
-                case AccountingPlanEnum.Proceeds:
-                    break;
-                case AccountingPlanEnum.CostPrice:
-                    break;
-                case AccountingPlanEnum.CostOfSales:
-                    break;
-                case AccountingPlanEnum.OtherOperationalExpenses:
+               
+                case AccountingActionsEnum.Partner:
+                    guidIds = SelectItemsManager.SelectPartners().Select(s => s.Id).ToList();
+                    new Thread(delegate()
+                    {
+                        _accountingRecords = AccountingRecordsManager.GetAccountingRecordsByPartner(StartDate, EndDate, guidIds);
+                        OnUpdate();
+                    }).Start();
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("accountingPlanEnum", accountingPlanEnum, null);
+                    throw new ArgumentOutOfRangeException("actionEnum", actionEnum, null);
             }
             
         }
@@ -166,9 +164,9 @@ namespace UserControls.Views.Accountant
 
         #region External methods
 
-        public void UpdateAccountingRecords(AccountingPlanEnum accountingPlanEnum)
+        public void UpdateAccountingRecords(AccountingActionsEnum actionEnum)
         {
-            OnUpdateAccountingRecords(accountingPlanEnum);
+            OnUpdateAccountingRecords(actionEnum);
         }
 
         #endregion External methods
