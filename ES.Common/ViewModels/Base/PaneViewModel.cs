@@ -87,7 +87,7 @@ namespace ES.Common.ViewModels.Base
 
         #region IsModified
         private bool _isModified;
-        public bool IsModified
+        public virtual bool IsModified
         {
             get { return _isModified; }
             set

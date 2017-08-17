@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Data;
-using CashReg.Models;
 using ES.Data.Models;
 using Shared.Helpers;
 using UserControls.Helpers;
@@ -13,13 +10,24 @@ namespace UserControls.ViewModels.Invoices
 {
     public class PackingListForSallerViewModel : InvoiceViewModelBase
     {
+        
+        #region External properties
+
+        public override bool IsModified
+        {
+            get { return false; }
+        }
+        #endregion External properties
+
         #region Constructors
 
-        public PackingListForSallerViewModel():base()
+        public PackingListForSallerViewModel()
+            : base()
         {
             Initialize();
         }
-        public PackingListForSallerViewModel(Guid invoiceId):base(invoiceId)
+        public PackingListForSallerViewModel(Guid invoiceId)
+            : base(invoiceId)
         {
             Initialize();
         }
@@ -28,9 +36,9 @@ namespace UserControls.ViewModels.Invoices
         #region Internal methods
         private void Initialize()
         {
-            Title = string.Format("Ապրանքների ցուցակ {0}", IsInvoiceValid && Invoice.InvoiceNumber!=null? Invoice.InvoiceNumber: string.Empty);
+            Title = string.Format("Ապրանքների ցուցակ {0}", IsInvoiceValid && Invoice.InvoiceNumber != null ? Invoice.InvoiceNumber : string.Empty);
             IsModified = true;
-            Description = string.Format("{0} {1}", Title, IsInvoiceValid? (Partner != null ? Partner.FullName : FromStock != null ? FromStock.FullName : string.Empty):string.Empty);
+            Description = string.Format("{0} {1}", Title, IsInvoiceValid ? (Partner != null ? Partner.FullName : FromStock != null ? FromStock.FullName : string.Empty) : string.Empty);
         }
         protected override bool CanImportInvoice(ExportImportEnum importFrom)
         {
@@ -49,5 +57,5 @@ namespace UserControls.ViewModels.Invoices
         #endregion Internal methods
     }
 
-    public class PackingListViewModel{}
+    public class PackingListViewModel { }
 }

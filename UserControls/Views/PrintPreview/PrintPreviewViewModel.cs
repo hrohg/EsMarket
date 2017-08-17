@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Windows;
+﻿using System.ComponentModel;
 using System.Windows.Input;
 using ES.Common.Helpers;
-using Shared.Implementations;
 using UserControls.Helpers;
 using UserControls.Views.PrintPreview.Views;
 

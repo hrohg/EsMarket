@@ -14,7 +14,7 @@
         xmlns:controls1="clr-namespace:ES.Common.Controls;assembly=ES.Common"
         xmlns:helper1="clr-namespace:UserControls.PriceTicketControl.Helper;assembly=UserControls"
         xmlns:enumerations="clr-namespace:UserControls.Enumerations;assembly=UserControls"
-        Name="WinShop" Title="ES Market - Վաճառք" MinHeight="600" MinWidth="800" Closing="WinShop_Closing"
+        Title="ES Market - Վաճառք" MinHeight="600" MinWidth="800" Closing="WinShop_Closing"
         WindowState="Maximized" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Shared;component/Images/shopping_cart.Ico">
     <Window.Resources>

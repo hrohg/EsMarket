@@ -102,7 +102,7 @@ namespace UserControls.Helpers
                 MessageBox.Show(ex.Message);
             }
         }
-        public static void Print(StackPanel ctrl, string title, bool showDialog)
+        public static void Print(Grid ctrl, string title, bool showDialog)
         {
             PrintEx(ctrl); return;
             var pDialog = new PrintDialog

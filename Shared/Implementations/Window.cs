@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows;
 using System.Windows.Interop;
 
 namespace Shared.Implementations
 {
-    public class EsWindow : System.Windows.Window
+    public class EsWindow : Window
     {
         #region Contructors
 
@@ -18,6 +15,7 @@ namespace Shared.Implementations
             SourceInitialized += Window_SourceInitialized;
             Loaded += OnLoaded;
             MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+            MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
         }
 
         #endregion
@@ -36,11 +34,11 @@ namespace Shared.Implementations
                 SizeToContent = SizeToContent.Manual;
                 WindowState = WindowState.Maximized;
             }
-            else
-            {
-                WindowState = WindowState.Normal;
-                SizeToContent = System.Windows.SizeToContent.Height;
-            }
+            //else
+            //{
+            //    WindowState = WindowState.Normal;
+            //    SizeToContent = SizeToContent.Height;
+            //}
         }
         private void Window_SourceInitialized(object sender, EventArgs e)
         {
@@ -59,7 +57,7 @@ namespace Shared.Implementations
                 // ...and the monitor information, then we set the size constraint
                 if (GetMonitorInfo(hMonitor, ref mi))
                 {
-                    this.MaxHeight = mi.rcWork.Bottom - mi.rcWork.Top;
+                    MaxHeight = mi.rcWork.Bottom - mi.rcWork.Top;
                 }
             }
         }
