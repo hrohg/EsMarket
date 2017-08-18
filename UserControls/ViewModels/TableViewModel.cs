@@ -71,6 +71,7 @@ namespace UserControls.ViewModels
             Initialize();
             IsShowUpdateButton = true;
             IsShowCloseButton = true;
+            ViewList = new ObservableCollection<T>(list);
         }
         public TableViewModel()
         {

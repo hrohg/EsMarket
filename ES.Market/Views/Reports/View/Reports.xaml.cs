@@ -36,7 +36,7 @@ namespace ES.Market.Views.Reports.View
 
             var viewTable = new UctrlViewTable(model);
             //viewTable.DataContext = model;
-            if (model != null)
+            if (model != null && model.ViewList.Any())
             {
                 var columns = model.ViewList.First().GetType().GetProperties();
                 foreach (var column in columns.Select(item => new DataGridTextColumn
@@ -158,7 +158,7 @@ namespace ES.Market.Views.Reports.View
                             Quantity = s.Quantity ?? 0,
                             Price = s.Price ?? 0,
                         }).ToList();
-            if (list.Count == 0)
+            if (!list.Any())
             {
                 MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
                 return;
