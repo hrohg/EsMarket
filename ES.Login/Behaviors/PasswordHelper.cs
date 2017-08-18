@@ -20,7 +20,7 @@ namespace ES.Login.Behaviors
             set
             {
                 SetValue(PasswordProperty, value);
-                if (_passwordBox != null) _passwordBox.Password = Password.ToUnsecureString();
+                //if (_passwordBox != null) _passwordBox.Password = Password.ToUnsecureString();
             }
         }
 
@@ -37,7 +37,7 @@ namespace ES.Login.Behaviors
         private void OnPasswordBoxValueChanged(object sender, RoutedEventArgs e)
         {
             Password = AssociatedObject.SecurePassword;
-            //if (_passwordBox == null) _passwordBox = sender as PasswordBox;
+            if (_passwordBox == null) _passwordBox = sender as PasswordBox;
             return;
             //var binding = BindingOperations.GetBindingExpression(this, PasswordProperty);
             //if (binding != null)
@@ -46,7 +46,6 @@ namespace ES.Login.Behaviors
             //    if (property != null)
             //        property.SetValue(binding.DataItem, AssociatedObject.SecurePassword, null);
             //}
-            //if(_passwordBox==null) _passwordBox = sender as PasswordBox;
         }
 
         public static void SetIsClear(DependencyObject target, bool value)

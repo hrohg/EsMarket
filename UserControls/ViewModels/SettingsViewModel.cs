@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Ports;
 using System.Linq;
 using System.Management;
 using System.Threading;
@@ -67,6 +68,29 @@ namespace UserControls.ViewModels
         public bool LocalMode { get { return _settings.MemberSettings.IsOfflineMode; } set { _settings.MemberSettings.IsOfflineMode = value; RaisePropertyChanged("OfflineMode"); } }
         #endregion Is work in offline mode
 
+        #region CashDesk port
+
+        public List<string> CashDeskPorts
+        {
+            get
+            {
+                var comPorts = new List<string>(){""};
+                comPorts.AddRange(SerialPort.GetPortNames().ToList());
+                return comPorts;
+            }
+        }
+
+        public string CashDeskPort
+        {
+            get { return _settings.MemberSettings.CashDeskPort; }
+            set
+            {
+                _settings.MemberSettings.CashDeskPort = value;
+                RaisePropertyChanged("CashDeskPort");
+            }
+        }
+        #endregion Cashdesk port
+
         public bool NotifyAboutIncomingInvoices { get { return _settings.MemberSettings.NotifyAboutIncomingInvoices; } set { _settings.MemberSettings.NotifyAboutIncomingInvoices = value; RaisePropertyChanged("NotifyAboutIncomingInvoices"); } }
 
         #endregion General
@@ -114,6 +138,7 @@ namespace UserControls.ViewModels
 
         public bool SaleBySingle { get { return Settings.MemberSettings.SaleBySingle; } set { Settings.MemberSettings.SaleBySingle = value; RaisePropertyChanged("SaleBySingle"); } }
         public bool IsPrintSaleTicket { get { return Settings.MemberSettings.IsPrintSaleTicket; } set { Settings.MemberSettings.IsPrintSaleTicket = value; RaisePropertyChanged("IsPrintSaleTicket"); } }
+        public bool IsEcrActivated { get { return Settings.MemberSettings.IsEcrActivated; } set { Settings.MemberSettings.IsEcrActivated = value; RaisePropertyChanged("IsEcrActivated"); } }
 
 
         #endregion Sale

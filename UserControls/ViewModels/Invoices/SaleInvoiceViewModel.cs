@@ -193,7 +193,7 @@ namespace UserControls.ViewModels.Invoices
         }
         private bool CanPrintEcrTicket(object o)
         {
-            return string.IsNullOrEmpty(Invoice.RecipientTaxRegistration) && ApplicationManager.Settings.MemberSettings.IsEcrActivated;
+            return string.IsNullOrEmpty(Invoice.RecipientTaxRegistration) && IsEcrActivated;
         }
         private void OnPrintEcrTicket(object o)
         {
@@ -388,7 +388,7 @@ namespace UserControls.ViewModels.Invoices
             Partner = ApplicationManager.CashManager.GetPartners.SingleOrDefault(s=>s.Id==Partner.Id);
             //CheckForPrize(Invoice);
             ResponseReceiptModel responceReceiptModel = null;
-            if (ApplicationManager.Settings.MemberSettings.IsEcrActivated && CanPrintEcrTicket(o))
+            if (CanPrintEcrTicket(o))
             {
                 //todo
                 EcrServer ecrManager = null;
@@ -428,8 +428,10 @@ namespace UserControls.ViewModels.Invoices
             }
             Invoice = invoice;
             IsModified = false;
+            RaisePropertyChanged("InvocieStateImageState");
+            RaisePropertyChanged("InvoiceStateTooltip");
 
-            if (IsPrintTicket && (!ApplicationManager.Settings.MemberSettings.IsEcrActivated || ApplicationManager.Settings.MemberSettings.EcrConfig.UseExternalPrinter))
+            if (IsPrintTicket && (!IsEcrActivated || ApplicationManager.Settings.MemberSettings.EcrConfig.UseExternalPrinter))
             {
                 PrintInvoiceTicket(responceReceiptModel);
             }

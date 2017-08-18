@@ -20,6 +20,10 @@
     <UserControl.Resources>
         <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="FontSize" Value="18"/>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.InputBindings>
@@ -37,8 +41,8 @@
                 <MenuItem Header="Վճարել" InputGestureText="Ctrl+E" Command="{Binding PaidInvoiceCommand}"/>
                 <Separator/>
                 <MenuItem Header="Հիշել" InputGestureText="Ctrl+S" Command="{Binding SaveInvoiceCommand}"/>
-                <MenuItem Header="Հաստատել" InputGestureText="F5" Command="{Binding ApproveInvoiceCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabItem}}" Tag="1"/>
-                <MenuItem Header="Հաստատել (Փակել)" InputGestureText="Ctrl+F5" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabItem}}" Tag="1"/>
+                <MenuItem Header="Հաստատել" InputGestureText="F6" Command="{Binding ApproveInvoiceCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabItem}}" Tag="1"/>
+                <MenuItem Header="Հաստատել (Փակել)" InputGestureText="F5" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabItem}}" Tag="1"/>
                 <Separator/>
                 <MenuItem Header="Տպել" InputGestureText="Ctrl+P" Tag="2" IsEnabled="False" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
             </ContextMenu>
@@ -195,17 +199,17 @@
                 </Grid>
                 <TextBlock Grid.Column="1" Grid.Row="0" Text="Կոդ"/>
                 <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path=Code, UpdateSourceTrigger=PropertyChanged}" 
-                             FontSize="16" Width="150" TabIndex="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="1 0">
+                             Width="150" TabIndex="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="1 0">
                     <TextBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding Path=Code}"/>
                     </TextBox.InputBindings>
                     <i:Interaction.Behaviors>
-                        <behaviors:TextBoxBehavior IsFocusOnLoad="True" IsSelectTextOnFocus="True" IsFocusOnKeyboardFocused="True" />
+                            <behaviors:TextBoxBehavior IsFocusOnLoad="True" IsSelectTextOnFocus="True" IsFocusOnKeyboardFocused="True" IsFocusOnTextChanged="True" />
                     </i:Interaction.Behaviors>
                 </TextBox>
                 <TextBlock Grid.Column="2" Grid.Row="0" Text="Անվանում"/>
                 <TextBox Grid.Column="2" Grid.Row="1" Text="{Binding Path=InvoiceItem.Description, UpdateSourceTrigger=PropertyChanged}"
-                   FontSize="12" VerticalContentAlignment="Center" IsReadOnly="True">
+                   VerticalContentAlignment="Center" IsReadOnly="True">
                     <TextBox.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Ընտրել ըստ անվանման" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
@@ -215,7 +219,7 @@
                 <TextBlock Grid.Column="3" Grid.Row="0" Text="Գին"/>
                 <TextBox Grid.Column="3" Grid.Row="1" 
                              Text="{Binding Path=InvoiceItem.Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" 
-                             IsReadOnly="{Binding Path = DenayChangePrice}" Width="105" FontSize="20" VerticalContentAlignment="Center" 
+                             IsReadOnly="{Binding Path = DenayChangePrice}" Width="105" VerticalContentAlignment="Center" 
                              Focusable="{Binding DenayChangePrice, Converter={StaticResource InverseBooleanConverter}}"
                              HorizontalContentAlignment="Right" TabIndex="2">
                     <i:Interaction.Behaviors>

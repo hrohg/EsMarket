@@ -162,6 +162,26 @@
         </Setter>
     </Style>
 
+    <Style x:Key="OpenCashdeskButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource NoChromeButton}">
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Cash/CashWidrow.png" Width="24" Height="24"/>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsPressed, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                            <Setter TargetName="Image" Property="Opacity" Value="0.7"/>
+                        </DataTrigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Image" Property="Opacity" Value="0.5"/>
+                        </Trigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    
+
     <Style x:Key="AddSingleToggleButtinStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static res:ResourceKeys.NoChromeToggleButtonKey}}">
         <Setter Property="ToolTip" Value="{Binding AddSingleTooltip}"/>
         <Setter Property="ContentTemplate">

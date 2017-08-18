@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.ServiceModel.Security.Tokens;
 using System.Threading;
-using System.Windows.Forms;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common.Helpers;
-using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
@@ -312,7 +309,7 @@ namespace UserControls.ViewModels.Reports
                             Description = s.Select(t => t.Description).First(),
                             Mu = s.Select(t => t.Mu).First(),
                             Quantity = s.Sum(t => t.Quantity),
-                            ExistingQuantity = _productItems != null ? _productItems.Where(pr => pr.ProductId == s.First().ProductId).Select(pr => pr.Quantity).FirstOrDefault() : (decimal?)null,
+                            ExistingQuantity = _productItems != null ? _productItems.Where(pr => pr.ProductId == s.First().ProductId).Sum(pr => pr.Quantity) : (decimal?)null,
                             Price = s.Select(t => t.Price).First(),
                             Note = s.Select(t => t.Product != null ? t.Product.Note : string.Empty).First(),
                         }).ToList();

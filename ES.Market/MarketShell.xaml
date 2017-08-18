@@ -685,7 +685,7 @@
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="Տպել գնապիտակ (մեծ)" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.LargePrice}"/>
+                        <MenuItem Header="Տպել գնապիտակ LP" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.LargePrice}"/>
                     </MenuItem>
                 </MenuItem>
             </Menu>
@@ -880,9 +880,7 @@
                     <controls1:PanesStyleSelector>
                         <controls1:PanesStyleSelector.TabStyle>
                             <Style TargetType="{x:Type xcad:LayoutAnchorableItem}">
-
                                 <Setter Property="Visibility" Value="{Binding Model.IsVisible, Converter={StaticResource BoolToVisibilityConverter}, Mode=TwoWay}"/>
-
                             </Style>
 
                         </controls1:PanesStyleSelector.TabStyle>
@@ -953,7 +951,10 @@
             </CheckBox.Triggers>
           </CheckBox>-->
 
-
+                    <Button Style="{DynamicResource OpenCashdeskButtonStyle}" Command="{Binding OpenCashdeskCommand}" 
+                            IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Cashier}}"
+                          Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}" 
+                            ToolTip="Բացել դրամարկղը" Margin="5 0"/>
                     <Button Margin="5 0" Command="{Binding RefreshCashCommand}" Background="Transparent" BorderThickness="0" ToolTip="Թարմացնել" ClickMode="Press">
                         <Button.Template>
                             <ControlTemplate>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -212,11 +213,20 @@ namespace ES.Business.Helpers
         #region Ecr settings
 
         private EcrConfig _ecrModel;
+        private string _cashDeskPort;
+
         public EcrConfig EcrConfig
         {
             get { return _ecrModel ?? (_ecrModel = new EcrConfig()); }
             set { _ecrModel = value; }
         }
+
+        public string CashDeskPort
+        {   
+            get { return _cashDeskPort; }
+            set { _cashDeskPort = value; }
+        }
+
         #endregion Ecr settings
 
         #endregion External properties

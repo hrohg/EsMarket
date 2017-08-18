@@ -127,7 +127,6 @@ namespace ES.Data.Models
         public string RecipientBankAccount { get; set; }
         public string RecipientTaxRegistration { get; set; }
         private string _note;
-        private bool _isApproved;
 
         public string Notes
         {

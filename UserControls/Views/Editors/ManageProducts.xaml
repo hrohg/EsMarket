@@ -4,10 +4,17 @@
                     xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
                     xmlns:managers="clr-namespace:UserControls.ViewModels.Managers"
                     xmlns:helpers="clr-namespace:Shared.Helpers;assembly=Shared"
-                    xmlns:controls="clr-namespace:UserControls.Controls">
+                    xmlns:controls="clr-namespace:UserControls.Controls"
+                    xmlns:helper1="clr-namespace:UserControls.PriceTicketControl.Helper">
 
 
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    
+    <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="FontSize" Value="18"/>
+    </Style>
+    
+    
     <DataTemplate DataType="{x:Type managers:ProductManagerViewModel}">
         <Grid>
             <Grid>
@@ -79,7 +86,7 @@
                                     <Border Grid.Row="1" Margin="0 1" BorderThickness=".5" BorderBrush="LightSkyBlue" Padding="2">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="150"/>
+                                                <ColumnDefinition Width="220"/>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
@@ -90,13 +97,13 @@
                                             </Grid.RowDefinitions>
                                             <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Margin="0 1" HorizontalAlignment="Right">
                                                 <TextBlock Text="Ինքնարժեք" />
-                                                <TextBox Name="TxtCostPrice" Text="{Binding Product.CostPrice, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}, TargetNullValue=''}" Width="80" TabIndex="6" HorizontalContentAlignment="Right"/>
+                                                <TextBox Name="TxtCostPrice" Text="{Binding Product.CostPrice, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}, TargetNullValue=''}" Width="100" TabIndex="6" HorizontalContentAlignment="Right"/>
                                             </StackPanel>
                                             <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0 1">
                                                 <Label Content="Վաճառքի տոկոս" HorizontalContentAlignment="Right" Width="120"/>
                                                 <TextBox Text="{Binding Product.ProfitPercent, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}, TargetNullValue=''}" Width="50" TabIndex="7" HorizontalContentAlignment="Right"/>
                                                 <Label Content="Վաճառքի գին" HorizontalContentAlignment="Right" Width="120"/>
-                                                <TextBox Name="TxtPrice" Text="{Binding Path = Product.Price, UpdateSourceTrigger=PropertyChanged,StringFormat={}{0:#,#.##}, TargetNullValue='', Mode=TwoWay}" Width="80" TabIndex="7" HorizontalContentAlignment="Right"/>
+                                                <TextBox Name="TxtPrice" Text="{Binding Path = Product.Price, UpdateSourceTrigger=PropertyChanged,StringFormat={}{0:#,#.##}, TargetNullValue='', Mode=TwoWay}" Width="100" TabIndex="7" HorizontalContentAlignment="Right"/>
                                                 <Label Content="Զեղչ %" HorizontalContentAlignment="Right" Width="70"/>
                                                 <TextBox Name="TxtDiscount" Text="{Binding Product.Discount, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}, TargetNullValue=''}" Width="50" TabIndex="8" HorizontalContentAlignment="Right" />
                                             </StackPanel>
@@ -105,7 +112,7 @@
                                                 <TextBox Text="{Binding Product.DealerProfitPercent, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat={}{0:#,#.##}}" Width="50" TabIndex="8" HorizontalContentAlignment="Right"/>
 
                                                 <Label Content="Մեծածախ գին" HorizontalContentAlignment="Right" Width="120"/>
-                                                <TextBox Name="TxtDealerPrice" Text="{Binding Product.DealerPrice, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat={}{0:#,#.##}}" Width="80" TabIndex="9" HorizontalContentAlignment="Right" />
+                                                <TextBox Name="TxtDealerPrice" Text="{Binding Product.DealerPrice, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat={}{0:#,#.##}}" Width="100" TabIndex="9" HorizontalContentAlignment="Right" />
                                                 <Label Content="Զեղչ %" HorizontalContentAlignment="Right" Width="70"/>
                                                 <TextBox Name="TxtDealerDiscount" Text="{Binding Product.DealerDiscount, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat={}{0:#,#.##}}" Width="50" TabIndex="10" HorizontalContentAlignment="Right" />
                                             </StackPanel>
@@ -229,25 +236,14 @@
                                 <MenuItem Header="Արտահանել Excel" Command="{Binding ExportProductsCommand}" CommandParameter="{x:Static helpers:ExportImportEnum.Excel}"/>
                             </MenuItem>
                             <Separator/>
-                            <MenuItem Header="Տպել Բարկոդ" Command="{Binding PrintBarcodeCommand}" CommandParameter="False">
+                            <MenuItem Header="Տպել Բարկոդ" Command="{Binding PrintBarcodeCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.Small}">
                                 <MenuItem.Icon>
                                     <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="Տպել Բարկոդ (մեծ)" Command="{Binding PrintBarcodeLargeCommand}" CommandParameter="False">
-                                <MenuItem.Icon>
-                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
-                                </MenuItem.Icon>
+                            <MenuItem Header="Տպել Բարկոդ L" Command="{Binding PrintBarcodeCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.Large}">
                             </MenuItem>
-                            <MenuItem Header="Տպել Բարկոդ (Դիտել)" Command="{Binding PrintBarcodeCommand}" CommandParameter="True">
-                                <MenuItem.Icon>
-                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/PrintPreview120.png" SnapsToDevicePixels="True"/>
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Header="Տպել Բարկոդ մեծ (Դիտել)" Command="{Binding PrintBarcodeLargeCommand}" CommandParameter="True">
-                                <MenuItem.Icon>
-                                    <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/PrintPreview120.png" SnapsToDevicePixels="True"/>
-                                </MenuItem.Icon>
+                            <MenuItem Header="Տպել Բարկոդ LP" Command="{Binding PrintBarcodeCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.LargePrice}">
                             </MenuItem>
                             <MenuItem Header="Թարմացնել կշեռքների տվյալները" Command="{Binding}" CommandParameter="" IsEnabled="False">
                                 <!--<MenuItem.Icon>

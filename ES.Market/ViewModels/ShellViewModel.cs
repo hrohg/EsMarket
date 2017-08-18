@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.IO.Ports;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -204,6 +205,7 @@ namespace ES.Market.ViewModels
             }
             set { _isSalePrinterActive = value; RaisePropertyChanged("IsSalePrinterActive"); }
         }
+
         #endregion Toolbar
 
         #endregion
@@ -693,66 +695,7 @@ namespace ES.Market.ViewModels
 
         public void OnPrintPriceTicket(PrintPriceTicketEnum? printPriceTicketEnum)
         {
-            if (printPriceTicketEnum == null || !CanPrintPriceTicket(printPriceTicketEnum))
-            {
-                return;
-            }
-            var product = SelectItemsManager.SelectProduct(ApplicationManager.CashManager.Products.Where(s => !string.IsNullOrEmpty(s.Barcode)).ToList()).FirstOrDefault();
-            if (product == null) return;
-            UserControl priceTicket = null;
-            switch (printPriceTicketEnum)
-            {
-                case PrintPriceTicketEnum.Normal:
-                    break;
-                case PrintPriceTicketEnum.Small:
-                    break;
-                case PrintPriceTicketEnum.Large:
-                    priceTicket = new UctrlBarcodeX(new BarcodeViewModel(product.Code, product.Barcode, product.Description, product.Price, null));
-                    break;
-                case PrintPriceTicketEnum.LargePrice:
-                    //var priceTicket = new PriceTicketDialog
-                    //{
-                    //    DataContext = new PriceTicketLargePriceVewModel(product.Code, product.Barcode, product.Description,product.Price, null)
-                    //};
-                    //priceTicket.Show();
-
-                    //            Barcode barcode = new Barcode()
-                    //{
-                    //    IncludeLabel = true,
-                    //    Alignment = AlignmentPositions.CENTER,
-                    //    Width = 300,
-                    //    Height = 100,
-                    //    RotateFlipType = RotateFlipType.RotateNoneFlipNone,
-                    //    BackColor = Brushes.White,
-                    //    ForeColor = Brushes.Black,
-                    //};
-
-                    //var img = barcode.Encode(TYPE.EAN13, product.Barcode);
-
-                    priceTicket = new UctrlPriceTicket(new PriceTicketLargePriceVewModel(product.Code, product.Barcode, product.Description, product.Price, null));
-                    break;
-                case PrintPriceTicketEnum.PriceOnly:
-                    priceTicket = new UctrlPriceTicket(new PriceTicketVewModel(product.Code, product.Barcode, string.Format("{0} ({1})", product.Description, product.Code), product.Price, null));
-                    break;
-                case null:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("printPriceTicketEnum", printPriceTicketEnum, null);
-            }
-
-            PrintManager.PrintPreview(priceTicket, "Գնապիտակ", HgConvert.ToBoolean(printPriceTicketEnum));
-
-            //if (HgConvert.ToBoolean(o))
-            //{
-            //    PrintManager.Print(ctrl, true);
-            //}
-            //else
-            //{
-            //    var pb = new UiPrintPreview(ctrl);
-            //    pb.Show();
-            //    pb.Print();
-            //    pb.Close();
-            //}
+            PriceTicketManager.PrintPriceTicket(printPriceTicketEnum);
         }
         public bool Close()
         {
@@ -1762,6 +1705,31 @@ namespace ES.Market.ViewModels
         #endregion Stock Take
 
         #endregion
+
+        #region Toolbar buttons
+
+        private ICommand _openCashdeskCommand;
+        public ICommand OpenCashdeskCommand { get { return _openCashdeskCommand ?? (_openCashdeskCommand = new RelayCommand(OnOpenCashDesk, CanOpenCashDesk)); } }
+
+        private bool CanOpenCashDesk(object obj)
+        {
+            return ApplicationManager.IsInRole(UserRoleEnum.Cashier) && !string.IsNullOrEmpty(ApplicationManager.Settings.MemberSettings.CashDeskPort);
+        }
+
+        private void OnOpenCashDesk(object obj)
+        {
+            if (!CanOpenCashDesk(obj)) return;
+            var cashDeskPort = new SerialPort(ApplicationManager.Settings.MemberSettings.CashDeskPort);
+            cashDeskPort.Open();
+            if (cashDeskPort.IsOpen)
+            {
+                cashDeskPort.Write("80000");
+                cashDeskPort.Close();
+            }
+        }
+
+        #endregion Toolbar buttons
+
 
         private ICommand _correctProductsCommand;
 

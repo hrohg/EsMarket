@@ -73,6 +73,7 @@ namespace UserControls.ViewModels.Partners
         }
         private void GetPartners()
         {
+            ApplicationManager.Instance.CashProvider.UpdatePartners(false);
             Partners = new ObservableCollection<PartnerModel>(ApplicationManager.Instance.CashProvider.GetPartners);
             RaisePropertyChanged("Partners");
         }

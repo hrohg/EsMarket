@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
@@ -8,13 +7,23 @@ namespace ES.Common.Behaviors
 {
     public class TextBoxBehavior : Behavior<TextBox>
     {
+        #region Internal fields
         private bool _isSelectedAll;
+        #endregion Internal fields
 
+        #region Dependency properties
         public static readonly DependencyProperty IsFocusOnLoadProperty = DependencyProperty.Register("IsFocusOnLoad", typeof(bool), typeof(TextBoxBehavior), new PropertyMetadata(false));
         public bool IsFocusOnLoad
         {
             get { return (bool)GetValue(IsFocusOnLoadProperty); }
             set { SetValue(IsFocusOnLoadProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsFocusOnCleanProperty = DependencyProperty.Register("IsFocusOnClean", typeof(bool), typeof(TextBoxBehavior), new PropertyMetadata(false));
+        public bool IsFocusOnClean
+        {
+            get { return (bool)GetValue(IsFocusOnCleanProperty); }
+            set { SetValue(IsFocusOnCleanProperty, value); }
         }
 
         public static readonly DependencyProperty IsLeaveOnEnterProperty = DependencyProperty.Register("IsLeaveOnEnter", typeof(bool), typeof(TextBoxBehavior), new PropertyMetadata(IsLeaveOnEnterChanged));
@@ -52,27 +61,27 @@ namespace ES.Common.Behaviors
             set { SetValue(IsFocusOnKeyboardFocusedProperty, value); }
         }
 
-
-
-
         public static readonly DependencyProperty CaretIndexProperty = DependencyProperty.RegisterAttached("CaretIndex", typeof(int), typeof(TextBoxBehavior), new PropertyMetadata(0, OnCaretIndexChanged));
         public int CaretIndex
         {
             get { return (int)GetValue(CaretIndexProperty); }
             set { SetValue(CaretIndexProperty, value); }
         }
+
         public static readonly DependencyProperty SelectionStartProperty = DependencyProperty.RegisterAttached("SelectionStart", typeof(int), typeof(TextBoxBehavior), new PropertyMetadata(0, OnSelectionChanged));
         public int SelectionStart
         {
             get { return (int)GetValue(SelectionStartProperty); }
             set { SetValue(SelectionStartProperty, value); }
         }
+
         public static readonly DependencyProperty SelectionLengthProperty = DependencyProperty.RegisterAttached("SelectionLength", typeof(int), typeof(TextBoxBehavior), new PropertyMetadata(0, OnSelectionChanged));
         public int SelectionLength
         {
             get { return (int)GetValue(SelectionLengthProperty); }
             set { SetValue(SelectionLengthProperty, value); }
         }
+        #endregion Dependency properties
 
         protected override void OnAttached()
         {
@@ -89,6 +98,20 @@ namespace ES.Common.Behaviors
             {
                 AssociatedObject.GotKeyboardFocus += OnGotKeyboardFocus;
             }
+            if (IsFocusOnTextChanged)
+            {
+                AssociatedObject.TextChanged += OnTextChanged;
+            }
+        }
+
+        private void OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            if (textBox == null) return;
+            if (string.IsNullOrEmpty(textBox.Text))
+            {
+                OnFocus(textBox);
+            }
         }
 
         protected override void OnDetaching()
@@ -102,6 +125,7 @@ namespace ES.Common.Behaviors
             }
             if (IsFocusOnEnable) AssociatedObject.IsEnabledChanged -= OnEnabledChanged;
             if (IsFocusOnTextChanged) AssociatedObject.TextChanged -= TextChanged;
+            if (IsFocusOnTextChanged) AssociatedObject.TextChanged -= OnTextChanged;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

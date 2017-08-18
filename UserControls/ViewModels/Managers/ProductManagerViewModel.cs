@@ -19,6 +19,7 @@ using ES.Data.Models.EsModels;
 using Shared.Helpers;
 using UserControls.PriceTicketControl;
 using UserControls.Helpers;
+using UserControls.PriceTicketControl.Helper;
 using UserControls.PriceTicketControl.ViewModels;
 
 namespace UserControls.ViewModels.Managers
@@ -124,13 +125,13 @@ namespace UserControls.ViewModels.Managers
         private void SetCommands()
         {
             EditCommand = new RelayCommand(OnEditProduct, CanEdit);
-            PrintBarcodeCommand = new RelayCommand(PrintPreviewBarcode, OnCanPrintBarcode);
+            PrintBarcodeCommand = new RelayCommand<PrintPriceTicketEnum?>(OnPrintBarcode, CanPrintBarcode);
             ProductCopyCommand = new RelayCommand(CopyProduct, CanCopyProduct);
             ProductPastCommand = new RelayCommand(PastProduct, CanPastProduct);
             ExportProductsCommand = new RelayCommand<ExportImportEnum>(OnExportProducts, CanExportProducts);
             GetProductsCommand = new RelayCommand(GetProductBy);
             AddProductGroupCommand = new RelayCommand<string>(OnAddProductGroup, CanAddProductGroup);
-            PrintBarcodeCommand = new RelayCommand(PrintPreviewBarcode, OnCanPrintBarcode);
+            PrintBarcodeCommand = new RelayCommand<PrintPriceTicketEnum?>(PrintPreviewBarcode, CanPrintBarcode);
         }
 
         private void TimerElapsed(object obj)
@@ -384,57 +385,18 @@ namespace UserControls.ViewModels.Managers
                 LoadProducts();
             }
         }
-
-        protected virtual bool OnCanPrintBarcode(object o)
+        protected virtual bool CanPrintBarcode(PrintPriceTicketEnum? printPriceTicketEnum)
         {
-            return Product != null && !string.IsNullOrEmpty(Product.Barcode);
+            return Product != null && !string.IsNullOrEmpty(Product.Barcode) && printPriceTicketEnum != null;
+        }
+        protected virtual void OnPrintBarcode(PrintPriceTicketEnum? printPriceTicketEnum)
+        {
+            PriceTicketManager.PrintPriceTicket(printPriceTicketEnum);
         }
 
-        protected virtual void PrintBarcode(object o)
+        protected virtual void PrintPreviewBarcode(PrintPriceTicketEnum? printPriceTicketEnum)
         {
-            if (!OnCanPrintBarcode(o))
-            {
-                return;
-            }
-            var ctrl = new UctrlBarcodeWithText(new BarcodeViewModel(Product.Code, Product.Barcode, Product.Description, Product.Price, null));
-            PrintManager.PrintPreview(ctrl, "Print Barcode", HgConvert.ToBoolean(o));
-
-            //var pb = new UiPrintPreview(ctrl);
-            //if (HgConvert.ToBoolean(o))
-            //{
-            //    pb.Show();
-            //}
-            //else
-            //{
-            //    pb.Show();
-            //    PrintManager.Print(ctrl, true);
-            //    pb.Close();
-            //}
-        }
-
-        protected virtual void OnPrintBarcodeLarge(object o)
-        {
-            if (o == null || !OnCanPrintBarcode(o))
-            {
-                return;
-            }
-            var ctrl = new UctrlBarcodeLargeWithText(new BarcodeViewModel(Product.Code, Product.Barcode, Product.Description, Product.Price, null));
-            PrintManager.PrintPreview(ctrl, "Print Barcode", HgConvert.ToBoolean(o));
-
-            //var pb = new UiPrintPreview(ctrl);
-            //if (HgConvert.ToBoolean(o))
-            //{
-            //    pb.Show();
-            //}
-            //else
-            //{
-            //    PrintManager.Print(ctrl, ApplicationManager.BarcodePrinter);
-            //}
-        }
-
-        protected virtual void PrintPreviewBarcode(object o)
-        {
-            if (!OnCanPrintBarcode(o))
+            if (!CanPrintBarcode(printPriceTicketEnum))
             {
                 return;
             }
@@ -528,10 +490,6 @@ namespace UserControls.ViewModels.Managers
 
         
         public ICommand PrintBarcodeCommand { get; private set; }
-        public ICommand PrintBarcodeLargeCommand
-        {
-            get { return new RelayCommand(OnPrintBarcodeLarge, OnCanPrintBarcode); }
-        }
         public ICommand ProductCopyCommand { get; private set; }
         public ICommand ProductPastCommand { get; private set; }
         public ICommand ExportProductsCommand { get; private set; }

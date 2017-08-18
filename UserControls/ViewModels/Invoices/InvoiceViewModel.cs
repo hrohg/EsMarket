@@ -159,7 +159,6 @@ namespace UserControls.ViewModels.Invoices
         public InvoiceViewModel()
         {
             Invoice = new InvoiceModel(User, Member);
-            IsModified = true;
             Initialize();
         }
         public InvoiceViewModel(Guid id)
@@ -173,7 +172,6 @@ namespace UserControls.ViewModels.Invoices
 
         private void Initialize()
         {
-
             IsClosable = true;
             SetModels();
             SetICommands();
@@ -584,6 +582,8 @@ namespace UserControls.ViewModels.Invoices
             {
                 Invoice = Invoice;
                 IsModified = false;
+                RaisePropertyChanged("InvocieStateImageState");
+                RaisePropertyChanged("InvoiceStateTooltip");
             }
             else
             {
@@ -630,6 +630,8 @@ namespace UserControls.ViewModels.Invoices
             Invoice = InvoicesManager.GetInvoice(Invoice.Id, Invoice.MemberId);
             InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
             IsModified = false;
+            RaisePropertyChanged("InvocieStateImageState");
+            RaisePropertyChanged("InvoiceStateTooltip");
         }
 
         private void CheckForPrize(InvoiceModel invoice)
@@ -797,7 +799,7 @@ namespace UserControls.ViewModels.Invoices
         private void OnFindPartner(string filter)
         {
             var partners = PartnersManager.GetPartners().Where(s => string.IsNullOrEmpty(filter) ||
-                s.FullName.ToLower().Contains(filter.ToLower()) || 
+                s.FullName.ToLower().Contains(filter.ToLower()) ||
                 (!string.IsNullOrEmpty(s.Mobile) && s.Mobile.ToLower().Contains(filter.ToLower()) ||
                 (!string.IsNullOrEmpty(s.Email) && s.Email.ToLower().Contains(filter.ToLower())) ||
                 (!string.IsNullOrEmpty(s.ClubSixteenId) && s.ClubSixteenId.ToLower().Contains(filter.ToLower())
@@ -817,7 +819,7 @@ namespace UserControls.ViewModels.Invoices
         #region Paid command
 
         private ICommand _paidInvoiceCommand;
-        public ICommand PaidInvoiceCommand { get { return _paidInvoiceCommand??(_paidInvoiceCommand = new RelayCommand(OnPaidInvoice, CanPaidInvoice));} }
+        public ICommand PaidInvoiceCommand { get { return _paidInvoiceCommand ?? (_paidInvoiceCommand = new RelayCommand(OnPaidInvoice, CanPaidInvoice)); } }
 
         private bool CanPaidInvoice(object obj)
         {

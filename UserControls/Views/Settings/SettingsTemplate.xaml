@@ -26,6 +26,7 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 
                                 <GroupBox Grid.Row="1" Header="Գնապիտակի տպիչ">
@@ -84,10 +85,35 @@
                                     </Grid>
                                 </GroupBox>
                                 
-                                <GroupBox Grid.Row="3" Header="Այլ">
+                                <GroupBox Grid.Row="3" Header="Դրամարկղ">
+                                    <Grid>
+                                        <Grid.Resources>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Margin" Value="3"/>
+                                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                            </Style>
+                                        </Grid.Resources>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Միացում"/>
+                                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding CashDeskPorts}" SelectedItem="{Binding CashDeskPort}"/>
+                                    </Grid>
+                                </GroupBox>
+                                
+                                <GroupBox Grid.Row="4" Header="Այլ">
                                     <StackPanel>
                                         <CheckBox IsChecked="{Binding LocalMode}" Content="Աշխատել լոկալ ռեժիմում" Margin="5"/>
                                         <CheckBox IsChecked="{Binding NotifyAboutIncomingInvoices}" Content="Տեղեկացնել ստացված մուտքային ապրանքագրերի մասին" Margin="5"/>
+                                        
                                     </StackPanel>
                                 </GroupBox>
                             </Grid>
@@ -172,7 +198,7 @@
                                     <StackPanel>
                                         <CheckBox IsChecked="{Binding SaleBySingle}" Content="Վաճառել մեկական" Margin="5"/>
                                         <CheckBox IsChecked="{Binding IsPrintSaleTicket}" Content="Տպել վաճառքի ապրանքագիր" Margin="5"/>
-                                        <CheckBox IsChecked="{Binding EcrSettings.IsActive}" Content="Ակտիվացնել կապը ՀԴՄ-ի հետ" Margin="5"/>
+                                        <CheckBox IsChecked="{Binding IsEcrActivated}" Content="Ակտիվացնել կապը ՀԴՄ-ի հետ" Margin="5"/>
                                     </StackPanel>
                                 </GroupBox>
                             </Grid>
@@ -311,7 +337,7 @@
                                                     VerticalAlignment="Center"/>
                                                 <Button Content="Բեռնել" Command="{Binding Path=ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.GetOperatorsAndDepList}" Margin="3" Padding="5 0"/>
                                             </StackPanel>
-                                            <TextBlock Grid.Row="7" Grid.Column="0" Text="Տպել կտրոնը արտաքին տպիչով"/>
+                                            <TextBlock Grid.Row="7" Grid.Column="0" Text="Տպել կտրոնն արտաքին տպիչով"/>
                                             <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding EcrSettings.UseExternalPrinter}" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
                                             <TextBlock Grid.Row="8" Grid.Column="0" Text="Առևտրի ծրագիր IP" HorizontalAlignment="Right"/>
                                             <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding EcrSettings.ApplicationIp}"/>
