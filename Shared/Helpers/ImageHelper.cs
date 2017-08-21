@@ -17,7 +17,7 @@ namespace Shared.Helpers
         }
         public static ImageState GetInvoiceStateImage(bool isAccepted)
         {
-            return isAccepted ? new ImageState(new Uri(Prefix + "Document_Accept_16x16.png", UriKind.Relative), new Uri(Prefix + "Help/MenuItem_Help_Mouseover.png", UriKind.Relative), new Uri(Prefix + "Help/MenuItem_Help_Mouseover.png", UriKind.Relative), new Uri(Prefix + "Help/Help_Pressed.png", UriKind.Relative)) :
+            return isAccepted ? new ImageState(new Uri(Prefix + "Invoice/Document_Accept_16x16.png", UriKind.Relative), new Uri(Prefix + "Help/MenuItem_Help_Mouseover.png", UriKind.Relative), new Uri(Prefix + "Help/MenuItem_Help_Mouseover.png", UriKind.Relative), new Uri(Prefix + "Help/Help_Pressed.png", UriKind.Relative)) :
                 new ImageState(new Uri(Prefix + "Invoice/Document_Information_16x16.png", UriKind.Relative), new Uri(Prefix + "Help/MenuItem_Help_DarkGray_Icon.png", UriKind.Relative), new Uri(Prefix + "Help/Help_White_Icon.png", UriKind.Relative), new Uri(Prefix + "Help/Help_Orange_Icon.png", UriKind.Relative));
         }
 

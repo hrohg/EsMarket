@@ -151,7 +151,7 @@ namespace UserControls.ViewModels.Invoices
             set { _partnerFilter = value; RaisePropertyChanged("PartnerFilter"); }
         }
 
-        public ImageState InvocieStateImageState { get { return ImageHelper.GetInvoiceStateImage(Invoice.IsApproved); } }
+        public ImageState InvoiceStateImageState { get { return ImageHelper.GetInvoiceStateImage(Invoice.IsApproved); } }
         public string InvoiceStateTooltip { get { return Invoice.IsApproved ? string.Format("Հաստատված է {0}", Invoice.ApproveDate) : "Հաստատված չէ"; } }
         #endregion
 
@@ -582,7 +582,7 @@ namespace UserControls.ViewModels.Invoices
             {
                 Invoice = Invoice;
                 IsModified = false;
-                RaisePropertyChanged("InvocieStateImageState");
+                RaisePropertyChanged("InvoiceStateImageState");
                 RaisePropertyChanged("InvoiceStateTooltip");
             }
             else
@@ -630,7 +630,7 @@ namespace UserControls.ViewModels.Invoices
             Invoice = InvoicesManager.GetInvoice(Invoice.Id, Invoice.MemberId);
             InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
             IsModified = false;
-            RaisePropertyChanged("InvocieStateImageState");
+            RaisePropertyChanged("InvoiceStateImageState");
             RaisePropertyChanged("InvoiceStateTooltip");
         }
 

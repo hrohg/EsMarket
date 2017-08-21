@@ -12,6 +12,8 @@
          xmlns:managers="clr-namespace:ES.Business.Managers;assembly=ES.Business"
          xmlns:popup="clr-namespace:UserControls.Controls.Popup"
          xmlns:controls="clr-namespace:ES.Common.Controls;assembly=ES.Common"
+         xmlns:res="clr-namespace:ResourceLibrary.Helper;assembly=ResourceLibrary"
+         xmlns:invoices="clr-namespace:UserControls.ViewModels.Invoices"
          MinHeight="450"
          MinWidth="700"
          Width="Auto"
@@ -24,6 +26,20 @@
         <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
             <Setter Property="FontSize" Value="18"/>
         </Style>
+
+        <Style x:Key="ThumbStyle" TargetType="{x:Type Thumb}" BasedOn="{StaticResource {x:Type Thumb}}">
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Cursor" Value="SizeWE"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
     </UserControl.Resources>
     <Grid>
         <Grid.InputBindings>
@@ -142,10 +158,10 @@
                         <ToggleButton x:Name="ParentToggleButton" Style="{DynamicResource InformationToggleButtinStyle}" Margin="1 0"/>
                     </StackPanel>
                     <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="PartnerFilterTextBox" Text="{Binding PartnerFilter}" MinWidth="250" HorizontalAlignment="Stretch">
-                    <TextBox.InputBindings>
+                        <TextBox.InputBindings>
                             <KeyBinding Key="Enter" Command="{Binding FindPartnerCommand}" CommandParameter="{Binding ElementName=PartnerFilterTextBox, Path=Text}"/>
-                    </TextBox.InputBindings>    
-                    <TextBox.ContextMenu>
+                        </TextBox.InputBindings>
+                        <TextBox.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Ընտրել պատվիրատու" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Customer}"/>
                                 <MenuItem Header="Ընտրել գործընկեր" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.None}"/>
@@ -169,7 +185,75 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Text="{Binding Invoice.InvoiceNumber}" Foreground="Blue" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Image Source="{Binding InvocieStateImageState.Normal}" Width="16" Height="16" ToolTip="{Binding InvoiceStateTooltip}"/>
+                        <ToggleButton x:Name="InvocieStateToggleButton" Style="{DynamicResource InvoiceStateToggleButtinStyle}" ToolTip="{Binding InvoiceStateTooltip}"/>
+                        <popup:DraggablePopup IsOpen="{Binding ElementName=InvocieStateToggleButton, Path=IsChecked}" StaysOpen="False" AllowsTransparency="True">
+                            <Border Background="LightBlue" MinWidth="200" MinHeight="100" CornerRadius="2 2 0 0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Border Grid.Row="0" CornerRadius="0 2 2 0" Background="#FF8808">
+                                        <StackPanel Orientation="Horizontal" Margin="3">
+                                            <Grid>
+                                                <Thumb Width="Auto" Style="{StaticResource ThumbStyle}"/>
+                                                <TextBlock Text="Ապրանքագիր" Background="Transparent"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
+                                    <Grid Grid.Row="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="ՀՀ:"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Invoice.InvoiceNumber}" Foreground="Green"/>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Ստեղծեց:"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Invoice.Creator}"/>
+                                        
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Ստեղծման ամսաթիվ:"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Invoice.CreateDate}"/>
+                                        
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Հաստատեց:"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Invoice.Approver}"/>
+                                        
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Հաստատման ամսաթիվ:"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Invoice.ApproveDate}"/>
+                                        
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Գումար:"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Invoice.Amount}"/>
+                                        
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Զեղչ:"/>
+                                        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Invoice.Discount}"/>
+                                        
+                                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Ընդամենը:"/>
+                                        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Invoice.Total}"/>
+                                        
+                                        <Separator Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"/>
+                                        
+                                        <TextBlock Grid.Row="9" Grid.Column="0" Text="Տող:"/>
+                                        <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ProductCount}"/>
+                                        <TextBlock Grid.Row="10" Grid.Column="0" Text="Քանակ:"/>
+                                        <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding ProductQuantity}"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </popup:DraggablePopup>
                     </StackPanel>
                 </Grid>
             </GroupBox>
@@ -182,51 +266,51 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Border Background="LightBlue" CornerRadius="3">
-            <Grid Grid.Row="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="20"/>
-                    <RowDefinition Height="35" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0" Grid.Row="1" Background="White" Margin="0 1">
-                    <Button Command="{Binding AddInvoiceItemCommand}" TabIndex="3" Style="{DynamicResource AddButtonStyle}"/>
-                </Grid>
-                <TextBlock Grid.Column="1" Grid.Row="0" Text="Կոդ"/>
-                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path=Code, UpdateSourceTrigger=PropertyChanged}" 
+                <Grid Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="35" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0" Grid.Row="1" Background="White" Margin="0 1">
+                        <Button Command="{Binding AddInvoiceItemCommand}" TabIndex="3" Style="{DynamicResource AddButtonStyle}"/>
+                    </Grid>
+                    <TextBlock Grid.Column="1" Grid.Row="0" Text="Կոդ"/>
+                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path=Code, UpdateSourceTrigger=PropertyChanged}" 
                              Width="150" TabIndex="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="1 0">
-                    <TextBox.InputBindings>
-                        <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding Path=Code}"/>
-                    </TextBox.InputBindings>
-                    <i:Interaction.Behaviors>
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding Path=Code}"/>
+                        </TextBox.InputBindings>
+                        <i:Interaction.Behaviors>
                             <behaviors:TextBoxBehavior IsFocusOnLoad="True" IsSelectTextOnFocus="True" IsFocusOnKeyboardFocused="True" IsFocusOnTextChanged="True" />
-                    </i:Interaction.Behaviors>
-                </TextBox>
-                <TextBlock Grid.Column="2" Grid.Row="0" Text="Անվանում"/>
-                <TextBox Grid.Column="2" Grid.Row="1" Text="{Binding Path=InvoiceItem.Description, UpdateSourceTrigger=PropertyChanged}"
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                    <TextBlock Grid.Column="2" Grid.Row="0" Text="Անվանում"/>
+                    <TextBox Grid.Column="2" Grid.Row="1" Text="{Binding Path=InvoiceItem.Description, UpdateSourceTrigger=PropertyChanged}"
                    VerticalContentAlignment="Center" IsReadOnly="True">
-                    <TextBox.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Ընտրել ըստ անվանման" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
-                        </ContextMenu>
-                    </TextBox.ContextMenu>
-                </TextBox>
-                <TextBlock Grid.Column="3" Grid.Row="0" Text="Գին"/>
-                <TextBox Grid.Column="3" Grid.Row="1" 
+                        <TextBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Ընտրել ըստ անվանման" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
+                            </ContextMenu>
+                        </TextBox.ContextMenu>
+                    </TextBox>
+                    <TextBlock Grid.Column="3" Grid.Row="0" Text="Գին"/>
+                    <TextBox Grid.Column="3" Grid.Row="1" 
                              Text="{Binding Path=InvoiceItem.Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" 
                              IsReadOnly="{Binding Path = DenayChangePrice}" Width="105" VerticalContentAlignment="Center" 
                              Focusable="{Binding DenayChangePrice, Converter={StaticResource InverseBooleanConverter}}"
                              HorizontalContentAlignment="Right" TabIndex="2">
-                    <i:Interaction.Behaviors>
-                        <behaviors:TextBoxBehavior IsSelectTextOnFocus="True" />
-                    </i:Interaction.Behaviors>
-                </TextBox>
-            </Grid>
+                        <i:Interaction.Behaviors>
+                            <behaviors:TextBoxBehavior IsSelectTextOnFocus="True" />
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                </Grid>
             </Border>
             <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="3" Visibility="Collapsed">
             <CheckBox Name="CbAddSingle" Content="Ավելացնել մեկական" IsChecked="{Binding SaleBySingle}"  Margin="5" VerticalContentAlignment="Center" VerticalAlignment="Center" Focusable="False" HorizontalContentAlignment="Right"/>

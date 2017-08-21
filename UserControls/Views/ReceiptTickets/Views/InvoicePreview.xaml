@@ -181,7 +181,7 @@
                                         CellStyle="{StaticResource CellRightAlign}"
                                         Width="Auto"/>
                         <DataGridTextColumn Header="Գին" 
-                                        Binding="{Binding Path=Price, Mode=OneWay}" CellStyle="{StaticResource CellRightAlign}" Width="Auto"/>
+                                        Binding="{Binding Path=Product.Price, Mode=OneWay}" CellStyle="{StaticResource CellRightAlign}" Width="Auto"/>
                         <DataGridTextColumn Header="Գումար" Binding="{Binding Path=Amount, Mode=OneWay}" CellStyle="{StaticResource CellRightAlign}" Width="Auto"/>
                     </DataGrid.Columns>
                 </DataGrid>

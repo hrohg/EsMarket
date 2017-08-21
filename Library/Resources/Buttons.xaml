@@ -274,6 +274,14 @@
         </Setter>
     </Style>
 
-
-
+    <Style x:Key="InvoiceStateToggleButtinStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static res:ResourceKeys.NoChromeToggleButtonKey}}">
+    <Setter Property="ToolTip" Value="Մանրամասն"/>
+    <Setter Property="Template">
+        <Setter.Value>
+            <ControlTemplate>
+                <Image Source="{Binding InvoiceStateImageState.Normal}" Width="16" Height="16"/>
+            </ControlTemplate>
+        </Setter.Value>
+    </Setter>
+    </Style>
 </ResourceDictionary>

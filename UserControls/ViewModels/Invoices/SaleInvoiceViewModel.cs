@@ -428,7 +428,7 @@ namespace UserControls.ViewModels.Invoices
             }
             Invoice = invoice;
             IsModified = false;
-            RaisePropertyChanged("InvocieStateImageState");
+            RaisePropertyChanged("InvoiceStateImageState");
             RaisePropertyChanged("InvoiceStateTooltip");
 
             if (IsPrintTicket && (!IsEcrActivated || ApplicationManager.Settings.MemberSettings.EcrConfig.UseExternalPrinter))

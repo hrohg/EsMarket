@@ -1719,11 +1719,18 @@ namespace ES.Market.ViewModels
         private void OnOpenCashDesk(object obj)
         {
             if (!CanOpenCashDesk(obj)) return;
-            var cashDeskPort = new SerialPort(ApplicationManager.Settings.MemberSettings.CashDeskPort);
+            var cashDeskPort = new SerialPort(ApplicationManager.Settings.MemberSettings.CashDeskPort)
+            {
+                BaudRate = 9600,
+                Parity = Parity.None,
+                DataBits = 8,
+                StopBits = StopBits.One,
+                Handshake = Handshake.None
+            };
             cashDeskPort.Open();
             if (cashDeskPort.IsOpen)
             {
-                cashDeskPort.Write("80000");
+                cashDeskPort.WriteLine("80000");
                 cashDeskPort.Close();
             }
         }

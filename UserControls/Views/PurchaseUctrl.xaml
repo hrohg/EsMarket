@@ -176,7 +176,75 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Text="{Binding Invoice.InvoiceNumber}" Foreground="Blue" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Image Source="{Binding InvocieStateImageState.Normal}" Width="16" Height="16" ToolTip="{Binding InvoiceStateTooltip}"/>
+                        <ToggleButton x:Name="InvocieStateToggleButton" Style="{DynamicResource InvoiceStateToggleButtinStyle}" ToolTip="{Binding InvoiceStateTooltip}"/>
+                        <popup:DraggablePopup IsOpen="{Binding ElementName=InvocieStateToggleButton, Path=IsChecked}" StaysOpen="False" AllowsTransparency="True">
+                            <Border Background="LightBlue" MinWidth="200" MinHeight="100" CornerRadius="2 2 0 0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Border Grid.Row="0" CornerRadius="0 2 2 0" Background="#FF8808">
+                                        <StackPanel Orientation="Horizontal" Margin="3">
+                                            <Grid>
+                                                <Thumb Width="Auto" Style="{StaticResource ThumbStyle}"/>
+                                                <TextBlock Text="Ապրանքագիր" Background="Transparent"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
+                                    <Grid Grid.Row="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="ՀՀ:"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Invoice.InvoiceNumber}" Foreground="Green"/>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Ստեղծեց:"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Invoice.Creator}"/>
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Ստեղծման ամսաթիվ:"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Invoice.CreateDate}"/>
+
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Հաստատեց:"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Invoice.Approver}"/>
+
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Հաստատման ամսաթիվ:"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Invoice.ApproveDate}"/>
+
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Գումար:"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Invoice.Amount}"/>
+
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Զեղչ:"/>
+                                        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Invoice.Discount}"/>
+
+                                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Ընդամենը:"/>
+                                        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Invoice.Total}"/>
+
+                                        <Separator Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"/>
+
+                                        <TextBlock Grid.Row="9" Grid.Column="0" Text="Տող:"/>
+                                        <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ProductCount}"/>
+                                        <TextBlock Grid.Row="10" Grid.Column="0" Text="Քանակ:"/>
+                                        <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding ProductQuantity}"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </popup:DraggablePopup>
                     </StackPanel>
                 </Grid>
             </GroupBox>
