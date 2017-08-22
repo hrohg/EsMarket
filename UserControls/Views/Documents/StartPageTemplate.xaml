@@ -163,17 +163,17 @@
                         <TextBlock Text="Դրամարկղ" Style="{StaticResource HeaderStyle}"/>
                         <TextBlock Grid.Row="1" Text="Աշխատանք դրամարկղի հետ:" Style="{StaticResource DescriptionStyle}"/>
                         <StackPanel Grid.Row="2" Margin="15">
-                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Seller}}">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.JuniorCashier}}">
                                                 <Hyperlink TextDecorations="None" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers:AccountingPlanEnum.AccountingReceivable}">
                                                     <TextBlock Text="221 Դեբիտորական պարտքի մարում" Style="{StaticResource LinkStyle}"/>
                                                     </Hyperlink>
                                                 </TextBlock>
-                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.SaleManager}}">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Cashier}}">
                                                 <Hyperlink TextDecorations="None" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers:AccountingPlanEnum.PurchasePayables}">
                                                     <TextBlock Text="521 Կրեդիտորական պարտքերի մարում" Style="{StaticResource LinkStyle}"/>
                                                     </Hyperlink>
                                                 </TextBlock>
-                            <TextBlock Margin="0 4 0 0">
+                            <TextBlock Margin="0 4 0 0"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.JuniorCashier}}">
                                                 <Hyperlink TextDecorations="None" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers:AccountingPlanEnum.ReceivedInAdvance}">
                                                     <TextBlock Text="523 Ստացված կանխավճարներ" Style="{StaticResource LinkStyle}"/>
                                                     </Hyperlink>

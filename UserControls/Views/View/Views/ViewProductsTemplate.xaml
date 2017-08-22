@@ -1,6 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:viewModels="clr-namespace:UserControls.ViewModels"
                     xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data"
                     xmlns:controls="clr-namespace:UserControls.Controls"
                     xmlns:view="clr-namespace:UserControls.Views.View">
@@ -16,9 +15,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TextBox Grid.Row="1" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="25" FontSize="15" VerticalContentAlignment="Center" Width="Auto" BorderThickness="1" BorderBrush="Black"/>
-                <Button Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" IsTabStop="False">
-                    <Image Height="20" Width="20" Source="pack://application:,,,/Shared;component/Images/Search.png"/>
-                </Button>
+                <Button Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" IsTabStop="False" Style="{DynamicResource FindTextBoxButtonStyle}"/>
                 <ContentControl Grid.Row="2" Content="{Binding}">
                     <ContentControl.Resources>
                         <DataTemplate DataType="{x:Type view:ProductItemsViewModel}">
@@ -88,13 +85,13 @@
                 </ContentControl>
                 <StackPanel Grid.Row="3" HorizontalAlignment="Right" Orientation="Horizontal" Margin="3">
                     <TextBlock Text="Տեսականի" Margin="3 0"/>
-                    <TextBlock Text="{Binding Count, StringFormat='# ##0'}" Margin="3 0" Foreground="Blue"/>
+                    <TextBlock Text="{Binding Count, StringFormat={}{0:#,0.##}}" Margin="3 0" Foreground="Blue"/>
                     <TextBlock Text="Քանակ" Margin="3 0"/>
-                    <TextBlock Text="{Binding Quantity, StringFormat='# ##0.##'}" Margin="3 0" Foreground="Blue"/>
+                    <TextBlock Text="{Binding Quantity, StringFormat={}{0:#,0.##}}" Margin="3 0" Foreground="Blue"/>
                     <TextBlock Text="Ինքնարժեք" Margin="3 0"/>
-                    <TextBlock Text="{Binding CostPrice, StringFormat='# ##0.##'}" Margin="3 0" Foreground="Blue"/>
+                    <TextBlock Text="{Binding CostPrice, StringFormat={}{0:#,0.##}}" Margin="3 0" Foreground="Blue"/>
                     <TextBlock Text="Վսճառքի գին" Margin="3 0"/>
-                    <TextBlock Text="{Binding Price, StringFormat='# ##0.##'}" Margin="3 0" Foreground="Blue"/>
+                    <TextBlock Text="{Binding Price, StringFormat={}{0:#,0.##}}" Margin="3 0" Foreground="Blue"/>
                 </StackPanel>
                 <StackPanel Grid.Row="4" HorizontalAlignment="Right" Orientation="Horizontal" Margin="1">
                     <Button Content="Թարմացնել" Width="80" Command="{Binding UpdateCommand}"/>

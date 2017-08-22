@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -49,6 +52,20 @@ namespace UserControls.ViewModels.Invoices
         #endregion
 
         #region InvoiceViewModel External properties
+
+        public override bool IsModified
+        {
+            get { return base.IsModified; }
+            set
+            {
+                base.IsModified = value;
+                DisposeTimer();
+                if (IsModified)
+                {
+                    _timer = new Timer(TimerElapsed, null, 60000, 60000);
+                }
+            }
+        }
 
         #region Is loading
         private bool _isLoading;
@@ -317,6 +334,49 @@ namespace UserControls.ViewModels.Invoices
         }
         #endregion
 
+        #region Auto save
+        Timer _timer = null;
+        private void DisposeTimer()
+        {
+            if (_timer != null)
+            {
+                _timer.Dispose();
+                _timer = null;
+            }
+        }
+        private void TimerElapsed(object obj)
+        {
+            new Thread(AutoSave).Start();
+            DisposeTimer();
+        }
+        private void AutoSave()
+        {
+            string filePath = PathHelper.GetMemberTempInvoiceFilePath(Invoice.Id, ApplicationManager.Member.Id);
+            if (string.IsNullOrEmpty(filePath)) return;
+            FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate);
+            BinaryFormatter formatter = new BinaryFormatter();
+            try
+            {
+                formatter.Serialize(fs, this);
+            }
+            catch
+            {
+                
+            }
+            finally
+            {
+                fs.Close();
+            }
+        }
+
+        private void DeleteAutoSaveFile()
+        {
+            DisposeTimer();
+            string filePath = PathHelper.GetMemberTempInvoiceFilePath(Invoice.Id, ApplicationManager.Member.Id);
+            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath)) return;
+            File.Delete(filePath);
+        }
+        #endregion Auto save
         #endregion Internal methods
 
         #region External methods
@@ -521,6 +581,7 @@ namespace UserControls.ViewModels.Invoices
         public virtual void OnSaveInvoice(object o)
         {
             Save();
+            DeleteAutoSaveFile();
         }
 
         private bool Save()

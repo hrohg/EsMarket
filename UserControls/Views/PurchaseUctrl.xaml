@@ -227,20 +227,20 @@
                                         <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Invoice.ApproveDate}"/>
 
                                         <TextBlock Grid.Row="5" Grid.Column="0" Text="Գումար:"/>
-                                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Invoice.Amount}"/>
+                                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Invoice.Amount, StringFormat={}{0:#,0.##}}"/>
 
                                         <TextBlock Grid.Row="6" Grid.Column="0" Text="Զեղչ:"/>
-                                        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Invoice.Discount}"/>
+                                        <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Invoice.Discount, StringFormat={}{0:#,0.##}%}"/>
 
                                         <TextBlock Grid.Row="7" Grid.Column="0" Text="Ընդամենը:"/>
-                                        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Invoice.Total}"/>
+                                        <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding Invoice.Total, StringFormat={}{0:#,0.##}}"/>
 
                                         <Separator Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2"/>
 
                                         <TextBlock Grid.Row="9" Grid.Column="0" Text="Տող:"/>
-                                        <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ProductCount}"/>
+                                        <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding ProductCount, StringFormat={}{0:#,0.##}}"/>
                                         <TextBlock Grid.Row="10" Grid.Column="0" Text="Քանակ:"/>
-                                        <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding ProductQuantity}"/>
+                                        <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding ProductQuantity, StringFormat={}{0:#,0.##}}"/>
                                     </Grid>
                                 </Grid>
                             </Border>

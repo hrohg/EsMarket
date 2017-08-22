@@ -297,10 +297,10 @@ namespace UserControls.ViewModels.Reports
                 return _invoiceItems == null
                     ? null
                     : _invoiceItems
-                    //.Where(s => 
-                    //    (IsSale && (InvoiceType)s.Invoice.InvoiceTypeId == InvoiceType.SaleInvoice) ||
-                    //    (IsPurchase && (InvoiceType)s.Invoice.InvoiceTypeId == InvoiceType.PurchaseInvoice) ||
-                    //    (IsMove && (InvoiceType)s.Invoice.InvoiceTypeId == InvoiceType.MoveInvoice)).OrderBy(s => s.Code)
+                    .Where(s => 
+                        (IsSale && Invoices.Any(i=>i.Id == s.InvoiceId && i.InvoiceTypeId==(int)InvoiceType.SaleInvoice)) ||
+                        (IsPurchase && Invoices.Any(i=>i.Id == s.InvoiceId && i.InvoiceTypeId==(int)InvoiceType.PurchaseInvoice)) ||
+                        (IsMove && Invoices.Any(i=>i.Id == s.InvoiceId && i.InvoiceTypeId==(int)InvoiceType.MoveInvoice))).OrderBy(s => s.Code)
                         .GroupBy(s => s.Code + s.Price)
                         .Select(s => new ProductOrderItemsModel
                         {

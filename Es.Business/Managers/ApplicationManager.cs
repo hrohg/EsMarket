@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Controls;
 using ES.Business.Helpers;
-using ES.Common;
 using ES.Common.Enumerations;
 using ES.Common.Managers;
 using ES.Common.Models;
@@ -492,13 +491,13 @@ namespace ES.Business.Managers
                     return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.Cashier) || IsInRole(UserRoleEnum.SeniorCashier);
                     break;
                 case UserRoleEnum.SeniorCashier:
-                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.SeniorCashier) || IsInRole(UserRoleEnum.Director);
+                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.SeniorCashier) || IsInRole(UserRoleEnum.JuniorCashier);
                     break;
                 case UserRoleEnum.JuniorCashier:
-                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.JuniorCashier);
+                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.JuniorCashier) || IsInRole(UserRoleEnum.Director);
                     break;
                 case UserRoleEnum.JuniorSeller:
-                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.JuniorSeller);
+                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.JuniorSeller) || IsInRole(UserRoleEnum.Director);
                     break;
                 case null:
                     return false;

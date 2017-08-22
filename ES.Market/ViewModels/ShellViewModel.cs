@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -234,9 +235,10 @@ namespace ES.Market.ViewModels
             ApplicationManager.MessageManager.MessageReceived += OnNewMessage;
             Tools.Add(LogViewModel);
             AddDocument(new StartPageViewModel(this));
-            ApplicationManager.Instance.CashProvider.UpdateCash();
+            LoadTempInvoices();
             InitializeCommands();
         }
+
         private void InitializeCommands()
         {
             RefreshCashCommand = new RefreshCashCommand(this);
@@ -266,6 +268,37 @@ namespace ES.Market.ViewModels
 
         }
 
+        private void LoadTempInvoices()
+        {
+            ApplicationManager.Instance.CashProvider.UpdateCash();
+            var tempFilesPath = PathHelper.GetMemberTempInvoicePath(ApplicationManager.Member.Id);
+            if (!string.IsNullOrEmpty(tempFilesPath) && Directory.Exists(tempFilesPath))
+            {
+                foreach (var filePath in Directory.GetFiles(tempFilesPath))
+                {
+                    if (File.Exists(filePath))
+                    {
+                        FileStream fileStream = new FileStream(filePath, FileMode.Open);
+                        try
+                        {
+                            BinaryFormatter serializer = new BinaryFormatter();
+                            var invoice = (InvoiceViewModel)serializer.Deserialize(fileStream);
+                            AddInvoiceDocument(invoice);
+                        }
+                        catch (Exception)
+                        {
+                            fileStream.Close();
+                            File.Delete(filePath);
+                            continue;
+                        }
+                        finally
+                        {
+                            fileStream.Close();
+                        }
+                    }
+                }
+            }
+        }
         private bool CanViewViewInternalWayBillCommands(ViewInvoicesEnum o)
         {
             switch (o)
@@ -321,7 +354,18 @@ namespace ES.Market.ViewModels
             Documents.Select(s => s.IsActive = (s == document && e.Value));
             ActiveTab = document;
         }
-
+        private void AddInvoiceDocument(InvoiceViewModel vm)
+        {
+            var exInvoice = Documents.SingleOrDefault(s => s is InvoiceViewModel && ((InvoiceViewModel)s).Invoice.Id == vm.Invoice.Id);
+            if (exInvoice != null)
+            {
+                exInvoice.IsSelected = true;
+            }
+            else
+            {
+                AddDocument(vm);
+            }
+        }
         private void AddDocument(DocumentViewModel vm)
         {
             if (vm.IsClosable)
@@ -1274,7 +1318,7 @@ namespace ES.Market.ViewModels
                 vm.InvoiceItems.Add(vm.InvoiceItem);
                 vm.InvoiceItem = new InvoiceItemsModel();
             }
-            AddDocument(vm);
+            AddInvoiceDocument(vm);
         }
 
         private void CreateWriteInInvoice(List<Tuple<string, decimal>> items, long? stockId, string notes = null)
@@ -1301,7 +1345,7 @@ namespace ES.Market.ViewModels
                 vm.InvoiceItems.Add(vm.InvoiceItem);
                 vm.InvoiceItem = new InvoiceItemsModel();
             }
-            AddDocument(vm);
+            AddInvoiceDocument(vm);
         }
 
         private void OnWriteOffStockTaking(object o)
@@ -1568,7 +1612,7 @@ namespace ES.Market.ViewModels
                     }
                     if (vm != null)
                     {
-                        AddDocument(vm);
+                        AddInvoiceDocument(vm);
                     }
                 }
             }

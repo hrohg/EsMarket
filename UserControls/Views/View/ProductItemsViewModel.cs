@@ -42,27 +42,10 @@ namespace UserControls.Views.View
                 _timer = new Timer(TimerElapsed, null, 300, 300);
             }
         }
-        public decimal Count { get { return _items != null ? _items.GroupBy(s => s.Code).Count() : 0; } }
-        public decimal Quantity { get { return _items != null ? _items.Sum(s => s.ExistingQuantity) : 0; } }
-        public decimal CostPrice { get { return _items != null ? _items.Sum(s => s.ExistingQuantity * (s.Product.CostPrice ?? 0)) : 0; } }
-        public decimal Price { get { return _items != null ? _items.Sum(s => s.ExistingQuantity * s.Product.Price ?? 0) : 0; } }
-
-        public bool IsLoading
-        {
-            get
-            {
-                return _isLoading;
-            }
-            set
-            {
-                if (_isLoading == value)
-                {
-                    return;
-                }
-                _isLoading = value;
-                RaisePropertyChanged("IsLoading");
-            }
-        }
+        public decimal Count { get { return Items != null ? Items.GroupBy(s => s.Code).Count() : 0; } }
+        public decimal Quantity { get { return Items != null ? Items.Sum(s => s.ExistingQuantity) : 0; } }
+        public decimal CostPrice { get { return Items != null ? Items.Sum(s => s.ExistingQuantity * (s.Product.CostPrice ?? 0)) : 0; } }
+        public decimal Price { get { return Items != null ? Items.Sum(s => s.ExistingQuantity * s.Product.Price ?? 0) : 0; } }
 
         public ObservableCollection<ProductOrderModel> Items
         {
@@ -97,6 +80,10 @@ namespace UserControls.Views.View
         private void TimerElapsed(object obj)
         {
             RaisePropertyChanged("Items");
+            RaisePropertyChanged("Count");
+            RaisePropertyChanged("Quantity");
+            RaisePropertyChanged("CostPrice");
+            RaisePropertyChanged("Price");
             DisposeTimer();
         }
         private void DisposeTimer()
