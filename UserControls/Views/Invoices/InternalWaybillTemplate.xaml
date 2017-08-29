@@ -169,7 +169,7 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
                         <Label Content="Նշումներ"/>
-                        <TextBox Text="{Binding Invoice.Notes, UpdateSourceTrigger=PropertyChanged}" Height="50" TextWrapping="Wrap" AcceptsReturn="True" HorizontalAlignment="Stretch"/>
+                        <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" Height="50" TextWrapping="Wrap" AcceptsReturn="True" HorizontalAlignment="Stretch"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Label Content="Քանակ" VerticalAlignment="Center" Foreground="Green"/>

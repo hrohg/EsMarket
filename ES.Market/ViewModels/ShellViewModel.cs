@@ -127,11 +127,24 @@ namespace ES.Market.ViewModels
                 if (_productItemsToolsViewModel == null)
                 {
                     _productItemsToolsViewModel = new ProductItemsToolsViewModel();
-                    _productItemsToolsViewModel.OnManageProduct += OnSetProduct;
+                    _productItemsToolsViewModel.OnManageProduct += OnManageProduct;
+                    _productItemsToolsViewModel.OnProductItemSelected += OnSetProduct;
+                    AddTools<ProductItemsToolsViewModel>(_productItemsToolsViewModel, false);
                 }
                 return _productItemsToolsViewModel;
             }
         }
+
+        private void OnSetProduct(ProductItemModel productitem)
+        {
+            var vm = Documents.FirstOrDefault(s => s.IsSelected) as InvoiceViewModel; //Documents.OfType<InvoiceViewModel>().FirstOrDefault();
+            if (vm == null)
+            {
+                return;
+            }
+            vm.OnSetProductItem(productitem);
+        }
+
         #endregion ProductitemsToolViewModel
 
         #endregion
@@ -346,13 +359,16 @@ namespace ES.Market.ViewModels
                 return;
             }
             AddDocument(vm);
-
         }
 
         private void OnActiveTabChanged(DocumentViewModel document, ActivityChangedEventArgs e)
         {
             Documents.Select(s => s.IsActive = (s == document && e.Value));
             ActiveTab = document;
+            if (ActiveTab is InvoiceViewModel || ActiveTab is ProductManagerViewModel)
+            {
+                ProductItemsToolsViewModel.IsActive = true;
+            }
         }
         private void AddInvoiceDocument(InvoiceViewModel vm)
         {
@@ -1444,7 +1460,7 @@ namespace ES.Market.ViewModels
             vm.OnProductEdited += ProductItemsToolsViewModel.UpdateProducts;
         }
 
-        private void OnSetProduct(ProductModel product)
+        private void OnManageProduct(ProductModel product)
         {
             var vm = Documents.OfType<ProductManagerViewModel>().FirstOrDefault();
             if (vm == null)

@@ -492,6 +492,7 @@ namespace ES.Business.Managers
                     }
                     catch (Exception ex)
                     {
+                        invoice.ApproveDate = null;
                         MessageBox.Show(ex.Message);
                         return false;
                     }
@@ -726,6 +727,7 @@ namespace ES.Business.Managers
                     }
                     catch (Exception ex)
                     {
+                        invoice.ApproveDate = null;
                         MessageBox.Show(string.Format("{0} \n {1}",ex.Message, ex.InnerException!=null? ex.InnerException.Message: string.Empty));
                         return null;
                     }
@@ -1038,6 +1040,7 @@ namespace ES.Business.Managers
                     }
                     catch (Exception ex)
                     {
+                        invoice.ApproveDate = null;
                         return null;
                     }
                 }
@@ -1202,6 +1205,7 @@ namespace ES.Business.Managers
                     }
                     catch (Exception ex)
                     {
+                        invoice.ApproveDate = null;
                         MessageManager.OnMessage(ex.Message, MessageTypeEnum.Warning);
                         return null;
                     }
@@ -1352,6 +1356,7 @@ namespace ES.Business.Managers
                     }
                     catch (Exception ex)
                     {
+                        invoice.ApproveDate = null;
                         return null;
                     }
                 }

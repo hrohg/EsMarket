@@ -170,6 +170,16 @@ namespace UserControls.ViewModels.Invoices
 
         public ImageState InvoiceStateImageState { get { return ImageHelper.GetInvoiceStateImage(Invoice.IsApproved); } }
         public string InvoiceStateTooltip { get { return Invoice.IsApproved ? string.Format("Հաստատված է {0}", Invoice.ApproveDate) : "Հաստատված չէ"; } }
+
+        public string Notes
+        {
+            get { return Invoice.Notes; }
+            set
+            {
+                Invoice.Notes = value; RaisePropertyChanged("Notes");
+                IsModified = true;
+            }
+        }
         #endregion
 
         #region Constructors
@@ -361,7 +371,7 @@ namespace UserControls.ViewModels.Invoices
             }
             catch
             {
-                
+
             }
             finally
             {

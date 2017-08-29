@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security;
 using System.Windows.Input;
 using ES.Business.Helpers;
+using ES.Business.Managers;
 using ES.Common;
 using ES.Common.Helpers;
 using ES.Common.Enumerations;
@@ -26,7 +27,7 @@ namespace UserControls.ViewModels
         public DataServer DataServer { get; set; }
         public bool IsShowPassword { get
         {
-            return false;// ApplicationManager.IsInRole(UserRoleEnum.Admin); 
+            return ApplicationManager.IsInRole(UserRoleEnum.Admin); 
         } }
 
         public string Password { get; private set; }

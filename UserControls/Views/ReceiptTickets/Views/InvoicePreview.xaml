@@ -5,11 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:receiptTickets="clr-namespace:UserControls.Views.ReceiptTickets"
              xmlns:invoices="clr-namespace:UserControls.ViewModels.Invoices"
+             xmlns:helpers="clr-namespace:UserControls.Helpers"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800" MinWidth="300" MaxWidth="768" HorizontalAlignment="Stretch">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="Bool2VisibilityConverter"/>
-
+        <helpers:MutiplyConverter x:Key="MutiplyConverter"/>
+        
         <DataTemplate DataType="{x:Type receiptTickets:SaleInvocieSmallTicketViewModel}">
             <Grid Margin="3">
                 <Grid.RowDefinitions>
@@ -177,12 +179,24 @@
                         </DataGridTemplateColumn>
                         <DataGridTextColumn Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" Width="Auto"/>
                         <DataGridTextColumn Header="Քանակ" 
-                                        Binding="{Binding Path=Quantity, StringFormat=N3, Mode=OneWay}" 
+                                        Binding="{Binding Path=Quantity, StringFormat={}{0:#,0.##}, Mode=OneWay}" 
                                         CellStyle="{StaticResource CellRightAlign}"
                                         Width="Auto"/>
-                        <DataGridTextColumn Header="Գին" 
-                                        Binding="{Binding Path=Product.Price, Mode=OneWay}" CellStyle="{StaticResource CellRightAlign}" Width="Auto"/>
-                        <DataGridTextColumn Header="Գումար" Binding="{Binding Path=Amount, Mode=OneWay}" CellStyle="{StaticResource CellRightAlign}" Width="Auto"/>
+                        <DataGridTextColumn Header="Գին" Binding="{Binding Path=Product.Price, Mode=OneWay, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}" Width="Auto"/>
+                        <DataGridTemplateColumn  Header="Գումար">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextWrapping="WrapWithOverflow" HorizontalAlignment="Right">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource MutiplyConverter}" Mode="OneWay" StringFormat="{}{0:#,0.##}">
+                                                <Binding Path="Quantity"/>
+                                                <Binding Path="Product.Price"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

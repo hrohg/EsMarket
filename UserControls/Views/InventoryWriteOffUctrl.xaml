@@ -136,7 +136,7 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
                         <Label Content="Նշումներ" VerticalAlignment="Top" Width="100" HorizontalAlignment="Left" FontSize="12"/>
-                        <TextBox Text="{Binding Invoice.Notes, UpdateSourceTrigger=PropertyChanged}" Height="50" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                        <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" Height="50" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
                     </StackPanel>
                     <Grid Grid.Column="1" Margin="5">
                         <Grid.RowDefinitions>

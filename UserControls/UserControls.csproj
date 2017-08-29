@@ -89,6 +89,7 @@
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Enumerations\ToolsEnum.cs" />
     <Compile Include="Helpers\AccountingActionManager.cs" />
+    <Compile Include="Helpers\Converters.cs" />
     <Compile Include="Helpers\PriceTicketManager.cs" />
     <Compile Include="Interfaces\IShellViewModel.cs" />
     <Compile Include="PriceTicketControl\Ean13BarcodeControl.cs" />
