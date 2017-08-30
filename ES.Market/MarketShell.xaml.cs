@@ -216,22 +216,6 @@ namespace ES.Market
         #endregion
 
         #region Cash desk
-        private void MiDebitViewDetile_Click(object sender, EventArgs e)
-        {
-            var partners = PartnersManager.GetPartners();
-            string content, title;
-            title = "Դեբիտորական պարտքի դիտում";
-            if (partners == null)
-            {
-                content = "Թերի տվյալներ։\nԽնդրում ենք փորձել մի փոքր ուշ։";
-                MessageBox.Show(content, title, MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            var list = partners.Where(s => s.Debit != 0).Select(s => new {Գործընկեր = s.Description, Դեբիտորական_պարտք = s.Debit}).ToList();
-            var view = new UIListView(list, "Դեբիտորական պարտքի դիտում", (double)list.Sum(s=>s.Դեբիտորական_պարտք) );
-            view.Show();
-        }
-
         
         //todo
         private PartnerModel SelectPartner(PartnerType partnerTypeId = 0)
@@ -249,25 +233,7 @@ namespace ES.Market
         #endregion
 
         #region AccountingRecords
-        //protected void MiViewAccountingPlan_Click(object sender, EventArgs e)
-        //{
-        //    var ctrl = new SelectDateIntermediate();
-        //    ctrl.ShowDialog();
-        //    if (ctrl.DialogResult != true) { return; }
-        //    var accountingRecords = AccountingRecordsManager.GetAccountingRecords(beginDate: ctrl.StartDate ?? DateTime.Now, endDate: ctrl.EndDate ?? DateTime.Now);
-        //    var uiReport = new UIListView(accountingRecords.Select(s =>
-        //        new
-        //        {
-        //            Ամսաթիվ = s.RegisterDate,
-        //            Դեբետ = AccountingRecordsManager.GetAccountingRecordsDescription(s.Debit),
-        //            Դեբետ_Անվանում = AccountingRecordsManager.GetAccountingRecordsDescription(s.Debit, s.DebitGuidId, s.DebitLongId),
-        //            Կրեդիտ = AccountingRecordsManager.GetAccountingRecordsDescription(s.Credit),
-        //            Կրեդիտ_Անվանում = AccountingRecordsManager.GetAccountingRecordsDescription(s.Credit, s.CreditGuidId, s.CreditLongId),
-        //            Գումար = s.Amount,
-        //            Նշումներ = s.Description
-        //        }));
-        //    uiReport.Show();
-        //}
+        
         //251
         protected void MiTransferIntoCashDesk_Click(object sender, EventArgs e)
         {

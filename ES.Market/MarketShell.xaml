@@ -342,10 +342,10 @@
                               Command="{Binding GetChashDesksInfoCommand}" 
                               IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Cashier}}"/>
                     <Separator/>
-                    <MenuItem Header="Պատվիրատու">
-                        <MenuItem Header="221 Դեբիտորական պարտքի մարում" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.AccountingReceivable}"/>
-                        <Separator/>
-                        <MenuItem Header="Դեբիտորական պարտքեր (մանրամասն)"  Click="MiDebitViewDetile_Click"/>
+                    <MenuItem Header="Դիտում">
+                        <!--<MenuItem Header="221 Դեբիտորական պարտքի մարում" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.AccountingReceivable}"/>-->
+                        <MenuItem Header="Դեբիտորական պարտքեր (մանրամասն)"  Command="{Binding ViewDebitByPartnerCommand}" CommandParameter="{x:Static enumerations1:DebitEnum.Debit}"/>
+                        <MenuItem Header="Կրեդիտորական պարտքեր"  Command="{Binding ViewDebitByPartnerCommand}" CommandParameter="{x:Static enumerations1:DebitEnum.Credit}"/>
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="Հաշիվ"
@@ -627,9 +627,8 @@
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
                                   Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations1:ReportTypes.Report}"/>
                     </MenuItem>
-
                 </MenuItem>
-
+                
                 <MenuItem Header="Օգնություն">
                     <MenuItem.Icon>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Help.ico" />

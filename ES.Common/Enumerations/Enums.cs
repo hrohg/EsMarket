@@ -17,4 +17,12 @@
         ByPartnerType,
         ByPartner,
     }
+
+    public enum DebitEnum
+    {
+        None = 0,
+        Debit = 0x1,
+        Credit = 0x2,
+        All = 0xFF
+    }
 }

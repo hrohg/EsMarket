@@ -92,6 +92,7 @@
     <Compile Include="Helpers\Converters.cs" />
     <Compile Include="Helpers\PriceTicketManager.cs" />
     <Compile Include="Interfaces\IShellViewModel.cs" />
+    <Compile Include="Managers\CashDeskManager.cs" />
     <Compile Include="PriceTicketControl\Ean13BarcodeControl.cs" />
     <Compile Include="PriceTicketControl\Helper\Enumerations.cs" />
     <Compile Include="PriceTicketControl\UctrlBarcodeLargeWithText.xaml.cs">

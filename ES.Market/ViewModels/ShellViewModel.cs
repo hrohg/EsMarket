@@ -1646,6 +1646,22 @@ namespace ES.Market.ViewModels
             get { return new RelayCommand(OnGetCashDeskInfo); }
         }
 
+        #region View
+
+        private ICommand _viewDebitByPartnerCommand;
+        public ICommand ViewDebitByPartnerCommand { get { return _viewDebitByPartnerCommand??(_viewDebitByPartnerCommand = new RelayCommand<DebitEnum>(OnViewDebitByPartner, CanViewDebitByPartner));} }
+
+        private bool CanViewDebitByPartner(DebitEnum obj)
+        {
+            return true;
+        }
+
+        private void OnViewDebitByPartner(DebitEnum value)
+        {
+            UserControls.Managers.CashDeskManager.ViewDebitByPartner(value);
+        }
+
+        #endregion View
         #region View report
         private ICommand _viewAccountantTableCommand;
         public ICommand ViewAccountantTableCommand
