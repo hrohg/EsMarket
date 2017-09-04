@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -8,12 +7,10 @@ using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common.Helpers;
-using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
 using Shared.Helpers;
-using UserControls.Commands;
 using UserControls.Views.CustomControls;
 
 namespace UserControls.ViewModels.StockTakeings
@@ -40,9 +37,14 @@ namespace UserControls.ViewModels.StockTakeings
         private List<StockTakeItemsModel> _stockTakeItems;
         public List<StockTakeItemsModel> StockTakeItems
         {
-            get { return _stockTakeItems!=null? _stockTakeItems.Where(s => (s.CodeOrBarcode + s.ProductDescription).ToLower().Contains(Filter != null ? Filter.ToLower() : string.Empty)).ToList(): (_stockTakeItems = new List<StockTakeItemsModel>()); }
-            set { _stockTakeItems = value; RaisePropertyChanged(StockTakeItemsProperty); }
+            get { return _stockTakeItems != null ? _stockTakeItems.Where(s => (s.CodeOrBarcode + s.ProductDescription).ToLower().Contains(Filter != null ? Filter.ToLower() : string.Empty)).ToList() : (_stockTakeItems = new List<StockTakeItemsModel>()); }
+            set
+            {
+                _stockTakeItems = value;
+                RaiseProperties();
+            }
         }
+
         #endregion Stock take
 
         public StockModel Stock { get { return _stock; } set { _stock = value; } }
@@ -50,17 +52,21 @@ namespace UserControls.ViewModels.StockTakeings
 
         public StockTakeItemsModel SelectedItem { get; set; }
 
-        public decimal Count { get { return StockTakeItems.Sum(s => s.Quantity); } }
+        public decimal Count { get { return StockTakeItems.Count; } }
+        public decimal Quantity { get { return StockTakeItems.Sum(s => s.StockTakeQuantity); } }
         public decimal Amount { get { return StockTakeItems.Sum(s => (s.Price ?? 0) * s.StockTakeQuantity); } }
-        public decimal Surplace { get { return StockTakeItems.Sum(s => (s.Price ?? 0) * ((s.Quantity - s.StockTakeQuantity) < 0 ? -s.Quantity + s.StockTakeQuantity : 0)); } }
-        public decimal Deficit { get { return StockTakeItems.Sum(s => (s.Price ?? 0) * ((s.Quantity - s.StockTakeQuantity) > 0 ? s.Quantity - s.StockTakeQuantity : 0)); } }
-        public decimal Total { get { return StockTakeItems.Sum(s => s.Amount); } }
+        public decimal Surplace { get { return StockTakeItems.Sum(s => (s.Quantity - s.StockTakeQuantity) < 0 ? -s.Quantity + s.StockTakeQuantity : 0); } }
+        public decimal SurplaceAmunt { get { return StockTakeItems.Sum(s => (s.Price ?? 0) * ((s.Quantity - s.StockTakeQuantity) < 0 ? -s.Quantity + s.StockTakeQuantity : 0)); } }
+        public decimal Deficit { get { return StockTakeItems.Sum(s => (s.Quantity - s.StockTakeQuantity) > 0 ? s.Quantity - s.StockTakeQuantity : 0); } }
+        public decimal DeficitAmount { get { return StockTakeItems.Sum(s => (s.Price ?? 0) * ((s.Quantity - s.StockTakeQuantity) > 0 ? s.Quantity - s.StockTakeQuantity : 0)); } }
+        public override double Total { get { return (double)(Surplace - Deficit); } }
+        public override double TotalAmount { get { return (double)(SurplaceAmunt - DeficitAmount); } }
 
         #region Filter
         Timer _timer = null;
         private void TimerElapsed(object obj)
         {
-            RaisePropertyChanged(StockTakeItemsProperty);
+            RaiseProperties();
             DisposeTimer();
         }
         private string _filter;
@@ -112,7 +118,19 @@ namespace UserControls.ViewModels.StockTakeings
                 _timer = null;
             }
         }
-
+        public void RaiseProperties()
+        {
+            RaisePropertyChanged(StockTakeItemsProperty);
+            RaisePropertyChanged("Count");
+            RaisePropertyChanged("Quantity");
+            RaisePropertyChanged("Amount");
+            RaisePropertyChanged("Surplace");
+            RaisePropertyChanged("SurplaceAmunt");
+            RaisePropertyChanged("Deficit");
+            RaisePropertyChanged("DeficitAmount");
+            RaisePropertyChanged("Total");
+            RaisePropertyChanged("TotalAmount");
+        }
         #endregion
 
         #region Public methods
@@ -354,7 +372,7 @@ namespace UserControls.ViewModels.StockTakeings
             if (!CanAddStockTakingItem(o)) { return; }
             StockTakeItem.StockTakeDate = DateTime.Now;
             var exItem = StockTakeManager.GetStockTakeItem(StockTake.Id, StockTakeItem.CodeOrBarcode, _memberId);
-            var index = exItem != null ? exItem.Index : StockTakeItems.Count + 1;
+            var index = exItem != null ? exItem.Index : StockTakeItems.Max(s=>s.Index) + 1;
             if (exItem != null)
             {
                 if (MessageBox.Show("Տվյալ կոդով ապրանք արդեն գույքագրվել է " + exItem.StockTakeQuantity + " հատ։ \n Ցանկանու՞մ եք ավելացնել ևս " + StockTakeItem.StockTakeQuantity + "-ով։",
@@ -371,13 +389,7 @@ namespace UserControls.ViewModels.StockTakeings
             CodeOrBarcode = null;
             RaisePropertyChanged(StockTakeItemProperty);
             StockTakeItems = StockTakeManager.GetStockTakeItems(StockTake.Id);
-            RaisePropertyChanged(StockTakeItemsProperty);
-
-            RaisePropertyChanged("Count");
-            RaisePropertyChanged("Amount");
-            RaisePropertyChanged("Surplace");
-            RaisePropertyChanged("Deficit");
-            RaisePropertyChanged("Total");
+            RaiseProperties();
 
         }
         #endregion Add stock take item

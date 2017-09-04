@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO.Ports;
 using System.Linq;
 using System.Windows;
 using ES.Business.Managers;
@@ -39,6 +40,25 @@ namespace UserControls.Managers
             if (view != null)
             {
                 view.Show();
+            }
+        }
+
+        public static void OpenCashDesk()
+        {
+            if(string.IsNullOrEmpty(ApplicationManager.Settings.MemberSettings.CashDeskPort)) return;
+            var cashDeskPort = new SerialPort(ApplicationManager.Settings.MemberSettings.CashDeskPort)
+            {
+                BaudRate = 9600,
+                Parity = Parity.None,
+                DataBits = 8,
+                StopBits = StopBits.One,
+                Handshake = Handshake.None
+            };
+            cashDeskPort.Open();
+            if (cashDeskPort.IsOpen)
+            {
+                cashDeskPort.WriteLine("80000");
+                cashDeskPort.Close();
             }
         }
     }

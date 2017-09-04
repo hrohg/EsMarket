@@ -19,6 +19,7 @@ using UserControls.Interfaces;
 
 namespace UserControls.ViewModels.Invoices
 {
+    [Serializable]
     public class InvoiceViewModelBase : DocumentViewModel, IInvoiceViewModel
     {
         #region Internal fields

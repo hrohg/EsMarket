@@ -11,6 +11,7 @@
             <Grid.InputBindings>
                 <KeyBinding Gesture="Ctrl+P" Command="{Binding PrintCommand}"/>
                 <KeyBinding Gesture="Ctrl+Shift+X" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
+                <KeyBinding Gesture="Ctrl+F" Command="{Binding GetProductByNameCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
             </Grid.InputBindings>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -53,10 +54,18 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <TextBox Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger = PropertyChanged}" Margin="3 5"/>
-                    <extendedControls:ExtendedDataGrid Grid.Row="1" ItemsSource="{Binding StockTakeItems}"
-                                                       AlternatingRowBackground ="GhostWhite" AlternationCount="2"
-                  SelectedItem="{Binding SelectedItem}"
-                  VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="18" Margin="1" >
+                    <Button Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{DynamicResource FindTextBoxButtonStyle}"/>
+                    <extendedControls:ExtendedDataGrid Grid.Row="1" 
+                                                       ItemsSource="{Binding StockTakeItems}" 
+                                                       AlternatingRowBackground ="GhostWhite" 
+                                                       AlternationCount="2"
+                                                       SelectedItem="{Binding SelectedItem}"
+                                                       VerticalContentAlignment="Stretch" 
+                                                       CanUserAddRows="False" 
+                                                       CanUserDeleteRows="False" 
+                                                       AutoGenerateColumns="False"  
+                                                       FontSize="18" 
+                                                       Margin="1" >
                         <DataGrid.Resources>
                             <Style x:Key="CellRightAlign">
                                 <Setter Property="Control.HorizontalAlignment" Value="Right" />
@@ -67,6 +76,7 @@
                             <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding CodeOrBarcode}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding ProductDescription}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Price}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Առկա է պահեստում" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Առկա է" Binding="{Binding Path=StockTakeQuantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Հաշվեկշիռ" Binding="{Binding Path=Balance, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
@@ -79,14 +89,40 @@
                         <TextBox Text="{Binding StockTake.Description}" Height="50" TextWrapping="Wrap" AcceptsReturn="True" IsReadOnly="True"/>
                     </GroupBox>
                     <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock Text="Գումար" FontSize="10"/>
-                        <TextBlock Text="{Binding Amount, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
-                        <TextBlock Text="Պակասորդ" FontSize="10"/>
-                        <TextBlock Text="{Binding Deficit, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
-                        <TextBlock Text="Ավելցուկ" FontSize="10"/>
-                        <TextBlock Text="{Binding Surplace, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
-                        <TextBlock Text="Ընդամենը" FontSize="10"/>
-                        <TextBlock Text="{Binding Total, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                        <GroupBox Header="Հաշվառվել է">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Անվանում" FontSize="10"/>
+                                <TextBlock Text="{Binding Count, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                                <TextBlock Text="Քանակ" FontSize="10"/>
+                                <TextBlock Text="{Binding Quantity, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                                <TextBlock Text="Գումար" FontSize="10"/>
+                                <TextBlock Text="{Binding Amount, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Պակասորդ">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Քանակ" FontSize="10"/>
+                                <TextBlock Text="{Binding Deficit, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                                <TextBlock Text="Գումար" FontSize="10"/>
+                                <TextBlock Text="{Binding DeficitAmount, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Ավելցուկ">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Քանակ" FontSize="10"/>
+                                <TextBlock Text="{Binding Surplace, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                                <TextBlock Text="Գումար" FontSize="10"/>
+                                <TextBlock Text="{Binding SurplaceAmunt, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Ընդամենը">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Քանակ" FontSize="10"/>
+                                <TextBlock Text="{Binding Total, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                                <TextBlock Text="Գումար" FontSize="10"/>
+                                <TextBlock Text="{Binding TotalAmount, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                            </StackPanel>
+                        </GroupBox>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -98,6 +134,8 @@
             <Grid.InputBindings>
                 <KeyBinding Gesture="Ctrl+F" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
                 <KeyBinding Gesture="Ctrl+Shift+F" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithFilters}"/>
+                <KeyBinding Gesture="Ctrl+F" Command="{Binding GetProductByNameCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
+
                 <!--<KeyBinding Gesture="Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
             <KeyBinding Gesture="Ctrl+Shift+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Small}"/>
             <KeyBinding Gesture="Ctrl+Shift+X" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
@@ -157,6 +195,8 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100"/>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0"  Text="{Binding Path=CodeOrBarcode, UpdateSourceTrigger=PropertyChanged}" 
                                  FontSize="14" HorizontalContentAlignment="Center" TabIndex="1">
@@ -176,6 +216,8 @@
                                     </ContextMenu>
                                 </TextBox.ContextMenu>
                             </TextBox>
+                            <TextBlock Grid.Column="2" Text="Գին:"/>
+                            <TextBlock Grid.Column="3" Text="{Binding StockTakeItem.Price}" Foreground="Blue"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox  Grid.Row="0" Grid.Column="1" Header="Հաշվառվել է" FontSize="10">
@@ -193,7 +235,7 @@
                     </GroupBox>
                     <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="3">
                         <TextBlock Text="Առկա է պահեստում"  VerticalAlignment="Center" Margin ="1 0"  FontSize="10"/>
-                        <TextBlock Text="{Binding Path=StockTakeItem.Quantity, StringFormat='# ##0.##'}" VerticalAlignment="Center" Foreground="Blue" />
+                        <TextBlock Text="{Binding Path=StockTakeItem.Quantity, StringFormat='{}{0:#,0.##}'}" VerticalAlignment="Center" Foreground="Blue" />
                     </StackPanel>
                     <Button x:Name="AddButton" Grid.Row="2" Grid.Column="1" Content="Ավելացնել" Width ="80" Margin="3" 
                         Command="{Binding AddStockTakingItemCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Right" VerticalContentAlignment="Center"/>
@@ -210,6 +252,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <TextBox Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger = PropertyChanged}" Margin="3 5"/>
+                    <Button Grid.Row="0" VerticalAlignment="Center" Style="{DynamicResource FindTextBoxButtonStyle}" HorizontalAlignment="Right"/>
                     <extendedControls:ExtendedDataGrid Grid.Row="1" ItemsSource="{Binding StockTakeItems}"
                                                        AlternatingRowBackground ="GhostWhite" AlternationCount="2"
                   SelectedItem="{Binding SelectedItem}"
@@ -237,6 +280,7 @@
                             <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding CodeOrBarcode}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding ProductDescription}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Price}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Առկա է պահեստում" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Առկա է" Binding="{Binding Path=StockTakeQuantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Հաշվեկշիռ" Binding="{Binding Path=Balance, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
@@ -249,14 +293,40 @@
                         <TextBox Text="{Binding StockTake.Description}" Height="50" TextWrapping="Wrap" AcceptsReturn="True"/>
                     </GroupBox>
                     <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock Text="Գումար" FontSize="10"/>
-                        <TextBlock Text="{Binding Amount, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
-                        <TextBlock Text="Պակասորդ" FontSize="10"/>
-                        <TextBlock Text="{Binding Deficit, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
-                        <TextBlock Text="Ավելցուկ" FontSize="10"/>
-                        <TextBlock Text="{Binding Surplace, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
-                        <TextBlock Text="Ընդամենը" FontSize="10"/>
-                        <TextBlock Text="{Binding Total, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                        <GroupBox Header="Հաշվառվել է">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Անվանում" FontSize="10"/>
+                                <TextBlock Text="{Binding Count, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                                <TextBlock Text="Քանակ" FontSize="10"/>
+                                <TextBlock Text="{Binding Quantity, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                                <TextBlock Text="Գումար" FontSize="10"/>
+                                <TextBlock Text="{Binding Amount, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Պակասորդ">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Քանակ" FontSize="10"/>
+                                <TextBlock Text="{Binding Deficit, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                                <TextBlock Text="Գումար" FontSize="10"/>
+                                <TextBlock Text="{Binding DeficitAmount, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Ավելցուկ">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Քանակ" FontSize="10"/>
+                                <TextBlock Text="{Binding Surplace, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                                <TextBlock Text="Գումար" FontSize="10"/>
+                                <TextBlock Text="{Binding SurplaceAmunt, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Ընդամենը">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Քանակ" FontSize="10"/>
+                                <TextBlock Text="{Binding Total, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                                <TextBlock Text="Գումար" FontSize="10"/>
+                                <TextBlock Text="{Binding TotalAmount, StringFormat='N2'}" FontSize="10" Margin="1,1,10,1" Foreground="Blue"/>
+                            </StackPanel>
+                        </GroupBox>
                     </StackPanel>
                 </Grid>
             </Border>

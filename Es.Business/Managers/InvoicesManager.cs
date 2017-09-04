@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Transactions;
 using System.Windows;
 using ES.Business.Helpers;
 using ES.Business.Models;
 using ES.Common.Enumerations;
+using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Data.Enumerations;
 using ES.Data.Models;
@@ -2124,5 +2127,64 @@ namespace ES.Business.Managers
         #endregion
 
         #endregion
+
+        public static void AutoSave(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems)
+        {
+            string filePath = PathHelper.GetMemberTempInvoiceFilePath(invoice.Id, ApplicationManager.Member.Id);
+            if (string.IsNullOrEmpty(filePath)) return;
+            FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate);
+            BinaryFormatter formatter = new BinaryFormatter();
+            try
+            {
+                formatter.Serialize(fs, new Tuple<InvoiceModel, List<InvoiceItemsModel>>(invoice,invoiceItems));
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                fs.Close();
+            }
+        }
+        public static List<Tuple<InvoiceModel, List<InvoiceItemsModel>>> LoadAutosavedinvoices()
+        {
+            ApplicationManager.Instance.CashProvider.UpdateCash();
+            var tempFilesPath = PathHelper.GetMemberTempInvoicePath(ApplicationManager.Member.Id);
+            var invoices = new List<Tuple<InvoiceModel, List<InvoiceItemsModel>>>();
+            if (!string.IsNullOrEmpty(tempFilesPath) && Directory.Exists(tempFilesPath))
+            {
+                foreach (var filePath in Directory.GetFiles(tempFilesPath))
+                {
+                    if (File.Exists(filePath))
+                    {
+                        FileStream fileStream = new FileStream(filePath, FileMode.Open);
+                        string fileContents;
+                        using (StreamReader reader = new StreamReader(fileStream))
+                        {
+                            fileContents = reader.ReadToEnd();
+                        }
+                        try
+                        {
+                            BinaryFormatter serializer = new BinaryFormatter();
+                            var invoice = (Tuple<InvoiceModel, List<InvoiceItemsModel>>)serializer.Deserialize(fileStream);
+                            invoices.Add(invoice);
+                        }
+                        catch (Exception)
+                        {
+                            fileStream.Close();
+                            
+                            continue;
+                        }
+                        finally
+                        {
+                            fileStream.Close();
+                        }
+                        File.Delete(filePath);
+                    }
+                }
+            }
+            return invoices;
+        }
     }
 }

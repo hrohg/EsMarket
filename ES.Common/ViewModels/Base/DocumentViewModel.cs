@@ -1,7 +1,9 @@
-﻿using ES.Common.Helpers;
+﻿using System;
+using ES.Common.Helpers;
 
 namespace ES.Common.ViewModels.Base
 {
+    [Serializable]
     public class DocumentViewModel : PaneViewModel
     {
         #region Internal properties
@@ -48,6 +50,7 @@ namespace ES.Common.ViewModels.Base
         public virtual int TotalRows { get; set; }
         public virtual double TotalCount { get; set; }
         public virtual double Total { get; set; }
+        public virtual double TotalAmount { get; set; }
 
         #endregion External properties
 

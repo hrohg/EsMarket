@@ -10,7 +10,6 @@ using CashReg.Models;
 using ES.Business.ExcelManager;
 using ES.Business.FileManager;
 using ES.Business.Helpers;
-using ES.Data.Model;
 using ES.Data.Models;
 using ES.Business.Managers;
 using ES.Common;
@@ -23,12 +22,14 @@ using Shared.Helpers;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
 using UserControls.Views.ReceiptTickets.Views;
+using CashDeskManager = UserControls.Managers.CashDeskManager;
 using InvoicePaid = CashReg.Helper.InvoicePaid;
 using ProductModel = ES.Business.Models.ProductModel;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Invoices
 {
+     [Serializable]
     public class SaleInvoiceViewModel : InvoiceViewModel
     {
         #region Internal properties
@@ -188,7 +189,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected override void OnPaidInvoice(object obj)
         {
-            //todo open cashdesk
+            CashDeskManager.OpenCashDesk();
             base.OnPaidInvoice(obj);
         }
         private bool CanPrintEcrTicket(object o)

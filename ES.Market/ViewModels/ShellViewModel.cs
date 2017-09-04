@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.IO.Ports;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,13 +34,11 @@ using ES.Market.Views.Reports.ViewModels;
 using ES.Shop.Controls;
 using ES.Shop.Users;
 using Shared.Helpers;
-using UserControls.PriceTicketControl;
 using UserControls.ControlPanel.Controls;
 using UserControls.Enumerations;
 using UserControls.Helpers;
 using UserControls.Interfaces;
 using UserControls.PriceTicketControl.Helper;
-using UserControls.PriceTicketControl.ViewModels;
 using UserControls.ViewModels;
 using UserControls.ViewModels.Documents;
 using UserControls.ViewModels.Invoices;
@@ -59,15 +54,12 @@ using UserControls.Views;
 using UserControls.Views.Accountant;
 using UserControls.Views.CustomControls;
 using UserControls.Views.View;
-using Color = System.Windows.Media.Color;
 using ExportManager = ES.Business.Managers.ExportManager;
-using Image = System.Windows.Controls.Image;
 using ItemsToSelect = UserControls.ControlPanel.Controls.ItemsToSelect;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 using TabControl = System.Windows.Controls.TabControl;
-using UserControl = System.Windows.Controls.UserControl;
 
 namespace ES.Market.ViewModels
 {
@@ -283,35 +275,43 @@ namespace ES.Market.ViewModels
 
         private void LoadTempInvoices()
         {
-            ApplicationManager.Instance.CashProvider.UpdateCash();
-            var tempFilesPath = PathHelper.GetMemberTempInvoicePath(ApplicationManager.Member.Id);
-            if (!string.IsNullOrEmpty(tempFilesPath) && Directory.Exists(tempFilesPath))
+            var invoices = InvoicesManager.LoadAutosavedinvoices();
+            InvoiceViewModel invoice = null;
+            foreach (var invoiceItems in invoices)
             {
-                foreach (var filePath in Directory.GetFiles(tempFilesPath))
+                if(invoiceItems.Item1 ==null || invoiceItems.Item2==null) continue;
+                switch ((InvoiceType)invoiceItems.Item1.InvoiceTypeId)
                 {
-                    if (File.Exists(filePath))
-                    {
-                        FileStream fileStream = new FileStream(filePath, FileMode.Open);
-                        try
-                        {
-                            BinaryFormatter serializer = new BinaryFormatter();
-                            var invoice = (InvoiceViewModel)serializer.Deserialize(fileStream);
-                            AddInvoiceDocument(invoice);
-                        }
-                        catch (Exception)
-                        {
-                            fileStream.Close();
-                            File.Delete(filePath);
-                            continue;
-                        }
-                        finally
-                        {
-                            fileStream.Close();
-                        }
-                    }
+                    case InvoiceType.PurchaseInvoice:
+                        invoice = new PurchaseInvoiceViewModel();
+                        break;
+                    case InvoiceType.SaleInvoice:
+                        invoice = new SaleInvoiceViewModel();
+                        break;
+                    case InvoiceType.ProductOrder:
+                        invoice = new PurchaseInvoiceViewModel();
+                        break;
+                    case InvoiceType.MoveInvoice:
+                        invoice = new InternalWaybillViewModel();
+                        break;
+                    case InvoiceType.InventoryWriteOff:
+                        invoice = new InventoryWriteOffViewModel();
+                        break;
+                    case InvoiceType.Statement:
+                        //invoice = new PurchaseInvoiceViewModel();
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
+                if (invoice != null)
+                {
+                    invoice.Invoice = invoiceItems.Item1;
+                    invoice.InvoiceItems = new ObservableCollection<InvoiceItemsModel>(invoiceItems.Item2);
+                }
+                Documents.Add(new InvoiceViewModel());
             }
         }
+
         private bool CanViewViewInternalWayBillCommands(ViewInvoicesEnum o)
         {
             switch (o)
@@ -328,6 +328,7 @@ namespace ES.Market.ViewModels
                     return false;
             }
         }
+
         private void OnViewViewInternalWayBillCommands(ViewInvoicesEnum o)
         {
             DocumentViewModel vm = null;
@@ -348,6 +349,7 @@ namespace ES.Market.ViewModels
         }
 
         #region Add remove documents and tools
+
         private void AddDocument<T>(DocumentViewModel vm, bool allowDoublicate = true)
         {
             var exDocument = Documents.FirstOrDefault(s => s is T);
@@ -370,9 +372,10 @@ namespace ES.Market.ViewModels
                 ProductItemsToolsViewModel.IsActive = true;
             }
         }
+
         private void AddInvoiceDocument(InvoiceViewModel vm)
         {
-            var exInvoice = Documents.SingleOrDefault(s => s is InvoiceViewModel && ((InvoiceViewModel)s).Invoice.Id == vm.Invoice.Id);
+            var exInvoice = Documents.SingleOrDefault(s => s is InvoiceViewModel && ((InvoiceViewModel) s).Invoice.Id == vm.Invoice.Id);
             if (exInvoice != null)
             {
                 exInvoice.IsSelected = true;
@@ -382,6 +385,7 @@ namespace ES.Market.ViewModels
                 AddDocument(vm);
             }
         }
+
         private void AddDocument(DocumentViewModel vm)
         {
             if (vm.IsClosable)
@@ -392,28 +396,29 @@ namespace ES.Market.ViewModels
             vm.IsActive = true;
             vm.IsSelected = true;
             Documents.Add(vm);
-
         }
+
         private void OnRemoveDocument(PaneViewModel vm)
         {
             if (vm == null) return;
             vm.OnClosed -= OnRemoveDocument;
             if (vm is DocumentViewModel)
             {
-                ((DocumentViewModel)vm).ActiveTabChangedEvent -= OnActiveTabChanged;
+                ((DocumentViewModel) vm).ActiveTabChangedEvent -= OnActiveTabChanged;
             }
 
-            Documents.Remove((DocumentViewModel)vm);
+            Documents.Remove((DocumentViewModel) vm);
             if (vm is ProductManagerViewModel)
             {
-                ((ProductManagerViewModel)vm).OnProductEdited -= ProductItemsToolsViewModel.UpdateProducts;
+                ((ProductManagerViewModel) vm).OnProductEdited -= ProductItemsToolsViewModel.UpdateProducts;
             }
             if (vm is InvoiceViewModel)
             {
-                ProductItemsToolsViewModel.OnProductItemSelected -= ((InvoiceViewModel)vm).OnSetProductItem;
-            } if (vm is StockTakeManagerViewModel)
+                ProductItemsToolsViewModel.OnProductItemSelected -= ((InvoiceViewModel) vm).OnSetProductItem;
+            }
+            if (vm is StockTakeManagerViewModel)
             {
-                ProductItemsToolsViewModel.OnProductItemSelected -= ((StockTakeManagerViewModel)vm).OnSetProductItem;
+                ProductItemsToolsViewModel.OnProductItemSelected -= ((StockTakeManagerViewModel) vm).OnSetProductItem;
             }
         }
 
@@ -424,6 +429,7 @@ namespace ES.Market.ViewModels
             vm.IsActive = true;
             vm.IsSelected = true;
         }
+
         private void AddTools<T>(ToolsViewModel vm, bool allowDoublicate = true)
         {
             var exTools = Tools.FirstOrDefault(s => s is T);
@@ -440,12 +446,14 @@ namespace ES.Market.ViewModels
             }
             AddTools(vm);
         }
+
         private void OnRemoveTools(PaneViewModel vm)
         {
             if (vm == null) return;
             vm.OnClosed -= OnRemoveDocument;
-            Tools.Remove((ToolsViewModel)vm);
+            Tools.Remove((ToolsViewModel) vm);
         }
+
         #endregion Add remove documents and tools
 
         #region Base
@@ -470,8 +478,7 @@ namespace ES.Market.ViewModels
                 case Key.F2:
                     if (!ApplicationManager.IsInRole(UserRoleEnum.Seller)) return;
                     //handle X key reate new sale invoice
-                    if (ApplicationManager.IsInRole(UserRoleEnum.Seller) ||
-                        ApplicationManager.IsInRole(UserRoleEnum.JuniorSeller))
+                    if (ApplicationManager.IsInRole(UserRoleEnum.Seller) || ApplicationManager.IsInRole(UserRoleEnum.JuniorSeller))
                     {
                         OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.SaleInvoice, InvoiceState.New, MaxInvocieCount.All));
                     }
@@ -487,8 +494,7 @@ namespace ES.Market.ViewModels
                 case Key.F4:
                     if (!ApplicationManager.IsInRole(UserRoleEnum.StockKeeper)) return;
                     //handle X key reate new sale invoice
-                    if (ApplicationManager.IsInRole(UserRoleEnum.SaleManager) ||
-                        ApplicationManager.IsInRole(UserRoleEnum.StockKeeper))
+                    if (ApplicationManager.IsInRole(UserRoleEnum.SaleManager) || ApplicationManager.IsInRole(UserRoleEnum.StockKeeper))
                     {
                         OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.MoveInvoice, InvoiceState.New, MaxInvocieCount.All));
                     }
@@ -519,9 +525,8 @@ namespace ES.Market.ViewModels
                     break;
             }
         }
+
         #endregion Base
-
-
 
         private void CreateLibraryBrowser()
         {
@@ -559,15 +564,15 @@ namespace ES.Market.ViewModels
         {
             if (vm is DocumentViewModel)
             {
-                AddDocument((DocumentViewModel)vm);
-                ((PaneViewModel)vm).IsActive = true;
+                AddDocument((DocumentViewModel) vm);
+                ((PaneViewModel) vm).IsActive = true;
                 if (vm is InvoiceViewModel)
                 {
-                    ProductItemsToolsViewModel.OnProductItemSelected += ((InvoiceViewModel)vm).OnSetProductItem;
+                    ProductItemsToolsViewModel.OnProductItemSelected += ((InvoiceViewModel) vm).OnSetProductItem;
                 }
                 if (vm is StockTakeManagerViewModel)
                 {
-                    ProductItemsToolsViewModel.OnProductItemSelected += ((StockTakeManagerViewModel)vm).OnSetProductItem;
+                    ProductItemsToolsViewModel.OnProductItemSelected += ((StockTakeManagerViewModel) vm).OnSetProductItem;
                 }
                 OnCreateProductItemsTools(ProductItemsToolsViewModel);
                 return;
@@ -587,9 +592,7 @@ namespace ES.Market.ViewModels
             {
                 nextTab = tabShop.Items.Add(new TabItem
                 {
-                    Content = new ProductOrderUctrl(_user, _member),
-                    DataContext = vm,
-                    AllowDrop = true
+                    Content = new ProductOrderUctrl(_user, _member), DataContext = vm, AllowDrop = true
                 });
                 tabShop.SelectedIndex = nextTab;
                 _parentTabControl.UpdateLayout();
@@ -624,8 +627,8 @@ namespace ES.Market.ViewModels
                     MessageBox.Show("Գործողությունն ընդհատված է։", "Թերի տվյալներ", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return null;
                 }
-                var startDate = (DateTime)dateIntermediate.Item1;
-                var endDate = (DateTime)dateIntermediate.Item2;
+                var startDate = (DateTime) dateIntermediate.Item1;
+                var endDate = (DateTime) dateIntermediate.Item2;
                 stockTakes = StockTakeManager.GetStockTakeByCreateDate(startDate, endDate);
                 if (stockTakes == null || !stockTakes.Any())
                 {
@@ -645,9 +648,8 @@ namespace ES.Market.ViewModels
             }
             var selectItemId = SelectManager.GetSelectedItem(stockTakes.OrderByDescending(s => s.CreateDate).Select(s => new ItemsToSelect
             {
-                DisplayName = s.StockTakeName + " " + s.CreateDate,
-                SelectedValue = s.Id
-            }).ToList(), false).Select(s => (Guid)s.SelectedValue).FirstOrDefault();
+                DisplayName = s.StockTakeName + " " + s.CreateDate, SelectedValue = s.Id
+            }).ToList(), false).Select(s => (Guid) s.SelectedValue).FirstOrDefault();
             return stockTakes.FirstOrDefault(s => s.Id == selectItemId);
         }
 
@@ -711,7 +713,7 @@ namespace ES.Market.ViewModels
         public void ExportProductsForScale(object o)
         {
             if (!(o is ExportForScale)) return;
-            switch ((ExportForScale)o)
+            switch ((ExportForScale) o)
             {
                 case ExportForScale.ShtrixM:
                     ExportManager.ExportPriceForShtrikhM(SelectItemsManager.SelectProductByCheck(true));
@@ -757,6 +759,7 @@ namespace ES.Market.ViewModels
         {
             PriceTicketManager.PrintPriceTicket(printPriceTicketEnum);
         }
+
         public bool Close()
         {
             for (int last = Documents.Count - 1; last >= 0; --last)
@@ -767,6 +770,7 @@ namespace ES.Market.ViewModels
             }
             return true;
         }
+
         #endregion
 
         #region Command methods
@@ -830,7 +834,7 @@ namespace ES.Market.ViewModels
 
         private void ImportProducts(string fileName)
         {
-            var products = (List<EsProductModel>)XmlManager.Read(fileName, typeof(List<EsProductModel>));
+            var products = (List<EsProductModel>) XmlManager.Read(fileName, typeof (List<EsProductModel>));
 
             if (products == null || products.Count == 0)
             {
@@ -901,7 +905,7 @@ namespace ES.Market.ViewModels
         private void ImportDsProducts(string fileName)
         {
             //XmlManager.Save(new List<row>(), fileName);
-            var products = (List<row>)XmlManager.Read(fileName, typeof(List<row>));
+            var products = (List<row>) XmlManager.Read(fileName, typeof (List<row>));
             //var products = (List<EsProductModel>)XmlManager.Read(fileName, typeof(List<EsProductModel>));
 
             if (products == null || products.Count == 0)
@@ -933,11 +937,7 @@ namespace ES.Market.ViewModels
             {
                 var product = new EsProductModel()
                 {
-                    Code = item.ID.ToString(),
-                    Barcode = item.barcode,
-                    Description = item.name,
-                    Mu = item.unit,
-                    CostPrice = (decimal)item.last_price_in,
+                    Code = item.ID.ToString(), Barcode = item.barcode, Description = item.name, Mu = item.unit, CostPrice = (decimal) item.last_price_in,
                     //Price = (decimal) item.price_ret,
                     Note = item.description1
                 };
@@ -984,18 +984,7 @@ namespace ES.Market.ViewModels
         {
             return new ProductModel()
             {
-                Code = item.Code,
-                Barcode = item.Barcode,
-                HcdCs = item.HcdCs,
-                Description = item.Description,
-                Mu = item.Mu,
-                CostPrice = item.CostPrice,
-                Price = item.Price,
-                ExpiryDays = item.ExpiryDays,
-                IsWeight = item.IsWeight,
-                EsMemberId = item.EsMemberId,
-                LastModifierId = item.LastModifierId,
-                IsEnabled = item.IsEnabled
+                Code = item.Code, Barcode = item.Barcode, HcdCs = item.HcdCs, Description = item.Description, Mu = item.Mu, CostPrice = item.CostPrice, Price = item.Price, ExpiryDays = item.ExpiryDays, IsWeight = item.IsWeight, EsMemberId = item.EsMemberId, LastModifierId = item.LastModifierId, IsEnabled = item.IsEnabled
             };
         }
 
@@ -1063,7 +1052,6 @@ namespace ES.Market.ViewModels
 
                 case InvoiceState.Approved:
                     return InvoicesManager.GetInvoicesDescriptions(type, ApplicationManager.Instance.GetMember.Id);
-
             }
             return null;
         }
@@ -1424,7 +1412,7 @@ namespace ES.Market.ViewModels
             {
                 var type = tuple.Item1;
                 var state = tuple.Item2;
-                var count = (int)tuple.Item3;
+                var count = (int) tuple.Item3;
                 var invoices = GetInvoices(state, type, count);
                 if (invoices == null)
                 {
@@ -1485,8 +1473,8 @@ namespace ES.Market.ViewModels
 
         #endregion
 
-
         #region Settings
+
         private void OnCheckConnection(object o)
         {
             var server = SelectItemsManager.SelectServers();
@@ -1504,6 +1492,7 @@ namespace ES.Market.ViewModels
                 MessageManager.OnMessage(new MessageModel("Սերվերի կապի ստաւոգումը ձախողվել է։", MessageTypeEnum.Warning));
             }
         }
+
         #endregion Sttings
 
         #endregion
@@ -1527,15 +1516,14 @@ namespace ES.Market.ViewModels
 
         public ICommand LogOutCommand { get; private set; }
         public ICommand ChangePasswordCommand { get; private set; }
+
         #region ConvertConfigFileCommand
 
         private ICommand _convertConfigFileCommand;
+
         public ICommand ConvertConfigFileCommand
         {
-            get
-            {
-                return _convertConfigFileCommand ?? (_convertConfigFileCommand = new RelayCommand(OnConvertConfigFile));
-            }
+            get { return _convertConfigFileCommand ?? (_convertConfigFileCommand = new RelayCommand(OnConvertConfigFile)); }
         }
 
         private void OnConvertConfigFile(object obj)
@@ -1544,19 +1532,20 @@ namespace ES.Market.ViewModels
         }
 
         #endregion ConvertConfigFileCommand
+
         #endregion Admin
 
         #region Documents
 
         #region Get invoices command
+
         private ICommand _getInvoicesCommand;
+
         public ICommand GetInvoicesCommand
         {
-            get
-            {
-                return _getInvoicesCommand ?? (_getInvoicesCommand = new RelayCommand(OnGetInvoices));
-            }
+            get { return _getInvoicesCommand ?? (_getInvoicesCommand = new RelayCommand(OnGetInvoices)); }
         }
+
         public void OnGetInvoices(object o)
         {
             var tuple = o as Tuple<InvoiceType, InvoiceState, MaxInvocieCount>;
@@ -1564,7 +1553,7 @@ namespace ES.Market.ViewModels
             {
                 var type = tuple.Item1;
                 var state = tuple.Item2;
-                var count = (int)tuple.Item3;
+                var count = (int) tuple.Item3;
                 List<InvoiceModel> invoices = null;
                 switch (state)
                 {
@@ -1605,7 +1594,7 @@ namespace ES.Market.ViewModels
                 InvoiceViewModel vm = null;
                 foreach (var invoiceModel in invoices)
                 {
-                    switch ((InvoiceType)invoiceModel.InvoiceTypeId)
+                    switch ((InvoiceType) invoiceModel.InvoiceTypeId)
                     {
                         case InvoiceType.SaleInvoice:
                             vm = new SaleInvoiceViewModel(invoiceModel.Id);
@@ -1633,6 +1622,7 @@ namespace ES.Market.ViewModels
                 }
             }
         }
+
         #endregion Get invoices command
 
         public ICommand WriteOffProductsCommand { get; private set; }
@@ -1649,7 +1639,11 @@ namespace ES.Market.ViewModels
         #region View
 
         private ICommand _viewDebitByPartnerCommand;
-        public ICommand ViewDebitByPartnerCommand { get { return _viewDebitByPartnerCommand??(_viewDebitByPartnerCommand = new RelayCommand<DebitEnum>(OnViewDebitByPartner, CanViewDebitByPartner));} }
+
+        public ICommand ViewDebitByPartnerCommand
+        {
+            get { return _viewDebitByPartnerCommand ?? (_viewDebitByPartnerCommand = new RelayCommand<DebitEnum>(OnViewDebitByPartner, CanViewDebitByPartner)); }
+        }
 
         private bool CanViewDebitByPartner(DebitEnum obj)
         {
@@ -1662,15 +1656,16 @@ namespace ES.Market.ViewModels
         }
 
         #endregion View
+
         #region View report
+
         private ICommand _viewAccountantTableCommand;
+
         public ICommand ViewAccountantTableCommand
         {
-            get
-            {
-                return _viewAccountantTableCommand ?? (_viewAccountantTableCommand = new RelayCommand<AccountingActionsEnum>(OnViewAccountantTable));
-            }
+            get { return _viewAccountantTableCommand ?? (_viewAccountantTableCommand = new RelayCommand<AccountingActionsEnum>(OnViewAccountantTable)); }
         }
+
         private void OnViewAccountantTable(AccountingActionsEnum accountingPlanEnum)
         {
             var dates = SelectManager.GetDateIntermediate();
@@ -1681,7 +1676,6 @@ namespace ES.Market.ViewModels
         }
 
         #endregion View report
-
 
         private ICommand _accountingActionCommand;
 
@@ -1732,7 +1726,11 @@ namespace ES.Market.ViewModels
         }
 
         private ICommand _viewAccountingRepaymentByPartnersCommand;
-        public ICommand ViewAccountingRepaymentByPartnersCommand { get { return _viewAccountingRepaymentByPartnersCommand ?? (_viewAccountingRepaymentByPartnersCommand = new RelayCommand(OnViewAccountingRepaymentByPartners)); } }
+
+        public ICommand ViewAccountingRepaymentByPartnersCommand
+        {
+            get { return _viewAccountingRepaymentByPartnersCommand ?? (_viewAccountingRepaymentByPartnersCommand = new RelayCommand(OnViewAccountingRepaymentByPartners)); }
+        }
 
         private void OnViewAccountingRepaymentByPartners(object obj)
         {
@@ -1740,8 +1738,8 @@ namespace ES.Market.ViewModels
             if (!partners.Any()) return;
             var dates = SelectManager.GetDateIntermediate();
             if (dates == null) return;
-            var repayment = AccountingRecordsManager.GetAccountingRecords(dates.Item1, dates.Item2, (long)AccountingPlanEnum.CashDesk, (long)AccountingPlanEnum.AccountingReceivable);
-            var ui = new UIListView(repayment.Where(s => (s.CreditGuidId != null && partners.Contains(s.CreditGuidId.Value))).Select(s => new { Ամսաթիվ = s.RegisterDate, Վճարված = s.Amount, Նշումներ = s.Description }).ToList()) { Title = "Դեբիտորական պարտքի մարում ըստ պատվիրատուների" };
+            var repayment = AccountingRecordsManager.GetAccountingRecords(dates.Item1, dates.Item2, (long) AccountingPlanEnum.CashDesk, (long) AccountingPlanEnum.AccountingReceivable);
+            var ui = new UIListView(repayment.Where(s => (s.CreditGuidId != null && partners.Contains(s.CreditGuidId.Value))).Select(s => new {Ամսաթիվ = s.RegisterDate, Վճարված = s.Amount, Նշումներ = s.Description}).ToList()) {Title = "Դեբիտորական պարտքի մարում ըստ պատվիրատուների"};
             ui.Show();
         }
 
@@ -1785,7 +1783,11 @@ namespace ES.Market.ViewModels
         #region Toolbar buttons
 
         private ICommand _openCashdeskCommand;
-        public ICommand OpenCashdeskCommand { get { return _openCashdeskCommand ?? (_openCashdeskCommand = new RelayCommand(OnOpenCashDesk, CanOpenCashDesk)); } }
+
+        public ICommand OpenCashdeskCommand
+        {
+            get { return _openCashdeskCommand ?? (_openCashdeskCommand = new RelayCommand(OnOpenCashDesk, CanOpenCashDesk)); }
+        }
 
         private bool CanOpenCashDesk(object obj)
         {
@@ -1795,24 +1797,10 @@ namespace ES.Market.ViewModels
         private void OnOpenCashDesk(object obj)
         {
             if (!CanOpenCashDesk(obj)) return;
-            var cashDeskPort = new SerialPort(ApplicationManager.Settings.MemberSettings.CashDeskPort)
-            {
-                BaudRate = 9600,
-                Parity = Parity.None,
-                DataBits = 8,
-                StopBits = StopBits.One,
-                Handshake = Handshake.None
-            };
-            cashDeskPort.Open();
-            if (cashDeskPort.IsOpen)
-            {
-                cashDeskPort.WriteLine("80000");
-                cashDeskPort.Close();
-            }
+            UserControls.Managers.CashDeskManager.OpenCashDesk();
         }
 
         #endregion Toolbar buttons
-
 
         private ICommand _correctProductsCommand;
 
@@ -1937,7 +1925,7 @@ namespace ES.Market.ViewModels
                     break;
                 case ToolsEnum.Categories:
                     tool = new CategoriesToolsViewModel();
-                    ((CategoriesToolsViewModel)tool).OnSetCategory += OnSetCategory;
+                    ((CategoriesToolsViewModel) tool).OnSetCategory += OnSetCategory;
                     AddTools<CategoriesToolsViewModel>(tool, false);
                     break;
                 default:

@@ -361,13 +361,16 @@ namespace UserControls.ViewModels.Invoices
         }
         private void AutoSave()
         {
+            //InvoicesManager.AutoSave(Invoice, InvoiceItems.ToList());
+
+
             string filePath = PathHelper.GetMemberTempInvoiceFilePath(Invoice.Id, ApplicationManager.Member.Id);
             if (string.IsNullOrEmpty(filePath)) return;
             FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate);
             BinaryFormatter formatter = new BinaryFormatter();
             try
             {
-                formatter.Serialize(fs, this);
+                formatter.Serialize(fs, (InvoiceViewModel)this);
             }
             catch
             {
