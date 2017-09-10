@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using ES.Business.Models;
 using ES.Data.Models;
-using ES.DataAccess.Models;
 using Microsoft.Office.Interop.Excel;
 using ProductOrderModel = ES.Data.Models.ProductOrderModel;
 
@@ -68,7 +67,7 @@ namespace ES.Business.ExcelManager
             var xlWSh = xlApp.GetWorksheet();
             if (xlWSh == null) return false;
             xlWSh.Activate();
-
+            xlApp.Show();
             var nextRow = 1;
             try
             {
@@ -89,11 +88,12 @@ namespace ES.Business.ExcelManager
             }
             catch (Exception)
             {
-                return false;
+                return false; 
+                xlApp.Dispose();
             }
             finally
             {
-                xlApp.Dispose();
+               
             }
         }
 

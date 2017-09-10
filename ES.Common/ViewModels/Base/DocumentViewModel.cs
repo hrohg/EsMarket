@@ -3,7 +3,6 @@ using ES.Common.Helpers;
 
 namespace ES.Common.ViewModels.Base
 {
-    [Serializable]
     public class DocumentViewModel : PaneViewModel
     {
         #region Internal properties
