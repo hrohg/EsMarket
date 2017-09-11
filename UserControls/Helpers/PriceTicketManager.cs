@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Controls;
 using ES.Business.Managers;
+using ES.Business.Models;
 using ES.Common;
 using UserControls.PriceTicketControl;
 using UserControls.PriceTicketControl.Helper;
@@ -11,13 +12,16 @@ namespace UserControls.Helpers
 {
     public class PriceTicketManager
     {
-        public static void PrintPriceTicket(PrintPriceTicketEnum? printPriceTicketEnum)
+        public static void PrintPriceTicket(PrintPriceTicketEnum? printPriceTicketEnum, ProductModel product=null)
         {
             if (printPriceTicketEnum == null)
             {
                 return;
             }
-            var product = SelectItemsManager.SelectProduct(ApplicationManager.CashManager.Products.Where(s => !string.IsNullOrEmpty(s.Barcode)).ToList()).FirstOrDefault();
+            if (product == null)
+            {
+                product = SelectItemsManager.SelectProduct(ApplicationManager.CashManager.Products.Where(s => !string.IsNullOrEmpty(s.Barcode)).ToList()).FirstOrDefault();
+            }
             if (product == null) return;
             UserControl priceTicket = null;
             switch (printPriceTicketEnum)
@@ -25,6 +29,7 @@ namespace UserControls.Helpers
                 case PrintPriceTicketEnum.Normal:
                     break;
                 case PrintPriceTicketEnum.Small:
+                    priceTicket = new UctrlBarcodeWithText(new BarcodeViewModel(product.Code, product.Barcode, product.Description, product.Price, null));
                     break;
                 case PrintPriceTicketEnum.Large:
                     priceTicket = new UctrlBarcodeX(new BarcodeViewModel(product.Code, product.Barcode, product.Description, product.Price, null));

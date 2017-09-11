@@ -6,7 +6,7 @@
              xmlns:viewModels="clr-namespace:UserControls.PriceTicketControl.ViewModels"
              xmlns:priceTicketControl="clr-namespace:UserControls.PriceTicketControl"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="50" d:DesignWidth="113" Width="113">
     <UserControl.Resources>
 
         <DataTemplate DataType="{x:Type viewModels:PriceTicketViewModelBase}">

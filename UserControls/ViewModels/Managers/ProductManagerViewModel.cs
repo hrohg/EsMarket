@@ -131,7 +131,7 @@ namespace UserControls.ViewModels.Managers
             ExportProductsCommand = new RelayCommand<ExportImportEnum>(OnExportProducts, CanExportProducts);
             GetProductsCommand = new RelayCommand(GetProductBy);
             AddProductGroupCommand = new RelayCommand<string>(OnAddProductGroup, CanAddProductGroup);
-            PrintBarcodeCommand = new RelayCommand<PrintPriceTicketEnum?>(PrintPreviewBarcode, CanPrintBarcode);
+            //PrintBarcodeCommand = new RelayCommand<PrintPriceTicketEnum?>(PrintPreviewBarcode, CanPrintBarcode);
         }
 
         private void TimerElapsed(object obj)
@@ -391,7 +391,7 @@ namespace UserControls.ViewModels.Managers
         }
         protected virtual void OnPrintBarcode(PrintPriceTicketEnum? printPriceTicketEnum)
         {
-            PriceTicketManager.PrintPriceTicket(printPriceTicketEnum);
+            PriceTicketManager.PrintPriceTicket(printPriceTicketEnum, Product);
         }
 
         protected virtual void PrintPreviewBarcode(PrintPriceTicketEnum? printPriceTicketEnum)

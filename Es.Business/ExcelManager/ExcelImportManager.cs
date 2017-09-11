@@ -63,16 +63,28 @@ namespace ES.Business.ExcelManager
                     var product = new ProductModel(memberId, userId, true)
                     {
                         Id = Guid.NewGuid(),
+                        //Code
                         Code = xlWSh.Cells[nextRow, 1].Text,
-                        HcdCs = xlWSh.Cells[nextRow, 2].Text,
-                        Description = xlWSh.Cells[nextRow, 3].Text,
-                        Mu = xlWSh.Cells[nextRow, 4].Text,                        
-                        CostPrice = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 5].Text)? null: HgConvert.ToDecimal(xlWSh.Cells[nextRow, 5].Text),
-                        Price = HgConvert.ToDecimal(xlWSh.Cells[nextRow, 6].Text),
-                        Note = xlWSh.Cells[nextRow, 7].Text,
-                        Discount = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 8].Text) ? null : HgConvert.ToDecimal(xlWSh.Cells[nextRow, 8].Text),
-                        DealerPrice = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 9].Text) ? null : HgConvert.ToDecimal(xlWSh.Cells[nextRow, 9].Text),
-                        DealerDiscount = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 10].Text) ? null : HgConvert.ToDecimal(xlWSh.Cells[nextRow, 10].Text),
+                        //Barcode
+                        Barcode = xlWSh.Cells[nextRow, 2].Text,
+                        //HcdCs
+                        HcdCs = xlWSh.Cells[nextRow, 3].Text,
+                        //Description
+                        Description = xlWSh.Cells[nextRow, 4].Text,
+                        //Mu
+                        Mu = xlWSh.Cells[nextRow, 5].Text,
+                        //Note
+                        Note = xlWSh.Cells[nextRow, 6].Text,
+                        //Cost price
+                        CostPrice = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 7].Text)? null: HgConvert.ToDecimal(xlWSh.Cells[nextRow, 7].Text),
+                        //Price
+                        Price = HgConvert.ToDecimal(xlWSh.Cells[nextRow, 8].Text),
+                        //Discount
+                        Discount = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 9].Text) ? null : HgConvert.ToDecimal(xlWSh.Cells[nextRow, 9].Text),
+                        //DealerPrice
+                        DealerPrice = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 10].Text) ? null : HgConvert.ToDecimal(xlWSh.Cells[nextRow, 10].Text),
+                        //DealerDiscount
+                        DealerDiscount = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 11].Text) ? null : HgConvert.ToDecimal(xlWSh.Cells[nextRow, 11].Text),
                     };
                     //nextRow++;
                     if(string.IsNullOrEmpty(product.Code)) continue;

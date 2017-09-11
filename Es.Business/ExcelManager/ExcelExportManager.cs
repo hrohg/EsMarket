@@ -69,19 +69,57 @@ namespace ES.Business.ExcelManager
             xlWSh.Activate();
             xlApp.Show();
             var nextRow = 1;
+            //Code
+            xlWSh.Cells[nextRow, 1] = "Code";
+            //Barcode
+            xlWSh.Cells[nextRow, 2] = "Barcode";
+            //HcdCs
+            xlWSh.Cells[nextRow, 3] = "HcdCs";
+            //Description
+            xlWSh.Cells[nextRow, 4] = "Description";
+            //Mu
+            xlWSh.Cells[nextRow, 5] = "Mu";
+            //Note
+            xlWSh.Cells[nextRow, 6] = "Note";
+            //Cost price
+            xlWSh.Cells[nextRow, 7] = "Cost price";
+            //Price
+            xlWSh.Cells[nextRow, 8] = "Price";
+            //Discount
+            xlWSh.Cells[nextRow, 9] = "Discount";
+            //DealerPrice
+            xlWSh.Cells[nextRow, 10] = "Dealer Price";
+            //Dealer Discount
+            xlWSh.Cells[nextRow, 11] = "Dealer Discount";
+            nextRow++;
+
             try
             {
                 foreach (var product in products)
                 {
+                    //Code
                     xlWSh.Cells[nextRow, 1] = product.Code;
-                    xlWSh.Cells[nextRow, 2] = product.Description;
-                    xlWSh.Cells[nextRow, 3] = product.Mu;
-                    xlWSh.Cells[nextRow, 4] = product.Note;
-                    xlWSh.Cells[nextRow, 5] = product.CostPrice;
-                    xlWSh.Cells[nextRow, 6] = product.DealerPrice;
-                    xlWSh.Cells[nextRow, 7] = product.DealerDiscount;
+                    //Barcode
+                    xlWSh.Cells[nextRow, 2] = product.Barcode;
+                    //HcdCs
+                    xlWSh.Cells[nextRow, 3] = product.HcdCs;
+                    //Description
+                    xlWSh.Cells[nextRow, 4] = product.Description;
+                    //Mu
+                    xlWSh.Cells[nextRow, 5] = product.Mu;
+                    //Note
+                    xlWSh.Cells[nextRow, 6] = product.Note;
+                    //Cost price
+                    xlWSh.Cells[nextRow, 7] = product.CostPrice;
+                    //Price
                     xlWSh.Cells[nextRow, 8] = product.Price;
+                    //Discount
                     xlWSh.Cells[nextRow, 9] = product.Discount;
+                    //Dealer Price
+                    xlWSh.Cells[nextRow, 10] = product.DealerPrice;
+                    //DealerDiscount
+                    xlWSh.Cells[nextRow, 11] = product.DealerDiscount;
+
                     nextRow++;
                 }
                 return true;
