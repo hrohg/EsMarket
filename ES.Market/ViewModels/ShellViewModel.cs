@@ -192,6 +192,17 @@ namespace ES.Market.ViewModels
 
         #region Toolbar
 
+        public bool IsEcrActivated
+        {
+            get { return ApplicationManager.Settings.MemberSettings.IsEcrActivated; }
+            set
+            {
+                ApplicationManager.Settings.MemberSettings.IsEcrActivated = value;
+                RaisePropertyChanged("IsEcrActivated");
+                RaisePropertyChanged("EcrButtonTooltip");
+            }
+        }
+        public string EcrButtonTooltip { get { return IsEcrActivated ? "ՀԴՄ ակտիվ է" : "ՀԴՄ պասիվ է"; } }
         public Visibility AddSingleVisibility
         {
             get
@@ -279,7 +290,7 @@ namespace ES.Market.ViewModels
             InvoiceViewModel invoice = null;
             foreach (var invoiceItems in invoices)
             {
-                if(invoiceItems.Item1 ==null || invoiceItems.Item2==null) continue;
+                if (invoiceItems.Item1 == null || invoiceItems.Item2 == null) continue;
                 switch ((InvoiceType)invoiceItems.Item1.InvoiceTypeId)
                 {
                     case InvoiceType.PurchaseInvoice:
@@ -375,7 +386,7 @@ namespace ES.Market.ViewModels
 
         private void AddInvoiceDocument(InvoiceViewModel vm)
         {
-            var exInvoice = Documents.SingleOrDefault(s => s is InvoiceViewModel && ((InvoiceViewModel) s).Invoice.Id == vm.Invoice.Id);
+            var exInvoice = Documents.SingleOrDefault(s => s is InvoiceViewModel && ((InvoiceViewModel)s).Invoice.Id == vm.Invoice.Id);
             if (exInvoice != null)
             {
                 exInvoice.IsSelected = true;
@@ -404,21 +415,21 @@ namespace ES.Market.ViewModels
             vm.OnClosed -= OnRemoveDocument;
             if (vm is DocumentViewModel)
             {
-                ((DocumentViewModel) vm).ActiveTabChangedEvent -= OnActiveTabChanged;
+                ((DocumentViewModel)vm).ActiveTabChangedEvent -= OnActiveTabChanged;
             }
 
-            Documents.Remove((DocumentViewModel) vm);
+            Documents.Remove((DocumentViewModel)vm);
             if (vm is ProductManagerViewModel)
             {
-                ((ProductManagerViewModel) vm).OnProductEdited -= ProductItemsToolsViewModel.UpdateProducts;
+                ((ProductManagerViewModel)vm).OnProductEdited -= ProductItemsToolsViewModel.UpdateProducts;
             }
             if (vm is InvoiceViewModel)
             {
-                ProductItemsToolsViewModel.OnProductItemSelected -= ((InvoiceViewModel) vm).OnSetProductItem;
+                ProductItemsToolsViewModel.OnProductItemSelected -= ((InvoiceViewModel)vm).OnSetProductItem;
             }
             if (vm is StockTakeManagerViewModel)
             {
-                ProductItemsToolsViewModel.OnProductItemSelected -= ((StockTakeManagerViewModel) vm).OnSetProductItem;
+                ProductItemsToolsViewModel.OnProductItemSelected -= ((StockTakeManagerViewModel)vm).OnSetProductItem;
             }
         }
 
@@ -451,7 +462,7 @@ namespace ES.Market.ViewModels
         {
             if (vm == null) return;
             vm.OnClosed -= OnRemoveDocument;
-            Tools.Remove((ToolsViewModel) vm);
+            Tools.Remove((ToolsViewModel)vm);
         }
 
         #endregion Add remove documents and tools
@@ -564,15 +575,15 @@ namespace ES.Market.ViewModels
         {
             if (vm is DocumentViewModel)
             {
-                AddDocument((DocumentViewModel) vm);
-                ((PaneViewModel) vm).IsActive = true;
+                AddDocument((DocumentViewModel)vm);
+                ((PaneViewModel)vm).IsActive = true;
                 if (vm is InvoiceViewModel)
                 {
-                    ProductItemsToolsViewModel.OnProductItemSelected += ((InvoiceViewModel) vm).OnSetProductItem;
+                    ProductItemsToolsViewModel.OnProductItemSelected += ((InvoiceViewModel)vm).OnSetProductItem;
                 }
                 if (vm is StockTakeManagerViewModel)
                 {
-                    ProductItemsToolsViewModel.OnProductItemSelected += ((StockTakeManagerViewModel) vm).OnSetProductItem;
+                    ProductItemsToolsViewModel.OnProductItemSelected += ((StockTakeManagerViewModel)vm).OnSetProductItem;
                 }
                 OnCreateProductItemsTools(ProductItemsToolsViewModel);
                 return;
@@ -592,7 +603,9 @@ namespace ES.Market.ViewModels
             {
                 nextTab = tabShop.Items.Add(new TabItem
                 {
-                    Content = new ProductOrderUctrl(_user, _member), DataContext = vm, AllowDrop = true
+                    Content = new ProductOrderUctrl(_user, _member),
+                    DataContext = vm,
+                    AllowDrop = true
                 });
                 tabShop.SelectedIndex = nextTab;
                 _parentTabControl.UpdateLayout();
@@ -627,8 +640,8 @@ namespace ES.Market.ViewModels
                     MessageBox.Show("Գործողությունն ընդհատված է։", "Թերի տվյալներ", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return null;
                 }
-                var startDate = (DateTime) dateIntermediate.Item1;
-                var endDate = (DateTime) dateIntermediate.Item2;
+                var startDate = (DateTime)dateIntermediate.Item1;
+                var endDate = (DateTime)dateIntermediate.Item2;
                 stockTakes = StockTakeManager.GetStockTakeByCreateDate(startDate, endDate);
                 if (stockTakes == null || !stockTakes.Any())
                 {
@@ -648,8 +661,9 @@ namespace ES.Market.ViewModels
             }
             var selectItemId = SelectManager.GetSelectedItem(stockTakes.OrderByDescending(s => s.CreateDate).Select(s => new ItemsToSelect
             {
-                DisplayName = s.StockTakeName + " " + s.CreateDate, SelectedValue = s.Id
-            }).ToList(), false).Select(s => (Guid) s.SelectedValue).FirstOrDefault();
+                DisplayName = s.StockTakeName + " " + s.CreateDate,
+                SelectedValue = s.Id
+            }).ToList(), false).Select(s => (Guid)s.SelectedValue).FirstOrDefault();
             return stockTakes.FirstOrDefault(s => s.Id == selectItemId);
         }
 
@@ -713,7 +727,7 @@ namespace ES.Market.ViewModels
         public void ExportProductsForScale(object o)
         {
             if (!(o is ExportForScale)) return;
-            switch ((ExportForScale) o)
+            switch ((ExportForScale)o)
             {
                 case ExportForScale.ShtrixM:
                     ExportManager.ExportPriceForShtrikhM(SelectItemsManager.SelectProductByCheck(true));
@@ -834,7 +848,7 @@ namespace ES.Market.ViewModels
 
         private void ImportProducts(string fileName)
         {
-            var products = (List<EsProductModel>) XmlManager.Read(fileName, typeof (List<EsProductModel>));
+            var products = (List<EsProductModel>)XmlManager.Read(fileName, typeof(List<EsProductModel>));
 
             if (products == null || products.Count == 0)
             {
@@ -905,7 +919,7 @@ namespace ES.Market.ViewModels
         private void ImportDsProducts(string fileName)
         {
             //XmlManager.Save(new List<row>(), fileName);
-            var products = (List<row>) XmlManager.Read(fileName, typeof (List<row>));
+            var products = (List<row>)XmlManager.Read(fileName, typeof(List<row>));
             //var products = (List<EsProductModel>)XmlManager.Read(fileName, typeof(List<EsProductModel>));
 
             if (products == null || products.Count == 0)
@@ -937,7 +951,11 @@ namespace ES.Market.ViewModels
             {
                 var product = new EsProductModel()
                 {
-                    Code = item.ID.ToString(), Barcode = item.barcode, Description = item.name, Mu = item.unit, CostPrice = (decimal) item.last_price_in,
+                    Code = item.ID.ToString(),
+                    Barcode = item.barcode,
+                    Description = item.name,
+                    Mu = item.unit,
+                    CostPrice = (decimal)item.last_price_in,
                     //Price = (decimal) item.price_ret,
                     Note = item.description1
                 };
@@ -984,7 +1002,18 @@ namespace ES.Market.ViewModels
         {
             return new ProductModel()
             {
-                Code = item.Code, Barcode = item.Barcode, HcdCs = item.HcdCs, Description = item.Description, Mu = item.Mu, CostPrice = item.CostPrice, Price = item.Price, ExpiryDays = item.ExpiryDays, IsWeight = item.IsWeight, EsMemberId = item.EsMemberId, LastModifierId = item.LastModifierId, IsEnabled = item.IsEnabled
+                Code = item.Code,
+                Barcode = item.Barcode,
+                HcdCs = item.HcdCs,
+                Description = item.Description,
+                Mu = item.Mu,
+                CostPrice = item.CostPrice,
+                Price = item.Price,
+                ExpiryDays = item.ExpiryDays,
+                IsWeight = item.IsWeight,
+                EsMemberId = item.EsMemberId,
+                LastModifierId = item.LastModifierId,
+                IsEnabled = item.IsEnabled
             };
         }
 
@@ -1090,10 +1119,12 @@ namespace ES.Market.ViewModels
                 case EcrExecuiteActions.GetReceiptData:
                     break;
                 case EcrExecuiteActions.CashWithdrawal:
+                case EcrExecuiteActions.CashIn:
+                    return true;
                     break;
                 case EcrExecuiteActions.PrintCash:
                     break;
-                case EcrExecuiteActions.CashIn:
+               
                     break;
                 case null:
                     break;
@@ -1193,14 +1224,26 @@ namespace ES.Market.ViewModels
                 case EcrExecuiteActions.GetReceiptData:
                     break;
                 case EcrExecuiteActions.CashWithdrawal:
-                    //message = ecrserver.SetCashWithdrawal() != null ? new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումն իրականացել է հաջողությամբ:", MessageModel.MessageType.Success) : new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageType.Warning);
-                    IsLoading = false;
+                    var partner = SelectItemsManager.SelectPartner();
+                    if (partner == null) break;
+                    var amountForm = new InputForm("Վերադարձվող գումար");
+                    if (amountForm.ShowDialog() != DialogResult.OK) break;
+                    if (ecrserver.SetCashWithdrawal(HgConvert.ToDecimal(amountForm.TicketValue), partner.FullName))
+                        MessageManager.OnMessage("Կանխավճարի վերադարձն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
+                    else
+                        MessageManager.OnMessage("Կանխավճարի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
                     break;
                 case EcrExecuiteActions.PrintCash:
                     break;
                 case EcrExecuiteActions.CashIn:
-                    //message = ecrserver.SetCashReceipt() != null ? new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումն իրականացել է հաջողությամբ:", MessageModel.MessageType.Success) : new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageModel.MessageType.Warning);
-                    IsLoading = false;
+                    var cashInPartner = SelectItemsManager.SelectPartner();
+                    if (cashInPartner == null) break;
+                    var cashInAmountForm = new InputForm("Կանխավճար");
+                    if (cashInAmountForm.ShowDialog() != DialogResult.OK) break;
+                    if (ecrserver.SetCashWithdrawal(HgConvert.ToDecimal(cashInAmountForm.TicketValue), cashInPartner.FullName))
+                        MessageManager.OnMessage("Կանխավճարի կտրոնի տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
+                    else
+                        MessageManager.OnMessage("Կանխավճարի կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
                     break;
                 case null:
                     break;
@@ -1412,7 +1455,7 @@ namespace ES.Market.ViewModels
             {
                 var type = tuple.Item1;
                 var state = tuple.Item2;
-                var count = (int) tuple.Item3;
+                var count = (int)tuple.Item3;
                 var invoices = GetInvoices(state, type, count);
                 if (invoices == null)
                 {
@@ -1553,7 +1596,7 @@ namespace ES.Market.ViewModels
             {
                 var type = tuple.Item1;
                 var state = tuple.Item2;
-                var count = (int) tuple.Item3;
+                var count = (int)tuple.Item3;
                 List<InvoiceModel> invoices = null;
                 switch (state)
                 {
@@ -1594,7 +1637,7 @@ namespace ES.Market.ViewModels
                 InvoiceViewModel vm = null;
                 foreach (var invoiceModel in invoices)
                 {
-                    switch ((InvoiceType) invoiceModel.InvoiceTypeId)
+                    switch ((InvoiceType)invoiceModel.InvoiceTypeId)
                     {
                         case InvoiceType.SaleInvoice:
                             vm = new SaleInvoiceViewModel(invoiceModel.Id);
@@ -1738,8 +1781,8 @@ namespace ES.Market.ViewModels
             if (!partners.Any()) return;
             var dates = SelectManager.GetDateIntermediate();
             if (dates == null) return;
-            var repayment = AccountingRecordsManager.GetAccountingRecords(dates.Item1, dates.Item2, (long) AccountingPlanEnum.CashDesk, (long) AccountingPlanEnum.AccountingReceivable);
-            var ui = new UIListView(repayment.Where(s => (s.CreditGuidId != null && partners.Contains(s.CreditGuidId.Value))).Select(s => new {Ամսաթիվ = s.RegisterDate, Վճարված = s.Amount, Նշումներ = s.Description}).ToList()) {Title = "Դեբիտորական պարտքի մարում ըստ պատվիրատուների"};
+            var repayment = AccountingRecordsManager.GetAccountingRecords(dates.Item1, dates.Item2, (long)AccountingPlanEnum.CashDesk, (long)AccountingPlanEnum.AccountingReceivable);
+            var ui = new UIListView(repayment.Where(s => (s.CreditGuidId != null && partners.Contains(s.CreditGuidId.Value))).Select(s => new { Ամսաթիվ = s.RegisterDate, Վճարված = s.Amount, Նշումներ = s.Description }).ToList()) { Title = "Դեբիտորական պարտքի մարում ըստ պատվիրատուների" };
             ui.Show();
         }
 
@@ -1925,7 +1968,7 @@ namespace ES.Market.ViewModels
                     break;
                 case ToolsEnum.Categories:
                     tool = new CategoriesToolsViewModel();
-                    ((CategoriesToolsViewModel) tool).OnSetCategory += OnSetCategory;
+                    ((CategoriesToolsViewModel)tool).OnSetCategory += OnSetCategory;
                     AddTools<CategoriesToolsViewModel>(tool, false);
                     break;
                 default:

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using CashReg;
 using CashReg.Helper;
+using ES.Business.Managers;
 using ES.Data.Model;
 using UserControls.ViewModels.Invoices;
 using MessageBox = System.Windows.MessageBox;
@@ -22,7 +24,7 @@ namespace UserControls.Helpers
         #endregion
         public EcrManager()
         {
-            
+            _ecrServer = new EcrServer(ApplicationManager.Settings.MemberSettings.EcrConfig);
         }
 
         #region Public Methods
@@ -199,5 +201,20 @@ namespace UserControls.Helpers
 
         }
         #endregion
+
+
+        public void PrintReceipt()
+        {
+            
+        }
+        public void ReceivedInAdvance(decimal amount, string fullName)
+        {
+            new Thread(() => _ecrServer.SetCashReceipt(amount, fullName)).Start();
+        }
+
+        public void RepaymentOfDebts(decimal amount, string fullName)
+        {
+            new Thread(() => _ecrServer.SetCashWithdrawal(amount, fullName)).Start();
+        }
     }
 }

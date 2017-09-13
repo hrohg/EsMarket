@@ -8,8 +8,10 @@ using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Common;
 using ES.Common.Helpers;
+using ES.Common.Models;
 using ES.Data.Model;
 using ES.Login;
+using ES.Market.Config;
 using ES.Market.ViewModels;
 using UserControls.Controls;
 using UserControls.ViewModels;
@@ -38,6 +40,11 @@ namespace ES.Market
                     return _loginWindow;
                 }
                 _logins = new ObservableMruCollection<string>(GeneralSettings.LoadGeneralSettings().LastLogins, 10);
+                var dataServers = DataServerSettings.GetDataServers();
+                if (!dataServers.Any())
+                {
+                    new ServerConfig(new ServerViewModel(new DataServer())).ShowDialog();                    
+                }
                 var loginVm = new LoginViewModel(_logins.FirstOrDefault(), _logins.ToList(), DataServerSettings.GetDataServers());
 
                 loginVm.LoginEvent += OnLogining;

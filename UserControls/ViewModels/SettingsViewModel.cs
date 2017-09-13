@@ -74,7 +74,7 @@ namespace UserControls.ViewModels
         {
             get
             {
-                var comPorts = new List<string>(){""};
+                var comPorts = new List<string>() { "" };
                 comPorts.AddRange(SerialPort.GetPortNames().ToList());
                 return comPorts;
             }
@@ -186,7 +186,46 @@ namespace UserControls.ViewModels
         #region ECR settings
         //public EcrSettings EcrSettings { get; set; }
         public EcrConfig EcrSettings { get { return Settings.MemberSettings.EcrConfig; } }
-
+        public string EcrSettingsIp
+        {
+            get { return EcrSettings.Ip; }
+            set
+            {
+                EcrSettings.Ip = value;
+                RaisePropertyChanged("EcrSettingsIp");
+                RaisePropertyChanged("ExecuteEcrActionCommand");
+            }
+        }
+        public int? EcrSettingsPort
+        {
+            get { return EcrSettings.Port; }
+            set
+            {
+                EcrSettings.Port = value;
+                RaisePropertyChanged("EcrSettingsPort");
+                RaisePropertyChanged("ExecuteEcrActionCommand");
+            }
+        }
+        public int EcrCashier
+        {
+            get { return EcrSettings.EcrCashier.Cashier; }
+            set
+            {
+                EcrSettings.EcrCashier.Cashier = value;
+                RaisePropertyChanged("EcrCashier");
+                RaisePropertyChanged("ExecuteEcrActionCommand");
+            }
+        }
+        public string EcrCashierPin
+        {
+            get { return EcrSettings.EcrCashier.Pin; }
+            set
+            {
+                EcrSettings.EcrCashier.Pin = value;
+                RaisePropertyChanged("EcrCashierPin");
+                RaisePropertyChanged("ExecuteEcrActionCommand");
+            }
+        }
         public bool CanActivateEcr
         {
             get

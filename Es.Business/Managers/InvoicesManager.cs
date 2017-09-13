@@ -744,8 +744,6 @@ namespace ES.Business.Managers
             {
                 using (var db = GetDataContext())
                 {
-                    invoice.ApproveDate = DateTime.Now;
-
                     #region Remove InvoiceItems
 
                     var exInvoiceItems = db.InvoiceItems.Where(s => s.InvoiceId == invoice.Id).ToList();
@@ -782,7 +780,7 @@ namespace ES.Business.Managers
                         }
                         exInvoice.FromStockId = invoice.FromStockId;
                         exInvoice.ToStockId = invoice.ToStockId;
-                        exInvoice.ApproveDate = DateTime.Now; // invoice.ApproveDate;
+                        exInvoice.ApproveDate = DateTime.Now;
                         exInvoice.ApproverId = invoice.ApproverId;
                         exInvoice.Approver = invoice.Approver;
                         exInvoice.AcceptDate = invoice.AcceptDate;
@@ -1043,6 +1041,7 @@ namespace ES.Business.Managers
                     }
                     catch (Exception ex)
                     {
+                        MessageManager.OnMessage(string.Format("Exception on approving sale invoice: {0}", ex.Message));
                         invoice.ApproveDate = null;
                         return null;
                     }
@@ -1832,7 +1831,7 @@ namespace ES.Business.Managers
 
         public static InvoiceModel ApproveSaleInvoice(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems, IEnumerable<long> stockIds, InvoicePaid invoicePaid)
         {
-            invoice.ApproveDate = DateTime.Now;
+            //invoice.ApproveDate = DateTime.Now;
             return ConvertInvoice(TryApproveSaleInvoice(ConvertInvoice(invoice), invoiceItems.Select(Convert).ToList(), stockIds, invoicePaid), ApplicationManager.Instance.CashProvider.GetPartners.SingleOrDefault(p => p.Id == invoice.PartnerId));
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -29,7 +30,7 @@ using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Invoices
 {
-     [Serializable]
+    [Serializable]
     public class SaleInvoiceViewModel : InvoiceViewModel
     {
         #region Internal properties
@@ -97,6 +98,7 @@ namespace UserControls.ViewModels.Invoices
                 _isPrintTicket = value;
                 RaisePropertyChanged("IsPrintTicket");
                 RaisePropertyChanged("SalePrinterButtonTooltip");
+                ApplicationManager.Settings.MemberSettings.IsPrintSaleTicket = value;
             }
         }
         public string SalePrinterButtonTooltip { get { return IsPrintTicket ? "Վաճառքի տպիչն ակտիվ է:" : "Վաճառքի տպիչը պասիվ է:"; } }
@@ -109,7 +111,8 @@ namespace UserControls.ViewModels.Invoices
         {
             Initialize();
         }
-        public SaleInvoiceViewModel(Guid id): base(id)
+        public SaleInvoiceViewModel(Guid id)
+            : base(id)
         {
             Initialize();
         }
@@ -162,7 +165,7 @@ namespace UserControls.ViewModels.Invoices
         }
         protected override bool SetQuantity(bool addSingle)
         {
-            var exCount = ProductsManager.GetProductItemCount(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList(), Member.Id);
+            var exCount = ProductsManager.GetProductItemQuantity(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList());
 
             if (exCount == 0 || InvoiceItem.Quantity > exCount)
             {
@@ -207,7 +210,7 @@ namespace UserControls.ViewModels.Invoices
                 DiscountType = s.Discount != null && s.Discount > 0 ? 1 : (int?)null,
                 AdgCode = s.Product.HcdCs
             }).ToList();
-            var invoicePaid = new CashReg.Helper.InvoicePaid
+            var invoicePaid = new InvoicePaid
             {
                 PaidAmount = InvoicePaid.Paid != null ? (double)InvoicePaid.Paid : 0,
                 PaidAmountCard = InvoicePaid.ByCheck != null ? (double)InvoicePaid.ByCheck : 0,
@@ -365,17 +368,17 @@ namespace UserControls.ViewModels.Invoices
                 MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);
                 return;
             }
-            
+
             Invoice.ApproverId = User.UserId;
             Invoice.Approver = User.FullName;
 
             InvoicePaid.PartnerId = Invoice.PartnerId;
             Invoice.RecipientName = Partner.FullName;
 
-            var cashDesk = InvoicePaid.Paid>0? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.MemberSettings.SaleCashDesks).SingleOrDefault(): null;
+            var cashDesk = InvoicePaid.Paid > 0 ? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.MemberSettings.SaleCashDesks).SingleOrDefault() : null;
             InvoicePaid.CashDeskId = cashDesk != null ? cashDesk.Id : (Guid?)null;
 
-            var bankAccount = InvoicePaid.ByCheck>0? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.MemberSettings.SaleBankAccounts).SingleOrDefault():null;
+            var bankAccount = InvoicePaid.ByCheck > 0 ? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.MemberSettings.SaleBankAccounts).SingleOrDefault() : null;
             InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
 
             var invoice = InvoicesManager.ApproveSaleInvoice(Invoice, InvoiceItems.ToList(), FromStocks.Select(s => s.Id), InvoicePaid);
@@ -385,11 +388,35 @@ namespace UserControls.ViewModels.Invoices
                 MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);
                 return;
             }
+
+
+            Invoice = invoice;
+            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
+
+            new Thread(PrintTicket).Start();
+            //PrintTicket();
+
+            AccountsReceivable = new AccountsReceivableModel(Invoice.Id, Partner.Id, User.UserId, Invoice.MemberId, true);
             ApplicationManager.CashManager.UpdatePartners();
-            Partner = ApplicationManager.CashManager.GetPartners.SingleOrDefault(s=>s.Id==Partner.Id);
+            Partner = ApplicationManager.CashManager.GetPartners.SingleOrDefault(s => s.Id == Partner.Id);
+            IsModified = false;
+            RaisePropertyChanged("InvoiceStateImageState");
+            RaisePropertyChanged("InvoiceStateTooltip");
             //CheckForPrize(Invoice);
+
+
+
+        }
+
+        private void PrintTicket()
+        {
+            if (!string.IsNullOrEmpty(ApplicationManager.Settings.MemberSettings.CashDeskPort))
+            {
+                CashDeskManager.OpenCashDesk();
+            }
+
             ResponseReceiptModel responceReceiptModel = null;
-            if (CanPrintEcrTicket(o))
+            if (CanPrintEcrTicket(null))
             {
                 //todo
                 EcrServer ecrManager = null;
@@ -418,7 +445,8 @@ namespace UserControls.ViewModels.Invoices
 
                 if (responceReceiptModel != null)
                 {
-                    invoice.RecipientTaxRegistration = responceReceiptModel.Rseq.ToString();
+                    Invoice.RecipientTaxRegistration = responceReceiptModel.Rseq.ToString();
+                    OnSaveInvoice(null);
                     MessageManager.OnMessage(new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:" + responceReceiptModel.Rseq, MessageTypeEnum.Success));
                 }
                 else
@@ -427,20 +455,12 @@ namespace UserControls.ViewModels.Invoices
                     //return false;
                 }
             }
-            Invoice = invoice;
-            IsModified = false;
-            RaisePropertyChanged("InvoiceStateImageState");
-            RaisePropertyChanged("InvoiceStateTooltip");
 
             if (IsPrintTicket && (!IsEcrActivated || ApplicationManager.Settings.MemberSettings.EcrConfig.UseExternalPrinter))
             {
                 PrintInvoiceTicket(responceReceiptModel);
             }
-            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
-            AccountsReceivable = new AccountsReceivableModel(Invoice.Id, Partner.Id, User.UserId, Invoice.MemberId, true);
-            return;
         }
-
         public override void OnApproveAndClose(object o)
         {
             OnApprove(o);

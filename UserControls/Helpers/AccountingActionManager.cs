@@ -68,6 +68,10 @@ namespace UserControls.Helpers
                 repaymentAccountingRecords: repaymentAccountingRecord))
             {
                 MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
+                if (ApplicationManager.Settings.MemberSettings.IsEcrActivated && depositAccountingRecords.Amount>0)
+                {
+                    new EcrManager().RepaymentOfDebts(depositAccountingRecords.Amount, partner.FullName);
+                }
             }
             else
             {
@@ -112,6 +116,10 @@ namespace UserControls.Helpers
             if (AccountingRecordsManager.SetRepaymentOfDebts(accountingRecords, ApplicationManager.Instance.GetMember.Id))
             {
                 MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
+                if (ApplicationManager.Settings.MemberSettings.IsEcrActivated)
+                {
+                    new EcrManager().RepaymentOfDebts(accountingRecords.Amount, partner.FullName);
+                }
             }
             else
             {
@@ -150,6 +158,11 @@ namespace UserControls.Helpers
             if (!ctrlAccountingRecords.Result || receivedInAdvance == null || receivedInAdvance.Amount == 0) return;
             AccountingRecordsManager.SetPartnerPayment(depositeAccountRecords: receivedInAdvance,
                 repaymentAccountingRecords: null);
+
+            if (ApplicationManager.Settings.MemberSettings.IsEcrActivated)
+            {
+                new EcrManager().ReceivedInAdvance(receivedInAdvance.Amount, partner.FullName);
+            }
         }
 
         public static void Action(AccountingPlanEnum accountingPlan)

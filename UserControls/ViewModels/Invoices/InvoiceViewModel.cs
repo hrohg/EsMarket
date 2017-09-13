@@ -275,7 +275,7 @@ namespace UserControls.ViewModels.Invoices
         }
         protected virtual bool SetQuantity(bool addSingle)
         {
-            var exCount = ProductsManager.GetProductItemCount(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList(), Member.Id);
+            var exCount = ProductsManager.GetProductItemQuantity(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList());
             InvoiceItem.Quantity = addSingle ? 1 : GetAddedItemCount(exCount, true);
             return InvoiceItem.Quantity != null && !(InvoiceItem.Quantity <= 0);
         }

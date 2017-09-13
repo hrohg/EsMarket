@@ -464,6 +464,7 @@ namespace ES.Business.Managers
 
         public static bool IsInRole(UserRoleEnum? type)
         {
+            if (Instance.UserRoles == null) return false;
             switch (type)
             {
                 case UserRoleEnum.Admin:

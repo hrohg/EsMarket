@@ -12,9 +12,7 @@
          xmlns:managers="clr-namespace:ES.Business.Managers;assembly=ES.Business"
          xmlns:popup="clr-namespace:UserControls.Controls.Popup"
          xmlns:controls="clr-namespace:ES.Common.Controls;assembly=ES.Common"
-         xmlns:res="clr-namespace:ResourceLibrary.Helper;assembly=ResourceLibrary"
-         xmlns:invoices="clr-namespace:UserControls.ViewModels.Invoices"
-         MinHeight="450"
+             MinHeight="450"
          MinWidth="700"
          Width="Auto"
          mc:Ignorable="d"
@@ -60,7 +58,18 @@
                 <MenuItem Header="Հաստատել" InputGestureText="F6" Command="{Binding ApproveInvoiceCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabItem}}" Tag="1"/>
                 <MenuItem Header="Հաստատել (Փակել)" InputGestureText="F5" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabItem}}" Tag="1"/>
                 <Separator/>
+                <MenuItem Header="Բեռնել">
+                    <MenuItem Header="Ապրանքագիր Xml"  Command="{Binding ImportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Xml}"/>
+                    <MenuItem Header="Ապրանքագիր Excel"  Command="{Binding ImportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
+                    <MenuItem Header="Ապրանքների բեռնում">
+                        <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
+                        <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceType.MoveInvoice}" />
+                        <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceType.PurchaseInvoice}"/>
+                    </MenuItem>
+                </MenuItem>
+                <Separator/>
                 <MenuItem Header="Տպել" InputGestureText="Ctrl+P" Tag="2" IsEnabled="False" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
+                <MenuItem Header="Տպել ՀԴՄ կտրոն" Command="{Binding PrintEcrTicketCommand}"/>
             </ContextMenu>
         </Grid.ContextMenu>
         <Grid.RowDefinitions>
@@ -470,8 +479,8 @@
                                 <MenuItem Header="Տպել ՀԴՄ կտրոն" Command="{Binding PrintEcrTicketCommand}"/>
                                 <Separator/>
                                 <MenuItem Header="Բեռնել">
-                                    <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceToXmlCommand}"/>
-                                    <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ImportInvoiceCommand}"/>
+                                    <MenuItem Header="Ապրանքագիր Xml"  Command="{Binding ImportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Xml}"/>
+                                    <MenuItem Header="Ապրանքագիր Excel"  Command="{Binding ImportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
                                     <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" Visibility="Collapsed"/>
                                     <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}"  Visibility="Collapsed"/>
                                     <MenuItem Header="Ապրանքների բեռնում">
@@ -492,40 +501,6 @@
                             </ContextMenu>
                         </controls:DropDownMenuButton.DropDownContextMenu>
                     </controls:DropDownMenuButton>
-                    <Menu Visibility="Collapsed">
-                        <MenuItem>
-                            <MenuItem.Header>
-                                <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu_24x24.png" Width="24" Height="24"/>
-                            </MenuItem.Header>
-                            <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"  />
-                            <MenuItem Header="Հաստատել" Command="{Binding ApproveInvoiceCommand}"  />
-                            <Separator/>
-                            <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
-                            <MenuItem Header="Տպել վաճառքի կտրոն Ctrl+Shift+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Small}"/>
-                            <MenuItem Header="Տպել ՀԴՄ կտրոն" Command="{Binding PrintEcrTicketCommand}"/>
-                            <Separator/>
-                            <MenuItem Header="Բեռնել">
-                                <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceToXmlCommand}"/>
-                                <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ImportInvoiceCommand}"/>
-                                <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" Visibility="Collapsed"/>
-                                <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}"  Visibility="Collapsed"/>
-                                <MenuItem Header="Ապրանքների բեռնում">
-                                    <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
-                                    <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceType.MoveInvoice}" />
-                                    <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceType.PurchaseInvoice}"/>
-                                </MenuItem>
-                            </MenuItem>
-                            <MenuItem Header="Արտահանել">
-                                <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceToXmlCommand}"/>
-                                <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ExportInvoiceToExcelCommand}"/>
-                                <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" Visibility="Collapsed"/>
-                                <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}" Visibility="Collapsed"/>
-                                <MenuItem Header="Արտահանել Ctrl+E" Command="{Binding ExportInvoiceCommand}" Visibility="Collapsed"/>
-                            </MenuItem>
-                            <Separator/>
-                            <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>
-                        </MenuItem>
-                    </Menu>
                 </StackPanel>
             </Grid>
         </Grid>

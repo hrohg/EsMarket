@@ -35,7 +35,7 @@ namespace UserControls.ViewModels.Invoices
         protected override void OnPrintInvoice(PrintModeEnum printSize)
         {
             if (!CanPrintInvoice(printSize)) { return; }
-            var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
+            //var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
             var ctrl = new MoveInvoiceView(new MoveInvocieTicketViewModel(Invoice, InvoiceItems.ToList(), StockManager.GetStock(Invoice.FromStockId), StockManager.GetStock(Invoice.ToStockId)));
             PrintManager.PrintPreview(ctrl, "Print move invoice", true);
         }
@@ -97,7 +97,7 @@ namespace UserControls.ViewModels.Invoices
         #region External methods
         protected override bool SetQuantity(bool addSingle)
         {
-            var exCount = ProductsManager.GetProductItemCount(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList(), Member.Id);
+            var exCount = ProductsManager.GetProductItemQuantity(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList());
             if (exCount > 0 && (InvoiceItem.Quantity == null || InvoiceItem.Quantity == 0))
             {
                 if (addSingle && exCount >= 1)

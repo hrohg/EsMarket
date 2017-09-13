@@ -46,7 +46,7 @@
                                     </Grid>
                                 </GroupBox>
                                 
-                                <GroupBox Grid.Row="2" Header="ՀԴՄ սերվիս">
+                                <GroupBox Grid.Row="2" Header="ՀԴՄ">
                                     <Grid>
                                         <Grid.Resources>
                                             <Style TargetType="{x:Type TextBlock}">
@@ -70,6 +70,7 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
+                                        <CheckBox  Grid.Row="0" Grid.Column="1" IsChecked="{Binding IsEcrActivated}" Content="Ակտիվացնել կապը ՀԴՄ-ի հետ" Margin="5"/>
 
                                         <TextBlock Grid.Row="1" Grid.Column="0" Text="ՀԴՄ-ի սերվերի տվյալներ"/>
                                         <Grid Grid.Row="1" Grid.Column="1" IsEnabled="{Binding  EcrSettings.IsActive}">
@@ -198,7 +199,6 @@
                                     <StackPanel>
                                         <CheckBox IsChecked="{Binding SaleBySingle}" Content="Վաճառել մեկական" Margin="5"/>
                                         <CheckBox IsChecked="{Binding IsPrintSaleTicket}" Content="Տպել վաճառքի ապրանքագիր" Margin="5"/>
-                                        <CheckBox IsChecked="{Binding IsEcrActivated}" Content="Ակտիվացնել կապը ՀԴՄ-ի հետ" Margin="5"/>
                                     </StackPanel>
                                 </GroupBox>
                             </Grid>
@@ -312,15 +312,15 @@
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
                                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Սերվեր IP"/>
-                                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding EcrSettings.Ip}"/>
+                                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding EcrSettingsIp}"/>
                                             <TextBlock Grid.Row="1" Grid.Column="0" Text="Սերվեր Port"/>
-                                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EcrSettings.Port}" Width="100" HorizontalContentAlignment="Right"/>
+                                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EcrSettingsPort}" Width="100" HorizontalContentAlignment="Right"/>
                                             <TextBlock Grid.Row="2" Grid.Column="0" Text="PublicKey"/>
                                             <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding EcrSettings.Password}"/>
                                             <TextBlock Grid.Row="3" Grid.Column="0" Text="Գրանցման համար"/>
                                             <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding EcrSettings.Crn}"/>
                                             <TextBlock Grid.Row="4" Grid.Column="0" Text="Օպերատոր"/>
-                                            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding EcrSettings.EcrCashier.Cashier, UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalContentAlignment="Right"/>
+                                            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding EcrCashier, UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalContentAlignment="Right"/>
                                             <TextBlock Grid.Row="5" Grid.Column="0" Text="Գաղտնաբառ"/>
                                             <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding EcrSettings.EcrCashier.Pin, UpdateSourceTrigger=PropertyChanged}"/>
                                             <TextBlock Grid.Row="6" Grid.Column="0" Text="Հարկման տեսակը"/>
@@ -344,9 +344,9 @@
                                         </Grid>
                                     </GroupBox>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <Button Content="Կապի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" MinWidth="100" CommandParameter="{x:Static helper:EcrExecuiteActions.CheckConnection}"/>
-                                        <Button Content="ՀԴՄ կապի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" MinWidth="100" CommandParameter="{x:Static helper:EcrExecuiteActions.CheckEcrConnection}"/>
-                                        <Button Content="Օպերատորի մուտքի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" MinWidth="100" CommandParameter="{x:Static helper:EcrExecuiteActions.OperatorLogin}"/>
+                                        <Button Content="Կապի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" MinWidth="100" Width="NaN" CommandParameter="{x:Static helper:EcrExecuiteActions.CheckConnection}"/>
+                                        <Button Content="ՀԴՄ կապի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" MinWidth="100" Width="NaN" CommandParameter="{x:Static helper:EcrExecuiteActions.CheckEcrConnection}"/>
+                                        <Button Content="Օպերատորի մուտքի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" MinWidth="100" Width="NaN" CommandParameter="{x:Static helper:EcrExecuiteActions.OperatorLogin}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>

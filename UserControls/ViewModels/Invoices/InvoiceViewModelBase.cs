@@ -237,11 +237,16 @@ namespace UserControls.ViewModels.Invoices
         #region Import
         protected virtual bool CanImportInvoice(ExportImportEnum importFrom)
         {
-            return IsInvoiceValid && !Invoice.IsApproved;
+            return !Invoice.IsApproved;
         }
         protected virtual void OnImportInvoice(ExportImportEnum importFrom)
         {
-            var filePath = FileManager.OpenExcelFile();
+            switch (importFrom)
+            {
+                case ExportImportEnum.Xml:
+                    break;
+                case ExportImportEnum.Excel:
+                    var filePath = FileManager.OpenExcelFile();
             if (File.Exists(filePath))
             {
                 var invoiceObject = ExcelImportManager.ImportInvoice(filePath);
@@ -259,9 +264,7 @@ namespace UserControls.ViewModels.Invoices
                     var product = new ProductsManager().GetProductsByCodeOrBarcode(invoiceItem.Code, Member.Id);
                     if (product == null)
                     {
-                        MessageBox.Show(invoiceItem.Code +
-                            " կոդով ապրանք չի հայտնաբերվել։ Գործողությունն ընդհատված է։ Փորձեք կրկին։",
-                            "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show(invoiceItem.Code + " կոդով ապրանք չի հայտնաբերվել։ Գործողությունն ընդհատված է։ Փորձեք կրկին։", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
                     invoiceItem.InvoiceId = Invoice.Id;
@@ -273,26 +276,38 @@ namespace UserControls.ViewModels.Invoices
                     InvoiceItems.Add(invoiceItem);
                 }
             }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("importFrom", importFrom, null);
+            }
+
+            
         }
+
         #endregion Import
 
         #region Export
+
         protected virtual bool CanExportInvoice(ExportImportEnum exportTo)
         {
             return IsInvoiceValid;
         }
+
         protected virtual void OnExportInvoice(ExportImportEnum exportTo)
         {
             ExcelExportManager.ExportInvoice(Invoice, InvoiceItems);
         }
+
         #endregion Export
 
         #endregion Command methods
 
         #region Commands
+
         public ICommand PrintInvoiceCommand { get; private set; }
         public ICommand ImportInvoiceCommand { get; private set; }
         public ICommand ExportInvoiceCommand { get; private set; }
+
         #endregion Commands
     }
 }

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
+using ES.Business.Managers;
 using ES.Business.Models;
 using UserControls.Commands;
 
@@ -14,7 +15,6 @@ namespace UserControls.ViewModels
         private const string FilterTextProperty = "FilterText";
         #endregion
         #region Private properties
-        private long _memberId;
         private ServicesModel _service;
         private ObservableCollection<ServicesModel> _services= new ObservableCollection<ServicesModel>();
         private string _filterText;
@@ -26,10 +26,9 @@ namespace UserControls.ViewModels
         public string FilterText { get { return _filterText; } set { _filterText = value; OnPropertyChanged(FilterTextProperty); } }
         public string EditButtonContent { get { return Services.SingleOrDefault(s => s.Id == Service.Id) == null ? "Ավելացնել" : "Փոփոխել"; } }
         #endregion
-        public ServicesViewModel(long memberId)
+        public ServicesViewModel()
         {
-            _memberId = memberId;
-            Service = new ServicesModel(_memberId, true);
+            Service = new ServicesModel(ApplicationManager.Member.Id, true);
             SetCommands();
         }
         #region Private methods
@@ -49,7 +48,7 @@ namespace UserControls.ViewModels
         }
         public void CreateNewService()
         {
-            Service=new ServicesModel(_memberId, true);
+            Service=new ServicesModel(ApplicationManager.Member.Id, true);
         }
 
         public bool CanEditService()

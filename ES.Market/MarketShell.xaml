@@ -14,6 +14,7 @@
         xmlns:controls1="clr-namespace:ES.Common.Controls;assembly=ES.Common"
         xmlns:helper1="clr-namespace:UserControls.PriceTicketControl.Helper;assembly=UserControls"
         xmlns:enumerations="clr-namespace:UserControls.Enumerations;assembly=UserControls"
+        xmlns:res="clr-namespace:ResourceLibrary.Helper;assembly=ResourceLibrary"
         Title="ES Market - Վաճառք" MinHeight="600" MinWidth="800" Closing="WinShop_Closing"
         WindowState="Maximized" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Shared;component/Images/shopping_cart.Ico">
@@ -28,6 +29,23 @@
             <SolidColorBrush x:Key="TabBackground" Color="#F5F5F5"/>
             <SolidColorBrush x:Key="StatusBarBackground" Color="#DC6E0A"/>
 
+            <Style x:Key="EcrToggleButtinStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static res:ResourceKeys.NoChromeToggleButtonKey}}">
+                <Setter Property="ToolTip" Value="{Binding EcrButtonTooltip}"/>
+                <Setter Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <StackPanel SnapsToDevicePixels="True" Orientation="Horizontal">
+                                <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Cash/CashRegister.png" Width="24"/>
+                            </StackPanel>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="false">
+                                    <Setter TargetName="Image" Property="Opacity" Value=".3"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
 
     </Window.Resources>
@@ -940,16 +958,9 @@
                     <TextBlock Text="{Binding LogViewModel.CurrentLog.Message}" Foreground="Blue" Margin="10 0 0 0"/>
                 </Grid>
                 <ProgressBar Grid.Column="2" IsIndeterminate="True" Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}" ToolTip="{Binding ProcessDescription}" Background="#F5F5F5" Margin="3"/>
+                
                 <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="5 0">
-                    <!--<CheckBox IsChecked="{Binding IsEcrActivated}" Margin="5 0" VerticalAlignment="Center" IsEnabled="False" ToolTip="{Binding EcrStatus}">
-            <CheckBox.Content>
-              <TextBlock Text="ՀԴՄ կարգավիճակ"/>
-            </CheckBox.Content>
-            <CheckBox.Triggers>
-
-            </CheckBox.Triggers>
-          </CheckBox>-->
-
+                    
                     <Button Style="{DynamicResource OpenCashdeskButtonStyle}" Command="{Binding OpenCashdeskCommand}" 
                             IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Cashier}}"
                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}" 
@@ -975,6 +986,7 @@
                             <Style TargetType="{x:Type Button}" BasedOn="{x:Null}"/>
                         </Button.Style>
                     </Button>
+                    <ToggleButton Style="{StaticResource EcrToggleButtinStyle}" IsChecked="{Binding IsEcrActivated}" Margin="5 0"/>
                     <ToggleButton IsChecked="{Binding IsLocalMode}" Margin="5 0">
                         <ToggleButton.Template>
                             <ControlTemplate>

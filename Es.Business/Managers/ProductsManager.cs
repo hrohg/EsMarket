@@ -369,9 +369,9 @@ namespace ES.Business.Managers
         {
             return TryDeleteProduct(id, memebrId);
         }
-        public static decimal GetProductItemCount(Guid? productId, List<long> fromStocks, long memberId)
+        public static decimal GetProductItemQuantity(Guid? productId, List<long> fromStocks)
         {
-            return TryGetProductItemCount(productId, fromStocks, memberId);
+            return TryGetProductItemCount(productId, fromStocks);
         }
         public static decimal GetProductItemCount(Guid? productId, long memberId)
         {
@@ -664,9 +664,10 @@ namespace ES.Business.Managers
                 return false;
             }
         }
-        private static decimal TryGetProductItemCount(Guid? productId, List<long> fromStocks, long memberId)
+        private static decimal TryGetProductItemCount(Guid? productId, List<long> fromStocks)
         {
             if (!productId.HasValue || fromStocks == null) return 0;
+            var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
             {
                 try

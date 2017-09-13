@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Xml.Serialization;
 using CashReg.Helper;
@@ -102,7 +100,7 @@ namespace ES.Common.Models
         }
         public EcrCashier EcrCashier
         {
-            get { return _ecrCashier; }
+            get { return _ecrCashier??(_ecrCashier= new EcrCashier()); }
             set { _ecrCashier = value; }
         }
 

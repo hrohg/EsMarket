@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using CashReg.Helper;
-using CashReg.Interfaces;
 using ES.Business.Managers;
 using ES.Common;
 using ES.Common.Enumerations;
@@ -128,7 +126,7 @@ namespace ES.Business.Helpers
     public class MemberSettings
     {
         #region Internal properties
-
+        private string _cashDeskPort;
         #endregion Internal properties
 
         #region External properties
@@ -140,6 +138,12 @@ namespace ES.Business.Helpers
         public bool IsOfflineMode { get; set; }
         public bool NotifyAboutIncomingInvoices { get; set; }
         public string ImportingFilePath { get; set; }
+        public bool IsEcrActivated { get; set; }
+        public string CashDeskPort
+        {
+            get { return _cashDeskPort; }
+            set { _cashDeskPort = value; }
+        }
         #endregion General
 
         #region Sale
@@ -173,8 +177,6 @@ namespace ES.Business.Helpers
         public string ActiveSalePrinter { get; set; }
         public bool SaleBySingle { get; set; }
         public bool IsPrintSaleTicket { get; set; }
-        public bool IsEcrActivated { get; set; }
-
         #endregion Sale
 
         #region Purchase
@@ -213,20 +215,12 @@ namespace ES.Business.Helpers
         #region Ecr settings
 
         private EcrConfig _ecrModel;
-        private string _cashDeskPort;
-
+        
         public EcrConfig EcrConfig
         {
             get { return _ecrModel ?? (_ecrModel = new EcrConfig()); }
             set { _ecrModel = value; }
         }
-
-        public string CashDeskPort
-        {   
-            get { return _cashDeskPort; }
-            set { _cashDeskPort = value; }
-        }
-
         #endregion Ecr settings
 
         #endregion External properties

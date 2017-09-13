@@ -11,6 +11,7 @@ using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Data.Enumerations;
 using ES.Data.Models;
+using ES.Market.Controls;
 using ES.Market.Edit;
 using ES.Market.ViewModels;
 using ES.Market.Views;
@@ -428,7 +429,7 @@ namespace ES.Market
             var nextTab = TabShop.Items.Add(new TabItem
             {
                 Header = "Ծառայությունների խմբագրում",
-                Content = new UctrlEditServices(ApplicationManager.Instance.GetMember.Id),
+                Content = new UctrlEditServices(),
                 AllowDrop = true
 
             });

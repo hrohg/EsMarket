@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
-using ES.Common.Helpers;
 using ES.Common.Managers;
 
 namespace ES.Login
@@ -22,25 +21,6 @@ namespace ES.Login
         {
             //if (e.Key != Key.Enter || string.IsNullOrEmpty(TxtLogin.Text)) return;
             //MoveToNextUIElement(e);
-        }
-
-        void MoveToNextUIElement(KeyEventArgs e)
-        {
-            // Creating a FocusNavigationDirection object and setting it to a
-            // local field that contains the direction selected.
-            FocusNavigationDirection focusDirection = FocusNavigationDirection.Next;
-
-            // MoveFocus takes a TraveralReqest as its argument.
-            TraversalRequest request = new TraversalRequest(focusDirection);
-
-            // Gets the element with keyboard focus.
-            UIElement elementWithFocus = Keyboard.FocusedElement as UIElement;
-
-            // Change keyboard focus.
-            if (elementWithFocus != null)
-            {
-                if (elementWithFocus.MoveFocus(request)) e.Handled = true;
-            }
         }
 
         private void TxtPassword_KeyDown(object sender, KeyEventArgs e)
