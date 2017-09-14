@@ -61,9 +61,9 @@ namespace ES.Business.Managers
             return TryGetStocks(memberId).Select(Convert).ToList();
 
         }
-        public static IEnumerable<StockModel> GetStocks(List<long> ids, long memberId)
+        public static IEnumerable<StockModel> GetStocks(List<long> ids)
         {
-            return TryGetStocks(ids,memberId).Select(Convert);
+            return TryGetStocks(ids).Select(Convert);
 
         }
         public static StockModel GetStock(long? id)
@@ -110,7 +110,7 @@ namespace ES.Business.Managers
                 
             }
         }
-        private static IEnumerable<EsStock> TryGetStocks(IEnumerable<long> ids, long memberId)
+        private static IEnumerable<EsStock> TryGetStocks(IEnumerable<long> ids)
         {
             using (var db = GetDataContext())
             {
@@ -120,7 +120,7 @@ namespace ES.Business.Managers
                         .Include(s => s.EsUsers)
                         .Include(s => s.EsMembers)
                         .Include(s => s.EsStock2)
-                        .Where(s => s.EsMemberId == memberId && s.IsEnable && ids.Contains(s.Id)).ToList();
+                        .Where(s => s.EsMemberId == ApplicationManager.Member.Id && s.IsEnable && ids.Contains(s.Id)).ToList();
                 }
                 catch (Exception)
                 {

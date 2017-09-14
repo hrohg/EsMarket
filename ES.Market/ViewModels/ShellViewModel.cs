@@ -551,7 +551,7 @@ namespace ES.Market.ViewModels
             _libraryBrowser = new UctrlLibraryBrowser();
             var vm = new LibraryViewModel();
             var xml = new XmlManager();
-            var fromStocks = StockManager.GetStocks(xml.GetItemsByControl(XmlTagItems.SaleStocks).Select(s => HgConvert.ToInt64(s.Value)).ToList(), Member.Id).ToList();
+            var fromStocks = StockManager.GetStocks(xml.GetItemsByControl(XmlTagItems.SaleStocks).Select(s => HgConvert.ToInt64(s.Value)).ToList()).ToList();
             vm.SelectProductItems(fromStocks.Select(s => s.Id).ToList());
             _libraryBrowser.DataContext = vm;
             leftPanel.UpdateLayout();

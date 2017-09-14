@@ -122,7 +122,7 @@ namespace UserControls.ViewModels.Invoices
 
         private void Initialize()
         {
-            FromStocks = StockManager.GetStocks(ApplicationManager.Settings.MemberSettings.ActiveSaleStocks.ToList(), Member.Id).ToList();
+            FromStocks = StockManager.GetStocks(ApplicationManager.Settings.MemberSettings.ActiveSaleStocks.ToList()).ToList();
             Invoice.InvoiceTypeId = (int)InvoiceType.SaleInvoice;
             if (Partner == null)
             {
@@ -315,7 +315,7 @@ namespace UserControls.ViewModels.Invoices
         public override bool CanAddInvoiceItem(object o)
         {
             ++count;
-            return base.CanAddInvoiceItem(o) && FromStocks != null;
+            return base.CanAddInvoiceItem(o) && FromStocks != null && FromStocks.Any();
         }
 
         public override void OnAddInvoiceItem(object o)
@@ -381,7 +381,7 @@ namespace UserControls.ViewModels.Invoices
             var bankAccount = InvoicePaid.ByCheck > 0 ? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.MemberSettings.SaleBankAccounts).SingleOrDefault() : null;
             InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
 
-            var invoice = InvoicesManager.ApproveSaleInvoice(Invoice, InvoiceItems.ToList(), FromStocks.Select(s => s.Id), InvoicePaid);
+            var invoice = InvoicesManager.ApproveSaleInvoice(Invoice, InvoiceItems.ToList(), FromStocks.Select(s => s.Id).ToList(), InvoicePaid);
             if (invoice == null)
             {
                 Invoice.AcceptDate = Invoice.ApproveDate = null;

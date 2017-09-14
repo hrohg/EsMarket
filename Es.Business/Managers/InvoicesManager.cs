@@ -738,8 +738,9 @@ namespace ES.Business.Managers
             }
         }
 
-        private static Invoices TryApproveSaleInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, IEnumerable<long> fromStockIds, InvoicePaid invoicePaid)
+        private static Invoices TryApproveSaleInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, List<long> fromStockIds, InvoicePaid invoicePaid)
         {
+            if (!invoiceItems.Any() || !fromStockIds.Any() || invoicePaid == null) return null;
             using (var transaction = new TransactionScope())
             {
                 using (var db = GetDataContext())
@@ -780,7 +781,7 @@ namespace ES.Business.Managers
                         }
                         exInvoice.FromStockId = invoice.FromStockId;
                         exInvoice.ToStockId = invoice.ToStockId;
-                        exInvoice.ApproveDate = DateTime.Now;
+                        exInvoice.ApproveDate = invoice.ApproveDate = DateTime.Now;
                         exInvoice.ApproverId = invoice.ApproverId;
                         exInvoice.Approver = invoice.Approver;
                         exInvoice.AcceptDate = invoice.AcceptDate;
@@ -1829,7 +1830,7 @@ namespace ES.Business.Managers
             return TryApprovePurchaseInvoice(ConvertInvoice(invoice), invoiceItems.Select(Convert).ToList(), (long)invoice.ToStockId, invoicePaid) != null;
         }
 
-        public static InvoiceModel ApproveSaleInvoice(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems, IEnumerable<long> stockIds, InvoicePaid invoicePaid)
+        public static InvoiceModel ApproveSaleInvoice(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems, List<long> stockIds, InvoicePaid invoicePaid)
         {
             //invoice.ApproveDate = DateTime.Now;
             return ConvertInvoice(TryApproveSaleInvoice(ConvertInvoice(invoice), invoiceItems.Select(Convert).ToList(), stockIds, invoicePaid), ApplicationManager.Instance.CashProvider.GetPartners.SingleOrDefault(p => p.Id == invoice.PartnerId));
