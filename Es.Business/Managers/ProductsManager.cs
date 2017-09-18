@@ -332,7 +332,7 @@ namespace ES.Business.Managers
         {
             return TryGetExistingProduct(memberId);
         }
-        public List<ProductModel> GetProducts(long memberId)
+        public List<ProductModel> GetProducts()
         {
             return TryGetProducts().Select(Convert).ToList();
         }
@@ -399,23 +399,23 @@ namespace ES.Business.Managers
         }
         public List<ProductItemModel> GetProductItemsForInvoices(IEnumerable<Guid> invoiceIds, long memberId)
         {
-            var products = GetProducts(memberId);
+            var products = GetProducts();
             return TryGetProductItemsForInvocies(invoiceIds, memberId).Select(s => Convert(s, products)).ToList();
         }
         public List<ProductItemModel> GetAllProductItems(long memberId)
         {
-            var products = GetProducts(memberId);
+            var products = GetProducts();
             return TryGetAllProductItems(memberId).Select(s => Convert(s, products)).ToList();
         }
         public List<ProductItemModel> GetProductItemsFromStocks(List<long> stockIds)
         {
-            var products = GetProducts(ApplicationManager.Member.Id);
+            var products = GetProducts();
             return TryGetProductItemsFromStocks(stockIds).Select(s => Convert(s, products)).ToList();
         }
-        public List<ProductItemModel> GetUnavailableProductItems(List<Guid> productItemIds, long memberId)
+        public List<ProductItemModel> GetUnavailableProductItems(List<Guid> productItemIds, List<long> stockIds)
         {
-            var products = GetProducts(memberId);
-            return TryGetUnavilableProductItems(productItemIds, memberId).Select(s => Convert(s, products)).ToList();
+            var products = GetProducts();
+            return TryGetUnavilableProductItems(productItemIds, stockIds).Select(s => Convert(s, products)).ToList();
         }
         public static long GetProductCount(long memberId)
         {
@@ -1143,13 +1143,14 @@ namespace ES.Business.Managers
                     .Where(s => s.MemberId == memberId && s.Quantity != 0 && s.StockId != null && stockIds.Contains((long)s.StockId)).ToList();
             }
         }
-        private static List<ProductItems> TryGetUnavilableProductItems(List<Guid> productIds, long memberId)
+        private static List<ProductItems> TryGetUnavilableProductItems(List<Guid> productIds, List<long> stockIds)
         {
+            var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
             {
                 try
                 {
-                    return db.ProductItems.Include(s => s.Products).Where(s => s.MemberId == memberId && s.Quantity != 0 && !productIds.Contains(s.ProductId)).ToList();
+                    return db.ProductItems.Include(s => s.Products).Where(s => s.MemberId == memberId && s.Quantity != 0 && !productIds.Contains(s.ProductId) && stockIds.Contains(s.StockId??0)).ToList();
                 }
                 catch (Exception)
                 {

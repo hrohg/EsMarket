@@ -21,6 +21,7 @@ namespace ES.Business.Models
         private long? _modifierId;
         private long? _closerId;
         private string _description;
+        
         #endregion
         #region Public properties
         public Guid Id { get { return _id; } set { _id = value; } }
@@ -34,6 +35,12 @@ namespace ES.Business.Models
         public long? ModifierId { get { return _modifierId; } set { _modifierId = value; } }
         public long? CloserId { get { return _closerId; } set { _closerId = value; } }
         public string Description { get { return _description; } set { _description = value; } }
+
+        public bool IsClosed
+        {
+            get { return ClosedDate!=null; }
+        }
+
         #endregion
     }
     /// <summary>

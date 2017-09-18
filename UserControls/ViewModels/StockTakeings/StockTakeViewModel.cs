@@ -11,10 +11,14 @@ using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
 using Shared.Helpers;
+using UserControls.Controls;
 using UserControls.Views.CustomControls;
+using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.StockTakeings
 {
+    public delegate void CreateWriteOffInvoiceDelegate(List<InvoiceItemsModel> items, long? stockId, string notes = null);
+    public delegate void CreateWriteInInvoiceDelegate(List<InvoiceItemsModel> items, long? stockId, string notes = null);
     public class StockTakeBaseViewModel : DocumentViewModel
     {
         #region Properties
@@ -63,7 +67,7 @@ namespace UserControls.ViewModels.StockTakeings
         public override double TotalAmount { get { return (double)(SurplaceAmunt - DeficitAmount); } }
 
         #region Filter
-        Timer _timer = null;
+        Timer _timer;
         private void TimerElapsed(object obj)
         {
             RaiseProperties();
@@ -184,7 +188,7 @@ namespace UserControls.ViewModels.StockTakeings
         }
         private void OnViewDetiles(object o)
         {
-            var products = new ProductsManager().GetProducts(ApplicationManager.Instance.GetMember.Id);
+            var products = new ProductsManager().GetProducts();
             var detile = from s in StockTakeItems
                          join t in products on s.ProductId equals t.Id
                          select new
@@ -220,11 +224,27 @@ namespace UserControls.ViewModels.StockTakeings
         #endregion Print
 
         #endregion
+        #region Events
+        public event CreateWriteInInvoiceDelegate CreateWriteInInvoiceEvent;
+        protected void OnCreateWriteInInvoice()
+        {
+            var handler = CreateWriteInInvoiceEvent;
+            if (handler != null) handler(StockTakeItems.Where(s => s.Balance > 0).Select(s => new InvoiceItemsModel{Code = s.CodeOrBarcode, Quantity = s.Balance??0}).ToList(), StockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", StockTake.StockTakeName, StockTake.CreateDate));
+        }
+        public event CreateWriteOffInvoiceDelegate CreateWriteOffInvoiceEvent;
+        protected void OnCreateWriteOffInvoice()
+        {
+            var handler = CreateWriteOffInvoiceEvent;
+            if (handler != null) handler(StockTakeItems.Where(s => s.Balance < 0).Select(s => new InvoiceItemsModel{Code = s.CodeOrBarcode, Quantity = -s.Balance??0}).ToList(), StockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", StockTake.StockTakeName, StockTake.CreateDate));
+        }
+        #endregion Events
     }
 
     public class StockTakeViewModel : StockTakeBaseViewModel
     {
         public StockTakeViewModel(StockTakeModel model) : base(model) { }
+
+
     }
 
     public class StockTakeManagerViewModel : StockTakeBaseViewModel
@@ -370,10 +390,16 @@ namespace UserControls.ViewModels.StockTakeings
         public void OnAddStockTakingItem(object o)
         {
             if (!CanAddStockTakingItem(o)) { return; }
+            AddStockTakingItem();
+
+        }
+
+        private void AddStockTakingItem(bool alwaysAdd = false)
+        {
             StockTakeItem.StockTakeDate = DateTime.Now;
             var exItem = StockTakeManager.GetStockTakeItem(StockTake.Id, StockTakeItem.CodeOrBarcode, _memberId);
-            var index = exItem != null ? exItem.Index : StockTakeItems.Max(s=>s.Index) + 1;
-            if (exItem != null)
+            var index = exItem != null ? exItem.Index : StockTakeItems.Max(s => s.Index) + 1;
+            if (exItem != null && !alwaysAdd)
             {
                 if (MessageBox.Show("Տվյալ կոդով ապրանք արդեն գույքագրվել է " + exItem.StockTakeQuantity + " հատ։ \n Ցանկանու՞մ եք ավելացնել ևս " + StockTakeItem.StockTakeQuantity + "-ով։",
                     "Կրկնակի գույքագրում", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) { return; }
@@ -390,7 +416,6 @@ namespace UserControls.ViewModels.StockTakeings
             RaisePropertyChanged(StockTakeItemProperty);
             StockTakeItems = StockTakeManager.GetStockTakeItems(StockTake.Id);
             RaiseProperties();
-
         }
         #endregion Add stock take item
 
@@ -435,8 +460,8 @@ namespace UserControls.ViewModels.StockTakeings
         }
         private void GetUnavailableProductItems(object obj)
         {
-            var unavailableProductItems =
-                new ProductsManager().GetUnavailableProductItems(StockTakeItems.Where(s => s.ProductId != null).Select(s => s.ProductId != null ? (Guid)s.ProductId : new Guid()).ToList(), _memberId);
+            var unavailableProductItems = new ProductsManager().GetUnavailableProductItems(
+                StockTakeItems.Where(s => s.ProductId != null).Select(s => s.ProductId != null ? (Guid)s.ProductId : new Guid()).ToList(), new List<long> { Stock.Id });
             var productItemIds = unavailableProductItems.GroupBy(s => s.ProductId).Select(s => s.Select(t => t.ProductId).First()).OrderBy(s => s).ToList();
             foreach (var productId in productItemIds)
             {
@@ -448,26 +473,104 @@ namespace UserControls.ViewModels.StockTakeings
                 {
                     case MessageBoxResult.Cancel:
                         return;
-                        break;
                     case MessageBoxResult.No:
                         continue;
-                        break;
                     case MessageBoxResult.Yes:
                         SetStockTakeItem(product);
                         StockTakeItem.StockTakeQuantity = 0;
                         OnAddStockTakingItem(null);
                         break;
-                    default:
+                    case MessageBoxResult.None:
                         break;
+                    case MessageBoxResult.OK:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
         }
+
+        private ICommand _selectUnavailableProductItemsCommand;
+
+        public ICommand SelectUnavailableProductItemsCommand
+        {
+            get { return _selectUnavailableProductItemsCommand ?? (_selectUnavailableProductItemsCommand = new RelayCommand(SelectUnavailableProductItems, CanSelectUnavailableProductItems)); }
+        }
+
+        public bool CanSelectUnavailableProductItems(object obj)
+        {
+            return StockTake.ClosedDate == null;
+        }
+
+        private void SelectUnavailableProductItems(object obj)
+        {
+            var unavailableProductItems = new ProductsManager().GetUnavailableProductItems(StockTakeItems.Where(s => s.ProductId != null).Select(s => s.ProductId != null ? (Guid)s.ProductId : new Guid()).ToList(), new List<long> { Stock.Id });
+            var productIds = unavailableProductItems.GroupBy(s => s.ProductId).Select(s => s.First()).OrderBy(s => s.Product.Code).ToList();
+
+            var selectedItems = SelectItemsManager.SelectProductItems(productIds.Select(s => new ProductItemsByCheck
+            {
+                Id = s.ProductId,
+                Code = s.Product.Code,
+                Description = s.Product.Description,
+                Price = s.Product.Price,
+                Quantity = unavailableProductItems.Where(pi => pi.ProductId == s.ProductId).Sum(pi => pi.Quantity)
+            }).ToList(), true);
+            if (selectedItems == null || !selectedItems.Any()) return;
+            foreach (var selectedProduct in selectedItems)
+            {
+                var product = unavailableProductItems.Where(s => s.ProductId == selectedProduct.Id).Select(s => s.Product).FirstOrDefault();
+                if (product == null) continue;
+                SetStockTakeItem(product);
+                StockTakeItem.StockTakeQuantity = 0;
+                AddStockTakingItem(true);
+            }
+        }
+
         #endregion GetUnavailableProductItemsCommand
 
         #region Completed stock taking command
 
+        private ICommand _writeOffStockTakingCommand;
+
+        public ICommand WriteOffStockTakingCommand
+        {
+            get { return _writeOffStockTakingCommand ?? (_writeOffStockTakingCommand = new RelayCommand(OnWriteOffStockTaking, CanWriteOffStockTaking)); }
+        }
+
+        private bool CanWriteOffStockTaking(object obj)
+        {
+            return !StockTake.IsClosed;
+        }
+
+        private void OnWriteOffStockTaking(object o)
+        {
+            OnCreateWriteOffInvoice();
+        }
+
+        private ICommand _writeInStockTakingCommand;
+
+        public ICommand WriteInStockTakingCommand
+        {
+            get { return _writeInStockTakingCommand ?? (_writeInStockTakingCommand = new RelayCommand(OnWriteInStockTaking, CanWriteInStockTaking)); }
+        }
+
+        private bool CanWriteInStockTaking(object obj)
+        {
+            return !StockTake.IsClosed;
+        }
+
+
+        private void OnWriteInStockTaking(object o)
+        {
+            OnCreateWriteInInvoice();
+        }
+
         private ICommand _completedCommand;
-        public ICommand CompletedCommand { get { return _completedCommand ?? (_completedCommand = new RelayCommand(OnCompletedStockTaking, CanCompletesStockTaking)); } }
+
+        public ICommand CompletedCommand
+        {
+            get { return _completedCommand ?? (_completedCommand = new RelayCommand(OnCompletedStockTaking, CanCompletesStockTaking)); }
+        }
 
         private bool CanCompletesStockTaking(object obj)
         {
@@ -476,16 +579,15 @@ namespace UserControls.ViewModels.StockTakeings
 
         private void OnCompletedStockTaking(object o)
         {
-            if (MessageBox.Show("Դուք իսկապե՞ս ցանկանում եք ամփոփել գույքագրումը: Ուշադրություն, ամփոփումից հետո այլևս հնարավոր չի լինի խմբագրել այն:",
-                "Գույքագրման ամփոփում", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Դուք իսկապե՞ս ցանկանում եք ամփոփել գույքագրումը: Ուշադրություն, ամփոփումից հետո այլևս հնարավոր չի լինի խմբագրել այն:", "Գույքագրման ամփոփում", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 StockTakeManager.CompletedStockTake(StockTake);
                 RaisePropertyChanged("StockTake");
             }
         }
+
         #endregion Completed stock takeing command
 
         #endregion
-
     }
 }

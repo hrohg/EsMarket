@@ -582,10 +582,7 @@
                         <Separator/>
                         <MenuItem Header="Տվյալների դուրսգրում" Command="{Binding WriteOffProductsCommand}" Visibility="Collapsed">
                         </MenuItem>
-                        <MenuItem Header="Պակասորդի դուրսգրում" Command="{Binding WriteOffStockTakingCommand}">
-                        </MenuItem>
-                        <MenuItem Header="Ավելցուկի մուտքագրում" Command="{Binding WriteInStockTakingCommand}">
-                        </MenuItem>
+                        
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="Ներմուծել" IsEnabled="False">

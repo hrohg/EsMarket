@@ -321,6 +321,19 @@ namespace UserControls.Helpers
             }
             return invoiceItems.ToList();
         }
+        public static List<ProductItemsByCheck> SelectProductItems(List<ProductItemsByCheck> productItems, bool selectMultiple = false)
+        {
+            if (productItems == null || productItems.Count == 0) { return new List<ProductItemsByCheck>(); }
+            var vm = new SelectProductItemsByCheckViewModel(productItems, "Ընտրել ապրանքները");
+            var selectedItems = new SelectItemsByCheck
+            {
+                DataContext = vm
+            };
+            var resoult = selectedItems.ShowDialog();
+            if (resoult == null || resoult.Value == false) return null;
+
+            return vm.GetItems();
+        }
         #region Select SubAccounting
         public static List<SubAccountingPlanModel> SelectSubAccountingPlan(List<SubAccountingPlanModel> items, bool allowMultipleSelect = false, string title = "Ընտրել")
         {

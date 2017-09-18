@@ -99,7 +99,7 @@ namespace UserControls.Views
         }
         private void CmMiChooseProductByName_Click(object sender, EventArgs e)
         {
-            var products = new ProductsManager().GetProducts(_member.Id);
+            var products = new ProductsManager().GetProducts();
             var selectedItems =
                 new ControlPanel.Controls.SelectItems(
                     products.Select(s => new ControlPanel.Controls.ItemsToSelect { DisplayName = s.Description, SelectedValue = s.Id }).ToList(),

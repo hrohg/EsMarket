@@ -23,7 +23,7 @@
             <Menu Grid.Row="0">
                 <MenuItem Header="Գույքագրում">
                     <MenuItem Header="Դիտել" Command="{Binding ViewDetilesCommand}"/>
-                    <MenuItem Header="Տպել" CommandTarget="Ctrl+P" Command="{Binding PrintCommand}"/>
+                    <MenuItem Header="Տպել" InputGestureText="Ctrl+P" Command="{Binding PrintCommand}"/>
                     <Separator/>
                     <MenuItem Header="Փակել" Command="{Binding CloseCommand}"/>
                 </MenuItem>
@@ -154,9 +154,15 @@
                     <MenuItem Header="Ներմուծել" Command="{Binding ImportCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
                     <MenuItem Header="Արտահանել" Command="{Binding ExportCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
                     <Separator/>
-                    <MenuItem Header="Տպել" CommandTarget="Ctrl+P" Command="{Binding PrintCommand}"/>
+                    <MenuItem Header="Տպել" InputGestureText="Ctrl+P" Command="{Binding PrintCommand}"/>
                     <Separator/>
+                    <MenuItem Header="Չհաշվառվածների ամփոփում" Command="{Binding SelectUnavailableProductItemsCommand}"/>
                     <MenuItem Header="Չհաշվառվածների ավելացում" Command="{Binding GetUnavailableProductItemsCommand}"/>
+                    <MenuItem Header="Պակասորդի դուրսգրում" Command="{Binding WriteOffStockTakingCommand}">
+                    </MenuItem>
+                    <MenuItem Header="Ավելցուկի մուտքագրում" Command="{Binding WriteInStockTakingCommand}">
+                    </MenuItem>
+
                     <MenuItem Header="Ամփոփել" Command="{Binding CompletedCommand}" ToolTip="Փակել գործող գույքագրումը: Այն այլևս հնարավոր չի լինի փոփոխել:"/>
                     <Separator/>
                     <MenuItem Header="Փակել" Command="{Binding CloseCommand}"/>

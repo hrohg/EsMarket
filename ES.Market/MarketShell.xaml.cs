@@ -478,7 +478,7 @@ namespace ES.Market
         }
         protected void MiViewPriceList_Click(object sender, EventArgs e)
         {
-            var products = new ProductsManager().GetProducts(ApplicationManager.Instance.GetMember.Id);
+            var products = new ProductsManager().GetProducts();
             new UIListView(products.Select(s => new { Կոդ = s.Code, Անվանում = s.Description, Չմ = s.Mu, Մեծածախ = s.DealerPrice, Մանրածախ = s.Price })
                 , "Գնացուցակ").Show();
         }

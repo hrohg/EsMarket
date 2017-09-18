@@ -269,8 +269,6 @@ namespace ES.Market.ViewModels
             ChangePasswordCommand = new RelayCommand(OnChangePassword);
             //Data
             WriteOffProductsCommand = new RelayCommand(OnWriteOffProducts);
-            WriteOffStockTakingCommand = new RelayCommand(OnWriteOffStockTaking);
-            WriteInStockTakingCommand = new RelayCommand(OnWriteInStockTaking);
             GetReportCommand = new RelayCommand<ReportTypes>(OnGetReport);
 
             #region Help
@@ -427,10 +425,17 @@ namespace ES.Market.ViewModels
             {
                 ProductItemsToolsViewModel.OnProductItemSelected -= ((InvoiceViewModel)vm).OnSetProductItem;
             }
+            if (vm is StockTakeBaseViewModel)
+            {
+                ((StockTakeBaseViewModel)vm).CreateWriteInInvoiceEvent -= OnCreateWriteInInvoice;
+                ((StockTakeBaseViewModel)vm).CreateWriteOffInvoiceEvent -= OnCreateWriteOffInvoice;
+            }
             if (vm is StockTakeManagerViewModel)
             {
                 ProductItemsToolsViewModel.OnProductItemSelected -= ((StockTakeManagerViewModel)vm).OnSetProductItem;
+                return;
             }
+             
         }
 
         private void AddTools(ToolsViewModel vm)
@@ -1338,10 +1343,10 @@ namespace ES.Market.ViewModels
             var stock = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Instance.GetMember.Id)).FirstOrDefault();
             if (stock == null) return;
             var existingProducts = ProductsManager.GetProductItemsByStock(stock.Id, ApplicationManager.Instance.GetMember.Id);
-            CreateWriteOffInvoice(existingProducts.Select(s => new Tuple<string, decimal>(s.Product.Code, s.Quantity)).ToList(), stock.Id);
+            OnCreateWriteOffInvoice(existingProducts.Select(s => new InvoiceItemsModel(){Code = s.Product.Code, Quantity = s.Quantity}).ToList(), stock.Id);
         }
 
-        private void CreateWriteOffInvoice(List<Tuple<string, decimal>> items, long? stockId, string notes = null)
+        private void OnCreateWriteOffInvoice(List<InvoiceItemsModel> items, long? stockId, string notes = null)
         {
             if (!items.Any())
             {
@@ -1353,8 +1358,8 @@ namespace ES.Market.ViewModels
             vm.Invoice.Notes = notes;
             foreach (var item in items)
             {
-                var code = item.Item1;
-                var quantity = item.Item2;
+                var code = item.Code;
+                var quantity = item.Quantity;
                 vm.SetInvoiceItem(code);
                 if (vm.InvoiceItem.Product == null)
                 {
@@ -1367,8 +1372,7 @@ namespace ES.Market.ViewModels
             }
             AddInvoiceDocument(vm);
         }
-
-        private void CreateWriteInInvoice(List<Tuple<string, decimal>> items, long? stockId, string notes = null)
+        private void OnCreateWriteInInvoice(List<InvoiceItemsModel> items, long? stockId, string notes)
         {
             if (!items.Any())
             {
@@ -1380,8 +1384,8 @@ namespace ES.Market.ViewModels
             vm.Invoice.Notes = notes;
             foreach (var item in items)
             {
-                var code = item.Item1;
-                var quantity = item.Item2;
+                var code = item.Code;
+                var quantity = item.Quantity;
                 vm.SetInvoiceItem(code);
                 if (vm.InvoiceItem.Product == null)
                 {
@@ -1394,22 +1398,9 @@ namespace ES.Market.ViewModels
             }
             AddInvoiceDocument(vm);
         }
+        
 
-        private void OnWriteOffStockTaking(object o)
-        {
-            var stockTake = GetOpeningStockTake();
-            if (stockTake == null) return;
-            var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id);
-            CreateWriteOffInvoice(stockTakeItems.Where(s => s.Balance < 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, -s.Balance ?? 0)).ToList(), stockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
-        }
-
-        private void OnWriteInStockTaking(object o)
-        {
-            var stockTake = GetOpeningStockTake();
-            if (stockTake == null) return;
-            var stockTakeItems = StockTakeManager.GetStockTakeItems(stockTake.Id);
-            CreateWriteInInvoice(stockTakeItems.Where(s => s.Balance > 0).Select(s => new Tuple<string, decimal>(s.CodeOrBarcode, s.Balance ?? 0)).ToList(), stockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", stockTake.StockTakeName, stockTake.CreateDate));
-        }
+        
 
         #endregion
 
@@ -1816,8 +1807,7 @@ namespace ES.Market.ViewModels
 
         #region Stock Take
 
-        public ICommand WriteOffStockTakingCommand { get; private set; }
-        public ICommand WriteInStockTakingCommand { get; private set; }
+        
 
         #endregion Stock Take
 
@@ -2088,8 +2078,11 @@ namespace ES.Market.ViewModels
                 MessageManager.OnMessage(new MessageModel("Գործողությունն ընդհատված է։", MessageTypeEnum.Warning));
                 return;
             }
+            vm.CreateWriteInInvoiceEvent += OnCreateWriteInInvoice;
+            vm.CreateWriteOffInvoiceEvent += OnCreateWriteOffInvoice;
             AddInvoiceDocument(vm);
         }
+        
 
         private StockTakeModel GetLastStockTake()
         {
