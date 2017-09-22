@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ServiceModel;
-using System.Text;
 using System.Threading;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
-using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
-using UserControls.Commands;
 using Xceed.Wpf.AvalonDock.Layout;
 
 namespace UserControls.ViewModels.Tools
@@ -31,7 +27,6 @@ namespace UserControls.ViewModels.Tools
         #region Internal proeprties
 
         private List<ProductModel> _products;
-        private List<ProductItemModel> _productItems;
         #endregion Internal properties
 
         #region External properties
@@ -72,7 +67,7 @@ namespace UserControls.ViewModels.Tools
 
         public List<CustomItem> Items
         {
-            get { return _items != null ? _items.Where(s => s.Description.ToLower().Contains(Filter)).ToList() : null; }
+            get { return _items != null ? _items.Where(s => s.Metadata.ToLower().Contains(Filter)).ToList() : null; }
             private set
             {
                 _items = value;
@@ -83,24 +78,6 @@ namespace UserControls.ViewModels.Tools
 
         public CustomItem SelectedItem { get; set; }
 
-        #region Loading
-        private bool _isLoading;
-
-        public bool IsLoading
-        {
-            get
-            {
-                return _isLoading;
-            }
-            set
-            {
-                if (value == _isLoading) return;
-                _isLoading = value;
-                RaisePropertyChanged("IsLoading");
-            }
-        }
-
-        #endregion Loading
         #endregion External proeprties
 
         #region Constructors
@@ -140,7 +117,7 @@ namespace UserControls.ViewModels.Tools
             if (_products != null)
             {
                 _products = _products.OrderBy(s => s.Description).ToList();
-                Items = _products.Select(p => new CustomItem(p.Id, string.Format("{0} {1} {2}", p.Code, p.Description, p.Price))).ToList();
+                Items = _products.Select(p => new CustomItem(p.Id, string.Format("{0} {1} {2}", p.Code, p.Description, p.Price), string.Format("{0} {1} {2} {3}", p.Code, p.Description, p.Price, p.Barcode))).ToList();
             }
             IsLoading = false;
         }
@@ -171,7 +148,7 @@ namespace UserControls.ViewModels.Tools
             if (!CanManageProduct(item)) return;
             var product = _products.SingleOrDefault(s => s.Id == SelectedItem.Value);
             if (product == null) return;
-            ManageProduct((ProductModel)product);
+            ManageProduct(product);
 
         }
         private void ManageProduct(ProductModel product)
@@ -199,11 +176,13 @@ namespace UserControls.ViewModels.Tools
     {
         public Guid Value { get; set; }
         public string Description { get; set; }
+        public string Metadata { get; set; }
 
-        public CustomItem(Guid id, string description)
+        public CustomItem(Guid id, string description, string metadata)
         {
             Value = id;
             Description = description;
+            Metadata = metadata;
         }
     }
 }
