@@ -422,7 +422,7 @@
                         <MenuItem Header="8 Կառավարչական հաշվառման հաշիվներ"></MenuItem>
                         <MenuItem Header="9 Արտահաշվեկշռային հաշիվներ"></MenuItem>
                     </MenuItem>
-                    <MenuItem Header="Վերծանում">
+                    <MenuItem Header="Վերծանում" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SeniorCashier}}">
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
                         </MenuItem.Icon>
@@ -582,7 +582,7 @@
                         <Separator/>
                         <MenuItem Header="Տվյալների դուրսգրում" Command="{Binding WriteOffProductsCommand}" Visibility="Collapsed">
                         </MenuItem>
-                        
+
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="Ներմուծել" IsEnabled="False">
@@ -643,7 +643,7 @@
                                   Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations1:ReportTypes.Report}"/>
                     </MenuItem>
                 </MenuItem>
-                
+
                 <MenuItem Header="Օգնություն">
                     <MenuItem.Icon>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Help.ico" />
@@ -955,9 +955,9 @@
                     <TextBlock Text="{Binding LogViewModel.CurrentLog.Message}" Foreground="Blue" Margin="10 0 0 0"/>
                 </Grid>
                 <ProgressBar Grid.Column="2" IsIndeterminate="True" Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}" ToolTip="{Binding ProcessDescription}" Background="#F5F5F5" Margin="3"/>
-                
+
                 <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="5 0">
-                    
+
                     <Button Style="{DynamicResource OpenCashdeskButtonStyle}" Command="{Binding OpenCashdeskCommand}" 
                             IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Cashier}}"
                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}" 

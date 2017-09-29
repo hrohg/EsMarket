@@ -1725,6 +1725,7 @@ namespace ES.Market.ViewModels
                 case AccountingPlanEnum.Purchase:
                     break;
                 case AccountingPlanEnum.AccountingReceivable:
+                    return ApplicationManager.IsInRole(UserRoleEnum.JuniorCashier);
                     break;
                 case AccountingPlanEnum.Prepayments:
                     break;
@@ -1737,6 +1738,7 @@ namespace ES.Market.ViewModels
                 case AccountingPlanEnum.PurchasePayables:
                     break;
                 case AccountingPlanEnum.ReceivedInAdvance:
+                    return ApplicationManager.IsInRole(UserRoleEnum.JuniorCashier);
                     break;
                 case AccountingPlanEnum.Debit_For_Salary:
                     break;

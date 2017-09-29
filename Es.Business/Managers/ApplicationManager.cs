@@ -420,7 +420,7 @@ namespace ES.Business.Managers
 
         private void Initialize()
         {
-            
+
         }
 
         private void OnMessageReceived(string message, MessageTypeEnum type)
@@ -465,47 +465,48 @@ namespace ES.Business.Managers
         public static bool IsInRole(UserRoleEnum? type)
         {
             if (Instance.UserRoles == null) return false;
+            var isInRole = false;
             switch (type)
             {
                 case UserRoleEnum.Admin:
-                    return Instance.UserRoles.Any(r => r.Id == 1);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Admin);
                     break;
                 case UserRoleEnum.Director:
-                    return Instance.UserRoles.Any(r => r.Id == 2) || IsInRole(UserRoleEnum.Admin);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Director) || IsInRole(UserRoleEnum.Admin);
                     break;
                 case UserRoleEnum.Manager:
-                    return Instance.UserRoles.Any(r => r.Id == 3) || IsInRole(UserRoleEnum.Director);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Manager) || IsInRole(UserRoleEnum.Director);
                     break;
                 case UserRoleEnum.StockKeeper:
-                    return Instance.UserRoles.Any(r => r.Id == 4) || IsInRole(UserRoleEnum.Manager);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.StockKeeper) || IsInRole(UserRoleEnum.Manager);
                     break;
                 case UserRoleEnum.SaleManager:
-                    return Instance.UserRoles.Any(r => r.Id == 5) || IsInRole(UserRoleEnum.Manager);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.SaleManager) || IsInRole(UserRoleEnum.Manager);
                     break;
                 case UserRoleEnum.SeniorSeller:
-                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.SaleManager) || IsInRole(UserRoleEnum.SaleManager);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.SaleManager) || IsInRole(UserRoleEnum.SaleManager);
                     break;
                 case UserRoleEnum.Seller:
-                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.Seller) || IsInRole(UserRoleEnum.SeniorSeller);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Seller) || IsInRole(UserRoleEnum.SeniorSeller);
                     break;
                 case UserRoleEnum.Cashier:
-                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.Cashier) || IsInRole(UserRoleEnum.SeniorCashier);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Cashier) || IsInRole(UserRoleEnum.SeniorCashier);
                     break;
                 case UserRoleEnum.SeniorCashier:
-                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.SeniorCashier) || IsInRole(UserRoleEnum.JuniorCashier);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.SeniorCashier) || IsInRole(UserRoleEnum.Manager);
                     break;
                 case UserRoleEnum.JuniorCashier:
-                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.JuniorCashier) || IsInRole(UserRoleEnum.Director);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.JuniorCashier) || IsInRole(UserRoleEnum.Cashier);
                     break;
                 case UserRoleEnum.JuniorSeller:
-                    return Instance.UserRoles.Any(r => r.Id == (int)UserRoleEnum.JuniorSeller) || IsInRole(UserRoleEnum.Director);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.JuniorSeller) || IsInRole(UserRoleEnum.Seller);
                     break;
                 case null:
-                    return false;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            return isInRole;
         }
         public static bool IsInRole(List<UserRoleEnum> types)
         {
