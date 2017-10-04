@@ -186,6 +186,7 @@ namespace UserControls.ViewModels
         #region ECR settings
         //public EcrSettings EcrSettings { get; set; }
         public EcrConfig EcrSettings { get { return Settings.MemberSettings.EcrConfig; } }
+        public EcrServiceSettings EcrServiceSettings { get { return EcrSettings.EcrServiceSettings?? (EcrSettings.EcrServiceSettings = new EcrServiceSettings());} }
         public string EcrSettingsIp
         {
             get { return EcrSettings.Ip; }

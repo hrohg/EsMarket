@@ -9,9 +9,9 @@ namespace ES.Business.Managers
     public class DefaultsManager:BaseManager
     {
         #region public properties
-        public static List<EsDefaults> GetDefaults(long memberId)
+        public static List<EsDefaults> GetDefaults()
         {
-            return TryGetEsDefaults(memberId);
+            return TryGetEsDefaults();
         }
         public static long? GetDefaultValueLong(string control, long memberId)
         {
@@ -32,13 +32,13 @@ namespace ES.Business.Managers
         }
         #endregion
         #region private properties
-        private static List<EsDefaults> TryGetEsDefaults(long memberId)
+        private static List<EsDefaults> TryGetEsDefaults()
         {
             using (var db = GetDataContext())
             {
                 try
                 {
-                    return db.EsDefaults.Where(s => s.MemberId == memberId).ToList();
+                    return db.EsDefaults.Where(s => s.MemberId == ApplicationManager.Member.Id).ToList();
                 }
                 catch (Exception)
                 {
@@ -66,15 +66,15 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    var esDefault = db.EsDefaults.SingleOrDefault(s =>  s.Control.ToLower()== control.ToLower() && s.MemberId == memberId);
-                    if (esDefault != null)
+                    var exDefault = db.EsDefaults.SingleOrDefault(s =>  s.Control.ToLower() == control.ToLower() && s.MemberId == memberId);
+                    if (exDefault != null)
                     {
-                        esDefault.ValueInGuid = valueInGuid;
-                        esDefault.ValueInLong = valueInLong;
+                        exDefault.ValueInGuid = valueInGuid;
+                        exDefault.ValueInLong = valueInLong;
                     }
                     else
                     {
-                        esDefault = new EsDefaults
+                        exDefault = new EsDefaults
                         {
                             Id = Guid.NewGuid(),
                             Control = control,
@@ -82,7 +82,7 @@ namespace ES.Business.Managers
                             ValueInLong = valueInLong,
                             MemberId = memberId
                         };
-                        db.EsDefaults.Add(esDefault);
+                        db.EsDefaults.Add(exDefault);
                     }
                     db.SaveChanges();
                     return true;

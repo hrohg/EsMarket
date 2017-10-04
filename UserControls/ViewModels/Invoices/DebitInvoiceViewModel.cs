@@ -20,7 +20,6 @@ namespace UserControls.ViewModels.Invoices
         #endregion
         public InventoryWriteOffViewModel()
         {
-            Invoice.InvoiceTypeId = (int)InvoiceType.InventoryWriteOff;
             Initialize();
         }
 
@@ -33,6 +32,7 @@ namespace UserControls.ViewModels.Invoices
 
         private void Initialize()
         {
+            Invoice.InvoiceTypeId = (int)InvoiceType.InventoryWriteOff;
             Invoice.PartnerId = null;
             Invoice.Partner = null;
             Invoice.RecipientName = null;

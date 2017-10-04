@@ -148,14 +148,7 @@ namespace ES.Business.Managers
         }
         public List<EsDefaults> EsDefaults
         {
-            get
-            {
-                if (_esDefaults == null)
-                {
-                    _esDefaults = DefaultsManager.GetDefaults(Member.Id);
-                }
-                return _esDefaults;
-            }
+            get { return _esDefaults ?? (_esDefaults = DefaultsManager.GetDefaults()); }
             set { _esDefaults = value; }
         }
         public EsDefaults GetEsDefaults(string control)
@@ -302,7 +295,7 @@ namespace ES.Business.Managers
                 if (async)
                 {
                     var thread = new Thread(SetPartners);
-                    thread.Start();
+                    thread.Start(); 
                 }
                 else
                 {
@@ -332,6 +325,11 @@ namespace ES.Business.Managers
                 }
             }
         }
+        public void UpdateDefaults()
+        {
+            _esDefaults = DefaultsManager.GetDefaults();
+        }
         #endregion
+        
     }
 }

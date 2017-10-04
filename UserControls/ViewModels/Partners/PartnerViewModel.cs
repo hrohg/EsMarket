@@ -97,6 +97,7 @@ namespace UserControls.ViewModels.Partners
                 if (PartnersManager.SetDefault(partner))
                 {
                     MessageManager.OnMessage("Գործողության բարեհաջող ավարտ։", MessageTypeEnum.Success);
+                    ApplicationManager.CashManager.UpdateDefaults();
                 }
                 else
                 {
@@ -162,13 +163,13 @@ namespace UserControls.ViewModels.Partners
         }
         #endregion
 
-        #region ICommands
+        #region Commands
         public ICommand NewPartnerCommand { get; private set; }
         public ICommand AddPartnerCommand { get; private set; }
         public ICommand EditPartnerCommand { get; private set; }
         public ICommand RemovePartnerCommand { get; private set; }
         public ICommand SetDefaultPartnerCommand { get; private set; }
-        #endregion
+        #endregion Commands
 
     }
 }

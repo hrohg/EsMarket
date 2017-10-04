@@ -95,11 +95,6 @@ namespace ES.Business.Managers
 
         #region Partners public methods
 
-        //public static PartnerModel SelectPartner(long memberId)
-        //{
-        //    var partners = GetPartners(memberId);
-
-        //}
         public static List<EsPartnersTypes> GetPartnersTypes(long memberId)
         {
             return TryGetPartnersTypes(memberId);

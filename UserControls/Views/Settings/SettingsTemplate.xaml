@@ -73,15 +73,15 @@
                                         <CheckBox  Grid.Row="0" Grid.Column="1" IsChecked="{Binding IsEcrActivated}" Content="Ակտիվացնել կապը ՀԴՄ-ի հետ" Margin="5"/>
 
                                         <TextBlock Grid.Row="1" Grid.Column="0" Text="ՀԴՄ-ի սերվերի տվյալներ"/>
-                                        <Grid Grid.Row="1" Grid.Column="1" IsEnabled="{Binding  EcrSettings.IsActive}">
+                                        <Grid Grid.Row="1" Grid.Column="1" IsEnabled="{Binding  IsEcrActivated}">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBox Grid.Column="0" Text="{Binding EcrSettings.EcrServiceSettings.Ip}"/>
-                                            <TextBox Grid.Column="1" Text="{Binding EcrSettings.EcrServiceSettings.Port, TargetNullValue=0}" Width="50" HorizontalContentAlignment="Right"/>
-                                            <CheckBox Grid.Column="2" IsChecked="{Binding EcrSettings.EcrServiceSettings.IsActive}" Content="Ակտիվացնել" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Column="0" Text="{Binding EcrServiceSettings.Ip}"/>
+                                            <TextBox Grid.Column="1" Text="{Binding EcrServiceSettings.Port, TargetNullValue=0}" Width="50" HorizontalContentAlignment="Right"/>
+                                            <CheckBox Grid.Column="2" IsChecked="{Binding EcrServiceSettings.IsActive}" Content="Ակտիվացնել" VerticalAlignment="Center"/>
                                         </Grid>
                                     </Grid>
                                 </GroupBox>
@@ -322,7 +322,7 @@
                                             <TextBlock Grid.Row="4" Grid.Column="0" Text="Օպերատոր"/>
                                             <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding EcrCashier, UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalContentAlignment="Right"/>
                                             <TextBlock Grid.Row="5" Grid.Column="0" Text="Գաղտնաբառ"/>
-                                            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding EcrSettings.EcrCashier.Pin, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding EcrCashierPin, UpdateSourceTrigger=PropertyChanged}"/>
                                             <TextBlock Grid.Row="6" Grid.Column="0" Text="Հարկման տեսակը"/>
                                             <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal">
                                                 <ComboBox
