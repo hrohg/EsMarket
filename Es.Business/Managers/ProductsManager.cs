@@ -332,7 +332,7 @@ namespace ES.Business.Managers
         {
             return TryGetExistingProduct(memberId);
         }
-        public List<ProductModel> GetProducts()
+        public static List<ProductModel> GetProducts()
         {
             return TryGetProducts().Select(Convert).ToList();
         }
@@ -407,7 +407,7 @@ namespace ES.Business.Managers
             var products = GetProducts();
             return TryGetAllProductItems(memberId).Select(s => Convert(s, products)).ToList();
         }
-        public List<ProductItemModel> GetProductItemsFromStocks(List<long> stockIds)
+        public static List<ProductItemModel> GetProductItemsFromStocks(List<long> stockIds)
         {
             var products = GetProducts();
             return TryGetProductItemsFromStocks(stockIds).Select(s => Convert(s, products)).ToList();
@@ -1139,8 +1139,11 @@ namespace ES.Business.Managers
             using (var db = GetDataContext())
             {
                 return db.ProductItems
-                    .Include(s => s.Products)
-                    .Where(s => s.MemberId == memberId && s.Quantity != 0 && s.StockId != null && stockIds.Contains((long)s.StockId)).ToList();
+                    .Include(p => p.Products)
+                    .Where(pi => pi.MemberId == memberId && pi.Quantity != 0 && pi.StockId != null && stockIds.Contains((long)pi.StockId))
+                    .Join(db.Invoices.Where(i=>i.MemberId==memberId), pi=>pi.DeliveryInvoiceId, ii=>ii.Id, (pi,ii)=>new {pi,ii})
+                    .OrderBy(s=>s.ii.CreateDate)
+                    .Select(s=>s.pi).ToList();
             }
         }
         private static List<ProductItems> TryGetUnavilableProductItems(List<Guid> productIds, List<long> stockIds)

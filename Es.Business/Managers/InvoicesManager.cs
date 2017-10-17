@@ -26,8 +26,9 @@ namespace ES.Business.Managers
         SaleInvoice = 2,
         ProductOrder = 3,
         MoveInvoice = 4,
-        InventoryWriteOff = 5
-        , Statement,
+        InventoryWriteOff = 5, 
+        ReturnFrom = 6,
+        ReturnTo = 7
     }
     public enum InvoiceState
     {
@@ -308,13 +309,13 @@ namespace ES.Business.Managers
                 return new List<Invoices>();
             }
         }
-        private static List<Invoices> TryGetInvoices(InvoiceType invoiceType, int? maxCount, long memberId)
+        private static List<Invoices> TryGetInvoices(InvoiceType invoiceType, int? maxCount)
         {
             try
             {
                 using (var db = GetDataContext())
                 {
-                    var items = db.Invoices.Where(s => s.InvoiceTypeId == (long)invoiceType && s.MemberId == memberId).OrderByDescending(s => s.CreateDate).ThenBy(s => s.ApproveDate);
+                    var items = db.Invoices.Where(s => s.InvoiceTypeId == (long)invoiceType && s.MemberId == ApplicationManager.Member.Id).OrderByDescending(s => s.CreateDate).ThenBy(s => s.ApproveDate);
                     return maxCount != null ? items.Take((int)maxCount).ToList() : items.ToList();
                 }
             }
@@ -428,7 +429,11 @@ namespace ES.Business.Managers
                 case InvoiceType.InventoryWriteOff:
                     return string.Format("{0}{1}", "WO", invoiceIndex);
                     break;
-                case InvoiceType.Statement:
+                case InvoiceType.ReturnFrom:
+                    return string.Format("{0}{1}", "RF", invoiceIndex);
+                    break;
+                case InvoiceType.ReturnTo:
+                    return string.Format("{0}{1}", "RT", invoiceIndex);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("invoiceTypeId", invoiceTypeId, null);
@@ -1501,7 +1506,11 @@ namespace ES.Business.Managers
                 case InvoiceType.InventoryWriteOff:
                     invocieName = "Դուրսգրում";
                     break;
-                case InvoiceType.Statement:
+               case InvoiceType.ReturnFrom:
+                    invocieName = "Վերադարձ";
+                    break;
+                case InvoiceType.ReturnTo:
+                    invocieName = "Վերադարձ մատակարարին";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("invoiceType", invoiceType, null);
@@ -1547,7 +1556,15 @@ namespace ES.Business.Managers
             {
                 using (var db = GetDataContext())
                 {
-                    var report = db.Partners.Where(p => partnerTypes.Contains((PartnerType)p.EsPartnersTypeId)).Join(db.InvoiceItems.Where(s => s.Invoices.ApproveDate >= startDate && s.Invoices.ApproveDate <= endDate && (InvoiceType)s.Invoices.InvoiceTypeId == invoiceType && s.Invoices.ApproveDate != null && s.Invoices.MemberId == memberId), p => p.Id, ii => ii.Invoices.PartnerId, (p, ii) => new { p, ii }).GroupBy(s => s.ii.InvoiceId).Select(s => new InvoiceReportByPartner
+                    var report = db.Partners.Where(p => partnerTypes.Contains((PartnerType)p.EsPartnersTypeId))
+                        .Join(db.InvoiceItems
+                        .Where(s => 
+                            s.Invoices.ApproveDate >= startDate && 
+                            s.Invoices.ApproveDate <= endDate && 
+                            (InvoiceType)s.Invoices.InvoiceTypeId == invoiceType && 
+                            s.Invoices.ApproveDate != null && 
+                            s.Invoices.MemberId == memberId), 
+                        p => p.Id, ii => ii.Invoices.PartnerId, (p, ii) => new { p, ii }).GroupBy(s => s.ii.InvoiceId).Select(s => new InvoiceReportByPartner
                     {
                         Invoice = s.FirstOrDefault().ii.Invoices.InvoiceNumber,
                         Date = s.FirstOrDefault().ii.Invoices.ApproveDate,
@@ -1773,10 +1790,10 @@ namespace ES.Business.Managers
             return TryGetInvoices(invoiceType).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).OrderByDescending(s => s.CreateDate).ToList();
         }
 
-        public static List<InvoiceModel> GetInvoices(InvoiceType invoiceType, int? maxInvoiceCount, long memberId)
+        public static List<InvoiceModel> GetInvoices(InvoiceType invoiceType, int? maxInvoiceCount)
         {
             var partners = PartnersManager.GetPartner();
-            return TryGetInvoices(invoiceType, maxInvoiceCount, memberId).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).OrderByDescending(s => s.CreateDate).ToList();
+            return TryGetInvoices(invoiceType, maxInvoiceCount).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).OrderByDescending(s => s.CreateDate).ToList();
         }
 
         public static List<InvoiceModel> GetApprovedInvoices(InvoiceType invoiceType, int? maxInvoiceCount, long memberId)

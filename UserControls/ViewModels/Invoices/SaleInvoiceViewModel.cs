@@ -53,7 +53,7 @@ namespace UserControls.ViewModels.Invoices
             {
                 Invoice.RecipientName = value != null ? value.FullName : null;
                 base.Partner = value;
-                SetPartnerPrice();
+                SetPrice();
             }
         }
 
@@ -135,7 +135,7 @@ namespace UserControls.ViewModels.Invoices
             IsEcrActivated = ApplicationManager.Settings.MemberSettings.IsEcrActivated;
         }
 
-        private void SetPartnerPrice()
+        protected override void SetPrice()
         {
             foreach (var item in InvoiceItems)
             {
@@ -318,7 +318,7 @@ namespace UserControls.ViewModels.Invoices
             return base.CanAddInvoiceItem(o) && FromStocks != null && FromStocks.Any();
         }
 
-        public override void OnAddInvoiceItem(object o)
+        protected override void OnAddInvoiceItem(object o)
         {
             if (!CanAddInvoiceItem(o))
             {
@@ -356,12 +356,12 @@ namespace UserControls.ViewModels.Invoices
             get { return InvoicePaid.IsPaid && InvoicePaid.Change <= (InvoicePaid.Paid ?? 0) && Partner != null && (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit && (InvoicePaid.ReceivedPrepayment ?? 0) <= Partner.Credit; }
         }
 
-        public override bool CanApprove(object o)
+        protected override bool CanApprove(object o)
         {
             return base.CanApprove(o) && IsPaid;
         }
 
-        public override void OnApprove(object o)
+        protected override void OnApprove(object o)
         {
             if (!CanApprove(o))
             {

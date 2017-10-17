@@ -87,7 +87,7 @@ namespace UserControls.ViewModels.Invoices
         #endregion
 
         #region External Methods
-        public override void OnAddInvoiceItem(object o)
+        protected override void OnAddInvoiceItem(object o)
         {
             if (!CanAddInvoiceItem(o)) { return; }
             if (!SetQuantity(AddBySingle)) { return; }
@@ -95,7 +95,7 @@ namespace UserControls.ViewModels.Invoices
             InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
             RaisePropertyChanged("InvoicePaid");
         }
-        public override bool CanApprove(object o)
+        protected override bool CanApprove(object o)
         {
             return base.CanApprove(o)
                 && InvoicePaid.IsPaid
@@ -104,7 +104,7 @@ namespace UserControls.ViewModels.Invoices
                 && (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit
                 && ApplicationManager.IsInRole(UserRoleEnum.Manager);
         }
-        public override void OnApprove(object o)
+        protected override void OnApprove(object o)
         {
             if (!CanApprove(o)) return;
 
@@ -167,6 +167,12 @@ namespace UserControls.ViewModels.Invoices
                     StockManager.GetStock(Invoice.ToStockId), InvoicePaid));
             PrintManager.PrintPreview(ctrl, "Print purchase invoice", true);
         }
+
+        protected override void SetPrice()
+        {
+            
+        }
+
         #endregion
     }
 }

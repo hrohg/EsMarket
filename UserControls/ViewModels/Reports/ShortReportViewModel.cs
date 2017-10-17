@@ -510,7 +510,11 @@ namespace UserControls.ViewModels.Reports
                     case InvoiceType.InventoryWriteOff:
                         descritpion = "Դուրսգրման ակտ";
                         break;
-                    case InvoiceType.Statement:
+                    case InvoiceType.ReturnFrom:
+                        descritpion = "Ետ վերադարձ";
+                        break;
+                    case InvoiceType.ReturnTo:
+                        descritpion = "Վերադարձ մատակարարին";
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -554,7 +558,9 @@ namespace UserControls.ViewModels.Reports
                         break;
                     case InvoiceType.InventoryWriteOff:
                         break;
-                    case InvoiceType.Statement:
+                    case InvoiceType.ReturnFrom:
+                        break;
+                    case InvoiceType.ReturnTo:
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

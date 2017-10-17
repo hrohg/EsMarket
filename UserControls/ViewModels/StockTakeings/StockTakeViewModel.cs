@@ -188,7 +188,7 @@ namespace UserControls.ViewModels.StockTakeings
         }
         private void OnViewDetiles(object o)
         {
-            var products = new ProductsManager().GetProducts();
+            var products = ProductsManager.GetProducts();
             var detile = from s in StockTakeItems
                          join t in products on s.ProductId equals t.Id
                          select new

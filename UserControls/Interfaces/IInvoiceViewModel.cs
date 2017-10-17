@@ -2,6 +2,5 @@
 {
     public interface IInvoiceViewModel
     {
-        string Title { get; }
     }
 }

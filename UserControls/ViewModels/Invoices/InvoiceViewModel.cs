@@ -21,7 +21,6 @@ using ES.Data.Enumerations;
 using ES.Data.Models;
 using ES.DataAccess.Models;
 using Shared.Helpers;
-using UserControls.Commands;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets.Views;
 using ExcelImportManager = ES.Business.ExcelManager.ExcelImportManager;
@@ -31,7 +30,7 @@ using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Invoices
 {
-    public class InvoiceViewModel : InvoiceViewModelBase
+    public abstract class InvoiceViewModel : InvoiceViewModelBase
     {
 
         #region Properties
@@ -219,7 +218,7 @@ namespace UserControls.ViewModels.Invoices
         private void SetICommands()
         {
             //ICommands
-            RemoveInvoiceItemCommand = new RemoveInvoiceItemCommands(this);
+            RemoveInvoiceItemCommand = new RelayCommand(RemoveInvoiceItem, CanRemoveInvoiceItem); 
 
 
             //PrintInvoiceItemCommand = new PrintInvoiceItemCommands(this);
@@ -230,9 +229,8 @@ namespace UserControls.ViewModels.Invoices
             //ExportInvoiceToExcelRusCommand = new ExportInvoiceToExcelRusCommands(this);
             //ExportInvoiceToXmlRusCommand = new ExportInvoiceToXmlRusCommands(this);
 
-            ApproveMoveInvoiceCommand = new ApproveMoveInvoiceCommands(this);
-            AddItemsFromStocksCommand = new AddItemsFromStocksCommand(this, InvoiceType.MoveInvoice);
-            ApproveInvoiceAndCloseCommand = new ApproveCloseInvoiceCommands(this);
+            AddItemsFromStocksCommand = new RelayCommand(OnAddItemsFromStocks, CanAddItemsFromStocks);
+            ApproveInvoiceAndCloseCommand = new RelayCommand(OnApproveAndClose, CanApprove);
 
             GetProductCommand = new RelayCommand(OnGetProduct);
 
@@ -390,6 +388,8 @@ namespace UserControls.ViewModels.Invoices
             File.Delete(filePath);
         }
         #endregion Auto save
+
+        protected abstract void SetPrice(); 
         #endregion Internal methods
 
         #region External methods
@@ -520,7 +520,7 @@ namespace UserControls.ViewModels.Invoices
             else
             {
                 MessageManager.OnMessage(string.Format("{0} կոդով ապրանք չի հայտնաբերվել:", code), MessageTypeEnum.Warning);
-                MessageBox.Show(string.Format("{0} կոդով ապրանք չի հայտնաբերվել:", code), "Սխալ ապա կոդ", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(string.Format("{0} կոդով ապրանք չի հայտնաբերվել:", code), "Սխալ կոդ", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
             RaisePropertyChanged("InvoiceItem");
@@ -537,13 +537,13 @@ namespace UserControls.ViewModels.Invoices
             return Invoice.ApproveDate == null && InvoiceItem.Product != null && InvoiceItem.Code == InvoiceItem.Product.Code;
         }
 
-        public virtual void OnAddInvoiceItem(object o)
+        protected virtual void OnAddInvoiceItem(object o)
         {
             if (!CanAddInvoiceItem(o))
             {
                 return;
             }
-            var exInvocieItem = InvoiceItems.FirstOrDefault(s => s.ProductId == InvoiceItem.ProductId && s.ProductItemId == null && s.Price == InvoiceItem.Price);
+            var exInvocieItem = InvoiceItems.FirstOrDefault(s => s.ProductId == InvoiceItem.ProductId && s.ProductItemId == InvoiceItem.ProductItemId && s.Price == InvoiceItem.Price);
             if (exInvocieItem != null)
             {
                 exInvocieItem.Quantity += InvoiceItem.Quantity;
@@ -565,12 +565,12 @@ namespace UserControls.ViewModels.Invoices
             ExcelExportManager.ExportInvoice(Invoice, InvoiceItems);
         }
 
-        public virtual bool CanRemoveInvoiceItem()
+        public virtual bool CanRemoveInvoiceItem(object o)
         {
             return Invoice.ApproveDate == null && SelectedInvoiceItem != null && (ApplicationManager.Instance.UserRoles.Any(s => s.Id == (int)EsSettingsManager.MemberRoles.SeniorSeller || s.Id == (int)EsSettingsManager.MemberRoles.Manager));
         }
 
-        public virtual void RemoveInvoiceItem()
+        public virtual void RemoveInvoiceItem(object o)
         {
             var index = SelectedInvoiceItem.Index;
             foreach (var invoiceItemsModel in InvoiceItems.Where(invoiceItemsModel => invoiceItemsModel.Index > index))
@@ -614,7 +614,7 @@ namespace UserControls.ViewModels.Invoices
             MessageManager.OnMessage("Գործողությունը հնարավոր չէ իրականացնել:Գործողության ընդհատում:", MessageTypeEnum.Warning);
             return false;
         }
-        public virtual bool CanApprove(object o)
+        protected virtual bool CanApprove(object o)
         {
             return Invoice.ApproveDate == null && InvoiceItems.Count != 0;
         }
@@ -639,34 +639,34 @@ namespace UserControls.ViewModels.Invoices
             return true;
         }
 
-        public virtual void OnApprove(object o)
-        {
-            if (!CanApprove(o))
-            {
-                MessageBox.Show("Գործողությունը հնարավոր չէ իրականացնել:", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            Invoice.ApproverId = User.UserId;
-            Invoice.Approver = User.FullName;
-            InvoicePaid.PartnerId = Invoice.PartnerId; // todo
-            Invoice.ApproveDate = DateTime.Now;
+        protected abstract void OnApprove(object o);
+        //{
+        //    if (!CanApprove(o))
+        //    {
+        //        MessageBox.Show("Գործողությունը հնարավոր չէ իրականացնել:", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Error);
+        //        return;
+        //    }
+        //    Invoice.ApproverId = User.UserId;
+        //    Invoice.Approver = User.FullName;
+        //    InvoicePaid.PartnerId = Invoice.PartnerId; // todo
+        //    Invoice.ApproveDate = DateTime.Now;
 
-            var invocie = InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), InvoicePaid);
-            if (invocie != null)
-            {
-                Invoice = Invoice;
-                IsModified = false;
-                RaisePropertyChanged("InvoiceStateImageState");
-                RaisePropertyChanged("InvoiceStateTooltip");
-            }
-            else
-            {
-                Invoice.ApproverId = null;
-                Invoice.Approver = null;
-                Invoice.ApproveDate = null;
-                MessageBox.Show("Գործողությունն իրականացման ժամանակ տեղի է ունեցել սխալ:", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+        //    var invocie = InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), InvoicePaid);
+        //    if (invocie != null)
+        //    {
+        //        Invoice = Invoice;
+        //        IsModified = false;
+        //        RaisePropertyChanged("InvoiceStateImageState");
+        //        RaisePropertyChanged("InvoiceStateTooltip");
+        //    }
+        //    else
+        //    {
+        //        Invoice.ApproverId = null;
+        //        Invoice.Approver = null;
+        //        Invoice.ApproveDate = null;
+        //        MessageBox.Show("Գործողությունն իրականացման ժամանակ տեղի է ունեցել սխալ:", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Error);
+        //    }
+        //}
 
         public virtual void OnApproveAndClose(object o)
         {
@@ -716,12 +716,12 @@ namespace UserControls.ViewModels.Invoices
 
         #region AddItemsFromStocksCommands
 
-        public bool CanAddItemsFromStocks()
+        public bool CanAddItemsFromStocks(object o)
         {
             return Invoice.ApproveDate == null;
         }
 
-        public void AddItemsFromStocks()
+        public void OnAddItemsFromStocks(object o)
         {
             var stock = SelectItemsManager.SelectStocks(StockManager.GetStocks(Member.Id), false).FirstOrDefault();
             if (stock == null) return;
@@ -806,8 +806,7 @@ namespace UserControls.ViewModels.Invoices
         public ICommand ExportInvoiceToXmlCommand { get; private set; }
         public ICommand ExportInvoiceToExcelRusCommand { get; private set; }
         public ICommand ExportInvoiceToXmlRusCommand { get; private set; }
-        public ICommand ApproveMoveInvoiceCommand { get; private set; }
-
+        
         #region Add Items From Invoice Command
 
         private ICommand _addItemsFromInvoiceCommand;
@@ -908,5 +907,6 @@ namespace UserControls.ViewModels.Invoices
         #endregion Paid command
 
         #endregion Commands
+        
     }
 }

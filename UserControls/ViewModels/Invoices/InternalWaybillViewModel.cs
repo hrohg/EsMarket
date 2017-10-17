@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
@@ -39,21 +38,40 @@ namespace UserControls.ViewModels.Invoices
             var ctrl = new MoveInvoiceView(new MoveInvocieTicketViewModel(Invoice, InvoiceItems.ToList(), StockManager.GetStock(Invoice.FromStockId), StockManager.GetStock(Invoice.ToStockId)));
             PrintManager.PrintPreview(ctrl, "Print move invoice", true);
         }
-        public override bool CanApprove(object o)
+        protected override bool CanApprove(object o)
         {
             return base.CanApprove(o)
                 && FromStock != null
                 && ToStock != null
                 && FromStock.Id != ToStock.Id;
         }
-        public override void OnApprove(object o)
+        protected override void OnApprove(object o)
         {
             if (!CanApprove(o))
             {
                 MessageManager.OnMessage(new MessageModel(DateTime.Now, "Գործողության ընդհատում: Գործողությունը հնարավոր չէ իրականացնել:", MessageTypeEnum.Warning));
                 return;
             }
-            base.OnApprove(o);
+            Invoice.ApproverId = User.UserId;
+            Invoice.Approver = User.FullName;
+            InvoicePaid.PartnerId = Invoice.PartnerId; // todo
+            Invoice.ApproveDate = DateTime.Now;
+
+            var invocie = InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), InvoicePaid);
+            if (invocie != null)
+            {
+                Invoice = Invoice;
+                IsModified = false;
+                RaisePropertyChanged("InvoiceStateImageState");
+                RaisePropertyChanged("InvoiceStateTooltip");
+            }
+            else
+            {
+                Invoice.ApproverId = null;
+                Invoice.Approver = null;
+                Invoice.ApproveDate = null;
+                MessageBox.Show("Գործողությունն իրականացման ժամանակ տեղի է ունեցել սխալ:", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
         public override void OnApproveAndClose(object o)
         {
@@ -119,7 +137,7 @@ namespace UserControls.ViewModels.Invoices
             }
             return InvoiceItem.Quantity != null && InvoiceItem.Quantity > 0;
         }
-        public override void OnAddInvoiceItem(object o)
+        protected override void OnAddInvoiceItem(object o)
         {
             if (!CanAddInvoiceItem(o)) { return; }
             if (!SetQuantity(MoveBySingle)) { return; }
@@ -142,7 +160,7 @@ namespace UserControls.ViewModels.Invoices
         {
             var stocks = StockManager.GetStocks(ApplicationManager.Member.Id);
             if (stocks == null) return;
-            StockModel stock = null;
+            StockModel stock;
             if (stocks.Count == 1)
             {
                 stock = stocks.FirstOrDefault();
@@ -172,6 +190,11 @@ namespace UserControls.ViewModels.Invoices
         }
 
         #endregion Commands
+
+        protected override void SetPrice()
+        {
+            
+        }
     }
 
     [Flags]

@@ -217,7 +217,7 @@ namespace ES.Business.Managers
             if (updateingHandler != null) updateingHandler();
             lock (_locker)
             {
-                _products = new ProductsManager().GetProducts();
+                _products = ProductsManager.GetProducts();
             }
             OnProductsUpdated();
         }

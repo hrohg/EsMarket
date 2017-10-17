@@ -66,7 +66,7 @@ namespace UserControls.ViewModels
         }
         public void SelectProductItems(List<long> stockIds)
         {
-            var productItems = new ProductsManager().GetProductItemsFromStocks(stockIds);
+            var productItems = ProductsManager.GetProductItemsFromStocks(stockIds);
             if (productItems == null || productItems.Count == 0) { return; }
             productItems = productItems.Where(s => s.Product != null).OrderBy(s => s.Product.Code).ThenBy(s => s.Product.Description).ToList();
             var items = productItems.GroupBy(s => s.ProductId).Select(s =>

@@ -131,7 +131,7 @@
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                        <Binding Source="{x:Static managers:InvoiceType.Statement}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:InvoiceType.ReturnFrom}"  Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:InvoiceState.New}" Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:MaxInvocieCount.All}" Mode="OneWay"/>
                                     </MultiBinding>
@@ -143,7 +143,7 @@
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                        <Binding Source="{x:Static managers:InvoiceType.Statement}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:InvoiceType.ReturnTo}"  Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:InvoiceState.New}" Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:MaxInvocieCount.All}" Mode="OneWay"/>
                                     </MultiBinding>

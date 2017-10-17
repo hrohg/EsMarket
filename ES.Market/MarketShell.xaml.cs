@@ -50,7 +50,7 @@ namespace ES.Market
             var nextTab = TabShop.Items.Add(new TabItem
             {
                 Header = "Ապրանքների ցուցակ" + (" - " + invoice.InvoiceNumber),
-                Content = new PackingListUctrl(invoice, ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember),
+                Content = new PackingListUctrl(invoice),
                 AllowDrop = true
             });
             TabShop.SelectedIndex = nextTab;
@@ -441,7 +441,8 @@ namespace ES.Market
 
         protected void MiBackupData_Click(object sender, EventArgs e)
         {
-            new DatabaseManagement.MainWindow().ShowDialog();
+            DatabaseManager.BackupDatabase(ApplicationManager.DataSource, ApplicationManager.DbName);
+            //new DatabaseManagement.MainWindow().ShowDialog();
         }
         protected void MiManageBrands_Click(object sender, EventArgs e)
         {
@@ -478,7 +479,7 @@ namespace ES.Market
         }
         protected void MiViewPriceList_Click(object sender, EventArgs e)
         {
-            var products = new ProductsManager().GetProducts();
+            var products = ProductsManager.GetProducts();
             new UIListView(products.Select(s => new { Կոդ = s.Code, Անվանում = s.Description, Չմ = s.Mu, Մեծածախ = s.DealerPrice, Մանրածախ = s.Price })
                 , "Գնացուցակ").Show();
         }

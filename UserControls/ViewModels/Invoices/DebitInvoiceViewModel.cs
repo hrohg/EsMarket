@@ -42,7 +42,7 @@ namespace UserControls.ViewModels.Invoices
         #endregion
 
         #region External methods
-        public override void OnAddInvoiceItem(object o)
+        protected override void OnAddInvoiceItem(object o)
         {
             base.OnAddInvoiceItem(o);
             InvoiceItem.Price = 0;
@@ -52,11 +52,11 @@ namespace UserControls.ViewModels.Invoices
             return product != null ? (product.Price ?? 0) : 0;
         }
 
-        public override bool CanApprove(object o)
+        protected override bool CanApprove(object o)
         {
             return Invoice != null && Invoice.ApproveDate == null && InvoiceItems != null && InvoiceItems.Count > 0;
         }
-        public override void OnApprove(object o)
+        protected override void OnApprove(object o)
         {
             if (!CanApprove(o))
             {

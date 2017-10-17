@@ -196,7 +196,7 @@ namespace ES.Business.Helpers
         }
         public static List<InvoiceItemsModel> SelectProductItems(List<long> stockId, bool selectMultiple = false)
         {
-            var productItems = new ProductsManager().GetProductItemsFromStocks(stockId);
+            var productItems = ProductsManager.GetProductItemsFromStocks(stockId);
             if (productItems == null || productItems.Count == 0) { return new List<InvoiceItemsModel>(); }
             var ui = new SelectItemsByCheck(productItems.Select(pi => new ProductToSelectByCheck(pi.Id, pi.Product.Code, pi.Product.Description, pi.Quantity)).ToList(), selectMultiple);
             ui.ShowDialog();

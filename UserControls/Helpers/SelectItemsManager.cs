@@ -275,7 +275,7 @@ namespace UserControls.Helpers
         }
         public static List<InvoiceItemsModel> SelectProductItemsFromStock(List<long> stockId, bool selectMultiple = false)
         {
-            var items = new ProductsManager().GetProductItemsFromStocks(stockId);
+            var items = ProductsManager.GetProductItemsFromStocks(stockId);
             if (items == null || items.Count == 0) { return new List<InvoiceItemsModel>(); }
             var vm = new SelectProductItemsByCheckViewModel(
                         items.Select(

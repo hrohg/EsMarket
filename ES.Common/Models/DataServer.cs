@@ -27,6 +27,17 @@ namespace ES.Common.Models
         public bool IntegratedSecurity { get { return _integratedSecurity; } set { if (string.Equals(value, _integratedSecurity)) { return; } _integratedSecurity = value; } }
         public bool PersistSecurityInfo { get { return _persistSecurityInfo; } set { _persistSecurityInfo = value; } }
         public bool MultipleActiveResultSets { get { return _multipleActiveResultSets; } set { _multipleActiveResultSets = value; } }
+        public string DataSource
+        {
+            get
+            {
+                return string.Format("{0}{1}{2}",
+                    Name,
+                    !string.IsNullOrEmpty(Instance) ? string.Format(@"\{0}", Instance) : string.Empty,
+                    Port != null && Port != 0 ? string.Format(",{0}", Port) : string.Empty);
+            }
+        }
+
         #endregion External properties
 
         #region Constructors

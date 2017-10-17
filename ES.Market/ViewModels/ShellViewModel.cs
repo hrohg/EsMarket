@@ -251,7 +251,7 @@ namespace ES.Market.ViewModels
             ApplicationManager.MessageManager.MessageReceived += OnNewMessage;
             Tools.Add(LogViewModel);
             AddDocument(new StartPageViewModel(this));
-            LoadTempInvoices();
+            LoadAutosavedInvoices();
             InitializeCommands();
         }
 
@@ -282,7 +282,7 @@ namespace ES.Market.ViewModels
 
         }
 
-        private void LoadTempInvoices()
+        private void LoadAutosavedInvoices()
         {
             var invoices = InvoicesManager.LoadAutosavedinvoices();
             InvoiceViewModel invoice = null;
@@ -306,18 +306,19 @@ namespace ES.Market.ViewModels
                     case InvoiceType.InventoryWriteOff:
                         invoice = new InventoryWriteOffViewModel();
                         break;
-                    case InvoiceType.Statement:
-                        //invoice = new PurchaseInvoiceViewModel();
+                    case InvoiceType.ReturnFrom:
+                        invoice = new ReturnFromInvoiceViewModel();
+                        break;
+                    case InvoiceType.ReturnTo:
+                        invoice = new ReturnToInvoiceViewModel();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                if (invoice != null)
-                {
-                    invoice.Invoice = invoiceItems.Item1;
-                    invoice.InvoiceItems = new ObservableCollection<InvoiceItemsModel>(invoiceItems.Item2);
-                }
-                Documents.Add(new InvoiceViewModel());
+                invoice.Invoice = invoiceItems.Item1;
+                invoice.InvoiceItems = new ObservableCollection<InvoiceItemsModel>(invoiceItems.Item2);
+                
+                Documents.Add(invoice);
             }
         }
 
@@ -384,6 +385,7 @@ namespace ES.Market.ViewModels
 
         private void AddInvoiceDocument(InvoiceViewModel vm)
         {
+            if(vm==null) return;
             var exInvoice = Documents.SingleOrDefault(s => s is InvoiceViewModel && ((InvoiceViewModel)s).Invoice.Id == vm.Invoice.Id);
             if (exInvoice != null)
             {
@@ -1051,30 +1053,8 @@ namespace ES.Market.ViewModels
         {
             switch (state)
             {
-                case InvoiceState.All:
-                    switch (type)
-                    {
-                        case InvoiceType.SaleInvoice:
-                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.Instance.GetMember.Id);
-                            break;
-                        case InvoiceType.MoveInvoice:
-                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.Instance.GetMember.Id);
-                            break;
-                        case InvoiceType.PurchaseInvoice:
-                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.Instance.GetMember.Id);
-                            break;
-                        case InvoiceType.InventoryWriteOff:
-                            return InvoicesManager.GetInvoices(type, count, ApplicationManager.Instance.GetMember.Id);
-                            break;
-                        case InvoiceType.ProductOrder:
-                            break;
-                        case InvoiceType.Statement:
-                            break;
-                        default:
-                            return null;
-                            break;
-                    }
-                    return null;
+                case InvoiceState.All:                            
+                    return InvoicesManager.GetInvoices(type, count);
                 case InvoiceState.New:
                     return null;
 
@@ -1592,23 +1572,33 @@ namespace ES.Market.ViewModels
                 switch (state)
                 {
                     case InvoiceState.New:
+                        InvoiceViewModel newInvocieViewmodel = null;
                         switch (type)
                         {
                             case InvoiceType.SaleInvoice:
-                                AddInvoiceDocument(new SaleInvoiceViewModel());
+                                newInvocieViewmodel =new SaleInvoiceViewModel();
                                 break;
                             case InvoiceType.MoveInvoice:
-                                AddInvoiceDocument(new InternalWaybillViewModel());
+                                newInvocieViewmodel = new InternalWaybillViewModel();
                                 break;
                             case InvoiceType.PurchaseInvoice:
-                                AddInvoiceDocument(new PurchaseInvoiceViewModel());
+                                newInvocieViewmodel =new PurchaseInvoiceViewModel();
                                 break;
                             case InvoiceType.InventoryWriteOff:
-                                AddInvoiceDocument(new InventoryWriteOffViewModel());
+                                newInvocieViewmodel =new InventoryWriteOffViewModel();
+                                break;
+                            case InvoiceType.ProductOrder:
+                                break;
+                            case InvoiceType.ReturnFrom:
+                                newInvocieViewmodel = new ReturnFromInvoiceViewModel();
+                                break;
+                            case InvoiceType.ReturnTo:
+                                newInvocieViewmodel = new ReturnToInvoiceViewModel();
                                 break;
                             default:
                                 break;
                         }
+                        AddInvoiceDocument(newInvocieViewmodel);
                         return;
                     case InvoiceState.Saved:
                     case InvoiceState.All:
@@ -1644,7 +1634,11 @@ namespace ES.Market.ViewModels
                         case InvoiceType.InventoryWriteOff:
                             vm = new InventoryWriteOffViewModel(invoiceModel.Id);
                             break;
-                        case InvoiceType.Statement:
+                        case InvoiceType.ReturnFrom:
+                            vm = new ReturnFromInvoiceViewModel(invoiceModel.Id);
+                            break;
+                        case InvoiceType.ReturnTo:
+                            vm = new ReturnToInvoiceViewModel(invoiceModel.Id);
                             break;
                         default:
                             break;

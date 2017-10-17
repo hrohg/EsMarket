@@ -11,14 +11,10 @@ namespace ES.Market.Views
     /// </summary>
     public partial class PackingListUctrl : UserControl
     {
-        private EsUserModel _user;
-        private EsMemberModel _member;
-        public PackingListUctrl(InvoiceModel invoice, EsUserModel user, EsMemberModel member)
+        public PackingListUctrl(InvoiceModel invoice)
         {
-            _user = user;
-            _member = member;
             InitializeComponent();
-            DataContext = new InvoiceViewModel(invoice.Id);
+            DataContext = new PackingListViewModel(invoice.Id);
         }
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {

@@ -865,13 +865,44 @@ namespace ES.Business.Managers
 
             return command;
         }
+
+        public static void BackupDatabase(string connectionString, string databaseName)
+        {
+            System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog
+            {
+                Title = "Backup File",
+                RestoreDirectory = true,
+                Filter = "ES-Market Bakup Files (*.esm)|*.esm | SQL Bakup Files (*.bak)|*.bak",
+                AddExtension = true
+            };
+            string backupFilePath = string.Empty;
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                backupFilePath = dialog.FileName;
+            }
+            else
+            {
+                return;
+            }
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                var query = String.Format("BACKUP DATABASE [{0}] TO DISK='{1}'", databaseName, backupFilePath);
+
+                using (var command = new SqlCommand(query, connection))
+                {
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
         public static bool CreateDatabaseBackup(string backupFilePath, string dbName, ref string errorMessage)
         {
             if (File.Exists(backupFilePath))
             {
                 try
                 {
-                    //File.Delete(backupFilePath);
+                    File.Delete(backupFilePath);
                 }
                 catch { }
             }

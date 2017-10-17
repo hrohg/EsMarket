@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -20,7 +21,8 @@ using UserControls.Interfaces;
 namespace UserControls.ViewModels.Invoices
 {
     [Serializable]
-    public class InvoiceViewModelBase : DocumentViewModel, IInvoiceViewModel
+    [SettingsSerializeAs(SettingsSerializeAs.Xml)]
+    public abstract class InvoiceViewModelBase : DocumentViewModel, IInvoiceViewModel
     {
         #region Internal fields
         #endregion Internal fields
@@ -211,6 +213,7 @@ namespace UserControls.ViewModels.Invoices
             IsModified = true;
             RaisePropertyChanged(FilteredInvoiceItemsProperty);
         }
+
         #endregion Internal methods
 
         #region External methods

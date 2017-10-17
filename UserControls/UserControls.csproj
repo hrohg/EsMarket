@@ -110,7 +110,6 @@
     <Compile Include="PriceTicketControl\ViewModels\BarcodeViewModel.cs" />
     <Compile Include="Commands\AccountingRecordsCommands.cs" />
     <Compile Include="Commands\EsUserChangeCommand.cs" />
-    <Compile Include="Commands\InvoiceCommands.cs" />
     <Compile Include="Commands\PartnerCommands.cs" />
     <Compile Include="Commands\ProductCommand.cs" />
     <Compile Include="Commands\ProductOrderCommands.cs" />
@@ -164,6 +163,7 @@
     <Compile Include="Interfaces\ITabItem.cs" />
     <Compile Include="PriceTicketControl\ViewModels\PriceTicketLargePriceVewModel.cs" />
     <Compile Include="PriceTicketControl\ViewModels\PriceTicketViewModelBase.cs" />
+    <Compile Include="ViewModels\Invoices\ReturnInvoiceViewModel.cs" />
     <Compile Include="ViewModels\SelectItemsViewModel.cs" />
     <Compile Include="ViewModels\AccountingPlanViewModel.cs" />
     <Compile Include="ViewModels\AccountingRecordsViewModel.cs" />

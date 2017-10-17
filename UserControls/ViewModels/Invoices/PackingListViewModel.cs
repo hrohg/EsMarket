@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Windows.Data;
-using ES.Data.Models;
 using Shared.Helpers;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets.Views;
@@ -57,5 +54,26 @@ namespace UserControls.ViewModels.Invoices
         #endregion Internal methods
     }
 
-    public class PackingListViewModel { }
+    public class PackingListViewModel : InvoiceViewModel
+    {
+        #region Constructors
+        public PackingListViewModel() { }
+        public PackingListViewModel(Guid id) : base(id) { }
+        #endregion Constructors
+
+        protected override void SetPrice()
+        {
+            
+        }
+
+        protected override void OnAddInvoiceItem(object o)
+        {
+            base.OnAddInvoiceItem(o);
+        }
+
+        protected override void OnApprove(object o)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

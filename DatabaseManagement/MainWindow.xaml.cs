@@ -30,7 +30,7 @@ namespace DatabaseManagement
             {
                 Title = "Backup File",
                 RestoreDirectory = true,
-                Filter = "Realtor Bakup Files (*.es)|*.es",
+                Filter = "Realtor Bakup Files (*.esm)|*.esm",
                 AddExtension = true
             };
 
@@ -46,15 +46,15 @@ namespace DatabaseManagement
 
             string password = string.Empty;
 
-            InputPassword passWindow = new InputPassword();
-            if (passWindow.ShowDialog() ?? false)
-            {
-                password = passWindow.Password.Trim();
-            }
-            else
-            {
-                return;
-            }
+            //InputPassword passWindow = new InputPassword();
+            //if (passWindow.ShowDialog() ?? false)
+            //{
+            //    password = passWindow.Password.Trim();
+            //}
+            //else
+            //{
+            //    return;
+            //}
             //if (string.IsNullOrEmpty(password))
             //{
             //    MessageBox.Show(CultureResources.Inst["PasswordCanNotBeEmpty"], CultureResources.Inst["PasswordError"], MessageBoxButton.OK, MessageBoxImage.Error);
@@ -63,9 +63,9 @@ namespace DatabaseManagement
             Cursor = Cursors.Wait;
 
             string errorMessage = string.Empty;
-            if (backupFilePath.EndsWith(".es"))
+            if (backupFilePath.EndsWith(".esm"))
             {
-                backupFilePath = backupFilePath.Replace(".es", ".bak");
+                backupFilePath = backupFilePath.Replace(".esm", ".bak");
             }
 
             //if (!Session.Inst.BEManager.CreateDatabaseBackup(backupFilePath, DatabaseManager.GetConnectionString(), ref errorMessage))
