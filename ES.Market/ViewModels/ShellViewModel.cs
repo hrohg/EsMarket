@@ -317,7 +317,7 @@ namespace ES.Market.ViewModels
                 }
                 invoice.Invoice = invoiceItems.Item1;
                 invoice.InvoiceItems = new ObservableCollection<InvoiceItemsModel>(invoiceItems.Item2);
-                
+
                 Documents.Add(invoice);
             }
         }
@@ -385,7 +385,7 @@ namespace ES.Market.ViewModels
 
         private void AddInvoiceDocument(InvoiceViewModel vm)
         {
-            if(vm==null) return;
+            if (vm == null) return;
             var exInvoice = Documents.SingleOrDefault(s => s is InvoiceViewModel && ((InvoiceViewModel)s).Invoice.Id == vm.Invoice.Id);
             if (exInvoice != null)
             {
@@ -437,7 +437,7 @@ namespace ES.Market.ViewModels
                 ProductItemsToolsViewModel.OnProductItemSelected -= ((StockTakeManagerViewModel)vm).OnSetProductItem;
                 return;
             }
-             
+
         }
 
         private void AddTools(ToolsViewModel vm)
@@ -574,7 +574,7 @@ namespace ES.Market.ViewModels
         private void OnNewMessage(MessageModel message)
         {
             LogViewModel.AddLog(message);
-            _messages.Add(message);
+            if (_messages != null) _messages.Add(message);
             RaisePropertyChanged(MessagesProperty);
         }
 
@@ -1053,7 +1053,7 @@ namespace ES.Market.ViewModels
         {
             switch (state)
             {
-                case InvoiceState.All:                            
+                case InvoiceState.All:
                     return InvoicesManager.GetInvoices(type, count);
                 case InvoiceState.New:
                     return null;
@@ -1109,7 +1109,7 @@ namespace ES.Market.ViewModels
                     break;
                 case EcrExecuiteActions.PrintCash:
                     break;
-               
+
                     break;
                 case null:
                     break;
@@ -1323,7 +1323,7 @@ namespace ES.Market.ViewModels
             var stock = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Instance.GetMember.Id)).FirstOrDefault();
             if (stock == null) return;
             var existingProducts = ProductsManager.GetProductItemsByStock(stock.Id, ApplicationManager.Instance.GetMember.Id);
-            OnCreateWriteOffInvoice(existingProducts.Select(s => new InvoiceItemsModel(){Code = s.Product.Code, Quantity = s.Quantity}).ToList(), stock.Id);
+            OnCreateWriteOffInvoice(existingProducts.Select(s => new InvoiceItemsModel() { Code = s.Product.Code, Quantity = s.Quantity }).ToList(), stock.Id);
         }
 
         private void OnCreateWriteOffInvoice(List<InvoiceItemsModel> items, long? stockId, string notes = null)
@@ -1378,9 +1378,9 @@ namespace ES.Market.ViewModels
             }
             AddInvoiceDocument(vm);
         }
-        
 
-        
+
+
 
         #endregion
 
@@ -1557,12 +1557,39 @@ namespace ES.Market.ViewModels
 
         public ICommand GetInvoicesCommand
         {
-            get { return _getInvoicesCommand ?? (_getInvoicesCommand = new RelayCommand(OnGetInvoices)); }
+            get { return _getInvoicesCommand ?? (_getInvoicesCommand = new RelayCommand<Tuple<InvoiceType, InvoiceState, MaxInvocieCount>>(OnGetInvoices, CanGetInvoices)); }
         }
 
-        public void OnGetInvoices(object o)
+        private bool CanGetInvoices(Tuple<InvoiceType, InvoiceState, MaxInvocieCount> tuple)
         {
-            var tuple = o as Tuple<InvoiceType, InvoiceState, MaxInvocieCount>;
+            if (tuple == null) return false;
+
+            var type = tuple.Item1;
+            var state = tuple.Item2;
+            var count = (int)tuple.Item3;
+            switch (type)
+            {
+                case InvoiceType.PurchaseInvoice:
+                    return ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
+                case InvoiceType.SaleInvoice:
+                    return ApplicationManager.IsInRole(UserRoleEnum.Seller);
+                case InvoiceType.ProductOrder:
+                    return ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
+                case InvoiceType.MoveInvoice:
+                    return ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
+                case InvoiceType.InventoryWriteOff:
+                    return ApplicationManager.IsInRole(UserRoleEnum.Manager);
+                case InvoiceType.ReturnFrom:
+                case InvoiceType.ReturnTo:
+                    return ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public void OnGetInvoices(Tuple<InvoiceType, InvoiceState, MaxInvocieCount> tuple)
+        {
+            //var tuple = o as Tuple<InvoiceType, InvoiceState, MaxInvocieCount>;
             if (tuple != null)
             {
                 var type = tuple.Item1;
@@ -1576,16 +1603,16 @@ namespace ES.Market.ViewModels
                         switch (type)
                         {
                             case InvoiceType.SaleInvoice:
-                                newInvocieViewmodel =new SaleInvoiceViewModel();
+                                newInvocieViewmodel = new SaleInvoiceViewModel();
                                 break;
                             case InvoiceType.MoveInvoice:
                                 newInvocieViewmodel = new InternalWaybillViewModel();
                                 break;
                             case InvoiceType.PurchaseInvoice:
-                                newInvocieViewmodel =new PurchaseInvoiceViewModel();
+                                newInvocieViewmodel = new PurchaseInvoiceViewModel();
                                 break;
                             case InvoiceType.InventoryWriteOff:
-                                newInvocieViewmodel =new InventoryWriteOffViewModel();
+                                newInvocieViewmodel = new InventoryWriteOffViewModel();
                                 break;
                             case InvoiceType.ProductOrder:
                                 break;
@@ -1802,8 +1829,6 @@ namespace ES.Market.ViewModels
         #endregion View
 
         #region Stock Take
-
-        
 
         #endregion Stock Take
 
@@ -2078,7 +2103,7 @@ namespace ES.Market.ViewModels
             vm.CreateWriteOffInvoiceEvent += OnCreateWriteOffInvoice;
             AddInvoiceDocument(vm);
         }
-        
+
 
         private StockTakeModel GetLastStockTake()
         {

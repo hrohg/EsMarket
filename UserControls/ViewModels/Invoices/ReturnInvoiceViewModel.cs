@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -23,13 +24,15 @@ namespace UserControls.ViewModels.Invoices
         {
             get { return string.Format("Ետ վերադարձ {0}", Invoice != null && !string.IsNullOrEmpty(Invoice.InvoiceNumber) ? string.Format(" - {0}", Invoice.InvoiceNumber) : string.Empty); }
         }
+
+        public bool CanChangePartner { get { return !InvoiceItems.Any(); } }
         #endregion External properties
 
         #region Constructors
 
         public ReturnFromInvoiceViewModel()
         {
-            Invoice.InvoiceTypeId = (int)InvoiceType.InventoryWriteOff;
+            Invoice.InvoiceTypeId = (int)InvoiceType.ReturnFrom;
             Initialize();
         }
 
@@ -47,26 +50,11 @@ namespace UserControls.ViewModels.Invoices
         {
 
         }
-        protected override void OnGetProduct(object o)
+
+        protected override void OnInvoiceItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            base.OnGetProduct(o);
-            OnAddInvoiceItem(o);
-        }
-        protected override bool SetQuantity(bool addSingle)
-        {
-            var exCount = ProductsManager.GetProductItemQuantity(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList());
-            if (InvoiceItem.Quantity == null || InvoiceItem.Quantity == 0)
-            {
-                if (addSingle)
-                {
-                    InvoiceItem.Quantity = 1;
-                }
-                else
-                {
-                    InvoiceItem.Quantity = GetAddedItemCount(exCount, false);
-                }
-            }
-            return InvoiceItem.Quantity != null && InvoiceItem.Quantity > 0;
+            base.OnInvoiceItemsChanged(sender, e);
+            RaisePropertyChanged("CanChangePartner");
         }
         #endregion Internal methods
     }
@@ -86,7 +74,7 @@ namespace UserControls.ViewModels.Invoices
 
         public ReturnToInvoiceViewModel()
         {
-            Invoice.InvoiceTypeId = (int)InvoiceType.InventoryWriteOff;
+            Invoice.InvoiceTypeId = (int)InvoiceType.ReturnTo;
             Initialize();
         }
 
@@ -119,16 +107,35 @@ namespace UserControls.ViewModels.Invoices
             {
                 return;
             }
+
             base.OnAddInvoiceItem(o);
-            //InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
-            //RaisePropertyChanged("InvoicePaid");
+
+
+            var exCount = ProductsManager.GetProductItemQuantity(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList());
+            if (!Invoice.PartnerId.HasValue) return;
+            if (InvoiceItem.Quantity == null || InvoiceItem.Quantity == 0)
+            {
+
+                var quantity = InvoiceItem.Quantity ?? 0;
+                var saleInvoiceItems = InvoicesManager.GetSaleInvoiceByProductId(InvoiceItem.ProductId, (Guid)Invoice.PartnerId, quantity);
+                foreach (var invoiceItem in saleInvoiceItems)
+                {
+                    InvoiceItem.Quantity = Math.Min(invoiceItem.Quantity ?? 0, quantity);
+                    quantity -= InvoiceItem.Quantity.Value;
+                    base.OnAddInvoiceItem(o);
+                    if (quantity > 0)
+                    {
+                        InvoiceItem = new InvoiceItemsModel(Invoice, invoiceItem.Product);
+                    }
+                }
+            }
         }
         public override void SetInvoiceItem(string code)
         {
             base.SetInvoiceItem(code);
             var productItems = SelectItemsManager.SelectProductItems(ApplicationManager.Settings.MemberSettings.ActiveSaleStocks, true);
         }
-        protected override void SetPrice(){}
+        protected override void SetPrice() { }
         protected override bool SetQuantity(bool addSingle)
         {
             var exCount = ProductsManager.GetProductItemQuantity(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList());

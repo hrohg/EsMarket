@@ -26,7 +26,7 @@ namespace ES.Business.Managers
         SaleInvoice = 2,
         ProductOrder = 3,
         MoveInvoice = 4,
-        InventoryWriteOff = 5, 
+        InventoryWriteOff = 5,
         ReturnFrom = 6,
         ReturnTo = 7
     }
@@ -347,10 +347,10 @@ namespace ES.Business.Managers
                 {
                     if (startDate == null) startDate = DateTime.Today;
                     if (endDate == null) endDate = DateTime.Today;
-                    return db.Invoices.Where(s => 
-                        s.ApproveDate.HasValue && 
-                        s.ApproveDate >= startDate && 
-                        s.ApproveDate < endDate && 
+                    return db.Invoices.Where(s =>
+                        s.ApproveDate.HasValue &&
+                        s.ApproveDate >= startDate &&
+                        s.ApproveDate < endDate &&
                         s.MemberId == _memberId).OrderByDescending(s => s.InvoiceIndex).ToList();
                 }
             }
@@ -511,7 +511,7 @@ namespace ES.Business.Managers
         private static Invoices TryApprovePurchaseInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, long stockId, InvoicePaid invoicePaid)
         {
             //decimal amount = 0;
-            
+
             //amount = (invoicePaid.Paid - invoicePaid.Change) ?? 0;
             //if (amount > 0)
             //{
@@ -736,7 +736,7 @@ namespace ES.Business.Managers
                     catch (Exception ex)
                     {
                         invoice.ApproveDate = null;
-                        MessageBox.Show(string.Format("{0} \n {1}",ex.Message, ex.InnerException!=null? ex.InnerException.Message: string.Empty));
+                        MessageBox.Show(string.Format("{0} \n {1}", ex.Message, ex.InnerException != null ? ex.InnerException.Message : string.Empty));
                         return null;
                     }
                 }
@@ -909,7 +909,7 @@ namespace ES.Business.Managers
                             MessageManager.OnMessage("Դրամարկղ ընտրված չէ։ Ընտրեք դրամարկղ և փորձեք կրկին։", MessageTypeEnum.Warning);
                             return null;
                         }
-                        
+
                         // 251 - 221 Register in AccountingRecoords
                         var cpAccountingRecords = new AccountingRecords
                         {
@@ -1217,7 +1217,7 @@ namespace ES.Business.Managers
                         MessageManager.OnMessage(ex.Message, MessageTypeEnum.Warning);
                         return null;
                     }
-                    
+
                 }
             }
         }
@@ -1506,7 +1506,7 @@ namespace ES.Business.Managers
                 case InvoiceType.InventoryWriteOff:
                     invocieName = "Դուրսգրում";
                     break;
-               case InvoiceType.ReturnFrom:
+                case InvoiceType.ReturnFrom:
                     invocieName = "Վերադարձ";
                     break;
                 case InvoiceType.ReturnTo:
@@ -1558,12 +1558,12 @@ namespace ES.Business.Managers
                 {
                     var report = db.Partners.Where(p => partnerTypes.Contains((PartnerType)p.EsPartnersTypeId))
                         .Join(db.InvoiceItems
-                        .Where(s => 
-                            s.Invoices.ApproveDate >= startDate && 
-                            s.Invoices.ApproveDate <= endDate && 
-                            (InvoiceType)s.Invoices.InvoiceTypeId == invoiceType && 
-                            s.Invoices.ApproveDate != null && 
-                            s.Invoices.MemberId == memberId), 
+                        .Where(s =>
+                            s.Invoices.ApproveDate >= startDate &&
+                            s.Invoices.ApproveDate <= endDate &&
+                            (InvoiceType)s.Invoices.InvoiceTypeId == invoiceType &&
+                            s.Invoices.ApproveDate != null &&
+                            s.Invoices.MemberId == memberId),
                         p => p.Id, ii => ii.Invoices.PartnerId, (p, ii) => new { p, ii }).GroupBy(s => s.ii.InvoiceId).Select(s => new InvoiceReportByPartner
                     {
                         Invoice = s.FirstOrDefault().ii.Invoices.InvoiceNumber,
@@ -1571,8 +1571,8 @@ namespace ES.Business.Managers
                         Partner = s.FirstOrDefault().p.FullName,
                         Count = s.Count(),
                         Quantity = s.Sum(t => t.ii.Quantity ?? 0),
-                        Cost = s.Sum(t => (t.ii.Quantity??0) * (t.ii.CostPrice ?? 0)),
-                        Sale = s.Sum(t => (t.ii.Quantity??0) * (t.ii.Price ?? 0)),
+                        Cost = s.Sum(t => (t.ii.Quantity ?? 0) * (t.ii.CostPrice ?? 0)),
+                        Sale = s.Sum(t => (t.ii.Quantity ?? 0) * (t.ii.Price ?? 0)),
                         Approver = s.FirstOrDefault().ii.Invoices.Approver
                     }).ToList();
                     return report;
@@ -1597,8 +1597,8 @@ namespace ES.Business.Managers
                         Partner = s.FirstOrDefault().p.FullName,
                         Count = s.Count(),
                         Quantity = s.Sum(t => t.ii.Quantity ?? 0),
-                        Cost = s.Sum(t => (t.ii.Quantity??0) * (t.ii.CostPrice ?? 0)),
-                        Sale = s.Sum(t => (t.ii.Quantity??0) * (t.ii.Price ?? 0)),
+                        Cost = s.Sum(t => (t.ii.Quantity ?? 0) * (t.ii.CostPrice ?? 0)),
+                        Sale = s.Sum(t => (t.ii.Quantity ?? 0) * (t.ii.Price ?? 0)),
                         Approver = s.FirstOrDefault().ii.Invoices.Approver
                     }).ToList();
                     return report;
@@ -1609,7 +1609,7 @@ namespace ES.Business.Managers
                 return new List<InvoiceReportByPartner>();
             }
         }
-                private static List<InvoiceReport> TryGetSaleByPartners(DateTime startDate, DateTime endDate, long memberId)
+        private static List<InvoiceReport> TryGetSaleByPartners(DateTime startDate, DateTime endDate, long memberId)
         {
             try
             {
@@ -1620,7 +1620,7 @@ namespace ES.Business.Managers
                                     && s.InvoiceTypeId == (long)InvoiceType.SaleInvoice &&
                                     s.MemberId == memberId)
                         .Join(db.Partners, ii => ii.PartnerId, p => p.Id, (ii, p) =>
-                            new { ii, p }).GroupBy(s => s.p.Id).Select(s => 
+                            new { ii, p }).GroupBy(s => s.p.Id).Select(s =>
                         new InvoiceReport
                     {
                         Description = s.FirstOrDefault().p.FullName,
@@ -1637,7 +1637,30 @@ namespace ES.Business.Managers
                 return new List<InvoiceReport>();
             }
         }
+        private static List<InvoiceItems> TryGetSaleInvoiceItemsByProductId(Guid productId, Guid partnerId, decimal count)
+        {
+            try
+            {
+                using (var db = GetDataContext())
+                {
 
+                    var items = db.InvoiceItems.Where(s => s.ProductId==productId && s.Invoices.PartnerId==partnerId && s.Quantity>0 && s.Invoices.MemberId == ApplicationManager.Member.Id).OrderByDescending(s=>s.Invoices.ApproveDate);
+                    var invoiceItems = new List<InvoiceItems>();
+                    decimal sum = 0;
+                    foreach (var item in items)
+                    {
+                        invoiceItems.Add(item);
+                        sum += item.Quantity??0;
+                        if(sum>count) break;
+                    }
+                    return invoiceItems;
+                }
+            }
+            catch (Exception)
+            {
+                return new List<InvoiceItems>();
+            }
+        }
         #endregion
 
         #region Invoices report
@@ -1703,7 +1726,7 @@ namespace ES.Business.Managers
                     if (startDate == null) startDate = DateTime.Today;
                     if (endDate == null) endDate = DateTime.Now;
                     return db.InvoiceItems
-                        .Include(s=>s.Invoices)
+                        .Include(s => s.Invoices)
                         .Where(s => s.Invoices.MemberId == memberId && s.Invoices.ApproveDate >= startDate && s.Invoices.ApproveDate <= endDate).ToList();
                 }
             }
@@ -2153,7 +2176,7 @@ namespace ES.Business.Managers
             BinaryFormatter formatter = new BinaryFormatter();
             try
             {
-                formatter.Serialize(fs, new Tuple<InvoiceModel, List<InvoiceItemsModel>>(invoice,invoiceItems));
+                formatter.Serialize(fs, new Tuple<InvoiceModel, List<InvoiceItemsModel>>(invoice, invoiceItems));
             }
             catch
             {
@@ -2190,7 +2213,7 @@ namespace ES.Business.Managers
                         catch (Exception)
                         {
                             fileStream.Close();
-                            
+
                             continue;
                         }
                         finally
@@ -2202,6 +2225,11 @@ namespace ES.Business.Managers
                 }
             }
             return invoices;
+        }
+
+        public static List<InvoiceItemsModel> GetSaleInvoiceByProductId(Guid productId, Guid partnerId, decimal count)
+        {
+            return TryGetSaleInvoiceItemsByProductId(productId, partnerId, count).Select(Convert).ToList();
         }
     }
 }

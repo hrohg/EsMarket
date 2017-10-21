@@ -342,7 +342,29 @@
                             </MenuItem.CommandParameter>
                         </MenuItem>
                     </MenuItem>
+                    <MenuItem Header="Վերադարձ" 
+                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}"
+                              Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <MenuItem Header="Ետ վերադարձ" Command="{Binding GetInvoicesCommand}">
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.ReturnFrom}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.New}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                        </MenuItem>
+                        <MenuItem Header="Վերադարձ մատակարարին" Command="{Binding GetInvoicesCommand}">
+                            <MenuItem.CommandParameter>
+                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceType.ReturnTo}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.New}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                                </MultiBinding>
+                            </MenuItem.CommandParameter>
+                        </MenuItem>
 
+                    </MenuItem>
                     <MenuItem Header="Ծառայություններ" IsEnabled="False"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                         <MenuItem.Icon>

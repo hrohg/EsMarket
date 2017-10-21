@@ -35,13 +35,13 @@ namespace UserControls.ViewModels.Documents
             Title = "Գլխավոր";
             CanFloat = false;
             IsClosable = false;
-            OpenInvocieCommand = new RelayCommand(OnOpenInvoice);
+            OpenInvocieCommand = new RelayCommand<Tuple<InvoiceType, InvoiceState, MaxInvocieCount>>(OnOpenInvoice);
             GetReportCommand = new RelayCommand<ReportTypes>(OnGetReport);
             OpenCarculatorCommand = new RelayCommand(_parent.OnOpenCalc);
             ToolsCommand = new RelayCommand<ToolsEnum>(_parent.OnTools);
         }
 
-        private void OnOpenInvoice(object o)
+        private void OnOpenInvoice(Tuple<InvoiceType, InvoiceState, MaxInvocieCount> o)
         {
             _parent.OnGetInvoices(o);
         }

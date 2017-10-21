@@ -59,7 +59,7 @@ namespace UserControls.ViewModels.Invoices
                 Partner = Invoice.Partner ?? PartnersManager.GetPartner(Invoice.PartnerId, Invoice.MemberId);
                 var invoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
                 InvoiceItems = new ObservableCollection<InvoiceItemsModel>();
-                _invoiceItems.CollectionChanged += OnInvoiceItemsChanged;
+                InvoiceItems.CollectionChanged += OnInvoiceItemsChanged;
                 foreach (var invoiceItemsModel in invoiceItems)
                 {
                     InvoiceItems.Add(invoiceItemsModel);
@@ -160,7 +160,7 @@ namespace UserControls.ViewModels.Invoices
         {
             get
             {
-                return string.Format("Տեղափոխություն ({0} -> {1})", FromStock!=null? FromStock.Name:string.Empty, ToStock!=null? ToStock.Name:string.Empty);
+                return string.Format("Տեղափոխություն ({0} -> {1})", FromStock != null ? FromStock.Name : string.Empty, ToStock != null ? ToStock.Name : string.Empty);
             }
         }
 
@@ -185,6 +185,7 @@ namespace UserControls.ViewModels.Invoices
             PrintInvoiceCommand = new RelayCommand<PrintModeEnum>(OnPrintInvoice, CanPrintInvoice);
             ImportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnImportInvoice, CanImportInvoice);
             ExportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnExportInvoice, CanExportInvoice);
+
         }
 
         protected virtual void OnInvoiceItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -250,41 +251,41 @@ namespace UserControls.ViewModels.Invoices
                     break;
                 case ExportImportEnum.Excel:
                     var filePath = FileManager.OpenExcelFile();
-            if (File.Exists(filePath))
-            {
-                var invoiceObject = ExcelImportManager.ImportInvoice(filePath);
-                if (invoiceObject == null) return;
-                var importInvoice = invoiceObject.Item1;
-                var importInvoiceItems = invoiceObject.Item2;
-                if (importInvoice == null || importInvoiceItems == null) return;
-                Invoice = new InvoiceModel(User, Member, Invoice.InvoiceTypeId);
-                Invoice.CreateDate = importInvoice.CreateDate;
-                if (Invoice.CreateDate == DateTime.MinValue) Invoice.CreateDate = DateTime.Now;
-                InvoiceItems.Clear();
-                foreach (var invoiceItem in importInvoiceItems)
-                {
-                    if (invoiceItem == null || string.IsNullOrEmpty(invoiceItem.Code)) return;
-                    var product = new ProductsManager().GetProductsByCodeOrBarcode(invoiceItem.Code, Member.Id);
-                    if (product == null)
+                    if (File.Exists(filePath))
                     {
-                        MessageBox.Show(invoiceItem.Code + " կոդով ապրանք չի հայտնաբերվել։ Գործողությունն ընդհատված է։ Փորձեք կրկին։", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
+                        var invoiceObject = ExcelImportManager.ImportInvoice(filePath);
+                        if (invoiceObject == null) return;
+                        var importInvoice = invoiceObject.Item1;
+                        var importInvoiceItems = invoiceObject.Item2;
+                        if (importInvoice == null || importInvoiceItems == null) return;
+                        Invoice = new InvoiceModel(User, Member, Invoice.InvoiceTypeId);
+                        Invoice.CreateDate = importInvoice.CreateDate;
+                        if (Invoice.CreateDate == DateTime.MinValue) Invoice.CreateDate = DateTime.Now;
+                        InvoiceItems.Clear();
+                        foreach (var invoiceItem in importInvoiceItems)
+                        {
+                            if (invoiceItem == null || string.IsNullOrEmpty(invoiceItem.Code)) return;
+                            var product = new ProductsManager().GetProductsByCodeOrBarcode(invoiceItem.Code, Member.Id);
+                            if (product == null)
+                            {
+                                MessageBox.Show(invoiceItem.Code + " կոդով ապրանք չի հայտնաբերվել։ Գործողությունն ընդհատված է։ Փորձեք կրկին։", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                return;
+                            }
+                            invoiceItem.InvoiceId = Invoice.Id;
+                            invoiceItem.ProductId = product.Id;
+                            invoiceItem.Description = product.Description;
+                            invoiceItem.Mu = product.Mu;
+                            invoiceItem.Note += product.Note;
+                            invoiceItem.Product = product;
+                            InvoiceItems.Add(invoiceItem);
+                        }
                     }
-                    invoiceItem.InvoiceId = Invoice.Id;
-                    invoiceItem.ProductId = product.Id;
-                    invoiceItem.Description = product.Description;
-                    invoiceItem.Mu = product.Mu;
-                    invoiceItem.Note += product.Note;
-                    invoiceItem.Product = product;
-                    InvoiceItems.Add(invoiceItem);
-                }
-            }
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("importFrom", importFrom, null);
             }
 
-            
+
         }
 
         #endregion Import

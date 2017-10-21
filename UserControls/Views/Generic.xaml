@@ -15,6 +15,9 @@
         <ResourceDictionary Source="Editors/ManagePartners.xaml"/>
 
         <!--Invoices-->
+        <ResourceDictionary Source="View/Views/Invoices/SaleInvoiceTemplate.xaml"/>
+        <ResourceDictionary Source="View/Views/Invoices/PurchaseInvoiceTemplate.xaml"/>
+        
         <ResourceDictionary Source="Invoices/InternalWaybillTemplate.xaml"/>
 
         <!--Views-->

@@ -241,5 +241,6 @@ namespace ES.Business.Helpers
             return items.Where(s => selectItem.SelectedItems.Select(t => (Guid)t.SelectedValue).Contains(s.Id)).ToList();
         }
         #endregion
+        
     }
 }
