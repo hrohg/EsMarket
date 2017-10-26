@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 using CashReg;
 using CashReg.Models;
 using ES.Business.ExcelManager;
@@ -410,18 +411,19 @@ namespace UserControls.ViewModels.Invoices
 
         private void PrintTicket()
         {
-            if (!string.IsNullOrEmpty(ApplicationManager.Settings.MemberSettings.CashDeskPort))
+            try
             {
-                CashDeskManager.OpenCashDesk();
-            }
-
-            ResponseReceiptModel responceReceiptModel = null;
-            if (CanPrintEcrTicket(null))
-            {
-                //todo
-                EcrServer ecrManager = null;
-                try
+                if (!string.IsNullOrEmpty(ApplicationManager.Settings.MemberSettings.CashDeskPort))
                 {
+                    CashDeskManager.OpenCashDesk();
+                }
+
+                ResponseReceiptModel responceReceiptModel = null;
+                if (CanPrintEcrTicket(null))
+                {
+                    //todo
+                    EcrServer ecrManager = null;
+
                     ecrManager = new EcrServer(ApplicationManager.Settings.MemberSettings.EcrConfig);
                     responceReceiptModel = ecrManager.PrintReceipt(InvoiceItems.Select(s => new CashReg.Helper.Product(s.Code, s.Description, s.Mu)
                     {
@@ -437,28 +439,30 @@ namespace UserControls.ViewModels.Invoices
                         PartialAmount = 0,
                         PrePaymentAmount = 0
                     });
-                }
-                catch (Exception ex)
-                {
-                    // ignored
+
+
+                    if (responceReceiptModel != null)
+                    {
+                        Invoice.RecipientTaxRegistration = responceReceiptModel.Rseq.ToString();
+                        OnSaveInvoice(null);
+                        MessageManager.OnMessage(new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:" + responceReceiptModel.Rseq, MessageTypeEnum.Success));
+                    }
+                    else
+                    {
+                        MessageManager.OnMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումը ձախողվել է:  {0}", ecrManager != null ? string.Format("{0} ({1})", ecrManager.ActionDescription, ecrManager.ActionCode) : string.Empty), MessageTypeEnum.Warning));
+                        //return false;
+                    }
                 }
 
-                if (responceReceiptModel != null)
+                if (IsPrintTicket && (!IsEcrActivated || ApplicationManager.Settings.MemberSettings.EcrConfig.UseExternalPrinter))
                 {
-                    Invoice.RecipientTaxRegistration = responceReceiptModel.Rseq.ToString();
-                    OnSaveInvoice(null);
-                    MessageManager.OnMessage(new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:" + responceReceiptModel.Rseq, MessageTypeEnum.Success));
-                }
-                else
-                {
-                    MessageManager.OnMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումը ձախողվել է:  {0}", ecrManager != null ? string.Format("{0} ({1})", ecrManager.ActionDescription, ecrManager.ActionCode) : string.Empty), MessageTypeEnum.Warning));
-                    //return false;
+                    Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => PrintInvoiceTicket(responceReceiptModel)));
                 }
             }
-
-            if (IsPrintTicket && (!IsEcrActivated || ApplicationManager.Settings.MemberSettings.EcrConfig.UseExternalPrinter))
+            catch (Exception ex)
             {
-                PrintInvoiceTicket(responceReceiptModel);
+                Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(()=> MessageManager.OnMessage(ex.Message, MessageTypeEnum.Error)));
+                // ignored
             }
         }
         public override void OnApproveAndClose(object o)

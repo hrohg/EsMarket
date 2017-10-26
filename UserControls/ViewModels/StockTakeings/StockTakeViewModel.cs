@@ -229,13 +229,13 @@ namespace UserControls.ViewModels.StockTakeings
         protected void OnCreateWriteInInvoice()
         {
             var handler = CreateWriteInInvoiceEvent;
-            if (handler != null) handler(StockTakeItems.Where(s => s.Balance > 0).Select(s => new InvoiceItemsModel{Code = s.CodeOrBarcode, Quantity = s.Balance??0}).ToList(), StockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", StockTake.StockTakeName, StockTake.CreateDate));
+            if (handler != null) handler(StockTakeItems.Where(s => s.Balance > 0).Select(s => new InvoiceItemsModel { Code = s.CodeOrBarcode, Quantity = s.Balance ?? 0 }).ToList(), StockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", StockTake.StockTakeName, StockTake.CreateDate));
         }
         public event CreateWriteOffInvoiceDelegate CreateWriteOffInvoiceEvent;
         protected void OnCreateWriteOffInvoice()
         {
             var handler = CreateWriteOffInvoiceEvent;
-            if (handler != null) handler(StockTakeItems.Where(s => s.Balance < 0).Select(s => new InvoiceItemsModel{Code = s.CodeOrBarcode, Quantity = -s.Balance??0}).ToList(), StockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", StockTake.StockTakeName, StockTake.CreateDate));
+            if (handler != null) handler(StockTakeItems.Where(s => s.Balance < 0).Select(s => new InvoiceItemsModel { Code = s.CodeOrBarcode, Quantity = -s.Balance ?? 0 }).ToList(), StockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", StockTake.StockTakeName, StockTake.CreateDate));
         }
         #endregion Events
     }
@@ -398,7 +398,7 @@ namespace UserControls.ViewModels.StockTakeings
         {
             StockTakeItem.StockTakeDate = DateTime.Now;
             var exItem = StockTakeManager.GetStockTakeItem(StockTake.Id, StockTakeItem.CodeOrBarcode, _memberId);
-            var index = exItem != null ? exItem.Index : StockTakeItems.Max(s => s.Index) + 1;
+            var index = exItem != null ? exItem.Index : StockTakeItems.Any() ? StockTakeItems.Max(s => s.Index) + 1 : 1;
             if (exItem != null && !alwaysAdd)
             {
                 if (MessageBox.Show("Տվյալ կոդով ապրանք արդեն գույքագրվել է " + exItem.StockTakeQuantity + " հատ։ \n Ցանկանու՞մ եք ավելացնել ևս " + StockTakeItem.StockTakeQuantity + "-ով։",
