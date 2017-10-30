@@ -323,10 +323,13 @@
                         <Style x:Key="CellRightAlign">
                             <Setter Property="Control.HorizontalAlignment" Value="Right"/>
                         </Style>
-                        <ContextMenu x:Key="RowMenu">
-                            <MenuItem Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemoveInvoiceItemCommand}" CommandParameter="{Binding InvoiceItem.Id}" Header="Հեռացնել"/>
+                        <ContextMenu x:Key="RowMenu" x:Shared="False" DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type extendedControls:ExtendedDataGrid}}, Path=DataContext}">
+                            <MenuItem Command="{Binding Path=RemoveInvoiceItemCommand}" Header="Հեռացնել"/>
                         </ContextMenu>
                     </DataGrid.Resources>
+                    <DataGrid.InputBindings>
+                        <KeyBinding Key="Delete" Command="{Binding RemoveInvoiceItemCommand}"/>
+                    </DataGrid.InputBindings>
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="ContextMenu" Value="{StaticResource RowMenu}"/>
