@@ -13,14 +13,14 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch">
                     <StackPanel.Resources>
                         <Style TargetType="{x:Type Button}">
                             <Setter Property="Width" Value="Auto"/>
                         </Style>
                     </StackPanel.Resources>
+                    <ComboBox ItemsSource="{Binding ProductsViewModes}" DisplayMemberPath="DisplayName" SelectedItem="{Binding CurrentProductsViewMode}" Margin="3"/>
                     <Button VerticalAlignment="Top" 
                         HorizontalAlignment="Right" 
                         Background="Transparent" BorderBrush="Transparent"

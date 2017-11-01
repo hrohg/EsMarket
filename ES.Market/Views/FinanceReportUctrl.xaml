@@ -55,7 +55,7 @@
                     <DataGridTextColumn IsReadOnly="True" Header="Գործընկեր" Binding="{Binding Partner.FullName}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Ապրանքագիր" Binding="{Binding InvoiceNumber}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Ստեղծման ամսաթիվ" Binding="{Binding CreateDate}" />
-                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Total, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Total, StringFormat='{}{0:#,0.##}'}" CellStyle="{StaticResource CellRightAlign}"/>
                     <DataGridTextColumn IsReadOnly="True" Header="Հեղինակ" Binding="{Binding Creator}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Հասատման ամսաթիվ" Binding="{Binding Path=ApproveDate}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Հաստատեց" Binding="{Binding Approver}" />
@@ -72,10 +72,10 @@
                     <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}"/>
                     <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
-                    <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Quantity, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
-                    <DataGridTextColumn IsReadOnly="True" Header="Մնացորդ" Binding="{Binding ExistingQuantity, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
-                    <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Price, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
-                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Quantity, StringFormat='{}{0:#,0.##}'}" CellStyle="{StaticResource CellRightAlign}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="Մնացորդ" Binding="{Binding ExistingQuantity, StringFormat='{}{0:#,0.##}'}" CellStyle="{StaticResource CellRightAlign}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Price, StringFormat='{}{0:#,0.##}'}" CellStyle="{StaticResource CellRightAlign}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat='{}{0:#,0.##}'}" CellStyle="{StaticResource CellRightAlign}"/>
                     <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
                 </DataGrid.Columns>
             </DataGrid>
@@ -89,10 +89,10 @@
                     <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}"/>
                     <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
-                    <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Quantity, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
-                    <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Price, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
-                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat='# ##0.##'}" CellStyle="{StaticResource CellRightAlign}"/>
-                    <DataGridTextColumn IsReadOnly="True" Header="Զեղչ" Binding="{Binding Path=Discount, StringFormat='#0.00'}" CellStyle="{StaticResource CellRightAlign}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Quantity, StringFormat='{}{0:#,0.##}'}" CellStyle="{StaticResource CellRightAlign}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Price, StringFormat='{}{0:#,0.##}'}" CellStyle="{StaticResource CellRightAlign}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat='{}{0:#,0.##}'}" CellStyle="{StaticResource CellRightAlign}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="Զեղչ" Binding="{Binding Path=Discount, StringFormat='{}{0:#,0.##}%'}" CellStyle="{StaticResource CellRightAlign}"/>
                     <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
                 </DataGrid.Columns>
             </DataGrid>

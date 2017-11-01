@@ -13,6 +13,13 @@ using Xceed.Wpf.AvalonDock.Layout;
 
 namespace UserControls.ViewModels.Tools
 {
+    public enum ProductsViewEnum
+    {
+        ByProducts,
+        ByProductItems,
+        ByCategories,
+        ByStocks
+    }
     public class ProductItemsToolsViewModel : ToolsViewModel
     {
         #region Events
@@ -77,6 +84,15 @@ namespace UserControls.ViewModels.Tools
         #endregion Items
 
         public CustomItem SelectedItem { get; set; }
+        public List<ItemsToSelect> ProductsViewModes { get; set; }
+
+        private ItemsToSelect _currentProductsViewMode;
+
+        public ItemsToSelect CurrentProductsViewMode
+        {
+            get { return _currentProductsViewMode; }
+            set { _currentProductsViewMode = value; }
+        }
 
         #endregion External proeprties
 
@@ -96,7 +112,7 @@ namespace UserControls.ViewModels.Tools
             IsFloating = true;
             CanFloat = true;
             AnchorSide = AnchorSide.Left;
-                        
+
             SelectItemCommand = new RelayCommand<Guid>(OnSelectItem);
             EditProductCommand = new RelayCommand(OnManagingProduct, CanManageProduct);
             ApplicationManager.Instance.CashProvider.ProductsUpdateing += OnProductsUpdating;
@@ -104,6 +120,16 @@ namespace UserControls.ViewModels.Tools
             OnUpdateProducts(null);
             UpdateProductsCommand = new RelayCommand(OnUpdateProducts);
             _products = ApplicationManager.Instance.CashProvider.Products;
+
+
+            ProductsViewModes = new List<ItemsToSelect>
+        {
+            new ItemsToSelect("By Products", ProductsViewEnum.ByProducts),
+            new ItemsToSelect("By Product Items", ProductsViewEnum.ByProductItems),
+            new ItemsToSelect("By Categories", ProductsViewEnum.ByCategories),
+            new ItemsToSelect("By Stocks", ProductsViewEnum.ByStocks)
+        };
+            CurrentProductsViewMode = ProductsViewModes.FirstOrDefault();
         }
 
         private void OnProductsUpdating()

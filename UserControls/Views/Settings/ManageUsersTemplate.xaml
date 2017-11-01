@@ -9,12 +9,12 @@
     </Style>
 
     <DataTemplate DataType="{x:Type settings:ManageUsersViewModel}">
-        <Grid MinWidth="170">
+        <ScrollViewer MinWidth="250" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" MinHeight="150"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <GroupBox Grid.Row="0" Header="Օգտագործողի բեռնում">
                 <Grid>
@@ -27,7 +27,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="1" Header="Օգտագործողներ" MinHeight="50">
+            <GroupBox Grid.Row="1" Header="Օգտագործողներ">
                 <ListView  ItemsSource="{Binding EsUsers}" SelectedItem="{Binding SelectedEsUser}">
                     <ListView.ItemTemplate>
                         <DataTemplate DataType="{x:Type model:EsUserModel}">
@@ -36,61 +36,64 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </GroupBox>
-
             <GroupBox Grid.Row="2" Header="Օգտագործող" IsEnabled="{Binding IsEnabledEditMode}">
-                <Grid>
-                    <Grid.Resources>
-                        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
-                            <Setter Property="HorizontalAlignment" Value="Right"/>
-                        </Style>
-                    </Grid.Resources>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="24"/>
-                        <RowDefinition Height="24"/>
-                        <RowDefinition Height="24"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Անվանում:"/>
-                    <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding SelectedEsUser.UserName}" HorizontalAlignment="Left"/>
-                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Հեռախոս:"/>
-                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding SelectedEsUser.Mobile}"/>
-                    <TextBlock Grid.Column="0" Grid.Row="2" Text="Էլ փոստ:"/>
-                    <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding SelectedEsUser.Email}"/>
-                    <GroupBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Header="Օգտագործողի խմբեր">
-                        <Grid MinHeight="100">
-                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                            <ItemsControl  ItemsSource="{Binding Roles}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.Template>
-                                    <ControlTemplate TargetType="ItemsControl">
-                                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                                            <ItemsPresenter/>
-                                        </ScrollViewer>
-                                    </ControlTemplate>
-                                </ItemsControl.Template>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type settings:UserRole}">
-                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Content="{Binding Alias}" Margin="5" Width="125" ToolTip="{Binding Role.Description}"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl></ScrollViewer>
+                    <Grid>
+                        <Grid.Resources>
+                            <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Column="0" Grid.Row="0" Text="Անվանում:"/>
+                        <TextBox  Grid.Column="1" Grid.Row="0" Text="{Binding SelectedEsUser.UserName}" IsReadOnly="True"/>
+                        <TextBlock Grid.Column="0" Grid.Row="1" Text="Հեռախոս:"/>
+                        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding SelectedEsUser.Mobile}"/>
+                        <TextBlock Grid.Column="0" Grid.Row="2" Text="Էլ փոստ:"/>
+                        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding SelectedEsUser.Email}"/>
+                        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+                            <GroupBox  Header="Օգտագործողի խմբեր">
+                                <Grid MinHeight="100">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                        <ItemsControl  ItemsSource="{Binding Roles}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                <WrapPanel Width="{Binding (FrameworkElement.ActualWidth), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}" Height="{Binding (FrameworkElement.ActualHeight), RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.Template>
+                                                <ControlTemplate TargetType="ItemsControl">
+                                                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                                                        <ItemsPresenter/>
+                                                    </ScrollViewer>
+                                                </ControlTemplate>
+                                            </ItemsControl.Template>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type settings:UserRole}">
+                                                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Content="{Binding Alias}" Margin="5" Width="125" ToolTip="{Binding Role.Description}"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Grid>
+                            </GroupBox>
                         </Grid>
-                    </GroupBox>
-                    <StackPanel Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button  Content="Խմբագրել" Command="{Binding EditUserRoleCommand}" CommandParameter="{Binding SelectedEsUser}"/>
-                        <Button Content="Հեռացնել" Command="{Binding RemoveEsUserCommand}" CommandParameter="{Binding SelectedEsUser}"/>
-                    </StackPanel>
-                </Grid>
-            </GroupBox>
-        </Grid>
+                        <StackPanel Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button  Content="Խմբագրել" Command="{Binding EditUserRoleCommand}" CommandParameter="{Binding SelectedEsUser}"/>
+                            <Button Content="Հեռացնել" Command="{Binding RemoveEsUserCommand}" CommandParameter="{Binding SelectedEsUser}"/>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+            </Grid>
+        </ScrollViewer>
     </DataTemplate>
 </ResourceDictionary>
