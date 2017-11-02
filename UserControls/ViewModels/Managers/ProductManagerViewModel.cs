@@ -416,7 +416,7 @@ namespace UserControls.ViewModels.Managers
         protected virtual void GetProductBy(object o)
         {
             var type = o is ProductViewType ? (ProductViewType)o : (ProductViewType?)null;
-            Products = new ProductsManager().GetProductsBy(type ?? ProductViewType.ByActive, ApplicationManager.Instance.GetMember.Id);
+            Products = new ProductsManager().GetProductsBy(type ?? ProductViewType.ByActive);
         }
 
         protected virtual bool CanChangeProductEnabled(object o)

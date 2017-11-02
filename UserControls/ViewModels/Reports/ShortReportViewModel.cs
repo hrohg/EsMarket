@@ -272,7 +272,7 @@ namespace UserControls.ViewModels.Reports
         #endregion Cost From Sale
 
         public decimal ProfitFromSale { get { return TotalSale - CostFromSale; } }
-        public decimal ProfitPrcentFromSale { get { return TotalSale != 0 ? ProfitFromSale * 100 / (CostFromSale != 0 ? CostFromSale : TotalSale) : 0; } }
+        public decimal ProfitPrcentFromSale { get { return TotalSale != 0 ? ProfitFromSale * 100 / TotalSale : 0; } }
 
         #endregion Short invoice report from sale
 

@@ -344,9 +344,9 @@ namespace ES.Business.Managers
         {
             return TryGetRegisteredProducts(memberId).Select(Convert).ToList();
         }
-        public List<ProductModel> GetProductsBy(ProductViewType type, long memberId)
+        public List<ProductModel> GetProductsBy(ProductViewType type)
         {
-            return TryGetProductsBy(type, memberId);
+            return TryGetProductsBy(type);
 
         }
         public ProductModel EditProduct(ProductModel product)
@@ -819,12 +819,13 @@ namespace ES.Business.Managers
 
             }
         }
-        private List<ProductModel> TryGetProductsBy(ProductViewType type, long memberId)
+        private List<ProductModel> TryGetProductsBy(ProductViewType type)
         {
             using (var db = GetDataContext())
             {
                 try
                 {
+                    var memberId = ApplicationManager.Member.Id;
                     switch (type)
                     {
                         case ProductViewType.All:

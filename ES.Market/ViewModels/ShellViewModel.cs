@@ -71,9 +71,6 @@ namespace ES.Market.ViewModels
         #endregion Events
 
         #region Internal fields
-        private const string UserProperty = "User";
-        private const string MemberProperty = "Member";
-        private const string UserRolesProperty = "UserRoles";
         private const string IsLocalModeProperty = "IsLocalMode";
         private const string MessagesProperty = "Messages";
         private const string MessageProperty = "Message";
@@ -81,9 +78,6 @@ namespace ES.Market.ViewModels
 
         #region Internal properties
         private MarketShell _parentTabControl;
-        private EsUserModel _user;
-        private EsMemberModel _member;
-        private List<MembersRoles> _userRoles;
         private bool _isLocalMode;
 
         private ObservableCollection<MessageModel> _messages = new ObservableCollection<MessageModel>();
@@ -148,9 +142,6 @@ namespace ES.Market.ViewModels
         public ObservableCollection<ToolsViewModel> Tools { get; set; }
         #endregion Avalon dock
 
-        public EsUserModel User { get { return _user; } set { _user = value; RaisePropertyChanged(UserProperty); } }
-        public EsMemberModel Member { get { return _member; } set { _member = value; RaisePropertyChanged(MemberProperty); } }
-        public List<MembersRoles> UserRoles { get { return _userRoles; } set { _userRoles = value; RaisePropertyChanged(UserRolesProperty); } }
         public string ProcessDescription { get; set; }
         public bool IsCashUpdateing
         {
@@ -181,7 +172,7 @@ namespace ES.Market.ViewModels
         public ObservableCollection<InvoiceViewModel> Invoices = new ObservableCollection<InvoiceViewModel>();
         public ObservableCollection<MessageModel> Messages { get { return new ObservableCollection<MessageModel>(_messages.OrderByDescending(s => s.Date)); } set { _messages = value; RaisePropertyChanged(MessagesProperty); RaisePropertyChanged(MessageProperty); } }
         public MessageModel Message { get { return Messages.LastOrDefault(); } }
-        public string ServerDescription { get { return ApplicationManager.IsEsServer ? string.Format("{0}: {1}", "Cloud", Member.FullName) : string.Format("{0}: {1}", "Local server", Member.FullName); } }
+        public string ServerDescription { get { return ApplicationManager.IsEsServer ? string.Format("{0}: {1}", "Cloud", ApplicationManager.Member.FullName) : string.Format("{0}: {1}", "Local server", ApplicationManager.Member.FullName); } }
         public string ServerPath
         {
             get
@@ -241,9 +232,6 @@ namespace ES.Market.ViewModels
         #region Internal methods
         private void Initialize()
         {
-            User = ApplicationManager.GetEsUser;
-            Member = ApplicationManager.Instance.GetMember;
-            UserRoles = ApplicationManager.Instance.UserRoles;
             IsLocalMode = ApplicationManager.Settings.MemberSettings.IsOfflineMode;
 
             Documents = new ObservableCollection<DocumentViewModel>();
@@ -525,13 +513,13 @@ namespace ES.Market.ViewModels
                 case Key.F7:
                     if (!ApplicationManager.IsInRole(UserRoleEnum.Manager)) return;
                     //handle X key reate new sale invoice
-                    if (_userRoles.FirstOrDefault(s => s.RoleName != "Manager" || s.RoleName == "Storekeeper" || s.RoleName != "Seller") == null) break;
+                    if (!ApplicationManager.IsInRole(UserRoleEnum.Seller)) break;
                     OnGetInvoices(new Tuple<InvoiceType, InvoiceState, MaxInvocieCount>(InvoiceType.ProductOrder, InvoiceState.New, MaxInvocieCount.All));
                     break;
                 case Key.F8:
                     if (!ApplicationManager.IsInRole(UserRoleEnum.Manager)) return;
                     //handle X key logoff
-                    if (_userRoles.FirstOrDefault(s => s.RoleName != "Manager") == null) break;
+                    if (!ApplicationManager.IsInRole(UserRoleEnum.Manager)) break;
                     //MiManageProducts_Click(null, null);
                     break;
                 case Key.F9:
@@ -610,7 +598,7 @@ namespace ES.Market.ViewModels
             {
                 nextTab = tabShop.Items.Add(new TabItem
                 {
-                    Content = new ProductOrderUctrl(_user, _member),
+                    Content = new ProductOrderUctrl(),
                     DataContext = vm,
                     AllowDrop = true
                 });
@@ -743,10 +731,10 @@ namespace ES.Market.ViewModels
                     ExportManager.ExportPriceForScaleToXml(SelectItemsManager.SelectProductByCheck(true));
                     break;
                 case ExportForScale.WaightsOnly:
-                    ExportManager.ExportPriceForScaleToXml(new ProductsManager().GetProductsBy(ProductViewType.WeigthsOnly, _member.Id));
+                    ExportManager.ExportPriceForScaleToXml(new ProductsManager().GetProductsBy(ProductViewType.WeigthsOnly));
                     break;
                 case ExportForScale.ShtrixK:
-                    ExportManager.ExportPriceForShtrikhK(new ProductsManager().GetProductsBy(ProductViewType.All, _member.Id));
+                    ExportManager.ExportPriceForShtrikhK(new ProductsManager().GetProductsBy(ProductViewType.All));
                     break;
                 case ExportForScale.All:
                     break;
@@ -1411,7 +1399,7 @@ namespace ES.Market.ViewModels
 
         private bool CanGetProductHistory(object o)
         {
-            return UserRoles.Any(s => s.RoleName == "Manager" || s.RoleName == "SaleManager");
+            return ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
         }
 
         private void OnGetProductsHistory(object o)
@@ -1452,7 +1440,7 @@ namespace ES.Market.ViewModels
 
         private bool CanManageProcucts(object o)
         {
-            return _userRoles.Any(s => s.RoleName == "Manager");
+            return ApplicationManager.IsInRole(UserRoleEnum.Manager);
         }
 
         private void OnManageProducts(object o)
@@ -1477,7 +1465,7 @@ namespace ES.Market.ViewModels
 
         private bool CanManagePartners(object o)
         {
-            return _userRoles.Any(s => s.RoleName == "Manager");
+            return ApplicationManager.IsInRole(UserRoleEnum.Manager);
         }
 
         private void OnManagePartners(object o)
@@ -2056,13 +2044,13 @@ namespace ES.Market.ViewModels
                     {
                         return;
                     }
-                    var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(_member.Id));
+                    var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Member.Id));
                     if (stocks.Count == 0)
                     {
                         MessageManager.OnMessage(new MessageModel("Պահեստի բացակայում", MessageTypeEnum.Warning));
                         return;
                     }
-                    stockTake = StockTakeManager.CreateStockTaking(stocks.First().Id, _user.UserId, _member.Id);
+                    stockTake = StockTakeManager.CreateStockTaking(stocks.First().Id);
                     vm = new StockTakeManagerViewModel(stockTake);
                     break;
                 case ProjectCreationEnum.Edit:

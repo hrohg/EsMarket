@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ES.Data.Models.Reports
 {
@@ -17,7 +14,7 @@ namespace ES.Data.Models.Reports
         public decimal Cost { get; set; }
         public decimal? Sale { get; set; }
         public decimal Profit { get { return (decimal) (Sale!=null? Sale - Cost:0); } }
-        public string Pers { get { return (((Sale ?? 0) - Cost) * 100 / (Cost != 0 ? Cost : Sale)??0).ToString("N2"); } }
+        public string Pers { get { return (Sale!=null && Sale != 0 ? (double)((Sale - Cost) * 100 / Sale.Value) : 0.0).ToString("N2"); } }
     }
 
     public class InvoiceReportByPartner : IInvoiceReport

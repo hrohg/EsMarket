@@ -19,23 +19,15 @@ namespace UserControls.Views
     {
         #region Properties
         public const string Description = "Պատվեր -";
-        private readonly EsMemberModel _member;
-        private readonly EsUserModel _user;
         private ProductOrderViewModel _viewModel;
         #endregion
-        public ProductOrderUctrl(EsUserModel user, EsMemberModel member)
+        public ProductOrderUctrl()
         {
             InitializeComponent();
-            _member = member;
-            _user = user;
-            DataContext = _viewModel = new ProductOrderViewModel(new ProductOrderModel(), member);
+            DataContext = _viewModel = new ProductOrderViewModel(new ProductOrderModel());
         }
         private void CtrlProductOrder_Loaded(object sender, RoutedEventArgs e)
         {
-            if (_member == null || _user == null)
-            {
-                return;
-            }
             TxtCode.Focus();
         }
         private void CtrlProductOrder_KeyDown(object sender, KeyEventArgs e)

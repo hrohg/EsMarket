@@ -4,7 +4,6 @@ using System.Data.Entity;
 using System.Linq;
 using ES.Business.Helpers;
 using ES.Business.Models;
-using ES.Common.Managers;
 using ES.DataAccess.Models;
 
 namespace ES.Business.Managers
@@ -107,9 +106,9 @@ namespace ES.Business.Managers
         {
             return TryGetStockTakeByCreateDate(startDate, endDate).Select(ConvertStockTake).ToList();
         }
-        public static StockTakeModel CreateStockTaking(long stockId, long creatorId, long memberId)
+        public static StockTakeModel CreateStockTaking(long stockId)
         {
-            return ConvertStockTake(TryCreateStockTake(stockId, creatorId, memberId));
+            return ConvertStockTake(TryCreateStockTake(stockId));
         }
         #endregion
 
@@ -196,21 +195,21 @@ namespace ES.Business.Managers
                 return new List<StockTake>();
             }
         }
-        private static StockTake TryCreateStockTake(long stockId, long creatorId, long memberId)
+        private static StockTake TryCreateStockTake(long stockId)
         {
             try
             {
                 using (var db = GetDataContext())
                 {
-                    var lastNumber = db.StockTake.Where(s => s.MemberId == memberId).OrderByDescending(s => s.StockTakeNumber).Select(s => s.StockTakeNumber).FirstOrDefault();
+                    var lastNumber = db.StockTake.Where(s => s.MemberId == ApplicationManager.Member.Id).OrderByDescending(s => s.StockTakeNumber).Select(s => s.StockTakeNumber).FirstOrDefault();
                     var newItem = new StockTake
                     {
                         Id = Guid.NewGuid(),
-                        MemberId = memberId,
+                        MemberId = ApplicationManager.Member.Id,
                         StockTakeNumber = lastNumber != null ? ++lastNumber : 1,
                         StockId = stockId,
                         CreateDate = DateTime.Now,
-                        CreatorId = creatorId
+                        CreatorId = ApplicationManager.GetEsUser.UserId
                     };
                     db.StockTake.Add(newItem);
                     db.SaveChanges();

@@ -18,7 +18,6 @@ namespace UserControls.ViewModels.Products
         /// <summary>
         /// Initalize a new instance of the ProductViewModel class.
         /// </summary>
-        private EsMemberModel _member;
         private PartnerModel _partner;
         private ProductOrderModel _productOrder = new ProductOrderModel() ;
         private ProductOrderItems _productOrderItem = new ProductOrderItems();
@@ -39,16 +38,15 @@ namespace UserControls.ViewModels.Products
         {
             _productOrderItems = value; OnPropertyChanged("PropertyOrderItems");
         } } 
-        public ProductOrderViewModel(ProductOrderModel productOrder, EsMemberModel member)
+        public ProductOrderViewModel(ProductOrderModel productOrder)
         {
             _productOrder = productOrder;
-            _member = member;
             EditCommand = new ProductOrderEditCommands(this);
         }
 
         public void SetProductOrderItem(string code)
         {
-            var product = new ProductsManager().GetProductsByCodeOrBarcode(code, _member.Id);
+            var product = new ProductsManager().GetProductsByCodeOrBarcode(code, ApplicationManager.Member.Id);
             SetProductOrderItem(product);
         }
         private void SetProductOrderItem(ProductModel product)

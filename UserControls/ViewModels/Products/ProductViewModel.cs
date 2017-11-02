@@ -441,7 +441,7 @@ namespace UserControls.ViewModels.Products
         }
         public void GetProductBy(ProductViewType? type)
         {
-            Products = new ProductsManager().GetProductsBy(type ?? ProductViewType.ByActive, ApplicationManager.Instance.GetMember.Id);
+            Products = new ProductsManager().GetProductsBy(type ?? ProductViewType.ByActive);
         }
         public bool CanChangeProductEnabled { get { return Product != null && _products.Any(s => s.Id == Product.Id); } }
         public void ChangeProductEnabled()
