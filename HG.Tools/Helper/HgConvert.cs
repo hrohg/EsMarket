@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -86,6 +87,14 @@ namespace HG.Tools.Helper
                     return 0;
                 }
                 return Convert.ToDecimal(o);
+            }
+            public static decimal ToDecimal(string o, CultureInfo cultureInfo)
+            {
+                if (string.IsNullOrEmpty(o))
+                {
+                    return 0;
+                }
+                return decimal.Parse(o, cultureInfo);
             }
             /// <summary>
             /// Returns the specified double-precision floating point number

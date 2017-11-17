@@ -218,7 +218,7 @@ namespace UserControls.ViewModels.Invoices
         private void SetICommands()
         {
             //ICommands
-            RemoveInvoiceItemCommand = new RelayCommand(RemoveInvoiceItem, CanRemoveInvoiceItem); 
+            RemoveInvoiceItemCommand = new RelayCommand(RemoveInvoiceItem, CanRemoveInvoiceItem);
 
 
             //PrintInvoiceItemCommand = new PrintInvoiceItemCommands(this);
@@ -389,7 +389,7 @@ namespace UserControls.ViewModels.Invoices
         }
         #endregion Auto save
 
-        protected abstract void SetPrice(); 
+        protected abstract void SetPrice();
         #endregion Internal methods
 
         #region External methods
@@ -593,8 +593,7 @@ namespace UserControls.ViewModels.Invoices
 
         public virtual void OnSaveInvoice(object o)
         {
-            Save();
-            DeleteAutoSaveFile();
+            if (Save()) DeleteAutoSaveFile();
         }
 
         private bool Save()
@@ -806,7 +805,7 @@ namespace UserControls.ViewModels.Invoices
         public ICommand ExportInvoiceToXmlCommand { get; private set; }
         public ICommand ExportInvoiceToExcelRusCommand { get; private set; }
         public ICommand ExportInvoiceToXmlRusCommand { get; private set; }
-        
+
         #region Add Items From Invoice Command
 
         private ICommand _addItemsFromInvoiceCommand;
@@ -907,6 +906,6 @@ namespace UserControls.ViewModels.Invoices
         #endregion Paid command
 
         #endregion Commands
-        
+
     }
 }

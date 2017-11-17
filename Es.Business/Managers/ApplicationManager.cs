@@ -400,7 +400,17 @@ namespace ES.Business.Managers
         }
         public static LocalManager CashManager { get { return Instance.CashProvider; } }
         public static MessageManager MessageManager { get { return _insatance._messageManager; } }
-        #endregion
+
+        #region Main Thread
+        static int mainThreadId;
+
+        // If called in the non main thread, will return false;
+        public static bool IsMainThread
+        {
+            get { return System.Threading.Thread.CurrentThread.ManagedThreadId == mainThreadId; }
+        }
+        #endregion Main Thread
+        #endregion External properties
 
         #region Constructors
         private static ApplicationManager _insatance;
@@ -419,7 +429,8 @@ namespace ES.Business.Managers
 
         private void Initialize()
         {
-
+            // In Main method:
+            mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
         }
 
         private void OnMessageReceived(string message, MessageTypeEnum type)

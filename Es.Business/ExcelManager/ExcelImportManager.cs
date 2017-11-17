@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using ES.Business.Managers;
@@ -76,15 +77,15 @@ namespace ES.Business.ExcelManager
                         //Note
                         Note = xlWSh.Cells[nextRow, 6].Text,
                         //Cost price
-                        CostPrice = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 7].Text)? null: HgConvert.ToDecimal(xlWSh.Cells[nextRow, 7].Text),
+                        CostPrice = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 7].Text) ? null : HgConvert.ToDecimal(xlWSh.Cells[nextRow, 7].Text, CultureInfo.InvariantCulture),
                         //Price
-                        Price = HgConvert.ToDecimal(xlWSh.Cells[nextRow, 8].Text),
+                        Price = HgConvert.ToDecimal(xlWSh.Cells[nextRow, 8].Text, CultureInfo.InvariantCulture),
                         //Discount
-                        Discount = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 9].Text) ? null : HgConvert.ToDecimal(xlWSh.Cells[nextRow, 9].Text),
+                        Discount = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 9].Text) ? null : HgConvert.ToDecimal(xlWSh.Cells[nextRow, 9].Text, CultureInfo.InvariantCulture),
                         //DealerPrice
-                        DealerPrice = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 10].Text) ? null : HgConvert.ToDecimal(xlWSh.Cells[nextRow, 10].Text),
+                        DealerPrice = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 10].Text) ? null : HgConvert.ToDecimal(xlWSh.Cells[nextRow, 10].Text, CultureInfo.InvariantCulture),
                         //DealerDiscount
-                        DealerDiscount = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 11].Text) ? null : HgConvert.ToDecimal(xlWSh.Cells[nextRow, 11].Text),
+                        DealerDiscount = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 11].Text) ? null : HgConvert.ToDecimal(xlWSh.Cells[nextRow, 11].Text, CultureInfo.InvariantCulture),
                     };
                     //nextRow++;
                     if(string.IsNullOrEmpty(product.Code)) continue;
@@ -123,8 +124,8 @@ namespace ES.Business.ExcelManager
                     var invoiceItem = new InvoiceItemsModel
                     {
                         Product = product,
-                        Quantity = HgConvert.ToDecimal(xlWSh.Cells[nextRow, 5].Text),
-                        Price = HgConvert.ToDecimal(xlWSh.Cells[nextRow, 6].Text),
+                        Quantity = HgConvert.ToDecimal(xlWSh.Cells[nextRow, 5].Text, CultureInfo.InvariantCulture),
+                        Price = HgConvert.ToDecimal(xlWSh.Cells[nextRow, 6].Text, CultureInfo.InvariantCulture),
                         Note = xlWSh.Cells[nextRow, 8].Text
                     };
                     invoiceItems.Add(invoiceItem);
@@ -169,7 +170,7 @@ namespace ES.Business.ExcelManager
                             Code = xlWSh.Cells[nextRowIndex, 2].Text,
                             Description = xlWSh.Cells[nextRowIndex, 3].Text,
                             Mu = xlWSh.Cells[nextRowIndex, 4].Text,
-                            Price = Math.Round(HgConvert.ToDecimal(xlWSh.Cells[nextRowIndex, 6].Text), 2),
+                            Price = Math.Round(HgConvert.ToDecimal(xlWSh.Cells[nextRowIndex, 6].Text, CultureInfo.InvariantCulture), 2),
                             HcdCs = xlWSh.Cells[nextRowIndex, 8].Text
                         };
                         product.Price +=addVAT ?  Math.Round((decimal) (product.Price * 20 / 100),2) : 0;
@@ -181,7 +182,7 @@ namespace ES.Business.ExcelManager
                             Code = product.Code,
                             Description = product.Description,
                             Mu = product.Mu,
-                            Quantity = HgConvert.ToDecimal(xlWSh.Cells[nextRowIndex, 5].Text),
+                            Quantity = HgConvert.ToDecimal(xlWSh.Cells[nextRowIndex, 5].Text, CultureInfo.InvariantCulture),
                             Price = product.Price,
                             Note = xlWSh.Cells[nextRowIndex, 8].Text
                         };

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using ES.Business.Managers;
 using ES.Common.Models;
 using ES.Common.ViewModels.Base;
 using Xceed.Wpf.AvalonDock.Layout;

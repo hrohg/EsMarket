@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Threading;
 using System.Xml.Serialization;
 using CashReg;
 using CashReg.Helper;
@@ -561,7 +562,17 @@ namespace ES.Market.ViewModels
 
         private void OnNewMessage(MessageModel message)
         {
-            LogViewModel.AddLog(message);
+            if (ApplicationManager.IsMainThread)
+            {
+                LogViewModel.AddLog(message);
+            }
+            else
+            {
+                if (System.Windows.Application.Current!=null)
+                {
+                    System.Windows.Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => LogViewModel.AddLog(message)));
+                }
+            }
             if (_messages != null) _messages.Add(message);
             RaisePropertyChanged(MessagesProperty);
         }
@@ -1421,6 +1432,7 @@ namespace ES.Market.ViewModels
                     OnNewMessage(new MessageModel("Ապրանքագիր չի հայտնաբերվել։", MessageTypeEnum.Information));
                     return;
                 }
+                invoices = invoices.OrderByDescending(s => s.ApproveDate).ToList();
                 invoices = SelectItemsManager.SelectInvoice(invoices, true);
                 foreach (var invoiceModel in invoices)
                 {
