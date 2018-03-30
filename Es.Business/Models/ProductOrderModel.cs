@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace ES.Business.Models
 {
-    public class ProductOrderModel:INotifyPropertyChanged
+    public class ProductOrdersModel:INotifyPropertyChanged
     { 
     
           /// <summary>
@@ -49,7 +49,7 @@ namespace ES.Business.Models
         #endregion
         #region Constructors
 
-        public ProductOrderModel()
+        public ProductOrdersModel()
         {
             
         }

@@ -95,17 +95,21 @@ namespace ES.Business.Managers
 
         #region Partners public methods
 
-        public static List<EsPartnersTypes> GetPartnersTypes(long memberId)
+        public static List<EsPartnersTypes> GetPartnersTypes()
         {
-            return TryGetPartnersTypes(memberId);
+            return TryGetPartnersTypes();
         }
-        public static PartnerModel GetPartner(Guid? id, long esMemberId)
+        public static PartnerModel GetPartner(Guid? id)
         {
-            return Convert(TryGetPartner(id, esMemberId));
+            return Convert(TryGetPartner(id));
         }
         public static List<PartnerModel> GetPartners()
         {
             return TryGetPartners().Select(Convert).OrderBy(s => s.FullName).ToList();
+        }
+        public static decimal GetPartnersAmount(bool isDebit)
+        {
+            return TryGetPartnersAmount(isDebit);
         }
         public static List<PartnerModel> GetPartners(List<Guid> ids)
         {
@@ -115,17 +119,26 @@ namespace ES.Business.Managers
         {
             return TryGetPartners(partnerTypeId).Select(Convert).FirstOrDefault();
         }
-        public static PartnerModel GetDefaultParnerByInvoiceType(long esMemberId, InvoiceType invoiceTypeId)
+        public static PartnerModel GetDefaultParnerByInvoiceType(InvoiceType type)
         {
-            switch (invoiceTypeId)
+            switch (type)
             {
+                case InvoiceType.ReturnFrom:
                 case InvoiceType.SaleInvoice:
-                    return Convert(TryGetPartner(DefaultsManager.GetDefaultValueGuid(DefaultControls.Customer, esMemberId), esMemberId));
+                    return Convert(TryGetPartner(DefaultsManager.GetDefaultValueGuid(DefaultControls.Customer)));
+                case InvoiceType.ReturnTo:
                 case InvoiceType.PurchaseInvoice:
-                    return Convert(TryGetPartner(DefaultsManager.GetDefaultValueGuid(DefaultControls.Provider, esMemberId), esMemberId));
+                    return Convert(TryGetPartner(DefaultsManager.GetDefaultValueGuid(DefaultControls.Provider)));
+                case InvoiceType.ProductOrder:
+                    break;
+                case InvoiceType.MoveInvoice:
+                    break;
+                case InvoiceType.InventoryWriteOff:
+                    break;
                 default:
                     return null;
             }
+            return null;
         }
         public static List<PartnerModel> GetPartner()
         {
@@ -176,15 +189,14 @@ namespace ES.Business.Managers
                     controlKey = DefaultControls.Branch;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("type", partner.PartnersTypeId, null);
-                    return false;
+                    throw new ArgumentOutOfRangeException("partner", partner.PartnersTypeId, null);
             }
-            return DefaultsManager.SetDefault(controlKey, partner.EsMemberId, null, partner.Id );
+            return DefaultsManager.SetDefault(controlKey, null, partner.Id );
         }
         #endregion
 
         #region Partners private methods
-        private static List<EsPartnersTypes> TryGetPartnersTypes(long memberId)
+        private static List<EsPartnersTypes> TryGetPartnersTypes()
         {
             try
             {
@@ -198,7 +210,7 @@ namespace ES.Business.Managers
                 return new List<EsPartnersTypes>();
             }
         }
-        private static Partners TryGetPartner(Guid? id, long memberId)
+        private static Partners TryGetPartner(Guid? id)
         {
             if (id == null) return null;
             using (var db = GetDataContext())
@@ -207,7 +219,7 @@ namespace ES.Business.Managers
                 {
                     return db.Partners.Include(s => s.EsMembers)
                                         .Include(s => s.EsPartnersTypes)
-                                        .SingleOrDefault(s => s.Id == id && s.EsMemberId == memberId);
+                                        .SingleOrDefault(s => s.Id == id && s.EsMemberId == ApplicationManager.Member.Id);
                 }
                 catch (Exception)
                 {
@@ -230,6 +242,21 @@ namespace ES.Business.Managers
                 catch (Exception)
                 {
                     return new List<Partners>();
+                }
+
+            }
+        }
+        private static decimal TryGetPartnersAmount(bool isDebit)
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    return db.Partners.Where(s => s.EsMemberId == ApplicationManager.Member.Id).Sum(s=>isDebit?(s.Debit??0):(s.Credit??0));
+                }
+                catch (Exception)
+                {
+                    return 0;
                 }
 
             }

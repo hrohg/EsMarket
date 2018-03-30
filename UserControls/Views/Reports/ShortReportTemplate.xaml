@@ -26,8 +26,8 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" CanVerticallyScroll="True" MaxHeight="200">
-                        <GroupBox Header="Վաճառք ըստ գնորդների" VerticalAlignment="Stretch">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <GroupBox Header="Վաճառք ըստ գնորդների" VerticalAlignment="Stretch" Height="{Binding ElementName=GroupBox_Turnover,Path=ActualHeight}">
                             <DataGrid ItemsSource="{Binding Customers}" AutoGenerateColumns="False" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn IsReadOnly="True" Header="Գնորդ" Binding="{Binding Description}" />
@@ -38,7 +38,7 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                         </GroupBox>
-                        <GroupBox Header="Վաճառք ըստ վաճառողների" VerticalAlignment="Stretch">
+                        <GroupBox Header="Վաճառք ըստ վաճառողների" VerticalAlignment="Stretch" Height="{Binding ElementName=GroupBox_Turnover,Path=ActualHeight}">
                             <DataGrid ItemsSource="{Binding Sellers}" AutoGenerateColumns="False" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn IsReadOnly="True" Header="Վաճառող" Binding="{Binding Description}" />
@@ -49,7 +49,7 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                         </GroupBox>
-                        <GroupBox Header="Շրջանառություն" VerticalAlignment="Stretch">
+                        <GroupBox x:Name="GroupBox_Turnover" Header="Շրջանառություն" VerticalAlignment="Top">
                                 <StackPanel>
                                     <DataGrid ItemsSource="{Binding ShortReport}" AutoGenerateColumns="False" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" Width="auto" CanUserAddRows="False" CanUserDeleteRows="False">
                                         <DataGrid.Columns>

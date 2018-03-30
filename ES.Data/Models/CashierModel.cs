@@ -61,6 +61,9 @@ namespace ES.Data.Models
                 OnPropertyChanged(ChangeProperty);
             }
         }
+        /// <summary>
+        /// Կանխավճար
+        /// </summary>
         public decimal? ReceivedPrepayment
         {
             get { return _receivedPrepayment; }
@@ -71,6 +74,9 @@ namespace ES.Data.Models
                 _receivedPrepayment = value; OnPropertyChanged(ReceivedPrepaymentProperty); OnPropertyChanged(ChangeProperty);
             }
         }
+        /// <summary>
+        /// Դեբետ
+        /// </summary>
         public decimal? AccountsReceivable
         {
             get { return _accountsReceivable; }

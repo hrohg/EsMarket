@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows;
 using CashReg;
 using CashReg.Helper;
+using CashReg.Interfaces;
 using ES.Business.Managers;
 using ES.Data.Model;
 using UserControls.ViewModels.Invoices;
@@ -24,7 +25,7 @@ namespace UserControls.Helpers
         #endregion
         public EcrManager()
         {
-            _ecrServer = new EcrServer(ApplicationManager.Settings.MemberSettings.EcrConfig);
+            _ecrServer = new EcrServer(ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig);
         }
 
         #region Public Methods
@@ -80,12 +81,12 @@ namespace UserControls.Helpers
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 //Print ECR Receipt
-                var pr = _ecrServer.PrintReceipt(model.InvoiceItems.Select(s => new Product(s.Code,s.Description, s.Mu )
+                var pr = _ecrServer.PrintReceipt(model.InvoiceItems.Select(s =>(IEcrProduct) new EcrProduct(s.Code,s.Description, s.Mu )
                     {
                         Qty = s.Quantity??0,
                         Price = s.Price??0,
                         //Dep = 1
-                    }).ToList(), new CashReg.Helper.InvoicePaid { PaidAmount = (int)(Math.Round((model.Invoice.Total + 5) / 10) * 10) });
+                    }).ToList(), new EcrPaid { PaidAmount = (int)(Math.Round((model.Invoice.Total + 5) / 10) * 10) });
                 if (_ecrServer.ActionCode == EcrException.ResponseCodes.Ok)
                 {
                     MessageBox.Show("Հսկիչ դրամարկղային կտրոնի տպումն իրականացվել է հաջողությամբ։ \n Խնդրում ենք վերցնել հսկիչ դրամարկղային կտրոնը։", "Տեղեկացում",
@@ -120,12 +121,12 @@ namespace UserControls.Helpers
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 //Print ECR Receipt
-                var pr = _ecrServer.PrintReceipt(model.InvoiceItems.Select(s => new Product(s.Code, s.Description, s.Mu)
+                var pr = _ecrServer.PrintReceipt(model.InvoiceItems.Select(s =>(IEcrProduct) new EcrProduct(s.Code, s.Description, s.Mu)
                     {
                         Qty = s.Quantity??0,
                         Price = s.Price??0,
                         //Dep = 1
-                    }).ToList(), new CashReg.Helper.InvoicePaid { PaidAmount = (int)(Math.Round((model.Invoice.Total + 5) / 10) * 10) });
+                    }).ToList(), (IEcrPaid)new EcrPaid { PaidAmount = (int)(Math.Round((model.Invoice.Total + 5) / 10) * 10) });
                 if (_ecrServer.ActionCode == EcrException.ResponseCodes.Ok)
                 {
                     MessageBox.Show("Հսկիչ դրամարկղային կտրոնի տպումն իրականացվել է հաջողությամբ։ \n Խնդրում ենք վերցնել հսկիչ դրամարկղային կտրոնը։", "Տեղեկացում",

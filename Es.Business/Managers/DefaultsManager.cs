@@ -15,20 +15,20 @@ namespace ES.Business.Managers
         }
         public static long? GetDefaultValueLong(string control, long memberId)
         {
-            var defaultControl = TryGetEsDefault(control, memberId);
+            var defaultControl = TryGetEsDefault(control);
             if (defaultControl == null) return null;
             return defaultControl.ValueInLong;
         }
-        public static Guid?  GetDefaultValueGuid(string control, long memberId)
+        public static Guid?  GetDefaultValueGuid(string control)
         {
-            var defaultControl = TryGetEsDefault(control, memberId);
+            var defaultControl = TryGetEsDefault(control);
             if (defaultControl == null) return null;
             return defaultControl.ValueInGuid;
         }
 
-        public static bool SetDefault(string control, long memberId, int? valueInInt, Guid valueInGuid)
+        public static bool SetDefault(string control, int? valueInInt, Guid valueInGuid)
         {
-            return TrySetDefault(control, memberId, valueInInt, valueInGuid);
+            return TrySetDefault(control, valueInInt, valueInGuid);
         }
         #endregion
         #region private properties
@@ -46,13 +46,13 @@ namespace ES.Business.Managers
                 }
             }
         }
-        private static EsDefaults TryGetEsDefault(string control, long memberId)
+        private static EsDefaults TryGetEsDefault(string control)
         {
             using (var db = GetDataContext())
             {
                 try
                 {
-                    return db.EsDefaults.SingleOrDefault(s => s.MemberId == memberId && s.Control == control);
+                    return db.EsDefaults.SingleOrDefault(s => s.MemberId == ApplicationManager.Member.Id && s.Control == control);
                 }
                 catch (Exception)
                 {
@@ -60,13 +60,13 @@ namespace ES.Business.Managers
                 }
             }
         }
-        private static bool TrySetDefault(string control, long memberId, long? valueInLong, Guid valueInGuid)
+        private static bool TrySetDefault(string control, long? valueInLong, Guid valueInGuid)
         {
             using (var db = GetDataContext())
             {
                 try
                 {
-                    var exDefault = db.EsDefaults.SingleOrDefault(s =>  s.Control.ToLower() == control.ToLower() && s.MemberId == memberId);
+                    var exDefault = db.EsDefaults.SingleOrDefault(s =>  s.Control.ToLower() == control.ToLower() && s.MemberId == ApplicationManager.Member.Id);
                     if (exDefault != null)
                     {
                         exDefault.ValueInGuid = valueInGuid;
@@ -80,7 +80,7 @@ namespace ES.Business.Managers
                             Control = control,
                             ValueInGuid = valueInGuid,
                             ValueInLong = valueInLong,
-                            MemberId = memberId
+                            MemberId = ApplicationManager.Member.Id
                         };
                         db.EsDefaults.Add(exDefault);
                     }
@@ -91,7 +91,6 @@ namespace ES.Business.Managers
                 {
                     return false;
                 }
-
             }
         }
         #endregion

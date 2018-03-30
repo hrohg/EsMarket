@@ -82,7 +82,8 @@ namespace ES.Data.Models
         public PartnerTypeModel PartnersType { get { return _partnerType; } set { _partnerType = value; } }
         public long? EsUserId { get { return _esUserId; } set { _esUserId = value; } }
         public EsUserModel EsUser { get { return _esUser; } set { _esUser = value; } }
-        public string ClubSixteenId { get { return _clubSixteenId; } set { _clubSixteenId = value; OnPropertyChanged(ClubSixteenIdProperty); } }
+        public string ClubSixteenId { get { return _clubSixteenId; } set { _clubSixteenId = value; OnPropertyChanged(ClubSixteenIdProperty); OnPropertyChanged("IsRegistered"); } }
+        public bool IsRegistered { get { return !string.IsNullOrEmpty(ClubSixteenId); } }
         public string FullName{get { return _fullName; }set { _fullName = value; OnPropertyChanged(FullNameProperty); }}
         public string PartnerFull { get {return ((FullName ?? string.Empty) + (FullName ?? string.Empty) + (LastName ?? string.Empty) + (Mobile ?? string.Empty));} }
         public string Description { get { return string.Format("{0} {1}", FullName, MobileByFormating);} }

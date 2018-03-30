@@ -1,5 +1,6 @@
-﻿using System.Collections.ObjectModel;
-using ES.Business.Managers;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Windows;
 using ES.Common.Models;
 using ES.Common.ViewModels.Base;
 using Xceed.Wpf.AvalonDock.Layout;
@@ -9,7 +10,7 @@ namespace UserControls.ViewModels.Logs
     public class LogViewModel : ToolsViewModel
     {
         #region Internal properties
-
+        private readonly object _sync = new object();
         #endregion Internal properties
 
         #region External properties
@@ -56,8 +57,15 @@ namespace UserControls.ViewModels.Logs
 
         public void AddLog(MessageModel log)
         {
-            Logs.Insert(0, log);
-            CurrentLog = log;
+            if (Application.Current != null)
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    lock (_sync)
+                    {
+                        Logs.Insert(0, log);
+                        CurrentLog = log;
+                    }
+                }));
         }
         #endregion External methods
 

@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using ES.Business.ExcelManager;
 using ES.Business.Managers;
+using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
@@ -42,11 +43,11 @@ namespace UserControls.ViewModels
         #endregion
 
         #region External Properties
-        
+
         public override int TotalRows { get { return _totalRows; } set { _totalRows = value; RaisePropertyChanged("TotalRows"); } }
         public override double TotalCount { get { return _totalCount; } set { _totalCount = value; RaisePropertyChanged("TotalCount"); } }
         public override double Total { get { return _total; } set { _total = value; RaisePropertyChanged("Total"); } }
-        
+
         public bool IsShowNulls
         {
             get
@@ -66,7 +67,8 @@ namespace UserControls.ViewModels
         #endregion
 
         #region Constructors
-        public TableViewModel(List<T> list):this()
+        public TableViewModel(List<T> list)
+            : this()
         {
             Initialize();
             IsShowUpdateButton = true;
@@ -107,7 +109,7 @@ namespace UserControls.ViewModels
         #region Commands
 
         private ICommand _exportToExcelCommand;
-        public ICommand ExportToExcelCommand { get { return _exportToExcelCommand?? (_exportToExcelCommand = new RelayCommand(OnExportToExcel, CanExportToExcel)); } }
+        public ICommand ExportToExcelCommand { get { return _exportToExcelCommand ?? (_exportToExcelCommand = new RelayCommand(OnExportToExcel, CanExportToExcel)); } }
         private ICommand _printCommand;
         public ICommand PrintCommand { get { return _printCommand ?? (_printCommand = new RelayCommand(OnPrint, CanPrint)); } }
         private ICommand _updateCommand;
@@ -143,20 +145,23 @@ namespace UserControls.ViewModels
     {
         #region Internal properties
         private List<ProductOrderModel> _items = new List<ProductOrderModel>();
+        private ProductOrderTypeEnum _productOrderType;
         #endregion
         #region External properties
         public override ObservableCollection<ProductOrderModel> ViewList
         {
             get
             {
-                return new ObservableCollection<ProductOrderModel>(_items.Where(s => IsShowNulls || s.NeededQuantity > 0).ToList());
+                return new ObservableCollection<ProductOrderModel>(_items.Where(s => IsShowNulls || s.DemandQuantity > 0).ToList());
             }
         }
 
         #endregion
-        public ProductOrderBySaleViewModel(): base()
+        public ProductOrderBySaleViewModel(ProductOrderTypeEnum productOrderType)
+            : base()
         {
             IsShowUpdateButton = true;
+            _productOrderType = productOrderType;
             Initialize();
         }
 
@@ -167,64 +172,127 @@ namespace UserControls.ViewModels
             IsClosable = true;
             OnUpdate(null);
         }
-        private void Update(Tuple<DateTime, DateTime> dateIntermediate)
+        private void UpdateAsync()
         {
-
-            var invoices = InvoicesManager.GetInvoices((DateTime)dateIntermediate.Item1, (DateTime)dateIntermediate.Item2);
-            var invoiceItems = InvoicesManager.GetInvoiceItems(invoices.Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice).Select(s => s.Id));
-            var productItems = new ProductsManager().GetProductItems(ApplicationManager.Instance.GetMember.Id);
-            var productOrder = invoiceItems.GroupBy(s => s.ProductId).Where(s => s.FirstOrDefault() != null).Select(s =>
-                new ProductOrderModel
-                {
-                    ProductId = s.First().ProductId,
-                    Code = s.First().Product.Code,
-                    Description = s.First().Product.Description,
-                    Mu = s.First().Product.Mu,
-                    MinPrice = s.First().Product.CostPrice,
-                    MinQuantity = s.First().Product.MinQuantity,
-                    ExistingQuantity = productItems.Where(t => t.ProductId == s.First().ProductId).Sum(t => t.Quantity),
-                    SaleQuantity = invoiceItems.Where(t => t.ProductId == s.First().ProductId).Sum(t => t.Quantity ?? 0),
-                    Note = s.First().Product.Note
-                }).ToList();
-            productOrder = productOrder.Where(s => s.NeededQuantity >= 0).ToList();
-            var productProviders = ProductsManager.GetProductsProviders(productOrder.Select(s => s.ProductId).ToList());
-            var providers = PartnersManager.GetPartners(productProviders.Select(s => s.ProviderId).ToList());
-            foreach (var item in productOrder)
+            switch (_productOrderType)
             {
-                var productProvider = productProviders.FirstOrDefault(s => s.ProductId == item.ProductId);
-                if (productProvider == null) continue;
-                var provider = providers.FirstOrDefault(s => s.Id == productProvider.ProviderId);
-                if (provider == null) continue;
-                item.Provider = provider.FullName;
+                case ProductOrderTypeEnum.ByQuantity:
+                    Title = "Անհրաժեշտ ապրանքների ցուցակ";
+                    _items = ProductsManager.GetProductOrderByProduct();
+
+                    if (_items == null || _items.Count == 0)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(new Action(() => { MessageBox.Show("Նշված տվյալներով պատվեր չի հայտնաբերվել"); }));
+                        return;
+                    }
+                    for (var i = 0; i < _items.Count; i++)
+                        _items[i].Index = i;
+
+                    break;
+                case ProductOrderTypeEnum.ByProviders:
+                    Title = "Անհրաժեշտ ապրանքների ցուցակ";
+                    _items = ProductsManager.GetProductOrderByProduct();
+                    if (_items == null || _items.Count == 0)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(new Action(() => { MessageBox.Show("Նշված տվյալներով պատվեր չի հայտնաբերվել"); }));
+                        return;
+                    }
+                    for (var i = 0; i < _items.Count; i++)
+                    {
+                        _items[i].Index = i;
+                    }
+
+                    break;
+                case ProductOrderTypeEnum.ByBrands:
+                    Title = "Անհրաժեշտ ապրանքների ցուցակ";
+                    var brands = SelectItemsManager.SelectBrands(ProductsManager.GetBrands(ApplicationManager.Instance.GetMember.Id), true);
+                    _items = ProductsManager.GetProductOrderByBrands(brands, ApplicationManager.Instance.GetMember.Id);
+                    if (_items == null || _items.Count == 0)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(new Action(() => { MessageBox.Show("Նշված տվյալներով պատվեր չի հայտնաբերվել"); }));
+                        return;
+                    }
+                    for (var i = 0; i < _items.Count; i++)
+                    {
+                        _items[i].Index = i;
+                    }
+
+
+                    break;
+                case ProductOrderTypeEnum.BySale:
+                    Tuple<DateTime, DateTime> dateIntermediate = null;
+                    Application.Current.Dispatcher.Invoke(new Action(() => { dateIntermediate = SelectManager.GetDateIntermediate(); }));
+
+                    if (dateIntermediate == null) return;
+                    Title = Description = string.Format("Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն) {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
+
+                    var invoices = InvoicesManager.GetInvoices((DateTime)dateIntermediate.Item1, (DateTime)dateIntermediate.Item2);
+                    var invoiceItems = InvoicesManager.GetInvoiceItems(invoices.Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice).Select(s => s.Id));
+                    var productItems = new ProductsManager().GetProductItems(ApplicationManager.Instance.GetMember.Id);
+                    var productOrder = invoiceItems.GroupBy(s => s.ProductId).Where(s => s.FirstOrDefault() != null).Select(s => new ProductOrderModel
+                    {
+                        ProductId = s.First().ProductId,
+                        Code = s.First().Product.Code,
+                        Description = s.First().Product.Description,
+                        Mu = s.First().Product.Mu,
+                        MinPrice = s.First().Product.CostPrice,
+                        CostPrice = s.First().Product.CostPrice,
+                        Price = s.First().Product.Price,
+                        MinQuantity = s.First().Product.MinQuantity,
+                        ExistingQuantity = productItems.Where(t => t.ProductId == s.First().ProductId).Sum(t => t.Quantity),
+                        SaleQuantity = invoiceItems.Where(t => t.ProductId == s.First().ProductId).Sum(t => t.Quantity ?? 0),
+                        Notes = s.First().Product.Note
+                    }).ToList();
+                    productOrder = productOrder.Where(s => s.DemandQuantity >= 0).ToList();
+                    var productProviders = ProductsManager.GetProductsProviders(productOrder.Select(s => s.ProductId).ToList());
+                    var providers = PartnersManager.GetPartners(productProviders.Select(s => s.ProviderId).ToList());
+                    foreach (var item in productOrder)
+                    {
+                        var productProvider = productProviders.FirstOrDefault(s => s.ProductId == item.ProductId);
+                        if (productProvider == null) continue;
+                        var provider = providers.FirstOrDefault(s => s.Id == productProvider.ProviderId);
+                        if (provider == null) continue;
+                        item.Provider = provider.FullName;
+                    }
+                    _items = productOrder.OrderBy(s => s.Notes).ThenBy(s => s.Description).ThenBy(s => s.Code).ToList();
+                    
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            _items = productOrder.OrderBy(s => s.Provider).ThenBy(s => s.Description).ThenBy(s => s.Code).ToList();
-            TotalRows = _items.Count;
-            TotalCount = (double)_items.Sum(s => s.ExistingQuantity);
-            Total = (double)_items.Sum(i => i.Amount);
-            RaisePropertyChanged("ViewList");
-            IsLoading = false;
-            RaisePropertyChanged(IsInProgressProperty);
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                TotalRows = _items.Count;
+                TotalCount = (double)_items.Sum(s => s.ExistingQuantity);
+                Total = (double)_items.Sum(i => i.Amount);
+                RaisePropertyChanged("ViewList");
+                IsLoading = false;
+            }));
             
+
         }
+
         protected override void OnUpdate(object o)
         {
             base.OnUpdate(o);
-            Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
-            if (dateIntermediate==null) return;
-            Title = Description = string.Format("Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն) {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
-            var thread = new Thread(() => Update(dateIntermediate));
+            var thread = new Thread(UpdateAsync);
             thread.Start();
             IsLoading = true;
         }
+
         protected override void OnExportToExcel(object o)
         {
             base.OnExportToExcel(o);
             ExcelExportManager.ExportList(ViewList);
         }
+
         protected override void OnPrint(object o)
         {
             base.OnPrint(o);
-            if (o == null) { return; }
+            if (o == null)
+            {
+                return;
+            }
             var productOrder = ((FrameworkElement)o).FindVisualChildren<Border>().FirstOrDefault();
             if (productOrder == null) return;
             PrintManager.PrintEx(productOrder);

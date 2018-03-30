@@ -1,6 +1,4 @@
-﻿using Microsoft.SqlServer.Management.Sdk.Sfc;
-
-namespace ESL.DataAccess.Helpers
+﻿namespace ES.DataAccess.Helpers
 {
     /// <summary>
     /// Contains properties returning values of the appSection in configuration file
@@ -15,7 +13,7 @@ namespace ESL.DataAccess.Helpers
             get
             {
                 string retval = System.Configuration.ConfigurationManager.AppSettings["EslServerConnectionProvider"];
-                return retval!=null? retval.Replace("serverPas", "academypbx569280"):"System.Data.SqlClient";
+                return retval != null ? retval.Replace("serverPas", "esstockdb@)!$") : "System.Data.SqlClient";
             }
         }
         /// <summary>

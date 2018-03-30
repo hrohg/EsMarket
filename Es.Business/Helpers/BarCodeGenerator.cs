@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Microsoft.Office.Interop.Excel;
 
 namespace ES.Business.Helpers
 {
@@ -90,9 +91,13 @@ namespace ES.Business.Helpers
             }
             if (ProductCode.Length == 4) ProductCode = 1 + ProductCode;
         }
+
         private string CalculateChecksumDigit()
         {
-            string sTemp = CountryCode + ManufacturerCode + ProductCode;
+            return CalculateChecksumDigit(CountryCode + ManufacturerCode + ProductCode);
+        }
+
+        public static string CalculateChecksumDigit(string sTemp){
             int iSum = 0;
             int iDigit = 0;
 

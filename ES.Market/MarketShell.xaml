@@ -22,6 +22,7 @@
 
         <ResourceDictionary>
             <converters:GetInvocieParameterConverter x:Key="GetInvocieParameterConverter"/>
+            <converters:GetInvocieByConverter x:Key="GetInvocieByConverter"/>
             <converters:UserRoleToBoolConverter x:Key="UserRoleToBoolConverter"/>
 
             <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -124,7 +125,7 @@
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.SaleInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.SaleInvoice}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.New}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
@@ -138,7 +139,7 @@
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.SaleInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.SaleInvoice}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
@@ -152,7 +153,7 @@
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.SaleInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.SaleInvoice}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.Approved}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
@@ -166,7 +167,7 @@
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.SaleInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.SaleInvoice}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.Approved}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.SmallCount}" Mode="OneWay"/>
                                 </MultiBinding>
@@ -174,15 +175,15 @@
                         </MenuItem>
                     </MenuItem>
                     <MenuItem Header="Գնում" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
+                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
                         </MenuItem.Icon>
-                        <MenuItem Header="Նոր F3" Command="{Binding GetInvoicesCommand}">
+                        <MenuItem Header="Նոր F3" Command="{Binding GetInvoicesCommand}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.PurchaseInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.PurchaseInvoice}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.New}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
@@ -191,10 +192,10 @@
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_recherch.png"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="Չհաստատված" Command="{Binding GetInvoicesCommand}">
+                        <MenuItem Header="Չհաստատված" Command="{Binding GetInvoicesCommand}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.PurchaseInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.PurchaseInvoice}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
@@ -203,10 +204,10 @@
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="Ապրանքագրեր" Command="{Binding GetInvoicesCommand}">
+                        <MenuItem Header="Ապրանքագրեր" Command="{Binding GetInvoicesCommand}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.PurchaseInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.PurchaseInvoice}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.Approved}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
@@ -215,10 +216,10 @@
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="Դիտել վերջին 100 ապրանքագրերը" Command="{Binding GetInvoicesCommand}">
+                        <MenuItem Header="Դիտել վերջին 100 ապրանքագրերը" Command="{Binding GetInvoicesCommand}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.PurchaseInvoice}"  Mode="OneWay" />
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.PurchaseInvoice}"  Mode="OneWay" />
                                     <Binding Source="{x:Static managers1:InvoiceState.Approved}" Mode="OneWay" />
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.SmallCount}" Mode="OneWay"/>
                                 </MultiBinding>
@@ -240,7 +241,7 @@
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.MoveInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.MoveInvoice}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.New}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
@@ -249,7 +250,7 @@
                         <MenuItem Header="Չհաստատված" Command="{Binding GetInvoicesCommand}" >
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.MoveInvoice}"  Mode="OneWay" />
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.MoveInvoice}"  Mode="OneWay" />
                                     <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay" />
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
@@ -264,7 +265,7 @@
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.MoveInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.MoveInvoice}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.Approved}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
@@ -276,7 +277,7 @@
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.MoveInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.MoveInvoice}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.Approved}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.SmallCount}" Mode="OneWay"/>
                                 </MultiBinding>
@@ -288,43 +289,43 @@
                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
                     <MenuItem Header="Ակտեր" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
+                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
                         </MenuItem.Icon>
-                        <MenuItem Header="Դուրս գրման ակտ" Command="{Binding GetInvoicesCommand}">
+                        <MenuItem Header="Դուրս գրման ակտ" Command="{Binding GetInvoicesCommand}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_recherch.png"/>
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.InventoryWriteOff}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.InventoryWriteOff}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.New}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
                         </MenuItem>
-                        <MenuItem Header="Մուտքագրման ակտ" Command="{Binding}">
+                        <MenuItem Header="Մուտքագրման ակտ" Command="{Binding}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_recherch.png"/>
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.SaleInvoice}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.SaleInvoice}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
                         </MenuItem>
-                        <MenuItem Header="Ակտեր" Command="{Binding GetInvoicesCommand}">
+                        <MenuItem Header="Չհաստատված ակտեր" Command="{Binding GetInvoicesCommand}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.InventoryWriteOff}"  Mode="OneWay"/>
-                                    <Binding Source="{x:Static managers1:InvoiceState.All}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.Statements}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
@@ -335,8 +336,8 @@
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.InventoryWriteOff}"  Mode="OneWay"/>
-                                    <Binding Source="{x:Static managers1:InvoiceState.All}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.Statements}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Approved}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.SmallCount}" Mode="OneWay"/>
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
@@ -345,19 +346,19 @@
                     <MenuItem Header="Վերադարձ" 
                               IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <MenuItem Header="Ետ վերադարձ" Command="{Binding GetInvoicesCommand}">
+                        <MenuItem Header="Ետ վերադարձ" Command="{Binding GetInvoicesCommand}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}">
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.ReturnFrom}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.ReturnFrom}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.New}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
                         </MenuItem>
-                        <MenuItem Header="Վերադարձ մատակարարին" Command="{Binding GetInvoicesCommand}">
+                        <MenuItem Header="Վերադարձ մատակարարին" Command="{Binding GetInvoicesCommand}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.ReturnTo}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.ReturnTo}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.New}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
@@ -374,11 +375,11 @@
 
                 </MenuItem>
 
-                <MenuItem Header="Դրամարկղ">
+                <MenuItem Header="Դրամարկղ"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.JuniorCashier}}">
                     <MenuItem.Icon>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/CashDesk.ico"/>
                     </MenuItem.Icon>
-                    <MenuItem Header="Մնացորդ" 
+                    <MenuItem Header="Մնացորդ"
                               Command="{Binding GetChashDesksInfoCommand}" 
                               IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Cashier}}"/>
                     <Separator/>
@@ -485,11 +486,18 @@
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
                         </MenuItem.Icon>
-                        <MenuItem Header="Ապրանքաշրջանառություն" Command="{Binding GetProductsHistoryCommand}" />
+                        <MenuItem Header="Ապրանքաշրջանառություն" Command="{Binding GetProductsHistoryCommand}" 
+                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"/>
                         <MenuItem Header="Գնացուցակ" Click ="MiViewPriceList_Click"/>
                         <Separator/>
-                        <MenuItem Header="Վաճառք" Command="{Binding SaleProductsCommand}">
-                        </MenuItem>
+                        <Separator/>
+                        <MenuItem Header="Ապրանքների դիտում ըստ պահեստների" Command="{Binding ViewProductsByStockCommand}"/>
+                    </MenuItem>
+                    <MenuItem Header="Փաստաթղթեր">
+                        <MenuItem Header="Վաճառք" Command="{Binding ViewPackingListsCommand}" CommandParameter="{x:Static managers1:InvoiceTypeEnum.SaleInvoice}"/>
+                        <MenuItem Header="Գնում" Command="{Binding ViewPackingListsCommand}" CommandParameter="{x:Static managers1:InvoiceTypeEnum.PurchaseInvoice}"/>
+                        <MenuItem Header="Տեղափոխություն" Command="{Binding ViewPackingListsCommand}" CommandParameter="{x:Static managers1:InvoiceTypeEnum.MoveInvoice}"/>
+                        <Separator/>
                         <MenuItem Header="Տեղափոխություն">
                             <MenuItem Header="Դիտում" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.None}">
                             </MenuItem>
@@ -499,48 +507,63 @@
                             </MenuItem>
                         </MenuItem>
                         <Separator/>
-                        <MenuItem Header="Վաճառքի ապրանքագրեր" Command="{Binding ViewPackingListForSallerCommand}">
+                        <MenuItem Header="Վաճառքի ապրանքագրեր" Command="{Binding ViewPackingListCommand}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
-                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.SaleInvoice}"  Mode="OneWay"/>
+                                <MultiBinding Converter="{StaticResource GetInvocieByConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.SaleInvoice}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.All}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.BigCount}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:OrderInvoiceBy.ApprovedDate}" Mode="OneWay"/>
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
                         </MenuItem>
-                        <MenuItem Header="Տեղափոխման ապրանքագրեր" Command="{Binding ViewPackingListForSallerCommand}">
+                        <MenuItem Header="Տեղափոխման ապրանքագրեր" Command="{Binding ViewPackingListCommand}">
                             <MenuItem.CommandParameter>
-                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.MoveInvoice}"  Mode="OneWay"/>
+                                <MultiBinding Converter="{StaticResource GetInvocieByConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.MoveInvoice}"  Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:InvoiceState.All}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.BigCount}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:OrderInvoiceBy.ApprovedDate}" Mode="OneWay"/>
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
                         </MenuItem>
-                        <MenuItem Header="Գնման ապրանքագրեր" Command="{Binding ViewPackingListForSallerCommand}">
+                        <MenuItem Header="Գնման ապրանքագրեր">
+                            <MenuItem Header="Գնման ապրանքագրեր" Command="{Binding ViewPackingListCommand}">
+                                <MenuItem.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource GetInvocieByConverter}">
+                                        <Binding Source="{x:Static managers1:InvoiceTypeEnum.PurchaseInvoice}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers1:InvoiceState.All}" Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers1:MaxInvocieCount.BigCount}" Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers1:OrderInvoiceBy.ApprovedDate}" Mode="OneWay"/>
+                                    </MultiBinding>
+                                </MenuItem.CommandParameter>
+                            </MenuItem>
+                            <MenuItem Header="Գնման ապրանքագրեր ըստ օպերատորի" Command="{Binding ViewPackingListCommand}">
+                                <MenuItem.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource GetInvocieByConverter}">
+                                        <Binding Source="{x:Static managers1:InvoiceTypeEnum.PurchaseInvoice}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers1:InvoiceState.All}" Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers1:MaxInvocieCount.BigCount}" Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers1:OrderInvoiceBy.Approver}" Mode="OneWay"/>
+                                    </MultiBinding>
+                                </MenuItem.CommandParameter>
+                            </MenuItem>
+                        </MenuItem>
+                        <MenuItem Header="Ակտեր" Command="{Binding ViewPackingListCommand}">
                             <MenuItem.CommandParameter>
-                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.PurchaseInvoice}"  Mode="OneWay"/>
-                                    <Binding Source="{x:Static managers1:InvoiceState.All}" Mode="OneWay"/>
+                                <MultiBinding Converter="{StaticResource GetInvocieByConverter}">
+                                    <Binding Source="{x:Static managers1:InvoiceTypeEnum.Statements}"  Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Approved}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.BigCount}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:OrderInvoiceBy.ApprovedDate}" Mode="OneWay"/>
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
                         </MenuItem>
-                        <MenuItem Header="Դուրսգրման ապրանքագրեր" Command="{Binding ViewPackingListForSallerCommand}">
-                            <MenuItem.CommandParameter>
-                                <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                    <Binding Source="{x:Static managers1:InvoiceType.InventoryWriteOff}"  Mode="OneWay"/>
-                                    <Binding Source="{x:Static managers1:InvoiceState.All}" Mode="OneWay"/>
-                                    <Binding Source="{x:Static managers1:MaxInvocieCount.BigCount}" Mode="OneWay"/>
-                                </MultiBinding>
-                            </MenuItem.CommandParameter>
-                        </MenuItem>
-                        <Separator/>
-                        <MenuItem Header="Ապրանքների դիտում ըստ պահեստների" Command="{Binding ViewProductsByStockCommand}"/>
                     </MenuItem>
+
                     <Separator/>
                     <MenuItem Header="Խմբագրում">
                         <MenuItem.Icon>
@@ -568,16 +591,14 @@
                         </MenuItem>
                     </MenuItem>
                     <MenuItem Name="MiProductOrder" Header="Պատվեր">
-                        <MenuItem Name="MiProductOrderByMinQuantity" Header="Ըստ մնացորդի" Click="MiProductOrderByMinQuantity_Click"/>
-                        <MenuItem Header="Դասակարգում ըստ մատակարարների" 
-                                  Click="MiProductOrderByProviders_Click" 
+                        <MenuItem Header="Ըստ մնացորդի" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.ByQuantity}"/>
+                        <MenuItem Header="Դասակարգում ըստ մատակարարների" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.ByProviders}"
                                   IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <MenuItem Header="Ըստ ապրանքատեսակների" 
-                                      Click="MiProductOrderByBrands_Click"
+                        <MenuItem Header="Ըստ ապրանքատեսակների" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.ByBrands}"
                                       IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <MenuItem Header="Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն)" Command="{Binding ProductOrderCommand}"/>
+                        <MenuItem Header="Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն)" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.BySale}"/>
                     </MenuItem>
                     <MenuItem Header="Գույքագրում" 
                               IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
@@ -692,18 +713,18 @@
                         <Separator Margin="3"/>
                         <MenuItem Header="Տպել ապրանքագրի նմուշ" Margin="3" Command="{Binding PrintSampleInvoiceCommand}">
                             <MenuItem.Icon>
-                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
+                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="Ծրագրի մասին" Margin="3">
                             <MenuItem.Icon>
-                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/light_bulb_help.png"/>
+                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/light_bulb_help.png"/>
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
                     <MenuItem Header="Հաշվիչ" Command="{Binding OpenCarculatorCommand}">
                         <MenuItem.Icon>
-                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Calc.png"/>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Calc.png"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="Տպել գնապիտակ">
@@ -984,7 +1005,7 @@
                             IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Cashier}}"
                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}" 
                             ToolTip="Բացել դրամարկղը" Margin="5 0"/>
-                    <Button Margin="5 0" Command="{Binding RefreshCashCommand}" Background="Transparent" BorderThickness="0" ToolTip="Թարմացնել" ClickMode="Press">
+                    <Button Margin="5 0" Command="{Binding RefreshCashCommand}" Focusable="False" Background="Transparent" BorderThickness="0" ToolTip="Թարմացնել" ClickMode="Press">
                         <Button.Template>
                             <ControlTemplate>
                                 <Image x:Name="Image" Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Refresh_Dark.png"/>
@@ -1005,13 +1026,13 @@
                             <Style TargetType="{x:Type Button}" BasedOn="{x:Null}"/>
                         </Button.Style>
                     </Button>
-                    <ToggleButton Style="{StaticResource EcrToggleButtinStyle}" IsChecked="{Binding IsEcrActivated}" Margin="5 0"/>
+                    <ToggleButton Style="{StaticResource EcrToggleButtinStyle}" IsChecked="{Binding ApplicationSettings.IsEcrActivated}" Margin="5 0"/>
                     <ToggleButton IsChecked="{Binding IsLocalMode}" Margin="5 0">
                         <ToggleButton.Template>
                             <ControlTemplate>
                                 <Image x:Name="Image" Height="24" Width="24" Source="pack://application:,,,/Shared;component/Images/Server/Server_Offline_Dark.png" ToolTip="Առցանց ռեժիմ"/>
                                 <ControlTemplate.Triggers>
-                                    <DataTrigger Binding="{Binding IsLocalMode}" Value="True">
+                                    <DataTrigger Binding="{Binding ApplicationSettings.IsOfflineMode}" Value="True">
                                         <Setter TargetName="Image" Property="Source" Value="pack://application:,,,/Shared;component/Images/Server/Server_Online_Light.png"/>
                                         <Setter TargetName="Image" Property="ToolTip" Value="Լոկալ ռեժիմ"/>
                                     </DataTrigger>
@@ -1021,7 +1042,7 @@
                     </ToggleButton>
                     <StackPanel Orientation="Horizontal">
                         <Image Height="24" Width="24" Margin="5 0" VerticalAlignment="Center" Source="{Binding ServerPath}" ToolTip="{Binding ServerDescription}"/>
-                        <Image Height="24" Width="24" Margin="5 0" VerticalAlignment="Center" Source="pack://application:,,,/Shared;component/Images/User_24x24_Dark.png" ToolTip="{Binding User.FullName}"/>
+                        <Image Height="24" Width="24" Margin="5 0" VerticalAlignment="Center" Source="pack://application:,,,/Shared;component/Images/User_24x24_Dark.png" ToolTip="{Binding UserDescription}"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>

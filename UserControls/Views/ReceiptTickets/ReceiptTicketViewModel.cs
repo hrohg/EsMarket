@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Security.Policy;
 using CashReg.Models;
 using ES.Data.Model;
 using ES.Data.Models;
-using Shared.Helpers;
 
 
 namespace UserControls.Views.ReceiptTickets

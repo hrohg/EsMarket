@@ -45,8 +45,8 @@ namespace UserControls.Managers
 
         public static void OpenCashDesk()
         {
-            if(string.IsNullOrEmpty(ApplicationManager.Settings.MemberSettings.CashDeskPort)) return;
-            var cashDeskPort = new SerialPort(ApplicationManager.Settings.MemberSettings.CashDeskPort)
+            if(string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort)) return;
+            var cashDeskPort = new SerialPort(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort)
             {
                 BaudRate = 9600,
                 Parity = Parity.None,

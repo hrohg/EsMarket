@@ -1,41 +1,12 @@
 ﻿using System;
 using System.Windows.Input;
 using ES.Business.Managers;
-using ES.Common.Managers;
 using ES.Market.ViewModels;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets.Views;
 
 namespace ES.Market.Commands
 {
-    public class RefreshCashCommand : ICommand
-    {
-        /// <summary>
-        /// Initialize a new instance of the ProductEditCommand class.
-        /// </summary>
-        /// <param name="viewModel"></param>
-        public RefreshCashCommand(ShellViewModel viewModel)
-        {
-            _viewModel = viewModel;
-        }
-
-        private ShellViewModel _viewModel;
-        public event EventHandler CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
-        public bool CanExecute(object parameter)
-        {
-            return _viewModel.CanUpdateCash();
-        }
-
-
-        public void Execute(object parameter)
-        {
-            _viewModel.UpdateCash();
-        }
-    }
     #region Other
     public class ExportProductsForScaleCommand : ICommand
     {
@@ -79,11 +50,11 @@ namespace ES.Market.Commands
         }
         public bool CanExecute(object parameter)
         {
-            return !string.IsNullOrEmpty(ApplicationManager.Settings.MemberSettings.ActiveSalePrinter);
+            return !string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSalePrinter);
         }
         public void Execute(object parameter)
         {
-            PrintManager.PrintOnActivePrinter(new ReceiptTicketSmall(null), ApplicationManager.Settings.MemberSettings.ActiveSalePrinter);
+            PrintManager.PrintOnActivePrinter(new ReceiptTicketSmall(null), ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSalePrinter);
         }
     }
     #endregion

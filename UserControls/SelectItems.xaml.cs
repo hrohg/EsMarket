@@ -67,22 +67,6 @@ namespace UserControls
             BtnSearch_Click(null,null);
         }
 
-        private void TxtSearchText_KeyDown(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.Enter:
-                case Key.Down:
-                    LvItems.Focus();
-                   LvItems.SelectedIndex = 0;
-                    break;
-                case Key.Up:
-                    LvItems.Focus();
-                    LvItems.SelectedIndex = LvItems.Items.Count;
-                    break;
-            }
-        }
-
         private void LvItems_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
@@ -91,10 +75,10 @@ namespace UserControls
                     BtnAccept_Click(null, null);
                     break;
                 case Key.Up:
-                    if (LvItems.SelectedIndex == LvItems.Items.Count) LvItems.SelectedIndex = 0;
+                    if (LvItems.SelectedIndex == LvItems.Items.Count-1) LvItems.SelectedIndex = 0;
                     break;
                 case Key.Down:
-                    if (LvItems.SelectedIndex == 0) LvItems.SelectedIndex = LvItems.Items.Count;
+                    if (LvItems.SelectedIndex == 0) LvItems.SelectedIndex = LvItems.Items.Count-1;
                     break;
                 default:
                     TxtSearchText.Focus();
@@ -108,6 +92,22 @@ namespace UserControls
             BtnAccept_Click(null, null);
         }
         #endregion
+
+        private void TxtSearchText_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Enter:
+                case Key.Down:
+                    LvItems.Focus();
+                    LvItems.SelectedIndex = 0;
+                    break;
+                case Key.Up:
+                    LvItems.Focus();
+                    LvItems.SelectedIndex = LvItems.Items.Count - 1;
+                    break;
+            }
+        }
     }
 
     public class ItemsToSelect

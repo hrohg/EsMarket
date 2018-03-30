@@ -23,20 +23,12 @@ namespace ES.Business.Helpers
             if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return null; }
             return servers.FirstOrDefault(s => selectItem.SelectedItems.Select(t => t.SelectedValue).Contains(s.Name));
         }
-        public static List<XmlSettingsItem> SelectServer(List<XmlSettingsItem> servers)
-        {
-            if (servers == null) return new List<XmlSettingsItem>();
-            if (servers.Count < 2) { return servers; }
-            var selectItem = new SelectItems(servers.Select(s => new ItemsToSelect { DisplayName = s.Key, SelectedValue = s.Key }).ToList(), false, "Ընտրել սերվեր");
-            if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return new List<XmlSettingsItem>(); }
-            return servers.Where(s => selectItem.SelectedItems.Select(t => t.SelectedValue).Contains(s.Key)).ToList();
-        }
-
+        
         public static List<PartnerModel> SelectPartners(List<PartnerModel> partners, bool allowMultipleSelect, string title)
         {
             if (partners == null || partners.Count == 0) return new List<PartnerModel>();
             if (partners.Count == 1) { return partners; }
-            var selectItem = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), allowMultipleSelect, title);
+            var selectItem = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1})",s.FullName,s.ClubSixteenId), SelectedValue = s.Id }).ToList(), allowMultipleSelect, title);
             if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return new List<PartnerModel>(); }
             return partners.Where(s => selectItem.SelectedItems.Select(t => (Guid)t.SelectedValue).Contains(s.Id)).ToList();
         }
@@ -45,13 +37,13 @@ namespace ES.Business.Helpers
             var partners = PartnersManager.GetPartners();
             if (partners == null || partners.Count == 0) return new List<PartnerModel>();
             if (partners.Count == 1) { return partners; }
-            var selectItem = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), allowMultipleSelect,title);
+            var selectItem = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1})",s.FullName,s.ClubSixteenId), SelectedValue = s.Id }).ToList(), allowMultipleSelect,title);
             if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return new List<PartnerModel>(); }
             return partners.Where(s => selectItem.SelectedItems.Select(t => (Guid)t.SelectedValue).Contains(s.Id)).ToList();
         }
         public static List<PartnerType> SelectPartnersTypes(bool allowMultipleSelect = false,  string title = "Ընտրել")
         {
-            var partnerTypes = PartnersManager.GetPartnersTypes(ApplicationManager.Instance.GetMember.Id);
+            var partnerTypes = PartnersManager.GetPartnersTypes();
             if (partnerTypes == null || partnerTypes.Count == 0) return new List<PartnerType>();
             if (partnerTypes.Count == 1) { return partnerTypes.Select(s=>(PartnerType)s.Id).ToList(); }
             var selectItem = new SelectItems(partnerTypes.Select(s => new ItemsToSelect { DisplayName = s.Description, SelectedValue = s.Id }).ToList(), allowMultipleSelect, title);

@@ -2,7 +2,6 @@
 using System.Configuration;
 using System.Data.Common;
 using ES.DataAccess.Helpers;
-using ESL.DataAccess.Helpers;
 
 namespace ES.Business.DataUtilities
 {

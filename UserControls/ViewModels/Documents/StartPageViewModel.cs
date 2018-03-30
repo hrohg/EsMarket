@@ -35,13 +35,13 @@ namespace UserControls.ViewModels.Documents
             Title = "Գլխավոր";
             CanFloat = false;
             IsClosable = false;
-            OpenInvocieCommand = new RelayCommand<Tuple<InvoiceType, InvoiceState, MaxInvocieCount>>(OnOpenInvoice);
+            OpenInvocieCommand = new RelayCommand<Tuple<InvoiceTypeEnum, InvoiceState, MaxInvocieCount>>(OnOpenInvoice);
             GetReportCommand = new RelayCommand<ReportTypes>(OnGetReport);
             OpenCarculatorCommand = new RelayCommand(_parent.OnOpenCalc);
             ToolsCommand = new RelayCommand<ToolsEnum>(_parent.OnTools);
         }
 
-        private void OnOpenInvoice(Tuple<InvoiceType, InvoiceState, MaxInvocieCount> o)
+        private void OnOpenInvoice(Tuple<InvoiceTypeEnum, InvoiceState, MaxInvocieCount> o)
         {
             _parent.OnGetInvoices(o);
         }
@@ -70,37 +70,6 @@ namespace UserControls.ViewModels.Documents
 
         private bool CanExecuteAccountingAction(AccountingPlanEnum accountingPlan)
         {
-            switch (accountingPlan)
-            {
-                case AccountingPlanEnum.Purchase:
-                    break;
-                case AccountingPlanEnum.AccountingReceivable:
-                    break;
-                case AccountingPlanEnum.Prepayments:
-                    break;
-                case AccountingPlanEnum.CashDesk:
-                    break;
-                case AccountingPlanEnum.Accounts:
-                    break;
-                case AccountingPlanEnum.EquityBase:
-                    break;
-                case AccountingPlanEnum.PurchasePayables:
-                    break;
-                case AccountingPlanEnum.ReceivedInAdvance:
-                    break;
-                case AccountingPlanEnum.Debit_For_Salary:
-                    break;
-                case AccountingPlanEnum.Proceeds:
-                    break;
-                case AccountingPlanEnum.CostPrice:
-                    break;
-                case AccountingPlanEnum.CostOfSales:
-                    break;
-                case AccountingPlanEnum.OtherOperationalExpenses:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("accountingPlan", accountingPlan, null);
-            }
             return _parent.CanExecuteAccountingAction(accountingPlan);
         }
 

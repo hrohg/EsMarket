@@ -172,8 +172,8 @@
                 <Menu Margin="3 0">
                     <MenuItem Header="Ապրանքների բեռնում">
                         <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
-                        <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"  CommandParameter="{x:Static managers:InvoiceType.MoveInvoice}"/>
-                        <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"  CommandParameter="{x:Static managers:InvoiceType.PurchaseInvoice}"/>
+                        <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"  CommandParameter="{x:Static managers:InvoiceTypeEnum.MoveInvoice}"/>
+                        <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"  CommandParameter="{x:Static managers:InvoiceTypeEnum.PurchaseInvoice}"/>
                     </MenuItem>
                     <MenuItem Header="...">
                         <MenuItem.Icon>

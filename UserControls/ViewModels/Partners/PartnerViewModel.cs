@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
@@ -18,7 +19,7 @@ namespace UserControls.ViewModels.Partners
         #region Properties
         private const string PartnerProperties = "Partner";
         private const string PartnersProperty = "Partners";
-        
+
         #endregion
 
         #region Private properties
@@ -77,6 +78,22 @@ namespace UserControls.ViewModels.Partners
             Partners = new ObservableCollection<PartnerModel>(ApplicationManager.Instance.CashProvider.GetPartners);
             RaisePropertyChanged("Partners");
         }
+        //    private bool CheckLuhn(string purportedCC)
+        //    {
+        //        if (string.IsNullOrEmpty(purportedCC)) return false;
+        //        int sum = 0;
+        //        int nDigits = purportedCC.Length;
+        //        int parity = nDigits%2;
+        //for(int i=0;i<nDigits;++i){
+        //    int digit = integer([i]);
+        //    if (i%2 == parity)
+        //        digit = digit*2;
+        //    if (digit > 9)
+        //        digit = digit - 9;
+        //    sum = sum + digit;
+        //}
+        //        return (sum%10) == 0;
+        //    }
         private void InitializeCommands()
         {
             NewPartnerCommand = new PartnerNewCommand(this);
@@ -97,7 +114,7 @@ namespace UserControls.ViewModels.Partners
                 if (PartnersManager.SetDefault(partner))
                 {
                     MessageManager.OnMessage("Գործողության բարեհաջող ավարտ։", MessageTypeEnum.Success);
-                    ApplicationManager.CashManager.UpdateDefaults();
+                    ApplicationManager.CashManager.UpdatePartners();
                 }
                 else
                 {
@@ -105,6 +122,7 @@ namespace UserControls.ViewModels.Partners
                 }
             }
         }
+
         #endregion
         #endregion
 
@@ -169,6 +187,41 @@ namespace UserControls.ViewModels.Partners
         public ICommand EditPartnerCommand { get; private set; }
         public ICommand RemovePartnerCommand { get; private set; }
         public ICommand SetDefaultPartnerCommand { get; private set; }
+
+        private ICommand _generateLocalIdCommand;
+        public ICommand GenerateLocalIdCommand { get { return _generateLocalIdCommand ?? (_generateLocalIdCommand = new RelayCommand(OnGenerateLocalId, CanGenerateLocalId)); } }
+        private bool CanGenerateLocalId(object obj)
+        {
+            return Partner != null && string.IsNullOrEmpty(Partner.ClubSixteenId);
+        }
+        private void OnGenerateLocalId(object obj)
+        {
+            if (!CanGenerateLocalId(obj)) return;
+            //Country code
+            var code1 = "3741";
+            //Application code
+            var code2 = "0000";
+            //Member code
+            var code3 = "0005";
+            //Partner code
+            var code4 = "3741";
+            //var checkSum = BarCodeGenerator.CalculateChecksumDigit(string.Format("{0},{1},{2}", code1, code2, code3));
+            Partner.ClubSixteenId = string.Format("{0}{1}{2}{3}", code1, code2, code3, code4);
+        }
+
+        private ICommand _synPartnerCommand;
+        public ICommand SyncPartnerCommand { get { return _synPartnerCommand ?? (_synPartnerCommand = new RelayCommand(OnSync, CanSync)); } }
+
+        private bool CanSync(object obj)
+        {
+            return Partner != null && !string.IsNullOrEmpty(Partner.ClubSixteenId);
+        }
+
+        private void OnSync(object obj)
+        {
+            Partner.ClubSixteenId = null;
+        }
+
         #endregion Commands
 
     }

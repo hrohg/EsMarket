@@ -64,7 +64,7 @@ namespace ES.Common.Models
     {
         #region Internal properties
         private string _ip;
-        private int? _port;
+        private int _port;
         private string _password;
         private string _crn;
         private EcrCashier _ecrCashier;
@@ -72,6 +72,8 @@ namespace ES.Common.Models
         private Department _cashierDepartment;
         private bool _useExternalPrinter;
         private string _applicationIp;
+        private bool _useExtPos;
+
         #endregion Internal properties
 
         #region External properties
@@ -81,7 +83,7 @@ namespace ES.Common.Models
             set { _ip = value; }
         }
 
-        public int? Port
+        public int Port
         {
             get { return _port; }
             set { _port = value; }
@@ -146,6 +148,12 @@ namespace ES.Common.Models
         public EcrServiceSettings EcrServiceSettings { get; set; }
         public bool IsActive { get; set; }
         public string ExcelFilePath { get; set; }
+
+        public bool UseExtPos
+        {
+            get { return _useExtPos; }
+            set { _useExtPos = value; }
+        }
 
         #endregion External properties
 

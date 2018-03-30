@@ -11,11 +11,14 @@
 
     public enum ViewInvoicesEnum
     {
-        None,
-        ByDetiles,
-        ByStock,
-        ByPartnerType,
-        ByPartner,
+        None = 0,
+        ByDetiles = 1,
+        ByStock = 2,
+        ByPartnerType = 4,
+        ByPartner = 8,
+        ByPartnersDetiles = ByDetiles | ByPartner,
+        ByStocksDetiles = ByDetiles | ByStock,
+        BySaleChart = 16
     }
 
     public enum DebitEnum

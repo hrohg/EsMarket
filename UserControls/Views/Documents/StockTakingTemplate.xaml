@@ -162,7 +162,6 @@
                     </MenuItem>
                     <MenuItem Header="Ավելցուկի մուտքագրում" Command="{Binding WriteInStockTakingCommand}">
                     </MenuItem>
-
                     <MenuItem Header="Ամփոփել" Command="{Binding CompletedCommand}" ToolTip="Փակել գործող գույքագրումը: Այն այլևս հնարավոր չի լինի փոփոխել:"/>
                     <Separator/>
                     <MenuItem Header="Փակել" Command="{Binding CloseCommand}"/>

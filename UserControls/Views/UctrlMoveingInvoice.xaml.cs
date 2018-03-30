@@ -45,7 +45,7 @@ namespace UserControls.Views
         #region Methods
         private StockModel ChooseStock(long memberId)
         {
-            var stocks =  StockManager.GetStocks(memberId);
+            var stocks =  StockManager.GetStocks();
             var selectedItems = new ControlPanel.Controls.SelectItems(stocks.Select(s => new ControlPanel.Controls.ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), false);
             if (selectedItems.ShowDialog() != true || selectedItems.SelectedItems == null) return null;
             return  stocks.FirstOrDefault(s => selectedItems.SelectedItems.Select(t => t.SelectedValue).ToList().Contains(s.Id));

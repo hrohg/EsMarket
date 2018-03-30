@@ -42,7 +42,7 @@ namespace UserControls.ViewModels.Managers
         protected long UserId { get { return ApplicationManager.GetEsUser.UserId; } }
         private ProductModel _product;
         protected List<ProductModel> _products;
-        Timer _timer = null;
+        Timer _timer;
         private ProductModel _productOnBufer;
 
         #endregion

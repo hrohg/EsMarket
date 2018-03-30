@@ -344,6 +344,16 @@ namespace UserControls.ViewModels.Reports
                         {
                             InvoiceType = InvoiceType.InventoryWriteOff,
                             ShortInvoiceReports = _invoices
+                        },
+                        new ShortReport
+                        {
+                            InvoiceType = InvoiceType.ReturnFrom,
+                            ShortInvoiceReports = _invoices
+                        },
+                        new ShortReport
+                        {
+                            InvoiceType = InvoiceType.ReturnTo,
+                            ShortInvoiceReports = _invoices
                         }
                     }
                     : new List<ShortReport>();
@@ -502,7 +512,6 @@ namespace UserControls.ViewModels.Reports
                         descritpion = "Վաճառք";
                         break;
                     case InvoiceType.ProductOrder:
-
                         break;
                     case InvoiceType.MoveInvoice:
                         descritpion = "Տեղափոխություն";

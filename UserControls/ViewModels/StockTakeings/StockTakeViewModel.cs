@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
+using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
@@ -229,13 +230,31 @@ namespace UserControls.ViewModels.StockTakeings
         protected void OnCreateWriteInInvoice()
         {
             var handler = CreateWriteInInvoiceEvent;
-            if (handler != null) handler(StockTakeItems.Where(s => s.Balance > 0).Select(s => new InvoiceItemsModel { Code = s.CodeOrBarcode, Quantity = s.Balance ?? 0 }).ToList(), StockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", StockTake.StockTakeName, StockTake.CreateDate));
+            if (handler != null)
+            {
+                var products = ApplicationManager.CashManager.Products;
+                handler(StockTakeItems.Where(s => s.Balance > 0).Where(s => products.Any(t => t.Id == s.ProductId)).Select(s => new InvoiceItemsModel
+                {
+                    ProductId = s.ProductId ?? Guid.Empty,
+                    Code = !string.IsNullOrEmpty(products.First(p => p.Id == s.ProductId).Barcode) ? products.First(p => p.Id == s.ProductId).Barcode : products.First(p => p.Id == s.ProductId).Code,
+                    Quantity = s.Balance ?? 0
+                }).ToList(), StockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", StockTake.StockTakeName, StockTake.CreateDate));
+            }
         }
         public event CreateWriteOffInvoiceDelegate CreateWriteOffInvoiceEvent;
         protected void OnCreateWriteOffInvoice()
         {
             var handler = CreateWriteOffInvoiceEvent;
-            if (handler != null) handler(StockTakeItems.Where(s => s.Balance < 0).Select(s => new InvoiceItemsModel { Code = s.CodeOrBarcode, Quantity = -s.Balance ?? 0 }).ToList(), StockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", StockTake.StockTakeName, StockTake.CreateDate));
+            if (handler != null)
+            {
+                var products = ApplicationManager.CashManager.Products;
+                handler(StockTakeItems.Where(s => s.Balance < 0).Where(s=>products.Any(t=>t.Id==s.ProductId)).Select(s => new InvoiceItemsModel
+                {
+                    ProductId = s.ProductId??Guid.Empty,
+                    Code = !string.IsNullOrEmpty(products.First(p => p.Id == s.ProductId).Barcode)? products.First(p => p.Id == s.ProductId).Barcode: products.First(p => p.Id == s.ProductId).Code,
+                    Quantity = -s.Balance ?? 0
+                }).ToList(), StockTake.StockId, string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", StockTake.StockTakeName, StockTake.CreateDate));
+            }
         }
         #endregion Events
     }
@@ -574,7 +593,7 @@ namespace UserControls.ViewModels.StockTakeings
 
         private bool CanCompletesStockTaking(object obj)
         {
-            return StockTake.ClosedDate != null;
+            return StockTake.ClosedDate == null && ApplicationManager.IsInRole(UserRoleEnum.Manager);
         }
 
         private void OnCompletedStockTaking(object o)

@@ -8,9 +8,13 @@
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
                     xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
-                    xmlns:converters="clr-namespace:UserControls.Converters">
+                    xmlns:converters="clr-namespace:UserControls.Converters"
+                    xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data"
+                    xmlns:managers="clr-namespace:ES.Business.Managers;assembly=ES.Business">
 
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
+    <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
     <Style x:Key="ThumbStyle" TargetType="{x:Type Thumb}" BasedOn="{StaticResource {x:Type Thumb}}">
         <Setter Property="Width" Value="8"/>
@@ -28,7 +32,6 @@
     <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
         <Setter Property="FontSize" Value="18"/>
     </Style>
-
 
     <DataTemplate DataType="{x:Type invoices:PurchaseInvoiceViewModel}">
         <Grid>
@@ -301,6 +304,9 @@
                         <i:Interaction.Behaviors>
                             <behaviors:TextBoxBehavior IsSelectTextOnFocus="True" />
                         </i:Interaction.Behaviors>
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding AddInvoiceItemCommand}"/>
+                        </TextBox.InputBindings>
                     </TextBox>
                     <StackPanel Grid.Row="1" Grid.Column="5"  Orientation="Horizontal" HorizontalAlignment="Right" >
                         <!--<StackPanel Name="ExpireDate" Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding IsExpiring}">
@@ -323,16 +329,13 @@
                         <Style x:Key="CellRightAlign">
                             <Setter Property="Control.HorizontalAlignment" Value="Right"/>
                         </Style>
-                        <ContextMenu x:Key="RowMenu" x:Shared="False" DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type extendedControls:ExtendedDataGrid}}, Path=DataContext}">
-                            <MenuItem Command="{Binding Path=RemoveInvoiceItemCommand}" Header="Հեռացնել"/>
-                        </ContextMenu>
                     </DataGrid.Resources>
                     <DataGrid.InputBindings>
-                        <KeyBinding Key="Delete" Command="{Binding RemoveInvoiceItemCommand}"/>
+                        <KeyBinding Key="Delete" Command="{Binding RemoveInvoiceItemsCommand}" CommandParameter="{Binding ElementName=DgInvoiceItems, Path=SelectedItems}"/>
                     </DataGrid.InputBindings>
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
-                            <Setter Property="ContextMenu" Value="{StaticResource RowMenu}"/>
+                            <Setter Property="ContextMenu" Value="{DynamicResource DataGridRowContextMenuStyle}"/>
                         </Style>
                     </DataGrid.RowStyle>
                     <DataGrid.Columns>
@@ -340,7 +343,25 @@
                         <DataGridTextColumn IsReadOnly="True" Header="Բրենդ" Binding="{Binding Product.Brand.BrandName, Mode=OneWay}"/>
                         <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code, Mode=OneWay}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Բարկոդ" Binding="{Binding Product.Barcode, Mode=OneWay}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description, Mode=OneWay}" />
+                        <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
+                                    <TextBlock Text="{Binding Description}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn CanUserSort="True" CanUserReorder="True" SortMemberPath="Description" Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
+                                    <Image Style="{DynamicResource InfoImageStyle}"
+                                           ToolTip="{Binding Path=Note}" 
+                                           HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               IsEnabled="{Binding Converter={StaticResource StringToBoolConverter}, Path=Note}"
+                                               Visibility="{Binding Converter={StaticResource BoolToVisibilityConverter}, RelativeSource={RelativeSource Self}, Path=IsEnabled}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" />
                         <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, TargetNullValue='', StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}" />
                         <DataGridTextColumn IsReadOnly="False" Header="Գնման գին" Binding="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, TargetNullValue='', StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}" />
@@ -509,7 +530,7 @@
                         <Menu Margin="3 0">
                             <MenuItem Background="Transparent">
                                 <MenuItem.Header>
-                                    <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu_24x24.png.png" Width="24" Height="24"/>
+                                    <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu_24x24.png" Width="24" Height="24"/>
                                 </MenuItem.Header>
                                 <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"/>
                                 <MenuItem Header="Հաստատել" Command="{Binding ApproveInvoiceCommand}"/>
@@ -798,6 +819,9 @@
                         <i:Interaction.Behaviors>
                             <behaviors:TextBoxBehavior IsSelectTextOnFocus="True" />
                         </i:Interaction.Behaviors>
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding AddInvoiceItemCommand}"/>
+                        </TextBox.InputBindings>
                     </TextBox>
                     <StackPanel Grid.Row="1" Grid.Column="5"  Orientation="Horizontal" HorizontalAlignment="Right" >
                         <!--<StackPanel Name="ExpireDate" Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding IsExpiring}">
@@ -810,23 +834,26 @@
                     <TextBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Grid.ColumnSpan="3" Text="{Binding Filter, Mode=OneWayToSource}"/>
                 </Grid>
                 <extendedControls:ExtendedDataGrid Grid.Row="1" x:Name="DgInvoiceItems" 
-              ItemsSource="{Binding InvoiceItems, NotifyOnSourceUpdated=True}" 
-              SelectedItem="{Binding SelectedInvoiceItem}" 
-                                           AlternatingRowBackground ="GhostWhite" AlternationCount="2"
-              VerticalContentAlignment="Stretch"
-              CanUserAddRows="False" CanUserDeleteRows="False"
-              AutoGenerateColumns="False"  FontSize="18" >
+                                                   ItemsSource="{Binding InvoiceItems, NotifyOnSourceUpdated=True}" 
+                                                   SelectedItem="{Binding SelectedInvoiceItem}" 
+                                                   AlternatingRowBackground ="GhostWhite" 
+                                                   AlternationCount="2"
+                                                   VerticalContentAlignment="Stretch"
+                                                   CanUserAddRows="False" 
+                                                   CanUserDeleteRows="False"
+                                                   AutoGenerateColumns="False"
+                                                   FontSize="18">
                     <DataGrid.Resources>
                         <Style x:Key="CellRightAlign">
                             <Setter Property="Control.HorizontalAlignment" Value="Right"/>
                         </Style>
-                        <ContextMenu x:Key="RowMenu">
-                            <MenuItem Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemoveInvoiceItemCommand}" CommandParameter="{Binding InvoiceItem.Id}" Header="Հեռացնել"/>
-                        </ContextMenu>
                     </DataGrid.Resources>
+                    <DataGrid.InputBindings>
+                        <KeyBinding Key="Delete" Command="{Binding RemoveInvoiceItemsCommand}" CommandParameter="{Binding ElementName=DgInvoiceItems, Path=SelectedItems}"/>
+                    </DataGrid.InputBindings>
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
-                            <Setter Property="ContextMenu" Value="{StaticResource RowMenu}"/>
+                            <Setter Property="ContextMenu" Value="{StaticResource DataGridRowContextMenuStyle}"/>
                         </Style>
                     </DataGrid.RowStyle>
                     <DataGrid.Columns>
@@ -852,10 +879,22 @@
                         <Label Content="Նշումներ"/>
                         <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" Height="50" TextWrapping="Wrap" AcceptsReturn="True" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Auto"/>
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Label Content="Ընդամենը" VerticalAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right" FontSize="12"  Foreground="Green"/>
-                        <TextBox Text="{Binding Invoice.Total, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsReadOnly="True" Foreground="Blue" Margin="0,27"/>
-                    </StackPanel>
+                    
+                    <Grid Grid.Column="1" HorizontalAlignment="Right">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Ընդամենը" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12"  Foreground="Green"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Invoice.Total, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsReadOnly="True" Foreground="Blue" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Զեղչ" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Width="50"  Foreground="Green"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=Invoice.Discount, StringFormat={}{0:#,0.##}}" IsEnabled="False"  VerticalAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right" Width="50" FontSize="15" Foreground="Blue"/>
+                    </Grid>
                 </Grid>
             </Grid>
             <Grid Grid.Row="2">
@@ -863,7 +902,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Expander Grid.Row="0" Header="Վճարում" BorderBrush="Blue" IsExpanded="True" Margin="3">
+                <Expander Grid.Row="0" Header="Վերադարձ" BorderBrush="Blue" IsExpanded="True" Margin="3">
                     <StackPanel Orientation="Horizontal"  HorizontalAlignment="Right">
 
                         <GroupBox>
@@ -909,27 +948,7 @@
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>
-
                         </GroupBox>
-                        <GroupBox>
-                            <GroupBox.Header>
-                                <Label Content="Մանր" FontSize="10"/>
-                            </GroupBox.Header>
-                            <StackPanel VerticalAlignment="Bottom">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Label Content="Կանխիկ" VerticalAlignment="Center" Foreground="Green"/>
-                                    <TextBox Text="{Binding Path=InvoicePaid.Change, Mode=OneWay, StringFormat=N}" IsReadOnly="True"
-                 BorderThickness="1"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100"
-                 FontSize="15" Height="25" Margin="1" Foreground="Green"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal ">
-                                    <Label Content="Կանխավճար" VerticalAlignment="Center" Foreground="Green"/>
-                                    <TextBox Text="{Binding Path=InvoicePaid.Prepayment, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right"
-                 Width="100" FontSize="15" Height="25" Margin="1" Foreground="Green" IsReadOnly="True"/>
-                                </StackPanel>
-                            </StackPanel>
-                        </GroupBox>
-
                     </StackPanel>
                 </Expander>
                 <Grid Grid.Row="1">
@@ -939,6 +958,12 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <TextBlock Text="Տող"/>
+                        <TextBlock Text="{Binding ProductCount, StringFormat=N}" Foreground="Blue"/>
+                        <TextBlock Text="Քանակ"/>
+                        <TextBlock Text="{Binding ProductQuantity, StringFormat=N}" Foreground="Blue"/>
+                        <TextBlock Text="Գումար"/>
+                        <TextBlock Text="{Binding Invoice.Total, StringFormat=N}" Foreground="Blue"/>
                         <Button Style="{DynamicResource SaveButtonStyle}"
                         Command="{Binding SaveInvoiceCommand}"
                         ToolTip="Հիշել Ctrl+S" Margin="3 0"/>
@@ -949,13 +974,23 @@
                         <Menu Margin="3 0">
                             <MenuItem Background="Transparent">
                                 <MenuItem.Header>
-                                    <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu_24x24.png.png" Width="24" Height="24"/>
+                                    <Image Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu_24x24.png" Width="24" Height="24"/>
                                 </MenuItem.Header>
                                 <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"/>
                                 <MenuItem Header="Հաստատել" Command="{Binding ApproveInvoiceCommand}"/>
                                 <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
                                 <Separator/>
-                                <MenuItem Header="Ներմուծել" Command="{Binding ImportInvoiceCommand}" IsEnabled="False"/>
+                                <MenuItem Header="Մասնակի վերադարձ ՀԴՄ -ից" Command="{Binding PrintEcrTicketCommand}"/>
+                                <Separator/>
+                                <MenuItem Header="Բեռնել">
+                                    <MenuItem Header="Ապրանքագիր Xml"  Command="{Binding ImportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Xml}"/>
+                                    <MenuItem Header="Ապրանքագիր Excel"  Command="{Binding ImportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
+                                    <MenuItem Header="Ապրանքների բեռնում" IsEnabled="False">
+                                        <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
+                                        <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceTypeEnum.MoveInvoice}" />
+                                        <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceTypeEnum.PurchaseInvoice}"/>
+                                    </MenuItem>
+                                </MenuItem>
                                 <MenuItem Header="Արտահանել" Command="{Binding ExportInvoiceCommand}" IsEnabled="False"/>
                                 <Separator/>
                                 <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>

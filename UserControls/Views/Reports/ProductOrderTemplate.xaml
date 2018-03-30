@@ -5,11 +5,13 @@
                     xmlns:converters="clr-namespace:UserControls.Converters"
                     xmlns:controls="clr-namespace:UserControls.Controls"
                     xmlns:models1="clr-namespace:ES.DataAccess.Models;assembly=ES.DataAccess"
-                    xmlns:reports="clr-namespace:ES.Data.Models.Reports;assembly=ES.Data">
+                    xmlns:reports="clr-namespace:ES.Data.Models.Reports;assembly=ES.Data"
+                    xmlns:enumerations1="clr-namespace:ES.Common.Enumerations;assembly=ES.Common">
 
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     <converters:InvertVisibilityConverter x:Key="InvertVisibilityConverter"/>
-
+    <converters:UserRoleToVisibilityConverter x:Key="UserRoleToVisibilityConverter"/>
+    
     <DataTemplate DataType="{x:Type viewModels:TableViewModelBase}">
         <Grid>
         <Grid>
@@ -27,15 +29,90 @@
                             </DataGrid>
                         <ContentControl Content="{Binding}" Visibility="{Binding ElementName=DgTable, Path=Visibility, Mode=OneWay, Converter={StaticResource InvertVisibilityConverter}}">
                             <ContentControl.Resources>
+                                
+                                    <DataTemplate DataType="{x:Type viewModels:SaleInvoiceReportByPartnersDetiledViewModel}">
+                                        <DataGrid x:Name="DataGrid" ItemsSource="{Binding ViewList}" CanUserAddRows="False" CanUserDeleteRows="False"
+                                      FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True"
+                                      VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
+                                            <DataGrid.Columns>
+
+                                                <DataGridTemplateColumn Header="Ապրանքագիր" CanUserSort="True">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate DataType="{x:Type reports:SaleReportByPartnerDetiled}">
+                                                            <TextBlock Text="{Binding Invoice}" HorizontalAlignment="Right"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <DataGridTemplateColumn Header="Կոդ" CanUserSort="True">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate DataType="{x:Type reports:SaleReportByPartnerDetiled}">
+                                                            <TextBlock Text="{Binding Code}" HorizontalAlignment="Right"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <DataGridTemplateColumn Header="Անվանում" CanUserSort="True">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate DataType="{x:Type reports:SaleReportByPartnerDetiled}">
+                                                            <TextBlock Text="{Binding Description}" HorizontalAlignment="Right"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <DataGridTemplateColumn Header="Քանակ" CanUserSort="True">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate DataType="{x:Type reports:SaleReportByPartnerDetiled}">
+                                                            <TextBlock Text="{Binding Quantity, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <DataGridTemplateColumn Header="Գին" CanUserSort="True">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate DataType="{x:Type reports:SaleReportByPartnerDetiled}">
+                                                            <TextBlock Text="{Binding Price, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <DataGridTemplateColumn Header="Հասույթ">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate DataType="{x:Type reports:SaleReportByPartnerDetiled}">
+                                                            <TextBlock Text="{Binding Sale, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <DataGridTemplateColumn Header="Ինքնարժեք">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate DataType="{x:Type reports:SaleReportByPartnerDetiled}">
+                                                            <TextBlock Text="{Binding Cost, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <DataGridTemplateColumn Header="Եկամուտ">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate DataType="{x:Type reports:SaleReportByPartnerDetiled}">
+                                                            <TextBlock Text="{Binding Profit, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <DataGridTemplateColumn Header="Եկամուտ %" CanUserSort="True">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate DataType="{x:Type reports:SaleReportByPartnerDetiled}">
+                                                            <TextBlock Text="{Binding Pers, StringFormat='{}{0:#,0.##}%', TargetNullValue=0}" FontStyle="Italic" HorizontalAlignment="Right"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </DataTemplate>
+                                
                                     <DataTemplate DataType="{x:Type viewModels:ProductOrderBySaleViewModel}">
                                         <DataGrid x:Name="DataGrid" ItemsSource="{Binding ViewList}" CanUserAddRows="False" CanUserDeleteRows="False" 
                                           FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True"
                                           VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
                                             <DataGrid.Columns>
+                                                <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding Index, Mode=OneWay}"/>
                                                 <DataGridTemplateColumn Header="Մատակարար" CanUserSort="True" SortMemberPath="Provider">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type models:ProductOrderModel}">
-                                                            <TextBlock Text="{Binding Provider}"/>
+                                                            <TextBlock Text="{Binding Provider}" TextWrapping="Wrap"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
@@ -49,7 +126,7 @@
                                                 <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" SortMemberPath="Description">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type models:ProductOrderModel}">
-                                                            <TextBlock Text="{Binding Description}"/>
+                                                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
@@ -60,45 +137,52 @@
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="Մին քանակ">
+                                                <DataGridTemplateColumn Header="Պատվեր" CanUserSort="True">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                                                            <TextBlock Text="{Binding DemandQuantity, StringFormat='# ###.##'}" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <!--<DataGridTemplateColumn Header="Քանակ">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type models:ProductOrderModel}">
                                                             <TextBlock Text="{Binding MinQuantity, StringFormat='# ###.##'}" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
-                                                </DataGridTemplateColumn>
+                                                </DataGridTemplateColumn>-->
                                                 <DataGridTemplateColumn Header="Մնացորդ">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type models:ProductOrderModel}">
-                                                            <TextBlock Text="{Binding ExistingQuantity, StringFormat='# ###.##'}" HorizontalAlignment="Right"/>
+                                                            <TextBlock Text="{Binding ExistingQuantity, StringFormat='# ##0.##'}" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="Վաճառք">
+                                                <!--<DataGridTemplateColumn Header="Վաճառք">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type models:ProductOrderModel}">
                                                             <TextBlock Text="{Binding SaleQuantity, StringFormat='# ###.00'}" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="Պատվեր" CanUserSort="True">
+                                                </DataGridTemplateColumn>-->
+                                                <DataGridTemplateColumn Header="Ինքնարժեք" CanUserSort="True">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type models:ProductOrderModel}">
-                                                            <TextBlock Text="{Binding NeededQuantity, StringFormat='# ###.##'}" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                                            <TextBlock Text="{Binding CostPrice, StringFormat='# ##0.##'}" FontStyle="Italic" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
                                                 <DataGridTemplateColumn Header="Գին" CanUserSort="True">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type models:ProductOrderModel}">
-                                                            <TextBlock Text="{Binding MinPrice, StringFormat='# ###.##'}" FontStyle="Italic" HorizontalAlignment="Right"/>
+                                                            <TextBlock Text="{Binding Price, StringFormat='# ##0.##'}" FontStyle="Italic" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
                                                 <DataGridTemplateColumn Header="Նշումներ">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type models:ProductOrderModel}">
-                                                            <TextBlock Text="{Binding Note}"/>
+                                                            <TextBlock Text="{Binding Notes}" TextWrapping="Wrap"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
@@ -324,45 +408,46 @@
                                                 <DataGridTemplateColumn Header="Ապրանքագիր" CanUserSort="True">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type reports:InvoiceReport}">
-                                                            <TextBlock Text="{Binding Count, StringFormat='# ##0.##', TargetNullValue=0}" HorizontalAlignment="Right"/>
+                                                            <TextBlock Text="{Binding Count, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
                                                 <DataGridTemplateColumn Header="Քանակ" CanUserSort="True">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type reports:InvoiceReport}">
-                                                            <TextBlock Text="{Binding Quantity, StringFormat='# ##0.##', TargetNullValue=0}" HorizontalAlignment="Right"/>
+                                                            <TextBlock Text="{Binding Quantity, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
                                                 <DataGridTemplateColumn Header="Հասույթ">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type reports:InvoiceReport}">
-                                                            <TextBlock Text="{Binding Sale, StringFormat='# ##0.##', TargetNullValue=0}" HorizontalAlignment="Right"/>
+                                                            <TextBlock Text="{Binding Sale, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
                                                 <DataGridTemplateColumn Header="Ինքնարժեք">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type reports:InvoiceReport}">
-                                                            <TextBlock Text="{Binding Cost, StringFormat='# ##0.##', TargetNullValue=0}" HorizontalAlignment="Right"/>
+                                                            <TextBlock Text="{Binding Cost, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
                                                 <DataGridTemplateColumn Header="Եկամուտ">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type reports:InvoiceReport}">
-                                                            <TextBlock Text="{Binding Profit, StringFormat='# ##0.##', TargetNullValue=0}" HorizontalAlignment="Right"/>
+                                                            <TextBlock Text="{Binding Profit, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
                                                 <DataGridTemplateColumn Header="Եկամուտ %" CanUserSort="True">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type reports:InvoiceReport}">
-                                                            <TextBlock Text="{Binding Pers, StringFormat='#0.##', TargetNullValue=0}" FontStyle="Italic" HorizontalAlignment="Right"/>
+                                                            <TextBlock Text="{Binding Pers, StringFormat='{}{0:#,0.##}%', TargetNullValue=0}" FontStyle="Italic" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
+                                                
                                             </DataGrid.Columns>
                                         </DataGrid>
                                     </DataTemplate>
@@ -400,28 +485,28 @@
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="Հասույթ">
+                                                <DataGridTemplateColumn Header="Գումար">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type reports:InvoiceReportByPartner}">
                                                             <TextBlock Text="{Binding Sale, StringFormat='# ##0.00', TargetNullValue=0}" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="Ինքնարժեք" SortMemberPath="Cost">
+                                                <DataGridTemplateColumn Header="Ինքնարժեք" SortMemberPath="Cost" Visibility="{Binding Converter={StaticResource UserRoleToVisibilityConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type reports:InvoiceReportByPartner}">
                                                             <TextBlock Text="{Binding Cost, StringFormat='# ##0.00', TargetNullValue=0}" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="Եկամուտ">
+                                                <DataGridTemplateColumn Header="Եկամուտ" Visibility="{Binding Converter={StaticResource UserRoleToVisibilityConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type reports:InvoiceReportByPartner}">
                                                             <TextBlock Text="{Binding Profit, StringFormat='# ##0.00', TargetNullValue=0}" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
-                                                <DataGridTemplateColumn Header="Եկամուտ %" CanUserSort="True">
+                                                <DataGridTemplateColumn Header="Եկամուտ %" CanUserSort="True" Visibility="{Binding Converter={StaticResource UserRoleToVisibilityConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type reports:InvoiceReportByPartner}">
                                                             <TextBlock Text="{Binding Pers, StringFormat='#0.00', TargetNullValue=0}" FontStyle="Italic" HorizontalAlignment="Right"/>
@@ -451,24 +536,38 @@
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
+                                                <DataGridTemplateColumn Header="Ապրանքագիր" CanUserSort="True" SortMemberPath="Count">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate DataType="{x:Type models1:InvoiceItems}">
+                                                            <TextBlock Text="{Binding Invoices.InvoiceNumber}" HorizontalAlignment="Right"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
                                                 <DataGridTemplateColumn Header="Վաճառք" CanUserSort="True" SortMemberPath="Count">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type models1:InvoiceItems}">
-                                                            <TextBlock Text="{Binding Count, StringFormat=N0}" HorizontalAlignment="Right"/>
+                                                            <TextBlock Text="{Binding Invoices.ApproveDate}" HorizontalAlignment="Right"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <DataGridTemplateColumn Header="Քանակ" CanUserSort="True">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate DataType="{x:Type models1:InvoiceItems}">
+                                                            <TextBlock Text="{Binding Quantity, StringFormat='{}{0:#,0.###}'}" FontStyle="Italic" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
                                                 <DataGridTemplateColumn Header="Գին" CanUserSort="True">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type models1:InvoiceItems}">
-                                                            <TextBlock Text="{Binding Price, StringFormat='# ###.##'}" FontStyle="Italic" HorizontalAlignment="Right"/>
+                                                            <TextBlock Text="{Binding Price, StringFormat='{}{0:#,0.##}'}" FontStyle="Italic" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
                                                 <DataGridTemplateColumn Header="Գումար" CanUserSort="True" SortDirection="Descending" SortMemberPath="Sale">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate>
-                                                            <TextBlock Text="{Binding Sale, StringFormat=N0}" FontStyle="Italic" HorizontalAlignment="Right"/>
+                                                            <TextBlock Text="{Binding TotalAmount, StringFormat='{}{0:#,0.##}'}" FontStyle="Italic" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
@@ -482,6 +581,11 @@
                                             </DataGrid.Columns>
                                         </DataGrid>
                                     </DataTemplate>
+
+
+
+
+                                    
                                 </ContentControl.Resources>
                         </ContentControl>
                     </Grid>

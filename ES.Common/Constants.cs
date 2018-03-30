@@ -12,6 +12,7 @@ namespace ES.Common
         public const string MemberSettingsDataPath = "Msd";
         public const string ConfigFileExtantion = "conf";
         public const string DataFileExtantion = "dat";
+        public const string XmlFileExtantion = "xml";
         public const string TempInvoiceDataPath = "Msd";
 
         public const string LastLoggedUserName = "LLUNM.dat";

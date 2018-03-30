@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -8,10 +9,11 @@ using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
+using ES.Common.Models;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models.Reports;
 using Shared.Helpers;
-using UserControls.Interfaces;
+using UserControls.ControlPanel.Controls;
 using UserControls.ViewModels;
 using UserControls.Views;
 
@@ -53,7 +55,6 @@ namespace ES.Market.Views.Reports.ViewModels
         private void Initialize()
         {
             ViewInternalWayBillCommands = new RelayCommand<ViewInvoicesEnum>(OnViewViewInternalWayBillCommands, CanViewViewInternalWayBillCommands);
-            ViewSaleCommand = new RelayCommand<ViewInvoicesEnum>(OnViewSale);
             SallByCustomersCommand = new RelayCommand(OnSallByCustomers);
         }
 
@@ -87,7 +88,7 @@ namespace ES.Market.Views.Reports.ViewModels
         {
             var tab = _parentTabControl.FindChild<TabControl>();
             if (tab == null || vm == null) { return; }
-
+            vm.OnClosed += CloseTab;
             var nextTab = tab.Items.Add(new TabItem
             {
                 Content = control,
@@ -96,6 +97,16 @@ namespace ES.Market.Views.Reports.ViewModels
             });
             tab.SelectedIndex = nextTab;
         }
+
+        private void CloseTab(PaneViewModel vm)
+        {
+            var tab = _parentTabControl.FindChild<TabControl>();
+            if (tab == null || vm == null) { return; }
+            var tabItem = tab.Items.Cast<TabItem>().FirstOrDefault(s => s.DataContext == vm);
+            if (tabItem == null) return;
+            tab.Items.RemoveAt(tab.Items.IndexOf(tabItem));
+        }
+
         private bool CanViewViewInternalWayBillCommands(ViewInvoicesEnum o)
         {
             switch (o)
@@ -141,12 +152,23 @@ namespace ES.Market.Views.Reports.ViewModels
                     viewModel = new InvoiceReportViewModel(new List<InvoiceType> { InvoiceType.SaleInvoice });
                     break;
                 case ViewInvoicesEnum.ByDetiles:
+
                     break;
                 case ViewInvoicesEnum.ByStock:
+                    viewModel = new SaleInvoiceReportByStocksViewModel(type);
                     break;
                 case ViewInvoicesEnum.ByPartnerType:
                 case ViewInvoicesEnum.ByPartner:
                     viewModel = new SaleInvoiceReportByPartnerViewModel(type);
+                    break;
+                case ViewInvoicesEnum.ByPartnersDetiles:
+                    viewModel = new SaleInvoiceReportByPartnersDetiledViewModel(type);
+                    break;
+                case ViewInvoicesEnum.ByStocksDetiles:
+                    viewModel = new SaleInvoiceReportByStockDetiledViewModel(type);
+                    break;
+                case ViewInvoicesEnum.BySaleChart:
+                    viewModel = new SaleInvoiceReportByChartViewModel(type);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("type", type, null);
@@ -162,9 +184,9 @@ namespace ES.Market.Views.Reports.ViewModels
         #endregion
 
         #region Commands
-
+        private ICommand _viewSaleCommand;
         public ICommand ViewInternalWayBillCommands { get; private set; }
-        public ICommand ViewSaleCommand { get; private set; }
+        public ICommand ViewSaleCommand { get { return _viewSaleCommand ?? (_viewSaleCommand = new RelayCommand<ViewInvoicesEnum>(OnViewSale)); } }
         public ICommand SallByCustomersCommand { get; private set; }
         #endregion
 

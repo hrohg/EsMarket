@@ -8,13 +8,14 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using CashReg;
+using CashReg.Helper;
+using CashReg.Interfaces;
 using CashReg.Models;
 using ES.Business.ExcelManager;
 using ES.Business.FileManager;
 using ES.Business.Helpers;
 using ES.Data.Models;
 using ES.Business.Managers;
-using ES.Common;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
@@ -25,7 +26,6 @@ using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
 using UserControls.Views.ReceiptTickets.Views;
 using CashDeskManager = UserControls.Managers.CashDeskManager;
-using InvoicePaid = CashReg.Helper.InvoicePaid;
 using ProductModel = ES.Business.Models.ProductModel;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
@@ -35,14 +35,11 @@ namespace UserControls.ViewModels.Invoices
     public class SaleInvoiceViewModel : InvoiceViewModel
     {
         #region Internal properties
+
         #endregion
 
         #region External properties
 
-        public override string Title
-        {
-            get { return string.Format("Վաճառք{0}", Invoice != null && !string.IsNullOrEmpty(Invoice.InvoiceNumber) ? string.Format(" - {0}", Invoice.InvoiceNumber) : string.Empty); }
-        }
         public override string Description
         {
             get { return string.Format("{0}{1}", Title, Partner != null ? string.Format(" ({0})", Partner.FullName) : string.Empty); }
@@ -72,6 +69,7 @@ namespace UserControls.ViewModels.Invoices
                 _isEcrActivated = value;
                 RaisePropertyChanged("IsEcrActivated");
                 RaisePropertyChanged("EcrButtonTooltip");
+                ApplicationManager.Settings.IsEcrActivated = value;
             }
         }
         public string EcrButtonTooltip { get { return IsEcrActivated ? "ՀԴՄ ակտիվ է" : "ՀԴՄ պասիվ է"; } }
@@ -83,7 +81,7 @@ namespace UserControls.ViewModels.Invoices
         {
             get
             {
-                return !string.IsNullOrEmpty(ApplicationManager.Settings.MemberSettings.ActiveSalePrinter);
+                return !string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSalePrinter);
             }
         }
         private bool _isPrintTicket;
@@ -99,7 +97,7 @@ namespace UserControls.ViewModels.Invoices
                 _isPrintTicket = value;
                 RaisePropertyChanged("IsPrintTicket");
                 RaisePropertyChanged("SalePrinterButtonTooltip");
-                ApplicationManager.Settings.MemberSettings.IsPrintSaleTicket = value;
+                ApplicationManager.Settings.IsPrintSaleTicket = value;
             }
         }
         public string SalePrinterButtonTooltip { get { return IsPrintTicket ? "Վաճառքի տպիչն ակտիվ է:" : "Վաճառքի տպիչը պասիվ է:"; } }
@@ -120,50 +118,52 @@ namespace UserControls.ViewModels.Invoices
         {
             get
             {
-                return UseExtPos ? "Օգտագործել արտաքին POS տերմինալ" : "Օգտագործել ներքին POS տերմինալ";
+                return UseExtPos ? "Օգտագործել արտաքին POS տերմինալ" : "Օգտագործել ՀԴՄ ներքին POS տերմինալ";
             }
         }
         #endregion
 
         #region Constructors
         public SaleInvoiceViewModel()
+            : base(InvoiceType.SaleInvoice)
         {
-            Initialize();
+
+        }
+        public SaleInvoiceViewModel(InvoiceType type)
+            : base(type)
+        {
+
         }
         public SaleInvoiceViewModel(Guid id)
             : base(id)
         {
-            Initialize();
+
         }
         #endregion
 
         #region Internal methods
 
-        private void Initialize()
+        protected override void OnInitialize()
         {
-            FromStocks = StockManager.GetStocks(ApplicationManager.Settings.MemberSettings.ActiveSaleStocks.ToList()).ToList();
-            Invoice.InvoiceTypeId = (int)InvoiceType.SaleInvoice;
-            if (Partner == null)
-            {
-                var provideDefault = ApplicationManager.Instance.CashProvider.GetEsDefaults(DefaultControls.Customer);
-                Partner = provideDefault == null ? ApplicationManager.Instance.CashProvider.GetPartners.FirstOrDefault() : ApplicationManager.Instance.CashProvider.GetPartners.FirstOrDefault(s => s.Id == provideDefault.ValueInGuid);
-            } IsModified = false;
-            AddBySingle = ApplicationManager.Settings.MemberSettings.SaleBySingle;
+            base.OnInitialize();
+            FromStocks = StockManager.GetStocks(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSaleStocks.ToList()).ToList();
+            AddBySingle = ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBySingle;
             PrintEcrTicketCommand = new RelayCommand(OnPrintEcrTicket, CanPrintEcrTicket);
-            IsPrintTicket = ApplicationManager.Settings.MemberSettings.IsPrintSaleTicket;
-            IsEcrActivated = ApplicationManager.Settings.MemberSettings.IsEcrActivated;
+            IsPrintTicket = ApplicationManager.Settings.IsPrintSaleTicket;
+            IsEcrActivated = ApplicationManager.Settings.IsEcrActivated;
+            UseExtPos = ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.UseExtPos;
         }
 
         protected override void SetPrice()
         {
             foreach (var item in InvoiceItems)
             {
-                item.Price = GetPartnerPrice(item.Product);
+                item.Price = GetProductPrice(item.Product);
             }
             RaisePropertyChanged("InvoiceItems");
             if (InvoiceItem != null)
             {
-                InvoiceItem.Price = GetPartnerPrice(InvoiceItem.Product);
+                InvoiceItem.Price = GetProductPrice(InvoiceItem.Product);
             }
         }
         private void PrintInvoiceTicket(ResponseReceiptModel ecrResponseReceiptModel)
@@ -175,7 +175,14 @@ namespace UserControls.ViewModels.Invoices
                 InvoicePaid = InvoicePaid
             });
             //new UiPrintPreview(ticket).ShowDialog();
-            PrintManager.PrintDataGrid(ticket, ApplicationManager.Settings.MemberSettings.ActiveSalePrinter);
+            PrintManager.PrintDataGrid(ticket, ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSalePrinter);
+        }
+
+        protected override InvoiceItemsModel GetInvoiceItem(string code)
+        {
+            var invoiceItem = base.GetInvoiceItem(code);
+            invoiceItem.Price = GetProductPrice(invoiceItem.Product);
+            return invoiceItem;
         }
         protected override void OnGetProduct(object o)
         {
@@ -220,8 +227,9 @@ namespace UserControls.ViewModels.Invoices
         }
         private void OnPrintEcrTicket(object o)
         {
-            var ecrManager = new EcrServer(ApplicationManager.Settings.MemberSettings.EcrConfig);
-            var products = InvoiceItems.Select(s => new CashReg.Helper.Product(s.Code, s.Description, s.Mu)
+            var ecrManager = new EcrServer(ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig);
+            ecrManager.OnError += delegate(Exception ex) { MessageManager.OnMessage(ex.ToString()); };
+            var products = InvoiceItems.Select(s => (IEcrProduct)new EcrProduct(s.Code, s.Description, s.Mu)
             {
                 Price = s.Product.Price ?? 0,
                 Qty = s.Quantity ?? 0,
@@ -229,12 +237,13 @@ namespace UserControls.ViewModels.Invoices
                 DiscountType = s.Discount != null && s.Discount > 0 ? 1 : (int?)null,
                 AdgCode = s.Product.HcdCs
             }).ToList();
-            var invoicePaid = new InvoicePaid
+            var invoicePaid = new EcrPaid
             {
                 PaidAmount = InvoicePaid.Paid != null ? (double)InvoicePaid.Paid : 0,
                 PaidAmountCard = InvoicePaid.ByCheck != null ? (double)InvoicePaid.ByCheck : 0,
                 PartialAmount = 0,
-                PrePaymentAmount = 0
+                PrePaymentAmount = (double)(InvoicePaid.ReceivedPrepayment ?? 0),
+                UseExtPos = UseExtPos
             };
             var responceReceiptViewModel = ecrManager.PrintReceipt(products, invoicePaid);
             var message = responceReceiptViewModel != null ?
@@ -246,15 +255,15 @@ namespace UserControls.ViewModels.Invoices
         protected override void OnImportInvoice(ExportImportEnum importFrom)
         {
             InvoiceItems.Clear();
-            var filePath = FileManager.OpenExcelFile("Excel files(*.xls *.xlsx *․xlsm)|*.xls;*.xlsm;*․xlsx|Excel with macros|*.xlsm|Excel 97-2003 file|*.xls", "Excel ֆայլի բեռնում", ApplicationManager.Settings.MemberSettings.ImportingFilePath);
+            var filePath = FileManager.OpenExcelFile("Excel files(*.xls *.xlsx *․xlsm)|*.xls;*.xlsm;*․xlsx|Excel with macros|*.xlsm|Excel 97-2003 file|*.xls", "Excel ֆայլի բեռնում", ApplicationManager.Settings.SettingsContainer.MemberSettings.ImportingFilePath);
             if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
             {
                 IsLoading = false;
                 return;
             }
-            var memberSettings = ApplicationManager.Settings.MemberSettings;
+            var memberSettings = ApplicationManager.Settings.SettingsContainer.MemberSettings;
             memberSettings.ImportingFilePath = Path.GetDirectoryName(filePath);
-            MemberSettings.Save(ApplicationManager.Settings.MemberSettings, memberSettings.MemberId);
+            MemberSettings.Save(ApplicationManager.Settings.SettingsContainer.MemberSettings, memberSettings.MemberId);
             ProductModel product;
             var invoice = ExcelImportManager.ImportSaleInvoice(filePath);
             if (invoice == null) return;
@@ -272,8 +281,7 @@ namespace UserControls.ViewModels.Invoices
                         HcdCs = item.Product != null ? item.Product.HcdCs : null,
                         Price = item.Price
                     };
-                    var result =
-                        MessageBox.Show(
+                    var result = MessageBox.Show(
                             string.Format("{0}({1}) ապրանքը գրանցված չէ: Ցանկանու՞մ եք գրանցել:", item.Description,
                                 item.Code), "Ապրանքի գրանցում", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                     if (result != MessageBoxResult.Yes && result != MessageBoxResult.No)
@@ -305,6 +313,12 @@ namespace UserControls.ViewModels.Invoices
                 RaisePropertyChanged("InvoicePaid");
             }
         }
+
+        private void CheckForPrize(InvoiceModel invoice)
+        {
+            if (!InvoicesManager.CheckForPrize(invoice)) return;
+            MessageBox.Show(string.Format("Շնորհավորում ենք դուք շահել եք։ \n Ապրանքագիր։ {0} \n Ամսաթիվ։ {1} \n Պատվիրատու։ {2}", invoice.InvoiceNumber, invoice.ApproveDate, invoice.RecipientName), "Շահում", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+        }
         #endregion
 
         #region External methods
@@ -335,8 +349,7 @@ namespace UserControls.ViewModels.Invoices
 
         public override bool CanAddInvoiceItem(object o)
         {
-            ++count;
-            return base.CanAddInvoiceItem(o) && FromStocks != null && FromStocks.Any();
+            return base.CanAddInvoiceItem(o);
         }
 
         protected override void OnAddInvoiceItem(object o)
@@ -345,6 +358,8 @@ namespace UserControls.ViewModels.Invoices
             {
                 return;
             }
+            ++count;
+
             if (!SetQuantity(AddBySingle))
             {
                 return;
@@ -354,12 +369,12 @@ namespace UserControls.ViewModels.Invoices
             //RaisePropertyChanged("InvoicePaid");
         }
 
-        protected override decimal GetPartnerPrice(EsProductModel product)
+        protected override decimal GetProductPrice(EsProductModel product)
         {
             decimal price = product != null ? (product.Price ?? 0) : 0;
             if (Partner == null || product == null) { return price; }
 
-            price = base.GetPartnerPrice(product);
+            price = base.GetProductPrice(product);
             var dealerPrice = (product.DealerPrice ?? 0) * (1 - (product.DealerDiscount ?? 0) / 100);
             switch (Partner.PartnersTypeId)
             {
@@ -384,7 +399,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected override void OnApprove(object o)
         {
-            if (!CanApprove(o))
+            if (!CanApprove(o) && IsModified)
             {
                 MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);
                 return;
@@ -393,10 +408,10 @@ namespace UserControls.ViewModels.Invoices
             IsLoading = true;
             PrepareToApprove();
             //Approve Invoice
-            new Thread(()=>OnApproveAsync(false)).Start();
+            new Thread(() => OnApproveAsync(false)).Start();
         }
 
-        private void PrepareToApprove()
+        protected virtual void PrepareToApprove()
         {
             Invoice.ApproverId = ApplicationManager.GetEsUser.UserId;
             Invoice.Approver = ApplicationManager.GetEsUser.FullName;
@@ -404,131 +419,125 @@ namespace UserControls.ViewModels.Invoices
             InvoicePaid.PartnerId = Invoice.PartnerId;
             Invoice.RecipientName = Partner.FullName;
 
-            var cashDesk = InvoicePaid.Paid > 0 ? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.MemberSettings.SaleCashDesks).SingleOrDefault() : null;
+            //Paid
+            var cashDesk = InvoicePaid.Paid > 0 ? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleCashDesks).SingleOrDefault() : null;
             InvoicePaid.CashDeskId = cashDesk != null ? cashDesk.Id : (Guid?)null;
 
-            var bankAccount = InvoicePaid.ByCheck > 0 ? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.MemberSettings.SaleBankAccounts).SingleOrDefault() : null;
+            var bankAccount = InvoicePaid.ByCheck > 0 ? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBankAccounts).SingleOrDefault() : null;
             InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
         }
-        private void OnApproveAsync(bool closeOnExit)
+        protected override void OnApproveAsync(bool closeOnExit)
         {
             try
             {
-                OnSaveInvoice(null);
-                if (IsModified)
+                if (IsModified && !Save())
                 {
                     IsLoading = false;
                     return;
                 }
 
                 IsLoading = true;
-                if (!RegisterEcrTicket())
+                ResponseReceiptModel responceReceiptModel = null;
+                if (IsEcrActivated)
                 {
-                    IsLoading = false;
-                    return;
+                    responceReceiptModel = RegisterEcrTicket();
+                    if (responceReceiptModel == null)
+                    {
+                        IsLoading = false;
+                        MessageManager.OnMessage("ՀԴՄ կտրոնի տպումը ձախողվել է:", MessageTypeEnum.Warning);
+                        return;
+                    }
+                }
+                //Open Cash desk
+                if (!string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort) && InvoicePaid.Paid > 0)
+                {
+                    CashDeskManager.OpenCashDesk();
+                }
+
+                //Print ticket
+                if (IsPrintTicket && (!IsEcrActivated || ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.UseExternalPrinter) && Application.Current != null)
+                {
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => PrintInvoiceTicket(responceReceiptModel)));
                 }
 
                 var invoice = InvoicesManager.ApproveSaleInvoice(Invoice, InvoiceItems.ToList(), FromStocks.Select(s => s.Id).ToList(), InvoicePaid);
-                if (invoice == null || Application.Current==null)
+                if (invoice == null || Application.Current == null)
                 {
                     Invoice.AcceptDate = Invoice.ApproveDate = null;
                     MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);
                     IsLoading = false;
                     return;
                 }
-                Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => ReloadApprovedInvoice(invoice)));
-
                 //CheckForPrize(Invoice);
+                MessageManager.OnMessage(string.Format("{0} ապրանքագիրը հաստատվել է հաջողությամբ: Գումար {1} վճարվել է {2}",invoice.Amount, Invoice.InvoiceNumber, InvoicePaid.ByCash), MessageTypeEnum.Success);
 
-                if (closeOnExit && Invoice.ApproveDate != null && Application.Current != null)
+                if (closeOnExit && invoice.ApproveDate != null && Application.Current != null)
                 {
-                   Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>  OnClose(null)));
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => OnClose(null)));
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => ReloadApprovedInvoice(invoice)));
                 }
             }
             catch (Exception ex)
             {
-                if (Application.Current != null)
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => MessageManager.OnMessage(ex.Message, MessageTypeEnum.Error)));
-                IsLoading = false;
+                MessageManager.OnMessage(ex.Message, MessageTypeEnum.Error);
             }
-        }
-
-        private void ReloadApprovedInvoice(InvoiceModel invoice)
-        {
-            Invoice = invoice;
-            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
-
-            AccountsReceivable = new AccountsReceivableModel(Invoice.Id, Partner.Id, User.UserId, Invoice.MemberId, true);
-            ApplicationManager.CashManager.UpdatePartners();
-            Partner = ApplicationManager.CashManager.GetPartners.SingleOrDefault(s => s.Id == Partner.Id);
-
-            IsModified = false;
             IsLoading = false;
-
-            RaisePropertyChanged("InvoiceStateImageState");
-            RaisePropertyChanged("InvoiceStateTooltip");
         }
-        private bool RegisterEcrTicket()
+        private ResponseReceiptModel RegisterEcrTicket()
         {
+            ResponseReceiptModel responceReceiptModel = null;
             try
             {
-                ResponseReceiptModel responceReceiptModel = null;
                 if (CanPrintEcrTicket(null))
                 {
                     //todo
-                    EcrServer ecrManager = null;
-
-                    ecrManager = new EcrServer(ApplicationManager.Settings.MemberSettings.EcrConfig);
-                    responceReceiptModel = ecrManager.PrintReceipt(InvoiceItems.Select(s => new CashReg.Helper.Product(s.Code, s.Description, s.Mu)
+                    var items = InvoiceItems.Select(s => (IEcrProduct)new EcrProduct(s.Code, s.Description, s.Mu)
                     {
                         Price = s.Product.Price ?? 0,
                         Qty = s.Quantity ?? 0,
-                        Discount = s.Discount ?? 0,
+                        Discount = s.Discount,
                         DiscountType = s.Discount != null ? 1 : (int?)null,
                         AdgCode = s.Product.HcdCs
-                    }).ToList(), new InvoicePaid
+                    }).ToList();
+                    var paid = new EcrPaid
                     {
-                        PaidAmount = InvoicePaid.Paid != null ? (double)InvoicePaid.Paid : 0,
+                        PaidAmount = (double)(InvoicePaid.Paid ?? 0) + (double)(InvoicePaid.AccountsReceivable ?? 0),
                         PaidAmountCard = InvoicePaid.ByCheck != null ? (double)InvoicePaid.ByCheck : 0,
                         PartialAmount = 0,
-                        PrePaymentAmount = InvoicePaid.Prepayment != null ? (double)InvoicePaid.Prepayment : 0,
+                        PrePaymentAmount = (double)(InvoicePaid.ReceivedPrepayment ?? 0),
                         UseExtPos = UseExtPos
-                    });
-
+                    };
+                    //paid.PaidAmount = (double)items.Sum(s => s.DiscountType == null ? 
+                    //    s.Price * s.Qty : s.DiscountType == 1 ? 
+                    //    s.Price * s.Qty * (1 - (s.Discount ?? 0)) / 100: 
+                    //    s.Price * s.Qty - (s.Discount ?? 0))
+                    //    - paid.PaidAmountCard - paid.PartialAmount - paid.PrePaymentAmount;
+                    var ecrManager = new EcrServer(ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig);
+                    responceReceiptModel = ecrManager.PrintReceipt(items, paid);
 
                     if (responceReceiptModel != null)
                     {
                         Invoice.RecipientTaxRegistration = responceReceiptModel.Rseq.ToString();
-                        //todo approve invoice
                         MessageManager.OnMessage(new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:" + responceReceiptModel.Rseq, MessageTypeEnum.Success));
                     }
                     else
                     {
-                        MessageManager.OnMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումը ձախողվել է:  {0}", ecrManager != null ? string.Format("{0} ({1})", ecrManager.ActionDescription, ecrManager.ActionCode) : string.Empty), MessageTypeEnum.Warning));
-                        return false;
+                        MessageManager.OnMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումը ձախողվել է:  {0}", string.Format("{0} ({1})", ecrManager.ActionDescription, ecrManager.ActionCode)), MessageTypeEnum.Warning));
+                        return null;
                     }
-                }
-
-                //Open Cash desk
-                if (!string.IsNullOrEmpty(ApplicationManager.Settings.MemberSettings.CashDeskPort) && InvoicePaid.Paid > 0)
-                {
-                    CashDeskManager.OpenCashDesk();
-                }
-
-                //Print ticket
-                if (IsPrintTicket && (!IsEcrActivated || ApplicationManager.Settings.MemberSettings.EcrConfig.UseExternalPrinter) && Application.Current != null)
-                {
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => PrintInvoiceTicket(responceReceiptModel)));
                 }
             }
             catch (Exception ex)
             {
                 if (Application.Current != null)
                     Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => MessageManager.OnMessage(ex.Message, MessageTypeEnum.Error)));
-                // ignored
-                return false;
+                // aborting
+                return null;
             }
-            return true;
+            return responceReceiptModel;
         }
         public override void OnApproveAndClose(object o)
         {
@@ -549,7 +558,6 @@ namespace UserControls.ViewModels.Invoices
         #region Commands
 
         public ICommand PrintEcrTicketCommand { get; private set; }
-
         #endregion
     }
 }

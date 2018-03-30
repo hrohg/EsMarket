@@ -9,7 +9,7 @@ using ES.Data.Models;
 using ES.DataAccess.Models;
 using UserControls.Commands;
 using ProductModel = ES.Business.Models.ProductModel;
-using ProductOrderModel = ES.Business.Models.ProductOrderModel;
+using ProductOrderModel = ES.Business.Models.ProductOrdersModel;
 
 namespace UserControls.ViewModels.Products
 {

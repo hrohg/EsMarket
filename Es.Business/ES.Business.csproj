@@ -73,6 +73,7 @@
     <Compile Include="ExcelManager\ExcelDataContent.cs" />
     <Compile Include="ExcelManager\ExcelExportManager.cs" />
     <Compile Include="ExcelManager\ExcelImportManager.cs" />
+    <Compile Include="Helpers\ApplicationSettingsViewModel.cs" />
     <Compile Include="Helpers\BarCodeGenerator.cs" />
     <Compile Include="Helpers\BaseClasses.cs" />
     <Compile Include="Helpers\BaseManager.cs" />

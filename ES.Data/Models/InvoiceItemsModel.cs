@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace ES.Data.Models
 {
@@ -27,11 +28,7 @@ namespace ES.Data.Models
         }
 
         #region Invoice items model properties
-        private const string IdProperties = "Id";
         private const string IndexProperty = "Index";
-        private const string InvoiceIdProperties = "InvoiceId";
-        private const string ProductIdProperties = "ProductId";
-        private const string ProductItemIdProperties = "ProductItemId";
         private const string ProductProperty = "Product";
         private const string CodeProperties = "Code";
         private const string DescriptionProperties = "Description";
@@ -45,9 +42,10 @@ namespace ES.Data.Models
         private const string AmountProperty = "Amount";
         private const string ExpiryDateProperty = "ExpiryDate";
         #endregion
+
         #region Invoice items model private properties
         private Guid _id = Guid.NewGuid();
-        private int? _index;
+        private int _index;
         private Guid _productId;
         private EsProductModel _product;
         private ProductItemModel _productItem;
@@ -62,9 +60,10 @@ namespace ES.Data.Models
         private DateTime? _expiryDate;
         private decimal? _discount;
         #endregion
+
         #region Invoice items public properties
         public Guid Id { get { return _id; } set { _id = value; } }
-        public int? Index
+        public int Index
         {
             get { return _index; }
             set
@@ -88,8 +87,7 @@ namespace ES.Data.Models
             }
         }
         private InvoiceModel _invoice;
-        private bool _isApproved;
-
+        [XmlIgnore]
         public InvoiceModel Invoice
         {
             get { return _invoice; }
@@ -101,7 +99,7 @@ namespace ES.Data.Models
             }
         }
         #endregion Invoice
-
+        [XmlIgnore]
         public EsProductModel Product
         {
             get
@@ -120,6 +118,7 @@ namespace ES.Data.Models
                 OnPropertyChanged(ProductProperty);
             }
         }
+        [XmlIgnore]
         public ProductItemModel ProductItem
         {
             get

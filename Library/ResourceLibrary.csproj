@@ -153,7 +153,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\Invoice\Approve.png" />
-    <Resource Include="Resources\Images\Invoice\Approve_Green.png" />
     <Resource Include="Resources\Images\Barcode\BarcodeScanner.png" />
     <Resource Include="Resources\Images\Cash\CashWidrow.png" />
     <Resource Include="Resources\Images\Menu\DropDownMenu.png" />
@@ -192,6 +191,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\POS\POS_64x64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Invoice\Approve_Green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Information\Information64x64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Information\Information24x24.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

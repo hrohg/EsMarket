@@ -267,6 +267,13 @@
                         Header="Brand" Width="Auto"/>
                             <DataGridTextColumn Binding="{Binding Path=Code}" Header="Կոդ" Width="Auto" IsReadOnly="True"/>
                             <DataGridTextColumn Binding="{Binding Path=Barcode}" Header="Բարկոդ" Width="Auto" IsReadOnly="True"/>
+                            <DataGridTemplateColumn  Header="ԱՏԳ" Width="Auto" CanUserSort="True" SortMemberPath="HcdCs">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=HcdCs}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTextColumn Binding="{Binding Path=Description}" Header="Անվանում" Width="Auto" IsReadOnly="True"/>
                             <DataGridTextColumn Binding="{Binding Path=Mu}" Header="ՉՄ" Width="Auto" IsReadOnly="True"/>
                             <DataGridTemplateColumn  Header="Առկա քանակ" Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">

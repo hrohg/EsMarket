@@ -6,9 +6,10 @@
                     xmlns:enumerations="clr-namespace:ES.Common.Enumerations;assembly=ES.Common"
                     xmlns:enumerations1="clr-namespace:UserControls.Enumerations">
 
-    <converters:GetInvocieParameterConverter x:Key="GetInvocieParameterConverter"/>
+
     <converters:UserRoleToBoolConverter x:Key="UserRoleToBoolConverter"/>
     <converters:UserRoleToBoolMultiValueConverter x:Key="UserRoleToBoolMultiValueConverter"/>
+    <converters:GetInvocieParameterConverter x:Key="GetInvocieParameterConverter"/>
 
     <Style x:Key="SeparatorStyle"
            TargetType="{x:Type Border}">
@@ -82,7 +83,7 @@
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                        <Binding Source="{x:Static managers:InvoiceType.SaleInvoice}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:InvoiceTypeEnum.SaleInvoice}"  Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:InvoiceState.New}" Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:MaxInvocieCount.All}" Mode="OneWay"/>
                                     </MultiBinding>
@@ -91,11 +92,11 @@
                             </Hyperlink>
                     </TextBlock>
                             <TextBlock Margin="0 4 0 0" 
-                                       IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
+                                       IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.SaleManager}}">
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                        <Binding Source="{x:Static managers:InvoiceType.PurchaseInvoice}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:InvoiceTypeEnum.PurchaseInvoice}"  Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:InvoiceState.New}" Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:MaxInvocieCount.All}" Mode="OneWay"/>
                                     </MultiBinding>
@@ -107,7 +108,7 @@
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                        <Binding Source="{x:Static managers:InvoiceType.MoveInvoice}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:InvoiceTypeEnum.MoveInvoice}"  Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:InvoiceState.New}" Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:MaxInvocieCount.All}" Mode="OneWay"/>
                                     </MultiBinding>
@@ -115,11 +116,11 @@
                             <TextBlock Text="Տեղափոխման ապրանքագիր" Style="{StaticResource LinkStyle}"/>
                             </Hyperlink>
                     </TextBlock>
-                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Manager}}">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.StockKeeper}}">
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                        <Binding Source="{x:Static managers:InvoiceType.InventoryWriteOff}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:InvoiceTypeEnum.InventoryWriteOff}"  Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:InvoiceState.New}" Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:MaxInvocieCount.All}" Mode="OneWay"/>
                                     </MultiBinding>
@@ -127,11 +128,11 @@
                             <TextBlock Text="Դուրսգրման ակտ" Style="{StaticResource LinkStyle}"/>
                             </Hyperlink>
                     </TextBlock>
-                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.SaleManager}}">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Seller}}">
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                        <Binding Source="{x:Static managers:InvoiceType.ReturnFrom}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:InvoiceTypeEnum.ReturnFrom}"  Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:InvoiceState.New}" Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:MaxInvocieCount.All}" Mode="OneWay"/>
                                     </MultiBinding>
@@ -143,7 +144,7 @@
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
-                                        <Binding Source="{x:Static managers:InvoiceType.ReturnTo}"  Mode="OneWay"/>
+                                        <Binding Source="{x:Static managers:InvoiceTypeEnum.ReturnTo}"  Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:InvoiceState.New}" Mode="OneWay"/>
                                         <Binding Source="{x:Static managers:MaxInvocieCount.All}" Mode="OneWay"/>
                                     </MultiBinding>
@@ -191,7 +192,7 @@
                         <TextBlock Grid.Row="0" Text="Տվյալներ" Style="{StaticResource HeaderStyle}"/>
                         <TextBlock Grid.Row="1" Text="Վերլուծությունների դիտում: Տվյալների մշակում:" Style="{StaticResource DescriptionStyle}"/>
                         <StackPanel Grid.Row="2" Margin="15">
-                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.SaleManager}}">
+                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.Seller}}">
                                                 <Hyperlink TextDecorations="None" Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations:ReportTypes.Report}">
                                                     <TextBlock Text="Վերլուծություններ" Style="{StaticResource LinkStyle}"/>
                                                     </Hyperlink>

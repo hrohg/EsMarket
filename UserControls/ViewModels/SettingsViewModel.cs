@@ -199,10 +199,10 @@ namespace UserControls.ViewModels
         }
         public int? EcrSettingsPort
         {
-            get { return EcrSettings.Port; }
+            get { return EcrSettings.Port>0?EcrSettings.Port:(int?)null; }
             set
             {
-                EcrSettings.Port = value;
+                EcrSettings.Port = value??0;
                 RaisePropertyChanged("EcrSettingsPort");
                 RaisePropertyChanged("ExecuteEcrActionCommand");
             }
@@ -339,7 +339,7 @@ namespace UserControls.ViewModels
             if (Settings.Save())
             {
                 Settings.LoadMemberSettings();
-                ApplicationManager.ReloadSettings();
+                ApplicationManager.Settings.Reload();
                 MessageManager.OnMessage("Կարգավորումների գրանցումն իրականացել է հաջողությամբ:");
             }
             else

@@ -19,7 +19,6 @@ namespace ES.Common.Behaviors
             e.Handled = true;
             var request = new TraversalRequest(FocusNavigationDirection.Next) { Wrapped = false };
             AssociatedObject.MoveFocus(request);
-
         }
 
         protected override void OnDetaching()

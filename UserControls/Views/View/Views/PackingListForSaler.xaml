@@ -13,12 +13,37 @@
                 <RowDefinition />
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
-                <TextBlock Text="Ապրանքագիր" FontWeight="Bold"/>
-                <TextBlock Text="{Binding Invoice.InvoiceNumber}" Foreground="Blue"/>
-                <TextBlock Text="Ամսաթիվ" FontWeight="Bold" Margin="10,0,0,0"/>
-                <TextBlock Text="{Binding Invoice.ApproveDate}" Foreground="Blue"/>
-            </StackPanel>
+            <Grid Grid.Row="0" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Ապրանքագիր" FontWeight="Bold"/>
+                <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding Invoice.InvoiceNumber}" Foreground="Blue"/>
+                
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="Ամսաթիվ" FontWeight="Bold" Margin="10,0,0,0"/>
+                <TextBlock Grid.Row="0" Grid.Column="5" Text="{Binding Invoice.ApproveDate}" Foreground="Blue"/>
+                
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="Հանձնեց" FontWeight="Bold" Margin="10,0,0,0"/>
+                <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding Invoice.ProviderName}" Foreground="Blue"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="4" Text="Ընդունեց" FontWeight="Bold" Margin="10,0,0,0"/>
+                <TextBlock Grid.Row="1" Grid.Column="5" Text="{Binding Invoice.RecipientName}" Foreground="Blue"/>
+                
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Նշումներ" FontWeight="Bold" Margin="10,0,0,0"/>
+                <TextBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="5" Text="{Binding Invoice.Notes, Mode=OneWay}" IsReadOnly="True" Height="50" VerticalContentAlignment="Top" TextWrapping="WrapWithOverflow" HorizontalAlignment="Stretch"/>
+            </Grid>
             <DataGrid Grid.Row="1" CanUserAddRows="False"  CanUserSortColumns="True" CanUserDeleteRows="False" IsReadOnly="True" 
                   ItemsSource="{Binding InvoiceItems, Mode=TwoWay}" 
                   AutoGenerateColumns="False">
@@ -58,10 +83,22 @@
                     <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
                 </DataGrid.Columns>
             </DataGrid>
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="Զեղչ"/>
+                    <TextBox Text="{Binding Invoice.Discount, Mode=OneWay, StringFormat={}{0:#,0.00}%}" IsReadOnly="True"/>
+                    <TextBlock Text="Գումար"/>
+                    <TextBox Text="{Binding Invoice.Amount, Mode=OneWay,StringFormat={}{0:#,0.##}}" IsReadOnly="True"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static helpers:ExportImportEnum.Excel}" Content="Արտահանել" Width="75"/>
                 <Button Command="{Binding PrintInvoiceCommand, ConverterParameter=True}" CommandParameter="{x:Static helpers:PrintModeEnum.Normal}" Content="Տպել" Width="75"/>
             </StackPanel>
+            </Grid>
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

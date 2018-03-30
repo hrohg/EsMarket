@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Xml.Serialization;
 using ES.Common.Helpers;
 
 namespace ES.Common.ViewModels.Base
@@ -14,7 +14,7 @@ namespace ES.Common.ViewModels.Base
         #region Description
 
         private string _description;
-
+        [XmlIgnore]
         public virtual string Description
         {
             get
@@ -32,6 +32,7 @@ namespace ES.Common.ViewModels.Base
         #endregion Description
 
         #region IsActive
+        [XmlIgnore]
         public override bool IsActive
         {
            set
@@ -45,10 +46,17 @@ namespace ES.Common.ViewModels.Base
         }
 
         #endregion
+        [XmlIgnore]
 
         public virtual int TotalRows { get; set; }
+        [XmlIgnore]
+
         public virtual double TotalCount { get; set; }
+        [XmlIgnore]
+
         public virtual double Total { get; set; }
+        [XmlIgnore]
+
         public virtual double TotalAmount { get; set; }
 
         #endregion External properties
@@ -64,6 +72,7 @@ namespace ES.Common.ViewModels.Base
         #region Events
 
         #region Active tab changing
+
         public delegate void ActiveTabChanged(DocumentViewModel document, ActivityChangedEventArgs e);
         public event ActiveTabChanged ActiveTabChangedEvent;
         private void OnActiveTabChanges(DocumentViewModel document)

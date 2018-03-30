@@ -1,4 +1,5 @@
 ﻿using System;
+using ES.Business.Managers;
 using Shared.Helpers;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets.Views;
@@ -7,7 +8,7 @@ namespace UserControls.ViewModels.Invoices
 {
     public class PackingListForSallerViewModel : InvoiceViewModelBase
     {
-        
+
         #region External properties
 
         public override bool IsModified
@@ -18,8 +19,7 @@ namespace UserControls.ViewModels.Invoices
 
         #region Constructors
 
-        public PackingListForSallerViewModel()
-            : base()
+        public PackingListForSallerViewModel(): base()
         {
             Initialize();
         }
@@ -57,13 +57,13 @@ namespace UserControls.ViewModels.Invoices
     public class PackingListViewModel : InvoiceViewModel
     {
         #region Constructors
-        public PackingListViewModel() { }
+        public PackingListViewModel():base(InvoiceType.ProductOrder) { }
         public PackingListViewModel(Guid id) : base(id) { }
         #endregion Constructors
-
+        protected override void OnInitialize() { }
         protected override void SetPrice()
         {
-            
+
         }
 
         protected override void OnAddInvoiceItem(object o)
@@ -74,6 +74,11 @@ namespace UserControls.ViewModels.Invoices
         protected override void OnApprove(object o)
         {
             throw new NotImplementedException();
+        }
+
+        protected override void OnApproveAsync(bool closeOnExit)
+        {
+            OnApprove(null);
         }
     }
 }

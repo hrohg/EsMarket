@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using ES.Business.Managers;
-using ES.Common;
 using ES.Common.Enumerations;
 using ES.Common.Managers;
+using ES.Data.Model;
 using ES.Data.Models;
 using Shared.Helpers;
 using UserControls.Helpers;
@@ -18,14 +19,11 @@ namespace UserControls.ViewModels.Invoices
 {
     public class PurchaseInvoiceViewModel : InvoiceViewModel
     {
-        #region internal methods
+        #region Internal properties
 
         #endregion
+
         #region External properties
-        public override string Title
-        {
-            get { return string.Format("Գնում{0}", Invoice != null && !string.IsNullOrEmpty(Invoice.InvoiceNumber) ? string.Format(" - {0}", Invoice.InvoiceNumber) : string.Empty); }
-        }
         public override string Description
         {
             get { return string.Format("{0}{1}", Title, Partner != null ? string.Format(" ({0})", Partner.FullName) : string.Empty); }
@@ -43,45 +41,44 @@ namespace UserControls.ViewModels.Invoices
         }
 
         #endregion
+
         public PurchaseInvoiceViewModel()
+            : base(InvoiceType.PurchaseInvoice)
         {
-            Initialize();
+
         }
-        public PurchaseInvoiceViewModel(Guid id): base(id)
+        public PurchaseInvoiceViewModel(InvoiceType type)
+            : base(type)
         {
-            Initialize();
+
+        }
+        public PurchaseInvoiceViewModel(Guid id)
+            : base(id)
+        {
+
         }
 
         #region Internal methods
 
-        private void Initialize()
+        protected override void OnInitialize()
         {
-            FromStocks = StockManager.GetStocks(Member.Id).ToList();
-            Invoice.InvoiceTypeId = (int)InvoiceType.PurchaseInvoice;
-            if (Partner == null)
-            {
-                var provideDefault = ApplicationManager.Instance.CashProvider.GetEsDefaults(DefaultControls.Provider);
-                Partner = provideDefault == null
-                    ? ApplicationManager.Instance.CashProvider.GetPartners.FirstOrDefault()
-                    : ApplicationManager.Instance.CashProvider.GetPartners.FirstOrDefault(s => s.Id == provideDefault.ValueInGuid);
-            }
-
-            IsModified = false;
-            AddBySingle = ApplicationManager.Settings.MemberSettings.PurchaseBySingle;
+            base.OnInitialize();
+            Title = "Գնում";
+            FromStocks = StockManager.GetStocks().ToList();
+            AddBySingle = ApplicationManager.Settings.SettingsContainer.MemberSettings.PurchaseBySingle;
         }
         protected override void OnGetProduct(object o)
         {
             base.OnGetProduct(o);
             OnAddInvoiceItem(o);
         }
-        protected override decimal GetPartnerPrice(EsProductModel product)
+        protected override decimal GetProductPrice(EsProductModel product)
         {
             return product != null ? (product.CostPrice ?? 0) : 0;
-
         }
-        protected override void OnInvoiceItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected override void OnInvoiceItemsPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            base.OnInvoiceItemPropertyChanged(sender, e);
+            base.OnInvoiceItemsPropertyChanged(sender, e);
             InvoicePaid.Paid = InvoiceItems.Sum(s => (s.Price ?? 0) * (s.Quantity ?? 0));
         }
         #endregion
@@ -102,7 +99,7 @@ namespace UserControls.ViewModels.Invoices
                 && InvoicePaid.Change <= (InvoicePaid.Paid ?? 0)
                 && Partner != null
                 && (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit
-                && ApplicationManager.IsInRole(UserRoleEnum.Manager);
+                && ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
         }
         protected override void OnApprove(object o)
         {
@@ -116,7 +113,7 @@ namespace UserControls.ViewModels.Invoices
 
             if (ToStock == null)
             {
-                ToStock = SelectItemsManager.SelectStocks(StockManager.GetStocks(Member.Id)).FirstOrDefault();
+                ToStock = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActivePurchaseStocks.ToList()).ToList()).FirstOrDefault();
             }
             if (ToStock == null)
             {
@@ -127,16 +124,16 @@ namespace UserControls.ViewModels.Invoices
             Invoice.RecipientName = ToStock.FullName;
             if (InvoicePaid.ByCash > 0)
             {
-                var cashDesk = SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.MemberSettings.PurchaseCashDesks).SingleOrDefault();
+                var cashDesk = SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.SettingsContainer.MemberSettings.PurchaseCashDesks).SingleOrDefault();
                 InvoicePaid.CashDeskId = cashDesk != null ? cashDesk.Id : (Guid?)null;
             }
             if (InvoicePaid.ByCheck > 0)
             {
-                var bankAccount = SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.MemberSettings.PurchaseBankAccounts).SingleOrDefault();
+                var bankAccount = SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.SettingsContainer.MemberSettings.PurchaseBankAccounts).SingleOrDefault();
                 InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
             }
 
-            var invoice = InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), InvoicePaid);
+            var invoice = InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), new List<StockModel> { ToStock }, InvoicePaid);
             if (invoice == null)
             {
                 Invoice.AcceptDate = Invoice.ApproveDate = null;
@@ -144,11 +141,17 @@ namespace UserControls.ViewModels.Invoices
                 return;
             }
             Invoice = invoice;
-            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
+            var items = InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index);
+            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(items);
             IsModified = false;
             RaisePropertyChanged("InvoiceStateImageState");
             RaisePropertyChanged("InvoiceStateTooltip");
             MessageManager.OnMessage(string.Format("Ապրանքագիր {0} հաստատված է։", Invoice.InvoiceNumber), MessageTypeEnum.Success);
+        }
+
+        protected override void OnApproveAsync(bool closeOnExit)
+        {
+            OnApprove(null);
         }
         public override void OnApproveAndClose(object o)
         {
@@ -170,7 +173,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected override void SetPrice()
         {
-            
+
         }
 
         #endregion

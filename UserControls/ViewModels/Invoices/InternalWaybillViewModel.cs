@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -57,7 +58,7 @@ namespace UserControls.ViewModels.Invoices
             InvoicePaid.PartnerId = Invoice.PartnerId; // todo
             Invoice.ApproveDate = DateTime.Now;
 
-            var invocie = InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), InvoicePaid);
+            var invocie = InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), new List<StockModel>{FromStock}, InvoicePaid);
             if (invocie != null)
             {
                 Invoice = Invoice;
@@ -73,6 +74,10 @@ namespace UserControls.ViewModels.Invoices
                 MessageBox.Show("Գործողությունն իրականացման ժամանակ տեղի է ունեցել սխալ:", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        protected override void OnApproveAsync(bool closeOnExit)
+        {
+            OnApprove(null);
+        }
         public override void OnApproveAndClose(object o)
         {
             OnApprove(o);
@@ -82,22 +87,23 @@ namespace UserControls.ViewModels.Invoices
             }
         }
         #endregion
-        public InternalWaybillViewModel()
+        public InternalWaybillViewModel():base(InvoiceType.MoveInvoice)
         {
-            Initialize();
+            
         }
         public InternalWaybillViewModel(Guid id): base(id)
         {
-            Initialize();
+            
         }
 
         #region Internal methods
 
-        private void Initialize()
+        protected override sealed void OnInitialize()
         {
+            base.OnInitialize();
             FromStock = StockManager.GetStock(Invoice.FromStockId);
             ToStock = StockManager.GetStock(Invoice.ToStockId);
-            Invoice.InvoiceTypeId = (int)InvoiceType.MoveInvoice;
+            
             IsModified = false;
         }
         protected override void OnGetProduct(object o)
@@ -105,7 +111,7 @@ namespace UserControls.ViewModels.Invoices
             base.OnGetProduct(o);
             OnAddInvoiceItem(o);
         }
-        protected override decimal GetPartnerPrice(EsProductModel product)
+        protected override decimal GetProductPrice(EsProductModel product)
         {
             return product != null ? (product.Price ?? 0) : 0;
 
@@ -158,7 +164,7 @@ namespace UserControls.ViewModels.Invoices
 
         private void OnSelectStock(StockTypeEnum stockTypeEnum)
         {
-            var stocks = StockManager.GetStocks(ApplicationManager.Member.Id);
+            var stocks = StockManager.GetStocks();
             if (stocks == null) return;
             StockModel stock;
             if (stocks.Count == 1)

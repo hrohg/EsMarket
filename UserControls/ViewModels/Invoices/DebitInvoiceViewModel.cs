@@ -2,43 +2,46 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Managers;
 using ES.Data.Models;
-using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Invoices
 {
     public class InventoryWriteOffViewModel : SaleInvoiceViewModel
     {
         #region Internal properties
+
         #endregion
         #region External properties
         public override string Title { get { return "Դուրսգրման ակտ"; } }
         #endregion
         public InventoryWriteOffViewModel()
+            : base(InvoiceType.InventoryWriteOff)
         {
-            Initialize();
+
         }
 
-        public InventoryWriteOffViewModel(Guid id): base(id)
+        public InventoryWriteOffViewModel(Guid id)
+            : base(id)
         {
-            Initialize();
+
         }
 
         #region Internal methods
 
-        private void Initialize()
+        protected override void OnInitialize()
         {
-            Invoice.InvoiceTypeId = (int)InvoiceType.InventoryWriteOff;
-            Invoice.PartnerId = null;
-            Invoice.Partner = null;
-            Invoice.RecipientName = null;
+            base.OnInitialize();
         }
-
-
+        protected override void PrepareToApprove()
+        {
+            Invoice.ApproverId = ApplicationManager.GetEsUser.UserId;
+            Invoice.Approver = ApplicationManager.GetEsUser.FullName;
+        }
         #endregion
 
         #region External methods
@@ -47,7 +50,7 @@ namespace UserControls.ViewModels.Invoices
             base.OnAddInvoiceItem(o);
             InvoiceItem.Price = 0;
         }
-        protected override decimal GetPartnerPrice(EsProductModel product)
+        protected override decimal GetProductPrice(EsProductModel product)
         {
             return product != null ? (product.Price ?? 0) : 0;
         }
@@ -56,18 +59,6 @@ namespace UserControls.ViewModels.Invoices
         {
             return Invoice != null && Invoice.ApproveDate == null && InvoiceItems != null && InvoiceItems.Count > 0;
         }
-        protected override void OnApprove(object o)
-        {
-            if (!CanApprove(o))
-            {
-                MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);
-                return;
-            }
-            var fromStocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Instance.GetMember.Id));
-            if (fromStocks == null || fromStocks.Count == 0) return;
-            var td = new Thread(() => Approve(fromStocks.Select(s => s.Id).ToList()));
-            td.Start();
-        }
 
         private void Approve(List<long> fromStocks)
         {
@@ -75,6 +66,8 @@ namespace UserControls.ViewModels.Invoices
             Invoice.ApproverId = User.UserId;
             Invoice.Approver = User.FullName;
             var invoice = InvoicesManager.RegisterInventoryWriteOffInvoice(Invoice, InvoiceItems.ToList(), fromStocks);
+
+            //Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => ReloadApprovedInvoice(invoice)));
             if (invoice == null)
             {
                 Invoice.AcceptDate = Invoice.ApproveDate = null;
@@ -88,6 +81,35 @@ namespace UserControls.ViewModels.Invoices
             }
             IsLoading = false;
         }
+
+        protected override void OnApproveAsync(bool closeOnExit)
+        {
+            try
+            {
+                if (IsModified && !Save())
+                {
+                    IsLoading = false;
+                    return;
+                }
+
+                if (FromStocks != null && FromStocks.Any())
+                {
+                    Approve(FromStocks.Select(s => s.Id).ToList());
+                    if (Invoice.ApproveDate != null) MessageManager.OnMessage(string.Format("{0} ապրանքագիրը հաստատվել է հաջողությամբ:", Invoice.InvoiceNumber), MessageTypeEnum.Success);
+
+                    if (closeOnExit && Invoice.ApproveDate != null && Application.Current != null)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => OnClose(null)));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageManager.OnMessage(ex.Message, MessageTypeEnum.Error);
+            }
+            IsLoading = false;
+        }
+
         #endregion
 
         #region Commands

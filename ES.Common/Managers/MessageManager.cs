@@ -1,4 +1,8 @@
-﻿using ES.Common.Enumerations;
+﻿using System;
+using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
+using ES.Common.Enumerations;
 using ES.Common.Models;
 
 namespace ES.Common.Managers
@@ -29,7 +33,17 @@ namespace ES.Common.Managers
 
         public static void OnMessage(string message, MessageTypeEnum type = MessageTypeEnum.Information)
         {
-            Manager.SendMessage(new MessageModel(message, type));
+            if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA && !Thread.CurrentThread.IsBackground && !Thread.CurrentThread.IsThreadPoolThread && Thread.CurrentThread.IsAlive)
+            {
+                Manager.SendMessage(new MessageModel(message, type));
+            }
+            else
+            {
+                if (Application.Current != null)
+                {
+                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => Manager.SendMessage(new MessageModel(message, type))));
+                }
+            }
         }
         public static void OnMessage(MessageModel message)
         {

@@ -31,7 +31,7 @@ namespace ES.Business.Managers
             get
             {
                 string providerName = "System.Data.SqlClient";
-                string serverName = "93.187.163.33,14033";
+                string serverName = "bamboo.arvixe.com"; // "93.187.163.33,14033";
                 string databaseName = "EsStockDb";
 
                 // Initialize the connection string builder for the
@@ -45,8 +45,8 @@ namespace ES.Business.Managers
                 sqlBuilder.IntegratedSecurity = false;
                 sqlBuilder.PersistSecurityInfo = true;
                 sqlBuilder.MultipleActiveResultSets = true;
-                sqlBuilder.UserID = "sa";
-                sqlBuilder.Password = "academypbx569280";
+                sqlBuilder.UserID = "esstockdb_user"; // "sa";
+                sqlBuilder.Password = "esstockdb@)!$"; //"academypbx569280";
 
                 // Build the SqlConnection connection string.
                 string providerString = sqlBuilder.ToString();

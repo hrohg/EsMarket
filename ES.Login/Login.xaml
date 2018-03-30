@@ -6,7 +6,7 @@
         xmlns:behaviors1="clr-namespace:ES.Login.Behaviors"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         Title="Մուտք ES համակարգ" Height="280" Width="600" 
-        ResizeMode="NoResize" WindowStartupLocation="CenterScreen" KeyDown="Window_KeyDown"
+        ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Shared;component/Images/Cart.png">
     <Window.Resources>
         <system:Boolean x:Key="True">True</system:Boolean>
@@ -32,8 +32,8 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,5">
                 <Label Content="Մուտքանուն"/>
                 <ComboBox x:Name="TxtLogin" ItemsSource="{Binding Logins}" SelectedItem="{Binding Login}" Text="{Binding Login}" 
-                          IsEditable="True" PreviewKeyDown="TxtLogin_OnPreviewKeyDown"  Width="200" Height="25" 
-                          HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TabIndex="0" KeyDown="TxtLogin_KeyDown">
+                          IsEditable="True" Width="200" Height="25" 
+                          HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TabIndex="0">
                     <i:Interaction.Behaviors>
                         <behaviors1:FocusNextElementBehaviors />
                     </i:Interaction.Behaviors>

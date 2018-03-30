@@ -9,7 +9,6 @@ using ES.Common.Enumerations;
 using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Data.Models;
-using ES.Data.Models.Reports;
 using ES.Shop.Controls;
 using UserControls.ControlPanel.Controls;
 using UserControls.ViewModels;
@@ -51,7 +50,6 @@ namespace ES.Market.Views.Reports.View
             }
             nextTab = TabReport.Items.Add(new TabItem
                     {
-                        Header = header,
                         Content = viewTable,
                         AllowDrop = true
                     });
@@ -76,75 +74,13 @@ namespace ES.Market.Views.Reports.View
             Close();
         }
         #endregion
-        void MiViewSaleReportByStocks_Click(object sender, EventArgs e)
-        {
-            var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Member.Id), true);
-            var dateIntermediate = SelectManager.GetDateIntermediate();
-            var invoiceItems =
-                InvoicesManager.GetInvoiceItemsByStocks(
-                InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2)
-                    .Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice)
-                        .Select(s => s.Id), stocks.Select(t => t.Id));
-            var list = stocks.Select(s =>
-                        new InvoiceReport()
-                        {
-                            Description = s.FullName,
-                            Count = invoiceItems.Count(ii => ii.ProductItem.StockId == s.Id),
-                            Quantity = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id).Sum(ii => ii.Quantity ?? 0),
-                            Cost = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id).Sum(ii => ii.Quantity * ii.CostPrice ?? 0),
-                            Sale = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id).Sum(ii => ii.Quantity * ii.Price ?? 0)
-                        }).ToList();
-            list.Add(new InvoiceReport
-            {
-                Description = "Ընդամենը",
-                Count = list.Sum(s => s.Count),
-                Quantity = list.Sum(s => s.Quantity),
-                Cost = list.Sum(s => s.Cost),
-                Sale = list.Sum(s => s.Sale)
-            });
-            if (list.Count == 0)
-            {
-                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
-                return;
-            }
-            var viewModel = new TableViewModel<InvoiceReport>(list);
-            //viewModel.SetItems(list);
-            LoadTab(viewModel, "ReportByStocks");
-
-        }
-        void MiViewSaleReportDetileByStocks_Click(object sender, EventArgs e)
-        {
-            var stocksIds = SelectItemsManager.SelectStocks(StockManager.GetStocks(ApplicationManager.Member.Id), true).Select(t => t.Id);
-            var dateIntermediate = SelectManager.GetDateIntermediate();
-            var invoiceItems =
-                InvoicesManager.GetInvoiceItemsByStocks(
-                InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2)
-                    .Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice)
-                        .Select(s => s.Id), stocksIds);
-            var list = invoiceItems.GroupBy(s => s.Code).Select(s =>
-                        new InvoiceReportModel()
-                        {
-                            Code = s.First().Code,
-                            Description = s.First().Description,
-                            Mu = s.First().Mu,
-                            Quantity = s.Sum(t => t.Quantity) ?? 0,
-                            Price = s.First().Price ?? 0,
-                            CostPrice = s.First().CostPrice ?? 0
-                        }).ToList();
-            if (list.Count == 0)
-            {
-                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
-                return;
-            }
-            var viewModel = new TableViewModel<InvoiceReportModel>(list){IsShowCloseButton = true};
-            LoadTab(viewModel, "ReportByStocks");
-
-        }
         void MiViewProductReportByProviders_OnClick(object sender, EventArgs e)
         {
             var products = SelectItemsManager.SelectProduct(true);
             var dateIntermediate = SelectManager.GetDateIntermediate();
-            var invoiceItems = InvoicesManager.GetInvoiceItemssByCode(products.Select(s => s.Code), dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Member.Id).OrderBy(s => s.InvoiceId);
+            if (dateIntermediate == null) return;
+
+            var invoiceItems = InvoicesManager.GetInvoiceItemsByCode(products.Select(s => s.Code), dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Member.Id).OrderBy(s => s.InvoiceId);
             var invoices = InvoicesManager.GetInvoices(invoiceItems.Select(s => s.InvoiceId).Distinct());
             var list = invoiceItems.Select(s =>
                         new ProductProviderReportModel
@@ -172,6 +108,8 @@ namespace ES.Market.Views.Reports.View
         protected void MiViewSaleReportDetile_Click(object sender, EventArgs e)
         {
             var dateIntermediate = SelectManager.GetDateIntermediate();
+            if (dateIntermediate == null) return;
+
             var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2)
                     .Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).ToList();
 

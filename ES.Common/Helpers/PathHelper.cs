@@ -52,9 +52,7 @@ namespace ES.Common.Helpers
         }
         public static string GetMemberTempInvoiceFilePath(Guid invoiceId, long memberId)
         {
-            var appDataPath = GetLocalAppDataPath();
-            return string.Format(@"{0}\_${1}.{2}", GetMemberTempInvoicePath(memberId), invoiceId, Constants.DataFileExtantion);
-
+            return string.Format(@"{0}\_${1}.{2}", GetMemberTempInvoicePath(memberId), invoiceId, Constants.XmlFileExtantion);
         }
         public static string GetGeneralSettingsFilePath()
         {

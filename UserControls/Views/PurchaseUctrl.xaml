@@ -513,7 +513,7 @@
                     <Menu Margin="3 0">
                         <MenuItem Background="Transparent">
                             <MenuItem.Header>
-                                <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu_24x24.png.png" Width="24" Height="24"/>
+                                <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Menu/Menu_24x24.png" Width="24" Height="24"/>
                             </MenuItem.Header>
                             <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"/>
                             <MenuItem Header="Հաստատել" Command="{Binding ApproveInvoiceCommand}"/>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Xml.Serialization;
 using ES.Data.Model;
 
 namespace ES.Data.Models
@@ -8,6 +9,7 @@ namespace ES.Data.Models
     {
         public InvoiceModel()
         {
+            CreateDate = DateTime.Now;
         }
         public InvoiceModel(EsUserModel creator, EsMemberModel member)
         {
@@ -15,6 +17,7 @@ namespace ES.Data.Models
             _creator = creator.FullName;
             Creator = creator.FullName;
             _memberId = member.Id;
+            CreateDate = DateTime.Now;
         }
         public InvoiceModel(EsUserModel creator, EsMemberModel member, long invoiceTypeId)
             : this(creator, member)
@@ -24,7 +27,6 @@ namespace ES.Data.Models
 
 
         #region Invoice model properties
-        private const string IdProperty = "Id";
         private const string CreateDateProperty = "CreateDate";
         private const string DiscountProperty = "Discount";
         private const string TotalProperty = "Total";
@@ -33,6 +35,7 @@ namespace ES.Data.Models
         private const string OddMoneyProperty = "OddMoney";
         private const string ApproveDateProperty = "ApproveDate";
         #endregion
+
         #region ImvoiceModel private properties
         private Guid _id = Guid.NewGuid();
         private long _invoiceTypeId;
@@ -44,8 +47,8 @@ namespace ES.Data.Models
         private string _providerName;
         private string _recipientName;
         private decimal? _discount;
-        private decimal _summ = 0;
-        private decimal _amount = 0;
+        private decimal _summ;
+        private decimal _amount;
         private decimal? _paid;
         private DateTime? _approveDate;
 
@@ -56,7 +59,13 @@ namespace ES.Data.Models
         public long CreatorId { get { return _creatorId; } set { _creatorId = value; } }
         public string Creator { get { return _creator; } set { _creator = value; } }
         public long InvoiceTypeId { get { return _invoiceTypeId; } set { _invoiceTypeId = value; } }
-        public string InvoiceNumber { get; set; }
+
+        public string InvoiceNumber
+        {
+            get { return _invoiceNumber; }
+            set { _invoiceNumber = value; OnPropertyChanged("InvoiceNumber"); }
+        }
+
         public string About
         {
             get
@@ -69,6 +78,7 @@ namespace ES.Data.Models
         public string RecipientName { get { return _recipientName; } set { _recipientName = value; } }
         public string ProviderName { get { return _providerName; } set { _providerName = value; } }
         public Guid? PartnerId { get { return _partnerId; } set { _partnerId = value; } }
+        [XmlIgnore]
         public PartnerModel Partner { get; set; }
         public decimal? Discount { get { return _discount; } set { _discount = value; } }
 
@@ -127,6 +137,7 @@ namespace ES.Data.Models
         public string RecipientBankAccount { get; set; }
         public string RecipientTaxRegistration { get; set; }
         private string _note;
+        private string _invoiceNumber;
 
         public string Notes
         {
@@ -138,7 +149,17 @@ namespace ES.Data.Models
         {
             get { return ApproveDate != null; }
         }
-
+        public void Reload(InvoiceModel invoice, long memberId)
+        {
+            Id = invoice.Id;
+            InvoiceTypeId = invoice.InvoiceTypeId;
+            InvoiceNumber = invoice.InvoiceNumber;
+            CreateDate = invoice.CreateDate;
+            Creator = invoice.Creator;
+            CreatorId = invoice.CreatorId;
+            MemberId = memberId;
+            Notes = invoice.Notes;
+        }
         #endregion
 
         #region INotifyPropertyChanged
@@ -152,5 +173,6 @@ namespace ES.Data.Models
             }
         }
         #endregion
+        
     }
 }

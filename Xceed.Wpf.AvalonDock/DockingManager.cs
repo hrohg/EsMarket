@@ -263,8 +263,6 @@ namespace Xceed.Wpf.AvalonDock
                 RightSidePanel = CreateUIElementForModel(Layout.RightSide) as LayoutAnchorSideControl;
                 BottomSidePanel = CreateUIElementForModel(Layout.BottomSide) as LayoutAnchorSideControl;
             }
-
-
         }
 
         void DockingManager_Loaded(object sender, RoutedEventArgs e)

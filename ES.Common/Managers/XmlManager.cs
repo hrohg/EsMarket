@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Permissions;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
@@ -97,7 +98,7 @@ namespace ES.Common.Managers
 
         public XmlManager()
         {
-            
+
         }
 
         public XmlManager(string fileName)
@@ -872,7 +873,44 @@ namespace ES.Common.Managers
             writer.Close();
             return true;
         }
+        public static bool Save<T>(T obj, string filePath)
+        {
+            FileStream file = null;
+            try
+            {
+                XmlSerializer writer = new XmlSerializer(typeof(T));
+                file = !(File.Exists(filePath)) ? File.OpenWrite(filePath) : File.Create(filePath);
+                writer.Serialize(file, obj);
+            }
+            catch (Exception)
+            {
+                if (file != null) file.Close();
+                return false;
+            }
+            finally
+            {
+                if (file != null) file.Close();
+            }
+            return true;
+        }
+        public static T Load<T>(string filePath)
+        {
+            FileStream fileStream = null;
+            try
+            {
+                fileStream = new FileStream(filePath, FileMode.Open);
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                var item = (T)serializer.Deserialize(fileStream);
+                fileStream.Close();
+                return item;
+            }
+            catch (Exception)
+            {
+                if (fileStream != null) fileStream.Close();
 
+                return default(T);
+            }
+        }
         public static T Read<T>(String path)
         {
             var data = Read(path, typeof(T));
@@ -918,7 +956,7 @@ namespace ES.Common.Managers
         /// Settings
         /// </summary>
         public const string Root = "Settings";
-        
+
         public const string Login = "Login";
         public const string Logins = "Logins";
         public const string LocalMode = "LocalMode";
@@ -955,4 +993,5 @@ namespace ES.Common.Managers
         public const string EcrSettings = "EcrSettings";
         #endregion
     }
+
 }

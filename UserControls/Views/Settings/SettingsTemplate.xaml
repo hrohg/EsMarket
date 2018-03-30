@@ -28,7 +28,7 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                
+
                                 <GroupBox Grid.Row="1" Header="Գնապիտակի տպիչ">
                                     <Grid x:Name="Grid_PriceTicketPrinter">
                                         <ItemsControl  ItemsSource="{Binding Path = LablePrinters}">
@@ -45,7 +45,7 @@
                                         </ItemsControl>
                                     </Grid>
                                 </GroupBox>
-                                
+
                                 <GroupBox Grid.Row="2" Header="ՀԴՄ">
                                     <Grid>
                                         <Grid.Resources>
@@ -85,7 +85,7 @@
                                         </Grid>
                                     </Grid>
                                 </GroupBox>
-                                
+
                                 <GroupBox Grid.Row="3" Header="Դրամարկղ">
                                     <Grid>
                                         <Grid.Resources>
@@ -109,12 +109,12 @@
                                         <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding CashDeskPorts}" SelectedItem="{Binding CashDeskPort}"/>
                                     </Grid>
                                 </GroupBox>
-                                
+
                                 <GroupBox Grid.Row="4" Header="Այլ">
                                     <StackPanel>
                                         <CheckBox IsChecked="{Binding LocalMode}" Content="Աշխատել լոկալ ռեժիմում" Margin="5"/>
                                         <CheckBox IsChecked="{Binding NotifyAboutIncomingInvoices}" Content="Տեղեկացնել ստացված մուտքային ապրանքագրերի մասին" Margin="5"/>
-                                        
+
                                     </StackPanel>
                                 </GroupBox>
                             </Grid>
@@ -134,7 +134,7 @@
                                 <GroupBox Grid.Row="0" Header="Վաճառակետ">
                                     <Grid x:Name="Grid_Department">
                                         <ItemsControl  ItemsSource="{Binding Path = SaleStocks}">
-                                            <ItemsControl.ItemTemplate >
+                                            <ItemsControl.ItemTemplate>
                                                 <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
                                                     <CheckBox Content="{Binding Path=Data}" IsChecked="{Binding Path=IsChecked}" Margin ="5"/>
                                                 </DataTemplate>
@@ -148,7 +148,7 @@
                                     </Grid>
                                 </GroupBox>
                                 <GroupBox Grid.Row="1" Header="Կանխիկ դրամարկղ">
-                                    <Grid>
+                                    <Grid x:Name="Grid_SaleCashDesks">
                                         <ItemsControl  ItemsSource="{Binding Path = SaleCashDesks}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
@@ -157,14 +157,14 @@
                                             </ItemsControl.ItemTemplate>
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid, Path=ActualWidth}"/>
+                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid_SaleCashDesks, Path=ActualWidth}"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                         </ItemsControl>
                                     </Grid>
                                 </GroupBox>
                                 <GroupBox Grid.Row="2" Header="Անկանխիկ դրամարկղ" Visibility="{Binding HasBankAccounts, Converter={StaticResource BoolToVisibility}}">
-                                    <Grid>
+                                    <Grid x:Name="Grid_SaleBankAccounts">
                                         <ItemsControl  ItemsSource="{Binding Path = SaleBankAccounts}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
@@ -173,14 +173,14 @@
                                             </ItemsControl.ItemTemplate>
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid, Path=ActualWidth}"/>
+                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid_SaleBankAccounts, Path=ActualWidth}"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                         </ItemsControl>
                                     </Grid>
                                 </GroupBox>
                                 <GroupBox Grid.Row="3" Header="Տպիչ">
-                                    <Grid>
+                                    <Grid x:Name="Grid_SalePrinter">
                                         <ItemsControl  ItemsSource="{Binding Path = SalePrinters}">
                                             <ItemsControl.ItemTemplate >
                                                 <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
@@ -215,7 +215,7 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <GroupBox Grid.Row="0" Header="Պահեստ">
-                                    <Grid>
+                                    <Grid x:Name="Grid_PurchaseStocks">
                                         <ItemsControl  ItemsSource="{Binding Path = PurchaseStocks}">
                                             <ItemsControl.ItemTemplate >
                                                 <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
@@ -224,14 +224,14 @@
                                             </ItemsControl.ItemTemplate>
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid_Department, Path=ActualWidth}"/>
+                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid_PurchaseStocks, Path=ActualWidth}"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                         </ItemsControl>
                                     </Grid>
                                 </GroupBox>
                                 <GroupBox Grid.Row="1" Header="Կանխիկ դրամարկղ">
-                                    <Grid>
+                                    <Grid x:Name="Grid_PurchaseCashDesks">
                                         <ItemsControl  ItemsSource="{Binding Path = PurchaseCashDesks}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
@@ -240,14 +240,14 @@
                                             </ItemsControl.ItemTemplate>
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid, Path=ActualWidth}"/>
+                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid_PurchaseCashDesks, Path=ActualWidth}"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                         </ItemsControl>
                                     </Grid>
                                 </GroupBox>
                                 <GroupBox Grid.Row="2" Header="Անկանխիկ դրամարկղ" Visibility="{Binding HasBankAccounts, Converter={StaticResource BoolToVisibility}}">
-                                    <Grid>
+                                    <Grid x:Name="Grid_PurchaseBankAccounts">
                                         <ItemsControl  ItemsSource="{Binding Path = PurchaseBankAccounts}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
@@ -256,7 +256,7 @@
                                             </ItemsControl.ItemTemplate>
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid, Path=ActualWidth}"/>
+                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid_PurchaseBankAccounts, Path=ActualWidth}"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                         </ItemsControl>
@@ -310,6 +310,7 @@
                                                 <RowDefinition/>
                                                 <RowDefinition/>
                                                 <RowDefinition/>
+                                                <RowDefinition/>
                                             </Grid.RowDefinitions>
                                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Սերվեր IP"/>
                                             <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding EcrSettingsIp}"/>
@@ -339,8 +340,10 @@
                                             </StackPanel>
                                             <TextBlock Grid.Row="7" Grid.Column="0" Text="Տպել կտրոնն արտաքին տպիչով"/>
                                             <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding EcrSettings.UseExternalPrinter}" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Row="8" Grid.Column="0" Text="Առևտրի ծրագիր IP" HorizontalAlignment="Right"/>
-                                            <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding EcrSettings.ApplicationIp}"/>
+                                            <TextBlock Grid.Row="8" Grid.Column="0" Text="Օգտագործել արտաքին POS տերմինալ"/>
+                                            <CheckBox Grid.Row="8" Grid.Column="1" IsChecked="{Binding EcrSettings.UseExtPos}" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Row="9" Grid.Column="0" Text="Առևտրի ծրագիր IP" HorizontalAlignment="Right"/>
+                                            <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding EcrSettings.ApplicationIp}"/>
                                         </Grid>
                                     </GroupBox>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -360,5 +363,5 @@
             <controls:WaitingCover Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibility}}" />
         </Grid>
     </DataTemplate>
-    
+
 </ResourceDictionary>

@@ -45,7 +45,7 @@ namespace ES.Business.ExcelManager
                     xlWSh.Cells[nextRow, 4] = item.ExistingQuantity;
                     xlWSh.Cells[nextRow, 5] = item.Product != null ? item.Product.Price : 0;
                     xlWSh.Cells[nextRow, 6] = item.Amount;
-                    xlWSh.Cells[nextRow, 7] = item.Note;
+                    xlWSh.Cells[nextRow, 7] = item.Notes;
                     nextRow++;
                 }
                 xlApp.Show();
@@ -97,12 +97,23 @@ namespace ES.Business.ExcelManager
             {
                 foreach (var product in products)
                 {
+                    Range cell;
+                    
                     //Code
-                    xlWSh.Cells[nextRow, 1] = product.Code;
+                    cell = xlWSh.Cells[nextRow, 1] ;
+                    cell.NumberFormat = "@";
+                    cell.Value2 = product.Code;
+                    
                     //Barcode
-                    xlWSh.Cells[nextRow, 2] = product.Barcode;
+                    cell = xlWSh.Cells[nextRow, 2];
+                    cell.NumberFormat = "@";
+                    cell.Value2 = product.Barcode;
+                    
                     //HcdCs
-                    xlWSh.Cells[nextRow, 3] = product.HcdCs;
+                    cell = xlWSh.Cells[nextRow, 3];
+                    cell.NumberFormat = "@";
+                    cell.Value2 = product.HcdCs;
+                     
                     //Description
                     xlWSh.Cells[nextRow, 4] = product.Description;
                     //Mu

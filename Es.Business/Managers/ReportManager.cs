@@ -19,7 +19,7 @@ namespace ES.Business.Managers
                 try
                 {
                     return
-                        db.Invoices.Where(s => s.MemberId == ApplicationManager.Instance.GetMember.Id && s.ApproveDate != null && s.ApproveDate >= startDate && s.ApproveDate <= endDate)
+                        db.Invoices.Where(s => s.MemberId == ApplicationManager.Member.Id && s.ApproveDate != null && s.ApproveDate >= startDate && s.ApproveDate <= endDate)
                             .Select(s => new InvoiceModel
                             {
                                 Id = s.Id,

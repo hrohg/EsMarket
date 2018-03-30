@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
+using CashReg;
+using CashReg.Managers;
 using ES.Business.Managers;
 using ES.Business.Models;
+using ES.Common.Enumerations;
+using ES.Common.Managers;
 using UserControls.ControlPanel.Controls;
 using UserControls.ViewModels;
 
@@ -68,7 +72,7 @@ namespace UserControls.Helpers
                 repaymentAccountingRecords: repaymentAccountingRecord))
             {
                 MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
-                if (ApplicationManager.Settings.MemberSettings.IsEcrActivated && depositAccountingRecords.Amount>0)
+                if (ApplicationManager.Settings.IsEcrActivated && depositAccountingRecords.Amount>0)
                 {
                     new EcrManager().RepaymentOfDebts(depositAccountingRecords.Amount, partner.FullName);
                 }
@@ -116,7 +120,7 @@ namespace UserControls.Helpers
             if (AccountingRecordsManager.SetRepaymentOfDebts(accountingRecords, ApplicationManager.Instance.GetMember.Id))
             {
                 MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
-                if (ApplicationManager.Settings.MemberSettings.IsEcrActivated)
+                if (ApplicationManager.Settings.IsEcrActivated)
                 {
                     new EcrManager().RepaymentOfDebts(accountingRecords.Amount, partner.FullName);
                 }
@@ -156,12 +160,11 @@ namespace UserControls.Helpers
             receivedInAdvance.CreditGuidId = partner.Id;
             receivedInAdvance.DebitGuidId = cashDesk.Id;
             if (!ctrlAccountingRecords.Result || receivedInAdvance == null || receivedInAdvance.Amount == 0) return;
-            AccountingRecordsManager.SetPartnerPayment(depositeAccountRecords: receivedInAdvance,
-                repaymentAccountingRecords: null);
+            AccountingRecordsManager.SetPartnerPayment(depositeAccountRecords: receivedInAdvance, repaymentAccountingRecords: null);
 
-            if (ApplicationManager.Settings.MemberSettings.IsEcrActivated)
+            if (ApplicationManager.Settings.IsEcrActivated)
             {
-                new EcrManager().ReceivedInAdvance(receivedInAdvance.Amount, partner.FullName);
+                ApplicationManager.CreateEcrConnection().SetCashReceipt(receivedInAdvance.Amount, partner.FullName);
             }
         }
 

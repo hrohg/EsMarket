@@ -86,7 +86,7 @@ namespace ES.Shop.Controls
                     foreach (var invoice in invociesGroupByYear)
                     {
                         if (!invoice.Any()) { continue;}
-                        listByYear.Add(new KeyValuePair<int, decimal>(invoice.First().CreateDate.Month, invoice.Sum(s => s.Total) / invoice.Select(s => s.CreateDate.Date).Distinct().Count()));
+                        listByYear.Add(new KeyValuePair<int, decimal>(invoice.First().CreateDate.Year, invoice.Sum(s => s.Total)));
                     } LineChart.ItemsSource = listByYear;
                     break;
                 default:

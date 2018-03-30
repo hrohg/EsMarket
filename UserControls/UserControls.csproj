@@ -61,6 +61,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Bin\CashReg.dll</HintPath>
     </Reference>
+    <Reference Include="DotNetProjects.DataVisualization.Toolkit">
+      <HintPath>..\packages\DotNetProjects.Wpf.Toolkit.5.0.26\lib\net40\DotNetProjects.DataVisualization.Toolkit.dll</HintPath>
+    </Reference>
     <Reference Include="ReachFramework" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -75,6 +78,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -87,6 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Converters\StringToBoolConverter.cs" />
     <Compile Include="Enumerations\ToolsEnum.cs" />
     <Compile Include="Helpers\AccountingActionManager.cs" />
     <Compile Include="Helpers\Converters.cs" />
@@ -147,7 +152,7 @@
     <Compile Include="Converters\CommandParameterConverter.cs" />
     <Compile Include="Converters\InverseVisibilityConverter.cs" />
     <Compile Include="Converters\MessageColorConverter.cs" />
-    <Compile Include="Converters\UserRoleToBoolConverter.cs" />
+    <Compile Include="Converters\UserRoleConverter.cs" />
     <Compile Include="Editors\EditProducts\Views\EditProductUctrl.xaml.cs">
       <DependentUpon>EditProductUctrl.xaml</DependentUpon>
     </Compile>
@@ -175,7 +180,7 @@
     <Compile Include="ViewModels\Managers\ProductManagerViewModel.cs" />
     <Compile Include="Views\View\ProductItemsViewModel.cs" />
     <Compile Include="ViewModels\ReportExceptionViewModel.cs" />
-    <Compile Include="ViewModels\ReportViewModel.cs" />
+    <Compile Include="ViewModels\ReportDataViewModel.cs" />
     <Compile Include="ViewModels\SaleProductsViewModel.cs" />
     <Compile Include="ViewModels\ServerViewModel.cs" />
     <Compile Include="ViewModels\ServicesViewModel.cs" />

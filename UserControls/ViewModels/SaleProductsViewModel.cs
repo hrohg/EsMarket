@@ -72,6 +72,7 @@ namespace UserControls.ViewModels
         {
             base.OnUpdate(o);
             Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
+            if(dateIntermediate==null) return;
             Description = string.Format("Վաճառք {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
             var thread = new Thread(() => Update(dateIntermediate));
             thread.Start();

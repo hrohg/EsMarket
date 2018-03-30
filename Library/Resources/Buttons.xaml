@@ -42,7 +42,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="NoChromeButton" TargetType="{x:Type Button}">
+    <Style x:Key="NoChromeButton" TargetType="{x:Type Button}" x:Shared="False">
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="1"/>
@@ -219,7 +219,7 @@
     </Style>
 
     <Style x:Key="PosToggleButtinStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static res:ResourceKeys.NoChromeToggleButtonKey}}">
-        <Setter Property="ToolTip" Value="{Binding EcrButtonTooltip}"/>
+        <Setter Property="ToolTip" Value="{Binding ApplicationSettings.EcrButtonTooltip}"/>
         <Setter Property="ContentTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -302,4 +302,32 @@
         </Setter.Value>
     </Setter>
     </Style>
+
+    <Style x:Key="InfoImageStyle" TargetType="{x:Type Image}">
+        <Setter Property="Source" Value="pack://application:,,,/ResourceLibrary;component/Resources/Images/Information/Information24x24.png"/>
+        <Setter Property="Height" Value="24"/>
+    </Style>
+    
+    <Style x:Key="InfoToggleButtinStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static res:ResourceKeys.NoChromeToggleButtonKey}}">
+        <Setter Property="ToolTip" Value="Մանրամասն"/>
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <StackPanel SnapsToDevicePixels="True" Orientation="Horizontal">
+                        <Image x:Name="Image" Style="{StaticResource InfoImageStyle}"/>
+                    </StackPanel>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="true">
+                            <Setter TargetName="Image" Property="Opacity" Value=".5"/>
+                        </DataTrigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Image" Property="Opacity" Value=".3"/>
+                        </Trigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    
 </ResourceDictionary>

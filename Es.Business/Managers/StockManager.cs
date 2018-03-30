@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using ES.Business.Helpers;
-using ES.Common.Managers;
 using ES.Data.Model;
 using ES.DataAccess.Models;
 
@@ -34,7 +33,7 @@ namespace ES.Business.Managers
         private static EsStock Convert(StockModel item)
         {
             if (item == null) return null;
-            return new EsStock()
+            return new EsStock
             {
                 Id = item.Id,
                 ParentStockId = item.ParentId,
@@ -56,15 +55,14 @@ namespace ES.Business.Managers
                 return db.EsStock.FirstOrDefault(s => s.EsMemberId == memberId && s.IsEnable);
             }
         }
-        public static List<StockModel> GetStocks(long memberId)
+        public static List<StockModel> GetStocks()
         {
-            return TryGetStocks(memberId).Select(Convert).ToList();
+            return TryGetStocks().Select(Convert).ToList();
 
         }
         public static IEnumerable<StockModel> GetStocks(List<long> ids)
         {
             return TryGetStocks(ids).Select(Convert);
-
         }
         public static StockModel GetStock(long? id)
         {
@@ -91,7 +89,7 @@ namespace ES.Business.Managers
                 }
             }
         }
-        private static List<EsStock> TryGetStocks(long memberId)
+        private static List<EsStock> TryGetStocks()
         {
             using (var db = GetDataContext())
             {
@@ -101,7 +99,7 @@ namespace ES.Business.Managers
                         .Include(s => s.EsUsers)
                         .Include(s => s.EsMembers)
                         .Include(s => s.EsStock2)
-                        .Where(s => s.EsMemberId == memberId && s.IsEnable).ToList();
+                        .Where(s => s.EsMemberId == ApplicationManager.Member.Id && s.IsEnable).ToList();
                 }
                 catch (Exception)
                 {

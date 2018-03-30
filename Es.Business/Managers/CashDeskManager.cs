@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ES.Business.Helpers;
-using ES.Common.Managers;
 using ES.DataAccess.Models;
 
 namespace ES.Business.Managers

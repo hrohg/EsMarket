@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Xml.Serialization;
 using ES.Business.ExcelManager;
 using ES.Business.FileManager;
 using ES.Business.Managers;
@@ -25,18 +26,24 @@ namespace UserControls.ViewModels.Invoices
     public abstract class InvoiceViewModelBase : DocumentViewModel, IInvoiceViewModel
     {
         #region Internal fields
+
         #endregion Internal fields
 
         #region Internal properties
-        protected EsMemberModel Member { get { return ApplicationManager.Instance.GetMember; } }
-        protected EsUserModel User { get { return ApplicationManager.GetEsUser; } }
+
+        protected EsMemberModel Member
+        {
+            get { return ApplicationManager.Instance.GetMember; }
+        }
+
+        protected EsUserModel User
+        {
+            get { return ApplicationManager.GetEsUser; }
+        }
 
         protected bool IsInvoiceValid
         {
-            get
-            {
-                return Invoice != null && InvoiceItems != null && InvoiceItems.Count > 0;
-            }
+            get { return Invoice != null && InvoiceItems != null && InvoiceItems.Count > 0; }
         }
 
         #endregion Internal properties
@@ -44,8 +51,10 @@ namespace UserControls.ViewModels.Invoices
         #region External properties
 
         #region Invoice
+
         private const string InvoiceProperty = "Invoice";
         private InvoiceModel _invoice;
+
         public InvoiceModel Invoice
         {
             get { return _invoice; }
@@ -56,8 +65,9 @@ namespace UserControls.ViewModels.Invoices
                 RaisePropertyChanged(InvoiceProperty);
                 FromStock = _invoice.FromStockId != null ? StockManager.GetStock(_invoice.FromStockId) : null;
                 ToStock = _invoice.ToStockId != null ? StockManager.GetStock(_invoice.ToStockId) : null;
-                Partner = Invoice.Partner ?? PartnersManager.GetPartner(Invoice.PartnerId, Invoice.MemberId);
-                var invoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
+                Partner = Invoice.Partner ?? PartnersManager.GetPartner(Invoice.PartnerId);
+                
+                var invoiceItems = InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index);
                 InvoiceItems = new ObservableCollection<InvoiceItemsModel>();
                 InvoiceItems.CollectionChanged += OnInvoiceItemsChanged;
                 foreach (var invoiceItemsModel in invoiceItems)
@@ -67,7 +77,9 @@ namespace UserControls.ViewModels.Invoices
                 IsModified = true;
             }
         }
+
         private ObservableCollection<InvoiceItemsModel> _invoiceItems = new ObservableCollection<InvoiceItemsModel>();
+
         public ObservableCollection<InvoiceItemsModel> InvoiceItems
         {
             get { return _invoiceItems; }
@@ -82,36 +94,43 @@ namespace UserControls.ViewModels.Invoices
         #endregion Invoice
 
         #region Filter
+
         private const string FilteredInvoiceItemsProperty = "FilteredInvoiceItems";
+
+        [XmlIgnore]
         public string Filter { get; set; }
+
+        [XmlIgnore]
         public ObservableCollection<InvoiceItemsModel> FilteredInvoiceItems
         {
             get
             {
-                return new ObservableCollection<InvoiceItemsModel>(InvoiceItems.Where(s => string.IsNullOrEmpty(Filter) ||
-                    s.Code.Contains(Filter) ||
-                    s.Description.Contains(Filter) ||
-                    s.Price.ToString().Contains(Filter)));
+                return
+                    new ObservableCollection<InvoiceItemsModel>(InvoiceItems.Where(s => string.IsNullOrEmpty(Filter) ||
+                                                                                        s.Code.Contains(Filter) ||
+                                                                                        s.Description.Contains(Filter) ||
+                                                                                        s.Price.ToString()
+                                                                                            .Contains(Filter)));
             }
         }
+
         #endregion Filter
 
         #region Stocks
+
         private const string FromStockProperty = "FromStock";
         protected List<StockModel> FromStocks { get; set; }
         private StockModel _fromStock;
+
         public StockModel FromStock
         {
-            get
-            {
-                return _fromStock;
-            }
+            get { return _fromStock; }
             set
             {
                 _fromStock = value;
-                Invoice.FromStockId = value != null ? value.Id : (long?)null;
+                Invoice.FromStockId = value != null ? value.Id : (long?) null;
                 Invoice.ProviderName = value != null ? value.FullName : string.Empty;
-                if (value != null) FromStocks = new List<StockModel> { value };
+                if (value != null) FromStocks = new List<StockModel> {value};
                 RaisePropertyChanged(FromStockProperty);
                 RaisePropertyChanged("Description");
                 IsModified = true;
@@ -120,38 +139,40 @@ namespace UserControls.ViewModels.Invoices
 
         private const string ToStockProperty = "ToStock";
         private StockModel _toStock;
+
         public StockModel ToStock
         {
-            get
-            {
-                return _toStock;
-            }
+            get { return _toStock; }
             set
             {
                 _toStock = value;
-                Invoice.ToStockId = value != null ? value.Id : (long?)null;
+                Invoice.ToStockId = value != null ? value.Id : (long?) null;
                 Invoice.RecipientName = value != null ? value.FullName : string.Empty;
                 RaisePropertyChanged(ToStockProperty);
                 RaisePropertyChanged("Description");
                 IsModified = true;
             }
         }
+
         #endregion Stocks
 
         #region Partner
+
         protected const string PartnerProperty = "Partner";
         private PartnerModel _partner;
+
         public virtual PartnerModel Partner
         {
             get { return _partner; }
             set
             {
                 _partner = value;
-                Invoice.PartnerId = value != null ? value.Id : (Guid?)null;
+                Invoice.PartnerId = value != null ? value.Id : (Guid?) null;
                 IsModified = true;
                 RaisePropertyChanged(PartnerProperty);
             }
         }
+
         #endregion Partner
 
         #endregion External properties
@@ -160,28 +181,34 @@ namespace UserControls.ViewModels.Invoices
         {
             get
             {
-                return string.Format("Տեղափոխություն ({0} -> {1})", FromStock != null ? FromStock.Name : string.Empty, ToStock != null ? ToStock.Name : string.Empty);
+                return string.Format("Տեղափոխություն ({0} -> {1})", FromStock != null ? FromStock.Name : string.Empty,
+                    ToStock != null ? ToStock.Name : string.Empty);
             }
         }
 
         #region Constructors
+
         public InvoiceViewModelBase()
         {
             Initialize();
         }
+
         public InvoiceViewModelBase(Guid id)
             : this()
         {
-            Invoice = InvoicesManager.GetInvoice(id, ApplicationManager.Instance.GetMember.Id);
+            Invoice = InvoicesManager.GetInvoice(id);
             Initialize();
         }
+
         #endregion Constructors
 
         #region Internal methods
+
         private void Initialize()
         {
             Title = "Ապրանքագիր";
-            if (Invoice == null) Invoice = new InvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember);
+            if (Invoice == null)
+                Invoice = new InvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember);
             PrintInvoiceCommand = new RelayCommand<PrintModeEnum>(OnPrintInvoice, CanPrintInvoice);
             ImportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnImportInvoice, CanImportInvoice);
             ExportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnExportInvoice, CanExportInvoice);
@@ -195,7 +222,7 @@ namespace UserControls.ViewModels.Invoices
                 foreach (InvoiceItemsModel item in e.OldItems)
                 {
                     //Removed items
-                    item.PropertyChanged -= OnInvoiceItemPropertyChanged;
+                    item.PropertyChanged -= OnInvoiceItemsPropertyChanged;
                 }
             }
             else if (e.Action == NotifyCollectionChangedAction.Add)
@@ -203,14 +230,15 @@ namespace UserControls.ViewModels.Invoices
                 foreach (InvoiceItemsModel item in e.NewItems)
                 {
                     //Added items
-                    item.PropertyChanged += OnInvoiceItemPropertyChanged;
+                    item.PropertyChanged += OnInvoiceItemsPropertyChanged;
                 }
             }
-            OnInvoiceItemPropertyChanged(null, null);
+            OnInvoiceItemsPropertyChanged(null, null);
         }
-        protected virtual void OnInvoiceItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+
+        protected virtual void OnInvoiceItemsPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            Invoice.Amount = InvoiceItems.Sum(s => (s.Product.Price ?? 0) * (s.Quantity ?? 0));
+            Invoice.Amount = InvoiceItems.Sum(s => (s.Product.Price ?? 0)*(s.Quantity ?? 0));
             IsModified = true;
             RaisePropertyChanged(FilteredInvoiceItemsProperty);
         }
@@ -218,15 +246,18 @@ namespace UserControls.ViewModels.Invoices
         #endregion Internal methods
 
         #region External methods
+
         #endregion External methods
 
         #region Command methods
 
         #region Print invoice
+
         protected virtual bool CanPrintInvoice(PrintModeEnum printSize)
         {
             return IsInvoiceValid;
         }
+
         protected virtual void OnPrintInvoice(PrintModeEnum printSize)
         {
             //if (!CanPrintInvoice(printSize)) { return; }
@@ -236,13 +267,16 @@ namespace UserControls.ViewModels.Invoices
             //PrintManager.PrintOnActivePrinter(new ReceiptTicketSmall(new ReceiptTicketViewModel(new ResponceReceiptModel()){Invocie = Invoice, InvoiceItems = InvoiceItems.ToList(), InvoicePaid = InvoicePaid}), ApplicationManager.ActivePrinter);
 
         }
+
         #endregion
 
         #region Import
+
         protected virtual bool CanImportInvoice(ExportImportEnum importFrom)
         {
             return !Invoice.IsApproved;
         }
+
         protected virtual void OnImportInvoice(ExportImportEnum importFrom)
         {
             switch (importFrom)
@@ -268,7 +302,10 @@ namespace UserControls.ViewModels.Invoices
                             var product = new ProductsManager().GetProductsByCodeOrBarcode(invoiceItem.Code, Member.Id);
                             if (product == null)
                             {
-                                MessageBox.Show(invoiceItem.Code + " կոդով ապրանք չի հայտնաբերվել։ Գործողությունն ընդհատված է։ Փորձեք կրկին։", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                MessageBox.Show(
+                                    invoiceItem.Code +
+                                    " կոդով ապրանք չի հայտնաբերվել։ Գործողությունն ընդհատված է։ Փորձեք կրկին։",
+                                    "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
                                 return;
                             }
                             invoiceItem.InvoiceId = Invoice.Id;
@@ -308,10 +345,16 @@ namespace UserControls.ViewModels.Invoices
 
         #region Commands
 
+        [XmlIgnore]
         public ICommand PrintInvoiceCommand { get; private set; }
+
+        [XmlIgnore]
         public ICommand ImportInvoiceCommand { get; private set; }
+
+        [XmlIgnore]
         public ICommand ExportInvoiceCommand { get; private set; }
 
         #endregion Commands
     }
+
 }

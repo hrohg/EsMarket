@@ -24,7 +24,7 @@ namespace UserControls.Views
         public ProductOrderUctrl()
         {
             InitializeComponent();
-            DataContext = _viewModel = new ProductOrderViewModel(new ProductOrderModel());
+            DataContext = _viewModel = new ProductOrderViewModel(new ProductOrdersModel());
         }
         private void CtrlProductOrder_Loaded(object sender, RoutedEventArgs e)
         {

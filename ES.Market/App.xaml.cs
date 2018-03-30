@@ -43,7 +43,7 @@ namespace ES.Market
                 var dataServers = DataServerSettings.GetDataServers();
                 if (!dataServers.Any())
                 {
-                    new ServerConfig(new ServerViewModel(new DataServer())).ShowDialog();                    
+                    new ServerConfig(new ServerViewModel(new DataServer())).ShowDialog();
                 }
                 var loginVm = new LoginViewModel(_logins.FirstOrDefault(), _logins.ToList(), DataServerSettings.GetDataServers());
 
@@ -256,7 +256,9 @@ namespace ES.Market
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            new EsExceptionBox { DataContext = new ReportExceptionViewModel(e.Exception) }.ShowDialog();
+            if (Application.Current != null)
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+            new EsExceptionBox { DataContext = new ReportExceptionViewModel(e.Exception) }.ShowDialog()));
             e.Handled = true;
         }
         private static void ShutdownApplication()

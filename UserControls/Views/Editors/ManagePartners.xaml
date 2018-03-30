@@ -8,108 +8,76 @@
                 <RowDefinition />
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" HorizontalAlignment="Center">
-                <StackPanel Orientation="Horizontal">
-                    <Grid Grid.Row="0" HorizontalAlignment="Center" Width="400">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0"  Orientation="Horizontal" HorizontalAlignment="Right" Margin="1">
-                            <Label HorizontalContentAlignment="Right" Width="100" Content="Պատվիրատուի խումբ"/>
-                            <ComboBox Width="200" ItemsSource="{Binding PartnersTypes}" SelectedValue="{Binding Partner.PartnersTypeId}"
+            <Grid Grid.Row="0" HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Պատվիրատուի խումբ" HorizontalAlignment="Right"/>
+                <ComboBox Grid.Row="0" Grid.Column="1" Width="150" ItemsSource="{Binding PartnersTypes}" HorizontalAlignment="Left" SelectedValue="{Binding Partner.PartnersTypeId}"
                         DisplayMemberPath="Description" SelectedValuePath="Id"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="1"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <Label HorizontalContentAlignment="Right" Width="100" Content="ID"/>
-                            <TextBox Width="230" Text="{Binding Partner.ClubSixteenId}" Height="25" HorizontalContentAlignment="Center"/>
-                            <Button Width="68" Content="Հարցում" Margin="1" IsEnabled="False" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="2"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <Label HorizontalContentAlignment="Right" Width="100" Content="Անվանում"/>
-                            <TextBox Width="300" Text="{Binding Partner.FullName, UpdateSourceTrigger=PropertyChanged}" Height="25" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="3"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <Label HorizontalContentAlignment="Right" Width="100" Content="Անուն"/>
-                            <TextBox Width="300" Text="{Binding Partner.FirstName}" Height="25" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="4"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <Label HorizontalContentAlignment="Right" Width="100" Content="Ազգանուն"/>
-                            <TextBox Width="300" Text="{Binding Partner.LastName}" Height="25" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="5"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <Label HorizontalContentAlignment="Right" Width="100" Content="Բջջային"/>
-                            <TextBox Width="300" Text="{Binding Partner.Mobile, UpdateSourceTrigger=PropertyChanged}" Height="25" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="6"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <Label HorizontalContentAlignment="Right" Width="100" Content="Հասցե"/>
-                            <TextBox Width="300" Text="{Binding Partner.Address }" Height="25" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="7"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <Label HorizontalContentAlignment="Right" Width="100" Content="էլ-փոստ"/>
-                            <TextBox Width="300" Text="{Binding Partner.Email}" Height="25" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="8"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <Label HorizontalContentAlignment="Right" Content="Մաքսիմալ դեբիտորական պարտք"/>
-                            <TextBox Width="100" Text="{Binding Partner.MaxDebit}" Height="25" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="9"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <Label HorizontalContentAlignment="Right" Content="Զեղչ"/>
-                            <TextBox Width="100" Text="{Binding Partner.Discount}" Height="25" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                    </Grid>
-                    <Grid Grid.Row="0" HorizontalAlignment="Center" Width="400">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="0"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <Label HorizontalContentAlignment="Right" Content="ՀՎՀՀ"/>
-                            <TextBox Width="200" Text="{Binding Partner.TIN}" Height="25" TextAlignment="Center" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="1"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <TextBlock Text="Անձնագրային տվյալներ" Width="100" TextWrapping="WrapWithOverflow" TextAlignment="Right"/>
-                            <TextBox Width="300" Text="{Binding Partner.PasportData}" Height="25" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="2"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <TextBlock HorizontalAlignment ="Right" Width="100" FontSize="11" TextWrapping="WrapWithOverflow" TextAlignment="Right" Text="Իրավաբանական հասցե"/>
-                            <TextBox Width="300" Text="{Binding Partner.JuridicalAddress}" Height="25" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="3"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <Label HorizontalContentAlignment="Right" Width="100" Content="Բանկ"/>
-                            <TextBox Width="300" Text="{Binding Partner.Bank }" Height="25" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="4"  Orientation="Horizontal" Margin="1" HorizontalAlignment="Right">
-                            <Label HorizontalContentAlignment="Right" Width="100" Content="Հաշվեհամար"/>
-                            <TextBox Width="300" Text="{Binding Partner.BankAccount}" Height="25" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="1">
-                            <Label HorizontalContentAlignment="Right" Content="Նշումներ"/>
-                            <TextBox Width="300" Text="{Binding Partner.Notes}" Height ="130" VerticalScrollBarVisibility="Auto" TextWrapping="WrapWithOverflow" AcceptsReturn="True" AcceptsTab="True"/>
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
-                <Grid>
+                <TextBlock  Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Text="ID"/>
+                <Grid Grid.Row="1" Grid.Column="1" Margin="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Text="{Binding Partner.ClubSixteenId, Mode=OneWay}" IsReadOnly="True" Height="25" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"/>
+                    <Button Grid.Column="1" Width="70" Content="Generate" ToolTip="Գեներացնել անհատական ID" Command="{Binding GenerateLocalIdCommand}" Margin="1" VerticalContentAlignment="Center"/>
+                    <Button Grid.Column="2" Width="70" Content="Sync" ToolTip="Համաժամանակեցում" Command="{Binding SyncPartnerCommand}" Margin="1" VerticalContentAlignment="Center"/>
+                </Grid>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Անվանում" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="2" Grid.Column="1" MinWidth="300" 
+                         Text="{Binding Partner.FullName, UpdateSourceTrigger=PropertyChanged}" Height="25"
+                         IsReadOnly="{Binding Partner.IsRegistered}"
+                         VerticalContentAlignment="Center"/>
+                <TextBlock  Grid.Row="3" Grid.Column="0" Text="Անուն" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="3" Grid.Column="1" MinWidth="300" Text="{Binding Partner.FirstName}" Height="25" VerticalContentAlignment="Center"/>
+                <TextBlock  Grid.Row="4" Grid.Column="0" Text="Ազգանուն" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="4" Grid.Column="1" MinWidth="300" Text="{Binding Partner.LastName}" Height="25" VerticalContentAlignment="Center"/>
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Բջջային" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="5" Grid.Column="1" MinWidth="300" Text="{Binding Partner.Mobile, UpdateSourceTrigger=PropertyChanged}" Height="25" VerticalContentAlignment="Center"/>
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Հասցե" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="6" Grid.Column="1" MinWidth="300" Text="{Binding Partner.Address }" Height="25" VerticalContentAlignment="Center"/>
+                <TextBlock Grid.Row="7" Grid.Column="0" Text="էլ-փոստ" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="7" Grid.Column="1" MinWidth="300" Text="{Binding Partner.Email}" Height="25" VerticalContentAlignment="Center"/>
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="Մաքս. դեբետ" ToolTip="Մաքսիմալ դեբիտորական պարտք" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="8" Grid.Column="1" Width="150" Text="{Binding Partner.MaxDebit}" TextAlignment="Right" Height="25" VerticalContentAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBlock Grid.Row="9" Grid.Column="0" Text="Զեղչ" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="9" Grid.Column="1" Width="150" Text="{Binding Partner.Discount}" TextAlignment="Right" Height="25" VerticalContentAlignment="Center" HorizontalAlignment="Left"/>
+                <!--Right side-->
+                <TextBlock Grid.Row="0" Grid.Column="3"  HorizontalAlignment="Right" Text="ՀՎՀՀ"/>
+                <TextBox Grid.Row="0" Grid.Column="4" MinWidth="150" Text="{Binding Partner.TIN}" Height="25" TextAlignment="Center" VerticalContentAlignment="Center"/>
+                <TextBlock Grid.Row="1" Grid.Column="3" Text="Անձնագրային տվյալներ" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="1" Grid.Column="4" MinWidth="300" Text="{Binding Partner.PasportData}" Height="25" VerticalContentAlignment="Center"/>
+                <TextBlock Grid.Row="2" Grid.Column="3" HorizontalAlignment="Right" Text="Իրավաբանական հասցե"/>
+                <TextBox Grid.Row="2" Grid.Column="4" MinWidth="300" Text="{Binding Partner.JuridicalAddress}" Height="25" VerticalContentAlignment="Center"/>
+                <TextBlock Grid.Row="3" Grid.Column="3" Text="Բանկ" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="3" Grid.Column="4" MinWidth="300" Text="{Binding Partner.Bank }" Height="25" VerticalContentAlignment="Center"/>
+                <TextBlock Grid.Row="4" Grid.Column="3" Text="Հաշվեհամար" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="4" Grid.Column="4" MinWidth="300" Text="{Binding Partner.BankAccount}" Height="25" VerticalContentAlignment="Center"/>
+                <TextBlock Grid.Row="5" Grid.Column="3" Text="Նշումներ" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="5" Grid.Column="4" Grid.RowSpan="3" MinWidth="300" Text="{Binding Partner.Notes}" MinHeight="70" VerticalScrollBarVisibility="Auto" TextWrapping="WrapWithOverflow" AcceptsReturn="True" AcceptsTab="True"/>
 
-                    <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" >
-                        <TextBox Text="{Binding Path=FilterText, UpdateSourceTrigger=PropertyChanged}" Width="400" Height="25" VerticalContentAlignment="Center" />
-                    </StackPanel>
+                <!--Bottom side-->
+                <Grid Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Right">
                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="3">
                         <Button Content="Նոր" Padding="3" Command="{Binding NewPartnerCommand}" Width="80"/>
                         <Button Content="Ավելացնել" Padding="3" Command="{Binding AddPartnerCommand}" Width="80"/>
@@ -117,40 +85,47 @@
                         <Button Content="Հիմնական" Padding="3" Command="{Binding SetDefaultPartnerCommand}" CommandParameter="{Binding Partner}" Width="80"/>
                     </StackPanel>
                 </Grid>
-
-            </StackPanel>
-            <DataGrid Grid.Row="1" 
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" Text="{Binding Path=FilterText, UpdateSourceTrigger=PropertyChanged}" Height="25" VerticalContentAlignment="Center" />
+                <DataGrid Grid.Row="1" 
                   ItemsSource="{Binding Partners}" 
                   SelectedItem="{Binding Partner}" 
                   VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="12" 
                       AlternatingRowBackground ="GhostWhite" AlternationCount="2"
                       Margin="1">
-                <DataGrid.Resources>
-                    <Style x:Key="CellRightAlign">
-                        <Setter Property="Control.HorizontalAlignment" Value="Right" />
-                    </Style>
-                    <ContextMenu x:Key="RowMenu">
-                        <MenuItem Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemovePartnerCommand}" CommandParameter="{Binding Partner.Id}" Header="Հեռացնել"/>
-                    </ContextMenu>
-                </DataGrid.Resources>
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="ContextMenu" Value="{StaticResource RowMenu}"/>
-                    </Style>
-                </DataGrid.RowStyle>
-                <DataGrid.Columns>
-                    <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding FullName}" />
-                    <DataGridTextColumn IsReadOnly="True" Header="Պատվիրատու" Binding="{Binding PartnersType.Description}" />
-                    <DataGridTextColumn IsReadOnly="False" Header="Հեռախոս" Binding="{Binding Path=Mobile, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" CellStyle="{StaticResource CellRightAlign}" />
-                    <DataGridTextColumn IsReadOnly="True" Header="Հասցե" Binding="{Binding Path=Address, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" CellStyle="{StaticResource CellRightAlign}" />
-                    <DataGridTextColumn IsReadOnly="True" Header="Էլ-փոստ" Binding="{Binding Path=Email, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" CellStyle="{StaticResource CellRightAlign}" />
-                    <DataGridTextColumn IsReadOnly="True" Header="Զեղչ" Binding="{Binding Path=Discount}" />
-                    <DataGridTextColumn IsReadOnly="True" Header="Max դեբետ" Binding="{Binding Path=MaxDebit}" />
-                    <DataGridTextColumn IsReadOnly="True" Header="Դեբետ" Binding="{Binding Path=Debit}" />
-                    <DataGridTextColumn IsReadOnly="True" Header="Կրեդիտ" Binding="{Binding Path=Credit}" />
-                    <DataGridTextColumn IsReadOnly="True" Header="Քարտի ID" Binding="{Binding ClubSixteenId}" />
-                </DataGrid.Columns>
-            </DataGrid>
+                    <DataGrid.Resources>
+                        <Style x:Key="CellRightAlign">
+                            <Setter Property="Control.HorizontalAlignment" Value="Right" />
+                        </Style>
+                        <ContextMenu x:Key="RowMenu">
+                            <MenuItem Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemovePartnerCommand}" CommandParameter="{Binding Partner.Id}" Header="Հեռացնել"/>
+                        </ContextMenu>
+                    </DataGrid.Resources>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="ContextMenu" Value="{StaticResource RowMenu}"/>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding FullName}" />
+                        <DataGridTextColumn IsReadOnly="True" Header="Պատվիրատու" Binding="{Binding PartnersType.Description}" />
+                        <DataGridTextColumn IsReadOnly="False" Header="Հեռախոս" Binding="{Binding Path=Mobile, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" CellStyle="{StaticResource CellRightAlign}" />
+                        <DataGridTextColumn IsReadOnly="True" Header="Հասցե" Binding="{Binding Path=Address, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" CellStyle="{StaticResource CellRightAlign}" />
+                        <DataGridTextColumn IsReadOnly="True" Header="Էլ-փոստ" Binding="{Binding Path=Email, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" CellStyle="{StaticResource CellRightAlign}" />
+                        <DataGridTextColumn IsReadOnly="True" Header="Զեղչ" Binding="{Binding Path=Discount}" />
+                        <DataGridTextColumn IsReadOnly="True" Header="Max դեբետ" Binding="{Binding Path=MaxDebit}" />
+                        <DataGridTextColumn IsReadOnly="True" Header="Դեբետ" Binding="{Binding Path=Debit}" />
+                        <DataGridTextColumn IsReadOnly="True" Header="Կրեդիտ" Binding="{Binding Path=Credit}" />
+                        <DataGridTextColumn IsReadOnly="True" Header="Քարտ ID" Binding="{Binding ClubSixteenId}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </Grid>
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

@@ -9,7 +9,7 @@ namespace UserControls.Interfaces
 {
     public interface IShellViewModel: INotifyPropertyChanged
     {
-        void OnGetInvoices(Tuple<InvoiceType, InvoiceState, MaxInvocieCount> o);
+        void OnGetInvoices(Tuple<InvoiceTypeEnum, InvoiceState, MaxInvocieCount> o);
         void OnGetReport(ReportTypes type);
         void OnTools(ToolsEnum toolsEnum);
         void OnSetCategory(EsCategoriesModel category);
