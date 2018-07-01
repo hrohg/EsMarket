@@ -18,7 +18,7 @@ using ES.Data.Models;
 using ES.Data.Models.Reports;
 using ES.DataAccess.Models;
 using MessageBox = System.Windows.MessageBox;
-using ProductModel = ES.Business.Models.ProductModel;
+using ProductModel = ES.Data.Models.ProductModel;
 
 namespace ES.Business.Managers
 {
@@ -425,7 +425,8 @@ namespace ES.Business.Managers
                         .Include(s => s.Products)
                         .Include(s => s.ProductItems)
                         .Include(s => s.Products.ProductCategories)
-                        .Include(s => s.Products.ProductGroup).Where(s => s.InvoiceId == invoiceId).OrderBy(s => s.Code).ToList();
+                        .Include(s => s.Products.ProductGroup)
+                        .Include(s => s.Products.ProductsAdditionalData).Where(s => s.InvoiceId == invoiceId).OrderBy(s => s.Code).ToList();
                 }
             }
             catch (Exception)
@@ -439,8 +440,13 @@ namespace ES.Business.Managers
             {
                 using (var db = GetDataContext())
                 {
-                    return db.InvoiceItems.Include(s => s.Invoices).Include(s => s.Products).Include(s => s.ProductItems).Include(s => s.Products.ProductCategories)
-                        .Include(s => s.Products.ProductGroup).Where(s => invoiceIds.Contains(s.InvoiceId)).OrderBy(s => s.Code).ToList();
+                    return db.InvoiceItems
+                        .Include(s => s.Invoices)
+                        .Include(s => s.Products).Include(s => s.ProductItems)
+                        .Include(s => s.Products.ProductCategories)
+                        .Include(s => s.Products.ProductGroup)
+                        .Include(s => s.Products.ProductsAdditionalData)
+                        .Where(s => invoiceIds.Contains(s.InvoiceId)).OrderBy(s => s.Code).ToList();
                 }
             }
             catch (Exception)
@@ -534,7 +540,7 @@ namespace ES.Business.Managers
                     }
                     else
                     {
-                        if (exInvoice.ApproveDate != null) return false;
+                        if (exInvoice.ApproveDate != null) { MessageManager.OnMessage(string.Format("Հաստատված ապրանքագիր ({0})", exInvoice.InvoiceNumber), MessageTypeEnum.Information); return false; }
 
                         exInvoice.InvoiceTypeId = invoice.InvoiceTypeId;
                         exInvoice.FromStockId = invoice.FromStockId;
@@ -1602,6 +1608,7 @@ namespace ES.Business.Managers
                         MessageManager.OnMessage("Պատվիրատու ընտրված չէ։ Ընտրեք պատվիրատու և փորձեք կրկին։", MessageTypeEnum.Warning);
                         return null;
                     }
+                    //Remove this
                     if (exPartner.Credit == null) exPartner.Credit = 0;
                     if (exPartner.Debit == null) exPartner.Debit = 0;
 
@@ -1781,6 +1788,32 @@ namespace ES.Business.Managers
             }
         }
 
+        public static void CheckForQuantityExisting(List<InvoiceItemsModel> invoiceItems, IEnumerable<long> fromStockIds)
+        {
+            int mismatchItemsCount = 0;
+            using (var db = GetDataContext())
+            {
+                var productsIds = invoiceItems.Select(t => t.ProductId).ToList();
+                List<ProductItems> productItemsFifo = db.ProductItems.Where(s => productsIds.Contains(s.ProductId) && fromStockIds.Contains(s.StockId ?? 0) && s.Quantity > 0).ToList();
+
+                foreach (var items in invoiceItems.GroupBy(s => s.ProductId))
+                {
+                    var invoiceItem = items.First();
+                    invoiceItem.Quantity = items.Sum(s => s.Quantity);
+                    var existingQuantity = productItemsFifo.Where(s => s.ProductId == invoiceItem.ProductId).Sum(s => s.Quantity);
+                    if (existingQuantity < invoiceItem.Quantity)
+                    {
+                        mismatchItemsCount++;
+                        var message = string.Format("Անբավարար միջոցներ {0} ({1}) {2} առկա է {3}", invoiceItem.Description, invoiceItem.Code, invoiceItem.Quantity, existingQuantity);
+                        MessageManager.OnMessage(message);
+                        //if (MessageBox.Show(string.Format("{0} \nՑանկանու՞մ եք շարունակել:", message), "Անբավարար միջոցներ", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
+                    }
+                }
+                MessageManager.OnMessage(mismatchItemsCount == 0
+                    ? "Բոլոր ապրանքների քանակությունն առկա է:"
+                    : string.Format("Բավարար քանակով առկա չէ թվով {0} ապրանքատեսակներ:", mismatchItemsCount));
+            }
+        }
         private static Invoices TryApproveInventoryWriteOffInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, IEnumerable<long> fromStockIds)
         {
             using (var transaction = new TransactionScope())
@@ -2180,7 +2213,7 @@ namespace ES.Business.Managers
                         .Include(s => s.Products.ProductCategories)
                         .Include(s => s.Products.ProductGroup)
                         .Include(s => s.ProductItems)
-                        .Where(s => codes.Contains(s.Code)).OrderBy(s => s.Code).ToList();
+                        .Include(s => s.Products.ProductsAdditionalData).Where(s => codes.Contains(s.Code)).OrderBy(s => s.Code).ToList();
                 }
             }
             catch (Exception)
@@ -2195,8 +2228,16 @@ namespace ES.Business.Managers
             {
                 using (var db = GetDataContext())
                 {
-                    var invoiceIds = db.Invoices.Where(s => s.MemberId == memberId && s.CreateDate >= fromDate && s.CreateDate < toDate && s.ApproveDate != null).Select(s => s.Id);
-                    return db.InvoiceItems.Include(s => s.Invoices).Include(s => s.Products).Include(s => s.Products.ProductCategories).Include(s => s.Products.ProductGroup).Include(s => s.ProductItems).Where(s => invoiceIds.Contains(s.InvoiceId) && productIds.Contains(s.ProductId)).OrderBy(s => s.Invoices.ApproveDate).ThenBy(s => s.Code).ToList();
+                    var invoiceIds = db.Invoices
+                        .Where(s => s.MemberId == memberId && s.CreateDate >= fromDate && 
+                            s.CreateDate < toDate && s.ApproveDate != null).Select(s => s.Id);
+                    return db.InvoiceItems
+                        .Include(s => s.Invoices)
+                        .Include(s => s.Products).Include(s => s.Products.ProductCategories)
+                        .Include(s => s.Products.ProductGroup).Include(s => s.ProductItems)
+                        .Include(s => s.Products.ProductsAdditionalData)
+                        .Where(s => invoiceIds.Contains(s.InvoiceId) && 
+                            productIds.Contains(s.ProductId)).OrderBy(s => s.Invoices.ApproveDate).ThenBy(s => s.Code).ToList();
                 }
             }
             catch (Exception)
@@ -3068,38 +3109,38 @@ namespace ES.Business.Managers
 
         #endregion
 
-        public static void AutoSaveInvoice(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems)
+        public static bool AutoSaveInvoice(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems)
         {
             try
             {
-                string filePath = PathHelper.GetMemberTempInvoiceFilePath(invoice.Id, ApplicationManager.Member.Id);
-                if (string.IsNullOrEmpty(filePath)) return;
-                XmlManager.Save(new SerializableInvoice(invoice, invoiceItems), filePath);
+                var filePath = PathHelper.GetMemberTempInvoiceFilePath(invoice.Id, ApplicationManager.Member.Id);
+                return !string.IsNullOrEmpty(filePath) && XmlManager.Save(new SerializableInvoice(invoice, invoiceItems), filePath);
             }
             catch (Exception)
             {
                 //Ignore
+                return false;
             }
         }
-        public static void AutoSave(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems)
-        {
-            string filePath = PathHelper.GetMemberTempInvoiceFilePath(invoice.Id, ApplicationManager.Member.Id);
-            if (string.IsNullOrEmpty(filePath)) return;
-            FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate);
-            BinaryFormatter formatter = new BinaryFormatter();
-            try
-            {
-                formatter.Serialize(fs, new Tuple<InvoiceModel, List<InvoiceItemsModel>>(invoice, invoiceItems));
-            }
-            catch
-            {
+        //public static void AutoSave(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems)
+        //{
+        //    string filePath = PathHelper.GetMemberTempInvoiceFilePath(invoice.Id, ApplicationManager.Member.Id);
+        //    if (string.IsNullOrEmpty(filePath)) return;
+        //    FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate);
+        //    BinaryFormatter formatter = new BinaryFormatter();
+        //    try
+        //    {
+        //        formatter.Serialize(fs, new Tuple<InvoiceModel, List<InvoiceItemsModel>>(invoice, invoiceItems));
+        //    }
+        //    catch
+        //    {
 
-            }
-            finally
-            {
-                fs.Close();
-            }
-        }
+        //    }
+        //    finally
+        //    {
+        //        fs.Close();
+        //    }
+        //}
         public static List<SerializableInvoice> LoadAutosavedInvoices()
         {
             ApplicationManager.Instance.CashProvider.UpdateCash();

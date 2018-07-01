@@ -299,7 +299,7 @@ namespace UserControls.ViewModels.Invoices
                         foreach (var invoiceItem in importInvoiceItems)
                         {
                             if (invoiceItem == null || string.IsNullOrEmpty(invoiceItem.Code)) return;
-                            var product = new ProductsManager().GetProductsByCodeOrBarcode(invoiceItem.Code, Member.Id);
+                            var product = new ProductsManager().GetProductsByCodeOrBarcode(invoiceItem.Code);
                             if (product == null)
                             {
                                 MessageBox.Show(

@@ -13,7 +13,7 @@ namespace ES.Data.Models
         public InvoiceItemsModel()
         {
         }
-        public InvoiceItemsModel(InvoiceModel invoice, EsProductModel product)
+        public InvoiceItemsModel(InvoiceModel invoice, ProductModel product)
             : this(invoice)
         {
             if (product == null) return;
@@ -47,7 +47,7 @@ namespace ES.Data.Models
         private Guid _id = Guid.NewGuid();
         private int _index;
         private Guid _productId;
-        private EsProductModel _product;
+        private ProductModel _product;
         private ProductItemModel _productItem;
         private Guid? _productItemId;
         private string _code;
@@ -100,7 +100,7 @@ namespace ES.Data.Models
         }
         #endregion Invoice
         [XmlIgnore]
-        public EsProductModel Product
+        public ProductModel Product
         {
             get
             {
@@ -152,11 +152,11 @@ namespace ES.Data.Models
                 _expiryDate = value; OnPropertyChanged(ExpiryDateProperty);
             }
         }
-        public decimal Percentage { get { return Price.HasValue && Price!=0 ? Product != null ? ((Product.Price??0) - (Price ?? 0)) * 100 / Price.Value : 0 : 100; } }
+        public decimal Percentage { get { return Price.HasValue && Price != 0 ? Product != null ? ((Product.Price ?? 0) - (Price ?? 0)) * 100 / Price.Value : 0 : 100; } }
         public decimal Amount { get { return (Quantity != null && Price != null) ? (decimal)Price * (decimal)Quantity : 0; } }
         public decimal? Discount { get { return _discount; } set { _discount = value; OnPropertyChanged(DiscountProperties); OnPropertyChanged(AmountProperty); } }
         public string Note { get { return _note; } set { _note = value; OnPropertyChanged(NoteProperties); } }
-        
+
         #endregion
 
         #region INotifyPropertyChanged

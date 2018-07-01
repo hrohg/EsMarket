@@ -21,4 +21,55 @@ namespace UserControls.Helpers
             throw new NotImplementedException();
         }
     }
+
+    public class EnumConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter,
+                              System.Globalization.CultureInfo culture)
+        {
+            Enum enumValue = default(Enum);
+            if (parameter is Type && value!=null)
+            {
+                enumValue = (Enum)Enum.Parse((Type)parameter, value.ToString());
+            }
+            return enumValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter,
+                                  System.Globalization.CultureInfo culture)
+        {
+            int returnValue = 0;
+            if (parameter is Type && value!=null)
+            {
+                returnValue = (int)Enum.Parse((Type)parameter, value.ToString());
+            }
+            return returnValue;
+        }
+    }
+
+    public class IntToEnumConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter,
+                              System.Globalization.CultureInfo culture)
+        {
+            int returnValue = 0;
+            if (parameter is Type && value != null)
+            {
+                returnValue = (int)Enum.Parse((Type)parameter, value.ToString());
+            }
+            return returnValue;
+            
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter,
+                                  System.Globalization.CultureInfo culture)
+        {
+            Enum enumValue = default(Enum);
+            if (parameter is Type && value != null)
+            {
+                enumValue = (Enum)Enum.Parse((Type)parameter, value.ToString());
+            }
+            return enumValue;
+        }
+    }
 }

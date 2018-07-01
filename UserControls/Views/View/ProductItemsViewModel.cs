@@ -150,7 +150,7 @@ namespace UserControls.Views.View
                         Կոդ = item.Code,
                         Անվանում = item.Description,
                         Չմ = item.Mu,
-                        Քանակ = item.ExistingQuantity.ToString("# ##0.##"),
+                        Քանակ = item.ExistingQuantity.ToString("# ##0.###"),
                         Գին = item.Product != null && item.Product.Price!=null? ((decimal)item.Product.Price).ToString("# ##0.##") : "0",
                         Գումար = item.Amount.ToString("# ##0.##")
                         //Պահեստ = _stocks.FirstOrDefault(t=>t.Id==product.Select(s=>s.StockId).FirstOrDefault()).FullName

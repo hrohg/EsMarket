@@ -94,25 +94,25 @@
     <Compile Include="Interfaces\IDemandEstateDisplayData.cs" />
     <Compile Include="Managers\BaseManager.cs" />
     <Compile Include="Models\AccountingPlan.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountingRecords.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountsReceivable.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Brands.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\CashDesk.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EsCategories.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EsDefaults.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EsInvoiceItemsArchive.cs">
       <DependentUpon>EsStockDbModel.tt</DependentUpon>
@@ -121,22 +121,22 @@
       <DependentUpon>EsStockDbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EsInvoiceTypes.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EsMembers.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EsMembersAccounts.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EsPartnersTypes.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ESSharedProducts.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EsStock.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EsStockDbModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -169,62 +169,65 @@
       <DependentUpon>EsStockDbServerModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\ESUserRoles.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EsUsers.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\EsUsersInRole.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\InvoiceItems.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Invoices.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MembersBrands.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MembersRoles.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MemberUsersRoles.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ParsalModels.cs" />
     <Compile Include="Models\Partners.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ProductCategories.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ProductGroup.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ProductItems.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ProductOrder.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ProductOrderItems.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Products.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductsAdditionalData.cs">
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SaleInCash.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\StockTake.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\StockTakeItems.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\SubAccountingPlan.cs">
-      <DependentUpon>EsStockDbModel.tt</DependentUpon>
+      <DependentUpon>EsStockDbServerModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sysdiagrams.cs">
       <DependentUpon>EsStockDbModel.tt</DependentUpon>

@@ -13,7 +13,8 @@
          xmlns:popup="clr-namespace:UserControls.Controls.Popup"
          xmlns:controls="clr-namespace:ES.Common.Controls;assembly=ES.Common"
              xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data"
-         MinHeight="450"
+             xmlns:invoices="clr-namespace:UserControls.ViewModels.Invoices"
+             MinHeight="450"
          MinWidth="700"
          Width="Auto"
          mc:Ignorable="d"
@@ -343,7 +344,7 @@
 
                 <extendedControls:ExtendedDataGrid Grid.Row="1" x:Name="DgInvoiceItems"   ItemsSource="{Binding InvoiceItems}" 
                                            SelectedItem="{Binding SelectedInvoiceItem}" VerticalContentAlignment="Stretch"
-                                           CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="14" 
+                                           CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="18" 
                                            AlternatingRowBackground ="GhostWhite" AlternationCount="2">
                     <DataGrid.Resources>
                         <Style x:Key="CellRightAlign">
@@ -367,7 +368,7 @@
                         <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
-                                    <TextBlock Text="{Binding Description}"/>
+                                    <TextBlock Text="{Binding Description}" FontSize="18"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -384,8 +385,22 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
-                        <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.###}}" CellStyle="{StaticResource CellRightAlign}" />
-                        <DataGridTextColumn IsReadOnly="{Binding DenayChangePrice}" Header="Գին" Binding="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}" />
+                        <DataGridTemplateColumn Header="Քանակ">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
+                                    <TextBox Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0.###}}" 
+                                             HorizontalContentAlignment="Right"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Գին">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
+                                    <TextBox Text="{Binding Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0.##}}" 
+                                             HorizontalContentAlignment="Right" IsReadOnly="{Binding ElementName=DgInvoiceItems, Path=DataContext.DenayChangePrice, Mode=OneWay}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
                         <DataGridTextColumn IsReadOnly="True" Header="Զեղչ" Binding="{Binding Path=Discount, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
                     </DataGrid.Columns>
@@ -419,7 +434,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Expander Grid.Row="0" Header ="Վճարում" IsExpanded="True" BorderBrush="Blue">
+                <Expander Grid.Row="0" Header ="Վճարում" IsExpanded="True" BorderBrush="Blue" IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}">
                     <StackPanel  Orientation="Horizontal"  HorizontalAlignment="Right" CanHorizontallyScroll="True">
                         <TextBlock Foreground="Red" FontSize="60" Text="{Binding Path=Invoice.Total, StringFormat={}{0:#,#.##}}"/>
                         <GroupBox>
@@ -526,11 +541,8 @@
                                         </MenuItem>
                                     </MenuItem>
                                     <MenuItem Header="Արտահանել">
-                                        <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceToXmlCommand}"/>
-                                        <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ExportInvoiceToExcelCommand}"/>
-                                        <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" Visibility="Collapsed"/>
-                                        <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}" Visibility="Collapsed"/>
-                                        <MenuItem Header="Արտահանել Ctrl+E" Command="{Binding ExportInvoiceCommand}" Visibility="Collapsed"/>
+                                        <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Xml}"/>
+                                        <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
                                     </MenuItem>
                                     <Separator/>
                                     <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>

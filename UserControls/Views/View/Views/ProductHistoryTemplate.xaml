@@ -187,7 +187,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Border>
-                                    <TextBlock Text="{Binding Path=Quantity, StringFormat='# ###.##', TargetNullValue='0'}" Style="{StaticResource TextBlockStyle}" HorizontalAlignment="Right"/>
+                                    <TextBlock Text="{Binding Path=Quantity, StringFormat='# ##0.###', TargetNullValue='0'}" Style="{StaticResource TextBlockStyle}" HorizontalAlignment="Right"/>
                                 </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

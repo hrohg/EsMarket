@@ -346,7 +346,7 @@ namespace UserControls.ViewModels.StockTakeings
         }
         public void GetProduct(Guid id)
         {
-            SetStockTakeItem(new ProductsManager().GetProduct(id, _memberId));
+            SetStockTakeItem(ProductsManager.GetProduct(id));
         }
 
         #endregion
@@ -367,7 +367,7 @@ namespace UserControls.ViewModels.StockTakeings
         }
         protected void GetProduct(string code)
         {
-            SetStockTakeItem(new ProductsManager().GetProductsByCodeOrBarcode(code, _memberId));
+            SetStockTakeItem(new ProductsManager().GetProductsByCodeOrBarcode(code));
         }
         #endregion Get product command
 
@@ -480,13 +480,18 @@ namespace UserControls.ViewModels.StockTakeings
         private void GetUnavailableProductItems(object obj)
         {
             var unavailableProductItems = new ProductsManager().GetUnavailableProductItems(
-                StockTakeItems.Where(s => s.ProductId != null).Select(s => s.ProductId != null ? (Guid)s.ProductId : new Guid()).ToList(), new List<long> { Stock.Id });
+                StockTakeItems.Where(s => s.ProductId != null).Where(s=>s.ProductId!=null).Select(s => (Guid)s.ProductId).ToList(), new List<long> { Stock.Id });
             var productItemIds = unavailableProductItems.GroupBy(s => s.ProductId).Select(s => s.Select(t => t.ProductId).First()).OrderBy(s => s).ToList();
             foreach (var productId in productItemIds)
             {
                 var quantity = unavailableProductItems.Where(s => s.ProductId == productId).Sum(s => s.Quantity);
                 var product = unavailableProductItems.Where(s => s.ProductId == productId).Select(s => s.Product).FirstOrDefault();
                 if (product == null) continue;
+                if (StockTakeItems.Any(s => s.ProductId == product.Id))
+                {
+                    MessageBox.Show(product.Description + " (" + product.Code + ") ապրանքից արդեն հաշվառվել է։ \n", "Հաշվառում", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    continue;
+                }
                 switch (MessageBox.Show(product.Description + " (" + product.Code + ") ապրանքից " + quantity + " հատ չի հաշվառվել։ \n Ցանկանու՞մ եք հաշվառել։", "Հաշվառում",
                     MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
                 {
@@ -523,25 +528,30 @@ namespace UserControls.ViewModels.StockTakeings
 
         private void SelectUnavailableProductItems(object obj)
         {
-            var unavailableProductItems = new ProductsManager().GetUnavailableProductItems(StockTakeItems.Where(s => s.ProductId != null).Select(s => s.ProductId != null ? (Guid)s.ProductId : new Guid()).ToList(), new List<long> { Stock.Id });
-            var productIds = unavailableProductItems.GroupBy(s => s.ProductId).Select(s => s.First()).OrderBy(s => s.Product.Code).ToList();
+            if (StockTake.StockId != null)
+            {
+                var unavailableProductItems = new ProductsManager().GetUnavailableProductItems(StockTakeItems.Where(s => s.ProductId != null).Select(s =>(Guid)s.ProductId).ToList(), new List<long> { StockTake.StockId.Value });
+                // checked second!!!
+                //unavailableProductItems = unavailableProductItems.Where(s => StockTakeItems.All(t => t.ProductId != s.ProductId)).ToList();
+                var productIds = unavailableProductItems.GroupBy(s => s.ProductId).Select(s => s.First()).OrderBy(s => s.Product.Code).ToList();
 
-            var selectedItems = SelectItemsManager.SelectProductItems(productIds.Select(s => new ProductItemsByCheck
-            {
-                Id = s.ProductId,
-                Code = s.Product.Code,
-                Description = s.Product.Description,
-                Price = s.Product.Price,
-                Quantity = unavailableProductItems.Where(pi => pi.ProductId == s.ProductId).Sum(pi => pi.Quantity)
-            }).ToList(), true);
-            if (selectedItems == null || !selectedItems.Any()) return;
-            foreach (var selectedProduct in selectedItems)
-            {
-                var product = unavailableProductItems.Where(s => s.ProductId == selectedProduct.Id).Select(s => s.Product).FirstOrDefault();
-                if (product == null) continue;
-                SetStockTakeItem(product);
-                StockTakeItem.StockTakeQuantity = 0;
-                AddStockTakingItem(true);
+                var selectedItems = SelectItemsManager.SelectProductItems(productIds.Select(s => new ProductItemsByCheck
+                {
+                    Id = s.ProductId,
+                    Code = s.Product.Code,
+                    Description = s.Product.Description,
+                    Price = s.Product.Price,
+                    Quantity = unavailableProductItems.Where(pi => pi.ProductId == s.ProductId).Sum(pi => pi.Quantity)
+                }).ToList(), true);
+                if (selectedItems == null || !selectedItems.Any()) return;
+                foreach (var selectedProduct in selectedItems)
+                {
+                    var product = unavailableProductItems.Where(s => s.ProductId == selectedProduct.Id).Select(s => s.Product).FirstOrDefault();
+                    if (product == null) continue;
+                    SetStockTakeItem(product);
+                    StockTakeItem.StockTakeQuantity = 0;
+                    AddStockTakingItem();
+                }
             }
         }
 

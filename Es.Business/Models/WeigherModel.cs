@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using ES.Data.Models;
 
 namespace ES.Business.Models
 {

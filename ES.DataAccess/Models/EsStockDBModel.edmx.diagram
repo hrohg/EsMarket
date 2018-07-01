@@ -86,6 +86,8 @@
         <AssociationConnector Association="EsStockDBModel.FK_ProductOrderItems_ProductOrderItems" />
         <AssociationConnector Association="EsStockDBModel.FK_ProductOrderItems_Products" />
         <AssociationConnector Association="EsStockDBModel.FK_StockTakingItems_StockTaking" />
+        <EntityTypeShape EntityType="EsStockDBModel.ProductsAdditionalData" Width="1.5" PointX="0.5" PointY="33.375" />
+        <AssociationConnector Association="EsStockDBModel.FK_ProductsAdditionalData_Products" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

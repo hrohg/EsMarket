@@ -73,7 +73,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected override void OnApprove(object o)
         {
-            throw new NotImplementedException();
+            
         }
 
         protected override void OnApproveAsync(bool closeOnExit)

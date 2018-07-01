@@ -5,16 +5,20 @@
                     xmlns:managers="clr-namespace:UserControls.ViewModels.Managers"
                     xmlns:helpers="clr-namespace:Shared.Helpers;assembly=Shared"
                     xmlns:controls="clr-namespace:UserControls.Controls"
-                    xmlns:helper1="clr-namespace:UserControls.PriceTicketControl.Helper">
+                    xmlns:helper1="clr-namespace:UserControls.PriceTicketControl.Helper"
+                    xmlns:helpers1="clr-namespace:UserControls.Helpers"
+                    xmlns:helper="clr-namespace:CashReg.Helper;assembly=CashReg">
 
 
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    <helpers1:EnumConverter x:Key="EnumConverter" />
+    <helpers1:IntToEnumConverter x:Key="IntToEnumConverter" />
     
     <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
         <Setter Property="FontSize" Value="18"/>
     </Style>
-    
-    
+
+
     <DataTemplate DataType="{x:Type managers:ProductManagerViewModel}">
         <Grid>
             <Grid>
@@ -164,27 +168,38 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
                                             <RowDefinition/>
                                             <RowDefinition/>
+                                            <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <Label Grid.Row="0" Grid.Column="0" Content="Մինիմալ քանակ" HorizontalContentAlignment="Right" Width="120" IsTabStop ="False" TabIndex="9"/>
-                                        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0 1">
-                                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Product.MinQuantity, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" Width="80" TabIndex="6" HorizontalContentAlignment="Right"/>
-                                            <TextBlock  Text="Պիտանելիության ժամկետ (օր)" HorizontalAlignment="Right" TextWrapping="Wrap" />
-                                            <TextBox  Text="{Binding Product.ExpiryDays, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" TabIndex="11" Width="50" HorizontalContentAlignment="Right" HorizontalAlignment="Left"/>
-                                        </StackPanel>
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Նշումներ" HorizontalAlignment="Right"/>
-                                        <TextBox Grid.Row="1" Grid.Column="1" Name="TxtNotes" Text="{Binding Product.Note, UpdateSourceTrigger=PropertyChanged}" Height="50" AcceptsReturn="True" TextWrapping="Wrap" TabIndex="5"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Մինիմալ քանակ" HorizontalAlignment="Right"/>
+                                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Product.MinQuantity, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" Width="80" TabIndex="6" HorizontalContentAlignment="Right"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Պիտանելիության ժամկետ (օր)" HorizontalAlignment="Right" TextWrapping="Wrap" />
+                                        <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding Product.ExpiryDays, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" TabIndex="11" Width="50" HorizontalContentAlignment="Right"/>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Հարկման տեսակ"/>
+                                        <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" 
+                                                  ItemsSource="{Binding EcrDepartments}" 
+                                                  DisplayMemberPath="Description" 
+                                                  SelectedValuePath="Id" 
+                                                  SelectedValue="{Binding Product.TypeOfTaxes, Converter={StaticResource IntToEnumConverter}, ConverterParameter={x:Type helper:TypeOfTaxes}}" Margin="0 3" IsEditable="False"/>
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Նշումներ" HorizontalAlignment="Right"/>
+                                        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="5" Text="{Binding Product.Note, UpdateSourceTrigger=PropertyChanged}" Height="50" AcceptsReturn="True" TextWrapping="Wrap" TabIndex="5"/>
                                     </Grid>
                                 </Border>
                             </TabItem>
                         </TabControl>
                         <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="1 5 1 1">
                             <CheckBox IsChecked="{Binding IsGetProductFromEsServer}" Content="Բեռնել անհայտ ապրանքները սերվերից" Margin="3 0" VerticalAlignment="Center"/>
-                            <Button Content="{Binding Product.EditProductStage}" Command="{Binding EditCommand}" Margin="1" Width="80"/>
+                            <Button Content="{Binding EditProductStage}" Command="{Binding EditCommand}" Margin="1" Width="80"/>
                             <Button Content="Մաքրել" Command="{Binding NewCommand}" Width="80"/>
                         </StackPanel>
                     </StackPanel>

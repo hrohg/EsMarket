@@ -4,11 +4,10 @@ using System.ComponentModel;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
-using ES.Data.Model;
 using ES.Data.Models;
 using ES.DataAccess.Models;
 using UserControls.Commands;
-using ProductModel = ES.Business.Models.ProductModel;
+using ProductModel = ES.Data.Models.ProductModel;
 using ProductOrderModel = ES.Business.Models.ProductOrdersModel;
 
 namespace UserControls.ViewModels.Products
@@ -19,7 +18,7 @@ namespace UserControls.ViewModels.Products
         /// Initalize a new instance of the ProductViewModel class.
         /// </summary>
         private PartnerModel _partner;
-        private ProductOrderModel _productOrder = new ProductOrderModel() ;
+        private ProductOrderModel _productOrder;
         private ProductOrderItems _productOrderItem = new ProductOrderItems();
         private ObservableCollection<ProductOrderItemsModel> _productOrderItems = new ObservableCollection<ProductOrderItemsModel>();
         public PartnerModel Partner
@@ -46,7 +45,7 @@ namespace UserControls.ViewModels.Products
 
         public void SetProductOrderItem(string code)
         {
-            var product = new ProductsManager().GetProductsByCodeOrBarcode(code, ApplicationManager.Member.Id);
+            var product = new ProductsManager().GetProductsByCodeOrBarcode(code);
             SetProductOrderItem(product);
         }
         private void SetProductOrderItem(ProductModel product)

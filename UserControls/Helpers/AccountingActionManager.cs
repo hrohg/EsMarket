@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using CashReg;
@@ -72,7 +73,7 @@ namespace UserControls.Helpers
                 repaymentAccountingRecords: repaymentAccountingRecord))
             {
                 MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
-                if (ApplicationManager.Settings.IsEcrActivated && depositAccountingRecords.Amount>0)
+                if (ApplicationManager.Settings.IsEcrActivated && depositAccountingRecords.Amount > 0)
                 {
                     new EcrManager().RepaymentOfDebts(depositAccountingRecords.Amount, partner.FullName);
                 }
@@ -153,8 +154,8 @@ namespace UserControls.Helpers
             var ctrlAccountingRecords = new CtrlAccountingRecords(new AccountingRecordsViewModel(accountingRecords,
                 "Կանխավճար \n" +
                 "Գործընկեր։ " + partner.FullName + "\n" +
-                 "Դեբտորական պարտք։ " + (partner.Debit != null ? partner.Debit.ToString() : "0") + "\n" +
-                    "Կերդիտորական պարտք։ " + (partner.Credit != null ? partner.Credit.ToString() : "0")));
+                 "Դեբիտորական պարտք։ " + (partner.Debit != null ? partner.Debit.ToString() : "0") + "\n" +
+                    "Կրեդիտորական պարտք։ " + (partner.Credit != null ? partner.Credit.ToString() : "0")));
             ctrlAccountingRecords.ShowDialog();
             var receivedInAdvance = ctrlAccountingRecords.AccountingRecord;
             receivedInAdvance.CreditGuidId = partner.Id;
@@ -168,6 +169,46 @@ namespace UserControls.Helpers
             }
         }
 
+        private static void OnPrepayments()
+        {
+            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
+            accountingRecords.Debit = (long)AccountingPlanEnum.Prepayments;
+            accountingRecords.Credit = (long)AccountingPlanEnum.CashDesk;
+
+            var partner = SelectItemsManager.SelectPartner();
+            if (partner == null)
+            {
+                MessageBox.Show("Գործընկեր ընտրված չէ։", "Թերի տվյալներ");
+                return;
+            }
+            accountingRecords.DebitGuidId = partner.Id;
+
+            var cashDesk = SelectItemsManager.SelectDefaultSaleCashDesks(null, false, "Ընտրել դրամարկղ").FirstOrDefault();
+            if (cashDesk == null)
+            {
+                MessageBox.Show("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
+                return;
+            }
+            accountingRecords.CreditGuidId = cashDesk.Id;
+
+            var ctrlAccountingRecords = new CtrlAccountingRecords(new AccountingRecordsViewModel(accountingRecords,
+                "Տրված կանխավճար \n" +
+                "Գործընկեր։ " + partner.FullName + "\n" +
+                 "Դեբիտորական պարտք։ " + (partner.Debit.ToString(CultureInfo.InvariantCulture)) + "\n" +
+                    "Կրեդիտորական պարտք։ " + (partner.Credit.ToString(CultureInfo.InvariantCulture))));
+            ctrlAccountingRecords.ShowDialog();
+            var accountingRecord = ctrlAccountingRecords.AccountingRecord;
+            accountingRecord.DebitGuidId = partner.Id;
+            accountingRecord.CreditGuidId = cashDesk.Id;
+            if (!ctrlAccountingRecords.Result || accountingRecord.Amount == 0) return;
+            if (cashDesk.Total < accountingRecord.Amount)
+            {
+                MessageBox.Show("Անբավարար միջոցներ:", "Անբավարար միջոցներ", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (AccountingRecordsManager.SetPartnerPrepayment(accountingRecord)) ApplicationManager.CashManager.UpdatePartners();
+
+        }
         public static void Action(AccountingPlanEnum accountingPlan)
         {
             switch (accountingPlan)
@@ -180,6 +221,7 @@ namespace UserControls.Helpers
                     RepaymentOfReceivable();
                     break;
                 case AccountingPlanEnum.Prepayments:
+                    OnPrepayments();
                     break;
                 case AccountingPlanEnum.CashDesk:
                     break;

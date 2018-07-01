@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
+using CashReg.Helper;
 using ES.Business.Helpers;
 using ES.Business.Models;
 using ES.Common;
@@ -13,7 +14,7 @@ using ES.Data.Models;
 using ES.Data.Models.EsModels;
 using ES.DataAccess.Models;
 using DataTable = System.Data.DataTable;
-using ProductModel = ES.Business.Models.ProductModel;
+using ProductModel = ES.Data.Models.ProductModel;
 
 namespace ES.Business.Managers
 {
@@ -154,6 +155,7 @@ namespace ES.Business.Managers
             exItem.EsMember = item.EsMember;
             exItem.LastModifierId = item.LastModifierId;
             exItem.ProductGroups = item.ProductGroups;
+            exItem.TypeOfTaxes = item.TypeOfTaxes;
             return exItem;
         }
         public static void CopyProduct(ProductModel product, ProductModel item)
@@ -185,7 +187,11 @@ namespace ES.Business.Managers
             product.EsMember = item.EsMember;
             product.LastModifierId = item.LastModifierId;
             product.ProductGroups = item.ProductGroups;
+            product.TypeOfTaxes = item.TypeOfTaxes;
             product.IsEnabled = item.IsEnabled;
+
+            //Additional data
+            product.TypeOfTaxes = item.TypeOfTaxes;
         }
         public List<ProductModel> Convert(List<Products> items)
         {
@@ -221,6 +227,9 @@ namespace ES.Business.Managers
             exItem.ProductCategories = Convert(item.ProductCategories);
             exItem.ProductGroups = Convert(item.ProductGroup.ToList());
             //_products.Add(exItem.Id, exItem);
+
+            //Additional data
+            exItem.TypeOfTaxes = item.ProductsAdditionalData != null && item.ProductsAdditionalData.TypeOfTaxes != null ? (TypeOfTaxes)item.ProductsAdditionalData.TypeOfTaxes : default(TypeOfTaxes);
             return exItem;
         }
         public static ProductModel ConvertLight(Products item)
@@ -251,6 +260,9 @@ namespace ES.Business.Managers
             //exItem.EsMember = item.EsMember;
             exItem.LastModifierId = item.LastModifierId;
             //_products.Add(exItem.Id, exItem);
+
+            exItem.TypeOfTaxes = item.ProductsAdditionalData != null && item.ProductsAdditionalData.TypeOfTaxes != null ? (TypeOfTaxes)item.ProductsAdditionalData.TypeOfTaxes : default(TypeOfTaxes);
+
             return exItem;
         }
         private static Products Convert(ProductModel item)
@@ -282,6 +294,7 @@ namespace ES.Business.Managers
             exItem.LastModifierId = item.LastModifierId;
             exItem.ProductCategories = Convert(item.ProductCategories);
             exItem.ProductGroup = Convert(item.ProductGroups);
+
             return exItem;
         }
 
@@ -320,13 +333,29 @@ namespace ES.Business.Managers
         //{
         //    return TryGetProductsByMember(memberId).Select(ConvertProduct).OrderByDescending(s => s.Code).ToList();
         //}
-        public ProductModel GetProductsByCodeOrBarcode(string code, long memberId)
+        public ProductModel GetProductsByCodeOrBarcode(string code)
         {
-            return Convert(TryGetProductsByCodeOrBarcode(code, memberId));
+            return Convert(TryGetProductsByCodeOrBarcode(code));
         }
-        public ProductModel GetProduct(Guid id, long memberId)
+        public static ProductModel GetProduct(Guid id)
         {
-            return Convert(TryGetProduct(id, memberId));
+            return Convert(TryGetProduct(id));
+        }
+
+        public static bool IsProductExists(Guid id)
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    return db.Products.SingleOrDefault(s => s.EsMemberId == ApplicationManager.Member.Id && s.Id == id) != null;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+
+            }
         }
         public List<ProductModel> GetExistingProduct(long memberId)
         {
@@ -351,7 +380,11 @@ namespace ES.Business.Managers
         }
         public ProductModel EditProduct(ProductModel product)
         {
-            return Convert(TryEditProduct(Convert(product)));
+            var exProduct = Convert(product);
+            var productAdditionalData = new ProductsAdditionalData { ProductId = product.Id };
+            productAdditionalData.TypeOfTaxes = product.TypeOfTaxes > 0 ? (int)product.TypeOfTaxes : (int?)null;
+
+            return Convert(TryEditProduct(exProduct, productAdditionalData));
         }
         public static bool EditProducts(List<ProductModel> products)
         {
@@ -481,15 +514,19 @@ namespace ES.Business.Managers
                     var productIds = products.Select(t => t.Id);
                     var productItems = db.ProductItems.Where(s => s.MemberId == memberId && productIds.Contains(s.ProductId));
                     products = products.Where(s => s.MinQuantity > productItems.Where(t => t.ProductId == s.Id).Sum(t => t.Quantity));
-                    
+
                     var productOrderItems = products
-                        .Select(p => new { p, ii = db.InvoiceItems
-                            .Where(ii => 
-                                ii.Invoices.MemberId == memberId && 
-                                ii.Invoices.InvoiceTypeId==(int)InvoiceType.PurchaseInvoice && 
-                                ii.Invoices.ApproveDate!=null &&
+                        .Select(p => new
+                        {
+                            p,
+                            ii = db.InvoiceItems
+                                .Where(ii =>
+                                ii.Invoices.MemberId == memberId &&
+                                ii.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice &&
+                                ii.Invoices.ApproveDate != null &&
                                 ii.ProductId == p.Id)
-                            .OrderByDescending(ii => ii.Invoices.CreateDate).FirstOrDefault()})
+                                .OrderByDescending(ii => ii.Invoices.CreateDate).FirstOrDefault()
+                        })
                         .Select(s => new ProductOrderModel
                         {
                             Index = 0,
@@ -724,7 +761,7 @@ namespace ES.Business.Managers
             }
 
         }
-        private static Products TryGetProductsByCodeOrBarcode(string code, long memberId)
+        private static Products TryGetProductsByCodeOrBarcode(string code)
         {
             try
             {
@@ -734,7 +771,8 @@ namespace ES.Business.Managers
                         Include(s => s.Brands).
                         Include(s => s.ProductCategories).
                         Include(s => s.ProductGroup).
-                        Where(s => s.EsMemberId == memberId && s.IsEnable && (s.Code == code || s.ProductGroup.Any(t => t.Barcode == code) || s.Barcode == code))
+                        Include(s => s.ProductsAdditionalData).
+                        Where(s => s.EsMemberId == ApplicationManager.Member.Id && s.IsEnable && (s.Code == code || s.ProductGroup.Any(t => t.Barcode == code) || s.Barcode == code))
                         .OrderBy(s => s.ProductGroup.Count).FirstOrDefault();
                     return product;
                 }
@@ -745,15 +783,18 @@ namespace ES.Business.Managers
             }
 
         }
-        private static Products TryGetProduct(Guid id, long memberId)
+        private static Products TryGetProduct(Guid id)
         {
             using (var db = GetDataContext())
             {
                 try
                 {
-                    return db.Products.
-                                        Include(s => s.Brands).Include(s => s.ProductCategories).Include(s => s.ProductGroup).
-                                        SingleOrDefault(s => s.EsMemberId == memberId && s.Id == id);
+                    return db.Products
+                        .Include(s => s.Brands)
+                                        .Include(s => s.ProductCategories)
+                                        .Include(s => s.ProductGroup)
+                                        .Include(s => s.ProductsAdditionalData).
+                                        SingleOrDefault(s => s.EsMemberId == ApplicationManager.Member.Id && s.Id == id);
                 }
                 catch (Exception)
                 {
@@ -769,7 +810,11 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    return db.Products.Include(s => s.ProductCategories).Include(s => s.ProductGroup).Where(s => s.EsMemberId == memberId && s.IsEnable).ToList();
+                    return db.Products
+                        .Include(s => s.ProductCategories)
+                        .Include(s => s.ProductGroup)
+                        .Include(s => s.ProductsAdditionalData)
+                        .Where(s => s.EsMemberId == memberId && s.IsEnable).ToList();
                 }
                 catch (Exception)
                 {
@@ -809,7 +854,12 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    return db.Products.Include(s => s.ProductCategories).Include(s => s.ProductCategories).Include(s => s.ProductGroup).Where(s => s.EsMemberId == memberId).ToList();
+                    return db.Products
+                        .Include(s => s.ProductCategories)
+                        .Include(s => s.ProductCategories)
+                        .Include(s => s.ProductGroup)
+                        .Include(s => s.ProductsAdditionalData)
+                        .Where(s => s.EsMemberId == memberId).ToList();
                 }
                 catch (Exception)
                 {
@@ -828,17 +878,41 @@ namespace ES.Business.Managers
                     switch (type)
                     {
                         case ProductViewType.All:
-                            return db.Products.Include(s => s.ProductCategories).Include(s => s.ProductGroup).Where(s => s.EsMemberId == memberId).Select(Convert).ToList();
+                            return db.Products
+                                .Include(s => s.ProductCategories)
+                                .Include(s => s.ProductGroup)
+                                .Include(s => s.ProductsAdditionalData)
+                                .Where(s => s.EsMemberId == memberId).Select(Convert).ToList();
                         case ProductViewType.ByActive:
-                            return db.Products.Include(s => s.ProductCategories).Include(s => s.ProductGroup).Where(s => s.EsMemberId == memberId && s.IsEnable).Select(Convert).ToList();
+                            return db.Products
+                                .Include(s => s.ProductCategories)
+                                .Include(s => s.ProductGroup)
+                                .Include(s => s.ProductsAdditionalData)
+                                .Where(s => s.EsMemberId == memberId && s.IsEnable).Select(Convert).ToList();
                         case ProductViewType.ByPasive:
-                            return db.Products.Include(s => s.ProductCategories).Include(s => s.ProductGroup).Where(s => s.EsMemberId == memberId && !s.IsEnable).Select(Convert).ToList();
+                            return db.Products
+                                .Include(s => s.ProductCategories)
+                                .Include(s => s.ProductGroup)
+                                .Include(s => s.ProductsAdditionalData)
+                                .Where(s => s.EsMemberId == memberId && !s.IsEnable).Select(Convert).ToList();
                         case ProductViewType.ByEmpty:
-                            return db.Products.Include(s => s.ProductCategories).Include(s => s.ProductGroup).Where(s => s.EsMemberId == memberId).Select(Convert).ToList();
+                            return db.Products
+                                .Include(s => s.ProductCategories)
+                                .Include(s => s.ProductGroup)
+                                .Include(s => s.ProductsAdditionalData)
+                                .Where(s => s.EsMemberId == memberId).Select(Convert).ToList();
                         case ProductViewType.WeigthsOnly:
-                            return db.Products.Include(s => s.ProductCategories).Include(s => s.ProductGroup).Where(s => s.EsMemberId == memberId && s.IsWeight == true).Select(Convert).ToList();
+                            return db.Products
+                                .Include(s => s.ProductCategories)
+                                .Include(s => s.ProductGroup)
+                                .Include(s => s.ProductsAdditionalData)
+                                .Where(s => s.EsMemberId == memberId && s.IsWeight == true).Select(Convert).ToList();
                         default:
-                            return db.Products.Include(s => s.ProductCategories).Include(s => s.ProductGroup).Where(s => s.EsMemberId == memberId).Select(Convert).ToList();
+                            return db.Products
+                                .Include(s => s.ProductCategories)
+                                .Include(s => s.ProductGroup)
+                                .Include(s => s.ProductsAdditionalData)
+                                .Where(s => s.EsMemberId == memberId).Select(Convert).ToList();
                     }
                 }
                 catch (Exception)
@@ -984,7 +1058,7 @@ namespace ES.Business.Managers
                 }
             }
         }
-        private static Products TryEditProduct(Products item)
+        private static Products TryEditProduct(Products item, ProductsAdditionalData productAdditionalData)
         {
             if (item == null) return null;
             try
@@ -996,7 +1070,7 @@ namespace ES.Business.Managers
                         MessageBox.Show("Code-ը կամ Barcode-ը կրկնվում է։ Գործողությունը հնարավոր չէ շարունակել։");
                         return null;
                     }
-                    var exItem = db.Products.SingleOrDefault(s => s.Code == item.Code && s.EsMemberId == item.EsMemberId);
+                    var exItem = db.Products.Include(s => s.ProductsAdditionalData).SingleOrDefault(s => s.Code == item.Code && s.EsMemberId == item.EsMemberId);
                     if (exItem != null && exItem.Id != item.Id)
                     {
                         MessageBox.Show(
@@ -1043,6 +1117,23 @@ namespace ES.Business.Managers
                         //item.Id = Guid.NewGuid();
                         db.Products.Add(item);
                     }
+                    if (productAdditionalData != null)
+                    {
+
+                        if (exItem != null && exItem.ProductsAdditionalData != null)
+                        {
+                            exItem.ProductsAdditionalData.TypeOfTaxes = productAdditionalData.TypeOfTaxes;
+                        }
+                        else
+                        {
+                            if (productAdditionalData.ProductId == item.Id && productAdditionalData.TypeOfTaxes > 0)
+                            {
+                                db.ProductsAdditionalData.Add(productAdditionalData);
+                                item.ProductsAdditionalData = productAdditionalData;
+                            }
+                        }
+                    }
+
                     db.SaveChanges();
                     var exProductGrups = db.ProductGroup.Where(s => s.ProductId == item.Id && s.MemberId == item.EsMemberId).ToList();
                     foreach (var exProductGrup in exProductGrups)
@@ -1100,7 +1191,10 @@ namespace ES.Business.Managers
             var db = GetDataContext();
             try
             {
-                return db.ProductItems.Include(s => s.Products).Include(s => s.Products.ProductGroup).Include(s => s.Products.ProductCategories).Where(s => s.MemberId == memberId && s.Quantity != 0).ToList();
+                return db.ProductItems.Include(s => s.Products)
+                    .Include(s => s.Products.ProductGroup)
+                    .Include(s => s.Products.ProductCategories)
+                    .Where(s => s.MemberId == memberId && s.Quantity != 0).ToList();
             }
             catch (Exception)
             {
@@ -1117,6 +1211,7 @@ namespace ES.Business.Managers
                     .Include(s => s.Products)
                     .Include(s => s.Products.ProductGroup)
                     .Include(s => s.Products.ProductCategories)
+                    .Include(s => s.Products.ProductsAdditionalData)
                     .Where(s => s.MemberId == memberId && s.StockId == stockId && s.Quantity != 0).ToList();
             }
             catch (Exception)
@@ -1148,12 +1243,11 @@ namespace ES.Business.Managers
         }
         private static List<ProductItems> TryGetUnavilableProductItems(List<Guid> productIds, List<long> stockIds)
         {
-            var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
             {
                 try
                 {
-                    return db.ProductItems.Include(s => s.Products).Where(s => s.MemberId == memberId && s.Quantity != 0 && !productIds.Contains(s.ProductId) && stockIds.Contains(s.StockId ?? 0)).ToList();
+                    return db.ProductItems.Include(s => s.Products).Where(s => s.MemberId == ApplicationManager.Member.Id && s.Quantity != 0 && !productIds.Contains(s.ProductId) && stockIds.Contains(s.StockId ?? 0)).ToList();
                 }
                 catch (Exception)
                 {

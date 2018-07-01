@@ -60,5 +60,6 @@ namespace ES.DataAccess.Models
         public virtual DbSet<StockTakeItems> StockTakeItems { get; set; }
         public virtual DbSet<SubAccountingPlan> SubAccountingPlan { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
+        public virtual DbSet<ProductsAdditionalData> ProductsAdditionalData { get; set; }
     }
 }

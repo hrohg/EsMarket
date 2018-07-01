@@ -286,8 +286,7 @@ namespace ES.Business.Managers
             {
                 using (var db = GetDataContext())
                 {
-                    if (item.ProductId != null)
-                        item.Quantity = stockId != null ? ProductsManager.GetProductItemCountFromStock(item.ProductId, new List<long> { (long)stockId }, memberId) : 0;
+                    //if (item.ProductId != null) item.Quantity = stockId != null ? ProductsManager.GetProductItemCountFromStock(item.ProductId, new List<long> { (long)stockId }, memberId) : 0;
                     item.StockTakeDate = DateTime.Now;
                     var exItem = db.StockTakeItems.SingleOrDefault(s => s.StockTakeId == item.StockTakeId && (s.Id == item.Id || s.CodeOrBarcode == item.CodeOrBarcode));
                     if (exItem != null)
@@ -299,7 +298,7 @@ namespace ES.Business.Managers
                         exItem.Description = item.Description;
                         exItem.Mu = item.Mu;
                         exItem.Price = item.Price;
-                        exItem.Quantity = item.Quantity;
+                        //exItem.Quantity = item.Quantity;
                         exItem.StockTakeQuantity = item.StockTakeQuantity;
                         exItem.StockTakeDate = item.StockTakeDate;
                         exItem.Description = item.Description;

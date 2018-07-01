@@ -424,6 +424,7 @@
                         </MenuItem>
                         <MenuItem Header="2 Ընթացիկ ակտիվներ">
                             <MenuItem Header="221 Դեբիտորական պարտքի մարում" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.AccountingReceivable}"/>
+                            <MenuItem Header="224 Տրված ընթացիկ կանխավճարներ" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.Prepayments}"/>
                             <MenuItem Header="251 Գումարի փոխանցում դրամարկղում" Click="MiTransferIntoCashDesk_Click"/>
                         </MenuItem>
                         <MenuItem Header="3 Սեփական կապիտալ">
@@ -684,6 +685,12 @@
                                   IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
                                   Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations1:ReportTypes.Report}"/>
+                        <Separator/>
+                        <MenuItem Header="Կորդ մնացորդ" 
+                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
+                                  Command="{Binding GetFallowProductsCommand}"/>
+
                     </MenuItem>
                 </MenuItem>
 

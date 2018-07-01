@@ -105,7 +105,6 @@
     <Compile Include="Models\AccountingPlanRecordsModel.cs" />
     <Compile Include="Models\AccountingRecordsModel.cs" />
     <Compile Include="Models\FinanceReportModel.cs" />
-    <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\ProductOrderItemsModel.cs" />
     <Compile Include="Models\ProductOrderModel.cs" />
     <Compile Include="FileManager\OpenExcelFile.cs" />

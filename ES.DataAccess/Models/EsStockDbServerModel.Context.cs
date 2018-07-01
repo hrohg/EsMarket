@@ -57,5 +57,6 @@ namespace ES.DataAccess.Models
         public virtual DbSet<SubAccountingPlan> SubAccountingPlan { get; set; }
         public virtual DbSet<EsCategories> EsCategories { get; set; }
         public virtual DbSet<ProductCategories> ProductCategories { get; set; }
+        public virtual DbSet<ProductsAdditionalData> ProductsAdditionalData { get; set; }
     }
 }

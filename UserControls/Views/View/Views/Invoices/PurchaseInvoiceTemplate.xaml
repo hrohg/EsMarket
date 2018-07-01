@@ -346,7 +346,7 @@
                         <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
-                                    <TextBlock Text="{Binding Description}"/>
+                                    <TextBlock Text="{Binding Description}" FontSize="18"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -537,7 +537,7 @@
                                 <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
                                 <Separator/>
                                 <MenuItem Header="Ներմուծել" Command="{Binding ImportInvoiceCommand}" IsEnabled="False"/>
-                                <MenuItem Header="Արտահանել" Command="{Binding ExportInvoiceCommand}" IsEnabled="False"/>
+                                <MenuItem Header="Արտահանել" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
                                 <Separator/>
                                 <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>
                             </MenuItem>
@@ -879,7 +879,7 @@
                         <Label Content="Նշումներ"/>
                         <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" Height="50" TextWrapping="Wrap" AcceptsReturn="True" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Auto"/>
                     </StackPanel>
-                    
+
                     <Grid Grid.Column="1" HorizontalAlignment="Right">
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -991,8 +991,9 @@
                                         <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceTypeEnum.PurchaseInvoice}"/>
                                     </MenuItem>
                                 </MenuItem>
-                                <MenuItem Header="Արտահանել" Command="{Binding ExportInvoiceCommand}" IsEnabled="False"/>
+                                <MenuItem Header="Արտահանել" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
                                 <Separator/>
+                                <MenuItem Header="Մաքրել քանակները" Command="{Binding ClearQuantitiesCommand}"/>
                                 <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>
                             </MenuItem>
                         </Menu>

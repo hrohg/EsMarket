@@ -50,7 +50,7 @@ namespace UserControls.ViewModels.Invoices
         {
             if (!CanApprove(o))
             {
-                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Գործողության ընդհատում: Գործողությունը հնարավոր չէ իրականացնել:", MessageTypeEnum.Warning));
+                ApproveCompleted(false);
                 return;
             }
             Invoice.ApproverId = User.UserId;
@@ -73,6 +73,7 @@ namespace UserControls.ViewModels.Invoices
                 Invoice.ApproveDate = null;
                 MessageBox.Show("Գործողությունն իրականացման ժամանակ տեղի է ունեցել սխալ:", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            ApproveCompleted(true);
         }
         protected override void OnApproveAsync(bool closeOnExit)
         {

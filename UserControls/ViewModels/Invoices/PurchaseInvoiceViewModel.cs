@@ -39,7 +39,15 @@ namespace UserControls.ViewModels.Invoices
                 RaisePropertyChanged(PartnerProperty);
             }
         }
-
+        public override bool AddBySingle
+        {
+            get { return base.AddBySingle; }
+            set
+            {
+                base.AddBySingle = value;
+                ApplicationManager.Settings.SettingsContainer.MemberSettings.PurchaseBySingle = value;
+            }
+        }
         #endregion
 
         public PurchaseInvoiceViewModel()
@@ -63,7 +71,7 @@ namespace UserControls.ViewModels.Invoices
         protected override void OnInitialize()
         {
             base.OnInitialize();
-            Title = "Գնում";
+            //Title = "Գնում";
             FromStocks = StockManager.GetStocks().ToList();
             AddBySingle = ApplicationManager.Settings.SettingsContainer.MemberSettings.PurchaseBySingle;
         }

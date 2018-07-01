@@ -87,7 +87,7 @@ namespace ES.Data.Models
                 _accountsReceivable = value; OnPropertyChanged(AccountsReceivableProperty); OnPropertyChanged(ChangeProperty);
             }
         }
-        public decimal? Change { get { return IsPaid ? (Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - (Prepayment ?? 0) - (Total ?? 0) : 0; } }
+        public decimal? Change { get { return IsPaid ? ((Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - (Prepayment ?? 0) - (Total ?? 0)) : 0; } }
         public decimal? Prepayment { get { return _prepaiment; } set { _prepaiment = value; OnPropertyChanged(PrepaymentProperty); } }
         #endregion
         #region Public methods

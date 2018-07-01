@@ -169,6 +169,8 @@
     <Compile Include="PriceTicketControl\ViewModels\PriceTicketLargePriceVewModel.cs" />
     <Compile Include="PriceTicketControl\ViewModels\PriceTicketViewModelBase.cs" />
     <Compile Include="ViewModels\Invoices\ReturnInvoiceViewModel.cs" />
+    <Compile Include="ViewModels\Managers\PartnersServersViewModel.cs" />
+    <Compile Include="ViewModels\Reports\ItemsDataViewModelBase.cs" />
     <Compile Include="ViewModels\SelectItemsViewModel.cs" />
     <Compile Include="ViewModels\AccountingPlanViewModel.cs" />
     <Compile Include="ViewModels\AccountingRecordsViewModel.cs" />
@@ -358,7 +360,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Reports\ItemsDataView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Reports\ProductOrderTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\ManagePartnersServices.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

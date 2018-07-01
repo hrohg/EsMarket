@@ -6,7 +6,7 @@ using System.Windows;
 using ES.Business.Managers;
 using ES.Data.Models;
 using HG.Tools.Helper;
-using ProductModel = ES.Business.Models.ProductModel;
+using ProductModel = ES.Data.Models.ProductModel;
 
 namespace ES.Business.ExcelManager
 {

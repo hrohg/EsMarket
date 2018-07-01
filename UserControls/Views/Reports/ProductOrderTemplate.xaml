@@ -154,7 +154,7 @@
                                                 <DataGridTemplateColumn Header="Մնացորդ">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate DataType="{x:Type models:ProductOrderModel}">
-                                                            <TextBlock Text="{Binding ExistingQuantity, StringFormat='# ##0.##'}" HorizontalAlignment="Right"/>
+                                                            <TextBlock Text="{Binding ExistingQuantity, StringFormat='# ##0.###'}" HorizontalAlignment="Right"/>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>

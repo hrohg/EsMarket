@@ -7,27 +7,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace ES.DataAccess.Models
 {
     using System;
     using System.Collections.Generic;
-
+    
     public partial class EsInvoiceTypes
     {
         public EsInvoiceTypes()
         {
             this.Invoices = new HashSet<Invoices>();
         }
-
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    
         public long Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-
+    
         public virtual ICollection<Invoices> Invoices { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using ES.Data.Model;
 
 namespace ES.Data.Models
 {
@@ -50,7 +49,7 @@ namespace ES.Data.Models
         public string Description { get { return _description; } set { _description = value; OnPropertyChanged(DescriptionProperty); } }
         public long? ReservedById { get { return _reservedById; } set { _reservedById = value; OnPropertyChanged(ReservedByIdProperty); } }
         public long MemberId { get { return _memberId; } set { _memberId = value; OnPropertyChanged(MemberIdProperty); } }
-        public EsProductModel Product { get; set; }
+        public ProductModel Product { get; set; }
         #endregion
         
         #region INotifyPropertyChanged

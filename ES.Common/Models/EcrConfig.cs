@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Xml.Serialization;
 using CashReg.Helper;
@@ -60,8 +61,16 @@ namespace ES.Common.Models
     }
 
     [Serializable]
-    public class EcrConfig : IEcrSettings
+    public class EcrConfig : IEcrSettings, INotifyPropertyChanged
     {
+        protected virtual void RaisePropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+        [field: NonSerialized]
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #region Internal properties
         private string _ip;
         private int _port;
@@ -73,6 +82,8 @@ namespace ES.Common.Models
         private bool _useExternalPrinter;
         private string _applicationIp;
         private bool _useExtPos;
+        private bool _isActive;
+        private bool _isDefault;
 
         #endregion Internal properties
 
@@ -80,13 +91,21 @@ namespace ES.Common.Models
         public string Ip
         {
             get { return _ip; }
-            set { _ip = value; }
+            set
+            {
+                _ip = value;
+                RaisePropertyChanged("Ip");
+            }
         }
 
         public int Port
         {
             get { return _port; }
-            set { _port = value; }
+            set
+            {
+                _port = value;
+                RaisePropertyChanged("Port");
+            }
         }
 
         public string Password
@@ -102,14 +121,14 @@ namespace ES.Common.Models
         }
         public EcrCashier EcrCashier
         {
-            get { return _ecrCashier??(_ecrCashier= new EcrCashier()); }
+            get { return _ecrCashier ?? (_ecrCashier = new EcrCashier()); }
             set { _ecrCashier = value; }
         }
 
         public List<Department> TypeOfOperatorDeps
         {
             get { return _typeOfOperatorDeps; }
-            set { _typeOfOperatorDeps = value; }
+            set { _typeOfOperatorDeps = value; RaisePropertyChanged("TypeOfOperatorDeps"); }
         }
 
         [XmlIgnore]
@@ -121,32 +140,66 @@ namespace ES.Common.Models
                 _cashierDepartment = TypeOfOperatorDeps.Any()
                     ? TypeOfOperatorDeps.SingleOrDefault(s => s.Id == value)
                     : null;
+                RaisePropertyChanged("SelectedDepartmentId");
             }
         }
         public Department CashierDepartment
         {
-            get { return _cashierDepartment != null && TypeOfOperatorDeps.Any()? TypeOfOperatorDeps.SingleOrDefault(s => s.Id == _cashierDepartment.Id) : null; }
+            get { return _cashierDepartment != null && TypeOfOperatorDeps.Any() ? TypeOfOperatorDeps.SingleOrDefault(s => s.Id == _cashierDepartment.Id) : null; }
             set
             {
                 if (value == null) { return; }
-                _cashierDepartment = value; 
+                _cashierDepartment = value;
+                RaisePropertyChanged("CashierDepartment");
             }
         }
 
         public bool UseExternalPrinter
         {
             get { return _useExternalPrinter; }
-            set { _useExternalPrinter = value; }
+            set
+            {
+                _useExternalPrinter = value;
+                RaisePropertyChanged("UseExternalPrinter");
+            }
         }
 
         public string ApplicationIp
         {
             get { return _applicationIp; }
-            set { _applicationIp = value; }
+            set
+            {
+                _applicationIp = value;
+                RaisePropertyChanged("ApplicationIp"); 
+            }
         }
 
         public EcrServiceSettings EcrServiceSettings { get; set; }
-        public bool IsActive { get; set; }
+
+        public bool IsActive
+        {
+            get { return _isActive; }
+            set
+            {
+                _isActive = value;
+                RaisePropertyChanged("IsActive");
+                RaisePropertyChanged("ActivityDescription");
+            }
+        }
+
+        public string ActivityDescription { get { return IsActive ? "Ակտիվ" : "Պասիվ"; } }
+
+        public bool IsDefault
+        {
+            get { return _isDefault; }
+            set { _isDefault = value;
+                RaisePropertyChanged("IsDefault"); 
+                RaisePropertyChanged("DefaultStageDescription"); 
+            }
+        }
+
+        public string DefaultStageDescription { get { return IsDefault ? "Հիմնական" : "Լրացուցիչ"; } }
+
         public string ExcelFilePath { get; set; }
 
         public bool UseExtPos
@@ -154,7 +207,8 @@ namespace ES.Common.Models
             get { return _useExtPos; }
             set { _useExtPos = value; }
         }
-
+        [XmlIgnore]
+        public string TypeOfTaxes { get { return CashReg.Helper.Enumerations.GetEcrDepartments().Where(s => s.Id == SelectedDepartmentId).Select(s => s.Name).SingleOrDefault(); } }
         #endregion External properties
 
         #region Constructors
@@ -206,6 +260,6 @@ namespace ES.Common.Models
         }
         #endregion External methods
 
-        
+
     }
 }

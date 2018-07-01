@@ -1,11 +1,10 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace ES.Common.ViewModels.Base
 {
     public class ViewModelBase : INotifyPropertyChanged
     {
-
+        protected object Sync = new object();
         protected virtual void RaisePropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)

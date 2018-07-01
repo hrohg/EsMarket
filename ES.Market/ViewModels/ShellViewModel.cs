@@ -294,7 +294,7 @@ namespace ES.Market.ViewModels
                         throw new ArgumentOutOfRangeException();
                 }
                 invoiceVm.Invoice.Reload(invoice.Invoice, ApplicationManager.Member.Id);
-                invoiceVm.Title = string.Format("{0} (AutoSave)", invoiceVm.Title);
+                invoiceVm.Title = "AutoSave";
                 foreach (var invoiceItemsModel in invoice.InvoiceItems)
                 {
                     var code = invoiceItemsModel.Code;
@@ -1371,14 +1371,30 @@ namespace ES.Market.ViewModels
 
         private void OnCreateWriteOffInvoice(List<InvoiceItemsModel> items, long? stockId, string notes = null)
         {
-            if (!items.Any())
+            if (items == null || !items.Any())
             {
                 OnNewMessage(new MessageModel(DateTime.Now, "Դուրսգրման ենթակա ապրանք գոյություն չունի:", MessageTypeEnum.Information));
                 return;
             }
+            var isTrimInvoice = false;
+            if (items.Count > 500)
+            {
+                var result = MessageBox.Show("", "", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                switch (result)
+                {
+                    case MessageBoxResult.Cancel:
+                        return;
+                    case MessageBoxResult.Yes:
+                        isTrimInvoice = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
             var vm = new InventoryWriteOffViewModel();
             vm.Invoice.FromStockId = stockId;
             vm.Invoice.Notes = notes;
+
             foreach (var item in items)
             {
                 var productId = item.ProductId;
@@ -1400,8 +1416,16 @@ namespace ES.Market.ViewModels
                 vm.InvoiceItem.Index = vm.InvoiceItems.Count + 1;
                 vm.InvoiceItems.Add(vm.InvoiceItem);
                 vm.InvoiceItem = new InvoiceItemsModel();
+
+                if (vm.InvoiceItems.Count > 500 && isTrimInvoice)
+                {
+                    AddInvoiceDocument(vm);
+                    vm = new InventoryWriteOffViewModel();
+                    vm.Invoice.FromStockId = stockId;
+                    vm.Invoice.Notes = notes;
+                }
             }
-            AddInvoiceDocument(vm);
+            if (vm.InvoiceItems.Any()) AddInvoiceDocument(vm);
         }
 
         private void OnCreateWriteInInvoice(List<InvoiceItemsModel> items, long? stockId, string notes)
@@ -1801,6 +1825,7 @@ namespace ES.Market.ViewModels
                     return ApplicationManager.IsInRole(UserRoleEnum.JuniorCashier);
                     break;
                 case AccountingPlanEnum.Prepayments:
+                    return ApplicationManager.IsInRole(UserRoleEnum.JuniorCashier);
                     break;
                 case AccountingPlanEnum.CashDesk:
                     break;
@@ -1861,6 +1886,15 @@ namespace ES.Market.ViewModels
         public ICommand GetProductsHistoryCommand
         {
             get { return new RelayCommand(OnGetProductsHistory, CanGetProductHistory); }
+        }
+
+        private ICommand _getFallowProductsCommand;
+        public ICommand GetFallowProductsCommand{get{return _getFallowProductsCommand??(_getFallowProductsCommand = new RelayCommand(OnGetFalowProducts));}}
+
+        private void OnGetFalowProducts(object obj)
+        {
+            var vm = new FallowProductsViewModel();
+            AddDocument(vm);
         }
 
         #region View

@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common;
+using ES.Data.Models;
 using UserControls.PriceTicketControl;
 using UserControls.PriceTicketControl.Helper;
 using UserControls.PriceTicketControl.ViewModels;

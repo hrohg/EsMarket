@@ -19,7 +19,7 @@ using UserControls.Commands;
 using UserControls.Helpers;
 using UserControls.Interfaces;
 using UserControls.PriceTicketControl.ViewModels;
-using ProductModel = ES.Business.Models.ProductModel;
+using ProductModel = ES.Data.Models.ProductModel;
 
 namespace UserControls.ViewModels.Products
 {
@@ -205,7 +205,7 @@ namespace UserControls.ViewModels.Products
         private void OnGetProduct(object o)
         {
             if (!CanGetProduct(o)) { return; }
-            var product = new ProductsManager().GetProductsByCodeOrBarcode(o as string, ApplicationManager.Instance.GetMember.Id);
+            var product = new ProductsManager().GetProductsByCodeOrBarcode(o as string);
             Product = product ?? new ProductModel(ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId, true) { Code = o as string };
         }
         private bool CanGenerateBarcode(object o)

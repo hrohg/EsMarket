@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Linq;
 using System.Management;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using CashReg;
 using CashReg.Helper;
+using CashReg.Interfaces;
 using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
@@ -139,8 +142,7 @@ namespace UserControls.ViewModels
         public bool SaleBySingle { get { return Settings.MemberSettings.SaleBySingle; } set { Settings.MemberSettings.SaleBySingle = value; RaisePropertyChanged("SaleBySingle"); } }
         public bool IsPrintSaleTicket { get { return Settings.MemberSettings.IsPrintSaleTicket; } set { Settings.MemberSettings.IsPrintSaleTicket = value; RaisePropertyChanged("IsPrintSaleTicket"); } }
         public bool IsEcrActivated { get { return Settings.MemberSettings.IsEcrActivated; } set { Settings.MemberSettings.IsEcrActivated = value; RaisePropertyChanged("IsEcrActivated"); } }
-
-
+        
         #endregion Sale
 
         #region Purchase
@@ -184,60 +186,99 @@ namespace UserControls.ViewModels
         #endregion Purchase
 
         #region ECR settings
-        //public EcrSettings EcrSettings { get; set; }
-        public EcrConfig EcrSettings { get { return Settings.MemberSettings.EcrConfig; } }
-        public EcrServiceSettings EcrServiceSettings { get { return EcrSettings.EcrServiceSettings?? (EcrSettings.EcrServiceSettings = new EcrServiceSettings());} }
-        public string EcrSettingsIp
+        public List<IEcrDepartment> EcrDepartments { get; private set; }
+
+        public ObservableCollection<EcrConfig> EcrSettings
         {
-            get { return EcrSettings.Ip; }
-            set
+            get
             {
-                EcrSettings.Ip = value;
-                RaisePropertyChanged("EcrSettingsIp");
-                RaisePropertyChanged("ExecuteEcrActionCommand");
+                return new ObservableCollection<EcrConfig>(Settings.MemberSettings.EcrConfigs);
             }
         }
-        public int? EcrSettingsPort
+
+        public EcrConfig SelectedEcrSettings
         {
-            get { return EcrSettings.Port>0?EcrSettings.Port:(int?)null; }
+            get { return _selectedEcrSettings ?? (_selectedEcrSettings = new EcrConfig()); }
             set
             {
-                EcrSettings.Port = value??0;
-                RaisePropertyChanged("EcrSettingsPort");
-                RaisePropertyChanged("ExecuteEcrActionCommand");
+                _selectedEcrSettings = value; RaisePropertyChanged("SelectedEcrSettings");
+                RaisePropertyChanged("OnExecuteEcrAction");
+                RaisePropertyChanged("ManageEcrSettingsCommand");
+                RaisePropertyChanged("NewEcrSettingsCommand");
+                RaisePropertyChanged("ManageButtonContent");
             }
         }
-        public int EcrCashier
+
+        public bool IsDefault
         {
-            get { return EcrSettings.EcrCashier.Cashier; }
+            get
+            {
+                return SelectedEcrSettings.IsDefault;
+            }
             set
             {
-                EcrSettings.EcrCashier.Cashier = value;
-                RaisePropertyChanged("EcrCashier");
-                RaisePropertyChanged("ExecuteEcrActionCommand");
+                if (value && EcrSettings.Any(s=>s==SelectedEcrSettings))
+                {
+                    foreach (var ecrSetting in EcrSettings)
+                    {
+                        ecrSetting.IsDefault = false;
+                    }
+                }
+                SelectedEcrSettings.IsDefault = value;
             }
         }
-        public string EcrCashierPin
-        {
-            get { return EcrSettings.EcrCashier.Pin; }
-            set
-            {
-                EcrSettings.EcrCashier.Pin = value;
-                RaisePropertyChanged("EcrCashierPin");
-                RaisePropertyChanged("ExecuteEcrActionCommand");
-            }
-        }
+
+        //public string EcrSettingsIp
+        //{
+        //    get { return SelectedEcrSettings.Ip; }
+        //    set
+        //    {
+        //        SelectedEcrSettings.Ip = value;
+        //        RaisePropertyChanged("EcrSettingsIp");
+        //        RaisePropertyChanged("ExecuteEcrActionCommand");
+        //    }
+        //}
+        //public int? EcrSettingsPort
+        //{
+        //    get { return EcrSettings.Port>0?EcrSettings.Port:(int?)null; }
+        //    set
+        //    {
+        //        EcrSettings.Port = value??0;
+        //        RaisePropertyChanged("EcrSettingsPort");
+        //        RaisePropertyChanged("ExecuteEcrActionCommand");
+        //    }
+        //}
+        //public int EcrCashier
+        //{
+        //    get { return EcrSettings.EcrCashier.Cashier; }
+        //    set
+        //    {
+        //        EcrSettings.EcrCashier.Cashier = value;
+        //        RaisePropertyChanged("EcrCashier");
+        //        RaisePropertyChanged("ExecuteEcrActionCommand");
+        //    }
+        //}
+        //public string EcrCashierPin
+        //{
+        //    get { return EcrSettings.EcrCashier.Pin; }
+        //    set
+        //    {
+        //        EcrSettings.EcrCashier.Pin = value;
+        //        RaisePropertyChanged("EcrCashierPin");
+        //        RaisePropertyChanged("ExecuteEcrActionCommand");
+        //    }
+        //}
         public bool CanActivateEcr
         {
             get
             {
-                var canActivateEcr = EcrSettings != null && !string.IsNullOrEmpty(EcrSettings.Ip) && EcrSettings.Port > 0 &&
-                       !string.IsNullOrEmpty(EcrSettings.Password) &&
-                       EcrSettings.EcrCashier != null && EcrSettings.EcrCashier.Cashier > 0 && !string.IsNullOrEmpty(EcrSettings.EcrCashier.Pin) &&
-                       EcrSettings.CashierDepartment != null;
+                var canActivateEcr = EcrSettings != null && !string.IsNullOrEmpty(SelectedEcrSettings.Ip) && SelectedEcrSettings.Port > 0 &&
+                       !string.IsNullOrEmpty(SelectedEcrSettings.Password) &&
+                       SelectedEcrSettings.EcrCashier != null && SelectedEcrSettings.EcrCashier.Cashier > 0 && !string.IsNullOrEmpty(SelectedEcrSettings.EcrCashier.Pin) &&
+                       SelectedEcrSettings.CashierDepartment != null;
                 if (!canActivateEcr && EcrSettings != null)
                 {
-                    EcrSettings.IsActive = false;
+                    SelectedEcrSettings.IsActive = false;
                     RaisePropertyChanged("IsEcrActive");
 
                 }
@@ -253,6 +294,10 @@ namespace UserControls.ViewModels
 
         #endregion Destop settings
 
+        #region Ecr settings
+        public string ManageButtonContent { get { return EcrSettings.Any(s => s == SelectedEcrSettings) ? "Հեռացնել" : "Ավելացնել"; } }
+        #endregion Ecr settings
+
         #endregion External properties
 
         #region Constructors
@@ -267,6 +312,7 @@ namespace UserControls.ViewModels
         private void Initialize()
         {
             Title = "Կարգաբերումներ";
+            EcrDepartments = CashReg.Helper.Enumerations.GetEcrDepartments();
             LoadProperties();
         }
         #region Settings
@@ -315,6 +361,7 @@ namespace UserControls.ViewModels
 
         #region Save command
         private ICommand _saveCommand;
+        private EcrConfig _selectedEcrSettings;
         public ICommand SaveCommand { get { return _saveCommand ?? (_saveCommand = new RelayCommand(OnSave)); } }
         private void OnSave(object obj)
         {
@@ -340,6 +387,8 @@ namespace UserControls.ViewModels
             {
                 Settings.LoadMemberSettings();
                 ApplicationManager.Settings.Reload();
+                RaisePropertyChanged("EcrSettings");
+                SelectedEcrSettings = new EcrConfig();
                 MessageManager.OnMessage("Կարգավորումների գրանցումն իրականացել է հաջողությամբ:");
             }
             else
@@ -356,12 +405,12 @@ namespace UserControls.ViewModels
             switch (actionMode)
             {
                 case EcrExecuiteActions.CheckConnection:
-                    return EcrSettings != null && !string.IsNullOrEmpty(EcrSettings.Ip) && EcrSettings.Port != null;
+                    return EcrSettings != null && !string.IsNullOrEmpty(SelectedEcrSettings.Ip) && SelectedEcrSettings.Port > 0;
                 case EcrExecuiteActions.OperatorLogin:
                 case EcrExecuiteActions.GetOperatorsAndDepList:
-                    return EcrSettings != null && !string.IsNullOrEmpty(EcrSettings.Ip) && EcrSettings.Port != null && EcrSettings.EcrCashier != null && !string.IsNullOrEmpty(EcrSettings.EcrCashier.Pin);
+                    return EcrSettings != null && !string.IsNullOrEmpty(SelectedEcrSettings.Ip) && SelectedEcrSettings.Port > 0 && SelectedEcrSettings.EcrCashier != null && !string.IsNullOrEmpty(SelectedEcrSettings.EcrCashier.Pin);
                 case EcrExecuiteActions.CheckEcrConnection:
-                    return EcrSettings.IsActive && EcrSettings.EcrServiceSettings.IsActive && !string.IsNullOrEmpty(EcrSettings.EcrServiceSettings.Ip) && EcrSettings.EcrServiceSettings.Port > 0;
+                    return SelectedEcrSettings.IsActive && SelectedEcrSettings.EcrServiceSettings.IsActive && !string.IsNullOrEmpty(SelectedEcrSettings.EcrServiceSettings.Ip) && SelectedEcrSettings.EcrServiceSettings.Port > 0;
                 case EcrExecuiteActions.Zero:
                     break;
                 case EcrExecuiteActions.LogoutOperator:
@@ -399,78 +448,63 @@ namespace UserControls.ViewModels
         private void ExecuteEcrAction(EcrExecuiteActions actionMode)
         {
             IsInProgress = true;
-            var ecrserver = new EcrServer(EcrSettings);
+            var ecrserver = new EcrServer(SelectedEcrSettings);
             MessageModel message = null;
-            if (actionMode == EcrExecuiteActions.CheckConnection)
+            switch (actionMode)
             {
-                message = ecrserver.TryConnection()
-                    ? new MessageModel("Կապի ստուգումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success)
-                    : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageTypeEnum.Warning);
-            }
-            else if (actionMode == EcrExecuiteActions.OperatorLogin)
-            {
-                message = ecrserver.TryOperatorLogin()
-                    ? new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումն իրականացել է հաջողությամբ:",
-                        MessageTypeEnum.Success)
-                    : new MessageModel(
-                        "ՀԴՄ օպերատորի մուտքի ստուգումը ձախողվել է:" +
-                        string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode),
-                        MessageTypeEnum.Warning);
-            }
-            else if (actionMode == EcrExecuiteActions.GetOperatorsAndDepList)
-            {
-                var operatorDeps = ecrserver.GetUsersDepsList();
-                if (operatorDeps == null)
-                {
-                    message = new MessageModel(
-                            "ՀԴՄ օպերատորի բաժինների ստացումը ձախողվել է:" +
-                            string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode),
-                            MessageTypeEnum.Warning);
-                }
-                else
-                {
-                    EcrSettings.TypeOfOperatorDeps = operatorDeps.d.Select(s => (Department)s).ToList();
-                    EcrSettings.CashierDepartment = EcrSettings.TypeOfOperatorDeps.FirstOrDefault();
-                    RaisePropertyChanged("EcrSettings");
-                    message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումն իրականացել է հաջողությամբ:",
-                        MessageTypeEnum.Success);
-                }
-            }
-            else if (actionMode == EcrExecuiteActions.CheckEcrConnection)
-            {
-                message = ecrserver.TryEcrConnection()
-                    ? new MessageModel("ՀԴՄ կապի ստուգումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success)
-                    : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageTypeEnum.Warning);
-            }
-            else if (actionMode == EcrExecuiteActions.Zero)
-            {
-            }
-            else if (actionMode == EcrExecuiteActions.LogoutOperator)
-            {
-            }
-            else if (actionMode == EcrExecuiteActions.PrintReceiptTicket)
-            {
-            }
-            else if (actionMode == EcrExecuiteActions.PrintLatestTicket)
-            {
-            }
-            else if (actionMode == EcrExecuiteActions.PrintReturnTicket)
-            {
-            }
-            else if (actionMode == EcrExecuiteActions.PrintEcrReport)
-            {
-            }
-            else if (actionMode == EcrExecuiteActions.PrintReportX)
-            {
-            }
-            else if (actionMode == EcrExecuiteActions.PrintReportZ)
-            {
-            }
-            else if (actionMode == EcrExecuiteActions.ManageHeaderAndFooter)
-            {
-            }
-            else if (actionMode == EcrExecuiteActions.ManageLogo)
-            {
+                case EcrExecuiteActions.CheckEcrConnection:
+                    message = ecrserver.TryEcrConnection() ? new MessageModel("ՀԴՄ կապի ստուգումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageTypeEnum.Warning);
+                    break;
+                case EcrExecuiteActions.CheckConnection:
+                    message = ecrserver.TryConnection() ? new MessageModel("Կապի ստուգումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageTypeEnum.Warning);
+                    break;
+                case EcrExecuiteActions.Zero:
+                    break;
+                case EcrExecuiteActions.GetOperatorsAndDepList:
+                    var operatorDeps = ecrserver.GetUsersDepsList();
+                    if (operatorDeps == null)
+                    {
+                        message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
+                    }
+                    else
+                    {
+                        SelectedEcrSettings.TypeOfOperatorDeps = operatorDeps.d.Select(s => (Department)s).ToList();
+                        SelectedEcrSettings.CashierDepartment = SelectedEcrSettings.TypeOfOperatorDeps.FirstOrDefault();
+                        RaisePropertyChanged("SelectedEcrSettings");
+                        message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
+                    }
+                    break;
+                case EcrExecuiteActions.OperatorLogin:
+                    message = ecrserver.TryOperatorLogin() ? new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
+                    break;
+                case EcrExecuiteActions.LogoutOperator:
+                    break;
+                case EcrExecuiteActions.PrintReceiptTicket:
+                    break;
+                case EcrExecuiteActions.PrintLatestTicket:
+                    break;
+                case EcrExecuiteActions.PrintReturnTicket:
+                    break;
+                case EcrExecuiteActions.ManageHeaderAndFooter:
+                    break;
+                case EcrExecuiteActions.ManageLogo:
+                    break;
+                case EcrExecuiteActions.PrintEcrReport:
+                    break;
+                case EcrExecuiteActions.PrintReportX:
+                    break;
+                case EcrExecuiteActions.PrintReportZ:
+                    break;
+                case EcrExecuiteActions.GetReceiptData:
+                    break;
+                case EcrExecuiteActions.PrintCash:
+                    break;
+                case EcrExecuiteActions.CashIn:
+                    break;
+                case EcrExecuiteActions.CashWithdrawal:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("actionMode", actionMode, null);
             }
             if (message != null)
             {
@@ -481,9 +515,58 @@ namespace UserControls.ViewModels
             }
             IsInProgress = false;
         }
+
+        private ICommand _manageEcrSettingsCommand;
+
+        public ICommand ManageEcrSettingsCommand
+        {
+            get { return _manageEcrSettingsCommand ?? (_manageEcrSettingsCommand = new RelayCommand<EcrExecuiteActions>(OnManageEcrSettings, CanManageEcrSettings)); }
+        }
+
+        private bool CanManageEcrSettings(EcrExecuiteActions obj)
+        {
+            return EcrSettings.Any(s => s == SelectedEcrSettings) || !string.IsNullOrEmpty(SelectedEcrSettings.Ip);
+        }
+
+        private void OnManageEcrSettings(EcrExecuiteActions obj)
+        {
+            if (EcrSettings.Any(s => s == SelectedEcrSettings))
+            {
+                Settings.MemberSettings.EcrConfigs.Remove(SelectedEcrSettings);
+            }
+            else
+            {
+                if(SelectedEcrSettings.IsDefault)
+                    foreach (var ecrSetting in EcrSettings)
+                    {
+                        ecrSetting.IsDefault = false;
+                    }
+                Settings.MemberSettings.EcrConfigs.Add(SelectedEcrSettings);
+            }
+            RaisePropertyChanged("EcrSettings");
+            OnNewEcrSettings(obj);
+        }
+
+        private ICommand _newEcrSettingsCommand;
+
+        public ICommand NewEcrSettingsCommand
+        {
+            get { return _newEcrSettingsCommand ?? (_newEcrSettingsCommand = new RelayCommand<EcrExecuiteActions>(OnNewEcrSettings, CanNewEcrSettings)); }
+        }
+
+        private bool CanNewEcrSettings(EcrExecuiteActions obj)
+        {
+            return EcrSettings.Any(s => s == SelectedEcrSettings);
+        }
+
+        private void OnNewEcrSettings(EcrExecuiteActions obj)
+        {
+            SelectedEcrSettings = new EcrConfig();
+            RaisePropertyChanged("SelectedEcrSettings");
+        }
+
         #endregion Ecr commands
 
         #endregion Commands
-
     }
 }

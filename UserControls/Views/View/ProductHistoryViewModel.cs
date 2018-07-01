@@ -33,7 +33,7 @@ namespace UserControls.Views.View
         {
             get
             {
-                return InvoiceItems.Where(s => s.Invoice.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice).Sum(s => s.Quantity ?? 0);
+                return InvoiceItems.Where(s => s.Invoice.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice || s.Invoice.InvoiceTypeId==(int)InvoiceType.ReturnFrom).Sum(s => s.Quantity ?? 0);
             }
         }
         public decimal Move
@@ -49,7 +49,9 @@ namespace UserControls.Views.View
             {
                 return InvoiceItems.Where(
                     s => s.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice ||
-                    s.Invoice.InvoiceTypeId == (int)InvoiceType.InventoryWriteOff)
+                    s.Invoice.InvoiceTypeId == (int)InvoiceType.InventoryWriteOff ||
+                    s.Invoice.InvoiceTypeId == (int)InvoiceType.ReturnTo)
+
                     .Sum(s => s.Quantity ?? 0);
             }
         }

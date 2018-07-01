@@ -78,17 +78,17 @@
           <RowDefinition />
         </Grid.RowDefinitions>
         <TextBlock Grid.Column="0" Grid.Row="0" Text="Ընդամենը։" HorizontalAlignment="Right" />
-        <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Invoice.Total, StringFormat='# ###'}" HorizontalAlignment="Right"  />
+                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Invoice.Total, StringFormat={}{0:#,0.##}}" HorizontalAlignment="Right"  />
         <TextBlock Grid.Column="0" Grid.Row="1" Text="Ընդամենը վաճառք։" HorizontalAlignment="Right" />
-        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Invoice.Amount, StringFormat='# ###'}" HorizontalAlignment="Right"  />
+                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Invoice.Amount, StringFormat={}{0:#,0.##}}" HorizontalAlignment="Right"  />
         <TextBlock Grid.Column="0" Grid.Row="2" Text="Կանխիկ։"  HorizontalAlignment="Right" />
-        <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding InvoicePaid.Paid}" HorizontalAlignment="Right" />
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding InvoicePaid.Paid, StringFormat={}{0:#,0.##}}" HorizontalAlignment="Right" />
         <TextBlock Grid.Column="0" Grid.Row="3" Text="Անկանխիկ։"  HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsCheck}" />
-        <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding InvoicePaid.ByCheck}" HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsCheck}" />
+                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding InvoicePaid.ByCheck, StringFormat={}{0:#,0.##}}" HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsCheck}" />
         <TextBlock Grid.Column="0" Grid.Row="4" Text="Կրեդիտորական պարտք։" HorizontalAlignment="Right"  Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsAccountsReceivable}"/>
-        <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding InvoicePaid.AccountsReceivable, StringFormat='# ###'}" HorizontalAlignment="Right"  Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsAccountsReceivable}"/>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding InvoicePaid.AccountsReceivable, StringFormat={}{0:#,0.##}}" HorizontalAlignment="Right"  Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsAccountsReceivable}"/>
         <TextBlock Grid.Column="0" Grid.Row="5" Text="Դեբիտորական պարտք։" HorizontalAlignment="Right"  Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsReceivedPrepayment}"/>
-        <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding InvoicePaid.ReceivedPrepayment, StringFormat='# ###'}" HorizontalAlignment="Right"  Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsReceivedPrepayment}"/>
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding InvoicePaid.ReceivedPrepayment, StringFormat={}{0:#,0.##}}" HorizontalAlignment="Right"  Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsReceivedPrepayment}"/>
       </Grid>
       <Separator/>
       <Grid>

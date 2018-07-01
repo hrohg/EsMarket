@@ -222,7 +222,10 @@ namespace ES.Business.Managers
             return TrySetPartnerPayment(depositeAccountRecords: Convert(depositeAccountRecords),
                 repaymentAccountingRecords: Convert(repaymentAccountingRecords));
         }
-
+        public static bool SetPartnerPrepayment(AccountingRecordsModel accountingRecord)
+        {
+            return TrySetPartnerPrepayment(Convert(accountingRecord));
+        }
         public static List<AccountingRecordsModel> GetAccountingRecords(DateTime beginDate, DateTime endDate)
         {
             return TryGetAccountingRecords(beginDate, endDate).Select(Convert).ToList();
@@ -416,6 +419,51 @@ namespace ES.Business.Managers
             }
             return true;
         }
+
+        private static bool TrySetPartnerPrepayment(AccountingRecords accountingRecord)
+        {
+            if (accountingRecord == null) return false;
+            var memberId = ApplicationManager.Member.Id;
+            using (var transaction = new TransactionScope())
+            {
+                using (var db = GetDataContext())
+                {
+                    var partnerId = accountingRecord.DebitGuidId;
+                    var cashBoxId = accountingRecord.CreditGuidId;
+                    var exPartner = db.Partners.SingleOrDefault(s => s.EsMemberId == memberId && s.Id == partnerId);
+                    var exCashBox = db.CashDesk.SingleOrDefault(s => s.MemberId == memberId && s.Id == cashBoxId);
+                    if (exPartner == null || exCashBox == null) return false;
+                    if (exPartner.Debit == null) { exPartner.Debit = 0; }
+                    if (exPartner.Credit == null) { exPartner.Credit = 0; }
+
+                    if (exCashBox.Total < accountingRecord.Amount) return false;
+                    exCashBox.Total -= accountingRecord.Amount;
+                    exPartner.Debit += accountingRecord.Amount;
+                    db.AccountingRecords.Add(accountingRecord);
+
+                    //Change in CashDesk add to SaleInCash
+                    var newAccountsReceivable = new AccountsReceivable()
+                    {
+                        Id = Guid.NewGuid(),
+                        //InvoiceId = invoice.Id,
+                        Date = accountingRecord.RegisterDate,
+                        Amount = accountingRecord.Amount,
+                        Notes = accountingRecord.Description,
+                        CashierId = accountingRecord.RegisterId,
+                        MemberId = memberId,
+                        PartnerId = exPartner.Id,
+                        ExpairyDate = accountingRecord.RegisterDate.AddMonths(1),
+                        AccountingRecordsId = accountingRecord.Id
+                    };
+                    db.AccountsReceivable.Add(newAccountsReceivable);
+                    
+                    db.SaveChanges();
+                    transaction.Complete();
+                }
+            }
+            return true;
+        }
+
         private static List<AccountingRecords> TryGetAccountingRecords(DateTime beginDate, DateTime endDate)
         {
             var memberId = ApplicationManager.Member.Id;
@@ -482,7 +530,7 @@ namespace ES.Business.Managers
                         s.MemberId == MemberId
                         && s.RegisterDate >= beginDate
                         && s.RegisterDate < endDate
-                        && ((s.DebitGuidId!=null && ids.Contains((Guid)s.DebitGuidId)) || (s.CreditGuidId!=null && ids.Contains((Guid)s.CreditGuidId)))).ToList();
+                        && ((s.DebitGuidId != null && ids.Contains((Guid)s.DebitGuidId)) || (s.CreditGuidId != null && ids.Contains((Guid)s.CreditGuidId)))).ToList();
                 }
                 catch (Exception)
                 {

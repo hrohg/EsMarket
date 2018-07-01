@@ -267,8 +267,7 @@
                                 <Setter Property="Control.HorizontalAlignment" Value="Right" />
                             </Style>
                             <ContextMenu x:Key="RowMenu">
-                                <MenuItem Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Border}}, Path=DataContext.RemoveStockTakingItemCommand}" 
-                              CommandParameter="{Binding DataContext.Id, RelativeSource={RelativeSource Self}}" 
+                                <MenuItem Command="{Binding RemoveStockTakingItemCommand}" CommandParameter="{Binding DataContext.Id, RelativeSource={RelativeSource Self}}" 
                               Header="Հեռացնել"/>
                             </ContextMenu>
                         </DataGrid.Resources>

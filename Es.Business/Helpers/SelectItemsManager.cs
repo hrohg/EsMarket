@@ -9,7 +9,7 @@ using ES.Data.Enumerations;
 using ES.Data.Model;
 using ES.Data.Models;
 using ES.DataAccess.Models;
-using ProductModel = ES.Business.Models.ProductModel;
+using ProductModel = ES.Data.Models.ProductModel;
 
 namespace ES.Business.Helpers
 {

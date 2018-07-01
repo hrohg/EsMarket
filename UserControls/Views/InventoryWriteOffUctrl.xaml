@@ -174,20 +174,16 @@
                             <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
                             <Separator/>
                             <MenuItem Header="Արտահանել">
-                                <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ExportInvoiceToExcelCommand}"  />
-                                <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceToXmlCommand}"  />
-                                <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" />
-                                <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}" />
-                                <MenuItem Header="Արտահանել Ctrl+E" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}" />
+                                <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
+                                <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceCommand}"  CommandParameter="{x:Static filter:ExportImportEnum.Xml}"/>
                             </MenuItem>
                             <MenuItem Header="Ներմուծել">
-                                <MenuItem Header="Ներմուծել" Command="{Binding ImportInvoiceCommand}"  />
-                                <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceToXmlCommand}"  />
-                                <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" />
-                                <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}" />
+                                <MenuItem Header="Ներմուծել" Command="{Binding ImportInvoiceCommand}" />
+                                <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ImportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Xml}"/>
                             </MenuItem>
                             <Separator/>
                             <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>
+                            <MenuItem Header="Քանակի ստուգում" Command="{Binding CheckForExistingQuantityCommand}"/>
                         </MenuItem>
                         <MenuItem Header="Ապրանքների բեռնում">
                             <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />

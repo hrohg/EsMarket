@@ -86,7 +86,7 @@ namespace UserControls.Helpers
                         Qty = s.Quantity??0,
                         Price = s.Price??0,
                         //Dep = 1
-                    }).ToList(), new EcrPaid { PaidAmount = (int)(Math.Round((model.Invoice.Total + 5) / 10) * 10) });
+                    }).ToList(), new EcrPaid { PaidAmount = (int)(Math.Round((model.Invoice.Total + 5) / 10) * 10) }, null);
                 if (_ecrServer.ActionCode == EcrException.ResponseCodes.Ok)
                 {
                     MessageBox.Show("Հսկիչ դրամարկղային կտրոնի տպումն իրականացվել է հաջողությամբ։ \n Խնդրում ենք վերցնել հսկիչ դրամարկղային կտրոնը։", "Տեղեկացում",
@@ -126,7 +126,7 @@ namespace UserControls.Helpers
                         Qty = s.Quantity??0,
                         Price = s.Price??0,
                         //Dep = 1
-                    }).ToList(), (IEcrPaid)new EcrPaid { PaidAmount = (int)(Math.Round((model.Invoice.Total + 5) / 10) * 10) });
+                    }).ToList(), (IEcrPaid)new EcrPaid { PaidAmount = (int)(Math.Round((model.Invoice.Total + 5) / 10) * 10) }, null);
                 if (_ecrServer.ActionCode == EcrException.ResponseCodes.Ok)
                 {
                     MessageBox.Show("Հսկիչ դրամարկղային կտրոնի տպումն իրականացվել է հաջողությամբ։ \n Խնդրում ենք վերցնել հսկիչ դրամարկղային կտրոնը։", "Տեղեկացում",

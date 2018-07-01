@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 using CashReg.Helper;
 using ES.Business.Managers;
 using ES.Common;
@@ -139,6 +140,7 @@ namespace ES.Business.Helpers
         public bool NotifyAboutIncomingInvoices { get; set; }
         public string ImportingFilePath { get; set; }
         public bool IsEcrActivated { get; set; }
+
         public string CashDeskPort
         {
             get { return _cashDeskPort; }
@@ -214,12 +216,17 @@ namespace ES.Business.Helpers
 
         #region Ecr settings
 
-        private EcrConfig _ecrModel;
-        
+        private EcrConfig _ecrConfig;
+        private List<EcrConfig> _ecrModels;
+        [XmlIgnore]
         public EcrConfig EcrConfig
         {
-            get { return _ecrModel ?? (_ecrModel = new EcrConfig()); }
-            set { _ecrModel = value; }
+            get { return _ecrConfig ?? (EcrConfigs.Any(s => s.IsActive) ? (_ecrConfig = EcrConfigs.Any(s => s.IsActive && s.IsDefault) ? EcrConfigs.SingleOrDefault(s => s.IsActive && s.IsDefault) : EcrConfigs.FirstOrDefault(s => s.IsActive)) : new EcrConfig()); }
+        }
+        public List<EcrConfig> EcrConfigs
+        {
+            get { return _ecrModels ?? (_ecrModels = new List<EcrConfig>()); }
+            set { _ecrModels = value; }
         }
         #endregion Ecr settings
 
@@ -472,7 +479,7 @@ namespace ES.Business.Helpers
             }
             //General settings
             var xmlLogins = new XmlManager(filePath.FileName).GetXmlElements(XmlTagItems.Logins);
-            var logins = xmlLogins!=null? xmlLogins.Select(s => s.Value).ToList():new List<string>();
+            var logins = xmlLogins != null ? xmlLogins.Select(s => s.Value).ToList() : new List<string>();
             var generalSettings = GeneralSettings.LoadGeneralSettings();
             generalSettings.LastLogins = logins.ToList();
             if (GeneralSettings.SaveGeneralSettings(generalSettings))
@@ -487,9 +494,9 @@ namespace ES.Business.Helpers
             //MemberSettings
             var memberSettings = MemberSettings.GetSettings(memberId);
             EcrSettings conf = ConfigSettings.GetEcrConfig(filePath.FileName);
-
-            memberSettings.EcrConfig = EcrConfig.Convert(conf);
-            memberSettings.EcrConfig.Password = conf.Password;
+            var ecrConfig = EcrConfig.Convert(conf);
+            ecrConfig.Password = conf.Password;
+            memberSettings.EcrConfigs.Add(ecrConfig);
 
 
             if (MemberSettings.Save(memberSettings, ApplicationManager.Member.Id))

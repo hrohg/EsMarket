@@ -111,8 +111,10 @@
     <Compile Include="Enumerations\ProductEnums.cs" />
     <Compile Include="Enumerations\ProductOrderTypeEnum.cs" />
     <Compile Include="Enumerations\Scale.cs" />
+    <Compile Include="Helpers\DispatcherWrapper.cs" />
     <Compile Include="Helpers\Ean13.cs" />
     <Compile Include="Helpers\ImageState.cs" />
+    <Compile Include="Interfaces\IDispatcher.cs" />
     <Compile Include="Models\EcrConfig.cs" />
     <Compile Include="Helpers\EventArgs.cs" />
     <Compile Include="Helpers\ObservableMruCollectio.cs" />
@@ -148,6 +150,7 @@
     <Compile Include="Managers\MessageManager.cs" />
     <Compile Include="Models\DataServer.cs" />
     <Compile Include="Models\MessageModel.cs" />
+    <Compile Include="Models\ModelBase.cs" />
     <Compile Include="Models\ProductOrderModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportData.cs" />
@@ -203,9 +206,7 @@
   <ItemGroup>
     <None Include="DefaultLayout.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

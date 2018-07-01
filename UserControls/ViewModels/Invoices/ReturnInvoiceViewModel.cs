@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -10,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using CashReg;
 using CashReg.Helper;
+using CashReg.Interfaces;
 using CashReg.Models;
 using ES.Business.ExcelManager;
 using ES.Business.FileManager;
@@ -169,7 +171,7 @@ namespace UserControls.ViewModels.Invoices
             var invoiceItems = invoice.Item2;
             foreach (var item in invoiceItems)
             {
-                product = new ProductsManager().GetProductsByCodeOrBarcode(item.Code, Member.Id);
+                product = new ProductsManager().GetProductsByCodeOrBarcode(item.Code);
                 if (product == null)
                 {
                     product = new ProductModel(item.Code, Member.Id, User.UserId, true)
@@ -183,7 +185,7 @@ namespace UserControls.ViewModels.Invoices
                     MessageBox.Show(string.Format("{0}({1}) ապրանքը գրանցված չէ:", item.Description, item.Code), "Անհայտ ապրանք", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-                var exProduct = new ProductsManager().GetProductsByCodeOrBarcode(product.Code, Member.Id);
+                var exProduct = new ProductsManager().GetProductsByCodeOrBarcode(product.Code);
                 InvoiceItem = new InvoiceItemsModel
                 {
                     ProductId = product.Id,
@@ -224,34 +226,62 @@ namespace UserControls.ViewModels.Invoices
         {
             var ecrManager = new EcrServer(ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig);
             ecrManager.OnError += delegate(Exception ex) { MessageManager.OnMessage(ex.ToString()); };
-            var products = InvoiceItems.Select(s => new TotalModel
-            {
-                RpId = s.Index,
-                Adg = s.Product.HcdCs,
-                Gc = s.Code,
-                Gn = s.Description,
-                Mu = s.Mu,
-                Qty = (double)(s.Quantity ?? 0),
-                P = s.Product != null ? s.Product.Price ?? 0 : 0,
-                TT = (s.Quantity ?? 0) * (s.Price ?? 0),
 
-                Dsc = s.Discount.ToString(),
-                Adsc = "0",
-                DscT = s.Discount != null && s.Discount > 0 ? "1" : null
-            }).ToList();
             var invoicePaid = new EcrPaid
+                {
+                    PaidAmount = InvoicePaid.Paid != null ? (double)InvoicePaid.Paid : 0,
+                    PaidAmountCard = InvoicePaid.ByCheck != null ? (double)InvoicePaid.ByCheck : 0,
+                    PartialAmount = 0,
+                    PrePaymentAmount = (double)(InvoicePaid.ReceivedPrepayment ?? 0),
+                    UseExtPos = false
+                };
+            ResponseReceiptModel responceReceiptViewModel = null;
+            if (InvoiceItems.All(s => s.Quantity > 0))
             {
-                PaidAmount = InvoicePaid.Paid != null ? (double)InvoicePaid.Paid : 0,
-                PaidAmountCard = InvoicePaid.ByCheck != null ? (double)InvoicePaid.ByCheck : 0,
-                PartialAmount = 0,
-                PrePaymentAmount = (double)(InvoicePaid.ReceivedPrepayment ?? 0),
-                UseExtPos = false
-            };
-            var responceReceiptViewModel = ecrManager.PrintReceiptReturnTicket(products, invoicePaid);
+                var products = InvoiceItems.Select(s => new TotalModel
+                {
+                    RpId = InvoiceItems.IndexOf(s).ToString(),
+                    Adg = s.Product.HcdCs,
+                    Gc = s.Code,
+                    Gn = s.Description,
+                    Mu = s.Mu,
+                    Qty =  (s.Quantity!=null ? s.Quantity.ToString(): "0"),
+                    P = s.Product != null && s.Product.Price!=null ? s.Product.Price.ToString() : "0",
+                    Tt = ((s.Quantity ?? 0) * (s.Price ?? 0)).ToString(CultureInfo.InvariantCulture),
+
+                    Dsc = s.Discount.ToString(),
+                    Adsc = "0",
+                    DscT = s.Discount != null && s.Discount > 0 ? "1" : null
+                }).ToList();
+
+
+                responceReceiptViewModel = ecrManager.PrintReceiptReturnTicket(products, invoicePaid);
+            }
+            else
+            {
+                var returnItems = InvoiceItems.Where(s => s.Quantity > 0).Select(s => (IEcrReturnItem)(new ReturnItem(InvoiceItems.IndexOf(s), (double)(s.Quantity ?? 0)))).ToArray();
+                ecrManager.PrintReceiptReturnTicket(returnItems, invoicePaid);
+            }
             var message = responceReceiptViewModel != null ?
                 new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:" + responceReceiptViewModel.Fiscal, MessageTypeEnum.Success)
                 : new MessageModel("ՀԴՄ կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrManager.ActionDescription, ecrManager.ActionCode), MessageTypeEnum.Warning);
             MessageManager.OnMessage(message);
+        }
+
+        private ICommand _clearQuantitiesCpmmand;
+        public ICommand ClearQuantitiesCommand { get { return _clearQuantitiesCpmmand ?? (_clearQuantitiesCpmmand = new RelayCommand(OnClearQuantities, CanClearQuanities)); } }
+
+        private bool CanClearQuanities(object obj)
+        {
+            return InvoiceItems.Any(s => s.Quantity > 0);
+        }
+
+        private void OnClearQuantities(object obj)
+        {
+            foreach (var invoiceItemsModel in InvoiceItems)
+            {
+                invoiceItemsModel.Quantity = 0;
+            }
         }
 
         #endregion Commands
@@ -434,7 +464,7 @@ namespace UserControls.ViewModels.Invoices
             var invoiceItems = invoice.Item2;
             foreach (var item in invoiceItems)
             {
-                product = new ProductsManager().GetProductsByCodeOrBarcode(item.Code, Member.Id);
+                product = new ProductsManager().GetProductsByCodeOrBarcode(item.Code);
                 if (product == null)
                 {
                     product = new ProductModel(item.Code, Member.Id, User.UserId, true)
@@ -448,7 +478,7 @@ namespace UserControls.ViewModels.Invoices
                     MessageBox.Show(string.Format("{0}({1}) ապրանքը գրանցված չէ:", item.Description, item.Code), "Անհայտ ապրանք", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
-                var exProduct = new ProductsManager().GetProductsByCodeOrBarcode(product.Code, Member.Id);
+                var exProduct = new ProductsManager().GetProductsByCodeOrBarcode(product.Code);
                 InvoiceItem = new InvoiceItemsModel
                 {
                     ProductId = product.Id,

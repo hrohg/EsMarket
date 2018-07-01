@@ -13,7 +13,7 @@ using ES.DataAccess.Models;
 using UserControls.Controls;
 using UserControls.ViewModels;
 using ItemsToSelectByCheck = UserControls.Controls.ItemsToSelectByCheck;
-using ProductModel = ES.Business.Models.ProductModel;
+using ProductModel = ES.Data.Models.ProductModel;
 using SelectItemsByCheck = UserControls.Controls.SelectItemsByCheck;
 
 namespace UserControls.Helpers
@@ -284,7 +284,7 @@ namespace UserControls.Helpers
                     throw new ArgumentOutOfRangeException("orderBy", orderBy, null);
             }
 
-
+            ui.Topmost = true;
             if (ui.ShowDialog() == true && ui.SelectedItems != null)
             {
                 return invoices.Where(s => ui.SelectedItems.Select(t => (Guid)t.SelectedValue).Contains(s.Id)).ToList();

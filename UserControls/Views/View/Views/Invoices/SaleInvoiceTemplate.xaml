@@ -493,11 +493,8 @@
                                         </MenuItem>
                                     </MenuItem>
                                     <MenuItem Header="Արտահանել">
-                                        <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceToXmlCommand}"/>
-                                        <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ExportInvoiceToExcelCommand}"/>
-                                        <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" Visibility="Collapsed"/>
-                                        <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}" Visibility="Collapsed"/>
-                                        <MenuItem Header="Արտահանել Ctrl+E" Command="{Binding ExportInvoiceCommand}" Visibility="Collapsed"/>
+                                        <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Xml}"/>
+                                        <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
                                     </MenuItem>
                                     <Separator/>
                                     <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>

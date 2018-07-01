@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using CashReg.Helper;
+using CashReg.Interfaces;
 using ES.Business.ExcelManager;
 using ES.Business.FileManager;
 using ES.Business.Helpers;
@@ -55,9 +57,10 @@ namespace UserControls.ViewModels.Managers
             {
                 if (value == _product) return;
                 _product = ProductsManager.CopyProduct(value);
-                RaisePropertyChanged("Product");
+                RaisePropertyChanged(ProductProperty);
                 RaisePropertyChanged(ChangeProductActivityDescriptionProperty);
                 RaisePropertyChanged(ProductGroupDescriptionProperty);
+                RaisePropertyChanged("EditProductStage");
             }
         }
         public List<ProductModel> Products
@@ -104,6 +107,13 @@ namespace UserControls.ViewModels.Managers
             }
         }
         public bool IsGetProductFromEsServer { get; set; }
+        public string EditProductStage
+        {
+            get
+            {
+                return ProductsManager.GetProduct(Id) != null ? "Խմբագրել" : "Ավելացնել";
+            }
+        }
         #endregion
 
         #region Constructors
@@ -191,7 +201,7 @@ namespace UserControls.ViewModels.Managers
         private void OnGetProduct(object o)
         {
             if (!CanGetProduct(o)) { return; }
-            var product = new ProductsManager().GetProductsByCodeOrBarcode(o as string, ApplicationManager.Instance.GetMember.Id);
+            var product = new ProductsManager().GetProductsByCodeOrBarcode(o as string);
             Product = product ?? new ProductModel(ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId, true) { Code = o as string };
         }
         private bool CanGenerateBarcode(object o)
@@ -513,6 +523,7 @@ namespace UserControls.ViewModels.Managers
 
         #region External properties
         public string ChangeProductActivityDescription { get { return Product != null && Product.IsEnabled ? "Պասիվացում" : "Ակտիվացում"; } }
+        public List<IEcrDepartment> EcrDepartments { get; private set; }
         #endregion
 
         #region Constructors
@@ -527,6 +538,8 @@ namespace UserControls.ViewModels.Managers
         private void Initialize()
         {
             Title = "Ապրանքների խմբագրում, ավելացում";
+            EcrDepartments = CashReg.Helper.Enumerations.GetEcrDepartments();
+            EcrDepartments.Insert(0, new Department{Id = -1, Name = "Ընտրել հարկման տեսակը", Type = -1});
             SetCommands();
         }
         private void SetCommands()
@@ -611,7 +624,6 @@ namespace UserControls.ViewModels.Managers
         public void OnNewProduct(object o)
         {
             Product = new ProductModel(MemberId, UserId, true);
-            RaisePropertyChanged(ProductProperty);
         }
 
         protected override void OnEditProduct(object o)

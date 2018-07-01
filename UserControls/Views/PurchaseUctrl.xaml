@@ -520,7 +520,7 @@
                             <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
                             <Separator/>
                             <MenuItem Header="Ներմուծել" Command="{Binding ImportInvoiceCommand}" IsEnabled="False"/>
-                            <MenuItem Header="Արտահանել" Command="{Binding ExportInvoiceCommand}" IsEnabled="False"/>
+                            <MenuItem Header="Արտահանել" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
                             <Separator/>
                             <MenuItem Header="Մաքրել" Command="{Binding CleanInvoiceIemsCommand}"/>
                         </MenuItem>

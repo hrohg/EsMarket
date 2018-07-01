@@ -6,7 +6,7 @@ using ES.Data.Model;
 
 namespace ES.Data.Models
 {
-    public class EsProductModel : INotifyPropertyChanged
+    public class EsProductModel: INotifyPropertyChanged
     {
         /// <summary>
         /// Initialize a new instance of the Product class.
@@ -14,7 +14,6 @@ namespace ES.Data.Models
 
         #region Properties
         private const string IdProperty = "Id";
-        private const string EditProductStageProperty = "EditProductStage";
         private const string CodeProperty = "Code";
         private const string BarcodeProperty = "Barcode";
         private const string HcdCsProperty = "HcdCs";
@@ -70,7 +69,7 @@ namespace ES.Data.Models
         private EsUserModel _esUser;
         #endregion
         #region Public properties
-        public Guid Id { get { return _id; } set { _id = value; OnPropertyChanged(IdProperty); OnPropertyChanged(EditProductStageProperty); } }
+        public Guid Id { get { return _id; } set { _id = value; OnPropertyChanged(IdProperty); } }
         public string State { get { return IsEnabled ? "Ակտիվ" : "Պասիվ"; } }
         public string Code { get { return _code; } set { _code = value; OnPropertyChanged(CodeProperty); } }
         public string Barcode { get { return _barcode; } set { _barcode = value; OnPropertyChanged(BarcodeProperty); } }

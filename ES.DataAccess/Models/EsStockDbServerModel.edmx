@@ -159,9 +159,9 @@
           <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ParentStockId" Type="bigint" />
           <Property Name="StorekeeperId" Type="bigint" />
-          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="Description" Type="nvarchar" MaxLength="256" />
-          <Property Name="Address" Type="nchar" MaxLength="256" />
+          <Property Name="Name" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="250" />
+          <Property Name="Address" Type="nvarchar" MaxLength="250" />
           <Property Name="SpecialCode" Type="nvarchar" MaxLength="16" />
           <Property Name="IsEnable" Type="bit" Nullable="false" />
           <Property Name="EsMemberId" Type="bigint" Nullable="false" />
@@ -395,6 +395,13 @@
           <Property Name="BrandId" Type="bigint" />
           <Property Name="LastModifierId" Type="bigint" Nullable="false" />
           <Property Name="ExpiryDays" Type="int" />
+        </EntityType>
+        <EntityType Name="ProductsAdditionalData">
+          <Key>
+            <PropertyRef Name="ProductId" />
+          </Key>
+          <Property Name="ProductId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="TypeOfTaxes" Type="int" />
         </EntityType>
         <EntityType Name="SaleInCash">
           <Key>
@@ -1018,6 +1025,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ProductsAdditionalData_Products">
+          <End Role="Products" Type="Self.Products" Multiplicity="1" />
+          <End Role="ProductsAdditionalData" Type="Self.ProductsAdditionalData" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProductsAdditionalData">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_SaleInCash_CashDesk">
           <End Role="CashDesk" Type="Self.CashDesk" Multiplicity="1" />
           <End Role="SaleInCash" Type="Self.SaleInCash" Multiplicity="*" />
@@ -1083,6 +1102,7 @@
           <EntitySet Name="ProductOrder" EntityType="Self.ProductOrder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductOrderItems" EntityType="Self.ProductOrderItems" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Products" EntityType="Self.Products" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProductsAdditionalData" EntityType="Self.ProductsAdditionalData" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SaleInCash" EntityType="Self.SaleInCash" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="StockTake" EntityType="Self.StockTake" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="StockTakeItems" EntityType="Self.StockTakeItems" Schema="dbo" store:Type="Tables" />
@@ -1274,6 +1294,10 @@
           <AssociationSet Name="FK_Products_EsUsers" Association="Self.FK_Products_EsUsers">
             <End Role="EsUsers" EntitySet="EsUsers" />
             <End Role="Products" EntitySet="Products" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductsAdditionalData_Products" Association="Self.FK_ProductsAdditionalData_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProductsAdditionalData" EntitySet="ProductsAdditionalData" />
           </AssociationSet>
           <AssociationSet Name="FK_SaleInCash_CashDesk" Association="Self.FK_SaleInCash_CashDesk">
             <End Role="CashDesk" EntitySet="CashDesk" />
@@ -1525,6 +1549,11 @@
             <End Role="Products" EntitySet="Products" />
             <End Role="ProductCategories" EntitySet="ProductCategories" />
           </AssociationSet>
+          <EntitySet Name="ProductsAdditionalData" EntityType="EsStockDbModel.ProductsAdditionalData" />
+          <AssociationSet Name="FK_ProductsAdditionalData_Products" Association="EsStockDbModel.FK_ProductsAdditionalData_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProductsAdditionalData" EntitySet="ProductsAdditionalData" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="AccountingPlan">
           <Key>
@@ -1690,9 +1719,9 @@
           <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ParentStockId" Type="Int64" />
           <Property Name="StorekeeperId" Type="Int64" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="Address" Type="String" MaxLength="256" FixedLength="true" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="SpecialCode" Type="String" MaxLength="16" FixedLength="false" Unicode="true" />
           <Property Name="IsEnable" Type="Boolean" Nullable="false" />
           <Property Name="EsMemberId" Type="Int64" Nullable="false" />
@@ -1987,6 +2016,7 @@
           <NavigationProperty Name="ProductItems" Relationship="EsStockDbModel.FK_ProductItems_Products" FromRole="Products" ToRole="ProductItems" />
           <NavigationProperty Name="ProductOrderItems" Relationship="EsStockDbModel.FK_ProductOrderItems_Products" FromRole="Products" ToRole="ProductOrderItems" />
           <NavigationProperty Name="ProductCategories" Relationship="EsStockDbModel.FK_ProductCategories_Products" FromRole="Products" ToRole="ProductCategories" />
+          <NavigationProperty Name="ProductsAdditionalData" Relationship="EsStockDbModel.FK_ProductsAdditionalData_Products" FromRole="Products" ToRole="ProductsAdditionalData" />
         </EntityType>
         <EntityType Name="SaleInCash">
           <Key>
@@ -2675,6 +2705,26 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ProductsAdditionalData">
+          <Key>
+            <PropertyRef Name="ProductId" />
+          </Key>
+          <Property Name="ProductId" Type="Guid" Nullable="false" />
+          <Property Name="TypeOfTaxes" Type="Int32" />
+          <NavigationProperty Name="Products" Relationship="EsStockDbModel.FK_ProductsAdditionalData_Products" FromRole="ProductsAdditionalData" ToRole="Products" />
+        </EntityType>
+        <Association Name="FK_ProductsAdditionalData_Products">
+          <End Type="EsStockDbModel.Products" Role="Products" Multiplicity="1" />
+          <End Type="EsStockDbModel.ProductsAdditionalData" Role="ProductsAdditionalData" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProductsAdditionalData">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3159,6 +3209,14 @@
                 <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
                 <ScalarProperty Name="ProductId" ColumnName="ProductId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProductsAdditionalData">
+            <EntityTypeMapping TypeName="EsStockDbModel.ProductsAdditionalData">
+              <MappingFragment StoreEntitySet="ProductsAdditionalData">
+                <ScalarProperty Name="TypeOfTaxes" ColumnName="TypeOfTaxes" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
