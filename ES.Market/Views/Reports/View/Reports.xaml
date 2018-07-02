@@ -36,6 +36,10 @@
                                     <MenuItem Header="Պատվիրատուների մանրամասն" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartnersDetiles}" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"/>
                                         <MenuItem Header="Պատվիրատուների (ըստ խմբերի)" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartnerType}" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"/>
                     </MenuItem>
+                    <MenuItem Header="Վաճառք 0 - ական" 
+                              Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByZeroAmunt}"
+                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"/>
+
                 </MenuItem>
                 
                 <MenuItem Header="Տեղափոխություն" 

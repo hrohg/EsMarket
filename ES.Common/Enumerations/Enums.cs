@@ -18,7 +18,8 @@
         ByPartner = 8,
         ByPartnersDetiles = ByDetiles | ByPartner,
         ByStocksDetiles = ByDetiles | ByStock,
-        BySaleChart = 16
+        BySaleChart = 16,
+        ByZeroAmunt = 32,
     }
 
     public enum DebitEnum

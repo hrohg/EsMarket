@@ -69,11 +69,8 @@ namespace ES.Business.Managers
 
     public class InvoicesManager : BaseManager
     {
-        private static long _memberId;
-        static InvoicesManager()
-        {
-            _memberId = ApplicationManager.Member.Id;
-        }
+        private static long MemberId{get { return ApplicationManager.Member.Id; }}
+        
         #region Invoice enumerables
 
         public static List<int> GetInvoiceTypes(InvoiceTypeEnum type)
@@ -264,9 +261,10 @@ namespace ES.Business.Managers
             {
                 try
                 {
+                    var memberId = MemberId;
                     //var invoices = db.Invoices.Where(s => s.MemberId == memberId && s.InvoiceTypeId == invoiceTypeId);
                     //var index = invoices.Max(s => s.InvoiceIndex);
-                    return db.Invoices.Where(s => s.MemberId == ApplicationManager.Member.Id && s.InvoiceTypeId == invoiceTypeId).Max(s => s.InvoiceIndex) + 1;
+                    return db.Invoices.Where(s => s.MemberId == memberId && s.InvoiceTypeId == invoiceTypeId).Max(s => s.InvoiceIndex) + 1;
                 }
                 catch (Exception)
                 {
@@ -398,6 +396,7 @@ namespace ES.Business.Managers
         {
             try
             {
+                var memberId = MemberId;
                 using (var db = GetDataContext())
                 {
                     if (startDate == null) startDate = DateTime.Today;
@@ -406,7 +405,7 @@ namespace ES.Business.Managers
                         s.ApproveDate.HasValue &&
                         s.ApproveDate >= startDate &&
                         s.ApproveDate < endDate &&
-                        s.MemberId == _memberId).OrderByDescending(s => s.InvoiceIndex).ToList();
+                        s.MemberId == memberId).OrderByDescending(s => s.InvoiceIndex).ToList();
                 }
             }
             catch (Exception ex)
@@ -2742,7 +2741,12 @@ namespace ES.Business.Managers
             var partners = PartnersManager.GetPartner();
             return invoices.Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).ToList();
         }
-
+        public static List<InvoiceModel> GetInvoicesLight(DateTime startDate, DateTime endDate)
+        {
+            var invoices = TryGetInvoices(startDate, endDate);
+            var partners = PartnersManager.GetPartner();
+            return invoices.Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).ToList();
+        }
         public static List<InvoiceItemsModel> GetInvoiceItems(Guid invoiceId)
         {
             var items = new List<InvoiceItemsModel>();

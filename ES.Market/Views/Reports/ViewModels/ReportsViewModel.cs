@@ -15,6 +15,7 @@ using ES.Data.Models.Reports;
 using Shared.Helpers;
 using UserControls.ControlPanel.Controls;
 using UserControls.ViewModels;
+using UserControls.ViewModels.Reports;
 using UserControls.Views;
 
 namespace ES.Market.Views.Reports.ViewModels
@@ -169,6 +170,9 @@ namespace ES.Market.Views.Reports.ViewModels
                     break;
                 case ViewInvoicesEnum.BySaleChart:
                     viewModel = new SaleInvoiceReportByChartViewModel(type);
+                    break;
+                case ViewInvoicesEnum.ByZeroAmunt:
+                    viewModel = new SaleInvoiceReportTypeViewModel(type);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("type", type, null);

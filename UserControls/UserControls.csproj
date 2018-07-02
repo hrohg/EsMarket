@@ -171,6 +171,7 @@
     <Compile Include="ViewModels\Invoices\ReturnInvoiceViewModel.cs" />
     <Compile Include="ViewModels\Managers\PartnersServersViewModel.cs" />
     <Compile Include="ViewModels\Reports\ItemsDataViewModelBase.cs" />
+    <Compile Include="ViewModels\Reports\SaleInvoiceReports.cs" />
     <Compile Include="ViewModels\SelectItemsViewModel.cs" />
     <Compile Include="ViewModels\AccountingPlanViewModel.cs" />
     <Compile Include="ViewModels\AccountingRecordsViewModel.cs" />
