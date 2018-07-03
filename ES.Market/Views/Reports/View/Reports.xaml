@@ -42,46 +42,28 @@
 
                 </MenuItem>
                 
-                <MenuItem Header="Տեղափոխություն" 
-                          IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.StockKeeper}}">
-                    <MenuItem.Icon>
-                        <Image Source="pack://application:,,,/Shared;component/Images/review.png"/>
-                    </MenuItem.Icon>
+                <MenuItem Header="Տեղափոխություն" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.StockKeeper}}">
                     <MenuItem Header="Դիտում" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.None}">
-                        <MenuItem.Icon>
-                            <Image Source="pack://application:,,,/Shared;component/Images/review.png"/>
-                        </MenuItem.Icon>
+                        
                     </MenuItem>
                     <MenuItem Header="Ըստ բաժիննների" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByStock}">
-                        <MenuItem.Icon>
-                            <Image Source="pack://application:,,,/Shared;component/Images/review.png"/>
-                        </MenuItem.Icon>
+                        
                     </MenuItem>
                     <MenuItem Header="Դիտում մանրամասն" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByDetiles}">
-                        <MenuItem.Icon>
-                            <Image Source="pack://application:,,,/Shared;component/Images/review.png"/>
-                        </MenuItem.Icon>
+                        
                     </MenuItem>
                 </MenuItem>
                 
                 <MenuItem Header="Գնում">
-                    <MenuItem.Icon>
-                        <Image Source="pack://application:,,,/Shared;component/Images/review.png"/>
-                    </MenuItem.Icon>
+                    
                     <MenuItem Header="Դիտում" Command="{Binding ViewPurchaseCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.None}">
-                        <MenuItem.Icon>
-                            <Image Source="pack://application:,,,/Shared;component/Images/review.png"/>
-                        </MenuItem.Icon>
+                       
                     </MenuItem>
                     <MenuItem Header="Ըստ բաժիննների" Command="{Binding ViewPurchaseCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByStock}">
-                        <MenuItem.Icon>
-                            <Image Source="pack://application:,,,/Shared;component/Images/review.png"/>
-                        </MenuItem.Icon>
+                       
                     </MenuItem>
                     <MenuItem Header="Դիտում մանրամասն" Command="{Binding ViewPurchaseCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByDetiles}">
-                        <MenuItem.Icon>
-                            <Image Source="pack://application:,,,/Shared;component/Images/review.png"/>
-                        </MenuItem.Icon>
+                        
                     </MenuItem>
                 </MenuItem>
                 

@@ -8,6 +8,7 @@ using ES.Common;
 using ES.Data.Model;
 using ES.Common;
 using ES.Common.Managers;
+using ES.Data.Models;
 using UserControls.ViewModels.Invoices;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MenuItem = System.Windows.Controls.MenuItem;

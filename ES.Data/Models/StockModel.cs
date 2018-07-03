@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
+using ES.Data.Model;
 
-namespace ES.Data.Model
+namespace ES.Data.Models
 {
     public class StockModel:INotifyPropertyChanged
     {
@@ -52,9 +53,9 @@ namespace ES.Data.Model
         public EsMemberModel Member { get; set; }
         public string FullName { get { return string.Format("{0},{1} ({2} {3})",Name, Address, Storekeeper!=null? Storekeeper.LastName:string.Empty,Storekeeper!=null? Storekeeper.FirstName: string.Empty);} }
         #endregion
-        public StockModel()
+        public StockModel(long memberId)
         {
-
+            MemberId = memberId;
         }
         #region Private properties
         #endregion

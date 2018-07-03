@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.RightsManagement;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -1619,6 +1620,30 @@ namespace ES.Market.ViewModels
 
         #endregion ConvertConfigFileCommand
 
+        private ICommand _manageStockesCommand;
+        public ICommand ManageStockesCommand{get{return _manageStockesCommand??(_manageStockesCommand=new RelayCommand(OnManageStockes, CanManageStockes));}}
+
+        private bool CanManageStockes(object obj)
+        {
+            return true;
+        }
+
+        private void OnManageStockes(object obj)
+        {
+            AddDocument(new ManageStockesViewModel());
+        }
+        private ICommand _manageCashDesksCommand;
+        public ICommand ManageCashDesksCommand { get { return _manageCashDesksCommand ?? (_manageCashDesksCommand = new RelayCommand(OnManageCashDesks, CanManageCashDesks)); } }
+
+        private bool CanManageCashDesks(object obj)
+        {
+            return true;
+        }
+
+        private void OnManageCashDesks(object obj)
+        {
+            AddDocument(new ManageCashDesksViewModel());
+        }
         #endregion Admin
 
         #region Documents

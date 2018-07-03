@@ -5,10 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Transactions;
 using ES.Business.Helpers;
-using ES.Business.Models;
-using ES.Common;
 using ES.Common.Enumerations;
-using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
 using ES.DataAccess.Models;
@@ -611,7 +608,7 @@ namespace ES.Business.Managers
                         var exCashDesk = db.CashDesk.SingleOrDefault(s => s.Id == item.Id);
                         if (exCashDesk == null)
                         {
-                            db.CashDesk.Add(new CashDesk
+                            db.CashDesk.Add(new CashDesk(item.MemberId)
                             {
                                 Id = item.Id,
                                 MemberId = item.MemberId,

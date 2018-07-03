@@ -7,6 +7,7 @@ namespace ES.Data.Models.Reports
         DateTime Date { get; }
         decimal? Sale { get; }
         decimal Quantity { get; }
+        decimal Cost { get; set; }
         decimal Price { get; }
         decimal Amount { get; }
     }
@@ -39,7 +40,7 @@ namespace ES.Data.Models.Reports
 
         public decimal Amount { get; set; }
 
-        public decimal? Cost { get; set; }
+        public decimal Cost { get; set; }
         public decimal? Sale { get; set; }
         public decimal? Profit { get { return Sale - Cost; } }
         public decimal? Pers { get { return (Profit ?? 0) * 100 / (Cost != 0 ? Cost : 1); } }

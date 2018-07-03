@@ -51,16 +51,17 @@ namespace UserControls.ViewModels.Reports
     public class SaleInvoiceReportTypeViewModel : SaleInvoiceReportsBase<IInvoiceReport>
     {
         #region Internal properties
-        
-        
+
+
         #endregion
 
         #region External properties
-        
+
         #endregion
 
         #region Constructors
-        public SaleInvoiceReportTypeViewModel(ViewInvoicesEnum viewInvoicesEnum):base(viewInvoicesEnum)
+        public SaleInvoiceReportTypeViewModel(ViewInvoicesEnum viewInvoicesEnum)
+            : base(viewInvoicesEnum)
         {
             IsShowUpdateButton = true;
             Initialize();
@@ -139,7 +140,7 @@ namespace UserControls.ViewModels.Reports
                             Description = s.Description,
                             Mu = s.Mu,
                             Quantity = s.Quantity ?? 0,
-                            Cost = s.CostPrice,
+                            Cost = s.CostPrice ?? 0,
                             Price = s.Price ?? 0,
                             Sale = (s.Quantity ?? 0) * (s.Price ?? 0),
                             Note = s.Invoice.Notes
@@ -156,7 +157,7 @@ namespace UserControls.ViewModels.Reports
 
                     break;
                 case ViewInvoicesEnum.ByZeroAmunt:
-                    invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice && s.Amount==0).ToList();
+                    invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice && s.Amount == 0).ToList();
                     if (!invoices.Any())
                     {
                         MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
@@ -165,11 +166,10 @@ namespace UserControls.ViewModels.Reports
                     reports = new List<IInvoiceReport>(invoices.Select(s =>
                         new InvoiceReport()
                         {
+                            Description = s.InvoiceNumber,
                             Date = s.CreateDate,
-                           
-                            Cost = s.CostPrice,
-                            Price = s.Amount,
-                            Sale = s.Paid,
+                            Cost = InvoicesManager.GetInvoiceCost(s.Id),
+                            Sale = InvoicesManager.GetInvoiceTotal(s.Id),
                         }).ToList());
                     break;
                 default:

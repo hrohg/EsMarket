@@ -401,11 +401,12 @@ namespace ES.Business.Managers
                 {
                     if (startDate == null) startDate = DateTime.Today;
                     if (endDate == null) endDate = DateTime.Today;
+
                     return db.Invoices.Where(s =>
                         s.ApproveDate.HasValue &&
                         s.ApproveDate >= startDate &&
                         s.ApproveDate < endDate &&
-                        s.MemberId == memberId).OrderByDescending(s => s.InvoiceIndex).ToList();
+                        s.MemberId == memberId).OrderByDescending(s => s.InvoiceIndex).Include(s=>s.InvoiceItems).ToList();
                 }
             }
             catch (Exception ex)
@@ -2502,7 +2503,7 @@ namespace ES.Business.Managers
                         Code = s.ii.Code,
                         Description = s.ii.Description,
                         Quantity = s.ii.Quantity ?? 0,
-                        Cost = s.ii.CostPrice,
+                        Cost = s.ii.CostPrice??0,
                         Sale = (s.ii.Price ?? 0) * (s.ii.Quantity ?? 0),
                         Price = s.ii.Price ?? 0,
                         Approver = s.ii.Invoices.Approver
@@ -3185,6 +3186,40 @@ namespace ES.Business.Managers
                 return false;
             }
 
+        }
+        public static decimal GetInvoiceCost(Guid invoiceId)
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    return
+                        db.InvoiceItems.Where(s => s.InvoiceId == invoiceId && s.Invoices.MemberId == MemberId)
+                            .Sum(s => s.ProductItems.CostPrice);
+                }
+                catch (Exception)
+                {
+                    return 0;
+                    throw;
+                }
+            }
+        }
+        public static decimal GetInvoiceTotal(Guid invoiceId)
+        {
+            using (var db=GetDataContext())
+            {
+                try
+                {
+                    return
+                        db.InvoiceItems.Where(s => s.InvoiceId == invoiceId && s.Invoices.MemberId == MemberId)
+                            .Sum(s => s.Products.Price??0);
+                }
+                catch (Exception)
+                {
+                    return 0;
+                    throw;
+                }
+            }
         }
     }
 }

@@ -169,6 +169,8 @@
     <Compile Include="PriceTicketControl\ViewModels\PriceTicketLargePriceVewModel.cs" />
     <Compile Include="PriceTicketControl\ViewModels\PriceTicketViewModelBase.cs" />
     <Compile Include="ViewModels\Invoices\ReturnInvoiceViewModel.cs" />
+    <Compile Include="ViewModels\Managers\ManageCashDesksViewModel.cs" />
+    <Compile Include="ViewModels\Managers\ManageStockesViewModel.cs" />
     <Compile Include="ViewModels\Managers\PartnersServersViewModel.cs" />
     <Compile Include="ViewModels\Reports\ItemsDataViewModelBase.cs" />
     <Compile Include="ViewModels\Reports\SaleInvoiceReports.cs" />
@@ -356,6 +358,14 @@
     <Page Include="Views\Documents\StockTakingTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Editors\ManageCashDesksTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Editors\ManageStockesTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Invoices\InternalWaybillTemplate.xaml">
       <SubType>Designer</SubType>

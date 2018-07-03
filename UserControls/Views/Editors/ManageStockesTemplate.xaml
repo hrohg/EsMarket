@@ -1,0 +1,83 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:managers="clr-namespace:UserControls.ViewModels.Managers">
+
+    <DataTemplate DataType="{x:Type managers:ManageStockesViewModel}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+               
+                <TextBlock  Grid.Row="0" Grid.Column="1" Text="Անվանում" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding SelectedItem.Name}" VerticalContentAlignment="Center"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="Հասցե" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding SelectedItem.Address, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="Մեկնաբանություն" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding SelectedItem.Description }" VerticalContentAlignment="Center"/>
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="Պահեստապես" HorizontalAlignment="Right"/>
+                <ComboBox Grid.Row="4" Grid.Column="2" Text="{Binding SelectedItem.Storekeeper}" VerticalContentAlignment="Center" IsEnabled="False"/>
+                <TextBlock Grid.Row="5" Grid.Column="1" Text="Կոդ" ToolTip="Հատուկ հատկացված կոդ" HorizontalAlignment="Right"/>
+                <TextBox Grid.Row="5" Grid.Column="2" Text="{Binding SelectedItem.SpecialCode}" VerticalContentAlignment="Center" />
+                <TextBlock Grid.Row="6" Grid.Column="1" Text="Ակտիվ" HorizontalAlignment="Right"/>
+                <CheckBox Grid.Row="6" Grid.Column="2" IsChecked="{Binding SelectedItem.IsEnable}" VerticalContentAlignment="Center"/>
+            </Grid>
+            <Grid Grid.Row="1" HorizontalAlignment="Right">
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="3">
+                    <Button Content="Նոր" Padding="3" Command="{Binding NewCommand}" Width="80"/>
+                    <Button Content="Ավելացնել" Padding="3" Command="{Binding AddCommand}" Width="80"/>
+                    <Button Content="Խմբագրել" Padding="3" Command="{Binding EditCommand}" Width="80"/>
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" Text="{Binding Path=FilterText, UpdateSourceTrigger=PropertyChanged}" Height="25" VerticalContentAlignment="Center" />
+                <DataGrid Grid.Row="1" 
+                  ItemsSource="{Binding Items}" 
+                  SelectedItem="{Binding SelectedItem}" 
+                  VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="12" 
+                      AlternatingRowBackground ="GhostWhite" AlternationCount="2"
+                      Margin="1">
+                    <DataGrid.Resources>
+                        <Style x:Key="CellRightAlign">
+                            <Setter Property="Control.HorizontalAlignment" Value="Right" />
+                        </Style>
+                        <ContextMenu x:Key="RowMenu">
+                            <MenuItem Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemovePartnerCommand}" CommandParameter="{Binding Partner.Id}" Header="Հեռացնել"/>
+                        </ContextMenu>
+                    </DataGrid.Resources>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="ContextMenu" Value="{StaticResource RowMenu}"/>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Name}" />
+                        <DataGridTextColumn IsReadOnly="True" Header="Հասցե" Binding="{Binding Path=Address}" CellStyle="{StaticResource CellRightAlign}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

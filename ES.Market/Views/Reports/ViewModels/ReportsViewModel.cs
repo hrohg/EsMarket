@@ -25,6 +25,7 @@ namespace ES.Market.Views.Reports.ViewModels
         #region Constants
         private const string IsInProgressProperty = "IsInProgress";
         #endregion
+
         #region Internal properties
         private bool _isInProgress;
         private Window _parentTabControl;

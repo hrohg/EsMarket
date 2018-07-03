@@ -235,9 +235,9 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    return db.Partners.Include(s => s.EsMembers)
-                                        .Include(s => s.EsPartnersTypes)
-                                        .Where(s => s.EsMemberId == memberId).ToList();
+                    var partners = db.Partners.Where(s => s.EsMemberId == memberId)
+                                        .Include(s => s.EsPartnersTypes).ToList();
+                    return partners;
                 }
                 catch (Exception)
                 {

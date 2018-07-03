@@ -40,7 +40,7 @@ namespace UserControls.Views.CustomControls
                         
                         break;
                     case Key.X:
-                        //_viewModel.OnClose(this.Parent);
+                       
                         break;
                 }
             }

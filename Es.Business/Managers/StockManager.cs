@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using ES.Business.Helpers;
-using ES.Data.Model;
+using ES.Common.Managers;
+using ES.Data.Models;
 using ES.DataAccess.Models;
 
 namespace ES.Business.Managers
@@ -14,7 +15,7 @@ namespace ES.Business.Managers
         private static StockModel Convert(EsStock item)
         {
             if (item == null) return null;
-            return new StockModel
+            return new StockModel(item.EsMemberId)
             {
                 Id = item.Id,
                 ParentId = item.ParentStockId,
@@ -47,6 +48,7 @@ namespace ES.Business.Managers
             };
         }
         #endregion
+
         #region Public methods
         public static EsStock GetDefaultStock(long memberId)
         {
@@ -60,6 +62,11 @@ namespace ES.Business.Managers
             return TryGetStocks().Select(Convert).ToList();
 
         }
+        public static List<StockModel> GetAllStocks()
+        {
+            return TryGetAllStocks().Select(Convert).ToList();
+
+        }
         public static IEnumerable<StockModel> GetStocks(List<long> ids)
         {
             return TryGetStocks(ids).Select(Convert);
@@ -68,7 +75,12 @@ namespace ES.Business.Managers
         {
             return Convert(TryGetStock(id));
         }
+        public static bool ManageStock(StockModel item)
+        {
+            return TryManageStock(Convert(item));
+        }
         #endregion
+
         #region Private methods
         private static EsStock TryGetStock(long? stockId)
         {
@@ -108,6 +120,25 @@ namespace ES.Business.Managers
                 
             }
         }
+        private static List<EsStock> TryGetAllStocks()
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    return db.EsStock
+                        .Include(s => s.EsUsers)
+                        .Include(s => s.EsMembers)
+                        .Include(s => s.EsStock2)
+                        .Where(s => s.EsMemberId == ApplicationManager.Member.Id).ToList();
+                }
+                catch (Exception)
+                {
+                    return new List<EsStock>();
+                }
+
+            }
+        }
         private static IEnumerable<EsStock> TryGetStocks(IEnumerable<long> ids)
         {
             using (var db = GetDataContext())
@@ -127,6 +158,38 @@ namespace ES.Business.Managers
 
             }
         }
+        private static bool TryManageStock(EsStock item)
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    var exItem = db.EsStock.SingleOrDefault(s => s.Id == item.Id && s.EsMemberId == item.EsMemberId);
+                    if (exItem == null)
+                    {
+                        db.EsStock.Add(item);
+                    }
+                    else
+                    {
+                        exItem.Name = item.Name;
+                        exItem.Description = item.Description;
+                        exItem.Address = item.Address;
+                        exItem.SpecialCode = item.SpecialCode;
+                        exItem.IsEnable = item.IsEnable;
+                    }
+                    db.SaveChanges();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    MessageManager.OnMessage("Գործողության ընդհատում");
+                    MessageManager.OnMessage(ex.ToString());
+                    return false;
+                }
+            }
+        }
         #endregion
+
+        
     }
 }

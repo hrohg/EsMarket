@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ES.Business.Helpers;
+using ES.Common.Managers;
 using ES.DataAccess.Models;
 
 namespace ES.Business.Managers
@@ -32,6 +33,20 @@ namespace ES.Business.Managers
                 try
                 {
                     return db.CashDesk.Where(s => s.MemberId == ApplicationManager.Member.Id && s.IsActive).ToList();
+                }
+                catch (Exception)
+                {
+                    return new List<CashDesk>();
+                }
+            }
+        }
+        public static List<CashDesk> GetAllCashDesks()
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    return db.CashDesk.Where(s => s.MemberId == ApplicationManager.Member.Id).ToList();
                 }
                 catch (Exception)
                 {
@@ -77,6 +92,37 @@ namespace ES.Business.Managers
         #endregion
 
         #endregion
+
+        public static bool ManageCashDesk(CashDesk item)
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    var exItem = db.CashDesk.SingleOrDefault(s => s.Id == item.Id);
+                    if (exItem == null)
+                    {
+                        db.CashDesk.Add(item);
+                    }
+                    else
+                    {
+                        exItem.Description = item.Description;
+                        exItem.IsActive = item.IsActive;
+                        exItem.IsCash = item.IsCash;
+                        exItem.Name = item.Name;
+                        exItem.Notes = item.Notes;
+                    }
+                    db.SaveChanges();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    MessageManager.OnMessage("Գործողության ընդհատում");
+                    MessageManager.OnMessage(ex.ToString());
+                    return false;
+                }
+            }
+        }
     }
 
 }

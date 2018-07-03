@@ -2,10 +2,11 @@
 using System.ComponentModel;
 using System.Xml.Serialization;
 using ES.Data.Model;
+using EsMarket.SharedData.Interfaces;
 
 namespace ES.Data.Models
 {
-    public class InvoiceModel : INotifyPropertyChanged
+    public class InvoiceModel :INotifyPropertyChanged
     {
         public InvoiceModel()
         {

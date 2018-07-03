@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}</ProjectGuid>
+    <ProjectGuid>{03419848-B59B-49D5-9CDC-8A3CFD634FAD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ES.Data</RootNamespace>
-    <AssemblyName>ES.Data</AssemblyName>
+    <RootNamespace>EsMarket.SharedData</RootNamespace>
+    <AssemblyName>EsMarket.SharedData</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -31,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CashReg">
-      <HintPath>..\Bin\CashReg.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,38 +38,22 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enumerations\PartnerType.cs" />
-    <Compile Include="Helper\SerializableInvoices.cs" />
-    <Compile Include="Models\Bases\TreeViewItemBaseModel.cs" />
-    <Compile Include="Models\BrandModel.cs" />
-    <Compile Include="Models\CashierModel.cs" />
-    <Compile Include="Models\CategoriesModel.cs" />
-    <Compile Include="Models\EsMemberModel.cs" />
-    <Compile Include="Models\EsModels\EsCategoriesModel.cs" />
-    <Compile Include="Models\EsUserModel.cs" />
-    <Compile Include="Models\InvoiceItemsModel.cs" />
-    <Compile Include="Models\InvoiceModel.cs" />
-    <Compile Include="Models\PartnersModel.cs" />
-    <Compile Include="Models\PartnerTypeModel.cs" />
-    <Compile Include="Models\ProductItemModel.cs" />
-    <Compile Include="Models\EsProductModel.cs" />
-    <Compile Include="Models\ProductModel.cs" />
-    <Compile Include="Models\ProductOrderModel.cs" />
-    <Compile Include="Models\ProductsAdditionalDataModel.cs" />
-    <Compile Include="Models\Reports\InternalWayBillModel.cs" />
-    <Compile Include="Models\Reports\SaleInvoiceReports.cs" />
-    <Compile Include="Models\UsersRolesModel.cs" />
-    <Compile Include="Models\StockModel.cs" />
+    <Compile Include="Enums\DeliveryTypeEnum.cs" />
+    <Compile Include="Enums\InvoiceTypeEnum.cs" />
+    <Compile Include="Interfaces\IAddress.cs" />
+    <Compile Include="Interfaces\IBankAccount.cs" />
+    <Compile Include="Interfaces\IBuyerInfo.cs" />
+    <Compile Include="Interfaces\IDeliveryInfo.cs" />
+    <Compile Include="Interfaces\IEsMarketPartner.cs" />
+    <Compile Include="Interfaces\IEsMarketInvoice.cs" />
+    <Compile Include="Interfaces\IGoodsInfo.cs" />
+    <Compile Include="Interfaces\IInvoiceInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EsMarket.SharedData\EsMarket.SharedData.csproj">
-      <Project>{03419848-b59b-49d5-9cdc-8a3cfd634fad}</Project>
-      <Name>EsMarket.SharedData</Name>
-    </ProjectReference>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -400,7 +400,7 @@ namespace UserControls.ViewModels
                             Description = s.Description,
                             Mu = s.Mu,
                             Quantity = s.Quantity ?? 0,
-                            Cost = s.CostPrice,
+                            Cost = s.CostPrice??0,
                             Price = s.Price ?? 0,
                             Sale = (s.Quantity??0)*(s.Price??0),
                             Note = s.Invoice.Notes

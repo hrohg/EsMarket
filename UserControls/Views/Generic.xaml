@@ -14,6 +14,8 @@
         <ResourceDictionary Source="Editors/ManageProducts.xaml"/>
         <ResourceDictionary Source="Editors/ManagePartners.xaml"/>
 
+        <ResourceDictionary Source="Editors/ManageStockesTemplate.xaml"/>
+        <ResourceDictionary Source="Editors/ManageCashDesksTemplate.xaml"/>
         <!--Invoices-->
         <ResourceDictionary Source="View/Views/Invoices/InvoiceTemplate.xaml"/>
         <ResourceDictionary Source="View/Views/Invoices/SaleInvoiceTemplate.xaml"/>
@@ -36,10 +38,10 @@
         <ResourceDictionary Source="Tools/CategoriesTools.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
-    <DataTemplate DataType="{x:Type base:DocumentViewModel}">
+    <!--<DataTemplate DataType="{x:Type base:DocumentViewModel}">
         <Grid>
             <ContentPresenter />
             <controls:WaitingCover Visibility="Visible" />
         </Grid>
-    </DataTemplate>
+    </DataTemplate>-->
 </ResourceDictionary>

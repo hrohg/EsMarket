@@ -77,8 +77,8 @@
                     <MenuItem.Icon>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Safe.ico"/>
                     </MenuItem.Icon>
-                    <MenuItem Header="Կազմակերպությունների խմբագրում"/>
-                    <MenuItem Header="Օգտագործողների խմբագրում"/>
+                    <MenuItem Header="Պահեստների խմբագրում" Command="{Binding ManageStockesCommand}"/>
+                    <MenuItem Header="Դրամարկղների խմբագրում" Command="{Binding ManageCashDesksCommand}"/>
                     <MenuItem Header="DB Management">
                         <MenuItem Header="Հատուկ գործողություն" Click="MiExecute_Click" IsEnabled="False"/>
                         <MenuItem Header="Ապրանքների բեռնում" Command="{Binding ImportProductsCommand}"/>
@@ -571,7 +571,7 @@
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Edit.ico"/>
                         </MenuItem.Icon>
                         <MenuItem Header="Ապրանքների խմբագրում" Command="{Binding CorrectProductsCommand}"/>
-                        <MenuItem Header="Ապրանքների խմբագրում, ավելացում" Command="{Binding ManageProductsCommand}">
+                        <MenuItem Header="Ապրանքների խմբագրում (ընդլայնված)" Command="{Binding ManageProductsCommand}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Edit.ico"/>
                             </MenuItem.Icon>
