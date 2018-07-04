@@ -45,6 +45,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\EsMarketInvoiceConverter.cs" />
     <Compile Include="Enumerations\PartnerType.cs" />
     <Compile Include="Helper\SerializableInvoices.cs" />
     <Compile Include="Models\Bases\TreeViewItemBaseModel.cs" />

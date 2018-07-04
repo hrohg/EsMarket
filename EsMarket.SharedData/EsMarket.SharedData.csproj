@@ -50,11 +50,15 @@
     <Compile Include="Interfaces\IEsMarketInvoice.cs" />
     <Compile Include="Interfaces\IGoodsInfo.cs" />
     <Compile Include="Interfaces\IInvoiceInfo.cs" />
+    <Compile Include="Models\BankAccount.cs" />
+    <Compile Include="Models\DeliveryInfo.cs" />
+    <Compile Include="Models\EsGoodInfo.cs" />
+    <Compile Include="Models\EsMarketInvoice.cs" />
+    <Compile Include="Models\EsMarketPartner.cs" />
+    <Compile Include="Models\InvoiceInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

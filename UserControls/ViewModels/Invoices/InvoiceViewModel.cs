@@ -3,13 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Xml.Serialization;
 using CashReg.Models;
 using ES.Business.ExcelManager;
+using ES.Business.FileManager;
 using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Common;
@@ -312,6 +315,8 @@ namespace UserControls.ViewModels.Invoices
             GetProductCommand = new RelayCommand(OnGetProduct);
 
             CleanInvoiceIemsCommand = new RelayCommand(OnCleanInvoiceItems, CanCleanInvoiceItems);
+            ImportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnImportInvoice, CanImportInvoice);
+
         }
 
         private void SetDefaultPartner()
@@ -462,7 +467,62 @@ namespace UserControls.ViewModels.Invoices
         }
 
         #endregion Auto save
+        #region Import
 
+        protected virtual bool CanImportInvoice(ExportImportEnum importFrom)
+        {
+            return !Invoice.IsApproved;
+        }
+
+        protected virtual void OnImportInvoice(ExportImportEnum importFrom)
+        {
+            switch (importFrom)
+            {
+                case ExportImportEnum.Xml:
+                    break;
+                case ExportImportEnum.Excel:
+                    var filePath = FileManager.OpenExcelFile();
+                    if (File.Exists(filePath))
+                    {
+                        var invoiceObject = ExcelImportManager.ImportInvoice(filePath);
+                        if (invoiceObject == null) return;
+                        var importInvoice = invoiceObject.Item1;
+                        var importInvoiceItems = invoiceObject.Item2;
+                        if (importInvoice == null || importInvoiceItems == null) return;
+                        Invoice = new InvoiceModel(User, Member, Invoice.InvoiceTypeId);
+                        Invoice.CreateDate = importInvoice.CreateDate;
+                        if (Invoice.CreateDate == DateTime.MinValue) Invoice.CreateDate = DateTime.Now;
+                        InvoiceItems.Clear();
+                        foreach (var invoiceItem in importInvoiceItems)
+                        {
+                            if (invoiceItem == null || string.IsNullOrEmpty(invoiceItem.Code)) return;
+                            var product = new ProductsManager().GetProductsByCodeOrBarcode(invoiceItem.Code);
+                            if (product == null)
+                            {
+                                MessageBox.Show(
+                                    invoiceItem.Code +
+                                    " կոդով ապրանք չի հայտնաբերվել։ Գործողությունն ընդհատված է։ Փորձեք կրկին։",
+                                    "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                return;
+                            }
+                            invoiceItem.InvoiceId = Invoice.Id;
+                            invoiceItem.ProductId = product.Id;
+                            invoiceItem.Description = product.Description;
+                            invoiceItem.Mu = product.Mu;
+                            invoiceItem.Note += product.Note;
+                            invoiceItem.Product = product;
+                            InvoiceItems.Add(invoiceItem);
+                        }
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("importFrom", importFrom, null);
+            }
+
+
+        }
+
+        #endregion Import
         private void OnSaveInvoice(object o)
         {
             Save();
@@ -934,7 +994,8 @@ namespace UserControls.ViewModels.Invoices
         public ICommand GetProductCommand { get; private set; }
         public ICommand CleanInvoiceIemsCommand { get; private set; }
 
-        
+        [XmlIgnore]
+        public ICommand ImportInvoiceCommand { get; private set; }
 
         #region Partner commands
 

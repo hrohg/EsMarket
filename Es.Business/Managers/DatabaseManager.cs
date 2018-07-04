@@ -608,7 +608,7 @@ namespace ES.Business.Managers
                         var exCashDesk = db.CashDesk.SingleOrDefault(s => s.Id == item.Id);
                         if (exCashDesk == null)
                         {
-                            db.CashDesk.Add(new CashDesk(item.MemberId)
+                            db.CashDesk.Add(new CashDesk
                             {
                                 Id = item.Id,
                                 MemberId = item.MemberId,

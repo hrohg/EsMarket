@@ -598,6 +598,10 @@
       <Project>{ce538c7e-ffee-4b16-a6e6-8b6e64f43e0f}</Project>
       <Name>ES.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EsMarket.SharedData\EsMarket.SharedData.csproj">
+      <Project>{03419848-b59b-49d5-9cdc-8a3cfd634fad}</Project>
+      <Name>EsMarket.SharedData</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Library\ResourceLibrary.csproj">
       <Project>{51ce13e1-ad7e-4cbc-b907-4af2e39b26bb}</Project>
       <Name>ResourceLibrary</Name>

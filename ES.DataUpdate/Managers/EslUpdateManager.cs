@@ -286,7 +286,7 @@ namespace ES.DataUpdate.Managers
 
                     foreach (var item in esCashdesk.Where(s => exCashdesk.FirstOrDefault(t => t.Id == s.Id) == null))
                     {
-                        var newItem = new CashDesk(item.MemberId)
+                        var newItem = new CashDesk
                         {
                             Id = item.Id,
                             MemberId = item.MemberId,

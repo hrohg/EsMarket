@@ -14,10 +14,8 @@ namespace ES.DataAccess.Models
 
     public partial class CashDesk
     {
-        public CashDesk(long memberId)
+        public CashDesk()
         {
-            MemberId = memberId;
-            Id = Guid.NewGuid();
             this.SaleInCash = new HashSet<SaleInCash>();
         }
 

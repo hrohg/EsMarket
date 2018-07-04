@@ -168,17 +168,25 @@ namespace ES.Business.Models
         {
             if (longId == null && guidId == null) return string.Empty;
             string detile = null;
+            PartnerModel partner = null;
             switch (code)
             {
 
                 case 216:
-                    detile = ApplicationManager.Instance.CashProvider.GetStocks.Single(s => s.Id == longId).Name;
+                    var stock = ApplicationManager.Instance.CashProvider.GetStocks.Single(s => s.Id == longId);
+                    detile = stock != null ? stock.Name : "Unknown";
                     break;
                 case 221:
-                    detile = ApplicationManager.Instance.CashProvider.GetPartners.Single(s => s.Id == guidId).Description;
+                    partner = ApplicationManager.Instance.CashProvider.GetPartners.Single(s => s.Id == guidId);
+                    detile = partner != null ? partner.Description : "unknown";
                     break;
                 case 251:
-                    detile = ApplicationManager.Instance.CashProvider.GetCashDesk.Single(s => s.Id == guidId).Name;
+                    var cashDesk = ApplicationManager.Instance.CashProvider.GetCashDesk.SingleOrDefault(s => s.Id == guidId);
+                    detile = cashDesk != null ? cashDesk.Name : "Unknown";
+                    break;
+                case 521:
+                    partner = ApplicationManager.Instance.CashProvider.GetPartners.Single(s => s.Id == guidId);
+                    detile = partner != null ? partner.Description : "unknown";
                     break;
                 default:
                     break;

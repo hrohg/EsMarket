@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Permissions;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
 namespace ES.Common.Managers
 {
@@ -857,21 +858,15 @@ namespace ES.Common.Managers
             return GetItemsByControl(element);
         }
 
-        public static bool Save(Object o, String filePath)
+        public static bool Save(object obj)
         {
-            // Create a new Serializer
-            XmlSerializer serializer = new XmlSerializer(o.GetType());
-
-            // Create a new StreamWriter
-
-            TextWriter writer = new StreamWriter(filePath);
-
-            // Serialize the file
-            serializer.Serialize(writer, o);
-
-            // Close the writer
-            writer.Close();
-            return true;
+            if (obj == null) return false;
+            var fileDialog = new SaveFileDialog { Filter = "xml | .xml" };
+            if (fileDialog.ShowDialog() == true)
+            {
+                return Save(obj, fileDialog.FileName);
+            }
+            return false;
         }
         public static bool Save<T>(T obj, string filePath)
         {

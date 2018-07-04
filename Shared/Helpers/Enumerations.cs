@@ -34,6 +34,7 @@ namespace Shared.Helpers
     public enum ExportImportEnum
     {
         Xml, 
+        AccDocXml,
         Excel
     }
 }

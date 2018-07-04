@@ -33,7 +33,7 @@
                 <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding SelectedItem.Address, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
                 <TextBlock Grid.Row="3" Grid.Column="1" Text="Մեկնաբանություն" HorizontalAlignment="Right"/>
                 <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding SelectedItem.Description }" VerticalContentAlignment="Center"/>
-                <TextBlock Grid.Row="4" Grid.Column="1" Text="Պահեստապես" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="Պահեստապետ" HorizontalAlignment="Right"/>
                 <ComboBox Grid.Row="4" Grid.Column="2" Text="{Binding SelectedItem.Storekeeper}" VerticalContentAlignment="Center" IsEnabled="False"/>
                 <TextBlock Grid.Row="5" Grid.Column="1" Text="Կոդ" ToolTip="Հատուկ հատկացված կոդ" HorizontalAlignment="Right"/>
                 <TextBox Grid.Row="5" Grid.Column="2" Text="{Binding SelectedItem.SpecialCode}" VerticalContentAlignment="Center" />

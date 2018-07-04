@@ -37,11 +37,7 @@ namespace UserControls.ViewModels.Invoices
             IsModified = true;
             Description = string.Format("{0} {1}", Title, IsInvoiceValid ? (Partner != null ? Partner.FullName : FromStock != null ? FromStock.FullName : string.Empty) : string.Empty);
         }
-        protected override bool CanImportInvoice(ExportImportEnum importFrom)
-        {
-            return false;
-        }
-
+        
         protected override void OnPrintInvoice(PrintModeEnum printSize)
         {
             if (!CanPrintInvoice(printSize)) { return; }

@@ -4,13 +4,10 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Configuration;
-using System.IO;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 using System.Xml.Serialization;
 using ES.Business.ExcelManager;
-using ES.Business.FileManager;
 using ES.Business.Managers;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
@@ -66,7 +63,7 @@ namespace UserControls.ViewModels.Invoices
                 FromStock = _invoice.FromStockId != null ? StockManager.GetStock(_invoice.FromStockId) : null;
                 ToStock = _invoice.ToStockId != null ? StockManager.GetStock(_invoice.ToStockId) : null;
                 Partner = Invoice.Partner ?? PartnersManager.GetPartner(Invoice.PartnerId);
-                
+
                 var invoiceItems = InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index);
                 InvoiceItems = new ObservableCollection<InvoiceItemsModel>();
                 InvoiceItems.CollectionChanged += OnInvoiceItemsChanged;
@@ -128,9 +125,9 @@ namespace UserControls.ViewModels.Invoices
             set
             {
                 _fromStock = value;
-                Invoice.FromStockId = value != null ? value.Id : (long?) null;
+                Invoice.FromStockId = value != null ? value.Id : (long?)null;
                 Invoice.ProviderName = value != null ? value.FullName : string.Empty;
-                if (value != null) FromStocks = new List<StockModel> {value};
+                if (value != null) FromStocks = new List<StockModel> { value };
                 RaisePropertyChanged(FromStockProperty);
                 RaisePropertyChanged("Description");
                 IsModified = true;
@@ -146,7 +143,7 @@ namespace UserControls.ViewModels.Invoices
             set
             {
                 _toStock = value;
-                Invoice.ToStockId = value != null ? value.Id : (long?) null;
+                Invoice.ToStockId = value != null ? value.Id : (long?)null;
                 Invoice.RecipientName = value != null ? value.FullName : string.Empty;
                 RaisePropertyChanged(ToStockProperty);
                 RaisePropertyChanged("Description");
@@ -167,7 +164,7 @@ namespace UserControls.ViewModels.Invoices
             set
             {
                 _partner = value;
-                Invoice.PartnerId = value != null ? value.Id : (Guid?) null;
+                Invoice.PartnerId = value != null ? value.Id : (Guid?)null;
                 IsModified = true;
                 RaisePropertyChanged(PartnerProperty);
             }
@@ -210,7 +207,6 @@ namespace UserControls.ViewModels.Invoices
             if (Invoice == null)
                 Invoice = new InvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember);
             PrintInvoiceCommand = new RelayCommand<PrintModeEnum>(OnPrintInvoice, CanPrintInvoice);
-            ImportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnImportInvoice, CanImportInvoice);
             ExportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnExportInvoice, CanExportInvoice);
 
         }
@@ -238,7 +234,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected virtual void OnInvoiceItemsPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            Invoice.Amount = InvoiceItems.Sum(s => (s.Product.Price ?? 0)*(s.Quantity ?? 0));
+            Invoice.Amount = InvoiceItems.Sum(s => (s.Product.Price ?? 0) * (s.Quantity ?? 0));
             IsModified = true;
             RaisePropertyChanged(FilteredInvoiceItemsProperty);
         }
@@ -270,62 +266,7 @@ namespace UserControls.ViewModels.Invoices
 
         #endregion
 
-        #region Import
-
-        protected virtual bool CanImportInvoice(ExportImportEnum importFrom)
-        {
-            return !Invoice.IsApproved;
-        }
-
-        protected virtual void OnImportInvoice(ExportImportEnum importFrom)
-        {
-            switch (importFrom)
-            {
-                case ExportImportEnum.Xml:
-                    break;
-                case ExportImportEnum.Excel:
-                    var filePath = FileManager.OpenExcelFile();
-                    if (File.Exists(filePath))
-                    {
-                        var invoiceObject = ExcelImportManager.ImportInvoice(filePath);
-                        if (invoiceObject == null) return;
-                        var importInvoice = invoiceObject.Item1;
-                        var importInvoiceItems = invoiceObject.Item2;
-                        if (importInvoice == null || importInvoiceItems == null) return;
-                        Invoice = new InvoiceModel(User, Member, Invoice.InvoiceTypeId);
-                        Invoice.CreateDate = importInvoice.CreateDate;
-                        if (Invoice.CreateDate == DateTime.MinValue) Invoice.CreateDate = DateTime.Now;
-                        InvoiceItems.Clear();
-                        foreach (var invoiceItem in importInvoiceItems)
-                        {
-                            if (invoiceItem == null || string.IsNullOrEmpty(invoiceItem.Code)) return;
-                            var product = new ProductsManager().GetProductsByCodeOrBarcode(invoiceItem.Code);
-                            if (product == null)
-                            {
-                                MessageBox.Show(
-                                    invoiceItem.Code +
-                                    " կոդով ապրանք չի հայտնաբերվել։ Գործողությունն ընդհատված է։ Փորձեք կրկին։",
-                                    "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
-                                return;
-                            }
-                            invoiceItem.InvoiceId = Invoice.Id;
-                            invoiceItem.ProductId = product.Id;
-                            invoiceItem.Description = product.Description;
-                            invoiceItem.Mu = product.Mu;
-                            invoiceItem.Note += product.Note;
-                            invoiceItem.Product = product;
-                            InvoiceItems.Add(invoiceItem);
-                        }
-                    }
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("importFrom", importFrom, null);
-            }
-
-
-        }
-
-        #endregion Import
+       
 
         #region Export
 
@@ -336,7 +277,20 @@ namespace UserControls.ViewModels.Invoices
 
         protected virtual void OnExportInvoice(ExportImportEnum exportTo)
         {
-            ExcelExportManager.ExportInvoice(Invoice, InvoiceItems);
+            switch (exportTo)
+            {
+                case ExportImportEnum.AccDocXml:
+                    break;
+                case ExportImportEnum.Xml:
+                    InvoicesManager.ExportInvoiceToXml(Invoice, InvoiceItems.ToList());
+                    break;
+                case ExportImportEnum.Excel:
+                    ExcelExportManager.ExportInvoice(Invoice, InvoiceItems);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("exportTo", exportTo, null);
+            }
+
         }
 
         #endregion Export
@@ -347,9 +301,6 @@ namespace UserControls.ViewModels.Invoices
 
         [XmlIgnore]
         public ICommand PrintInvoiceCommand { get; private set; }
-
-        [XmlIgnore]
-        public ICommand ImportInvoiceCommand { get; private set; }
 
         [XmlIgnore]
         public ICommand ExportInvoiceCommand { get; private set; }
