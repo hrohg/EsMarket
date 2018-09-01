@@ -38,6 +38,16 @@ namespace UserControls.ControlPanel.Controls
             }
             return new Tuple<DateTime, DateTime>(window.StartDate ?? DateTime.Today, window.EndDate != null ? window.EndDate.Value.AddDays(1) : DateTime.Now);
         }
+        public static DateTime? GetDate(DateTime? date)
+        {
+            var window = new SelectDateIntermediate(date??DateTime.Now);
+            window.ShowDialog();
+            if (window.DialogResult == null || !(bool)window.DialogResult)
+            {
+                return null;
+            }
+            return window.StartDate;
+        }
         public static string ReadText(string oldText, string description)
         {
             var ui = new InputBox(description, oldText);
@@ -49,6 +59,6 @@ namespace UserControls.ControlPanel.Controls
             return null;
         }
 
-        
+       
     }
 }

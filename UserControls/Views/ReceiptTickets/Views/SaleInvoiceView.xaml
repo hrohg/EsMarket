@@ -41,7 +41,7 @@
     </StackPanel>
     <DataGrid Grid.Row="1" x:Name="PartDataGrid" ItemsSource="{Binding InvoiceItems}" SelectedItem="{Binding SelectedInvoiceItem}" 
               VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  
-              FontSize="12" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
+              FontSize="12" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" EnableRowVirtualization="False">
       <DataGrid.Resources>
         <Style x:Key="CellRightAlign">
           <Setter Property="Control.HorizontalAlignment" Value="Right" />

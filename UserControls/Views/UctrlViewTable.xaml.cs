@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Controls;
+using System.Windows.Controls.DataVisualization;
 
 namespace UserControls.Views
 {
@@ -19,6 +20,7 @@ namespace UserControls.Views
         {
             InitializeComponent();
             DataContext = vm;
+            
         }
         public UctrlViewTable()
         {

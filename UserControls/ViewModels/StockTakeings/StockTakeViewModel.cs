@@ -232,7 +232,7 @@ namespace UserControls.ViewModels.StockTakeings
             var handler = CreateWriteInInvoiceEvent;
             if (handler != null)
             {
-                var products = ApplicationManager.CashManager.Products;
+                var products = ApplicationManager.Instance.CashManager.Products;
                 handler(StockTakeItems.Where(s => s.Balance > 0).Where(s => products.Any(t => t.Id == s.ProductId)).Select(s => new InvoiceItemsModel
                 {
                     ProductId = s.ProductId ?? Guid.Empty,
@@ -247,7 +247,7 @@ namespace UserControls.ViewModels.StockTakeings
             var handler = CreateWriteOffInvoiceEvent;
             if (handler != null)
             {
-                var products = ApplicationManager.CashManager.Products;
+                var products = ApplicationManager.Instance.CashManager.Products;
                 handler(StockTakeItems.Where(s => s.Balance < 0).Where(s=>products.Any(t=>t.Id==s.ProductId)).Select(s => new InvoiceItemsModel
                 {
                     ProductId = s.ProductId??Guid.Empty,

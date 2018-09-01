@@ -68,12 +68,14 @@ namespace ES.Market.Views.Reports.View
             TabReport.SelectedIndex = nextTab;
         }
         #endregion
+
         #region FinanceReportUctrl Events
         private void BtnClose_Click(object sender, EventArgs e)
         {
             Close();
         }
         #endregion
+
         void MiViewProductReportByProviders_OnClick(object sender, EventArgs e)
         {
             var products = SelectItemsManager.SelectProduct(true);

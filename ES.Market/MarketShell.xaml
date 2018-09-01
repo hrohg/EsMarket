@@ -366,6 +366,20 @@
                         </MenuItem>
 
                     </MenuItem>
+                    <MenuItem Header="Չհաստատված" Command="{Binding GetInvoicesCommand}" >
+                        <MenuItem.CommandParameter>
+                            <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
+                                <Binding Source="{x:Static managers1:InvoiceTypeEnum.Statements}"  Mode="OneWay" />
+                                <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay" />
+                                <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
+                            </MultiBinding>
+                        </MenuItem.CommandParameter>
+                        <MenuItem.Icon>
+                            <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/review.png"></Image>
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+                    <Separator/>
                     <MenuItem Header="Ծառայություններ" IsEnabled="False"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                         <MenuItem.Icon>
@@ -489,11 +503,15 @@
                         </MenuItem.Icon>
                         <MenuItem Header="Ապրանքաշրջանառություն" Command="{Binding GetProductsHistoryCommand}" 
                                   IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"/>
+                        <Separator/>
                         <MenuItem Header="Գնացուցակ" Click ="MiViewPriceList_Click"/>
+                        <MenuItem Header="Փոփոխված ապրանքներ" Command="{Binding ChangedProductsCommand}"/>
                         <Separator/>
                         <Separator/>
-                        <MenuItem Header="Ապրանքների դիտում ըստ պահեստների" Command="{Binding ViewProductsByStockCommand}"/>
+                        <MenuItem Header="Ապրանքների դիտում (ըստ պահեստների)" Command="{Binding ViewProductsCommand}" CommandParameter="{x:Static enumerations:ProductsViewEnum.ByStocks}"/>
+                        <MenuItem Header="Ապրանքների դիտում (մանրամասն)" Command="{Binding ViewProductsCommand}" CommandParameter="{x:Static enumerations:ProductsViewEnum.ByDetile}"/>
                     </MenuItem>
+                    
                     <MenuItem Header="Փաստաթղթեր">
                         <MenuItem Header="Վաճառք" Command="{Binding ViewPackingListsCommand}" CommandParameter="{x:Static managers1:InvoiceTypeEnum.SaleInvoice}"/>
                         <MenuItem Header="Գնում" Command="{Binding ViewPackingListsCommand}" CommandParameter="{x:Static managers1:InvoiceTypeEnum.PurchaseInvoice}"/>
@@ -591,6 +609,7 @@
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
+                    
                     <MenuItem Name="MiProductOrder" Header="Պատվեր">
                         <MenuItem Header="Ըստ մնացորդի" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.ByQuantity}"/>
                         <MenuItem Header="Դասակարգում ըստ մատակարարների" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.ByProviders}"
@@ -601,6 +620,7 @@
                                       Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
                         <MenuItem Header="Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն)" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.BySale}"/>
                     </MenuItem>
+                    
                     <MenuItem Header="Գույքագրում" 
                               IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
@@ -673,6 +693,7 @@
                     </MenuItem>
                     <Separator IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    
                     <MenuItem Header="Վերլուծություններ">
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
@@ -690,6 +711,10 @@
                                   IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
                                   Command="{Binding GetFallowProductsCommand}"/>
+                        <MenuItem Header="Բաժինների մնացորդի ստուգում"
+                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
+                                  Command="{Binding CheckProductsRemainderCommand}"/>
 
                     </MenuItem>
                 </MenuItem>
@@ -723,7 +748,7 @@
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="Ծրագրի մասին" Margin="3">
+                        <MenuItem Header="Ծրագրի մասին" Margin="3" Command="{Binding AboutCommand}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/light_bulb_help.png"/>
                             </MenuItem.Icon>
@@ -738,6 +763,7 @@
                         <MenuItem.Icon>
                             <Image Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Price/PriceTicket.png"/>
                         </MenuItem.Icon>
+                        <MenuItem Header="Գնապիտակ" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.PriceTag}"/>
                         <MenuItem Header="Տպել գնապիտակ" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.PriceOnly}"/>
                         <MenuItem Header="Տպել գնապիտակ S" Click ="MiPrintBarcode_Click">
                             <MenuItem.Icon>

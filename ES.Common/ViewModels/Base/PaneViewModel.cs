@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using ES.Common.Helpers;
 
 namespace ES.Common.ViewModels.Base
@@ -167,7 +168,7 @@ namespace ES.Common.ViewModels.Base
             {
                 if (value == _isLoading) return;
                 _isLoading = value;
-                RaisePropertyChanged("IsLoading");
+                DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () => { RaisePropertyChanged("IsLoading"); });
             }
         }
 

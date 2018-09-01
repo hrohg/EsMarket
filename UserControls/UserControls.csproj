@@ -90,14 +90,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\PriceTagViewControl.xaml.cs">
+      <DependentUpon>PriceTagViewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PriceTagViewDialog.xaml.cs">
+      <DependentUpon>PriceTagViewDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ProductItemDataGrid.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Converters\InvoiceItemToStringConverter.cs" />
     <Compile Include="Converters\StringToBoolConverter.cs" />
     <Compile Include="Enumerations\ToolsEnum.cs" />
+    <Compile Include="Enumerations\ViewEnums.cs" />
     <Compile Include="Helpers\AccountingActionManager.cs" />
     <Compile Include="Helpers\Converters.cs" />
     <Compile Include="Helpers\PriceTicketManager.cs" />
     <Compile Include="Interfaces\IShellViewModel.cs" />
     <Compile Include="Managers\CashDeskManager.cs" />
+    <Compile Include="Models\PriceTagModel.cs" />
     <Compile Include="PriceTicketControl\Ean13BarcodeControl.cs" />
     <Compile Include="PriceTicketControl\Helper\Enumerations.cs" />
     <Compile Include="PriceTicketControl\UctrlBarcodeLargeWithText.xaml.cs">
@@ -172,8 +182,10 @@
     <Compile Include="ViewModels\Managers\ManageCashDesksViewModel.cs" />
     <Compile Include="ViewModels\Managers\ManageStockesViewModel.cs" />
     <Compile Include="ViewModels\Managers\PartnersServersViewModel.cs" />
+    <Compile Include="ViewModels\PriceTagsViewModel.cs" />
     <Compile Include="ViewModels\Reports\ItemsDataViewModelBase.cs" />
     <Compile Include="ViewModels\Reports\SaleInvoiceReports.cs" />
+    <Compile Include="ViewModels\Reports\ViewProductsBalanceViewModel.cs" />
     <Compile Include="ViewModels\SelectItemsViewModel.cs" />
     <Compile Include="ViewModels\AccountingPlanViewModel.cs" />
     <Compile Include="ViewModels\AccountingRecordsViewModel.cs" />
@@ -183,6 +195,7 @@
     <Compile Include="ViewModels\Invoices\PackingListViewModel.cs" />
     <Compile Include="ViewModels\Logs\LogViewModel.cs" />
     <Compile Include="ViewModels\Managers\ProductManagerViewModel.cs" />
+    <Compile Include="Views\View\Models\ProductItemsModel.cs" />
     <Compile Include="Views\View\ProductItemsViewModel.cs" />
     <Compile Include="ViewModels\ReportExceptionViewModel.cs" />
     <Compile Include="ViewModels\ReportDataViewModel.cs" />
@@ -285,6 +298,14 @@
       <DependentUpon>WaitingCover.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Controls\PriceTagViewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PriceTagViewDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PriceTicketControl\UctrlBarcodeLargeWithText.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

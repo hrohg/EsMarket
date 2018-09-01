@@ -71,21 +71,13 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
@@ -115,6 +107,7 @@
     <Compile Include="Helpers\Ean13.cs" />
     <Compile Include="Helpers\ImageState.cs" />
     <Compile Include="Interfaces\IDispatcher.cs" />
+    <Compile Include="Interfaces\IUpdatable.cs" />
     <Compile Include="Models\EcrConfig.cs" />
     <Compile Include="Helpers\EventArgs.cs" />
     <Compile Include="Helpers\ObservableMruCollectio.cs" />
@@ -158,6 +151,7 @@
     <Compile Include="ViewModels\Base\PaneViewModel.cs" />
     <Compile Include="ViewModels\Base\TabViewModel.cs" />
     <Compile Include="ViewModels\Base\ToolsViewModel.cs" />
+    <Compile Include="ViewModels\Base\UpdatableDocumentViewModel.cs" />
     <Compile Include="ViewModels\Base\ViewModelBase.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -194,10 +188,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ES.DataAccess\ES.DataAccess.csproj">
-      <Project>{A425B85D-C3EB-4BCC-B307-17DAAEE9237D}</Project>
-      <Name>ES.DataAccess</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Xceed.Wpf.AvalonDock\Xceed.Wpf.AvalonDock.csproj">
       <Project>{db81988f-e0f2-45a0-a1fd-8c37f3d35244}</Project>
       <Name>Xceed.Wpf.AvalonDock</Name>

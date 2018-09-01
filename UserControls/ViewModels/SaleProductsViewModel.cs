@@ -36,7 +36,7 @@ namespace UserControls.ViewModels
         {
             Title = Description = "Վաճառք";
             IsShowUpdateButton = true;
-            OnUpdate(o);
+            OnUpdate();
         }
 
         #region Internal methods
@@ -68,9 +68,9 @@ namespace UserControls.ViewModels
             IsLoading = false;
             RaisePropertyChanged(IsInProgressProperty);
         }
-        protected override void OnUpdate(object o)
+        protected override void OnUpdate()
         {
-            base.OnUpdate(o);
+            base.OnUpdate();
             Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
             if(dateIntermediate==null) return;
             Description = string.Format("Վաճառք {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);

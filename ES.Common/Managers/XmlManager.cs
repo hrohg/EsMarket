@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
 namespace ES.Common.Managers
@@ -88,6 +87,7 @@ namespace ES.Common.Managers
         private readonly string _fileName = @"ESConfig.Xml";
         private readonly string _filePath = Application.StartupPath;
         #endregion
+
         #region Public properties
 
         public string GetFilePath
@@ -858,24 +858,24 @@ namespace ES.Common.Managers
             return GetItemsByControl(element);
         }
 
-        public static bool Save(object obj)
+        public static bool Save<T>(T model)
         {
-            if (obj == null) return false;
-            var fileDialog = new SaveFileDialog { Filter = "xml | .xml" };
+            if (model == null) return false;
+            var fileDialog = new SaveFileDialog { Filter = "xml | *.xml" };
             if (fileDialog.ShowDialog() == true)
             {
-                return Save(obj, fileDialog.FileName);
+                return Save(model, fileDialog.FileName);
             }
             return false;
         }
-        public static bool Save<T>(T obj, string filePath)
+        public static bool Save<T>(T model, string filePath)
         {
             FileStream file = null;
             try
             {
                 XmlSerializer writer = new XmlSerializer(typeof(T));
                 file = !(File.Exists(filePath)) ? File.OpenWrite(filePath) : File.Create(filePath);
-                writer.Serialize(file, obj);
+                writer.Serialize(file, model);
             }
             catch (Exception)
             {
@@ -884,9 +884,60 @@ namespace ES.Common.Managers
             }
             finally
             {
-                if (file != null) file.Close();
+                if (file != null)
+                {
+                    file.Close();
+                }
             }
             return true;
+        }
+        public static bool Save<T>(List<T> model, string filePath)
+        {
+            FileStream file = null;
+            try
+            {
+                XmlSerializer writer = new XmlSerializer(typeof(List<T>));
+                file = !(File.Exists(filePath)) ? File.OpenWrite(filePath) : File.Create(filePath);
+                writer.Serialize(file, model);
+            }
+            catch (Exception)
+            {
+                if (file != null) file.Close();
+                return false;
+            }
+            finally
+            {
+                if (file != null)
+                {
+                    file.Close();
+                }
+            }
+            return true;
+        }
+        public static T Load<T>()
+        {
+            var fileDialog = new OpenFileDialog { Title = "Բեռնում", Filter = "xml | *.xml" };
+            var filePath = fileDialog.ShowDialog() == DialogResult.OK ? fileDialog.FileName : null;
+            if (string.IsNullOrEmpty(filePath)) return default(T);
+            FileStream fileStream = null;
+            try
+            {
+                fileStream = new FileStream(filePath, FileMode.Open);
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                var item = (T)serializer.Deserialize(fileStream);
+                fileStream.Close();
+                return item;
+            }
+            catch (Exception)
+            {
+                if (fileStream != null) fileStream.Close();
+
+                return default(T);
+            }
+            finally
+            {
+                if (fileStream != null) fileStream.Close();
+            }
         }
         public static T Load<T>(string filePath)
         {
@@ -904,6 +955,10 @@ namespace ES.Common.Managers
                 if (fileStream != null) fileStream.Close();
 
                 return default(T);
+            }
+            finally
+            {
+                if (fileStream != null) fileStream.Close();
             }
         }
         public static T Read<T>(String path)

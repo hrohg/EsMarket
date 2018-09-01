@@ -3,9 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data"
+             xmlns:converters="clr-namespace:UserControls.Converters"
              mc:Ignorable="d" Height="Auto">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="Bool2VisibilityConverter"/>
+        <converters:InvoiceItemToStringConverter x:Key="InvoiceItemToStringConverter"/>
         <Style x:Key="DataGridColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -26,6 +29,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
         <Style x:Key="DataGridCellStyle" TargetType="{x:Type DataGridCell}">
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -35,6 +39,7 @@
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="FontSize" Value="6"/>
         </Style>
+        
         <Style x:Key="DataGridColumnHeadersPresenterStyle" TargetType="{x:Type DataGridColumnHeadersPresenter}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -47,6 +52,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
         <Style x:Key="DataGridStyle" TargetType="{x:Type DataGrid}">
             <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
@@ -93,8 +99,19 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="HeaderTextBlockStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="FontSize" Value="7"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style x:Key="TextBlockStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="AllowDrop" Value="True"/>
+            <Setter Property="FontSize" Value="7"/>
+        </Style>
     </UserControl.Resources>
-    <Grid Margin="20">
+    
+    <Grid Margin="0 20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -103,58 +120,64 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        
         <StackPanel Grid.Row="0">
             <Separator/>
-            <TextBlock Text="{Binding Title}" HorizontalAlignment="Center" Margin="0 5" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Title}" Style="{StaticResource HeaderTextBlockStyle}" HorizontalAlignment="Center" Margin="0 5"/>
             <Separator/>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Կտրոն։ " />
-                <TextBlock Text="{Binding Invoice.InvoiceNumber}" />
+                <TextBlock Text="Կտրոն։ "  Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Text="{Binding Invoice.InvoiceNumber}" Style="{StaticResource TextBlockStyle}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Ամսաթիվ։ " />
-                <TextBlock Text="{Binding Date}" />
+                <TextBlock Text="Ամսաթիվ։ "  Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Text="{Binding Date}" Style="{StaticResource TextBlockStyle}" />
             </StackPanel>
-            <TextBlock Text="{Binding MemberName}" />
-            <TextBlock Text="{Binding MemberAddress}" />
+            <TextBlock Text="{Binding MemberName}"  Style="{StaticResource HeaderTextBlockStyle}"/>
+            <TextBlock Text="{Binding MemberAddress}" Style="{StaticResource TextBlockStyle}"/>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Գանձապահ։ " />
-                <TextBlock Text="{Binding Invoice.Approver}" />
+                <TextBlock Text="Գանձապահ։ " Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Text="{Binding Invoice.Approver}" Style="{StaticResource TextBlockStyle}"/>
             </StackPanel>
             <StackPanel Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsReceiptTicket}">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Անվանում։ " />
-                    <TextBlock Text="{Binding ResponseReceipt.Taxpayer}" />
+                    <TextBlock Text="Անվանում։ " Style="{StaticResource HeaderTextBlockStyle}"/>
+                    <TextBlock Text="{Binding ResponseReceipt.Taxpayer}" Style="{StaticResource TextBlockStyle}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Հասցե։ " />
-                    <TextBlock Text="{Binding ResponseReceipt.Address}" />
+                    <TextBlock Text="Հասցե։ " Style="{StaticResource HeaderTextBlockStyle}"/>
+                    <TextBlock Text="{Binding ResponseReceipt.Address}"  Style="{StaticResource TextBlockStyle}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="ՀՎՀՀ։ " />
-                    <TextBlock Text="{Binding ResponseReceipt.Tin}" />
+                    <TextBlock Text="ՀՎՀՀ։ " Style="{StaticResource HeaderTextBlockStyle}"/>
+                    <TextBlock Text="{Binding ResponseReceipt.Tin}"  Style="{StaticResource TextBlockStyle}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="ՍՀ։ " />
-                    <TextBlock Text="{Binding ResponseReceipt.Crn}" />
+                    <TextBlock Text="ՍՀ։ " Style="{StaticResource HeaderTextBlockStyle}"/>
+                    <TextBlock Text="{Binding ResponseReceipt.Crn}"  Style="{StaticResource TextBlockStyle}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="ԳՀ։ " />
-                    <TextBlock Text="{Binding ResponseReceipt.Sn}" />
+                    <TextBlock Text="ԳՀ։ " Style="{StaticResource HeaderTextBlockStyle}"/>
+                    <TextBlock Text="{Binding ResponseReceipt.Sn}"  Style="{StaticResource TextBlockStyle}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="ԿՀ։ " />
-                    <TextBlock Text="{Binding ResponseReceipt.Rseq, StringFormat='#', TargetNullValue=''}" />
+                    <TextBlock Text="ԿՀ։ " Style="{StaticResource HeaderTextBlockStyle}"/>
+                    <TextBlock Text="{Binding ResponseReceipt.Rseq, StringFormat='#', TargetNullValue=''}"  Style="{StaticResource TextBlockStyle}"/>
                 </StackPanel>
             </StackPanel>
-            <TextBlock Text="Բաժին։ " />
+            <TextBlock Text="Բաժին։ " Style="{StaticResource HeaderTextBlockStyle}"/>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Գնորդ։ " />
-                <TextBlock Text="{Binding Invoice.Partner.FullName}" />
+                <TextBlock Text="Գնորդ։ " Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Text="{Binding Invoice.Partner.FullName}" Style="{StaticResource TextBlockStyle}"/>
             </StackPanel>
-            <TextBlock Text="ՎԱՃԱՌՔ" HorizontalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="ՀՎՀՀ։ " Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Text="{Binding Invoice.Partner.Tin}"  Style="{StaticResource TextBlockStyle}"/>
+            </StackPanel>
+            <TextBlock Text="ՎԱՃԱՌՔ" HorizontalAlignment="Center" FontSize="10"/>
         </StackPanel>
-        <DataGrid Grid.Row="3" Style="{StaticResource DataGridStyle}"
+        
+        <!--<DataGrid Grid.Row="3" 
                   x:Name="PartDataGrid" 
                   Background="Transparent"
                   ItemsSource="{Binding InvoiceItems}" 
@@ -165,6 +188,7 @@
                   AutoGenerateColumns="False"
                   FontSize="7"
                   HeadersVisibility="Column"
+                  Style="{StaticResource DataGridStyle}"
                   ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}"
                   CellStyle="{StaticResource DataGridCellStyle}"
                   RowHeaderWidth="0"
@@ -238,10 +262,22 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
-        </DataGrid>
+        </DataGrid>-->
+        
+        <ItemsControl Grid.Row="3" ItemsSource="{Binding InvoiceItems}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Index}" Style="{StaticResource TextBlockStyle}"/>
+                        <TextBlock Text="{Binding Converter={StaticResource InvoiceItemToStringConverter}}" Style="{StaticResource TextBlockStyle}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        
         <StackPanel Grid.Row="4">
             <Separator Margin="0 5 0 0"/>
-            <TextBlock Text="ՎՃԱՐՈՒՄ" HorizontalAlignment="Center"/>
+            <TextBlock Text="ՎՃԱՐՈՒՄ" FontSize="10" HorizontalAlignment="Center"/>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -257,35 +293,35 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Column="0" Grid.Row="0" Text="Ընդամենը։" HorizontalAlignment="Right" />
-                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Invoice.Total, StringFormat='# ###'}" HorizontalAlignment="Right"  />
-                <TextBlock Grid.Column="0" Grid.Row="1" Text="Զեղչ։" HorizontalAlignment="Right" />
-                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Discount, StringFormat='# ###'}" HorizontalAlignment="Right" />
-                <TextBlock Grid.Column="0" Grid.Row="2" Text="Կանխիկ։"  HorizontalAlignment="Right" />
-                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding InvoicePaid.Paid}" HorizontalAlignment="Right" />
-                <TextBlock Grid.Column="0" Grid.Row="3" Text="Անկանխիկ։"  HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsCheck}" />
-                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding InvoicePaid.ByCheck}" HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsCheck}" />
-                <TextBlock Grid.Column="0" Grid.Row="4" Text="Կրեդիտորական պարտք։" HorizontalAlignment="Right"  Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsAccountsReceivable}"/>
-                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding InvoicePaid.AccountsReceivable, StringFormat='# ###'}" HorizontalAlignment="Right"  Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsAccountsReceivable}"/>
-                <TextBlock Grid.Column="0" Grid.Row="5" Text="Դեբիտորական պարտք։" HorizontalAlignment="Right"  Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsReceivedPrepayment}"/>
-                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding InvoicePaid.ReceivedPrepayment, StringFormat='# ###'}" HorizontalAlignment="Right"  Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsReceivedPrepayment}"/>
-                <TextBlock Grid.Column="0" Grid.Row="6" Text="Մանր։" HorizontalAlignment="Right"/>
-                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding InvoicePaid.Change, StringFormat='# ###'}" HorizontalAlignment="Right"/>
-                <TextBlock Grid.Column="0" Grid.Row="7" Text="Կուտակում։" HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsPrepayment}"/>
-                <TextBlock Grid.Column="1" Grid.Row="7" Text="{Binding InvoicePaid.Prepayment, StringFormat='# ###'}" HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsPrepayment}"/>
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="Ընդամենը։" HorizontalAlignment="Right"  Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Invoice.Total, StringFormat={}{0:#,0}}" HorizontalAlignment="Right" Style="{StaticResource TextBlockStyle}"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="Զեղչ։" HorizontalAlignment="Right"  Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Discount, StringFormat={}{0:#,0.##}}" HorizontalAlignment="Right" Style="{StaticResource TextBlockStyle}"/>
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="Կանխիկ։"  HorizontalAlignment="Right"  Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding InvoicePaid.Paid, StringFormat={}{0:#,0}}" HorizontalAlignment="Right" Style="{StaticResource TextBlockStyle}"/>
+                <TextBlock Grid.Column="0" Grid.Row="3" Text="Անկանխիկ։"  HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsCheck}" Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding InvoicePaid.ByCheck, StringFormat={}{0:#,0}}" HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsCheck}" Style="{StaticResource TextBlockStyle}"/>
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="Կրեդիտորական պարտք։" HorizontalAlignment="Right"  Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsAccountsReceivable}" Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding InvoicePaid.AccountsReceivable, StringFormat={}{0:#,0}}" HorizontalAlignment="Right"  Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsAccountsReceivable}" Style="{StaticResource TextBlockStyle}"/>
+                <TextBlock Grid.Column="0" Grid.Row="5" Text="Դեբիտորական պարտք։" HorizontalAlignment="Right"  Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsReceivedPrepayment}"  Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding InvoicePaid.ReceivedPrepayment, StringFormat={}{0:#,0}}" HorizontalAlignment="Right"  Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsReceivedPrepayment}"  Style="{StaticResource TextBlockStyle}"/>
+                <TextBlock Grid.Column="0" Grid.Row="6" Text="Մանր։" HorizontalAlignment="Right"  Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding InvoicePaid.Change, StringFormat={}{0:#,0}}" HorizontalAlignment="Right" Style="{StaticResource TextBlockStyle}"/>
+                <TextBlock Grid.Column="0" Grid.Row="7" Text="Կուտակում։" HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsPrepayment}" Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Grid.Column="1" Grid.Row="7" Text="{Binding InvoicePaid.Prepayment, StringFormat={}{0:#,0}}" HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsPrepayment}"  Style="{StaticResource TextBlockStyle}"/>
             </Grid>
             <Separator/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter},Path=IsLottery}">
                 <TextBlock Text="Վիճակահանության համար: " />
-                <TextBlock Text="{Binding ResponseReceipt.Lottery}"/>
+                <TextBlock Text="{Binding ResponseReceipt.Lottery}"  Style="{StaticResource TextBlockStyle}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter},Path=IsFiscal}">
                 <TextBlock Text="ՖԻՍԿԱԼ ՀԱՄԱՐ " />
-                <TextBlock Text="{Binding ResponseReceipt.Fiscal}"/>
+                <TextBlock Text="{Binding ResponseReceipt.Fiscal}"  Style="{StaticResource TextBlockStyle}"/>
             </StackPanel>
             <TextBlock Text="{Binding PrizeDescription}" HorizontalAlignment="Center" />
             <Separator/>
-            <TextBlock Text="{Binding Footer}" HorizontalAlignment="Center" FontSize="9" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Footer}" HorizontalAlignment="Center" FontSize="9" FontWeight="Bold" TextWrapping="Wrap" AllowDrop="True"/>
             <Separator/>
         </StackPanel>
     </Grid>

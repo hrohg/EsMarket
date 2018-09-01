@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Xml.Serialization;
 using ES.Data.Model;
 
 namespace ES.Data.Models
 {
+    [Serializable]
     public class EsProductModel: INotifyPropertyChanged
     {
         /// <summary>
@@ -40,6 +41,7 @@ namespace ES.Data.Models
         private const string IsEnabledProperty = "IsEnabled";
         private const string ProductStateHighlighthingProperty = "ProductStateHighlighthing";
         #endregion
+
         #region private properties
         private Guid _id = Guid.NewGuid();
         private string _code;
@@ -66,19 +68,24 @@ namespace ES.Data.Models
         private BrandModel _brand;
         private EsMemberModel _esMember;
         private long _lastModifierId;
+        private DateTime _lastModifiedDate;
         private EsUserModel _esUser;
         #endregion
+
         #region Public properties
+        [XmlIgnore]
         public Guid Id { get { return _id; } set { _id = value; OnPropertyChanged(IdProperty); } }
         public string State { get { return IsEnabled ? "Ակտիվ" : "Պասիվ"; } }
         public string Code { get { return _code; } set { _code = value; OnPropertyChanged(CodeProperty); } }
         public string Barcode { get { return _barcode; } set { _barcode = value; OnPropertyChanged(BarcodeProperty); } }
         public string HcdCs { get { return _hcdCs; } set { _hcdCs = value; OnPropertyChanged(HcdCsProperty); } }
+        [XmlIgnore]
         public List<ProductGroupModel> ProductGroups { get; set; }
+        [XmlIgnore]
         public List<ProductCategoriesModel> ProductCategories { get; set; }
         public string Description { get { return _description; } set { _description = value; OnPropertyChanged(DescriptionProperty); } }
         public string Mu { get { return _mu; } set { _mu = value; OnPropertyChanged(MuProperty); } }
-        public bool? IsWeight { get; set; }
+        public bool IsWeight { get; set; }
         public string Note { get { return _note; } set { _note = value; OnPropertyChanged(NoteProperty); } }
         public decimal? CostPrice
         {
@@ -119,6 +126,7 @@ namespace ES.Data.Models
                 OnPropertyChanged(DiscountProperty);
             }
         }
+        [XmlIgnore]
         public decimal? ProfitPercent
         {
             get { return _price != null && CostPrice != null && CostPrice != 0 ? _price * 100 / CostPrice - 100 : null; ; }
@@ -131,6 +139,7 @@ namespace ES.Data.Models
                 //    OnPropertyChanged(DealerProfitPercentProperty);
             }
         }
+        [XmlIgnore]
         public bool HasDealerPrice { get { return _dealerPrice != null; } }
         public decimal? DealerPrice
         {
@@ -147,7 +156,7 @@ namespace ES.Data.Models
                 OnPropertyChanged(DealerProfitPercentProperty);
             }
         }
-
+        
         public decimal? DealerDiscount
         {
             get { return _dealerDiscount; }
@@ -157,7 +166,7 @@ namespace ES.Data.Models
                 OnPropertyChanged(DealerDiscountProperty);
             }
         }
-
+        [XmlIgnore]
         public decimal? DealerProfitPercent
         {
             get { return _dealerPrice != null && CostPrice != null && CostPrice != 0 && _dealerPrice != null ? _dealerPrice * 100 / CostPrice - 100 : null; }
@@ -172,6 +181,7 @@ namespace ES.Data.Models
         }
         public int? ExpiryDays { get { return _expiryDays; } set { _expiryDays = value; OnPropertyChanged(ExpiryDaysProperty); } }
         public decimal? MinQuantity { get { return _minQuantity; } set { _minQuantity = value; OnPropertyChanged(MinQuantityProperty); } }
+        [XmlIgnore]
         public decimal? ExistingQuantity { get { return _existingQuantity; } set { _existingQuantity = value; OnPropertyChanged(ExistingQuantityProperty); } }
         public string ImagePath { get { return _imagePath; } set { _imagePath = value; OnPropertyChanged(ImagePathProperty); } }
         public bool IsEnabled
@@ -184,12 +194,20 @@ namespace ES.Data.Models
             }
         }
         public long? BrandId { get { return _brandId; } set { _brandId = value; OnPropertyChanged(BrandIdProperty); } }
+        [XmlIgnore]
         public long EsMemberId { get { return _esMemberId; } set { _esMemberId = value; } }
+        [XmlIgnore]
         public BrandModel Brand { get { return _brand; } set { _brand = value; } }
+        [XmlIgnore]
         public EsMemberModel EsMember { get { return _esMember; } set { _esMember = value; } }
+        [XmlIgnore]
         public long LastModifierId { get { return _lastModifierId; } set { _lastModifierId = value; } }
+        //[XmlIgnore]
+        public DateTime LastModifiedDate { get { return _lastModifiedDate; } set { _lastModifiedDate = value; } }
+        [XmlIgnore]
         public EsUserModel EsUser { get { return _esUser; } set { _esUser = value; } }
         #endregion
+
         #region Constructors
         public EsProductModel()
         {
@@ -209,6 +227,7 @@ namespace ES.Data.Models
         }
         //public ProductModel() { }
         #endregion
+
         #region private methods
         public void SetProduct(EsProductModel item)
         {
@@ -234,6 +253,7 @@ namespace ES.Data.Models
             EsUser = item.EsUser;
         }
         #endregion
+
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)

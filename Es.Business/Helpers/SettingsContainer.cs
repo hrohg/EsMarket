@@ -218,6 +218,9 @@ namespace ES.Business.Helpers
 
         private EcrConfig _ecrConfig;
         private List<EcrConfig> _ecrModels;
+        private bool _useUnicCode;
+        private bool _useDiscountBond;
+
         [XmlIgnore]
         public EcrConfig EcrConfig
         {
@@ -228,6 +231,19 @@ namespace ES.Business.Helpers
             get { return _ecrModels ?? (_ecrModels = new List<EcrConfig>()); }
             set { _ecrModels = value; }
         }
+
+        public bool UseShortCode
+        {
+            get { return _useUnicCode; }
+            set { _useUnicCode = value; }
+        }
+
+        public bool UseDiscountBond
+        {
+            get { return _useDiscountBond; }
+            set { _useDiscountBond = value; }
+        }
+
         #endregion Ecr settings
 
         #endregion External properties

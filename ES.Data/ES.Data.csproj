@@ -66,6 +66,7 @@
     <Compile Include="Models\ProductsAdditionalDataModel.cs" />
     <Compile Include="Models\Reports\InternalWayBillModel.cs" />
     <Compile Include="Models\Reports\SaleInvoiceReports.cs" />
+    <Compile Include="Models\StockProducts.cs" />
     <Compile Include="Models\UsersRolesModel.cs" />
     <Compile Include="Models\StockModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

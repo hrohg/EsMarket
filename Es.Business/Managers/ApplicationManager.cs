@@ -407,7 +407,7 @@ namespace ES.Business.Managers
             get { return _cashProvider ?? (_cashProvider = new LocalManager()); }
             set { _cashProvider = value; }
         }
-        public static LocalManager CashManager { get { return Instance.CashProvider; } }
+        public LocalManager CashManager { get { return Instance.CashProvider; } }
         public static MessageManager MessageManager { get { return _insatance._messageManager; } }
 
         #region Main Thread

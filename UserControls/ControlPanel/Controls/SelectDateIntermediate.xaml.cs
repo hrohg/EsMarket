@@ -48,6 +48,14 @@ namespace UserControls.ControlPanel.Controls
             StartDate = startDate;
             EndDate = endDate;
         }
+
+        public SelectDateIntermediate(DateTime startDate)
+        {
+            InitializeComponent();
+            StartDate = startDate;
+            LblEnd.Visibility = Visibility.Collapsed;
+            DtpEndDate.Visibility = Visibility.Collapsed;
+        }
         #region Events
 
         private void BtnOk_Click(object sender, EventArgs e)

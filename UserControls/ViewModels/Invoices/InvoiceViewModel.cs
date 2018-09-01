@@ -303,7 +303,6 @@ namespace UserControls.ViewModels.Invoices
             RaisePropertyChanged("ProductCount");
         }
 
-
         private void SetICommands()
         {
             //ICommands
@@ -321,7 +320,7 @@ namespace UserControls.ViewModels.Invoices
 
         private void SetDefaultPartner()
         {
-            Partner = PartnersManager.GetDefaultParnerByInvoiceType((InvoiceType)Invoice.InvoiceTypeId);
+            Invoice.Partner = Partner = PartnersManager.GetDefaultParnerByInvoiceType((InvoiceType)Invoice.InvoiceTypeId)??PartnersManager.GetDefaultPartner(PartnerType.None);
         }
 
         /// <summary>
@@ -331,7 +330,7 @@ namespace UserControls.ViewModels.Invoices
         /// <returns></returns>
         protected virtual decimal GetProductPrice(EsProductModel product)
         {
-            return (product != null) ? (product.Price ?? 0) * (product.Discount > 0 ? 1 - (product.Discount ?? 0) / 100 : 1 - (Partner.Discount ?? 0) / 100) : 0;
+            return (product != null) ? (product.Price ?? 0) * (1 - (product.Discount ?? 0) / 100 ): 0;
         }
 
         protected virtual bool SetQuantity(bool addSingle)
@@ -444,7 +443,7 @@ namespace UserControls.ViewModels.Invoices
                 if (IsModified)
                 {
                     DisposeTimer();
-                    _timer = new Timer(TimerElapsed, null, 5000, 5000);
+                    _timer = new Timer(TimerElapsed, null, 5000, Timeout.Infinite);
                 }
             }).Start();
         }
@@ -467,6 +466,7 @@ namespace UserControls.ViewModels.Invoices
         }
 
         #endregion Auto save
+
         #region Import
 
         protected virtual bool CanImportInvoice(ExportImportEnum importFrom)
@@ -523,6 +523,11 @@ namespace UserControls.ViewModels.Invoices
         }
 
         #endregion Import
+
+        public void ExportInvoice(bool isCostPrice = false, bool isPrice = true)
+        {
+            ExcelExportManager.ExportInvoice(Invoice, InvoiceItems);
+        }
         private void OnSaveInvoice(object o)
         {
             Save();
@@ -605,8 +610,8 @@ namespace UserControls.ViewModels.Invoices
             InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
 
             AccountsReceivable = new AccountsReceivableModel(Invoice.Id, Partner.Id, User.UserId, Invoice.MemberId, true);
-            ApplicationManager.CashManager.UpdatePartners();
-            Partner = ApplicationManager.CashManager.GetPartners.SingleOrDefault(s => s.Id == Partner.Id);
+            ApplicationManager.Instance.CashManager.UpdatePartners();
+            Partner = ApplicationManager.Instance.CashManager.GetPartners.SingleOrDefault(s => s.Id == Partner.Id);
 
             IsModified = false;
             IsLoading = false;
@@ -617,7 +622,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected void ApproveCompleted(bool isSuccess)
         {
-            if(isSuccess)
+            if (isSuccess)
             {
                 RaisePropertyChanged("RemoveInvoiceItemCommand");
             }
@@ -749,10 +754,7 @@ namespace UserControls.ViewModels.Invoices
             return Invoice.ApproveDate == null && InvoiceItem.Product != null && InvoiceItem.Code == InvoiceItem.Product.Code && !IsLoading;
         }
 
-        public void ExportInvoice(bool isCostPrice = false, bool isPrice = true)
-        {
-            ExcelExportManager.ExportInvoice(Invoice, InvoiceItems);
-        }
+
 
         public virtual bool CanRemoveInvoiceItem(object o)
         {
@@ -1040,7 +1042,7 @@ namespace UserControls.ViewModels.Invoices
         {
             var partner = SelectItemsManager.SelectPartners(partners, false).FirstOrDefault();
             if (partner == null) return false;
-            Partner = partner;
+            Partner = Invoice.Partner = partner;
             RaisePropertyChanged("Description");
             return true;
         }

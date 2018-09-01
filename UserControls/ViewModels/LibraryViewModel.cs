@@ -27,7 +27,7 @@ namespace UserControls.ViewModels
                 _textFilter = value.ToLower();
                 OnPropertyChanged("TextFilter");
                 DisposeTimer();
-                _timer = new Timer(TimerElapsed, null, 300, 300);
+                _timer = new Timer(TimerElapsed, null, 300, Timeout.Infinite);
             }
         }
 

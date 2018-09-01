@@ -23,6 +23,8 @@ namespace ES.Data.Models
         private Guid? _cashDeskId;
         private Guid? _cashDeskForTicketId;
         private Guid? _partnerId;
+        private decimal _discountBond;
+
         #endregion
         #region Public properties
         public decimal? Total { get { return _total; } set { _total = value; OnPropertyChanged(ChangeProperty); } }
@@ -42,7 +44,7 @@ namespace ES.Data.Models
                 OnPropertyChanged(ChangeProperty);
             }
         }
-        public decimal ByCash { get { return (Paid ?? 0) - (Change ?? 0); } }
+        public decimal ByCash { get { return (Paid ?? 0) - (Change ?? 0) - (Prepayment ?? 0); } }
         public decimal? ByCheck
         {
             get
@@ -69,8 +71,8 @@ namespace ES.Data.Models
             get { return _receivedPrepayment; }
             set
             {
-                if (value < 0) {value = null;}
-                if (_receivedPrepayment == value) { return;}
+                if (value < 0) { value = null; }
+                if (_receivedPrepayment == value) { return; }
                 _receivedPrepayment = value; OnPropertyChanged(ReceivedPrepaymentProperty); OnPropertyChanged(ChangeProperty);
             }
         }
@@ -88,7 +90,14 @@ namespace ES.Data.Models
             }
         }
         public decimal? Change { get { return IsPaid ? ((Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - (Prepayment ?? 0) - (Total ?? 0)) : 0; } }
-        public decimal? Prepayment { get { return _prepaiment; } set { _prepaiment = value; OnPropertyChanged(PrepaymentProperty); } }
+        public decimal? Prepayment { get { return _prepaiment; } set { _prepaiment = value; OnPropertyChanged(PrepaymentProperty); OnPropertyChanged(ChangeProperty); } }
+
+        public decimal DiscountBond
+        {
+            get { return _discountBond; }
+            set { _discountBond = value; OnPropertyChanged("DiscountBond"); }
+        }
+
         #endregion
         #region Public methods
         public bool IsPaid { get { return ((Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - (Prepayment ?? 0) - (Total ?? 0)) >= 0; } }

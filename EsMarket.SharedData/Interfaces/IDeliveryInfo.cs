@@ -1,12 +1,14 @@
 ﻿using System;
 using EsMarket.SharedData.Enums;
+using EsMarket.SharedData.Models;
 
 namespace EsMarket.SharedData.Interfaces
 {
     public interface IDeliveryInfo
     {
-        DateTime DeliveryDate { get; set; }
+        
+        DateTime? DeliveryDate { get; set; }
         DeliveryTypeEnum DeliveryMethod { get; set; }
-        IAddress DeliveryLocation { get; set; } 
+        AddressModel DeliveryLocation { get; set; } 
     }
 }

@@ -199,6 +199,24 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Գումար։" HorizontalAlignment="Right" />
+                    <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Invoice.Total, StringFormat={}{0:#,0.##}}" HorizontalAlignment="Right"  />
+                </Grid>
             </Grid>
         </DataTemplate>
     </UserControl.Resources>

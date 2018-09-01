@@ -34,8 +34,8 @@ namespace ES.Business.Managers
                 Email = item.Email,
                 Address = item.Address,
                 Discount = item.Discount,
-                Debit = item.Debit??0,
-                Credit = item.Credit??0,
+                Debit = item.Debit ?? 0,
+                Credit = item.Credit ?? 0,
                 MaxDebit = item.MaxDebit,
                 TIN = item.TIN,
                 PasportData = item.PasportData,
@@ -172,7 +172,7 @@ namespace ES.Business.Managers
 
         public static bool SetDefault(PartnerModel partner)
         {
-            if(partner==null || partner.PartnersTypeId==null) return false;
+            if (partner == null || partner.PartnersTypeId == null) return false;
             string controlKey;
             switch (partner.PartnerTypeEnum)
             {
@@ -191,7 +191,7 @@ namespace ES.Business.Managers
                 default:
                     throw new ArgumentOutOfRangeException("partner", partner.PartnersTypeId, null);
             }
-            return DefaultsManager.SetDefault(controlKey, null, partner.Id );
+            return DefaultsManager.SetDefault(controlKey, null, partner.Id);
         }
         #endregion
 
@@ -252,7 +252,7 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    return db.Partners.Where(s => s.EsMemberId == ApplicationManager.Member.Id).Sum(s=>isDebit?(s.Debit??0):(s.Credit??0));
+                    return db.Partners.Where(s => s.EsMemberId == ApplicationManager.Member.Id).Sum(s => isDebit ? (s.Debit ?? 0) : (s.Credit ?? 0));
                 }
                 catch (Exception)
                 {
@@ -271,7 +271,7 @@ namespace ES.Business.Managers
                     return db.Partners
                                         .Include(s => s.EsMembers)
                                         .Include(s => s.EsPartnersTypes)
-                                        .Where(s => s.EsMemberId == memberId && (partnerType ==PartnerType.None || s.EsPartnersTypeId == (long)partnerType))
+                                        .Where(s => s.EsMemberId == memberId && (partnerType == PartnerType.None || s.EsPartnersTypeId == (long)partnerType))
                                         .ToList();
                 }
                 catch (Exception)
@@ -308,7 +308,7 @@ namespace ES.Business.Managers
                 {
                     return db.Partners.Include(s => s.EsMembers)
                                         .Include(s => s.EsPartnersTypes)
-                                        .Where(s =>ids.Contains(s.Id)).ToList();
+                                        .Where(s => ids.Contains(s.Id)).ToList();
                 }
                 catch (Exception)
                 {

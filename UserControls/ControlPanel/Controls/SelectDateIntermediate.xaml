@@ -12,8 +12,9 @@
             <Label Content="Սկիզբ"/>
             <DatePicker Name="DtpStartDate" SelectedDate="{Binding Path=Invoice.CreateDate, StringFormat='dd.MM.yyyy'}" Margin="3"
                         FirstDayOfWeek="Monday" HorizontalAlignment="Right" />
-            <Label Content="Ավարտ"/>
-            <DatePicker Name="DtpEndDate" SelectedDate="{Binding Path=Invoice.CreateDate, StringFormat='dd.MM.yyyy'}" Margin="3"
+            
+            <Label x:Name="LblEnd" Content="Ավարտ"/>
+            <DatePicker x:Name="DtpEndDate" SelectedDate="{Binding Path=Invoice.CreateDate, StringFormat='dd.MM.yyyy'}" Margin="3"
                         FirstDayOfWeek="Monday" HorizontalAlignment="Right" />
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="3">

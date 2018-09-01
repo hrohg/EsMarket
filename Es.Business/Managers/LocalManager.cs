@@ -16,6 +16,8 @@ namespace ES.Business.Managers
         #region Private properties
         private EsMemberModel Member { get { return ApplicationManager.Instance.GetMember; } }
         private readonly object _syncStocks = new object();
+        private readonly object _syncPartners = new object();
+        private readonly object _syncProducts = new object();
         private readonly object _sync = new object();
         private readonly bool _localMode;
 
@@ -76,7 +78,7 @@ namespace ES.Business.Managers
         {
             get
             {
-                if (!_localMode || _productItems == null) _productItems = new ProductsManager().GetProductItems(Member.Id);
+                if (!_localMode || _productItems == null) _productItems = ProductsManager.GetProductItems();
                 return _productItems.Select(s => s.Product as ProductModel).ToList();
             }
             set { _products = value; }
@@ -86,7 +88,7 @@ namespace ES.Business.Managers
             get
             {
                 if (!_localMode || _productItems == null)
-                    _productItems = new ProductsManager().GetProductItems(Member.Id);
+                    _productItems = ProductsManager.GetProductItems();
                 return _productItems;
             }
             set
@@ -187,7 +189,7 @@ namespace ES.Business.Managers
         private void SetPartners()
         {
             _isPartnersUpdating = true;
-            lock (_sync)
+            lock (_syncPartners)
             {
                 _partners = PartnersManager.GetPartners();
             }
@@ -211,7 +213,7 @@ namespace ES.Business.Managers
             _isProductItemsUpdating = true;
             lock (_sync)
             {
-                _productItems = new ProductsManager().GetProductItems(Member.Id);
+                _productItems = ProductsManager.GetProductItems();
             }
             _isProductItemsUpdating = false;
             OnUpdateCompleted();
@@ -221,7 +223,7 @@ namespace ES.Business.Managers
             _isProductsUpdating = true;
             var updateingHandler = ProductsUpdateing;
             if (updateingHandler != null) updateingHandler();
-            lock (_sync)
+            lock (_syncProducts)
             {
                 _products = ProductsManager.GetProducts();
             }
@@ -275,26 +277,19 @@ namespace ES.Business.Managers
         }
         public void UpdateProducts(bool isAsync = true)
         {
-            if (_isProductsUpdating)
+
+            if (isAsync)
             {
-                while (_isProductsUpdating)
-                {
-                    Thread.Sleep(100);
-                }
+                var thread = new Thread(GetProducts);
+                thread.Start();
             }
             else
             {
-                if (isAsync)
-                {
-                    var thread = new Thread(GetProducts);
-                    thread.Start();
-                }
-                else
-                {
-                    GetProducts();
-                }
+                GetProducts();
             }
+
         }
+
         public void UpdateProducts(List<ProductModel> products)
         {
             _products = products;

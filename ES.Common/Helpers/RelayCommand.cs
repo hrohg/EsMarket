@@ -19,7 +19,12 @@ namespace ES.Common.Helpers
 		{
 		}
 
-		public RelayCommand(Action<object> execute, Predicate<object> canExecute)
+	    public RelayCommand(Action execute):this(o => { execute(); })
+	    {
+            
+	    }
+
+	    public RelayCommand(Action<object> execute, Predicate<object> canExecute)
 		{
 			if (execute == null)
 				throw new ArgumentNullException("execute");
@@ -27,10 +32,14 @@ namespace ES.Common.Helpers
 			_execute = execute;
 			_canExecute = canExecute;
 		}
+        
 		#endregion // Constructors
 
 		#region ICommand Members
-
+        public bool CanExecute()
+        {
+            return _canExecute == null || _canExecute(null);
+        }
 		public bool CanExecute(object parameter)
 		{
 			return _canExecute == null || _canExecute(parameter);

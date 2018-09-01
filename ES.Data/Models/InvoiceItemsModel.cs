@@ -128,11 +128,13 @@ namespace ES.Data.Models
             set
             {
                 _productItem = value;
-                _productItemId = _productItem != null ? _productItem.Product.Id : (Guid?)null;
-                _code = _productItem != null ? _productItem.Product.Code : null;
-                _description = _productItem != null ? _productItem.Product.Description : null;
-                _mu = _productItem != null ? _productItem.Product.Mu : null;
-                _note = _productItem != null ? _productItem.Product.Note : null;
+                if(value==null) return;
+                _productItemId = _productItem.Product != null ? _productItem.Id : (Guid?)null;
+                _productId = _productItem != null ? _productItem.ProductId : Guid.Empty;
+                _code = _productItem.Product != null ? _productItem.Product.Code : null;
+                _description = _productItem.Product != null ? _productItem.Product.Description : null;
+                _mu = _productItem.Product != null ? _productItem.Product.Mu : null;
+                _note = _productItem.Product != null ? _productItem.Product.Note : null;
             }
         }
         public Guid ProductId { get { return _productId; } set { _productId = value; } }

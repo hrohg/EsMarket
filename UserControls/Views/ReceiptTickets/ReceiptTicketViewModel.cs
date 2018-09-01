@@ -25,7 +25,7 @@ namespace UserControls.Views.ReceiptTickets
         #region External properties
         public EsMemberModel Member { get; set; }
         public EsUserModel User { get; set; }
-        public InvoiceModel Invoice { get { return _invoice; } set { _invoice = value;  OnPropertyChanged("Invocie");} }
+        public InvoiceModel Invoice { get { return _invoice; } set { _invoice = value;  OnPropertyChanged("Invoice");} }
         public List<InvoiceItemsModel> InvoiceItems { get { return _invoiceItems; } set { _invoiceItems = value; OnPropertyChanged("InvoiceItems"); } }
         public InvoicePaid InvoicePaid
         {

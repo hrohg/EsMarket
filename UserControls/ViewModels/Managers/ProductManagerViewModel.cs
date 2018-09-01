@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using CashReg.Helper;
 using CashReg.Interfaces;
 using ES.Business.ExcelManager;
 using ES.Business.FileManager;
 using ES.Business.Helpers;
 using ES.Business.Managers;
-using ES.Business.Models;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
@@ -25,10 +25,10 @@ using UserControls.PriceTicketControl.ViewModels;
 
 namespace UserControls.ViewModels.Managers
 {
-    public class ProductManagerViewModelBase : DocumentViewModel
+    public class ProductManagerViewModelBase : UpdatableDocumentViewModel
     {
         #region Events
-        public delegate void OnProductEditedDelegate();
+        public delegate void OnProductEditedDelegate(bool update);
         public event OnProductEditedDelegate OnProductEdited;
         #endregion Events
 
@@ -111,7 +111,8 @@ namespace UserControls.ViewModels.Managers
         {
             get
             {
-                return ProductsManager.GetProduct(Id) != null ? "Խմբագրել" : "Ավելացնել";
+                return Product != null && Products.Any(s => s.Id == Product.Id) ? "Խմբագրել" : "Ավելացնել";
+                //return ProductsManager.GetProduct(Id) != null ? "Խմբագրել" : "Ավելացնել";
             }
         }
         #endregion
@@ -138,6 +139,7 @@ namespace UserControls.ViewModels.Managers
             ProductCopyCommand = new RelayCommand(CopyProduct, CanCopyProduct);
             ProductPastCommand = new RelayCommand(PastProduct, CanPastProduct);
             ExportProductsCommand = new RelayCommand<ExportImportEnum>(OnExportProducts, CanExportProducts);
+            ExportNewProductsCommand = new RelayCommand<ExportImportEnum>(OnExportNewProducts, CanExportProducts);
             GetProductsCommand = new RelayCommand(GetProductBy);
             AddProductGroupCommand = new RelayCommand<string>(OnAddProductGroup, CanAddProductGroup);
             //PrintBarcodeCommand = new RelayCommand<PrintPriceTicketEnum?>(PrintPreviewBarcode, CanPrintBarcode);
@@ -158,10 +160,10 @@ namespace UserControls.ViewModels.Managers
         }
         protected void LoadProducts()
         {
-            new Thread(OnUpdateProducts).Start();
+            new Thread(OnUpdate).Start();
         }
 
-        private void OnUpdateProducts()
+        public override void OnUpdate()
         {
             IsLoading = true;
             _productOnBufer = null;
@@ -173,17 +175,20 @@ namespace UserControls.ViewModels.Managers
                 item.ExistingQuantity = productResidue.Any(pr => pr.ProductId == product.Id) ?
                     productResidue.Where(pr => pr.ProductId == product.Id).Select(pr => pr.Quantity).First() : 0;
             }
-            if (Application.Current != null)
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, new Action(() =>
             {
-                Application.Current.Dispatcher.BeginInvoke(new Action(() => CompletedUpdate(_products.OrderByDescending(s => s.Code).ToList())));
-            }
+                CompletedUpdate();
+                RaisePropertyChanged("Products");
+            }));
+
             IsLoading = false;
         }
 
-        private void CompletedUpdate(List<ProductModel> products)
+        private void CompletedUpdate()
         {
-            Products = products;
-            Product = _productOnBufer ?? new ProductModel(MemberId, UserId, true); RaisePropertyChanged("Product");
+            Product = _productOnBufer ?? new ProductModel(MemberId, UserId, true);
+            RaisePropertyChanged("Product");
+            RaisePropertyChanged("Products");
         }
         private bool IsProductExist()
         {
@@ -212,19 +217,19 @@ namespace UserControls.ViewModels.Managers
         {
             if (!CanGenerateBarcode(o)) { return; }
             if (!string.IsNullOrEmpty(Product.Barcode)) { return; }
-            var nextCode = GetNextCode;
+            var nextCode = GetNextCode();
             Product.Barcode = new BarCodeGenerator(nextCode).Barcode;
-            var code = !string.IsNullOrEmpty(Product.Code) ? Product.Code : Product.Barcode.Substring(7, 5);
-            while (Products.FirstOrDefault(s => s.Id != Product.Id && (s.Barcode == Product.Barcode || s.Code == code)) != null)
+            var code = string.IsNullOrEmpty(Product.Code) ?
+                string.Format("{0}{1}", ApplicationManager.Settings.SettingsContainer.MemberSettings.UseShortCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextCode) :
+                Product.Code;
+            while (Products.Any(s => s.Id != Product.Id && (s.Barcode == Product.Barcode || (string.IsNullOrEmpty(Product.Code) && s.Code == code))))
             {
                 nextCode--;
                 Product.Barcode = new BarCodeGenerator(nextCode).Barcode;
-                code = !string.IsNullOrEmpty(Product.Code) ? Product.Code : Product.Barcode.Substring(7, 5);
+                code = string.IsNullOrEmpty(Product.Code) ? string.Format("{0}{1}", ApplicationManager.Settings.SettingsContainer.MemberSettings.UseShortCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextCode) :
+                    Product.Code;
             }
-            if (string.IsNullOrEmpty(Product.Code))
-            {
-                Product.Code = code;
-            }
+            if (string.IsNullOrEmpty(Product.Code)) Product.Code = code;
         }
         private bool CanExportProducts(ExportImportEnum o)
         {
@@ -237,23 +242,34 @@ namespace UserControls.ViewModels.Managers
             thread.Start();
             IsLoading = false;
         }
-        private void ExportProducts(ExportImportEnum exportToFile)
+        private void OnExportNewProducts(ExportImportEnum o)
         {
-            string filePath = null;
-            List<ProductModel> products = null;
+            IsLoading = true;
+            var win = new SelectCount(new SelectCountModel(1, "Խմբագրված օրեր"), Visibility.Collapsed);
+            win.ShowDialog();
+            if (win.DialogResult == null || !(bool)win.DialogResult) return;
+            var count = (int)win.SelectedCount;
+            var thread = new Thread(() => ExportProducts(o, count));
+            thread.Start();
+            IsLoading = false;
+        }
+        private void ExportProducts(ExportImportEnum exportToFile, int? days = null)
+        {
+            var products = days == null ? Products : Products.Where(s => s.LastModifiedDate >= DateTime.Now.AddDays(-days.Value)).ToList();
             bool result;
             switch (exportToFile)
             {
                 case ExportImportEnum.Xml:
-                    filePath = FileManager.SaveFile("Export to xml file", "Xml file | *.xml");
+                    var filePath = FileManager.SaveFile("Export to xml file", "Xml file | *.xml");
                     if (string.IsNullOrEmpty(filePath))
                     {
                         return;
                     }
-                    result = XmlManager.Save(Products, filePath);
+                    //result = XmlManager.Save(Products.Select(s => s.ToEsGoods()).ToList(), filePath);
+                    result = XmlManager.Save(products, filePath);
                     break;
                 case ExportImportEnum.Excel:
-                    result = ExcelExportManager.ExportProducts(Products);
+                    result = ExcelExportManager.ExportProducts(products);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("exportToFile", exportToFile, null);
@@ -264,10 +280,11 @@ namespace UserControls.ViewModels.Managers
                 return;
             }
         }
-        protected void NotifyEditedProducts()
+
+        protected void NotifyEditedProducts(bool update)
         {
             var handler = OnProductEdited;
-            if (handler != null) handler();
+            if (handler != null) handler(update);
         }
         #endregion
 
@@ -353,29 +370,31 @@ namespace UserControls.ViewModels.Managers
 
         protected virtual void OnEditProduct(object o)
         {
+            IsLoading = true;
             var product = new ProductsManager().EditProduct(Product);
             if (product != null)
             {
                 if (_products.FirstOrDefault(s => s.Code == product.Code) == null)
                 {
                     _products.Add(product);
-                    //LoadProducts();
                     MessageManager.OnMessage("Ապրանքի ավելացումն իրականացել է հաջողությամբ։");
                 }
                 else
                 {
                     ProductsManager.CopyProduct(Products.SingleOrDefault(s => s.Id == product.Id), product);
                     MessageManager.OnMessage(string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումն իրականացել է հաջողությամբ։", product.Code, product.Description), MessageTypeEnum.Success);
-                    NotifyEditedProducts();
                 }
-                ApplicationManager.Instance.CashProvider.UpdateProducts(_products);
             }
             else
             {
                 MessageManager.OnMessage(string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումը ձախողվել է։", Product.Code, Product.Description), MessageTypeEnum.Error);
+                IsLoading = false;
+                return;
             }
+            IsLoading = false;
+            NotifyEditedProducts(false);
         }
-        
+
         protected virtual bool CanChangeProductCode(object o)
         {
             return Product != null && !string.IsNullOrEmpty(Product.Code) && IsProductExist() && IsProductSingle();
@@ -413,14 +432,12 @@ namespace UserControls.ViewModels.Managers
             PrintManager.PrintPreview(ctrl, "Print Barcode", true);
         }
 
-        private int GetNextCode
+        private int GetNextCode()
         {
-            get
-            {
-                return ProductsManager.GetNextProductCode(ApplicationManager.Instance.GetMember.Id); //_products.Count + 1;
-                //if (!string.IsNullOrEmpty(Product.Code)) Int32.TryParse(Product.Code, out next);
-                //return next;
-            }
+            return ProductsManager.GetNextProductCode(ApplicationManager.Instance.GetMember.Id); //_products.Count + 1;
+            //if (!string.IsNullOrEmpty(Product.Code)) Int32.TryParse(Product.Code, out next);
+            //return next;
+
         }
 
         protected virtual void GetProductBy(object o)
@@ -461,7 +478,7 @@ namespace UserControls.ViewModels.Managers
             }
             RaisePropertyChanged(ProductGroupDescriptionProperty);
         }
-        
+
         public virtual void SetProduct(ProductModel product)
         {
             if (IsLoading)
@@ -486,7 +503,7 @@ namespace UserControls.ViewModels.Managers
         #region Product Commands
 
         public ICommand EditCommand { get; private set; }
-        
+
         public ICommand GetProductCommand
         {
             get { return new RelayCommand(OnGetProduct, CanGetProduct); }
@@ -497,11 +514,12 @@ namespace UserControls.ViewModels.Managers
             get { return new RelayCommand(OnGenerateBarcode, CanGenerateBarcode); }
         }
 
-        
+
         public ICommand PrintBarcodeCommand { get; private set; }
         public ICommand ProductCopyCommand { get; private set; }
         public ICommand ProductPastCommand { get; private set; }
         public ICommand ExportProductsCommand { get; private set; }
+        public ICommand ExportNewProductsCommand { get; private set; }
         public ICommand GetProductsCommand { get; private set; }
         public ICommand AddProductGroupCommand { get; private set; }
 
@@ -510,7 +528,7 @@ namespace UserControls.ViewModels.Managers
     public class ProductManagerViewModel : ProductManagerViewModelBase
     {
         #region Events
-        
+
         #endregion Events
 
         #region Product properties
@@ -518,7 +536,7 @@ namespace UserControls.ViewModels.Managers
         #endregion
 
         #region Private properties
-        
+
         #endregion
 
         #region External properties
@@ -539,7 +557,7 @@ namespace UserControls.ViewModels.Managers
         {
             Title = "Ապրանքների խմբագրում, ավելացում";
             EcrDepartments = CashReg.Helper.Enumerations.GetEcrDepartments();
-            EcrDepartments.Insert(0, new Department{Id = -1, Name = "Ընտրել հարկման տեսակը", Type = -1});
+            EcrDepartments.Insert(0, new Department { Id = -1, Name = "Ընտրել հարկման տեսակը", Type = -1 });
             SetCommands();
         }
         private void SetCommands()
@@ -567,11 +585,10 @@ namespace UserControls.ViewModels.Managers
         private void OnImportProducts(ExportImportEnum o)
         {
             IsLoading = true;
-            var thread = new Thread(() => ImportProducts(o));
+            var thread = new Thread(() => ImportProductsAsync(o));
             thread.Start();
-            IsLoading = false;
         }
-        private void ImportProducts(ExportImportEnum importToFile)
+        private void ImportProductsAsync(ExportImportEnum importToFile)
         {
             string filePath = null;
             List<ProductModel> products = null;
@@ -581,14 +598,24 @@ namespace UserControls.ViewModels.Managers
                     filePath = FileManager.OpenFile("Open xml file", "Xml file | *.xml");
                     if (string.IsNullOrEmpty(filePath))
                     {
+                        IsLoading = false;
                         return;
                     }
+                    //var goods = XmlManager.Read<List<EsGood>>(filePath);
+                    //products = goods.Select(ProductsManager.Convert).ToList();
                     products = XmlManager.Read<List<ProductModel>>(filePath);
+                    foreach (var productModel in products)
+                    {
+                        productModel.LastModifierId = ApplicationManager.GetEsUser.UserId;
+                        //productModel.LastModifiedDate = DateTime.Now;
+                        productModel.EsMemberId = ApplicationManager.Member.Id;
+                    }
                     break;
                 case ExportImportEnum.Excel:
                     filePath = FileManager.OpenFile();
                     if (string.IsNullOrEmpty(filePath))
                     {
+                        IsLoading = false;
                         return;
                     }
                     products = ExcelImportManager.ImportProducts(filePath);
@@ -599,28 +626,36 @@ namespace UserControls.ViewModels.Managers
             if (products == null)
             {
                 MessageManager.OnMessage("Ապրանքների բեռնումն ձախողվել է:", MessageTypeEnum.Error);
+                IsLoading = false;
                 return;
             }
-            if (ProductsManager.EditProducts(products))
+            foreach (var productModel in products)
             {
-                ApplicationManager.Instance.CashProvider.UpdateCash();
-                if (Application.Current != null)
-                {
-                    Application.Current.Dispatcher.BeginInvoke(new Action(() => { Products = ApplicationManager.Instance.CashProvider.Products; }));
+                productModel.Id = Guid.Empty;
+                Product = productModel;
+                OnEditProduct(null);
+            }
+            //if (ProductsManager.EditProducts(products))
+            //{
+            //    ApplicationManager.Instance.CashProvider.UpdateCash();
+            //    if (Application.Current != null)
+            //    {
+            //        Application.Current.Dispatcher.BeginInvoke(new Action(() => { Products = ApplicationManager.Instance.CashProvider.Products; }));
 
-                }
-                MessageManager.OnMessage("Ապրանքների բեռնումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
-                NotifyEditedProducts();
-            }
-            else
-            {
-                MessageManager.OnMessage("Ապրանքների խմբագրումն ընդհատվել է:", MessageTypeEnum.Warning);
-            }
+            //    }
+            //    MessageManager.OnMessage("Ապրանքների բեռնումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
+            //    //NotifyEditedProducts();
+            //}
+            //else
+            //{
+            //    MessageManager.OnMessage("Ապրանքների խմբագրումն ընդհատվել է:", MessageTypeEnum.Warning);
+            //}
+            IsLoading = false;
         }
         #endregion
 
         #region External methods
-        
+
         public void OnNewProduct(object o)
         {
             Product = new ProductModel(MemberId, UserId, true);
@@ -628,27 +663,30 @@ namespace UserControls.ViewModels.Managers
 
         protected override void OnEditProduct(object o)
         {
+            IsLoading = true;
             var product = new ProductsManager().EditProduct(Product);
             if (product != null)
             {
                 if (_products.FirstOrDefault(s => s.Code == product.Code) == null)
                 {
                     _products.Add(product);
-                    //LoadProducts();
-                    MessageManager.OnMessage("Ապրանքի ավելացումն իրականացել է հաջողությամբ։");
+                    MessageManager.OnMessage(string.Format("Կոդ:{0} անվանում:{1} ապրանքի ավելացումն իրականացել է հաջողությամբ։", product.Code, product.Description));
                 }
                 else
                 {
                     ProductsManager.CopyProduct(Products.SingleOrDefault(s => s.Id == product.Id), product);
                     MessageManager.OnMessage(string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումն իրականացել է հաջողությամբ։", product.Code, product.Description), MessageTypeEnum.Success);
-                    NotifyEditedProducts();
                 }
-                ApplicationManager.Instance.CashProvider.UpdateProducts(_products);
+                Product.LastModifiedDate = product.LastModifiedDate;
             }
             else
             {
                 MessageManager.OnMessage(string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումը ձախողվել է։", Product.Code, Product.Description), MessageTypeEnum.Error);
+                IsLoading = false;
+                return;
             }
+            IsLoading = false;
+            NotifyEditedProducts(false);
         }
 
         public void DeleteProduct(object o)
@@ -676,19 +714,19 @@ namespace UserControls.ViewModels.Managers
     public class CorrectProductsViewModel : ProductManagerViewModelBase
     {
         #region Events
-        
+
         #endregion Events
 
         #region Product properties
-        
+
         #endregion
 
         #region Private properties
-        
+
         #endregion
 
         #region External properties
-        
+
         #endregion
 
         #region Constructors
@@ -709,31 +747,34 @@ namespace UserControls.ViewModels.Managers
         }
         protected override void OnEditProduct(object o)
         {
+            IsLoading = true;
             var product = new ProductsManager().EditProduct(Product);
             if (product != null)
             {
                 if (_products.FirstOrDefault(s => s.Code == product.Code) == null)
                 {
-                    
+
                     MessageManager.OnMessage("Ապրանքը գոյություն չունի: Ապրանքի խմբագրումն ընդհատվել է։", MessageTypeEnum.Warning);
+                    IsLoading = false;
                 }
                 else
                 {
                     ProductsManager.CopyProduct(Products.SingleOrDefault(s => s.Id == product.Id), product);
                     MessageManager.OnMessage(string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումն իրականացել է հաջողությամբ։", product.Code, product.Description), MessageTypeEnum.Success);
-                    NotifyEditedProducts();
+                    IsLoading = false;
+                    NotifyEditedProducts(false);
                 }
-                ApplicationManager.Instance.CashProvider.UpdateProducts(_products);
             }
             else
             {
                 MessageManager.OnMessage(string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումը ձախողվել է։", Product.Code, Product.Description), MessageTypeEnum.Error);
+                IsLoading = false;
             }
         }
         #endregion
 
         #region External methods
-        
+
         #endregion
 
         #region Product Commands

@@ -10,14 +10,20 @@ namespace UserControls
     /// </summary>
     public partial class SelectCount : Window
     {
-        public decimal SelectedCount { get { return ((SelectCountModel) DataContext).Count ?? 0; } }
+        public decimal SelectedCount { get { return ((SelectCountModel)DataContext).Count ?? 0; } }
         public SelectCount(SelectCountModel selectedCountModel, string text = null)
         {
             InitializeComponent();
             DataContext = selectedCountModel;
             TxtCount.Focus();
         }
-
+        public SelectCount(SelectCountModel selectedCountModel, Visibility countTextBoxvisibility)
+        {
+            InitializeComponent();
+            DataContext = selectedCountModel;
+            TxtCount.Focus();
+            MaxCountStackPanel.Visibility = countTextBoxvisibility;
+        }
         private void BtnAccept_Click(object sender, EventArgs e)
         {
             DialogResult = true;
@@ -46,8 +52,13 @@ namespace UserControls
         {
             MaxCount = maxCount;
             Count = count;
-            Descrpiton = description;
+            Description = description;
             _isCountFree = isCountFree;
+        }
+        public SelectCountModel(decimal? count, string description)
+        {
+            Count = count;
+            Description = description;
         }
         #region Select count model private properties
         private decimal? _maxCount;
@@ -70,7 +81,7 @@ namespace UserControls
         }
 
         public decimal? MaxCount { get { return _maxCount; } set { _maxCount = value; } }
-        public string Descrpiton { get; set; }
+        public string Description { get; set; }
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;

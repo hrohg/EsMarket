@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Business.Models;
@@ -64,6 +65,15 @@ namespace UserControls.Helpers
         }
         public static List<StockModel> SelectStocks(List<StockModel> stocks, bool allowMultipleSelect = false)
         {
+            if (stocks == null) return new List<StockModel>();
+            if (stocks.Count < 2) { return stocks; }
+            var selectItem = new SelectItems(stocks.Select(s => new ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), allowMultipleSelect);
+            if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return new List<StockModel>(); }
+            return stocks.Where(s => selectItem.SelectedItems.Select(t => (long)t.SelectedValue).Contains(s.Id)).ToList();
+        }
+        public static List<StockModel> SelectStocks(bool allowMultipleSelect = false)
+        {
+            var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(), allowMultipleSelect);
             if (stocks == null) return new List<StockModel>();
             if (stocks.Count < 2) { return stocks; }
             var selectItem = new SelectItems(stocks.Select(s => new ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), allowMultipleSelect);
@@ -423,6 +433,14 @@ namespace UserControls.Helpers
                 return null;
             }
             return partners.FirstOrDefault(s => selectedItems.SelectedItems.Select(t => t.SelectedValue).ToList().Contains(s.Id));
+        }
+
+        public static int? GetDays(int days)
+        {
+            var win = new SelectCount(new UserControls.SelectCountModel(days, "Մուտքագրել օրերի քանակը"), Visibility.Collapsed);
+            win.ShowDialog();
+            if (!win.DialogResult.HasValue || !win.DialogResult.Value) { return null; }
+            return (int)win.SelectedCount;
         }
     }
 }

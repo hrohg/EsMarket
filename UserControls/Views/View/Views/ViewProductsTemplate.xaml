@@ -20,8 +20,8 @@
                     <ContentControl.Resources>
                         <DataTemplate DataType="{x:Type view:ProductItemsViewModel}">
 
-                            <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
-                                <DataGrid.Columns>
+                            <controls:ProductItemDataGrid ColumnHeaders="{Binding Stocks}" ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                                <!--<DataGrid.Columns>
                                     <DataGridTemplateColumn Header="Կոդ" CanUserSort="True" SortMemberPath="Code">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="{x:Type models:ProductOrderModel}">
@@ -78,8 +78,8 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
+                                </DataGrid.Columns>-->
+                            </controls:ProductItemDataGrid>
                         </DataTemplate>
                     </ContentControl.Resources>
                 </ContentControl>

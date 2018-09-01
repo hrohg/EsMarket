@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Windows.Media;
+using System.Xml.Serialization;
+using EsMarket.SharedData.Models;
 
 namespace ES.Data.Models
 {
+    [Serializable]
     public partial class ProductModel : EsProductModel
     {
+        private object _toEsGoods;
+
         /// <summary>
         /// Initialize a new instance of the Product class.
         /// </summary>
@@ -12,18 +17,23 @@ namespace ES.Data.Models
         #region Properties
 
         #endregion
+
         #region private properties
 
         #endregion
+
         #region Public properties
-        public string State { get { return IsEnabled ? "Ակտիվ" : "Պասիվ"; } }
+        [XmlIgnore]
         public Brush ProductStateHighlighthing { get { return IsEnabled ? Brushes.Green : Brushes.Red; } }
+        [XmlIgnore]
         public Brush ProductCountHighlighthing { get { return MinQuantity == null ? Brushes.BlueViolet : ExistingQuantity > MinQuantity ? Brushes.Green : Brushes.Red; } }
+
         #endregion
+
         #region Constructors
         public ProductModel()
         {
-            
+
         }
         public ProductModel(long memberId, long lastModifierId, bool isEnable)
         {
@@ -40,6 +50,7 @@ namespace ES.Data.Models
         }
         //public ProductModel() { }
         #endregion
+
         #region private methods
         public void SetProduct(ProductModel item)
         {
@@ -76,6 +87,21 @@ namespace ES.Data.Models
         //    }
         //}
         //#endregion
+
+        public EsGood ToEsGoods()
+        {
+            return new EsGood
+            {
+                Code = Code,
+                HcdCs = HcdCs,
+                Barcode = Barcode,
+                Description = Description,
+                Unit = Mu,
+                Price = Price ?? 0,
+                CostPrice = CostPrice ?? 0,
+                DealerPrice = DealerPrice
+            };
+        }
     }
 
     public class ProductProvider

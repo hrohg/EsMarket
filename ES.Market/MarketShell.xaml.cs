@@ -16,7 +16,6 @@ using ES.Market.Edit;
 using ES.Market.ViewModels;
 using ES.Market.Views;
 using ES.MsOffice.ExcelManager;
-using ES.Shop.Controls;
 using UserControls.PriceTicketControl;
 using UserControls.ControlPanel.Controls;
 using UserControls.Helpers;

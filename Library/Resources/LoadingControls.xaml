@@ -13,7 +13,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Border x:Name="Border" Grid.Column="0" BorderThickness="0">
-                    <ProgressBar IsIndeterminate="True" Background="#F4F5F7" Opacity="1" Width="{Binding ElementName=Border, Path=ActualWidth}" VerticalAlignment="Center" HorizontalAlignment="Center" Height="20"/>
+                    <ProgressBar IsIndeterminate="True" Background="#F4F5F7" BorderThickness="0" Opacity="1" Width="{Binding ElementName=Border, Path=ActualWidth}" VerticalAlignment="Center" HorizontalAlignment="Center" Height="20"/>
                 </Border>
             </Grid>
         </Grid>

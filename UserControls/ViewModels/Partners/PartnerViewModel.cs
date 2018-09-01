@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
@@ -114,7 +114,7 @@ namespace UserControls.ViewModels.Partners
                 if (PartnersManager.SetDefault(partner))
                 {
                     MessageManager.OnMessage("Գործողության բարեհաջող ավարտ։", MessageTypeEnum.Success);
-                    ApplicationManager.CashManager.UpdatePartners();
+                    ApplicationManager.Instance.CashManager.UpdatePartners();
                 }
                 else
                 {
@@ -222,6 +222,55 @@ namespace UserControls.ViewModels.Partners
             Partner.ClubSixteenId = null;
         }
 
+        private ICommand _importCommand;
+        public ICommand ImportCommand { get { return _importCommand ?? (_importCommand = new RelayCommand(OnImport, CanImport)); } }
+
+        private bool CanImport(object obj)
+        {
+            return Partner != null;
+        }
+
+        private void OnImport(object obj)
+        {
+            var partners = XmlManager.Load<List<PartnerModel>>();
+            if (partners == null) return;
+            foreach (var partner in partners)
+            {
+                partner.EsMemberId = ApplicationManager.Member.Id;
+                partner.Discount = 0;
+                partner.Debit = 0;
+                partner.Credit = 0;
+                partner.MaxDebit = 0;
+
+                var expartner = Partners.FirstOrDefault(s =>
+                        (!string.IsNullOrEmpty(partner.ClubSixteenId) && s.ClubSixteenId == partner.ClubSixteenId) ||
+                        (!string.IsNullOrEmpty(partner.Email) && s.Email == partner.Email) ||
+                        s.FullName == partner.FullName);
+                if (expartner == null)
+                {
+                    partner.Id = Guid.NewGuid();
+                    PartnersManager.AddPartner(partner);
+                }
+                else
+                {
+                    partner.Id = expartner.Id;
+                    PartnersManager.EditPartner(partner);
+                }
+            }
+        }
+        private ICommand _exportCommand;
+        public ICommand ExportCommand { get { return _exportCommand ?? (_exportCommand = new RelayCommand(OnExport, CanExport)); } }
+
+        private bool CanExport(object obj)
+        {
+            return true;
+        }
+
+        private void OnExport(object obj)
+        {
+            //XmlManager.Save(Partner);
+            XmlManager.Save(Partners);
+        }
         #endregion Commands
 
     }

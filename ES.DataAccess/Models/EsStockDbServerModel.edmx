@@ -394,6 +394,7 @@
           <Property Name="IsEnable" Type="bit" Nullable="false" />
           <Property Name="BrandId" Type="bigint" />
           <Property Name="LastModifierId" Type="bigint" Nullable="false" />
+          <Property Name="LastModifiedDate" Type="datetime" Nullable="false" />
           <Property Name="ExpiryDays" Type="int" />
         </EntityType>
         <EntityType Name="ProductsAdditionalData">
@@ -2017,6 +2018,7 @@
           <NavigationProperty Name="ProductOrderItems" Relationship="EsStockDbModel.FK_ProductOrderItems_Products" FromRole="Products" ToRole="ProductOrderItems" />
           <NavigationProperty Name="ProductCategories" Relationship="EsStockDbModel.FK_ProductCategories_Products" FromRole="Products" ToRole="ProductCategories" />
           <NavigationProperty Name="ProductsAdditionalData" Relationship="EsStockDbModel.FK_ProductsAdditionalData_Products" FromRole="Products" ToRole="ProductsAdditionalData" />
+          <Property Name="LastModifiedDate" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         <EntityType Name="SaleInCash">
           <Key>
@@ -3102,6 +3104,7 @@
           <EntitySetMapping Name="Products">
             <EntityTypeMapping TypeName="EsStockDbModel.Products">
               <MappingFragment StoreEntitySet="Products">
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
                 <ScalarProperty Name="ExpiryDays" ColumnName="ExpiryDays" />
                 <ScalarProperty Name="LastModifierId" ColumnName="LastModifierId" />
                 <ScalarProperty Name="BrandId" ColumnName="BrandId" />

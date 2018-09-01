@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
@@ -14,7 +15,6 @@ using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Data.Enumerations;
-using ES.Data.Model;
 using ES.Data.Models;
 using ES.Data.Models.Reports;
 using Shared.Helpers;
@@ -63,7 +63,7 @@ namespace UserControls.ViewModels
 
             var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2);
             var invoiceItems = InvoicesManager.GetInvoiceItems(invoices.Select(s => s.Id));
-            var productItems = new ProductsManager().GetProductItems(ApplicationManager.Instance.GetMember.Id);
+            var productItems = ProductsManager.GetProductItems();
             var productOrder = new List<object>(productItems.GroupBy(s => s.Product).Select(s =>
                 new ProductOrderModel
                 {
@@ -138,7 +138,7 @@ namespace UserControls.ViewModels
         public ReportBaseViewModel()
             : base()
         {
-            Title = Description = "Հաշվետվություն";
+
             IsShowUpdateButton = true;
             Initialize();
         }
@@ -147,6 +147,7 @@ namespace UserControls.ViewModels
         #region Internal methods
         private void Initialize()
         {
+            Title = Description = "Հաշվետվություն";
         }
 
         private void OnUpdateAsync(Tuple<DateTime, DateTime> dateIntermediate)
@@ -173,7 +174,7 @@ namespace UserControls.ViewModels
 
         public void Update()
         {
-            base.OnUpdate(null);
+            base.OnUpdate();
             Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
             if (dateIntermediate == null) return;
             Description = string.Format("Հաշվետվություն {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
@@ -203,6 +204,7 @@ namespace UserControls.ViewModels
         #region Internal properties
         private List<IInvoiceReport> _items = new List<IInvoiceReport>();
         private List<InvoiceType> _invoiceTypes;
+        private Tuple<DateTime, DateTime> _dateIntermediate;
         #endregion
 
         #region External properties
@@ -229,23 +231,23 @@ namespace UserControls.ViewModels
         {
             _invoiceTypes = invoiceTypes;
             IsShowUpdateButton = true;
-            Initialize();
         }
         #endregion
 
         #region Internal methods
-        private void Initialize()
+        protected override void Initialize()
         {
+            base.Initialize();
             Title = Description = "Հաշվետվություն ըստ ապրանքագրերի";
-            OnUpdate(null);
         }
 
-        private void Update(Tuple<DateTime, DateTime> dateIntermediate)
+        protected override void UpdateAsync()
         {
-            IsLoading = true;
-            RaisePropertyChanged(IsInProgressProperty);
-
-            var reports = InvoicesManager.GetInvoicesReports(dateIntermediate.Item1, dateIntermediate.Item2, _invoiceTypes);
+            if (_dateIntermediate == null)
+            {
+                IsLoading = false; return;
+            }
+            var reports = InvoicesManager.GetInvoicesReports(_dateIntermediate.Item1, _dateIntermediate.Item2, _invoiceTypes);
             if (reports == null || reports.Count == 0)
             {
                 MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
@@ -256,18 +258,17 @@ namespace UserControls.ViewModels
             //TotalCount = (double)_items.Sum(s => s.Quantity ?? 0);
             Total = (double)ViewList.Sum(i => i.Sale ?? 0);
             IsLoading = false;
-            RaisePropertyChanged(IsInProgressProperty);
         }
 
-        protected override void OnUpdate(object o)
+        protected override void OnUpdate()
         {
-            base.OnUpdate(o);
-            Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
-            if (dateIntermediate == null) return;
-            Description = string.Format("Հաշվետվություն ըստ ապրանքագրերի {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
+            _dateIntermediate = SelectManager.GetDateIntermediate();
+            if (_dateIntermediate == null) return;
+            Description = string.Format("Հաշվետվություն ըստ ապրանքագրերի {0} - {1}", _dateIntermediate.Item1.Date, _dateIntermediate.Item2.Date);
             RaisePropertyChanged("Description");
-            var thread = new Thread(() => Update(dateIntermediate));
-            thread.Start();
+            base.OnUpdate();
+            //var thread = new Thread(() => Update(dateIntermediate));
+            //thread.Start();
         }
 
         protected override void OnPrint(object o)
@@ -287,9 +288,69 @@ namespace UserControls.ViewModels
 
     public class SaleInvoiceReportByStocksViewModel : SaleInvoiceReportByPartnerViewModel
     {
+        private Tuple<DateTime, DateTime> _dateIntermediate;
+        private List<StockModel> _stocks;
+
         public SaleInvoiceReportByStocksViewModel(ViewInvoicesEnum viewInvoicesEnum)
             : base(viewInvoicesEnum)
         {
+        }
+
+        protected override void Update(Tuple<DateTime, DateTime> dateIntermediate)
+        {
+            IsLoading = true;
+            _dateIntermediate = dateIntermediate;
+
+            Application.Current.Dispatcher.Invoke(
+                        new Action(() =>
+                            {
+                                _stocks = SelectItemsManager.SelectStocks(ApplicationManager.Instance.CashManager.GetStocks, true).ToList();
+                            }));
+            new Thread(UpdateAsync).Start();
+        }
+
+        private void UpdateAsync()
+        {
+            var invoiceItems = InvoicesManager.GetSaleInvoiceItemsByStocksForReport(_dateIntermediate.Item1, _dateIntermediate.Item2, _stocks.Select(s => s.Id).ToList());
+            var reports = _stocks.Select(s => new InvoiceReport
+            {
+                Description = s.FullName,
+                Count = invoiceItems.Where(ii => ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice).Count(ii => ii.ProductItem.StockId == s.Id),
+                Quantity = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0)),
+                Cost = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.CostPrice ?? 0)),
+                Sale = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0)),
+                ReturnAmount = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.ReturnFrom)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0))
+            }).ToList();
+            reports.Add(new InvoiceReport
+            {
+                Description = "Ընդամենը",
+                Count = reports.Sum(s => s.Count),
+                Quantity = reports.Sum(s => s.Quantity),
+                Cost = reports.Sum(s => s.Cost),
+                ReturnAmount = reports.Sum(s => s.ReturnAmount),
+                Sale = reports.Sum(s => s.Sale)
+            });
+
+
+            if (!reports.Any())
+            {
+                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։",
+                    MessageTypeEnum.Information));
+            }
+            else
+            {
+                ViewList = new ObservableCollection<IInvoiceReport>(reports);
+            }
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
+            {
+                TotalRows = reports.Count;
+                TotalCount = (double)reports.Sum(s => s.Quantity);
+                Total = (double)reports.Sum(i => i.Sale ?? 0);
+
+                IsLoading = false;
+            });
+
+
         }
     }
 
@@ -331,7 +392,7 @@ namespace UserControls.ViewModels
         private void Initialize()
         {
             Title = Description = "Վաճառք ըստ պատվիրատուների";
-            OnUpdate(null);
+            OnUpdate();
         }
 
         protected virtual void Update(Tuple<DateTime, DateTime> dateIntermediate)
@@ -349,7 +410,7 @@ namespace UserControls.ViewModels
                 case ViewInvoicesEnum.ByDetiles:
                     break;
                 case ViewInvoicesEnum.ByStock:
-                    Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList(); }));
+                    Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.Instance.CashManager.GetStocks, true).ToList(); }));
                     reports = new List<IInvoiceReport>(UpdateByStock(stocks, dateIntermediate));
                     break;
                 case ViewInvoicesEnum.ByPartner:
@@ -386,7 +447,7 @@ namespace UserControls.ViewModels
                     }
                     break;
                 case ViewInvoicesEnum.ByStocksDetiles:
-                    Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList(); }));
+                    Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.Instance.CashManager.GetStocks, true).ToList(); }));
 
                     var invoiceItems = InvoicesManager.GetInvoiceItemsByStocks(InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).Select(s => s.Id).ToList(), stocks);
 
@@ -400,9 +461,9 @@ namespace UserControls.ViewModels
                             Description = s.Description,
                             Mu = s.Mu,
                             Quantity = s.Quantity ?? 0,
-                            Cost = s.CostPrice??0,
+                            Cost = s.CostPrice ?? 0,
                             Price = s.Price ?? 0,
-                            Sale = (s.Quantity??0)*(s.Price??0),
+                            Sale = (s.Quantity ?? 0) * (s.Price ?? 0),
                             Note = s.Invoice.Notes
                         }).ToList());
                     break;
@@ -457,9 +518,9 @@ namespace UserControls.ViewModels
             IsLoading = false;
             RaisePropertyChanged(IsInProgressProperty);
         }
-        protected override void OnUpdate(object o)
+        protected override void OnUpdate()
         {
-            base.OnUpdate(o);
+            base.OnUpdate();
             Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
             if (dateIntermediate == null) return;
             Description = string.Format("{0} {1} - {2}", Title, dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
@@ -486,11 +547,11 @@ namespace UserControls.ViewModels
             var list = stocks.Select(s => new InvoiceReport
             {
                 Description = s.FullName,
-                Count = invoiceItems.Where(ii=>ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice).Count(ii => ii.ProductItem.StockId == s.Id),
+                Count = invoiceItems.Where(ii => ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice).Count(ii => ii.ProductItem.StockId == s.Id),
                 Quantity = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0)),
                 Cost = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.CostPrice ?? 0)),
                 Sale = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0)),
-                ReturnAmount = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId==(int)InvoiceType.ReturnFrom)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0))
+                ReturnAmount = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.ReturnFrom)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0))
             }).ToList();
             list.Add(new InvoiceReport
             {
@@ -498,7 +559,7 @@ namespace UserControls.ViewModels
                 Count = list.Sum(s => s.Count),
                 Quantity = list.Sum(s => s.Quantity),
                 Cost = list.Sum(s => s.Cost),
-                ReturnAmount = list.Sum(s=>s.ReturnAmount),
+                ReturnAmount = list.Sum(s => s.ReturnAmount),
                 Sale = list.Sum(s => s.Sale)
             });
             return list;
@@ -622,7 +683,7 @@ namespace UserControls.ViewModels
                                 continue;
                             }
                             summ = invoice.Sum(s => s.Amount);
-                            count = invoice.GroupBy(s=>s.Date.Day).Count();
+                            count = invoice.GroupBy(s => s.Date.Day).Count();
                             ChartDatas.Add(new KeyValuePair<object, decimal>(invoice.First().Date.ToString("T"), summ / count));
                         }
                         break;
@@ -639,7 +700,7 @@ namespace UserControls.ViewModels
                                 continue;
                             }
                             summ = invoice.Sum(s => s.Amount);
-                            count = invoice.GroupBy(s=>s.Date.Month).Count();
+                            count = invoice.GroupBy(s => s.Date.Month).Count();
                             ChartDatas.Add(new KeyValuePair<object, decimal>(invoice.First().Date.Day, summ / count));
                         }
                         break;
@@ -656,7 +717,7 @@ namespace UserControls.ViewModels
                                 continue;
                             }
                             summ = invoice.Sum(s => s.Amount);
-                            count = invoice.GroupBy(s=>s.Date.Day).Count();
+                            count = invoice.GroupBy(s => s.Date.Day).Count();
                             ChartDatas.Add(new KeyValuePair<object, decimal>(invoice.First().Date.ToString("ddd"), summ / count));
                         }
                         break;
@@ -672,8 +733,8 @@ namespace UserControls.ViewModels
                                 continue;
                             }
                             summ = invoice.Sum(s => s.Amount);
-                            count = invoice.GroupBy(s=>s.Date.Year).Count();
-                            ChartDatas.Add(new KeyValuePair<object, decimal>(invoice.First().Date.Month, summ/count));
+                            count = invoice.GroupBy(s => s.Date.Year).Count();
+                            ChartDatas.Add(new KeyValuePair<object, decimal>(invoice.First().Date.Month, summ / count));
                         }
                         break;
                     //ByYear
@@ -712,5 +773,5 @@ namespace UserControls.ViewModels
         #endregion
     }
 
-    
+
 }

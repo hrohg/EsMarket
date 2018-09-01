@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -22,6 +23,7 @@ using ES.Common.Models;
 using ES.Data.Enumerations;
 using Shared.Helpers;
 using UserControls.Helpers;
+using UserControls.Views.PrintPreview.Views;
 using UserControls.Views.ReceiptTickets;
 using UserControls.Views.ReceiptTickets.Views;
 using CashDeskManager = UserControls.Managers.CashDeskManager;
@@ -176,6 +178,17 @@ namespace UserControls.ViewModels.Invoices
                 InvoiceItem.Price = GetProductPrice(InvoiceItem.Product);
             }
             RaisePropertyChanged("InvoiceItem");
+            InvoicePaid.DiscountBond = SolveDiscountBond();
+        }
+
+        protected override void OnInvoiceItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            base.OnInvoiceItemsChanged(sender, e);
+            InvoicePaid.DiscountBond = SolveDiscountBond();
+        }
+        private decimal SolveDiscountBond()
+        {
+            return ApplicationManager.Settings.SettingsContainer.MemberSettings.UseDiscountBond ? InvoiceItems.Sum(s => GetProductDiscountBond(s.Price ?? 0)) : 0;
         }
         private void PrintInvoiceTicket(ResponseReceiptModel ecrResponseReceiptModel)
         {
@@ -185,8 +198,11 @@ namespace UserControls.ViewModels.Invoices
                 InvoiceItems = InvoiceItems.ToList(),
                 InvoicePaid = InvoicePaid
             });
+            //PrintPreview
             //new UiPrintPreview(ticket).ShowDialog();
-            PrintManager.PrintDataGrid(ticket, ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSalePrinter);
+            
+            //Print
+            PrintManager.Print(ticket, ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSalePrinter);
         }
 
         protected override InvoiceItemsModel GetInvoiceItem(string code)
@@ -269,20 +285,20 @@ namespace UserControls.ViewModels.Invoices
         private void ImportFromXml()
         {
             var invoice = InvoicesManager.ImportInvoiceFromXml();
-            if (invoice == null || invoice.InvoiceInfo == null || invoice.BuyerInfo == null || invoice.GoodsInfo == null) return;
-            var partner = ApplicationManager.CashManager.GetPartners.FirstOrDefault(s => s.FullName == invoice.BuyerInfo.Name && s.TIN == invoice.BuyerInfo.Tin);
-            if (partner != null) Partner = partner;
-            foreach (var goodsInfo in invoice.GoodsInfo)
-            {
-                GetInvoiceItem(goodsInfo.Code);
-                if (InvoiceItem != null)
-                {
-                    InvoiceItem.Price = goodsInfo.Price;
-                    InvoiceItem.Quantity = goodsInfo.Quantity;
-                    InvoiceItems.Add(InvoiceItem);
-                    InvoiceItem = null;
-                }
-            }
+            //if (invoice == null || invoice.InvoiceInfo == null || invoice.BuyerInfo == null || invoice.GoodsInfo == null) return;
+            // var partner = ApplicationManager.CashManager.GetPartners.FirstOrDefault(s => s.FullName == invoice.BuyerInfo.Name && s.TIN == invoice.BuyerInfo.Tin);
+            //if (partner != null) Partner = partner;
+            //foreach (var goodsInfo in invoice.GoodsInfo)
+            //{
+            //    GetInvoiceItem(goodsInfo.Code);
+            //    if (InvoiceItem != null)
+            //    {
+            //        InvoiceItem.Price = goodsInfo.Price;
+            //        InvoiceItem.Quantity = goodsInfo.Quantity;
+            //        InvoiceItems.Add(InvoiceItem);
+            //        InvoiceItem = null;
+            //    }
+            //}
         }
         private void ImportFromExcel()
         {
@@ -448,24 +464,30 @@ namespace UserControls.ViewModels.Invoices
 
         protected override decimal GetProductPrice(EsProductModel product)
         {
-            decimal price = product != null ? (product.Price ?? 0) : 0;
+
             if (Partner == null || product == null)
             {
-                return price;
+                return 0;
             }
-
-            price = base.GetProductPrice(product);
+            var price = base.GetProductPrice(product);
             var dealerPrice = (product.DealerPrice ?? 0) * (1 - (product.DealerDiscount ?? 0) / 100);
+
             switch (Partner.PartnersTypeId)
             {
                 case (long)PartnerType.Dealer:
-                    price = product.HasDealerPrice ? dealerPrice : price;
+                    if (product.HasDealerPrice) price = dealerPrice;
                     break;
                 default:
-                    if (product.HasDealerPrice) price = Math.Max(price, dealerPrice);
+                    if (!ApplicationManager.Settings.SettingsContainer.MemberSettings.UseDiscountBond) price -= GetProductDiscountBond(price);
+                    price = Math.Max(price, dealerPrice);
                     break;
             }
             return price;
+        }
+
+        private decimal GetProductDiscountBond(decimal price)
+        {
+            return price * (Partner != null ? (Partner.Discount ?? 0) / 100 : 0);
         }
 
         private bool IsPaidValid
@@ -554,7 +576,7 @@ namespace UserControls.ViewModels.Invoices
 
 
                 //CheckForPrize(Invoice);
-                MessageManager.OnMessage(string.Format("{0} ապրանքագիրը հաստատվել է հաջողությամբ: Գումար {1} վճարվել է {2}", Invoice.InvoiceNumber, invoice.Amount, InvoicePaid.ByCash), MessageTypeEnum.Success);
+                MessageManager.OnMessage(string.Format("{0} ապրանքագիրը հաստատվել է հաջողությամբ: Գումար {1} վճարվել է {2}", Invoice.InvoiceNumber, invoice.Amount.ToString("N"), InvoicePaid.ByCash.ToString("N")), MessageTypeEnum.Success);
 
                 if (closeOnExit && invoice.ApproveDate != null)
                 {

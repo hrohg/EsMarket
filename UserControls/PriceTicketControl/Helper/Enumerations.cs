@@ -11,6 +11,7 @@ namespace UserControls.PriceTicketControl.Helper
         PriceOnly,
         Small,
         Large,
-        LargePrice
+        LargePrice,
+        PriceTag
     }
 }

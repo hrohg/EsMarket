@@ -11,14 +11,14 @@ namespace ES.DataAccess.Models
 {
     using System;
     using System.Collections.Generic;
-
+    
     public partial class CashDesk
     {
         public CashDesk()
         {
             this.SaleInCash = new HashSet<SaleInCash>();
         }
-
+    
         public System.Guid Id { get; set; }
         public long MemberId { get; set; }
         public decimal Total { get; set; }
@@ -27,9 +27,8 @@ namespace ES.DataAccess.Models
         public string Notes { get; set; }
         public bool IsCash { get; set; }
         public bool IsActive { get; set; }
-
+    
         public virtual EsMembers EsMembers { get; set; }
         public virtual ICollection<SaleInCash> SaleInCash { get; set; }
-        
     }
 }

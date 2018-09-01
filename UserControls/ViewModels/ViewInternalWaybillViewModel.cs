@@ -20,6 +20,7 @@ namespace UserControls.ViewModels
 
         #region Internal properties
         private List<InternalWayBillDetilesModel> _items = new List<InternalWayBillDetilesModel>();
+        private Tuple<DateTime, DateTime> _dateIntermediate;
         #endregion
 
         #region External properties
@@ -41,36 +42,33 @@ namespace UserControls.ViewModels
         public InternalWayBillDetileViewModel(object o)
             : base()
         {
-            Title = Description = "Տեղափոխություն";
-            IsShowUpdateButton = true;
-            Initialize(o);
         }
         #endregion
 
         #region Internal methods
-        private void Initialize(object o)
+        protected override void Initialize()
         {
-            OnUpdate(o);
+            IsShowUpdateButton = true;
+            base.Initialize();
+            Title = Description = "Տեղափոխություն";
         }
-        private void Update(Tuple<DateTime, DateTime> dateIntermediate)
+        protected override void UpdateAsync()
         {
-            IsLoading = true;
+            if(_dateIntermediate==null) {IsLoading=false; return;}
             RaisePropertyChanged(IsInProgressProperty);
-            ViewList = new ObservableCollection<InternalWayBillDetilesModel>(InvoicesManager.GetWillBillByDetile(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetMember.Id));
+            ViewList = new ObservableCollection<InternalWayBillDetilesModel>(InvoicesManager.GetWillBillByDetile(_dateIntermediate.Item1, _dateIntermediate.Item2, ApplicationManager.Instance.GetMember.Id));
             TotalRows = _items.Count;
             TotalCount = (double)_items.Sum(s => s.Quantity ?? 0);
             Total = (double)_items.Sum(i => (i.Quantity ?? 0) * (i.Price ?? 0));
             IsLoading = false;
             RaisePropertyChanged(IsInProgressProperty);
         }
-        protected override void OnUpdate(object o)
+        protected override void OnUpdate()
         {
-            base.OnUpdate(o);
             Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
             if (dateIntermediate == null) return;
             Description = string.Format("Տեղափոխություն {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
-            var thread = new Thread(() => Update(dateIntermediate));
-            thread.Start();
+            base.OnUpdate();
         }
         protected override void OnPrint(object o)
         {
@@ -106,7 +104,7 @@ namespace UserControls.ViewModels
             }
         }
         public int Count { get { return _items.Count; } }
-        public override double  Total { get { return (double)_items.Sum(s => s.Amount); }}
+        public override double Total { get { return (double)_items.Sum(s => s.Amount); } }
         #endregion
 
         #region Constructors
@@ -122,7 +120,7 @@ namespace UserControls.ViewModels
         #region Internal methods
         private void Initialize(object o)
         {
-            OnUpdate(o);
+            OnUpdate();
         }
         private void Update(Tuple<DateTime, DateTime> dateIntermediate)
         {
@@ -134,9 +132,9 @@ namespace UserControls.ViewModels
             IsLoading = false;
             RaisePropertyChanged(IsInProgressProperty);
         }
-        protected override void OnUpdate(object o)
+        protected override void OnUpdate()
         {
-            base.OnUpdate(o);
+            base.OnUpdate();
             Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
             if (dateIntermediate == null) return;
 
@@ -154,5 +152,5 @@ namespace UserControls.ViewModels
         }
         #endregion
     }
-    
+
 }

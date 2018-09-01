@@ -1,10 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Xml.Serialization;
 using ES.Data.Enumerations;
 using ES.Data.Model;
 
 namespace ES.Data.Models
 {
+    [Serializable]
     public class PartnerModel:INotifyPropertyChanged
     {
         #region EsUserModel properties
@@ -31,9 +33,11 @@ namespace ES.Data.Models
         private const string BankAccountProperty = "BankAccount";
         private const string NotesProperty = "Notes";
         #endregion
+
         /// <summary>
         /// EsUsermodel private properties
         /// </summary>
+        /// 
         #region Private properties
         private Guid _id=Guid.NewGuid();
         private long _esMemberId;
@@ -59,33 +63,44 @@ namespace ES.Data.Models
         private string _bankAccount;
         private string _notes;
         #endregion
+
         /// <summary>
         /// EsUserModel public properties
         /// </summary>
+        /// 
         #region Public properties
+        [XmlIgnore]
         public Guid Id
         {
             get { return _id; }
             set { _id = value; }
         }
-        public long EsMemberId {get { return _esMemberId; }set {_esMemberId= value; OnPropertyChanged(EsMemberIdProperty); }}
+        [XmlIgnore]
+        public long EsMemberId {get { return _esMemberId; } set {_esMemberId= value; OnPropertyChanged(EsMemberIdProperty); }}
+        [XmlIgnore]
         public EsMemberModel EsMember { get; set; }
         public long? PartnersTypeId
         {
             get { return _partnersTypeId; }
             set { _partnersTypeId = value; OnPropertyChanged(PartnersTypeIdProperty); }
         }
+        [XmlIgnore]
         public PartnerType PartnerTypeEnum
         {
             get { return PartnersTypeId!=null? (PartnerType) PartnersTypeId: PartnerType.None; }
         }
+        [XmlIgnore]
         public PartnerTypeModel PartnersType { get { return _partnerType; } set { _partnerType = value; } }
+
         public long? EsUserId { get { return _esUserId; } set { _esUserId = value; } }
+        [XmlIgnore]
         public EsUserModel EsUser { get { return _esUser; } set { _esUser = value; } }
         public string ClubSixteenId { get { return _clubSixteenId; } set { _clubSixteenId = value; OnPropertyChanged(ClubSixteenIdProperty); OnPropertyChanged("IsRegistered"); } }
+        [XmlIgnore]
         public bool IsRegistered { get { return !string.IsNullOrEmpty(ClubSixteenId); } }
         public string FullName{get { return _fullName; }set { _fullName = value; OnPropertyChanged(FullNameProperty); }}
         public string PartnerFull { get {return ((FullName ?? string.Empty) + (FullName ?? string.Empty) + (LastName ?? string.Empty) + (Mobile ?? string.Empty));} }
+        [XmlIgnore]
         public string Description { get { return string.Format("{0} {1}", FullName, MobileByFormating);} }
         public string FirstName { get { return _firstName; } set { _firstName = value; OnPropertyChanged(FirstnameProperty); } }
         public string LastName {get { return _lastName; } set { _lastName = value; OnPropertyChanged(LastNameProperty); }}
@@ -95,6 +110,7 @@ namespace ES.Data.Models
             {value = value.Replace(" ", string.Empty);
             value = value.Replace("-", string.Empty);}
             _mobile = value; OnPropertyChanged(MobileProperty); } }
+        [XmlIgnore]
         public string MobileByFormating { get
         {
             return Mobile==null || Mobile.Length != 12? Mobile: string.Format("({0} {1}) {2} {3} {4}", 
@@ -106,9 +122,11 @@ namespace ES.Data.Models
         } }
         public string Email{get { return _email; }set { _email = value; OnPropertyChanged(EmailProperty); }}
         public string Address{get { return _address; }set { _address= value; OnPropertyChanged(AddressProperty);}}
+        [XmlIgnore]
         public decimal? Discount{get { return _discount; }set { _discount = value; OnPropertyChanged(DiscountProperty); }}
+        [XmlIgnore]
         public decimal Debit {get { return _debit; }set { _debit= value; OnPropertyChanged(DebitProperty); }}
-
+        [XmlIgnore]
         public decimal Credit
         {
             get
@@ -121,7 +139,7 @@ namespace ES.Data.Models
                 OnPropertyChanged(CreditProperty);
             }
         }
-
+        [XmlIgnore]
         public decimal? MaxDebit { get { return _maxDebit; } set { _maxDebit = value; OnPropertyChanged(MinBalanceProperty); } }
         public string TIN { get { return _tin; } set { _tin = value; OnPropertyChanged(TINProperty); } }
         public string PasportData { get { return _pasportData; } set { _pasportData = value; OnPropertyChanged(PasportDataProperty); } }
@@ -130,6 +148,7 @@ namespace ES.Data.Models
         public string BankAccount {get { return _bankAccount; } set { _bankAccount = value; OnPropertyChanged(BankAccountProperty); }}
         public string Notes { get { return _notes; } set { _notes = value; OnPropertyChanged(NotesProperty); } }
         #endregion
+
         public PartnerModel()
         {
             

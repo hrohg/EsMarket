@@ -11,6 +11,7 @@ using ES.Business.ExcelManager;
 using ES.Business.Managers;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
+using ES.Data.Enumerations;
 using ES.Data.Model;
 using ES.Data.Models;
 using Shared.Helpers;

@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
-using EsMarket.SharedData.Enums;
+using EsMarket.SharedData.Models;
 
 namespace EsMarket.SharedData.Interfaces
 {
+
     public interface IEsMarketInvoice
     {
-        IInvoiceInfo InvoiceInfo { get; set; }
-        IDeliveryInfo DeliveryInfo { get; set; }
-        IEsMarketPartner SupplierInfo { get; set; }
-        IEsMarketPartner BuyerInfo { get; set; }
+        InvoiceInfo InvoiceInfo { get; set; }
+        DeliveryInfo DeliveryInfo { get; set; }
+        EsMarketPartner SupplierInfo { get; set; }
+        EsMarketPartner BuyerInfo { get; set; }
         string Notes { get; set; }
-        IList<IGoodsInfo> GoodsInfo { get; set; }
+        List<EsGoodInfo> GoodsInfo { get; set; }
     }
 }

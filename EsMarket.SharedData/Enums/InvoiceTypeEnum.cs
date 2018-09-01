@@ -2,6 +2,6 @@
 {
     public enum InvoiceTypeEnum
     {
-        
+        None = 0x00
     }
 }

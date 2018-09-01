@@ -14,6 +14,7 @@ using ES.Common.ViewModels.Base;
 using ES.Data.Models.Reports;
 using Shared.Helpers;
 using UserControls.ControlPanel.Controls;
+using UserControls.Enumerations;
 using UserControls.ViewModels;
 using UserControls.ViewModels.Reports;
 using UserControls.Views;
@@ -78,10 +79,11 @@ namespace ES.Market.Views.Reports.ViewModels
             var tab = _parentTabControl.FindChild<TabControl>();
             if (tab == null || vm == null) { return; }
             var content = new UctrlViewTable(vm) { DataContext = vm };
+            vm.OnClosed += CloseTab;
             var nextTab = tab.Items.Add(new TabItem
             {
-                Header = vm.Title,
                 Content = content,
+                DataContext = vm,
                 AllowDrop = true,
             });
             tab.SelectedIndex = nextTab;
@@ -221,7 +223,7 @@ namespace ES.Market.Views.Reports.ViewModels
         #endregion
 
         #region Commands
-        
+
         public ICommand ViewInternalWayBillCommands { get; private set; }
         private ICommand _viewSaleCommand;
         public ICommand ViewSaleCommand { get { return _viewSaleCommand ?? (_viewSaleCommand = new RelayCommand<ViewInvoicesEnum>(OnViewSale)); } }
@@ -229,6 +231,42 @@ namespace ES.Market.Views.Reports.ViewModels
         private ICommand _viewPurchaseCommand;
         public ICommand ViewPurchaseCommand { get { return _viewPurchaseCommand ?? (_viewPurchaseCommand = new RelayCommand<ViewInvoicesEnum>(OnViewPurchase)); } }
         public ICommand SallByCustomersCommand { get; private set; }
+
+
+        #region Products commands
+
+        private ICommand _viewProductsCommand;
+        public ICommand ViewProductsCommand { get { return _viewProductsCommand ?? (_viewProductsCommand = new RelayCommand<ProductsViewEnum>(OnViewProductsCommand)); } }
+
+        private void OnViewProductsCommand(ProductsViewEnum viewEnum)
+        {
+            TableViewModel<IInvoiceReport> vm = null;
+            switch (viewEnum)
+            {
+                case ProductsViewEnum.ByDetile:
+                    vm = new ViewProductsBalanceViewModel(viewEnum);
+                    break;
+                case ProductsViewEnum.ByPrice:
+                    vm = new ViewProductsBalanceViewModel(viewEnum);
+                    break;
+            }
+            if (vm != null) AddTab(vm);
+        }
+
+        private ICommand _checkProductsRemainderForStockCommand;
+        public ICommand CheckProductsRemainderForStockCommand { get { return _checkProductsRemainderForStockCommand ?? (_checkProductsRemainderForStockCommand = new RelayCommand(OnCheckProductsRemainderForStock, CanCheckProductsRemainderForStock)); } }
+
+        private bool CanCheckProductsRemainderForStock(object obj)
+        {
+            return true;
+        }
+
+        private void OnCheckProductsRemainderForStock(object obj)
+        {
+            AddTab(new CheckProductsRemainderByStockViewModel());
+        }
+
+        #endregion Products commands
         #endregion
 
         #region INotifyPropertyChanged

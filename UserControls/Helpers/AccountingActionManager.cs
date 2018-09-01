@@ -206,7 +206,7 @@ namespace UserControls.Helpers
                 MessageBox.Show("Անբավարար միջոցներ:", "Անբավարար միջոցներ", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            if (AccountingRecordsManager.SetPartnerPrepayment(accountingRecord)) ApplicationManager.CashManager.UpdatePartners();
+            if (AccountingRecordsManager.SetPartnerPrepayment(accountingRecord)) ApplicationManager.Instance.CashManager.UpdatePartners();
 
         }
         public static void Action(AccountingPlanEnum accountingPlan)

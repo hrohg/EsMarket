@@ -7,7 +7,6 @@ using System.Management;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using CashReg;
 using CashReg.Helper;
 using CashReg.Interfaces;
@@ -49,7 +48,7 @@ namespace UserControls.ViewModels
         }
         #endregion IsIngrogress
 
-        public bool HasBankAccounts { get { return ApplicationManager.CashManager.GetBankAccounts.Any(); } }
+        public bool HasBankAccounts { get { return ApplicationManager.Instance.CashManager.GetBankAccounts.Any(); } }
 
         #region Member settings
 
@@ -95,6 +94,8 @@ namespace UserControls.ViewModels
         #endregion Cashdesk port
 
         public bool NotifyAboutIncomingInvoices { get { return _settings.MemberSettings.NotifyAboutIncomingInvoices; } set { _settings.MemberSettings.NotifyAboutIncomingInvoices = value; RaisePropertyChanged("NotifyAboutIncomingInvoices"); } }
+        public bool UseShortCode { get { return _settings.MemberSettings.UseShortCode; } set { _settings.MemberSettings.UseShortCode = value; RaisePropertyChanged("UseShortCode"); } }
+        public bool UseDiscountBond { get { return _settings.MemberSettings.UseDiscountBond; } set { _settings.MemberSettings.UseDiscountBond = value; RaisePropertyChanged("UseDiscountBond"); } }
 
         #endregion General
 
@@ -106,7 +107,7 @@ namespace UserControls.ViewModels
         {
             get
             {
-                return _saleStocks ?? (_saleStocks = ApplicationManager.CashManager.GetStocks.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.ActiveSaleStocks.Contains(s.Id)) }).ToList());
+                return _saleStocks ?? (_saleStocks = ApplicationManager.Instance.CashManager.GetStocks.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.ActiveSaleStocks.Contains(s.Id)) }).ToList());
             }
         }
         #endregion Sale stocks
@@ -115,7 +116,7 @@ namespace UserControls.ViewModels
         private List<ItemsForChoose> _saleCashDesks;
         public List<ItemsForChoose> SaleCashDesks
         {
-            get { return _saleCashDesks ?? (_saleCashDesks = ApplicationManager.CashManager.GetCashDesk.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.SaleCashDesks.Contains(s.Id)) }).ToList()); }
+            get { return _saleCashDesks ?? (_saleCashDesks = ApplicationManager.Instance.CashManager.GetCashDesk.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.SaleCashDesks.Contains(s.Id)) }).ToList()); }
         }
         #endregion Sale cash desks
 
@@ -123,7 +124,7 @@ namespace UserControls.ViewModels
         private List<ItemsForChoose> _saleBankAccounts;
         public List<ItemsForChoose> SaleBankAccounts
         {
-            get { return _saleBankAccounts ?? (_saleBankAccounts = ApplicationManager.CashManager.GetBankAccounts.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.SaleBankAccounts.Contains(s.Id)) }).ToList()); }
+            get { return _saleBankAccounts ?? (_saleBankAccounts = ApplicationManager.Instance.CashManager.GetBankAccounts.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.SaleBankAccounts.Contains(s.Id)) }).ToList()); }
         }
         #endregion Sale bank accounts
 
@@ -142,7 +143,7 @@ namespace UserControls.ViewModels
         public bool SaleBySingle { get { return Settings.MemberSettings.SaleBySingle; } set { Settings.MemberSettings.SaleBySingle = value; RaisePropertyChanged("SaleBySingle"); } }
         public bool IsPrintSaleTicket { get { return Settings.MemberSettings.IsPrintSaleTicket; } set { Settings.MemberSettings.IsPrintSaleTicket = value; RaisePropertyChanged("IsPrintSaleTicket"); } }
         public bool IsEcrActivated { get { return Settings.MemberSettings.IsEcrActivated; } set { Settings.MemberSettings.IsEcrActivated = value; RaisePropertyChanged("IsEcrActivated"); } }
-        
+
         #endregion Sale
 
         #region Purchase
@@ -153,7 +154,7 @@ namespace UserControls.ViewModels
         {
             get
             {
-                return _purchaseStocks ?? (_purchaseStocks = ApplicationManager.CashManager.GetStocks.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.ActivePurchaseStocks.Contains(s.Id)) }).ToList());
+                return _purchaseStocks ?? (_purchaseStocks = ApplicationManager.Instance.CashManager.GetStocks.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.ActivePurchaseStocks.Contains(s.Id)) }).ToList());
             }
         }
         #endregion Purchase stocks
@@ -162,7 +163,7 @@ namespace UserControls.ViewModels
         private List<ItemsForChoose> _purchaseCashDesks;
         public List<ItemsForChoose> PurchaseCashDesks
         {
-            get { return _purchaseCashDesks ?? (_purchaseCashDesks = ApplicationManager.CashManager.GetCashDesk.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.PurchaseCashDesks.Contains(s.Id)) }).ToList()); }
+            get { return _purchaseCashDesks ?? (_purchaseCashDesks = ApplicationManager.Instance.CashManager.GetCashDesk.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.PurchaseCashDesks.Contains(s.Id)) }).ToList()); }
         }
         #endregion Purchase cash desks
 
@@ -170,7 +171,7 @@ namespace UserControls.ViewModels
         private List<ItemsForChoose> _purchaseBankAccounts;
         public List<ItemsForChoose> PurchaseBankAccounts
         {
-            get { return _purchaseBankAccounts ?? (_purchaseBankAccounts = ApplicationManager.CashManager.GetBankAccounts.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.PurchaseBankAccounts.Contains(s.Id)) }).ToList()); }
+            get { return _purchaseBankAccounts ?? (_purchaseBankAccounts = ApplicationManager.Instance.CashManager.GetBankAccounts.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.PurchaseBankAccounts.Contains(s.Id)) }).ToList()); }
         }
         #endregion Purchase bank accounts
 
@@ -217,7 +218,7 @@ namespace UserControls.ViewModels
             }
             set
             {
-                if (value && EcrSettings.Any(s=>s==SelectedEcrSettings))
+                if (value && EcrSettings.Any(s => s == SelectedEcrSettings))
                 {
                     foreach (var ecrSetting in EcrSettings)
                     {
@@ -468,7 +469,7 @@ namespace UserControls.ViewModels
                     }
                     else
                     {
-                        SelectedEcrSettings.TypeOfOperatorDeps = operatorDeps.d.Select(s => (Department)s).ToList();
+                        SelectedEcrSettings.TypeOfOperatorDeps = operatorDeps.d;
                         SelectedEcrSettings.CashierDepartment = SelectedEcrSettings.TypeOfOperatorDeps.FirstOrDefault();
                         RaisePropertyChanged("SelectedEcrSettings");
                         message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
@@ -536,7 +537,7 @@ namespace UserControls.ViewModels
             }
             else
             {
-                if(SelectedEcrSettings.IsDefault)
+                if (SelectedEcrSettings.IsDefault)
                     foreach (var ecrSetting in EcrSettings)
                     {
                         ecrSetting.IsDefault = false;

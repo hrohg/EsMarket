@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using ES.Business.ExcelManager;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
@@ -19,9 +20,11 @@ using UserControls.Helpers;
 
 namespace UserControls.ViewModels
 {
-    public class TableViewModelBase : DocumentViewModel
+    public abstract class TableViewModelBase : DocumentViewModel
     {
-        public TableViewModelBase() { }
+        protected TableViewModelBase() { Init(); }
+        private void Init() { Initialize(); }
+        protected abstract void Initialize();
     }
     public class TableViewModel<T> : TableViewModelBase
     {
@@ -64,6 +67,7 @@ namespace UserControls.ViewModels
         public bool IsShowUpdateButton { get; set; }
         public bool IsShowCloseButton { get; set; }
         public virtual ObservableCollection<T> ViewList { get; protected set; }
+
         #endregion
 
         #region Constructors
@@ -77,24 +81,38 @@ namespace UserControls.ViewModels
         }
         public TableViewModel()
         {
-            Initialize();
+
         }
         #endregion
 
         #region Internal methods
-
-        private void Initialize()
+        //Base
+        protected override void Initialize()
         {
             ViewList = new ObservableCollection<T>();
+            OnUpdate();
         }
-
         protected virtual bool CanExportToExcel(object o) { return ViewList != null && ViewList.Any(); }
         protected virtual void OnExportToExcel(object o)
         {
             if (!CanExportToExcel(o)) { return; }
         }
-        protected virtual void OnUpdate(object o)
-        { }
+
+        protected virtual void OnUpdate()
+        {
+            IsLoading = true;
+            new Thread(UpdateAsync).Start();
+        }
+        protected virtual void UpdateAsync() { UpdateCompleted(true); }
+
+        protected void UpdateCompleted(bool isSuccess)
+        {
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
+            {
+                RaisePropertyChanged("ViewList");
+                IsLoading = false;
+            });
+        }
         protected virtual bool CanPrint(object o) { return o != null && ViewList != null && ViewList.Any(); }
         protected virtual void OnPrint(object o)
         {
@@ -162,22 +180,21 @@ namespace UserControls.ViewModels
         {
             IsShowUpdateButton = true;
             _productOrderType = productOrderType;
-            Initialize();
         }
 
         #region Internal methods
 
-        private void Initialize()
+        protected override void Initialize()
         {
             IsClosable = true;
-            OnUpdate(null);
+            Title = "Անհրաժեշտ ապրանքների ցուցակ";
         }
-        private void UpdateAsync()
+        protected override void UpdateAsync()
         {
             switch (_productOrderType)
             {
                 case ProductOrderTypeEnum.ByQuantity:
-                    Title = "Անհրաժեշտ ապրանքների ցուցակ";
+
                     _items = ProductsManager.GetProductOrderByProduct();
 
                     if (_items == null || _items.Count == 0)
@@ -228,7 +245,7 @@ namespace UserControls.ViewModels
 
                     var invoices = InvoicesManager.GetInvoices((DateTime)dateIntermediate.Item1, (DateTime)dateIntermediate.Item2);
                     var invoiceItems = InvoicesManager.GetInvoiceItems(invoices.Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice).Select(s => s.Id));
-                    var productItems = new ProductsManager().GetProductItems(ApplicationManager.Instance.GetMember.Id);
+                    var productItems = ProductsManager.GetProductItems();
                     var productOrder = invoiceItems.GroupBy(s => s.ProductId).Where(s => s.FirstOrDefault() != null).Select(s => new ProductOrderModel
                     {
                         ProductId = s.First().ProductId,
@@ -255,7 +272,7 @@ namespace UserControls.ViewModels
                         item.Provider = provider.FullName;
                     }
                     _items = productOrder.OrderBy(s => s.Notes).ThenBy(s => s.Description).ThenBy(s => s.Code).ToList();
-                    
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -268,13 +285,13 @@ namespace UserControls.ViewModels
                 RaisePropertyChanged("ViewList");
                 IsLoading = false;
             }));
-            
+
 
         }
 
-        protected override void OnUpdate(object o)
+        protected override void OnUpdate()
         {
-            base.OnUpdate(o);
+            base.OnUpdate();
             var thread = new Thread(UpdateAsync);
             thread.Start();
             IsLoading = true;
@@ -283,7 +300,7 @@ namespace UserControls.ViewModels
         protected override void OnExportToExcel(object o)
         {
             base.OnExportToExcel(o);
-            ExcelExportManager.ExportList(ViewList);
+            ExcelExportManager.ExportList(ViewList.Select(s => new { Կոդ = s.Code, Անվանում = s.Description, Մնացորդ = s.ExistingQuantity, Քանակ = s.DemandQuantity, ԻՆքնարժեք = s.CostPrice, Գին = s.Price, Մատակարար = s.Provider, }));
         }
 
         protected override void OnPrint(object o)

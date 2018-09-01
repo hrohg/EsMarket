@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Linq;
 using System.IO;
 using System.Linq;
 using System.Transactions;
@@ -201,7 +202,7 @@ namespace ES.Business.Managers
                 ProductId = item.ProductId,
                 Product = ProductsManager.Convert(item.Products),
                 ProductItemId = item.ProductItemId,
-                ProductItem = new ProductsManager().Convert(item.ProductItems),
+                ProductItem = ProductsManager.Convert(item.ProductItems),
                 Code = item.Code,
                 Description = item.Description,
                 Mu = item.Mu,
@@ -756,11 +757,13 @@ namespace ES.Business.Managers
                     #region Paid 521 - 251
 
                     decimal amount = invoicePaid.ByCash;
+                    var exCashDesk = db.CashDesk.SingleOrDefault(s => s.Id == invoicePaid.CashDeskId && s.MemberId == invoice.MemberId);
+
                     if (amount > 0)
                     {
-                        if (invoicePaid.CashDeskId == null) return null;
-                        var exCashDesk = db.CashDesk.SingleOrDefault(s => s.Id == invoicePaid.CashDeskId && s.MemberId == invoice.MemberId);
                         if (exCashDesk == null) return null;
+                        if (invoicePaid.CashDeskId == null) return null;
+
                         // 521 - 251 Register in AccountingRecoords
                         var cpAccountingRecords = new AccountingRecords
                         {
@@ -837,8 +840,8 @@ namespace ES.Business.Managers
                             RegisterId = (long)invoice.ApproverId,
                         };
                         db.AccountingRecords.Add(accountingRecords);
-                        exPartner.Debit -= amount;
-                        exPartner.Credit -= amount;
+                        exCashDesk.Total -= amount;
+                        exPartner.Credit += amount;
                     }
 
                     #endregion
@@ -1156,7 +1159,7 @@ namespace ES.Business.Managers
                     #region Add InvoiceItems and edit ProductItems quantity
 
                     var productsIds = invoiceItems.Select(t => t.ProductId).ToList();
-                    List<ProductItems> productItemsFifo = db.ProductItems.Where(s => productsIds.Contains(s.ProductId) && s.Quantity > 0).ToList();
+                    List<ProductItems> productItemsFifo = GetProductItemsFifo(db, productsIds, fromStockIds).ToList();
                     decimal costPrice = 0;
 
                     var exInvoiceItems = db.InvoiceItems.Where(s => s.InvoiceId == invoice.Id).OrderBy(s => s.Index).ToList();
@@ -1507,8 +1510,7 @@ namespace ES.Business.Managers
 
                     #region Add InvoiceItems and edit ProductItems quantity
 
-                    var productsIds = invoiceItems.Select(t => t.ProductId).ToList();
-                    List<ProductItems> productItemsFifo = db.ProductItems.Where(s => productsIds.Contains(s.ProductId) && s.Quantity > 0).ToList();
+                    var productItemsFifo = GetProductItemsFifo(db, invoiceItems.Select(t => t.ProductId).ToList(), fromStockIds);
                     decimal costPrice = 0;
 
                     var exInvoiceItems = db.InvoiceItems.Where(s => s.InvoiceId == invoice.Id).OrderBy(s => s.Index).ToList();
@@ -1637,15 +1639,15 @@ namespace ES.Business.Managers
 
                     #region Cash
 
+                    var exCashDesk = invoicePaid != null && invoicePaid.CashDeskId != null ? db.CashDesk.SingleOrDefault(s => s.Id == invoicePaid.CashDeskId && s.MemberId == invoice.MemberId) : null;
+
                     if (invoicePaid.ByCash > 0)
                     {
-                        var exCashDesk = invoicePaid != null && invoicePaid.CashDeskId != null ? db.CashDesk.SingleOrDefault(s => s.Id == invoicePaid.CashDeskId && s.MemberId == invoice.MemberId) : null;
                         if (exCashDesk == null)
                         {
                             MessageManager.OnMessage("Դրամարկղ ընտրված չէ։ Ընտրեք դրամարկղ և փորձեք կրկին։", MessageTypeEnum.Warning);
                             return null;
                         }
-
                         // 251 - 221 Register in AccountingRecoords
                         var cpAccountingRecords = new AccountingRecords
                         {
@@ -1724,7 +1726,7 @@ namespace ES.Business.Managers
 
                     #endregion
 
-                    #region Add ReceivedPrepayment
+                    #region Add ReceivedPrepayment 221 - 523
 
                     if ((invoicePaid.ReceivedPrepayment ?? 0) > 0)
                     {
@@ -1735,7 +1737,9 @@ namespace ES.Business.Managers
                             RegisterDate = (DateTime)invoice.ApproveDate,
                             Amount = invoicePaid.ReceivedPrepayment ?? 0,
                             Debit = (int)AccountingPlanEnum.AccountingReceivable,
+                            DebitGuidId = exPartner.Id,
                             Credit = (int)AccountingPlanEnum.ReceivedInAdvance,
+                            CreditGuidId = exPartner.Id,
                             Description = invoice.InvoiceNumber,
                             MemberId = invoice.MemberId,
                             RegisterId = (long)invoice.ApproverId,
@@ -1775,6 +1779,60 @@ namespace ES.Business.Managers
 
                     #endregion
 
+                    #region Prepayment 521 - 224
+
+                    if ((invoicePaid.Prepayment ?? 0) > 0)
+                    {
+                        if (exCashDesk == null)
+                        {
+                            MessageManager.OnMessage("Դրամարկղ ընտրված չէ։ Ընտրեք դրամարկղ և փորձեք կրկին։", MessageTypeEnum.Warning);
+                            return null;
+                        }
+                        // 521 - 224 Register in AccountingRecoords
+                        var accountingRecords = new AccountingRecords
+                        {
+                            Id = Guid.NewGuid(),
+                            RegisterDate = (DateTime)invoice.ApproveDate,
+                            Amount = invoicePaid.Prepayment ?? 0,
+                            Debit = (int)AccountingPlanEnum.PurchasePayables,
+                            DebitGuidId = exCashDesk.Id,
+                            Credit = (int)AccountingPlanEnum.Prepayments,
+                            CreditGuidId = exPartner.Id,
+                            Description = invoice.InvoiceNumber,
+                            MemberId = invoice.MemberId,
+                            RegisterId = (long)invoice.ApproverId,
+                        };
+                        db.AccountingRecords.Add(accountingRecords);
+                        exPartner.Credit += invoicePaid.Prepayment ?? 0;
+                        exCashDesk.Total += invoicePaid.Prepayment ?? 0;
+                    }
+
+                    #endregion
+
+                    #region Set Discount Bond
+
+                    if (invoicePaid.DiscountBond > 0)
+                    {
+                        // 521 - 224 Register in AccountingRecoords
+                        var accountingRecords = new AccountingRecords
+                        {
+                            Id = Guid.NewGuid(),
+                            RegisterDate = (DateTime)invoice.ApproveDate,
+                            Amount = invoicePaid.Prepayment ?? 0,
+                            Debit = (int)AccountingPlanEnum.Prepayments,
+                            DebitGuidId = exPartner.Id,
+                            Credit = (int)AccountingPlanEnum.PurchasePayables,
+                            //CreditGuidId = exPartner.Id,
+                            Description = invoice.InvoiceNumber,
+                            MemberId = invoice.MemberId,
+                            RegisterId = (long)invoice.ApproverId,
+                        };
+                        db.AccountingRecords.Add(accountingRecords);
+                        exPartner.Debit += invoicePaid.Prepayment ?? 0;
+                        //exCashDesk.Total += invoicePaid.Prepayment ?? 0;
+                        return null;
+                    }
+                    #endregion Set Discount Bond
                     try
                     {
                         db.SaveChanges();
@@ -1788,6 +1846,23 @@ namespace ES.Business.Managers
                         return null;
                     }
                 }
+            }
+        }
+
+        private static IEnumerable<ProductItems> GetProductItemsFifo(EsStockDBEntities db, List<Guid> productsIds, IEnumerable<long> stockIds)
+        {
+            try
+            {
+                List<ProductItems> productItemsFifo = db.ProductItems
+                        .Where(s => s.MemberId == MemberId && s.StockId != null && stockIds.Contains(s.StockId.Value) && productsIds.Contains(s.ProductId) && s.Quantity > 0).ToList();
+                var productItems = productItemsFifo.Join(db.Invoices.Where(s => s.MemberId == MemberId && s.ToStockId != null && stockIds.Contains(s.ToStockId.Value)), pi => pi.DeliveryInvoiceId, i => i.Id, (pi, i) => new { pi, i }).ToList();
+                return productItems.OrderBy(t => t.i.ApproveDate).Select(t => t.pi);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
 
@@ -1905,7 +1980,7 @@ namespace ES.Business.Managers
                     #region Add InvoiceItems and edit ProductItems quantity
 
                     var productsIds = invoiceItems.Select(t => t.ProductId).ToList();
-                    List<ProductItems> productItemsFifo = db.ProductItems.Where(s => productsIds.Contains(s.ProductId) && s.Quantity > 0).ToList();
+                    List<ProductItems> productItemsFifo = GetProductItemsFifo(db, productsIds, fromStockIds).ToList();
                     decimal costPrice = 0;
                     foreach (var invoiceItem in invoiceItems)
                     {
@@ -2047,7 +2122,7 @@ namespace ES.Business.Managers
                     #region Add InvoiceItems and edit ProductItems quantity
 
                     var productsIds = invoiceItems.Select(t => t.ProductId).ToList();
-                    List<ProductItems> productItemsFifo = db.ProductItems.Where(s => s.StockId == invoice.FromStockId && s.Quantity > 0 && productsIds.Contains(s.ProductId)).ToList();
+                    List<ProductItems> productItemsFifo = GetProductItemsFifo(db, productsIds, new List<long> { invoice.FromStockId ?? 0 }).ToList();
                     decimal costPrice = 0;
                     foreach (var invoiceItem in invoiceItems)
                     {
@@ -2776,7 +2851,45 @@ namespace ES.Business.Managers
             }
             return items;
         }
+        public static List<InvoiceItemsModel> GetSaleInvoiceItemsByStocksForReport(DateTime startDate, DateTime endDateTime, List<long> stocks)
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    return db.InvoiceItems.Where(s => s.Invoices.MemberId == ApplicationManager.Member.Id &&
+                                               s.ProductItems.StockId != null && stocks.Contains((int)s.ProductItems.StockId) &&
+                                               s.Invoices.ApproveDate >= startDate && s.Invoices.ApproveDate <= endDateTime &&
+                                               (s.Invoices.InvoiceTypeId == (int)InvoiceType.SaleInvoice ||
+                                                s.Invoices.InvoiceTypeId == (int)InvoiceType.InventoryWriteOff ||
+                                                s.Invoices.InvoiceTypeId == (int)InvoiceType.ReturnTo)).
+                        Select(s => new InvoiceItemsModel
+                        {
+                            Id = s.Id,
+                            ProductId = s.ProductId,
+                            ProductItem =
+                                s.ProductItemId != null
+                                    ? new ProductItemModel()
+                                    {
+                                        Id = (Guid)s.ProductItemId,
+                                        StockId = s.ProductItems.StockId
+                                    }
+                                    : null,
+                            Invoice = new InvoiceModel { InvoiceTypeId = s.Invoices.InvoiceTypeId },
+                            CostPrice = s.CostPrice,
+                            Price = s.Price,
+                            Quantity = s.Quantity,
 
+                        }).ToList();
+
+                }
+                catch (Exception)
+                {
+                    return new List<InvoiceItemsModel>();
+                }
+            }
+
+        }
         public static bool SaveInvoice(InvoiceModel invoiceModel, List<InvoiceItemsModel> invoiceItems)
         {
             var invoice = ConvertInvoice(invoiceModel);
@@ -3226,19 +3339,19 @@ namespace ES.Business.Managers
         }
         public static IEsMarketInvoice ImportInvoiceFromXml()
         {
-            var fileDialog = new OpenFileDialog {Title = "Ապրանքագրի բեռնում", Filter = "xml | .xml" };
+            var fileDialog = new OpenFileDialog { Title = "Ապրանքագրի բեռնում", Filter = "xml | *.xml" };
             return fileDialog.ShowDialog() == true ? XmlManager.Load<IEsMarketInvoice>(fileDialog.FileName) : null;
         }
         public static bool ExportInvoiceToXml(InvoiceModel invoice, List<InvoiceItemsModel> invoiceitems)
         {
-            return XmlManager.Save(Convert(invoice, invoiceitems));
+            return XmlManager.Save((EsMarketInvoice)Convert(invoice, invoiceitems));
         }
         public static bool ExportInvoiceToXmlAccDoc(InvoiceModel invoice, List<InvoiceItemsModel> invoiceitems)
         {
 
-            return TaxService.Converter.Helpers.AccountingDocumentConverter.ExportToXmlAccDoc(Convert(invoice, invoiceitems));
+            return TaxService.Converter.Helpers.AccountingDocumentConverter.ExportToXmlAccDoc((IEsMarketInvoice)new EsMarketInvoice()); //Convert(invoice, invoiceitems));
         }
-       
+
         private static IEsMarketInvoice Convert(InvoiceModel invoice, List<InvoiceItemsModel> invoiceitems)
         {
             IEsMarketInvoice esInvoice = new EsMarketInvoice
@@ -3267,13 +3380,14 @@ namespace ES.Business.Managers
                 {
 
                 },
-                GoodsInfo = new List<IGoodsInfo>(),
+                GoodsInfo = new List<EsGoodInfo>(),
                 Notes = invoice.Notes
             };
             foreach (var invoiceItemsModel in invoiceitems)
             {
                 esInvoice.GoodsInfo.Add(new EsGoodInfo
                 {
+                    Code = invoiceItemsModel.Code,
                     Description = invoiceItemsModel.Description,
                     Unit = invoiceItemsModel.Mu,
                     Quantity = invoiceItemsModel.Amount,
@@ -3282,6 +3396,6 @@ namespace ES.Business.Managers
             }
             return esInvoice;
         }
-        
+
     }
 }

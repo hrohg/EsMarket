@@ -28,6 +28,7 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
                                 <GroupBox Grid.Row="1" Header="Գնապիտակի տպիչ">
@@ -111,13 +112,50 @@
                                     </Grid>
                                 </GroupBox>
 
-                                <GroupBox Grid.Row="4" Header="Այլ">
-                                    <StackPanel>
-                                        <CheckBox IsChecked="{Binding LocalMode}" Content="Աշխատել լոկալ ռեժիմում" Margin="5"/>
-                                        <CheckBox IsChecked="{Binding NotifyAboutIncomingInvoices}" Content="Տեղեկացնել ստացված մուտքային ապրանքագրերի մասին" Margin="5"/>
-
-                                    </StackPanel>
+                                <GroupBox Grid.Row="4" Header="Ծանուցում">
+                                    <Grid>
+                                        <Grid.Resources>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Margin" Value="3"/>
+                                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                            </Style>
+                                        </Grid.Resources>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <CheckBox IsChecked="{Binding NotifyAboutIncomingInvoices}" Content="Մուտքային ապրանքագրերի մասին" Margin="5" IsEnabled="False"/>
+                                    </Grid>
                                 </GroupBox>
+
+                                <GroupBox Grid.Row="5" Header="Այլ">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Աշխանքային ռեժիմ"/>
+                                        <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding LocalMode}" Content="Լոկալ" Margin="5"/>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Ապրանքային կոդ"/>
+                                        <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding UseShortCode}" Content="Կարճ կոդ" Margin="5"/>
+                                    </Grid>
+                                </GroupBox>
+
                             </Grid>
                         </ScrollViewer>
                     </TabItem>
@@ -200,6 +238,7 @@
                                     <StackPanel>
                                         <CheckBox IsChecked="{Binding SaleBySingle}" Content="Վաճառել մեկական" Margin="5"/>
                                         <CheckBox IsChecked="{Binding IsPrintSaleTicket}" Content="Տպել վաճառքի ապրանքագիր" Margin="5"/>
+                                        <CheckBox IsChecked="{Binding UseDiscountBond}" Content= "Զեղչ (Կուտակային)" Margin="5"/>
                                     </StackPanel>
                                 </GroupBox>
                             </Grid>

@@ -13,7 +13,6 @@
          xmlns:popup="clr-namespace:UserControls.Controls.Popup"
          xmlns:controls="clr-namespace:ES.Common.Controls;assembly=ES.Common"
              xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data"
-             xmlns:invoices="clr-namespace:UserControls.ViewModels.Invoices"
              MinHeight="450"
          MinWidth="700"
          Width="Auto"
@@ -420,6 +419,8 @@
                             <TextBox Text="{Binding Path=Invoice.Amount, StringFormat={}{0:#,0.##}}" VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsEnabled="False" Foreground="Blue  "/>
                             <Label Content="Զեղչ" VerticalAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right" FontSize="12" Width="50"  Foreground="Green"/>
                             <TextBox Text="{Binding Path=Invoice.Discount, StringFormat={}{0:#,0.##}}" IsEnabled="False"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="50" FontSize="15" Foreground="Blue"/>
+                            <TextBlock Text="Բոնուս" VerticalAlignment="Center" FontSize="12"/>
+                            <TextBox Text="{Binding Path=InvoicePaid.DiscountBond, StringFormat={}{0:#,0.##}}" IsReadOnly="False" IsEnabled="False"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="50" FontSize="15" Foreground="Blue"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                             <Label Content="Ընդամենը" VerticalAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right" FontSize="12"  Foreground="Green"/>
@@ -493,9 +494,9 @@
                  FontSize="15" Height="25" Margin="1" Foreground="Green"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal ">
-                                    <Label Content="Կանխավճար" VerticalAlignment="Center" Foreground="Green"/>
-                                    <TextBox Text="{Binding Path=InvoicePaid.Prepayment, StringFormat={}{0:#,#.##}}"  VerticalAlignment="Center" HorizontalContentAlignment="Right"
-                 Width="100" FontSize="15" Height="25" Margin="1" Foreground="Green" IsReadOnly="True"/>
+                                    <Label Content="Կուտակում" VerticalAlignment="Center" Foreground="Green"/>
+                                    <TextBox Text="{Binding Path=InvoicePaid.Prepayment, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}"  VerticalAlignment="Center" HorizontalContentAlignment="Right"
+                 Width="100" FontSize="15" Height="25" Margin="1" Foreground="Green"/>
                                 </StackPanel>
                             </StackPanel>
                         </GroupBox>

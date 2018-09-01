@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.RightsManagement;
 using System.Threading;
 using System.Windows;
@@ -202,8 +203,8 @@ namespace ES.Market.ViewModels
         }
         public void Dispose()
         {
-            ApplicationManager.CashManager.BeginCashUpdateing -= BeginCashUpdateing;
-            ApplicationManager.CashManager.CashUpdated -= CashUpdated;
+            ApplicationManager.Instance.CashManager.BeginCashUpdateing -= BeginCashUpdateing;
+            ApplicationManager.Instance.CashManager.CashUpdated -= CashUpdated;
         }
         #endregion
 
@@ -212,8 +213,8 @@ namespace ES.Market.ViewModels
         {
             IsLocalMode = ApplicationManager.Settings.IsOfflineMode;
 
-            ApplicationManager.CashManager.BeginCashUpdateing += BeginCashUpdateing;
-            ApplicationManager.CashManager.CashUpdated += CashUpdated;
+            ApplicationManager.Instance.CashManager.BeginCashUpdateing += BeginCashUpdateing;
+            ApplicationManager.Instance.CashManager.CashUpdated += CashUpdated;
 
             Documents = new ObservableCollection<DocumentViewModel>();
             Tools = new ObservableCollection<ToolsViewModel>();
@@ -1347,7 +1348,10 @@ namespace ES.Market.ViewModels
 
         private bool CanGetProductOrder(ProductOrderTypeEnum productOrderType)
         {
-            return ApplicationManager.Instance.UserRoles.Any(s => s.RoleName == "Director" || s.RoleName == "Manager");
+            return ApplicationManager.IsInRole(UserRoleEnum.Admin) || 
+                ApplicationManager.IsInRole(UserRoleEnum.Director) || 
+                ApplicationManager.IsInRole(UserRoleEnum.Manager) || 
+                ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
         }
 
         private void OnGetProductOrder(ProductOrderTypeEnum productOrderType)
@@ -1395,7 +1399,7 @@ namespace ES.Market.ViewModels
             var vm = new InventoryWriteOffViewModel();
             vm.Invoice.FromStockId = stockId;
             vm.Invoice.Notes = notes;
-
+            vm.FromStock = ApplicationManager.Instance.CashManager.GetStocks.SingleOrDefault(s => s.Id == stockId);
             foreach (var item in items)
             {
                 var productId = item.ProductId;
@@ -1478,10 +1482,28 @@ namespace ES.Market.ViewModels
             }
         }
 
-        private void OnViewProductsByStock(object o)
+        private void OnViewProducts(ProductsViewEnum viewBy)
         {
-            var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(), true);
-            AddDocument(new ProductItemsViewModel(stocks));
+            DocumentViewModel vm = null;
+            switch (viewBy)
+            {
+                case ProductsViewEnum.ByStocks:
+                    var stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(), true);
+                    vm = new ProductItemsViewModel(stocks);
+                    break;
+                case ProductsViewEnum.ByDetile:
+                    vm = new ProductItemsViewByDetileModel();
+                    break;
+                case ProductsViewEnum.ByProducts:
+                    break;
+                case ProductsViewEnum.ByProductItems:
+                    break;
+                case ProductsViewEnum.ByCategories:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("viewBy", viewBy, null);
+            }
+            AddDocument(vm);
         }
 
         private bool CanGetProductHistory(object o)
@@ -1531,6 +1553,7 @@ namespace ES.Market.ViewModels
         private void OnManageProducts(object o)
         {
             var vm = new ProductManagerViewModel();
+            ApplicationManager.Instance.CashProvider.ProductUpdated += vm.OnUpdate;
             AddDocument(vm);
             vm.OnProductEdited += ProductItemsToolsViewModel.UpdateProducts;
         }
@@ -1621,7 +1644,11 @@ namespace ES.Market.ViewModels
         #endregion ConvertConfigFileCommand
 
         private ICommand _manageStockesCommand;
-        public ICommand ManageStockesCommand{get{return _manageStockesCommand??(_manageStockesCommand=new RelayCommand(OnManageStockes, CanManageStockes));}}
+
+        public ICommand ManageStockesCommand
+        {
+            get { return _manageStockesCommand ?? (_manageStockesCommand = new RelayCommand(OnManageStockes, CanManageStockes)); }
+        }
 
         private bool CanManageStockes(object obj)
         {
@@ -1632,8 +1659,13 @@ namespace ES.Market.ViewModels
         {
             AddDocument(new ManageStockesViewModel());
         }
+
         private ICommand _manageCashDesksCommand;
-        public ICommand ManageCashDesksCommand { get { return _manageCashDesksCommand ?? (_manageCashDesksCommand = new RelayCommand(OnManageCashDesks, CanManageCashDesks)); } }
+
+        public ICommand ManageCashDesksCommand
+        {
+            get { return _manageCashDesksCommand ?? (_manageCashDesksCommand = new RelayCommand(OnManageCashDesks, CanManageCashDesks)); }
+        }
 
         private bool CanManageCashDesks(object obj)
         {
@@ -1644,6 +1676,7 @@ namespace ES.Market.ViewModels
         {
             AddDocument(new ManageCashDesksViewModel());
         }
+
         #endregion Admin
 
         #region Documents
@@ -1905,6 +1938,15 @@ namespace ES.Market.ViewModels
         #endregion CashDesk
 
         #region Data
+        //View
+        private ICommand _changedProductsCommand;
+        public ICommand ChangedProductsCommand { get { return _changedProductsCommand ?? (_changedProductsCommand = new RelayCommand(OnViewChangedProducts)); } }
+
+        private void OnViewChangedProducts()
+        {
+            var vm = new ViewProductsViewModel(true);
+            AddDocument(vm);
+        }
 
         public ICommand GetReportCommand { get; private set; }
 
@@ -1914,11 +1956,28 @@ namespace ES.Market.ViewModels
         }
 
         private ICommand _getFallowProductsCommand;
-        public ICommand GetFallowProductsCommand{get{return _getFallowProductsCommand??(_getFallowProductsCommand = new RelayCommand(OnGetFalowProducts));}}
+
+        public ICommand GetFallowProductsCommand
+        {
+            get { return _getFallowProductsCommand ?? (_getFallowProductsCommand = new RelayCommand(OnGetFalowProducts)); }
+        }
 
         private void OnGetFalowProducts(object obj)
         {
             var vm = new FallowProductsViewModel();
+            AddDocument(vm);
+        }
+
+        private ICommand _checkProductsRemainderCommand;
+
+        public ICommand CheckProductsRemainderCommand
+        {
+            get { return _checkProductsRemainderCommand ?? (_checkProductsRemainderCommand = new RelayCommand(OnCheckProductsRemainder)); }
+        }
+
+        private void OnCheckProductsRemainder(object obj)
+        {
+            var vm = new CheckProductsRemainderViewModel();
             AddDocument(vm);
         }
 
@@ -1951,6 +2010,70 @@ namespace ES.Market.ViewModels
         #endregion Stock Take
 
         #endregion
+
+        #region Help
+
+        private ICommand _aboutCommand;
+        public ICommand AboutCommand { get { return _aboutCommand ?? (_aboutCommand = new RelayCommand(OnAbout)); } }
+
+        private void OnAbout(object obj)
+        {
+            AssemblyTitleAttribute _Title = null;
+            AssemblyCompanyAttribute _Company = null;
+            AssemblyCopyrightAttribute _Copyright = null;
+            AssemblyProductAttribute _Product = null;
+            Version _Version = null;
+            var Title = String.Empty;
+            var CompanyName = String.Empty;
+            var Copyright = String.Empty;
+            var ProductName = String.Empty;
+            var Version = String.Empty;
+            try
+            {
+
+
+                var assembly = Assembly.GetEntryAssembly();
+
+                if (assembly != null)
+                {
+                    object[] attributes = assembly.GetCustomAttributes(false);
+
+                    foreach (object attribute in attributes)
+                    {
+                        Type type = attribute.GetType();
+
+                        if (type == typeof(AssemblyTitleAttribute)) _Title = (AssemblyTitleAttribute)attribute;
+                        if (type == typeof(AssemblyCompanyAttribute))
+                            _Company = (AssemblyCompanyAttribute)attribute;
+                        if (type == typeof(AssemblyCopyrightAttribute))
+                            _Copyright = (AssemblyCopyrightAttribute)attribute;
+                        if (type == typeof(AssemblyProductAttribute))
+                            _Product = (AssemblyProductAttribute)attribute;
+                    }
+
+                    _Version = assembly.GetName().Version;
+                }
+
+                if (_Title != null) Title = _Title.Title;
+                if (_Company != null) CompanyName = _Company.Company;
+                if (_Copyright != null) Copyright = _Copyright.Copyright;
+                if (_Product != null) ProductName = _Product.Product;
+                if (_Version != null) Version = _Version.ToString();
+            }
+            catch
+            {
+            }
+
+            var info = string.Format("Application: {0}\n" +
+                                 "Product: {1}\n" +
+                                 "Company: {2}\n" +
+                                 "Version: {3}\n\n" +
+                                 "Copyright: {4}",
+                                 Title, ProductName, CompanyName, Version, Copyright);
+            MessageBox.Show(info, "Es Market");
+        }
+
+        #endregion Help
 
         #region Toolbar buttons
 
@@ -2018,9 +2141,9 @@ namespace ES.Market.ViewModels
             get { return new RelayCommand(OnGetSaleProducts); }
         }
 
-        public ICommand ViewProductsByStockCommand
+        public ICommand ViewProductsCommand
         {
-            get { return new RelayCommand(OnViewProductsByStock); }
+            get { return new RelayCommand<ProductsViewEnum>(OnViewProducts); }
         }
 
 

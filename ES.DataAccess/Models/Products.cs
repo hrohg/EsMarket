@@ -17,10 +17,10 @@ namespace ES.DataAccess.Models
         public Products()
         {
             this.InvoiceItems = new HashSet<InvoiceItems>();
+            this.ProductCategories = new HashSet<ProductCategories>();
             this.ProductGroup = new HashSet<ProductGroup>();
             this.ProductItems = new HashSet<ProductItems>();
             this.ProductOrderItems = new HashSet<ProductOrderItems>();
-            this.ProductCategories = new HashSet<ProductCategories>();
         }
     
         public System.Guid Id { get; set; }
@@ -44,15 +44,16 @@ namespace ES.DataAccess.Models
         public Nullable<long> BrandId { get; set; }
         public long LastModifierId { get; set; }
         public Nullable<int> ExpiryDays { get; set; }
+        public System.DateTime LastModifiedDate { get; set; }
     
         public virtual Brands Brands { get; set; }
         public virtual EsMembers EsMembers { get; set; }
         public virtual EsUsers EsUsers { get; set; }
         public virtual ICollection<InvoiceItems> InvoiceItems { get; set; }
+        public virtual ICollection<ProductCategories> ProductCategories { get; set; }
         public virtual ICollection<ProductGroup> ProductGroup { get; set; }
         public virtual ICollection<ProductItems> ProductItems { get; set; }
         public virtual ICollection<ProductOrderItems> ProductOrderItems { get; set; }
-        public virtual ICollection<ProductCategories> ProductCategories { get; set; }
         public virtual ProductsAdditionalData ProductsAdditionalData { get; set; }
     }
 }

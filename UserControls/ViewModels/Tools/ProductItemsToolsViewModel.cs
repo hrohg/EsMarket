@@ -4,22 +4,15 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Input;
 using ES.Business.Managers;
-using ES.Business.Models;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
+using UserControls.Enumerations;
 using Xceed.Wpf.AvalonDock.Layout;
 
 namespace UserControls.ViewModels.Tools
 {
-    public enum ProductsViewEnum
-    {
-        ByProducts,
-        ByProductItems,
-        ByCategories,
-        ByStocks
-    }
     public class ProductItemsToolsViewModel : ToolsViewModel
     {
         #region Events
@@ -185,9 +178,16 @@ namespace UserControls.ViewModels.Tools
         #endregion Internal methods
 
         #region External methods
-        public void UpdateProducts()
+        public void UpdateProducts(bool update)
         {
-            OnUpdateProducts(null);
+            if (update)
+            {
+                OnUpdateProducts(null);
+            }
+            else
+            {
+                OnProductsUpdated();
+            }
         }
         #endregion External methods
 

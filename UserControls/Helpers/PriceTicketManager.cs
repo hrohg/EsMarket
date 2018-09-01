@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Windows.Controls;
 using ES.Business.Managers;
-using ES.Business.Models;
 using ES.Common;
 using ES.Data.Models;
+using UserControls.Controls;
 using UserControls.PriceTicketControl;
 using UserControls.PriceTicketControl.Helper;
 using UserControls.PriceTicketControl.ViewModels;
@@ -13,7 +13,7 @@ namespace UserControls.Helpers
 {
     public class PriceTicketManager
     {
-        public static void PrintPriceTicket(PrintPriceTicketEnum? printPriceTicketEnum, ProductModel product=null)
+        public static void PrintPriceTicket(PrintPriceTicketEnum? printPriceTicketEnum, ProductModel product = null)
         {
             if (printPriceTicketEnum == null)
             {
@@ -21,7 +21,7 @@ namespace UserControls.Helpers
             }
             if (product == null)
             {
-                product = SelectItemsManager.SelectProduct(ApplicationManager.CashManager.Products.Where(s => !string.IsNullOrEmpty(s.Barcode)).ToList()).FirstOrDefault();
+                product = SelectItemsManager.SelectProduct(ApplicationManager.Instance.CashManager.Products.Where(s => !string.IsNullOrEmpty(s.Barcode)).ToList()).FirstOrDefault();
             }
             if (product == null) return;
             UserControl priceTicket = null;
@@ -59,6 +59,10 @@ namespace UserControls.Helpers
                     break;
                 case PrintPriceTicketEnum.PriceOnly:
                     priceTicket = new UctrlPriceTicket(new PriceTicketVewModel(product.Code, product.Barcode, string.Format("{0} ({1})", product.Description, product.Code), product.Price, null));
+                    break;
+                case PrintPriceTicketEnum.PriceTag:
+                    new PriceTagViewDialog().Show();
+                    return;
                     break;
                 case null:
                     break;

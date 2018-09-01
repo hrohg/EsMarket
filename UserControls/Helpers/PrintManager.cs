@@ -288,8 +288,8 @@ namespace UserControls.Helpers
             PageRangeSelection selection = PageRangeSelection.AllPages;
             PageRange range = new PageRange();
             XpsDocumentWriter xpsdw = PrintQueue.CreateXpsDocumentWriter(objectToPrint.Name, ref area, ref selection, ref range);
-            if(area==null) return;
-            Thickness margins = new Thickness(area.MediaSizeHeight>200?96:0);
+            if (area == null) return;
+            Thickness margins = new Thickness(area.MediaSizeHeight > 200 ? 96 : 0);
             if (xpsdw != null)
             {
                 double leftMargin = area.MediaSizeWidth - area.ExtentWidth - area.OriginWidth;// margins.Left - area.OriginWidth; 
@@ -442,7 +442,7 @@ namespace UserControls.Helpers
             try
             {
                 PrintDialog pDialog = new PrintDialog();
-                var printerServer = !string.IsNullOrEmpty(printer) &&printer.Split(new[] { @"\" }, StringSplitOptions.RemoveEmptyEntries).Count() > 1 ? 
+                var printerServer = !string.IsNullOrEmpty(printer) && printer.Split(new[] { @"\" }, StringSplitOptions.RemoveEmptyEntries).Count() > 1 ?
                     string.Format("\\\\{0}", printer.Split(new[] { @"\" }, StringSplitOptions.RemoveEmptyEntries).First()) : string.Empty;
                 var ps = string.IsNullOrEmpty(printerServer) ? new PrintServer() : new PrintServer(printerServer);
                 pDialog.PrintQueue = ps.GetPrintQueue(System.IO.Path.GetFileName(printer));
@@ -490,30 +490,42 @@ namespace UserControls.Helpers
             try
             {
                 PrintDialog pDialog = new PrintDialog();
-                var printerServer = printer.Split(new[] { @"\" }, StringSplitOptions.RemoveEmptyEntries).Count() > 1 ? string.Format("\\\\{0}", printer.Split(new[] { @"\" }, StringSplitOptions.RemoveEmptyEntries).First()) : string.Empty;
+                var printerServer = !string.IsNullOrEmpty(printer) && printer.Split(new[] { @"\" }, StringSplitOptions.RemoveEmptyEntries).Count() > 1 ?
+                    string.Format("\\\\{0}", printer.Split(new[] { @"\" }, StringSplitOptions.RemoveEmptyEntries).First()) : string.Empty;
                 var ps = string.IsNullOrEmpty(printerServer) ? new PrintServer() : new PrintServer(printerServer);
                 pDialog.PrintQueue = ps.GetPrintQueue(System.IO.Path.GetFileName(printer));
 
                 var printableArea = new Size(pDialog.PrintableAreaWidth, pDialog.PrintableAreaHeight);
                 ctrl.Arrange(new Rect(0, 0, printableArea.Width, printableArea.Height));
                 ctrl.UpdateLayout();
-
-
+                
                 PrintCapabilities capabilities = pDialog.PrintQueue.GetPrintCapabilities(pDialog.PrintTicket);
                 if (capabilities.PageImageableArea == null) return;
                 //get scale of the print wrt to screen of WPF visual
-                double scale = Math.Min(capabilities.PageImageableArea.ExtentWidth / ctrl.ActualWidth, capabilities.PageImageableArea.ExtentHeight / ctrl.ActualHeight);
+                //double scale = Math.Min(capabilities.PageImageableArea.ExtentWidth / ctrl.ActualWidth, capabilities.PageImageableArea.ExtentHeight / ctrl.ActualHeight);
+                double scale = printableArea.Width / ctrl.ActualWidth;
 
                 //Transform the Visual to scale
                 ctrl.LayoutTransform = new ScaleTransform(scale, scale);
 
                 //get the size of the printer page
-                Size sz = new Size(ctrl.ActualWidth * scale, ctrl.ActualHeight * scale); //(8.5 * 96.0, 11.0 * 96.0);
+                Size sz = new Size(ctrl.ActualWidth * (scale<1 ? scale: 0.87), ctrl.ActualHeight * scale); //(8.5 * 96.0, 11.0 * 96.0);
 
                 //update the layout of the visual to the printer page size.
                 ctrl.Measure(sz);
                 ctrl.Arrange(new Rect(new Point(capabilities.PageImageableArea.OriginWidth, capabilities.PageImageableArea.OriginHeight), sz));
                 ctrl.UpdateLayout();
+
+
+                //var dataGrid = ctrl.FindChild<DataGrid>();
+                //foreach (var dataGridColumn in dataGrid.Columns)
+                //{
+                //    var width = dataGridColumn.Width;
+                //    dataGridColumn.Width = 0;
+                //    dataGridColumn.Width = width.UnitType == DataGridLengthUnitType.Star ? dataGrid.ActualWidth - dataGrid.Columns.Sum(s => s.Width.DesiredValue) : width.DesiredValue;
+                //}
+                //dataGrid.UpdateLayout();
+
                 pDialog.PrintVisual(ctrl, "Print");
 
             }
@@ -522,5 +534,42 @@ namespace UserControls.Helpers
                 MessageBox.Show(ex.Message);
             }
         }
+        //public static void Print(UserControl ctrl, string printer)
+        //{
+        //    try
+        //    {
+        //        PrintDialog pDialog = new PrintDialog();
+        //        var printerServer = printer.Split(new[] { @"\" }, StringSplitOptions.RemoveEmptyEntries).Count() > 1 ? string.Format("\\\\{0}", printer.Split(new[] { @"\" }, StringSplitOptions.RemoveEmptyEntries).First()) : string.Empty;
+        //        var ps = string.IsNullOrEmpty(printerServer) ? new PrintServer() : new PrintServer(printerServer);
+        //        pDialog.PrintQueue = ps.GetPrintQueue(System.IO.Path.GetFileName(printer));
+
+        //        var printableArea = new Size(pDialog.PrintableAreaWidth, pDialog.PrintableAreaHeight);
+        //        ctrl.Arrange(new Rect(0, 0, printableArea.Width, printableArea.Height));
+        //        ctrl.UpdateLayout();
+
+
+        //        PrintCapabilities capabilities = pDialog.PrintQueue.GetPrintCapabilities(pDialog.PrintTicket);
+        //        if (capabilities.PageImageableArea == null) return;
+        //        //get scale of the print wrt to screen of WPF visual
+        //        double scale = Math.Min(capabilities.PageImageableArea.ExtentWidth / ctrl.ActualWidth, capabilities.PageImageableArea.ExtentHeight / ctrl.ActualHeight);
+
+        //        //Transform the Visual to scale
+        //        ctrl.LayoutTransform = new ScaleTransform(scale, scale);
+
+        //        //get the size of the printer page
+        //        Size sz = new Size(ctrl.ActualWidth * scale, ctrl.ActualHeight * scale); //(8.5 * 96.0, 11.0 * 96.0);
+
+        //        //update the layout of the visual to the printer page size.
+        //        ctrl.Measure(sz);
+        //        ctrl.Arrange(new Rect(new Point(capabilities.PageImageableArea.OriginWidth, capabilities.PageImageableArea.OriginHeight), sz));
+        //        ctrl.UpdateLayout();
+        //        pDialog.PrintVisual(ctrl, "Print");
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.Message);
+        //    }
+        //}
     }
 }

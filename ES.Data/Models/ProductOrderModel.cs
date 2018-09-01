@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 
 namespace ES.Data.Models
 {
     public class ProductOrderModel
     {
         #region External properties
+        public EsProductModel Product { get; set; }
+        public ObservableCollection<StockProducts> StockProducts { get; set; } 
+
         public int Index { get; set; }
         public Guid ProductId { get; set; }
-        public EsProductModel Product { get; set; }
+        
         public string Code { get; set; }
         public string Description { get; set; }
         public string Mu { get; set; }
@@ -22,6 +26,11 @@ namespace ES.Data.Models
         public decimal DemandQuantity { get { return (MinQuantity ?? 0) + SaleQuantity - ExistingQuantity; } }
         public string Provider { get; set; }
         public string Notes { get; set; }
+
+        public ProductOrderModel()
+        {
+            StockProducts = new ObservableCollection<StockProducts>();
+        }
         #endregion
     }
 }

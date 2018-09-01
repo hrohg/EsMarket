@@ -72,7 +72,7 @@ namespace UserControls.ViewModels.Reports
         private void Initialize()
         {
             Title = Description = "0-ական վաճառքների դիտում";
-            OnUpdate(null);
+            OnUpdate();
         }
 
         protected override void Update(Tuple<DateTime, DateTime> dateIntermediate)
@@ -89,7 +89,7 @@ namespace UserControls.ViewModels.Reports
                 case ViewInvoicesEnum.ByDetiles:
                     break;
                 case ViewInvoicesEnum.ByStock:
-                    Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList(); }));
+                    Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.Instance.CashManager.GetStocks, true).ToList(); }));
                     reports = new List<IInvoiceReport>(UpdateByStock(stocks, dateIntermediate));
                     break;
                 case ViewInvoicesEnum.ByPartner:
@@ -126,7 +126,7 @@ namespace UserControls.ViewModels.Reports
                     }
                     break;
                 case ViewInvoicesEnum.ByStocksDetiles:
-                    Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList(); }));
+                    Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.Instance.CashManager.GetStocks, true).ToList(); }));
 
                     var invoiceItems = InvoicesManager.GetInvoiceItemsByStocks(InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).Select(s => s.Id).ToList(), stocks);
 
@@ -213,9 +213,9 @@ namespace UserControls.ViewModels.Reports
             IsLoading = false;
             RaisePropertyChanged(IsInProgressProperty);
         }
-        protected override void OnUpdate(object o)
+        protected override void OnUpdate()
         {
-            base.OnUpdate(o);
+            base.OnUpdate();
             Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
             if (dateIntermediate == null) return;
             Description = string.Format("{0} {1} - {2}", Title, dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
