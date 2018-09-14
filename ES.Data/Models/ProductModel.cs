@@ -27,7 +27,7 @@ namespace ES.Data.Models
         public Brush ProductStateHighlighthing { get { return IsEnabled ? Brushes.Green : Brushes.Red; } }
         [XmlIgnore]
         public Brush ProductCountHighlighthing { get { return MinQuantity == null ? Brushes.BlueViolet : ExistingQuantity > MinQuantity ? Brushes.Green : Brushes.Red; } }
-
+        public PartnerModel Provider { get; set; }
         #endregion
 
         #region Constructors
@@ -76,6 +76,7 @@ namespace ES.Data.Models
             EsUser = item.EsUser;
         }
         #endregion
+
         //#region INotifyPropertyChanged
         //public event PropertyChangedEventHandler PropertyChanged;
         //private void OnPropertyChanged(string propertyName)

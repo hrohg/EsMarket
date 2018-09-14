@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using Microsoft.Office.Interop.Excel;
 
 namespace ES.Business.Helpers
 {
@@ -16,13 +15,13 @@ namespace ES.Business.Helpers
         public string CountryCode { get { return _countryCode; } set { _countryCode = value; } }
         public string ManufacturerCode { get { return _manufacturerCode; } set { _manufacturerCode = value; } }
         public string ProductCode { get { return _productCode; } set { _productCode = value; } }
-        public string Checksum { get { return CalculateChecksumDigit(); } }
+        private string GetChecksum(){return CalculateChecksumDigit();}
 
         public string Barcode
         {
             get
             {
-                var checksum = Checksum;
+                var checksum = GetChecksum();
                 return string.IsNullOrEmpty(CountryCode) || string.IsNullOrEmpty(ManufacturerCode) ||
                     string.IsNullOrEmpty(ProductCode) || string.IsNullOrEmpty(checksum) ? null : 
                     string.Format("{0}{1}{2}{3}", CountryCode, ManufacturerCode, ProductCode, checksum);
@@ -94,10 +93,10 @@ namespace ES.Business.Helpers
 
         private string CalculateChecksumDigit()
         {
-            return CalculateChecksumDigit(CountryCode + ManufacturerCode + ProductCode);
+            return CalculateEan13ChecksumDigit(CountryCode + ManufacturerCode + ProductCode);
         }
 
-        public static string CalculateChecksumDigit(string sTemp){
+        private static string CalculateEan13ChecksumDigit(string sTemp){
             int iSum = 0;
             int iDigit = 0;
 

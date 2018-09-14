@@ -70,6 +70,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected override void OnInitialize()
         {
+            if (Invoice.Partner == null) SetDefaultPartner(PartnersManager.GetDefaultParnerByInvoiceType((InvoiceType)Invoice.InvoiceTypeId));
             base.OnInitialize();
             //Title = "Գնում";
             FromStocks = StockManager.GetStocks().ToList();

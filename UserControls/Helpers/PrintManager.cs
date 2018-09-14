@@ -496,9 +496,9 @@ namespace UserControls.Helpers
                 pDialog.PrintQueue = ps.GetPrintQueue(System.IO.Path.GetFileName(printer));
 
                 var printableArea = new Size(pDialog.PrintableAreaWidth, pDialog.PrintableAreaHeight);
-                ctrl.Arrange(new Rect(0, 0, printableArea.Width, printableArea.Height));
+                ctrl.Arrange(new Rect(0, 0, printableArea.Width * 0.87, printableArea.Height));
                 ctrl.UpdateLayout();
-                
+
                 PrintCapabilities capabilities = pDialog.PrintQueue.GetPrintCapabilities(pDialog.PrintTicket);
                 if (capabilities.PageImageableArea == null) return;
                 //get scale of the print wrt to screen of WPF visual
@@ -509,7 +509,7 @@ namespace UserControls.Helpers
                 ctrl.LayoutTransform = new ScaleTransform(scale, scale);
 
                 //get the size of the printer page
-                Size sz = new Size(ctrl.ActualWidth * (scale<1 ? scale: 0.87), ctrl.ActualHeight * scale); //(8.5 * 96.0, 11.0 * 96.0);
+                Size sz = new Size(ctrl.ActualWidth * (scale < 1 ? scale : 0.87), ctrl.ActualHeight * scale); //(8.5 * 96.0, 11.0 * 96.0);
 
                 //update the layout of the visual to the printer page size.
                 ctrl.Measure(sz);

@@ -217,7 +217,7 @@ namespace UserControls.ViewModels.Products
         {
             if (!CanGenerateBarcode(o)) { return; }
             if (!string.IsNullOrEmpty(Product.Barcode)) { return; }
-            var nextCode = GetNextCode;
+            var nextCode = GetNextCode();
             Product.Barcode = new BarCodeGenerator(nextCode).Barcode;
             var code = !string.IsNullOrEmpty(Product.Code) ? Product.Code : Product.Barcode.Substring(7, 5);
             while (Products.FirstOrDefault(s => s.Id != Product.Id && (s.Barcode == Product.Barcode || s.Code == code)) != null)
@@ -344,7 +344,7 @@ namespace UserControls.ViewModels.Products
         }
         public void OnEditProduct()
         {
-            var product = new ProductsManager().EditProduct(Product);
+            var product = ProductsManager.EditProduct(Product);
             if (product != null)
             {
                 if (_products.FirstOrDefault(s => s.Code == product.Code) == null)
@@ -430,14 +430,11 @@ namespace UserControls.ViewModels.Products
             var ctrl = new UctrlBarcodeWithText(new BarcodeViewModel(Product.Code, Product.Barcode, Product.Description, Product.Price, null));
             PrintManager.PrintPreview(ctrl, "Print Barcode", true);
         }
-        private int GetNextCode
+        private int GetNextCode()
         {
-            get
-            {
-                return ProductsManager.GetNextProductCode(ApplicationManager.Instance.GetMember.Id); //_products.Count + 1;
+            return ProductsManager.GetNextProductCode(ApplicationManager.Instance.GetMember.Id); //_products.Count + 1;
                 //if (!string.IsNullOrEmpty(Product.Code)) Int32.TryParse(Product.Code, out next);
                 //return next;
-            }
         }
         public void GetProductBy(ProductViewType? type)
         {

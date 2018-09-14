@@ -372,5 +372,24 @@ namespace ES.Business.Managers
             }
         }
         #endregion
+
+        public static PartnerModel GetProviderForProduct(ProductModel item)
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    var partnerid =
+                        db.InvoiceItems.Where(s => s.ProductId == item.Id && s.Invoices.InvoiceTypeId==(long)InvoiceType.PurchaseInvoice && s.Invoices.MemberId == ApplicationManager.Member.Id)
+                        .OrderByDescending(s => s.Invoices.ApproveDate)
+                        .Select(s => s.Invoices.PartnerId).FirstOrDefault();
+                    return GetPartner(partnerid);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+        }
     }
 }

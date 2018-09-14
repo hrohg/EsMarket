@@ -6,10 +6,12 @@ namespace ES.Common
 {
     public static class Constants
     {
-        public static string AppName = "EsMarket";
+        public static string EsMarketAppName = "EsMarket";
         public const string DataServerSettingsDataPath = "Dss";
         public const string GeneralSettingsDataPath = "Gsd";
         public const string MemberSettingsDataPath = "Msd";
+        public const string MemberEcrServiceConfigPath = "EcrS";
+
         public const string ConfigFileExtantion = "conf";
         public const string DataFileExtantion = "dat";
         public const string XmlFileExtantion = "xml";

@@ -86,6 +86,10 @@
                               Command="{Binding ViewProductsCommand}"
                               CommandParameter="{x:Static enumerations:ProductsViewEnum.ByDetile}"/>
                     <Separator/>
+                    <MenuItem Header="Կորդ մնացորդ" 
+                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
+                                  Command="{Binding GetFallowProductsCommand}"/>
                     <MenuItem Header="Բաժինների մնացորդի ստուգում"
                                   IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"

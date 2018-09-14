@@ -131,7 +131,7 @@
                     <Setter Property="Control.HorizontalAlignment" Value="Right" />
                 </Style>
                 <ContextMenu x:Key="RowMenu">
-                    <MenuItem Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemoveInvoiceItemCommand}" CommandParameter="{Binding InvoiceItem.Id}" Header="Հեռացնել"/>
+                    <MenuItem Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemoveInvoiceItemCommand}" CommandParameter="{Binding InvoiceItem.Id}" Header="Հեռացնել!"/>
                 </ContextMenu>
             </DataGrid.Resources>
             <DataGrid.RowStyle>
@@ -140,7 +140,6 @@
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn IsReadOnly="True" Header="Բրենդ" Binding="{Binding Product.Brand.BrandName}"/>
                 <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" />
                 <DataGridTextColumn IsReadOnly="True" Header="Բարկոդ" Binding="{Binding Barcode}" />
                 <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />

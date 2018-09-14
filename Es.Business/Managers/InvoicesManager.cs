@@ -2862,7 +2862,8 @@ namespace ES.Business.Managers
                                                s.Invoices.ApproveDate >= startDate && s.Invoices.ApproveDate <= endDateTime &&
                                                (s.Invoices.InvoiceTypeId == (int)InvoiceType.SaleInvoice ||
                                                 s.Invoices.InvoiceTypeId == (int)InvoiceType.InventoryWriteOff ||
-                                                s.Invoices.InvoiceTypeId == (int)InvoiceType.ReturnTo)).
+                                                s.Invoices.InvoiceTypeId == (int)InvoiceType.ReturnTo || 
+                                                s.Invoices.InvoiceTypeId == (int)InvoiceType.ReturnFrom)).
                         Select(s => new InvoiceItemsModel
                         {
                             Id = s.Id,
@@ -3396,6 +3397,6 @@ namespace ES.Business.Managers
             }
             return esInvoice;
         }
-
+        
     }
 }

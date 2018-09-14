@@ -8,7 +8,7 @@ namespace ES.Common.Helpers
     {
         public static string GetLocalAppDataPath()
         {
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),Constants.AppName);
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),Constants.EsMarketAppName);
             if (Directory.Exists(path)) return path;
             try
             {
@@ -22,7 +22,7 @@ namespace ES.Common.Helpers
         }
         public static string GetTempAppPath()
         {
-            var path = Path.Combine(Environment.GetEnvironmentVariable("TEMP"), Constants.AppName);
+            var path = Path.Combine(Environment.GetEnvironmentVariable("TEMP"), Constants.EsMarketAppName);
             if (Directory.Exists(path)) return path;
             try
             {
@@ -72,6 +72,15 @@ namespace ES.Common.Helpers
             {
                 return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";
             }
+        }
+
+        public static string GetMemberEcrServiceFilePath(long memberId)
+        {
+            memberId = 0;
+
+            var appDataPath = GetLocalAppDataPath();
+            return string.Format(@"{0}\{1}_{2}.{3}", appDataPath, Constants.MemberEcrServiceConfigPath, memberId, Constants.ConfigFileExtantion);
+
         }
     }
 }

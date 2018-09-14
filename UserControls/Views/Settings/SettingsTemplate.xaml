@@ -411,6 +411,7 @@
                                         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                                             <Button Content="{Binding ManageButtonContent}" Command="{Binding Path=ManageEcrSettingsCommand}" MinWidth="100" Width="NaN" CommandParameter="{x:Static helper:EcrExecuiteActions.OperatorLogin}"/>
                                             <Button Content="Նոր" Command="{Binding Path=NewEcrSettingsCommand}" MinWidth="100" Width="NaN" CommandParameter="{x:Static helper:EcrExecuiteActions.OperatorLogin}"/>
+                                            <Button Content="Հիշել (service)" Command="{Binding Path=SaveEcrServiceSettingsCommand}" MinWidth="100" Width="NaN" CommandParameter="{x:Static helper:EcrExecuiteActions.OperatorLogin}"/>
                                         </StackPanel>
                                     </Grid>
                                     <GroupBox>

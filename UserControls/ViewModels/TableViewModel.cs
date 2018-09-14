@@ -23,7 +23,7 @@ namespace UserControls.ViewModels
     public abstract class TableViewModelBase : DocumentViewModel
     {
         protected TableViewModelBase() { Init(); }
-        private void Init() { Initialize(); }
+        protected void Init() { Initialize(); }
         protected abstract void Initialize();
     }
     public class TableViewModel<T> : TableViewModelBase
@@ -74,23 +74,23 @@ namespace UserControls.ViewModels
         public TableViewModel(List<T> list)
             : this()
         {
-            Initialize();
             IsShowUpdateButton = true;
             IsShowCloseButton = true;
-            ViewList = new ObservableCollection<T>(list);
         }
-        public TableViewModel()
+        public TableViewModel():base()
         {
-
+           
         }
         #endregion
 
         #region Internal methods
+
+        
         //Base
         protected override void Initialize()
         {
             ViewList = new ObservableCollection<T>();
-            OnUpdate();
+            Update();
         }
         protected virtual bool CanExportToExcel(object o) { return ViewList != null && ViewList.Any(); }
         protected virtual void OnExportToExcel(object o)
@@ -98,6 +98,7 @@ namespace UserControls.ViewModels
             if (!CanExportToExcel(o)) { return; }
         }
 
+        protected void Update() { OnUpdate();}
         protected virtual void OnUpdate()
         {
             IsLoading = true;
@@ -162,7 +163,7 @@ namespace UserControls.ViewModels
     public class ProductOrderBySaleViewModel : TableViewModel<ProductOrderModel>
     {
         #region Internal properties
-        private List<ProductOrderModel> _items = new List<ProductOrderModel>();
+        protected List<ProductOrderModel> _items = new List<ProductOrderModel>();
         private ProductOrderTypeEnum _productOrderType;
         #endregion
         #region External properties
@@ -188,6 +189,7 @@ namespace UserControls.ViewModels
         {
             IsClosable = true;
             Title = "Անհրաժեշտ ապրանքների ցուցակ";
+            base.Initialize();
         }
         protected override void UpdateAsync()
         {
@@ -272,7 +274,6 @@ namespace UserControls.ViewModels
                         item.Provider = provider.FullName;
                     }
                     _items = productOrder.OrderBy(s => s.Notes).ThenBy(s => s.Description).ThenBy(s => s.Code).ToList();
-
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -287,14 +288,6 @@ namespace UserControls.ViewModels
             }));
 
 
-        }
-
-        protected override void OnUpdate()
-        {
-            base.OnUpdate();
-            var thread = new Thread(UpdateAsync);
-            thread.Start();
-            IsLoading = true;
         }
 
         protected override void OnExportToExcel(object o)

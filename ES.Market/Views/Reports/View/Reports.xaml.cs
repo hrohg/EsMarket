@@ -12,6 +12,7 @@ using ES.Data.Models;
 using ES.Shop.Controls;
 using UserControls.ControlPanel.Controls;
 using UserControls.ViewModels;
+using UserControls.ViewModels.Reports;
 using UserControls.Views;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
@@ -101,7 +102,7 @@ namespace ES.Market.Views.Reports.View
                 MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
                 return;
             }
-            var viewModel = new TableViewModel<ProductProviderReportModel>(list);
+            var viewModel = new ViewProductsByProviderViewModel(list);
             //viewModel.SetItems(list);
             LoadTab(viewModel, "ReportByStocks");
 

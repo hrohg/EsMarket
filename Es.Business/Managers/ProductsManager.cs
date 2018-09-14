@@ -217,7 +217,7 @@ namespace ES.Business.Managers
                 exItem.HcdCs = item.HCDCS;
                 exItem.Description = item.Description;
                 exItem.Mu = item.Mu;
-                exItem.IsWeight = item.IsWeight??false;
+                exItem.IsWeight = item.IsWeight ?? false;
                 exItem.Note = item.Note;
                 exItem.CostPrice = item.CostPrice;
                 exItem.OldPrice = item.OldPrice;
@@ -259,7 +259,7 @@ namespace ES.Business.Managers
             exItem.HcdCs = item.HCDCS;
             exItem.Description = item.Description;
             exItem.Mu = item.Mu;
-            exItem.IsWeight = item.IsWeight??false;
+            exItem.IsWeight = item.IsWeight ?? false;
             exItem.Note = item.Note;
             exItem.CostPrice = item.CostPrice;
             exItem.OldPrice = item.OldPrice;
@@ -410,7 +410,7 @@ namespace ES.Business.Managers
         }
         public static List<ProductModel> GetChangedProducts(int days)
         {
-            return TryGetChangedProducts(days).Select(Convert).ToList();
+            return TryGetChangedProducts(days).Select(ConvertLight).ToList();
         }
         public List<ProductModel> GetProductsShortData(long memberId)
         {
@@ -425,7 +425,7 @@ namespace ES.Business.Managers
             return TryGetProductsBy(type);
 
         }
-        public ProductModel EditProduct(ProductModel product)
+        public static ProductModel EditProduct(ProductModel product)
         {
             var exProduct = Convert(product);
             var productAdditionalData = new ProductsAdditionalData { ProductId = product.Id };
@@ -1597,8 +1597,8 @@ namespace ES.Business.Managers
                     //var groupItems = items.Where(s => s.i.ApproveDate > date).GroupBy(t => t.pi.ProductId).Where(s => s.Sum(t => t.pi.Quantity) > 0).ToList();
 
                     var list = items.GroupBy(s => s.pi.ProductId).Where(s => s.Any(t => t.pi.StockId == stockId)).ToList();
-                    list = list.Where(s => s.Where(t => t.pi.StockId == stockId).Sum(t => t.pi.Quantity) > 0 &&
-                                           s.Where(t => t.pi.StockId != stockId).Sum(t => t.pi.Quantity) == 0).ToList();
+                    list = list.Where(s => s.Where(t => t.pi.StockId == stockId).Sum(t => t.pi.Quantity) == 0 &&
+                                           s.Where(t => t.pi.StockId != stockId).Sum(t => t.pi.Quantity) > 0).ToList();
 
                     var products = list.Select(s => s.First().pi.Products).Select(s => new ProductModel
                     {
@@ -1677,6 +1677,45 @@ namespace ES.Business.Managers
                 {
                     return new List<IInvoiceReport>();
                 }
+            }
+        }
+
+        public static List<IInvoiceReport> GetProductsByStock(DateTime? date, List<StockModel> stocks)
+        {
+            using (var db = GetDataContext())
+            {
+                var result = new List<IInvoiceReport>();
+                try
+                {
+
+                    var pI = db.ProductItems.Include(s => s.Products).
+                        Join(db.Invoices.Where(i => i.ApproveDate > date), pi => pi.DeliveryInvoiceId, i => i.Id, (pi, i) => new { pi, i }).
+                        Where(s => s.pi.Quantity > 0 && s.i != null);
+
+                    var invoiceItems = db.InvoiceItems.Where(ii => ii.Invoices.ApproveDate > date).Include(ii => ii.Invoices);
+
+
+                    foreach (var productItem in pI.GroupBy(t => t.pi.ProductId))
+                    {
+                        var invoiceItemsCur = invoiceItems.Where(ii => productItem.Select(t => t.i.Id).Contains(ii.InvoiceId));
+                        result.Add(new InvoiceReport
+                    {
+                        Description = productItem.First().pi.Products.Description,
+                        Count = productItem.Count(),
+                        Quantity = productItem.Sum(t => t.pi.Quantity) +
+                        invoiceItemsCur.Where(t => t.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice).Sum(t => t.Quantity ?? 0),
+                        //Cost = pI.Sum(t => t.pi.Quantity*t.pi.CostPrice),
+                        Price = productItem.Sum(t => t.pi.Quantity * (t.pi.Products.Price ?? 0)),
+                        Sale = productItem.Sum(t => t.pi.Quantity * ((t.pi.Products.Price ?? 0) - t.pi.CostPrice)),
+                    });
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                }
+                return result;
             }
         }
     }

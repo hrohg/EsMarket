@@ -7,13 +7,14 @@
                     xmlns:controls="clr-namespace:UserControls.Controls"
                     xmlns:helper1="clr-namespace:UserControls.PriceTicketControl.Helper"
                     xmlns:helpers1="clr-namespace:UserControls.Helpers"
-                    xmlns:helper="clr-namespace:CashReg.Helper;assembly=CashReg">
+                    xmlns:helper="clr-namespace:CashReg.Helper;assembly=CashReg"
+                    xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data">
 
 
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     <helpers1:EnumConverter x:Key="EnumConverter" />
     <helpers1:IntToEnumConverter x:Key="IntToEnumConverter" />
-    
+
     <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
         <Setter Property="FontSize" Value="18"/>
     </Style>
@@ -302,9 +303,18 @@
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Binding="{Binding Path=Description}" Header="Անվանում" Width="Auto" IsReadOnly="True"/>
                             <DataGridTextColumn Binding="{Binding Path=Mu}" Header="ՉՄ" Width="Auto" IsReadOnly="True"/>
+
+                            <DataGridTemplateColumn  Header="Մինիմալ քանակ" Width="Auto" CanUserSort="True" SortMemberPath="MinQuantity">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type models:ProductModel}">
+                                        <TextBlock Text="{Binding Path=MinQuantity, StringFormat={}{0:#,#.##}}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            
                             <DataGridTemplateColumn  Header="Առկա քանակ" Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">
                                 <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
+                                    <DataTemplate DataType="{x:Type models:ProductModel}">
                                         <TextBlock Text="{Binding Path=ExistingQuantity, StringFormat={}{0:#,#.##}}" Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -569,5 +579,5 @@
             <controls:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />
         </Grid>
     </DataTemplate>
-    
+
 </ResourceDictionary>

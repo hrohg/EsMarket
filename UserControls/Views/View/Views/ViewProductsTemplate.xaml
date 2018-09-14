@@ -102,4 +102,104 @@
             <controls:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"/>
         </Grid>
     </DataTemplate>
+
+
+    <DataTemplate DataType="{x:Type view:ProductItemsViewByDetileViewModel}">
+        <Grid>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="1" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="25" FontSize="15" VerticalContentAlignment="Center" Width="Auto" BorderThickness="1" BorderBrush="Black"/>
+                <Button Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" IsTabStop="False" Style="{DynamicResource FindTextBoxButtonStyle}"/>
+                <ContentControl Grid.Row="2" Content="{Binding}">
+                    <ContentControl.Resources>
+                        <DataTemplate DataType="{x:Type view:ProductItemsViewByDetileViewModel}">
+
+                            <controls:ProductItemDataGrid ColumnHeaders="{Binding Stocks}" ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="Կոդ" CanUserSort="True" SortMemberPath="Code">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                                                <TextBlock Text="{Binding Code}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" SortMemberPath="Description">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                                                <TextBlock Text="{Binding Description}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="ՉՄ" CanUserSort="True" SortMemberPath="Mu">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                                                <TextBlock Text="{Binding Mu}" HorizontalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Մին քանակ" CanUserSort="True" SortMemberPath="MinQuantity">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                                                <TextBlock Text="{Binding Product.MinQuantity, StringFormat='# ##0.##'}" HorizontalAlignment="Right"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Մնացորդ" CanUserSort="True" SortMemberPath="ExistingQuantity">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                                                <TextBlock Text="{Binding ExistingQuantity, StringFormat='# ##0.###'}" HorizontalAlignment="Right"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Գին" CanUserSort="True" SortMemberPath="Price">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                                                <TextBlock Text="{Binding Product.Price, StringFormat='# ##0.##'}" FontStyle="Italic" HorizontalAlignment="Right"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Գումար" CanUserSort="True" SortMemberPath="Amount">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                                                <TextBlock Text="{Binding Amount, StringFormat='# ##0.##'}" FontStyle="Italic" HorizontalAlignment="Right"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Header="Նշումներ">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate DataType="{x:Type models:ProductOrderModel}">
+                                                <TextBlock Text="{Binding Note}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </controls:ProductItemDataGrid>
+                        </DataTemplate>
+                    </ContentControl.Resources>
+                </ContentControl>
+                <StackPanel Grid.Row="3" HorizontalAlignment="Right" Orientation="Horizontal" Margin="3">
+                    <TextBlock Text="Տեսականի" Margin="3 0"/>
+                    <TextBlock Text="{Binding Count, StringFormat={}{0:#,0.##}}" Margin="3 0" Foreground="Blue"/>
+                    <TextBlock Text="Քանակ" Margin="3 0"/>
+                    <TextBlock Text="{Binding Quantity, StringFormat={}{0:#,0.##}}" Margin="3 0" Foreground="Blue"/>
+                    <TextBlock Text="Ինքնարժեք" Margin="3 0"/>
+                    <TextBlock Text="{Binding CostPrice, StringFormat={}{0:#,0.##}}" Margin="3 0" Foreground="Blue"/>
+                    <TextBlock Text="Վսճառքի գին" Margin="3 0"/>
+                    <TextBlock Text="{Binding Price, StringFormat={}{0:#,0.##}}" Margin="3 0" Foreground="Blue"/>
+                </StackPanel>
+                <StackPanel Grid.Row="4" HorizontalAlignment="Right" Orientation="Horizontal" Margin="1">
+                    <Button Content="Թարմացնել" Width="80" Command="{Binding UpdateCommand}"/>
+                    <Button Content="Արտահանել" Margin="1" Width="80" Command="{Binding ExportCommand}"/>
+                    <Button Content ="Տպել" Width="80" Command="{Binding PrintCommand}"/>
+                </StackPanel>
+            </Grid>
+            <controls:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"/>
+        </Grid>
+    </DataTemplate>
 </ResourceDictionary>

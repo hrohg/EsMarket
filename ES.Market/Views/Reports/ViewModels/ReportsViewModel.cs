@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -8,12 +9,9 @@ using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
-using ES.Common.Managers;
-using ES.Common.Models;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models.Reports;
 using Shared.Helpers;
-using UserControls.ControlPanel.Controls;
 using UserControls.Enumerations;
 using UserControls.ViewModels;
 using UserControls.ViewModels.Reports;
@@ -28,6 +26,8 @@ namespace ES.Market.Views.Reports.ViewModels
         #endregion
 
         #region Internal properties
+        private readonly object _sync = new object();
+        private DocumentViewModel _activeTab;
         private bool _isInProgress;
         private Window _parentTabControl;
         #endregion
@@ -43,6 +43,21 @@ namespace ES.Market.Views.Reports.ViewModels
                 OnPropertyChanged(IsInProgressProperty);
             }
         }
+
+        #region Avalon dock
+        public ObservableCollection<DocumentViewModel> Documents { get; set; }
+        public ObservableCollection<ToolsViewModel> Tools { get; set; }
+        public DocumentViewModel ActiveTab
+        {
+            get { return _activeTab; }
+            set
+            {
+                _activeTab = value;
+                OnPropertyChanged("AddSingleVisibility");
+            }
+        }
+        #endregion Avalon dock
+
         #endregion
 
         #region Constructors
@@ -57,6 +72,7 @@ namespace ES.Market.Views.Reports.ViewModels
         #region Internal methods
         private void Initialize()
         {
+            Documents = new ObservableCollection<DocumentViewModel>();
             ViewInternalWayBillCommands = new RelayCommand<ViewInvoicesEnum>(OnViewViewInternalWayBillCommands, CanViewViewInternalWayBillCommands);
             SallByCustomersCommand = new RelayCommand(OnSallByCustomers);
         }
@@ -65,7 +81,7 @@ namespace ES.Market.Views.Reports.ViewModels
         {
             var vm = new ReportBaseViewModel();
             vm.OnUpdate += UpdateSallByCustomers;
-            vm.Update();
+
             var tabControl = new UctrlViewTable { DataContext = vm };
             AddTab(tabControl, vm);
         }
@@ -111,6 +127,40 @@ namespace ES.Market.Views.Reports.ViewModels
             tab.Items.RemoveAt(tab.Items.IndexOf(tabItem));
         }
 
+        private void AddDocument(FallowProductsViewModel vm)
+        {
+            if (vm.IsClosable)
+            {
+                vm.OnClosed += OnRemoveDocument;
+            }
+            vm.ActiveTabChangedEvent += OnActiveTabChanged;
+            vm.IsActive = true;
+            vm.IsSelected = true;
+            lock (_sync)
+            {
+                Documents.Add(vm);
+            }
+        }
+        private void OnActiveTabChanged(DocumentViewModel document, ActivityChangedEventArgs e)
+        {
+            foreach (var doc in Documents)
+            {
+                doc.IsActive = (doc == document && e.Value);
+            }
+            ActiveTab = document;
+        }
+
+        private void OnRemoveDocument(PaneViewModel vm)
+        {
+            if (vm == null) return;
+            vm.OnClosed -= OnRemoveDocument;
+            if (vm is DocumentViewModel)
+            {
+                ((DocumentViewModel)vm).ActiveTabChangedEvent -= OnActiveTabChanged;
+            }
+            Documents.Remove((DocumentViewModel)vm);
+        }
+
         private bool CanViewViewInternalWayBillCommands(ViewInvoicesEnum o)
         {
             switch (o)
@@ -139,8 +189,6 @@ namespace ES.Market.Views.Reports.ViewModels
                     break;
                 case ViewInvoicesEnum.ByDetiles:
                     viewModel = new InternalWayBillDetileViewModel(o);
-                    break;
-                default:
                     break;
             }
             var tabControl = new UctrlViewTable { DataContext = viewModel };
@@ -249,6 +297,9 @@ namespace ES.Market.Views.Reports.ViewModels
                 case ProductsViewEnum.ByPrice:
                     vm = new ViewProductsBalanceViewModel(viewEnum);
                     break;
+                case ProductsViewEnum.ByStocks:
+                    vm = new ViewProductsResidualViewModel();
+                    break;
             }
             if (vm != null) AddTab(vm);
         }
@@ -266,7 +317,16 @@ namespace ES.Market.Views.Reports.ViewModels
             AddTab(new CheckProductsRemainderByStockViewModel());
         }
 
+        private ICommand _getFallowProductsCommand;
+        public ICommand GetFallowProductsCommand { get { return _getFallowProductsCommand ?? (_getFallowProductsCommand = new RelayCommand(OnGetFalowProducts)); } }
+        private void OnGetFalowProducts(object obj)
+        {
+            var vm = new FallowProductsViewModel();
+            AddDocument(vm);
+        }
+
         #endregion Products commands
+
         #endregion
 
         #region INotifyPropertyChanged

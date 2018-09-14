@@ -1492,7 +1492,7 @@ namespace ES.Market.ViewModels
                     vm = new ProductItemsViewModel(stocks);
                     break;
                 case ProductsViewEnum.ByDetile:
-                    vm = new ProductItemsViewByDetileModel();
+                    vm = new ProductItemsViewByDetileViewModel();
                     break;
                 case ProductsViewEnum.ByProducts:
                     break;

@@ -243,6 +243,21 @@ namespace ES.Common.Models
                 UseExternalPrinter = config.UseExternalPrinter
             };
         }
+        public EcrSettings Convert()
+        {
+            return new EcrSettings
+            {
+                Ip = Ip,
+                Password = Password,
+                Port = Port,
+                CashierDepartment = CashierDepartment,
+                ApplicationIp = ApplicationIp,
+                Crn = Crn,
+                EcrCashier = EcrCashier,
+                TypeOfOperatorDeps = TypeOfOperatorDeps,
+                UseExternalPrinter = UseExternalPrinter
+            };
+        }
         public static EcrConfig Convert(EcrSettings config)
         {
             return new EcrConfig

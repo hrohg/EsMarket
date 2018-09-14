@@ -23,7 +23,6 @@ using ES.Common.Models;
 using ES.Data.Enumerations;
 using Shared.Helpers;
 using UserControls.Helpers;
-using UserControls.Views.PrintPreview.Views;
 using UserControls.Views.ReceiptTickets;
 using UserControls.Views.ReceiptTickets.Views;
 using CashDeskManager = UserControls.Managers.CashDeskManager;
@@ -156,6 +155,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected override void OnInitialize()
         {
+            if (Invoice.Partner == null) SetDefaultPartner(PartnersManager.GetDefaultParnerByInvoiceType((InvoiceType)Invoice.InvoiceTypeId) ?? PartnersManager.GetDefaultPartner(PartnerType.None));
             base.OnInitialize();
             FromStocks = StockManager.GetStocks(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSaleStocks.ToList()).ToList();
             AddBySingle = ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBySingle;
@@ -337,7 +337,7 @@ namespace UserControls.ViewModels.Invoices
 
                     if (result == MessageBoxResult.Yes)
                     {
-                        product = new ProductsManager().EditProduct(product);
+                        product = ProductsManager.EditProduct(product);
                     }
                 }
                 var exProduct = new ProductsManager().GetProductsByCodeOrBarcode(product.Code);

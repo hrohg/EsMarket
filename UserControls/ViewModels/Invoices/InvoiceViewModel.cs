@@ -285,9 +285,8 @@ namespace UserControls.ViewModels.Invoices
 
         protected virtual void OnInitialize()
         {
-            if (Invoice.Partner == null) SetDefaultPartner();
             InvoiceItem = new InvoiceItemsModel(Invoice);
-            SetICommands();
+            SetCommands();
             IsModified = false;
         }
 
@@ -303,7 +302,7 @@ namespace UserControls.ViewModels.Invoices
             RaisePropertyChanged("ProductCount");
         }
 
-        private void SetICommands()
+        private void SetCommands()
         {
             //ICommands
             RemoveInvoiceItemCommand = new RelayCommand(RemoveInvoiceItem, CanRemoveInvoiceItem);
@@ -318,9 +317,9 @@ namespace UserControls.ViewModels.Invoices
 
         }
 
-        private void SetDefaultPartner()
+        protected void SetDefaultPartner(PartnerModel partner)
         {
-            Invoice.Partner = Partner = PartnersManager.GetDefaultParnerByInvoiceType((InvoiceType)Invoice.InvoiceTypeId)??PartnersManager.GetDefaultPartner(PartnerType.None);
+            Invoice.Partner = Partner = partner;
         }
 
         /// <summary>
@@ -756,12 +755,12 @@ namespace UserControls.ViewModels.Invoices
 
 
 
-        public virtual bool CanRemoveInvoiceItem(object o)
+        protected virtual bool CanRemoveInvoiceItem(object o)
         {
             return Invoice.ApproveDate == null && SelectedInvoiceItem != null && (ApplicationManager.Instance.UserRoles.Any(s => s.Id == (int)EsSettingsManager.MemberRoles.SeniorSeller || s.Id == (int)EsSettingsManager.MemberRoles.Manager));
         }
 
-        public virtual void RemoveInvoiceItem(object o)
+        protected virtual void RemoveInvoiceItem(object o)
         {
             var index = SelectedInvoiceItem.Index;
             RemoveInvoiceItem(SelectedInvoiceItem);
@@ -772,7 +771,7 @@ namespace UserControls.ViewModels.Invoices
             SelectedInvoiceItem = InvoiceItems[index];
         }
 
-        public virtual void RemoveInvoiceItems(IList invoiceItems)
+        protected virtual void RemoveInvoiceItems(IList invoiceItems)
         {
             var items = invoiceItems.Cast<InvoiceItemsModel>().ToList();
             int index = 0;

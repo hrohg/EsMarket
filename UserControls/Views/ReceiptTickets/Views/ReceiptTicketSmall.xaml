@@ -269,7 +269,8 @@
                 <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Index}" Style="{StaticResource TextBlockStyle}"/>
-                        <TextBlock Text="{Binding Converter={StaticResource InvoiceItemToStringConverter}}" Style="{StaticResource TextBlockStyle}"/>
+                        <TextBlock Text="{Binding Converter={StaticResource InvoiceItemToStringConverter}}" 
+                                   Style="{StaticResource TextBlockStyle}" TextWrapping="Wrap" AllowDrop="True"/>
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

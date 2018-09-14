@@ -40,7 +40,7 @@ namespace UserControls.ViewModels.Tools
             get { return _filter ?? string.Empty; }
             set
             {
-                _filter = value.ToLower();
+                _filter = value;
                 RaisePropertyChanged("Filter");
                 DisposeTimer();
                 _timer = new Timer(TimerElapsed, null, 300, 300);
@@ -67,7 +67,7 @@ namespace UserControls.ViewModels.Tools
 
         public List<CustomItem> Items
         {
-            get { return _items != null ? _items.Where(s => s.Metadata.ToLower().Contains(Filter)).ToList() : null; }
+            get { return _items != null ? _items.Where(s => s.Metadata.ToLower().Contains(Filter.ToLower()) || s.ProductGroups.Contains(Filter, new FilterComparer())).ToList() : null; }
             private set
             {
                 _items = value;
@@ -136,7 +136,12 @@ namespace UserControls.ViewModels.Tools
             if (_products != null)
             {
                 _products = _products.OrderBy(s => s.Description).ToList();
-                Items = _products.Select(p => new CustomItem(p.Id, string.Format("{0} {1} {2}", p.Code, p.Description, p.Price), string.Format("{0} {1} {2} {3}", p.Code, p.Description, p.Price, p.Barcode))).ToList();
+                Items = _products.Select(p =>
+                    new CustomItem(p.Id, string.Format("{0} {1} {2}", p.Code, p.Description, p.Price),
+                        string.Format("{0} {1} {2} {3}", p.Code, p.Description, p.Price, p.Barcode))
+                    {
+                        ProductGroups = p.ProductGroups != null ? p.ProductGroups.Select(t => t.Barcode).ToList() : new List<string>()
+                    }).ToList();
             }
             IsLoading = false;
         }
@@ -200,15 +205,33 @@ namespace UserControls.ViewModels.Tools
 
     public class CustomItem
     {
-        public Guid Value { get; set; }
-        public string Description { get; set; }
-        public string Metadata { get; set; }
-
+        public Guid Value { get; private set; }
+        public string Description { get; private set; }
+        public string Metadata { get; private set; }
+        public List<string> ProductGroups { get; set; }
         public CustomItem(Guid id, string description, string metadata)
         {
             Value = id;
             Description = description;
             Metadata = metadata;
+
+        }
+    }
+
+    public class FilterComparer : IEqualityComparer<String>
+    {
+        public bool Equals(string x, string y)
+        {
+            if (x != null && y != null)
+            {
+                return x.ToLower().Contains(y.ToLower());
+            }
+            return x == y;
+        }
+
+        public int GetHashCode(string obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }

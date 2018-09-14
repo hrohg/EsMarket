@@ -3,9 +3,8 @@
                     xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls">
 
     <ContextMenu x:Key="DataGridRowContextMenuStyle" x:Shared="False" DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type extendedControls:ExtendedDataGrid}}, Path=DataContext}">
-        <MenuItem Header="Delete" Command="{Binding Path = RemoveInvoiceItemCommand}"/>
+        <MenuItem Header="Հեռացնել" InputGestureText="Del" Command="{Binding Path = RemoveInvoiceItemCommand}"/>
     </ContextMenu>
     <ContextMenu x:Key="DataGridRowContextMenuGeneralStyle" x:Shared="False" DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type extendedControls:ExtendedDataGrid}}, Path=DataContext}">
-        
     </ContextMenu>
 </ResourceDictionary>

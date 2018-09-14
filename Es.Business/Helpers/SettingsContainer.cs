@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -220,6 +221,7 @@ namespace ES.Business.Helpers
         private List<EcrConfig> _ecrModels;
         private bool _useUnicCode;
         private bool _useDiscountBond;
+        private EcrServiceSettings _ecrServiceSettings;
 
         [XmlIgnore]
         public EcrConfig EcrConfig
@@ -242,6 +244,12 @@ namespace ES.Business.Helpers
         {
             get { return _useDiscountBond; }
             set { _useDiscountBond = value; }
+        }
+
+        public EcrServiceSettings EcrServiceSettings
+        {
+            get { return _ecrServiceSettings ?? (_ecrServiceSettings = new EcrServiceSettings()); }
+            set { _ecrServiceSettings = value; }
         }
 
         #endregion Ecr settings
@@ -283,6 +291,7 @@ namespace ES.Business.Helpers
                 fs.Close();
             }
         }
+
         #endregion Internal methods
 
         #region External methods
@@ -312,6 +321,28 @@ namespace ES.Business.Helpers
         public static bool Save(MemberSettings memberSettings, long memberId)
         {
             return memberSettings.Save(memberId);
+        }
+
+        public static bool SaveEcrService(EcrConfig config, long memberId)
+        {
+            string settingsFilePath = PathHelper.GetMemberEcrServiceFilePath(memberId);
+            if (string.IsNullOrEmpty(settingsFilePath)) return false;
+            FileStream fs = new FileStream(settingsFilePath, FileMode.OpenOrCreate);
+            XmlSerializer serializer = new XmlSerializer(typeof(EcrConfig));
+            try
+            {
+                serializer.Serialize(fs, config);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                fs.Close();
+            }
+
         }
         #endregion External methods
     }

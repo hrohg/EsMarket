@@ -507,7 +507,6 @@
                         <MenuItem Header="Գնացուցակ" Click ="MiViewPriceList_Click"/>
                         <MenuItem Header="Փոփոխված ապրանքներ" Command="{Binding ChangedProductsCommand}"/>
                         <Separator/>
-                        <Separator/>
                         <MenuItem Header="Ապրանքների դիտում (ըստ պահեստների)" Command="{Binding ViewProductsCommand}" CommandParameter="{x:Static enumerations:ProductsViewEnum.ByStocks}"/>
                         <MenuItem Header="Ապրանքների դիտում (մանրամասն)" Command="{Binding ViewProductsCommand}" CommandParameter="{x:Static enumerations:ProductsViewEnum.ByDetile}"/>
                     </MenuItem>

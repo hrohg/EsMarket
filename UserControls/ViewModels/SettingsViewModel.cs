@@ -93,6 +93,8 @@ namespace UserControls.ViewModels
         }
         #endregion Cashdesk port
 
+        public EcrServiceSettings EcrServiceSettings { get { return _settings.MemberSettings.EcrServiceSettings; } }
+
         public bool NotifyAboutIncomingInvoices { get { return _settings.MemberSettings.NotifyAboutIncomingInvoices; } set { _settings.MemberSettings.NotifyAboutIncomingInvoices = value; RaisePropertyChanged("NotifyAboutIncomingInvoices"); } }
         public bool UseShortCode { get { return _settings.MemberSettings.UseShortCode; } set { _settings.MemberSettings.UseShortCode = value; RaisePropertyChanged("UseShortCode"); } }
         public bool UseDiscountBond { get { return _settings.MemberSettings.UseDiscountBond; } set { _settings.MemberSettings.UseDiscountBond = value; RaisePropertyChanged("UseDiscountBond"); } }
@@ -296,6 +298,7 @@ namespace UserControls.ViewModels
         #endregion Destop settings
 
         #region Ecr settings
+        
         public string ManageButtonContent { get { return EcrSettings.Any(s => s == SelectedEcrSettings) ? "Հեռացնել" : "Ավելացնել"; } }
         #endregion Ecr settings
 
@@ -368,7 +371,7 @@ namespace UserControls.ViewModels
         {
             //General
             _settings.MemberSettings.ActiveLablePrinter = LablePrinters.Where(s => s.IsChecked).Select(s => (string)s.Value).SingleOrDefault();
-
+            
             //Sale
             _settings.MemberSettings.ActiveSaleStocks = SaleStocks.Where(s => s.IsChecked).Select(s => (long)s.Value).ToList();
             _settings.MemberSettings.SaleCashDesks = SaleCashDesks.Where(s => s.IsChecked).Select(s => (Guid)s.Value).ToList();
@@ -566,6 +569,24 @@ namespace UserControls.ViewModels
             RaisePropertyChanged("SelectedEcrSettings");
         }
 
+        private ICommand _saveEcrServiceSettingsCommand;
+
+        public ICommand SaveEcrServiceSettingsCommand
+        {
+            get { return _saveEcrServiceSettingsCommand ?? (_saveEcrServiceSettingsCommand = new RelayCommand<EcrExecuiteActions>(OnSaveEcrSettings, CanSaveEcrSettings)); }
+        }
+
+        private bool CanSaveEcrSettings(EcrExecuiteActions obj)
+        {
+            return EcrSettings.Any(s => s == SelectedEcrSettings) && EcrServiceSettings.IsActive;
+        }
+
+        private void OnSaveEcrSettings(EcrExecuiteActions obj)
+        {
+            var ecrSettings = SelectedEcrSettings;
+            ecrSettings.EcrServiceSettings = EcrServiceSettings;
+            MemberSettings.SaveEcrService(SelectedEcrSettings, ApplicationManager.Member.Id);
+        }
         #endregion Ecr commands
 
         #endregion Commands

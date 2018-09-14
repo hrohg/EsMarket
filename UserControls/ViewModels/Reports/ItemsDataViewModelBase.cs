@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -11,7 +10,6 @@ using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
 using Shared.Helpers;
-using UserControls.ControlPanel.Controls;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Reports
@@ -20,6 +18,11 @@ namespace UserControls.ViewModels.Reports
     {
         public ObservableCollection<T> Items { get; set; }
 
+        protected ItemsDataViewModelBase()
+        {
+            Init();
+        } 
+        private void Init() { Initialize();}
         protected virtual void Initialize()
         {
             Items = new ObservableCollection<T>();
@@ -70,24 +73,28 @@ namespace UserControls.ViewModels.Reports
         {
             ExcelExportManager.ExportList(Items.Cast<object>().ToList());
         }
+
+        protected void AddNewItem(T item)
+        {
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
+            {
+                Items.Add(item);
+            });
+        }
     }
 
     public class FallowProductsViewModel : ItemsDataViewModelBase<ProductModel>
     {
         private int _daysCount = 180;
-        public FallowProductsViewModel()
-        {
-            Initialize();
-        }
-
-        protected override sealed void Initialize()
+        
+        protected override void Initialize()
         {
             base.Initialize();
             Title = "Կորդ մնացորդի վերլուծություն";
         }
         protected override void Update()
         {
-            var win = new SelectCount(new UserControls.SelectCountModel(_daysCount, "Մուտքագրել օրերի քանակը"), Visibility.Collapsed);
+            var win = new SelectCount(new SelectCountModel(_daysCount, "Մուտքագրել օրերի քանակը"), Visibility.Collapsed);
             win.ShowDialog();
             if (!win.DialogResult.HasValue || !win.DialogResult.Value) { UpdateCompleted(false); return; }
             _daysCount = (int)win.SelectedCount;
@@ -110,7 +117,7 @@ namespace UserControls.ViewModels.Reports
 
         protected override void OnExport(ExportImportEnum obj)
         {
-            ExcelExportManager.ExportList(Items.Select(s => new { Կոդ = s.Code, Անվանում = s.Description, Չմ = s.Mu, Առկա = s.ExistingQuantity }));
+            ExcelExportManager.ExportList(Items.Select(s => new { Կոդ = s.Code, Անվանում = s.Description, Չմ = s.Mu, Գին = s.Price, Առկա = s.ExistingQuantity }));
         }
     }
 
@@ -118,12 +125,8 @@ namespace UserControls.ViewModels.Reports
     {
         private StockModel _stock;
         private int _daysCount=120;
-        public CheckProductsRemainderViewModel()
-        {
-            Initialize();
-        }
-
-        protected override sealed void Initialize()
+        
+        protected override void Initialize()
         {
             base.Initialize();
             Title = "Բաժինների անբավարար մնացորդի ստուգում";
@@ -131,7 +134,7 @@ namespace UserControls.ViewModels.Reports
 
         protected override void Update()
         {
-            var selectedStock = SelectItemsManager.SelectStocks(false);
+            var selectedStock = SelectItemsManager.SelectStocks();
             if (selectedStock == null || !selectedStock.Any()) return;
             _stock = selectedStock.FirstOrDefault();
             var days = SelectItemsManager.GetDays(_daysCount);
@@ -163,29 +166,24 @@ namespace UserControls.ViewModels.Reports
     {
         private StockModel _stock;
         
-        public CheckProductsRemainderByStockViewModel()
-        {
-            Initialize();
-        }
-
-        protected void Initialize()
+        protected override void Initialize()
         {
            Title = Description = "Բաժինների անբավարար մնացորդի ստուգում";
-            OnUpdate();
+            base.Initialize();
         }
 
         protected override void OnUpdate()
         {
-            var selectedStock = SelectItemsManager.SelectStocks(false);
+            var selectedStock = SelectItemsManager.SelectStocks();
             if (selectedStock == null || !selectedStock.Any()) return;
             _stock = selectedStock.FirstOrDefault();
             
             base.OnUpdate();
-            var thread = new Thread(UpdateAsync);
-            thread.Start();
+            //var thread = new Thread(UpdateAsync);
+            //thread.Start();
         }
 
-        protected void UpdateAsync()
+        protected override void UpdateAsync()
         {
             if (_stock == null)
             {

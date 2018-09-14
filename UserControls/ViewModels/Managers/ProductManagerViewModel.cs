@@ -371,7 +371,7 @@ namespace UserControls.ViewModels.Managers
         protected virtual void OnEditProduct(object o)
         {
             IsLoading = true;
-            var product = new ProductsManager().EditProduct(Product);
+            var product = ProductsManager.EditProduct(Product);
             if (product != null)
             {
                 if (_products.FirstOrDefault(s => s.Code == product.Code) == null)
@@ -664,7 +664,7 @@ namespace UserControls.ViewModels.Managers
         protected override void OnEditProduct(object o)
         {
             IsLoading = true;
-            var product = new ProductsManager().EditProduct(Product);
+            var product = ProductsManager.EditProduct(Product);
             if (product != null)
             {
                 if (_products.FirstOrDefault(s => s.Code == product.Code) == null)
@@ -748,7 +748,7 @@ namespace UserControls.ViewModels.Managers
         protected override void OnEditProduct(object o)
         {
             IsLoading = true;
-            var product = new ProductsManager().EditProduct(Product);
+            var product = ProductsManager.EditProduct(Product);
             if (product != null)
             {
                 if (_products.FirstOrDefault(s => s.Code == product.Code) == null)

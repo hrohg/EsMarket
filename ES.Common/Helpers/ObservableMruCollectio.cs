@@ -127,7 +127,7 @@ namespace ES.Common.Helpers
             {
                 var recentSize = Count - _originSize;
                 while (recentSize-- > MaxSize)
-                    RemoveAt(recentSize);
+                    if (recentSize < Count) RemoveAt(recentSize);
             }
         }
 

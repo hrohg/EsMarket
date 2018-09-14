@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 using ES.Business.ExcelManager;
 using ES.Business.Managers;
 using ES.Common.Helpers;
@@ -55,7 +56,7 @@ namespace UserControls.Views.View
                         s.Product.Description.ToLower().Contains(FilterText)));
             }
         }
-        public ObservableCollection<StockModel> Stocks { get { return new ObservableCollection<StockModel>(_stocks); } }
+        public ObservableCollection<StockModel> Stocks { get { return new ObservableCollection<StockModel>(_stocks??new List<StockModel>()); } }
         #endregion
 
         #region Constructors
@@ -71,12 +72,13 @@ namespace UserControls.Views.View
             Initialize();
         }
         #endregion
+
         #region Internal methods
 
         private void Initialize()
         {
             _items = new List<ProductOrderModel>();
-            Title = "Ապրանքների դիտում";
+            Title = "Ապրանքների դիտում ըստ պահեստների";
             OnUpdate(null);
         }
         private void TimerElapsed(object obj)
@@ -203,7 +205,7 @@ namespace UserControls.Views.View
 
     }
 
-    public class ProductItemsViewByDetileModel : DocumentViewModel
+    public class ProductItemsViewByDetileViewModel : DocumentViewModel
     {
         #region Internal Properties
         private string _filterText = string.Empty;
@@ -243,28 +245,29 @@ namespace UserControls.Views.View
                         s.Product.Description.ToLower().Contains(FilterText)));
             }
         }
-        public ObservableCollection<StockModel> Stocks { get { return new ObservableCollection<StockModel>(_stocks); } }
+        public ObservableCollection<StockModel> Stocks { get { return new ObservableCollection<StockModel>(_stocks ?? new List<StockModel>()); } }
         #endregion
 
         #region Constructors
 
-        public ProductItemsViewByDetileModel()
+        public ProductItemsViewByDetileViewModel()
         {
             Initialize();
         }
-        public ProductItemsViewByDetileModel(List<StockModel> stocks)
+        public ProductItemsViewByDetileViewModel(List<StockModel> stocks)
             : this()
         {
             _stocks = stocks;
             Initialize();
         }
         #endregion
+
         #region Internal methods
 
         private void Initialize()
         {
             _items = new List<ProductOrderModel>();
-            Title = "Ապրանքների դիտում";
+            Title = "Ապրանքների դիտում մանրամասն";
             OnUpdate(null);
         }
         private void TimerElapsed(object obj)
@@ -287,6 +290,11 @@ namespace UserControls.Views.View
         private void Update(object o)
         {
             _items.Clear();
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+            {
+                _stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(), true);
+            });
+            
             if (_stocks == null || !_stocks.Any() || IsLoading) return;
             IsLoading = true;
             _productItems = ProductsManager.GetProductItems();

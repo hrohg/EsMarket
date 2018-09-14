@@ -40,19 +40,13 @@ namespace UserControls.ViewModels.Reports
         {
             ViewInvoicesEnum = viewInvoicesEnum;
         }
-
-        protected virtual void Update(Tuple<DateTime, DateTime> dateIntermediate)
-        {
-            IsLoading = true;
-            RaisePropertyChanged(IsInProgressProperty);
-        }
     }
 
     public class SaleInvoiceReportTypeViewModel : SaleInvoiceReportsBase<IInvoiceReport>
     {
         #region Internal properties
 
-
+        private Tuple<DateTime, DateTime> _dateIntermediate;
         #endregion
 
         #region External properties
@@ -64,18 +58,16 @@ namespace UserControls.ViewModels.Reports
             : base(viewInvoicesEnum)
         {
             IsShowUpdateButton = true;
-            Initialize();
         }
         #endregion
 
         #region Internal methods
-        private void Initialize()
+        protected override void Initialize()
         {
-            Title = Description = "0-ական վաճառքների դիտում";
-            OnUpdate();
+            Title = Description = "0-ական վաճառքների դիտում";            
         }
 
-        protected override void Update(Tuple<DateTime, DateTime> dateIntermediate)
+        protected override void UpdateAsync()
         {
             List<IInvoiceReport> reports = null;
             List<PartnerModel> partners = null;
@@ -90,7 +82,7 @@ namespace UserControls.ViewModels.Reports
                     break;
                 case ViewInvoicesEnum.ByStock:
                     Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.Instance.CashManager.GetStocks, true).ToList(); }));
-                    reports = new List<IInvoiceReport>(UpdateByStock(stocks, dateIntermediate));
+                    reports = new List<IInvoiceReport>(UpdateByStock(stocks, _dateIntermediate));
                     break;
                 case ViewInvoicesEnum.ByPartner:
                     Application.Current.Dispatcher.Invoke(new Action(() =>
@@ -100,7 +92,7 @@ namespace UserControls.ViewModels.Reports
 
                     if (partners != null && partners.Count > 0)
                     {
-                        reports = new List<IInvoiceReport>(InvoicesManager.GetSaleInvoicesReportsByPartners(dateIntermediate.Item1, dateIntermediate.Item2, InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList(), ApplicationManager.Instance.GetMember.Id));
+                        reports = new List<IInvoiceReport>(InvoicesManager.GetSaleInvoicesReportsByPartners(_dateIntermediate.Item1, _dateIntermediate.Item2, InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList(), ApplicationManager.Instance.GetMember.Id));
                     }
                     break;
                 case ViewInvoicesEnum.ByPartnerType:
@@ -111,7 +103,7 @@ namespace UserControls.ViewModels.Reports
 
                     if (partnerTypes != null && partnerTypes.Count > 0)
                     {
-                        reports = new List<IInvoiceReport>(InvoicesManager.GetSaleInvoicesReportsByPartnerTypes(dateIntermediate.Item1, dateIntermediate.Item2, InvoiceType.SaleInvoice, partnerTypes, ApplicationManager.Instance.GetMember.Id));
+                        reports = new List<IInvoiceReport>(InvoicesManager.GetSaleInvoicesReportsByPartnerTypes(_dateIntermediate.Item1, _dateIntermediate.Item2, InvoiceType.SaleInvoice, partnerTypes, ApplicationManager.Instance.GetMember.Id));
                     }
                     break;
                 case ViewInvoicesEnum.ByPartnersDetiles:
@@ -122,13 +114,13 @@ namespace UserControls.ViewModels.Reports
 
                     if (partners != null && partners.Count > 0)
                     {
-                        reports = new List<IInvoiceReport>(InvoicesManager.GetSaleInvoicesReportsByPartnersDetiled(dateIntermediate.Item1, dateIntermediate.Item2, InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList()));
+                        reports = new List<IInvoiceReport>(InvoicesManager.GetSaleInvoicesReportsByPartnersDetiled(_dateIntermediate.Item1, _dateIntermediate.Item2, InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList()));
                     }
                     break;
                 case ViewInvoicesEnum.ByStocksDetiles:
                     Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.Instance.CashManager.GetStocks, true).ToList(); }));
 
-                    var invoiceItems = InvoicesManager.GetInvoiceItemsByStocks(InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).Select(s => s.Id).ToList(), stocks);
+                    var invoiceItems = InvoicesManager.GetInvoiceItemsByStocks(InvoicesManager.GetInvoices(_dateIntermediate.Item1, _dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).Select(s => s.Id).ToList(), stocks);
 
                     reports = new List<IInvoiceReport>(invoiceItems.Select(s =>
                         new SaleReportByPartnerDetiled
@@ -147,7 +139,7 @@ namespace UserControls.ViewModels.Reports
                         }).ToList());
                     break;
                 case ViewInvoicesEnum.BySaleChart:
-                    invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2)
+                    invoices = InvoicesManager.GetInvoices(_dateIntermediate.Item1, _dateIntermediate.Item2)
                             .Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).ToList();
                     if (!invoices.Any())
                     {
@@ -157,7 +149,7 @@ namespace UserControls.ViewModels.Reports
 
                     break;
                 case ViewInvoicesEnum.ByZeroAmunt:
-                    invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice && s.Amount == 0).ToList();
+                    invoices = InvoicesManager.GetInvoices(_dateIntermediate.Item1, _dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice && s.Amount == 0).ToList();
                     if (!invoices.Any())
                     {
                         MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
@@ -220,8 +212,7 @@ namespace UserControls.ViewModels.Reports
             if (dateIntermediate == null) return;
             Description = string.Format("{0} {1} - {2}", Title, dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
             RaisePropertyChanged("Description");
-            var thread = new Thread(() => Update(dateIntermediate));
-            thread.Start();
+            base.OnUpdate();
         }
 
         protected override void OnPrint(object o)
