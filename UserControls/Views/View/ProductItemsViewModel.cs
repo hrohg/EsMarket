@@ -119,6 +119,7 @@ namespace UserControls.Views.View
                     Code = product.First().Product.Code,
                     Description = product.First().Product.Description,
                     Mu = product.First().Product.Mu,
+                    Price = product.First().Product.Price,
                     ExistingQuantity = product.Sum(s => s.Quantity)
                 };
                 foreach (var stockModel in _stocks)

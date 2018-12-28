@@ -48,7 +48,7 @@ namespace UserControls.ViewModels
         }
         #endregion IsIngrogress
 
-        public bool HasBankAccounts { get { return ApplicationManager.Instance.CashManager.GetBankAccounts.Any(); } }
+        public bool HasBankAccounts { get { return ApplicationManager.CashManager.GetBankAccounts.Any(); } }
 
         #region Member settings
 
@@ -109,7 +109,7 @@ namespace UserControls.ViewModels
         {
             get
             {
-                return _saleStocks ?? (_saleStocks = ApplicationManager.Instance.CashManager.GetStocks.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.ActiveSaleStocks.Contains(s.Id)) }).ToList());
+                return _saleStocks ?? (_saleStocks = ApplicationManager.CashManager.GetStocks.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.ActiveSaleStocks.Contains(s.Id)) }).ToList());
             }
         }
         #endregion Sale stocks
@@ -118,7 +118,7 @@ namespace UserControls.ViewModels
         private List<ItemsForChoose> _saleCashDesks;
         public List<ItemsForChoose> SaleCashDesks
         {
-            get { return _saleCashDesks ?? (_saleCashDesks = ApplicationManager.Instance.CashManager.GetCashDesk.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.SaleCashDesks.Contains(s.Id)) }).ToList()); }
+            get { return _saleCashDesks ?? (_saleCashDesks = ApplicationManager.CashManager.GetCashDesk.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.SaleCashDesks.Contains(s.Id)) }).ToList()); }
         }
         #endregion Sale cash desks
 
@@ -126,7 +126,7 @@ namespace UserControls.ViewModels
         private List<ItemsForChoose> _saleBankAccounts;
         public List<ItemsForChoose> SaleBankAccounts
         {
-            get { return _saleBankAccounts ?? (_saleBankAccounts = ApplicationManager.Instance.CashManager.GetBankAccounts.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.SaleBankAccounts.Contains(s.Id)) }).ToList()); }
+            get { return _saleBankAccounts ?? (_saleBankAccounts = ApplicationManager.CashManager.GetBankAccounts.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.SaleBankAccounts.Contains(s.Id)) }).ToList()); }
         }
         #endregion Sale bank accounts
 
@@ -156,7 +156,7 @@ namespace UserControls.ViewModels
         {
             get
             {
-                return _purchaseStocks ?? (_purchaseStocks = ApplicationManager.Instance.CashManager.GetStocks.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.ActivePurchaseStocks.Contains(s.Id)) }).ToList());
+                return _purchaseStocks ?? (_purchaseStocks = ApplicationManager.CashManager.GetStocks.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.ActivePurchaseStocks.Contains(s.Id)) }).ToList());
             }
         }
         #endregion Purchase stocks
@@ -165,7 +165,7 @@ namespace UserControls.ViewModels
         private List<ItemsForChoose> _purchaseCashDesks;
         public List<ItemsForChoose> PurchaseCashDesks
         {
-            get { return _purchaseCashDesks ?? (_purchaseCashDesks = ApplicationManager.Instance.CashManager.GetCashDesk.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.PurchaseCashDesks.Contains(s.Id)) }).ToList()); }
+            get { return _purchaseCashDesks ?? (_purchaseCashDesks = ApplicationManager.CashManager.GetCashDesk.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.PurchaseCashDesks.Contains(s.Id)) }).ToList()); }
         }
         #endregion Purchase cash desks
 
@@ -173,7 +173,7 @@ namespace UserControls.ViewModels
         private List<ItemsForChoose> _purchaseBankAccounts;
         public List<ItemsForChoose> PurchaseBankAccounts
         {
-            get { return _purchaseBankAccounts ?? (_purchaseBankAccounts = ApplicationManager.Instance.CashManager.GetBankAccounts.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.PurchaseBankAccounts.Contains(s.Id)) }).ToList()); }
+            get { return _purchaseBankAccounts ?? (_purchaseBankAccounts = ApplicationManager.CashManager.GetBankAccounts.Select(s => new ItemsForChoose { Data = s.Name, Value = s.Id, IsChecked = (Settings.MemberSettings.PurchaseBankAccounts.Contains(s.Id)) }).ToList()); }
         }
         #endregion Purchase bank accounts
 

@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using ES.Common.Managers;
 
 namespace UserControls.Controls
 {
@@ -38,7 +39,7 @@ namespace UserControls.Controls
 			else
 			{
 				Password = string.Empty;
-				MessageBox.Show("PasswordIsIncorrect", "", MessageBoxButton.OK, MessageBoxImage.Error);
+			    MessageManager.ShowMessage("PasswordIsIncorrect", "", MessageBoxImage.Error);
 				pswRepeatPassword.Password = string.Empty;
 				pswRepeatPassword.Focus();
 				return;

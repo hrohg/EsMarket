@@ -46,9 +46,9 @@ namespace ES.Common.ViewModels.Base
         }
 
         #endregion
-        [XmlIgnore]
+        //[XmlIgnore]
 
-        public virtual int TotalRows { get; set; }
+        //public virtual int TotalRows { get; private set; }
         [XmlIgnore]
 
         public virtual double TotalCount { get; set; }

@@ -14,7 +14,7 @@
         xmlns:controls1="clr-namespace:ES.Common.Controls;assembly=ES.Common"
         xmlns:helper1="clr-namespace:UserControls.PriceTicketControl.Helper;assembly=UserControls"
         xmlns:enumerations="clr-namespace:UserControls.Enumerations;assembly=UserControls"
-        xmlns:res="clr-namespace:ResourceLibrary.Helper;assembly=ResourceLibrary"
+        xmlns:enums="clr-namespace:AccountingTools.Enums;assembly=AccountingTools"
         Title="ES Market - Վաճառք" MinHeight="600" MinWidth="800" Closing="WinShop_Closing"
         WindowState="Maximized" WindowStartupLocation="CenterScreen"
         Icon="pack://application:,,,/Shared;component/Images/shopping_cart.Ico">
@@ -24,13 +24,14 @@
             <converters:GetInvocieParameterConverter x:Key="GetInvocieParameterConverter"/>
             <converters:GetInvocieByConverter x:Key="GetInvocieByConverter"/>
             <converters:UserRoleToBoolConverter x:Key="UserRoleToBoolConverter"/>
+            <converters:UserRoleToBoolMultiValueConverter x:Key="UserRoleToBoolMultiValueConverter"/>
 
             <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <SolidColorBrush x:Key="DefaultBackground" Color="#19C8FA"/>
             <SolidColorBrush x:Key="TabBackground" Color="#F5F5F5"/>
             <SolidColorBrush x:Key="StatusBarBackground" Color="#DC6E0A"/>
 
-            <Style x:Key="EcrToggleButtinStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static res:ResourceKeys.NoChromeToggleButtonKey}}">
+            <!--<Style x:Key="EcrToggleButtinStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static res:ResourceKeys.NoChromeToggleButtonKey}}">
                 <Setter Property="ToolTip" Value="{Binding EcrButtonTooltip}"/>
                 <Setter Property="ContentTemplate">
                     <Setter.Value>
@@ -46,7 +47,8 @@
                         </DataTemplate>
                     </Setter.Value>
                 </Setter>
-            </Style>
+            </Style>-->
+
         </ResourceDictionary>
 
     </Window.Resources>
@@ -107,19 +109,25 @@
                     </MenuItem>
                 </MenuItem>
 
-                <MenuItem Header="Փաստաթղթեր"
-                          IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}"
+                <MenuItem Header="Փաստաթղթեր" 
                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <MenuItem.IsEnabled>
+                        <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.Seller}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorSeller}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                        </MultiBinding>
+                    </MenuItem.IsEnabled>
                     <MenuItem.Icon>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
                     </MenuItem.Icon>
-                    <MenuItem Header="Վաճառք" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}">
+                    <MenuItem Header="Վաճառք">
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
                         </MenuItem.Icon>
                         <MenuItem Header="Նոր F2" 
-                                  Command="{Binding GetInvoicesCommand}"
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}">
+                                  Command="{Binding GetInvoicesCommand}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_recherch.png"/>
                             </MenuItem.Icon>
@@ -131,23 +139,21 @@
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
                         </MenuItem>
-                        <MenuItem Header="Չհաստատված" 
-                                  Command="{Binding GetInvoicesCommand}"
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}">
+                        <MenuItem Header="Սևագիր" 
+                                  Command="{Binding GetInvoicesCommand}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
                                     <Binding Source="{x:Static managers1:InvoiceTypeEnum.SaleInvoice}"  Mode="OneWay"/>
-                                    <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Draft}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
                         </MenuItem>
                         <MenuItem Header="Ապրանքագրեր" 
-                                  Command="{Binding GetInvoicesCommand}"
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SeniorSeller}}">
+                                  Command="{Binding GetInvoicesCommand}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>
                             </MenuItem.Icon>
@@ -160,8 +166,7 @@
                             </MenuItem.CommandParameter>
                         </MenuItem>
                         <MenuItem Header="Դիտել վերջին 100 ապրանքագրերը" 
-                                  Command="{Binding GetInvoicesCommand}" 
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SeniorSeller}}">
+                                  Command="{Binding GetInvoicesCommand}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>
                             </MenuItem.Icon>
@@ -174,13 +179,12 @@
                             </MenuItem.CommandParameter>
                         </MenuItem>
                     </MenuItem>
-                    <MenuItem Header="Գնում" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
+                    <MenuItem Header="Գնում"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
                         </MenuItem.Icon>
-                        <MenuItem Header="Նոր F3" Command="{Binding GetInvoicesCommand}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
+                        <MenuItem Header="Նոր F3" Command="{Binding GetInvoicesCommand}">
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
                                     <Binding Source="{x:Static managers1:InvoiceTypeEnum.PurchaseInvoice}"  Mode="OneWay"/>
@@ -192,11 +196,11 @@
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_recherch.png"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="Չհաստատված" Command="{Binding GetInvoicesCommand}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
+                        <MenuItem Header="Սևագիր" Command="{Binding GetInvoicesCommand}">
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
                                     <Binding Source="{x:Static managers1:InvoiceTypeEnum.PurchaseInvoice}"  Mode="OneWay"/>
-                                    <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Draft}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
@@ -204,7 +208,7 @@
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="Ապրանքագրեր" Command="{Binding GetInvoicesCommand}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
+                        <MenuItem Header="Ապրանքագրեր" Command="{Binding GetInvoicesCommand}">
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
                                     <Binding Source="{x:Static managers1:InvoiceTypeEnum.PurchaseInvoice}"  Mode="OneWay"/>
@@ -216,7 +220,7 @@
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="Դիտել վերջին 100 ապրանքագրերը" Command="{Binding GetInvoicesCommand}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
+                        <MenuItem Header="Դիտել վերջին 100 ապրանքագրերը" Command="{Binding GetInvoicesCommand}">
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
                                     <Binding Source="{x:Static managers1:InvoiceTypeEnum.PurchaseInvoice}"  Mode="OneWay" />
@@ -230,7 +234,6 @@
                         </MenuItem>
                     </MenuItem>
                     <MenuItem Header="Տեղափոխում" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
@@ -247,11 +250,11 @@
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
                         </MenuItem>
-                        <MenuItem Header="Չհաստատված" Command="{Binding GetInvoicesCommand}" >
+                        <MenuItem Header="Սևագիր" Command="{Binding GetInvoicesCommand}" >
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
                                     <Binding Source="{x:Static managers1:InvoiceTypeEnum.MoveInvoice}"  Mode="OneWay" />
-                                    <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay" />
+                                    <Binding Source="{x:Static managers1:InvoiceState.Draft}" Mode="OneWay" />
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
@@ -289,12 +292,11 @@
                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
                     <MenuItem Header="Ակտեր" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Invoice.ico"/>
                         </MenuItem.Icon>
-                        <MenuItem Header="Դուրս գրման ակտ" Command="{Binding GetInvoicesCommand}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}">
+                        <MenuItem Header="Դուրս գրման ակտ" Command="{Binding GetInvoicesCommand}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_recherch.png"/>
                             </MenuItem.Icon>
@@ -306,26 +308,26 @@
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
                         </MenuItem>
-                        <MenuItem Header="Մուտքագրման ակտ" Command="{Binding}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}">
+                        <MenuItem Header="Մուտքագրման ակտ" Command="{Binding}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_recherch.png"/>
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
                                     <Binding Source="{x:Static managers1:InvoiceTypeEnum.SaleInvoice}"  Mode="OneWay"/>
-                                    <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Draft}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
                         </MenuItem>
-                        <MenuItem Header="Չհաստատված ակտեր" Command="{Binding GetInvoicesCommand}">
+                        <MenuItem Header="Սևագիր ակտեր" Command="{Binding GetInvoicesCommand}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/edit_find_replace.png"/>
                             </MenuItem.Icon>
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
                                     <Binding Source="{x:Static managers1:InvoiceTypeEnum.Statements}"  Mode="OneWay"/>
-                                    <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay"/>
+                                    <Binding Source="{x:Static managers1:InvoiceState.Draft}" Mode="OneWay"/>
                                     <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
@@ -344,9 +346,8 @@
                         </MenuItem>
                     </MenuItem>
                     <MenuItem Header="Վերադարձ" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <MenuItem Header="Ետ վերադարձ" Command="{Binding GetInvoicesCommand}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}">
+                        <MenuItem Header="Ետ վերադարձ" Command="{Binding GetInvoicesCommand}">
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
                                     <Binding Source="{x:Static managers1:InvoiceTypeEnum.ReturnFrom}"  Mode="OneWay"/>
@@ -355,7 +356,7 @@
                                 </MultiBinding>
                             </MenuItem.CommandParameter>
                         </MenuItem>
-                        <MenuItem Header="Վերադարձ մատակարարին" Command="{Binding GetInvoicesCommand}"  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
+                        <MenuItem Header="Վերադարձ մատակարարին" Command="{Binding GetInvoicesCommand}">
                             <MenuItem.CommandParameter>
                                 <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
                                     <Binding Source="{x:Static managers1:InvoiceTypeEnum.ReturnTo}"  Mode="OneWay"/>
@@ -366,11 +367,11 @@
                         </MenuItem>
 
                     </MenuItem>
-                    <MenuItem Header="Չհաստատված" Command="{Binding GetInvoicesCommand}" >
+                    <MenuItem Header="Սևագիր" Command="{Binding GetInvoicesCommand}" >
                         <MenuItem.CommandParameter>
                             <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
                                 <Binding Source="{x:Static managers1:InvoiceTypeEnum.Statements}"  Mode="OneWay" />
-                                <Binding Source="{x:Static managers1:InvoiceState.Saved}" Mode="OneWay" />
+                                <Binding Source="{x:Static managers1:InvoiceState.Draft}" Mode="OneWay" />
                                 <Binding Source="{x:Static managers1:MaxInvocieCount.All}" Mode="OneWay"/>
                             </MultiBinding>
                         </MenuItem.CommandParameter>
@@ -393,19 +394,30 @@
                     <MenuItem.Icon>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/CashDesk.ico"/>
                     </MenuItem.Icon>
-                    <MenuItem Header="Մնացորդ"
-                              Command="{Binding GetChashDesksInfoCommand}" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Cashier}}"/>
+                    <MenuItem Header="Մնացորդ" Command="{Binding GetChashDesksInfoCommand}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Cashier}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Director}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
+                    </MenuItem>
                     <Separator/>
                     <MenuItem Header="Դիտում">
                         <!--<MenuItem Header="221 Դեբիտորական պարտքի մարում" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.AccountingReceivable}"/>-->
                         <MenuItem Header="Դեբիտորական պարտքեր (մանրամասն)"  Command="{Binding ViewDebitByPartnerCommand}" CommandParameter="{x:Static enumerations1:DebitEnum.Debit}"/>
                         <MenuItem Header="Կրեդիտորական պարտքեր"  Command="{Binding ViewDebitByPartnerCommand}" CommandParameter="{x:Static enumerations1:DebitEnum.Credit}"/>
+                        <MenuItem Header="Դեբիտորական պարտքերի ստուգում"  Command="{Binding CheckDebitByPartnerCommand}" CommandParameter="{x:Static enumerations1:DebitEnum.Debit}"/>
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="Հաշիվ"
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorCashier}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Director}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem.Icon>
                             <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Cash-register.png"/>
                         </MenuItem.Icon>
@@ -414,10 +426,13 @@
                             <MenuItem Header="Մանրամասն" Click ="MiDebitDetile_Click"></MenuItem>
                             <MenuItem Header="Դեբիտորական պարտքի դիտում ըստ պատվիրատուների" Command ="{Binding ViewAccountingRepaymentByPartnersCommand}"/>
                         </MenuItem>
-                        <MenuItem Header="Գործարք"
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
-                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
-
+                        <MenuItem Header="Գործարք" Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorCashier}"/>
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.Director}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
                             <MenuItem.Icon>
                                 <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Edit.ico"></Image>
                             </MenuItem.Icon>
@@ -437,8 +452,8 @@
 
                         </MenuItem>
                         <MenuItem Header="2 Ընթացիկ ակտիվներ">
-                            <MenuItem Header="221 Դեբիտորական պարտքի մարում" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.AccountingReceivable}"/>
-                            <MenuItem Header="224 Տրված ընթացիկ կանխավճարներ" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.Prepayments}"/>
+                            <MenuItem Header="221 Դեբիտորական պարտքի մարում" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static enums:AccountingPlanEnum.AccountingReceivable}"/>
+                            <MenuItem Header="224 Տրված ընթացիկ կանխավճարներ" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static enums:AccountingPlanEnum.Prepayments}"/>
                             <MenuItem Header="251 Գումարի փոխանցում դրամարկղում" Click="MiTransferIntoCashDesk_Click"/>
                         </MenuItem>
                         <MenuItem Header="3 Սեփական կապիտալ">
@@ -446,8 +461,8 @@
                         </MenuItem>
                         <MenuItem Header="4 Ոչ ընթացիկ պարտավորություններ"></MenuItem>
                         <MenuItem Header="5 Ընթացիկ պարտավորություններ">
-                            <MenuItem Header="521 Կրեդիտորական պարտքերի մարում" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.PurchasePayables}"/>
-                            <MenuItem Header="523 Ստացված կանխավճարներ" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static managers1:AccountingPlanEnum.ReceivedInAdvance}"/>
+                            <MenuItem Header="521 Կրեդիտորական պարտքերի մարում" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static enums:AccountingPlanEnum.PurchasePayables}"/>
+                            <MenuItem Header="523 Ստացված կանխավճարներ" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static enums:AccountingPlanEnum.ReceivedInAdvance}"/>
                         </MenuItem>
                         <MenuItem Header="6 Եկամուտներ"></MenuItem>
                         <MenuItem Header="7 Ծախսեր">
@@ -460,7 +475,13 @@
                         <MenuItem Header="8 Կառավարչական հաշվառման հաշիվներ"></MenuItem>
                         <MenuItem Header="9 Արտահաշվեկշռային հաշիվներ"></MenuItem>
                     </MenuItem>
-                    <MenuItem Header="Վերծանում" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SeniorCashier}}">
+                    <MenuItem Header="Վերծանում">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorCashier}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Director}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
                         </MenuItem.Icon>
@@ -474,6 +495,8 @@
                         <MenuItem Header="Կրեդիտորական պերտքեր գնումների գծով" Command="{Binding ViewAccountantTableCommand}" CommandParameter="{x:Static managers1:AccountingActionsEnum.PurchasePayables}"/>
                         <MenuItem Header="Ստացված կանխավճարներ" Command="{Binding ViewAccountantTableCommand}" CommandParameter="{x:Static managers1:AccountingActionsEnum.ReceivedInAdvance}"/>
                         <MenuItem Header="Տրված ընթացիկ կանխավճարներ" Command="{Binding ViewAccountantTableCommand}" CommandParameter="{x:Static managers1:AccountingActionsEnum.Prepayments}"/>
+                        <Separator/>
+                        <MenuItem Header="Հաշվային պլան (մասնակի)" Command="{Binding ViewAccountantTableCommand}" CommandParameter="{x:Static managers1:AccountingActionsEnum.Partly}"/>
                     </MenuItem>
                     <Separator Visibility="{Binding IsEcrAcivated, Converter={StaticResource BoolToVisibilityConverter}}"/>
                     <MenuItem Header="ՀԴՄ" Visibility="{Binding IsEcrAcivated, Converter={StaticResource BoolToVisibilityConverter}}">
@@ -501,8 +524,7 @@
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
                         </MenuItem.Icon>
-                        <MenuItem Header="Ապրանքաշրջանառություն" Command="{Binding GetProductsHistoryCommand}" 
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"/>
+                        <MenuItem Header="Ապրանքաշրջանառություն" Command="{Binding GetProductsHistoryCommand}"/>
                         <Separator/>
                         <MenuItem Header="Գնացուցակ" Click ="MiViewPriceList_Click"/>
                         <MenuItem Header="Փոփոխված ապրանքներ" Command="{Binding ChangedProductsCommand}"/>
@@ -510,7 +532,7 @@
                         <MenuItem Header="Ապրանքների դիտում (ըստ պահեստների)" Command="{Binding ViewProductsCommand}" CommandParameter="{x:Static enumerations:ProductsViewEnum.ByStocks}"/>
                         <MenuItem Header="Ապրանքների դիտում (մանրամասն)" Command="{Binding ViewProductsCommand}" CommandParameter="{x:Static enumerations:ProductsViewEnum.ByDetile}"/>
                     </MenuItem>
-                    
+
                     <MenuItem Header="Փաստաթղթեր">
                         <MenuItem Header="Վաճառք" Command="{Binding ViewPackingListsCommand}" CommandParameter="{x:Static managers1:InvoiceTypeEnum.SaleInvoice}"/>
                         <MenuItem Header="Գնում" Command="{Binding ViewPackingListsCommand}" CommandParameter="{x:Static managers1:InvoiceTypeEnum.PurchaseInvoice}"/>
@@ -595,9 +617,8 @@
                         </MenuItem>
                         <MenuItem Header="Ծառայությունների խմբագրում" 
                                   Click="MiManageServices_Click"
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
+                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.JuniorManager}}"
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
-
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Edit.ico"/>
                             </MenuItem.Icon>
@@ -608,28 +629,56 @@
                             </MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
-                    
-                    <MenuItem Name="MiProductOrder" Header="Պատվեր">
+
+                    <MenuItem Header="Պատվեր">
                         <MenuItem Header="Ըստ մնացորդի" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.ByQuantity}"/>
                         <MenuItem Header="Դասակարգում ըստ մատակարարների" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.ByProviders}"
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
-                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
+                        </MenuItem>
                         <MenuItem Header="Ըստ ապրանքատեսակների" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.ByBrands}"
-                                      IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
-                                      Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                      Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
+                        </MenuItem>
                         <MenuItem Header="Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն)" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.BySale}"/>
+                        <MenuItem Header="Պատվիրատուների դիտում" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.ViewPartners}"/>
                     </MenuItem>
-                    
+
                     <MenuItem Header="Գույքագրում" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <MenuItem Header="Գույքագրման դիտում" Command="{Binding StockTakingCommand}" CommandParameter="{x:Static enumerations1:ProjectCreationEnum.View}" 
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
+                        <MenuItem Header="Գույքագրման դիտում" Command="{Binding StockTakingCommand}" CommandParameter="{x:Static enumerations1:ProjectCreationEnum.View}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
                         </MenuItem>
                         <MenuItem Header="Վերջին գույքագրման դիտում" 
                                   Command="{Binding StockTakingCommand}" 
-                                  CommandParameter="{x:Static enumerations1:ProjectCreationEnum.ViewLast}" 
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
+                                  CommandParameter="{x:Static enumerations1:ProjectCreationEnum.ViewLast}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
                         </MenuItem>
                         <MenuItem Header="Չփակված գույքաքրման խմբագրում" Command="{Binding StockTakingCommand}" CommandParameter="{x:Static enumerations1:ProjectCreationEnum.Edit}">
                             <MenuItem.Icon>
@@ -690,10 +739,22 @@
                             </MenuItem>
                         </MenuItem>
                     </MenuItem>
-                    <Separator IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
-                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    
+                    <Separator Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Separator.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                            </MultiBinding>
+                        </Separator.IsEnabled>
+                    </Separator>
+
                     <MenuItem Header="Վերլուծություններ">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/review.png"/>
                         </MenuItem.Icon>
@@ -702,18 +763,38 @@
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
                         Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations1:ReportTypes.ShortReport}"/>
                         <MenuItem Header="Ընդլայնված" 
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
-                                  Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations1:ReportTypes.Report}"/>
+                                  Command="{Binding GetReportCommand}" CommandParameter="{x:Static enumerations1:ReportTypes.Report}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
+                        </MenuItem>
+
                         <Separator/>
                         <MenuItem Header="Կորդ մնացորդ" 
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
-                                  Command="{Binding GetFallowProductsCommand}"/>
+                                  Command="{Binding GetFallowProductsCommand}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
+                        </MenuItem>
+
                         <MenuItem Header="Բաժինների մնացորդի ստուգում"
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
-                                  Command="{Binding CheckProductsRemainderCommand}"/>
+                                  Command="{Binding CheckProductsRemainderCommand}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
+                        </MenuItem>
 
                     </MenuItem>
                 </MenuItem>
@@ -781,23 +862,53 @@
 
             <Menu Grid.Column="2" 
                   VerticalAlignment="Top" VerticalContentAlignment="Center" Height="20"
-                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Menu.IsEnabled>
+                    <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                        <Binding Source="{x:Static enumerations1:UserRoleEnum.Director}"/>
+                        <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorManager}"/>
+                        <Binding Source="{x:Static enumerations1:UserRoleEnum.Admin}"/>
+                        <Binding Source="{x:Static enumerations1:UserRoleEnum.Moderator}"/>
+                    </MultiBinding>
+                </Menu.IsEnabled>
 
                 <MenuItem VerticalAlignment="Stretch" VerticalContentAlignment="Center" Height="20" Margin="0"
-                          IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
                           Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <MenuItem.IsEnabled>
+                        <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.Director}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorManager}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.Admin}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.Moderator}"/>
+                        </MultiBinding>
+                    </MenuItem.IsEnabled>
                     <MenuItem.Header>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Settings.ico"/>
                     </MenuItem.Header>
 
                     <MenuItem Header="Ընդհանուր դրույթներ"
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <MenuItem Header="Բրենդների խմբագրում" Click="MiManageBrands_Click"/>
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorManager}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Moderator}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
+                        <MenuItem Header="Բրենդների խմբագրում" Click="MiManageBrands_Click">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorManager}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
+                        </MenuItem>
                         <MenuItem Header="Ապրանքների տվյալների համաժամանակեցում" Command="{Binding SyncronizeProductsCommand}"
-          IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
-                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorManager}"/>
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.Moderator}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
                             <MenuItem.Icon>
                                 <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
                             </MenuItem.Icon>
@@ -807,95 +918,138 @@
                     <Separator/>
 
                     <MenuItem Header="Ադմինիստրատիվ դրույթներ"
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorManager}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Moderator}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem Header="Տվյալների բազայի արխիվացում" Click="MiBackupData_Click"                          
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorManager}"/>
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.Moderator}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
                         </MenuItem>
                     </MenuItem>
 
                     <MenuItem Header="Հաշվառման դրույթներ" >
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorManager}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorCashier}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem Header="Հաշվային պլանի խմբագրում" Click="MiManageSubAccountingPlans_Click"
-          IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
-                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"></MenuItem>
+          Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorManager}"/>
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorCashier}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
+                        </MenuItem>
                     </MenuItem>
 
                     <Separator/>
 
                     <MenuItem Header="Սերվերի կարգավորումներ" 
-                               IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
                                Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Director}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Admin}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Moderator}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Data.ico"/>
                         </MenuItem.Icon>
                         <MenuItem Header="Սերվերից բազային տվյաների բեռնում" Command="{Binding SyncronizeServerDataCommand}"
-          CommandParameter="{x:Static managers1:SyncronizeServersMode.DownloadBaseData}"
-           IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
-                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                                  CommandParameter="{x:Static managers1:SyncronizeServersMode.DownloadBaseData}"
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="Սերվերի բազային տվյալների համաժամանակեցում" Command="{Binding SyncronizeServerDataCommand}"
-          CommandParameter="{x:Static managers1:SyncronizeServersMode.SyncronizeBaseData}"
-           IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
-                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <MenuItem.Icon>
-                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <Separator Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <MenuItem Header="Տվյալների բազայի ինտեգրում" Command="{Binding SyncronizeServerDataCommand}"
-          CommandParameter="{x:Static managers1:SyncronizeServersMode.DownloadMemberData}"
-   IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Admin}}"
-                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <MenuItem.Icon>
-                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Header="Օգտագործողի տվյալների համաժամանակեցում" Command="{Binding SyncronizeServerDataCommand}"
-          CommandParameter="{x:Static managers1:SyncronizeServersMode.DownloadUserData}"
-           IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
-                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                                  CommandParameter="{x:Static managers1:SyncronizeServersMode.SyncronizeBaseData}"
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
                             </MenuItem.Icon>
                         </MenuItem>
+
                         <Separator Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <MenuItem Header="Սերվերի խմբագրում" Command="{Binding ChangeServerSettingsCommand}" 
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Admin}}"
-                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+
+                        <MenuItem Header="Տվյալների բազայի ինտեգրում" Command="{Binding SyncronizeServerDataCommand}"
+                                  CommandParameter="{x:Static managers1:SyncronizeServersMode.DownloadMemberData}"
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                             <MenuItem.Icon>
-                                <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Data.ico"/>
+                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Օգտագործողի տվյալների համաժամանակեցում" Command="{Binding SyncronizeServerDataCommand}" 
+                                  CommandParameter="{x:Static managers1:SyncronizeServersMode.DownloadUserData}" 
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.Icon>
+                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Download.ico"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                        <Separator Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                        <MenuItem Header="Սերվերի խմբագրում" Command="{Binding ChangeServerSettingsCommand}" 
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.Admin}"/>
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.Moderator}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
+                            <MenuItem.Icon>
+                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Data.ico"/>
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="Սերվերի հեռացում" Command="{Binding RemoveServerSettingsCommand}" 
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Admin}}"
-                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.Moderator}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
                             <MenuItem.Icon>
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Data.ico"/>
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="Սերվերի կապի ստուգում" Command="{Binding CheckConnectionCommand}" 
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Admin}}"
-                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.Moderator}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
 
                         </MenuItem>
                     </MenuItem>
 
                     <MenuItem Header="Օգտագործողների խմբագրում" 
                               Command="{Binding EditUsersCommand}" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
                               Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/user.png"/>
                         </MenuItem.Icon>
                     </MenuItem>
-
-                    <MenuItem Header="Կարգավորումներ" Command="{Binding ChangeSettingsCommand}" 
-                               IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Director}}"
-                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <MenuItem Header="Կարգավորումներ" Command="{Binding ChangeSettingsCommand}" Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorManager}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Moderator}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem.Icon>
                             <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Settings.ico"/>
                         </MenuItem.Icon>

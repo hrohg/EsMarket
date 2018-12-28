@@ -238,6 +238,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AccountingTools\AccountingTools.csproj">
+      <Project>{4BC4D97D-BF4C-4290-B6C5-87927F9C72FD}</Project>
+      <Name>AccountingTools</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DatabaseManagement\DatabaseManagement.csproj">
       <Project>{e126dbac-9a65-4663-ac38-c1dbbd6063fc}</Project>
       <Name>DatabaseManagement</Name>
@@ -273,6 +277,10 @@
     <ProjectReference Include="..\Shared\Shared.csproj">
       <Project>{ec37832a-a5ee-41b9-bfaf-1929a7e43755}</Project>
       <Name>Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UIHelper\UIHelper.csproj">
+      <Project>{6ff9845c-a677-453e-b7a2-94e5dea6db65}</Project>
+      <Name>UIHelper</Name>
     </ProjectReference>
     <ProjectReference Include="..\UserControls\UserControls.csproj">
       <Project>{fb4cac1b-f794-454c-ab58-908e3c679685}</Project>

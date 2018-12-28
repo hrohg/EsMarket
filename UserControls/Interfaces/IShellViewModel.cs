@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using AccountingTools.Enums;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Data.Models.EsModels;
@@ -16,5 +17,6 @@ namespace UserControls.Interfaces
         void OnOpenCalc(object obj);
         bool CanExecuteAccountingAction(AccountingPlanEnum accountingPlan);
         void OnAccountingAction(AccountingPlanEnum accountingPlan);
+        bool CanOpenTools(ToolsEnum obj);
     }
 }

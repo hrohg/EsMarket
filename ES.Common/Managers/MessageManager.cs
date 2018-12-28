@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using ES.Common.Enumerations;
+using ES.Common.Helpers;
 using ES.Common.Models;
 
 namespace ES.Common.Managers
@@ -51,6 +52,22 @@ namespace ES.Common.Managers
         }
         #endregion External methods
 
+        public static void ShowMessage(string message, string title = "Սխալ", MessageBoxImage messageBoxImage = MessageBoxImage.Warning)
+        {
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+                {
+                    MessageBox.Show(message, title, MessageBoxButton.OK, messageBoxImage);
+                });
+        }
+        public static MessageBoxResult ShowMessage(string message, string title, MessageBoxButton messageBoxButton, MessageBoxImage messageBoxImage = MessageBoxImage.Warning)
+        {
+            MessageBoxResult result = MessageBoxResult.None;
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+            {
+                result = MessageBox.Show(message, title, messageBoxButton, messageBoxImage);
+            });
+            return result;
+        }
         #region Events
 
         public delegate void MessageReceivedDelegate(MessageModel message);

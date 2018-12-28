@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using ES.Business.ExcelManager;
-using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
+using ES.Common.Managers;
+using ES.Common.Models;
 using ES.Common.ViewModels.Base;
-using ES.Data.Models;
 using Shared.Helpers;
-using UserControls.ControlPanel.Controls;
-using UserControls.Helpers;
+using UserControls.Interfaces;
 
 namespace UserControls.ViewModels
 {
@@ -26,31 +22,30 @@ namespace UserControls.ViewModels
         protected void Init() { Initialize(); }
         protected abstract void Initialize();
     }
-    public class TableViewModel<T> : TableViewModelBase
+
+    public class TableViewModel<T> : TableViewModelBase, ITableViewModel
     {
         #region Constants
-
-        public const string IsInProgressProperty = "IsInProgress";
 
         #endregion
 
         #region Internal properties
 
-        private string _title;
-        private string _description;
-        private bool _isLoading;
         private bool _isShowNulls;
-        private int _totalRows;
         private double _totalCount;
         private double _total;
+        protected ObservableCollection<T> Reports;
+        //protected List<T> _reports;
         #endregion
 
         #region External Properties
 
-        public override int TotalRows { get { return _totalRows; } set { _totalRows = value; RaisePropertyChanged("TotalRows"); } }
+        public int TotalRows
+        {
+            get { return ViewList.Count; }
+        }
         public override double TotalCount { get { return _totalCount; } set { _totalCount = value; RaisePropertyChanged("TotalCount"); } }
         public override double Total { get { return _total; } set { _total = value; RaisePropertyChanged("Total"); } }
-
         public bool IsShowNulls
         {
             get
@@ -66,7 +61,11 @@ namespace UserControls.ViewModels
         }
         public bool IsShowUpdateButton { get; set; }
         public bool IsShowCloseButton { get; set; }
-        public virtual ObservableCollection<T> ViewList { get; protected set; }
+        protected virtual ObservableCollection<T> ViewFilteredList { get { return Reports ?? (Reports = new ObservableCollection<T>()); } }
+        public ObservableCollection<T> ViewList
+        {
+            get { return ViewFilteredList; }
+        }
 
         #endregion
 
@@ -74,50 +73,90 @@ namespace UserControls.ViewModels
         public TableViewModel(List<T> list)
             : this()
         {
+            foreach (var item in list)
+            {
+                ViewList.Add(item);
+            }
             IsShowUpdateButton = true;
             IsShowCloseButton = true;
         }
-        public TableViewModel():base()
+        public TableViewModel()
         {
-           
+            ViewList.CollectionChanged += OnViewListCollectionChanged;
         }
+
+        private void OnViewListCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged("ViewList");
+            RaisePropertyChanged("Count");
+            RaisePropertyChanged("Total");
+        }
+
         #endregion
 
         #region Internal methods
 
-        
         //Base
         protected override void Initialize()
         {
-            ViewList = new ObservableCollection<T>();
-            Update();
+
         }
-        protected virtual bool CanExportToExcel(object o) { return ViewList != null && ViewList.Any(); }
-        protected virtual void OnExportToExcel(object o)
+        protected virtual bool CanExport(ExportImportEnum o) { return ViewList != null && ViewList.Any(); }
+        protected virtual void OnExport(ExportImportEnum o)
         {
-            if (!CanExportToExcel(o)) { return; }
+            //if (!CanExport(o)) { return; }
         }
 
-        protected void Update() { OnUpdate();}
-        protected virtual void OnUpdate()
+        //protected void Update() { OnUpdate(); }
+        public void Update()
         {
-            IsLoading = true;
+            if (IsLoading) return;
             new Thread(UpdateAsync).Start();
         }
-        protected virtual void UpdateAsync() { UpdateCompleted(true); }
 
-        protected void UpdateCompleted(bool isSuccess)
+        protected virtual void UpdateAsync()
         {
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+            {
+                IsLoading = true;
+                ViewList.Clear();
+            });
+        }
+
+        protected virtual void UpdateCompleted(bool isSuccess = true)
+        {
+            RaisePropertyChanged("ViewList");
+            IsLoading = false;
+        }
+        protected void SetResult(List<T> reports)
+        {
+            if (reports == null || reports.Count == 0)
+            {
+                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
+                UpdateStopped();
+                return;
+            }
             DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
             {
-                RaisePropertyChanged("ViewList");
-                IsLoading = false;
+                foreach (var report in reports)
+                {
+                    ViewList.Add(report);
+                }
+                RaisePropertyChanged("TotalRows");
+                RaisePropertyChanged("TotalCount");
+                RaisePropertyChanged("Total");
             });
+
+        }
+
+        protected void UpdateStopped()
+        {
+            UpdateCompleted(false);
         }
         protected virtual bool CanPrint(object o) { return o != null && ViewList != null && ViewList.Any(); }
         protected virtual void OnPrint(object o)
         {
-            if (!CanPrint(o)) { return; }
+            //if (!CanPrint(o)) { return; }
         }
         #endregion
 
@@ -127,187 +166,13 @@ namespace UserControls.ViewModels
 
         #region Commands
 
-        private ICommand _exportToExcelCommand;
-        public ICommand ExportToExcelCommand { get { return _exportToExcelCommand ?? (_exportToExcelCommand = new RelayCommand(OnExportToExcel, CanExportToExcel)); } }
+        private ICommand _exportCommand;
+        public ICommand ExportCommand { get { return _exportCommand ?? (_exportCommand = new RelayCommand<ExportImportEnum>(OnExport, CanExport)); } }
         private ICommand _printCommand;
         public ICommand PrintCommand { get { return _printCommand ?? (_printCommand = new RelayCommand(OnPrint, CanPrint)); } }
         private ICommand _updateCommand;
-        public ICommand UpdateCommand { get { return _updateCommand ?? (_updateCommand = new RelayCommand(OnUpdate)); } }
+        public ICommand UpdateCommand { get { return _updateCommand ?? (_updateCommand = new RelayCommand(Update)); } }
         #endregion
     }
 
-    public class InvoiceReportModel
-    {
-        public string Code { get; set; }
-        public string Description { get; set; }
-        public string Mu { get; set; }
-        public decimal Quantity { get; set; }
-        public decimal CostPrice { get; set; }
-        public decimal Price { get; set; }
-        public decimal Amount { get { return Quantity * Price; } }
-    }
-    public class ProductProviderReportModel
-    {
-        public string InvoiceNumber { get; set; }
-        public DateTime Date { get; set; }
-        public string Partner { get; set; }
-        public string Code { get; set; }
-        public string Description { get; set; }
-        public string Mu { get; set; }
-        public decimal Quantity { get; set; }
-        public decimal Price { get; set; }
-        public decimal Amount { get { return Quantity * Price; } }
-    }
-
-
-    public class ProductOrderBySaleViewModel : TableViewModel<ProductOrderModel>
-    {
-        #region Internal properties
-        protected List<ProductOrderModel> _items = new List<ProductOrderModel>();
-        private ProductOrderTypeEnum _productOrderType;
-        #endregion
-        #region External properties
-        public override ObservableCollection<ProductOrderModel> ViewList
-        {
-            get
-            {
-                return new ObservableCollection<ProductOrderModel>(_items.Where(s => IsShowNulls || s.DemandQuantity > 0).ToList());
-            }
-        }
-
-        #endregion
-        public ProductOrderBySaleViewModel(ProductOrderTypeEnum productOrderType)
-            : base()
-        {
-            IsShowUpdateButton = true;
-            _productOrderType = productOrderType;
-        }
-
-        #region Internal methods
-
-        protected override void Initialize()
-        {
-            IsClosable = true;
-            Title = "Անհրաժեշտ ապրանքների ցուցակ";
-            base.Initialize();
-        }
-        protected override void UpdateAsync()
-        {
-            switch (_productOrderType)
-            {
-                case ProductOrderTypeEnum.ByQuantity:
-
-                    _items = ProductsManager.GetProductOrderByProduct();
-
-                    if (_items == null || _items.Count == 0)
-                    {
-                        Application.Current.Dispatcher.BeginInvoke(new Action(() => { MessageBox.Show("Նշված տվյալներով պատվեր չի հայտնաբերվել"); }));
-                        return;
-                    }
-                    for (var i = 0; i < _items.Count; i++)
-                        _items[i].Index = i;
-
-                    break;
-                case ProductOrderTypeEnum.ByProviders:
-                    Title = "Անհրաժեշտ ապրանքների ցուցակ";
-                    _items = ProductsManager.GetProductOrderByProduct();
-                    if (_items == null || _items.Count == 0)
-                    {
-                        Application.Current.Dispatcher.BeginInvoke(new Action(() => { MessageBox.Show("Նշված տվյալներով պատվեր չի հայտնաբերվել"); }));
-                        return;
-                    }
-                    for (var i = 0; i < _items.Count; i++)
-                    {
-                        _items[i].Index = i;
-                    }
-
-                    break;
-                case ProductOrderTypeEnum.ByBrands:
-                    Title = "Անհրաժեշտ ապրանքների ցուցակ";
-                    var brands = SelectItemsManager.SelectBrands(ProductsManager.GetBrands(ApplicationManager.Instance.GetMember.Id), true);
-                    _items = ProductsManager.GetProductOrderByBrands(brands, ApplicationManager.Instance.GetMember.Id);
-                    if (_items == null || _items.Count == 0)
-                    {
-                        Application.Current.Dispatcher.BeginInvoke(new Action(() => { MessageBox.Show("Նշված տվյալներով պատվեր չի հայտնաբերվել"); }));
-                        return;
-                    }
-                    for (var i = 0; i < _items.Count; i++)
-                    {
-                        _items[i].Index = i;
-                    }
-
-
-                    break;
-                case ProductOrderTypeEnum.BySale:
-                    Tuple<DateTime, DateTime> dateIntermediate = null;
-                    Application.Current.Dispatcher.Invoke(new Action(() => { dateIntermediate = SelectManager.GetDateIntermediate(); }));
-
-                    if (dateIntermediate == null) return;
-                    Title = Description = string.Format("Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն) {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
-
-                    var invoices = InvoicesManager.GetInvoices((DateTime)dateIntermediate.Item1, (DateTime)dateIntermediate.Item2);
-                    var invoiceItems = InvoicesManager.GetInvoiceItems(invoices.Where(s => s.InvoiceTypeId == (int)InvoiceType.SaleInvoice).Select(s => s.Id));
-                    var productItems = ProductsManager.GetProductItems();
-                    var productOrder = invoiceItems.GroupBy(s => s.ProductId).Where(s => s.FirstOrDefault() != null).Select(s => new ProductOrderModel
-                    {
-                        ProductId = s.First().ProductId,
-                        Code = s.First().Product.Code,
-                        Description = s.First().Product.Description,
-                        Mu = s.First().Product.Mu,
-                        MinPrice = s.First().Product.CostPrice,
-                        CostPrice = s.First().Product.CostPrice,
-                        Price = s.First().Product.Price,
-                        MinQuantity = s.First().Product.MinQuantity,
-                        ExistingQuantity = productItems.Where(t => t.ProductId == s.First().ProductId).Sum(t => t.Quantity),
-                        SaleQuantity = invoiceItems.Where(t => t.ProductId == s.First().ProductId).Sum(t => t.Quantity ?? 0),
-                        Notes = s.First().Product.Note
-                    }).ToList();
-                    productOrder = productOrder.Where(s => s.DemandQuantity >= 0).ToList();
-                    var productProviders = ProductsManager.GetProductsProviders(productOrder.Select(s => s.ProductId).ToList());
-                    var providers = PartnersManager.GetPartners(productProviders.Select(s => s.ProviderId).ToList());
-                    foreach (var item in productOrder)
-                    {
-                        var productProvider = productProviders.FirstOrDefault(s => s.ProductId == item.ProductId);
-                        if (productProvider == null) continue;
-                        var provider = providers.FirstOrDefault(s => s.Id == productProvider.ProviderId);
-                        if (provider == null) continue;
-                        item.Provider = provider.FullName;
-                    }
-                    _items = productOrder.OrderBy(s => s.Notes).ThenBy(s => s.Description).ThenBy(s => s.Code).ToList();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                TotalRows = _items.Count;
-                TotalCount = (double)_items.Sum(s => s.ExistingQuantity);
-                Total = (double)_items.Sum(i => i.Amount);
-                RaisePropertyChanged("ViewList");
-                IsLoading = false;
-            }));
-
-
-        }
-
-        protected override void OnExportToExcel(object o)
-        {
-            base.OnExportToExcel(o);
-            ExcelExportManager.ExportList(ViewList.Select(s => new { Կոդ = s.Code, Անվանում = s.Description, Մնացորդ = s.ExistingQuantity, Քանակ = s.DemandQuantity, ԻՆքնարժեք = s.CostPrice, Գին = s.Price, Մատակարար = s.Provider, }));
-        }
-
-        protected override void OnPrint(object o)
-        {
-            base.OnPrint(o);
-            if (o == null)
-            {
-                return;
-            }
-            var productOrder = ((FrameworkElement)o).FindVisualChildren<Border>().FirstOrDefault();
-            if (productOrder == null) return;
-            PrintManager.PrintEx(productOrder);
-        }
-
-        #endregion
-    }
 }

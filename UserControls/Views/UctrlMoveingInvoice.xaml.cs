@@ -136,7 +136,7 @@ namespace UserControls.Views
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
             //if (_viewModel.Invoice.ApproveDate != null ||
-    //MessageBox.Show("Ապրանքագիրը հաստատված չէ։ Դուք իսկապե՞ս ցանկանում եք փակել այն։", "Զգուշացում",
+            //MMessageManager.ShowMessage("Ապրանքագիրը հաստատված չէ։ Դուք իսկապե՞ս ցանկանում եք փակել այն։", "Զգուշացում",
         //MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 var tabitem = this.Parent as TabItem;

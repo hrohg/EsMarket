@@ -57,7 +57,7 @@ namespace DatabaseManagement
             //}
             //if (string.IsNullOrEmpty(password))
             //{
-            //    MessageBox.Show(CultureResources.Inst["PasswordCanNotBeEmpty"], CultureResources.Inst["PasswordError"], MessageBoxButton.OK, MessageBoxImage.Error);
+            //    MessageManager.ShowMessage(CultureResources.Inst["PasswordCanNotBeEmpty"], CultureResources.Inst["PasswordError"], MessageBoxButton.OK, MessageBoxImage.Error);
             //    return;
             //}
             Cursor = Cursors.Wait;
@@ -74,7 +74,7 @@ namespace DatabaseManagement
             if (DatabaseManager.CreateDatabaseBackup(backupFilePath, ApplicationManager.DbName, ref errorMessage))
             {
                 Cursor = null;
-                //MessageBox.Show(CultureResources.Inst["ArchiveIsNotCompletedTryLater"], CultureResources.Inst["ArchiveError"], MessageBoxButton.OK, MessageBoxImage.Error);
+                //MessageManager.ShowMessage(CultureResources.Inst["ArchiveIsNotCompletedTryLater"], CultureResources.Inst["ArchiveError"], MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -86,14 +86,14 @@ namespace DatabaseManagement
 
                 if (cryptography.Encrypt(backupFilePath, string.Format("{0}.es", backupFilePath)))
                 {
-                    //MessageBox.Show(CultureResources.Inst["ArchiveCreatedSuccessfully"], "", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //MessageManager.ShowMessage(CultureResources.Inst["ArchiveCreatedSuccessfully"], "", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 Cursor = null;
             }
             else
             {
                 Cursor = null;
-                //MessageBox.Show(CultureResources.Inst["ArchiveIsNotCompletedTryLater"], CultureResources.Inst["ArchiveError"], MessageBoxButton.OK, MessageBoxImage.Error);
+                //MessageManager.ShowMessage(CultureResources.Inst["ArchiveIsNotCompletedTryLater"], CultureResources.Inst["ArchiveError"], MessageBoxButton.OK, MessageBoxImage.Error);
             }
             try
             {
@@ -101,7 +101,7 @@ namespace DatabaseManagement
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageManager.ShowMessage(ex.Message);
             }
         }
 
@@ -112,7 +112,7 @@ namespace DatabaseManagement
 
         public void RestoreDatabase(string filePath)
         {
-            //if (MessageBox.Show(CultureResources.Inst["RestoreWillDeleteAnyChanges"], CultureResources.Inst["ConfirmRestore"], MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            //if (MessageManager.ShowMessage(CultureResources.Inst["RestoreWillDeleteAnyChanges"], CultureResources.Inst["ConfirmRestore"], MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
             //{
             //    return;
             //}
@@ -120,7 +120,7 @@ namespace DatabaseManagement
             var processes = Process.GetProcessesByName("RealEstateApp");
             if (processes.Length > 0)
             {
-                //if (MessageBox.Show(CultureResources.Inst["RealtorIsOpenAndWillBeClose"], CultureResources.Inst["ConfirmRestore"], MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                //if (MessageManager.ShowMessage(CultureResources.Inst["RealtorIsOpenAndWillBeClose"], CultureResources.Inst["ConfirmRestore"], MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                 //{
                 //    return;
                 //}
@@ -157,7 +157,7 @@ namespace DatabaseManagement
 
                 //if (string.IsNullOrEmpty(restorePassword))
                 //{
-                //    MessageBox.Show(CultureResources.Inst["PasswordCanNotBeEmpty"], CultureResources.Inst["PasswordError"], MessageBoxButton.OK, MessageBoxImage.Error);
+                //    MessageManager.ShowMessage(CultureResources.Inst["PasswordCanNotBeEmpty"], CultureResources.Inst["PasswordError"], MessageBoxButton.OK, MessageBoxImage.Error);
                 //    return;
                 //}
             }
@@ -173,7 +173,7 @@ namespace DatabaseManagement
                 if (!cryptography.Decrypt(filePath, restoreFilePath))
                 {
                     Cursor = null;
-                    //MessageBox.Show(CultureResources.Inst["PasswordIsIncorrect"], "", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //MessageManager.ShowMessage(CultureResources.Inst["PasswordIsIncorrect"], "", MessageBoxButton.OK, MessageBoxImage.Information);
                     DeleteBackupFile(restoreFilePath);
                     return;
                 }
@@ -188,7 +188,7 @@ namespace DatabaseManagement
                 //    }
                 //}
                 Cursor = null;
-                MessageBox.Show("OK");
+                MessageManager.ShowMessage("OK");
             }
             catch
             {
@@ -204,13 +204,13 @@ namespace DatabaseManagement
             //if (!Session.Inst.BEManager.RestoreDatabase(restoreFilePath, Constants.DababaseFolderPath, ref errorMessage))
             //{
             //    Cursor = null;
-            //    MessageBox.Show(CultureResources.Inst["RestoreNotCompletedTryLater"], "", MessageBoxButton.OK, MessageBoxImage.Error);
+            //    MessageManager.ShowMessage(CultureResources.Inst["RestoreNotCompletedTryLater"], "", MessageBoxButton.OK, MessageBoxImage.Error);
             //    DeleteBackupFile(restoreFilePath);
             //}
             //else
             //{
             //    Cursor = null;
-            //    MessageBox.Show(CultureResources.Inst["ArchiveRestored"], "", MessageBoxButton.OK, MessageBoxImage.Information);
+            //    MessageManager.ShowMessage(CultureResources.Inst["ArchiveRestored"], "", MessageBoxButton.OK, MessageBoxImage.Information);
             //}
 
         }

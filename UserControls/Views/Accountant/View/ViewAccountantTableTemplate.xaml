@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:accountant="clr-namespace:UserControls.Views.Accountant"
                     xmlns:models="clr-namespace:ES.DataAccess.Models;assembly=ES.DataAccess"
-                    xmlns:models1="clr-namespace:ES.Business.Models;assembly=ES.Business">
+                    xmlns:models1="clr-namespace:ES.Business.Models;assembly=ES.Business"
+                    xmlns:helpers="clr-namespace:Shared.Helpers;assembly=Shared">
 
     <DataTemplate DataType="{x:Type accountant:ViewAccountantTableViewModel}">
         <Grid>
@@ -17,7 +18,7 @@
             <DataGrid Grid.Row="2" ItemsSource="{Binding Items}" AutoGenerateColumns="False">
                 <DataGrid.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Արտահանել Excel" Command="{Binding ExportToExcelCommand}"/>
+                        <MenuItem Header="Արտահանել Excel" Command="{Binding ExportCommand}" CommandParameter="{x:Static  helpers:ExportImportEnum.Excel}"/>
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>

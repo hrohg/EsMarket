@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Threading;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Managers;
@@ -11,7 +10,7 @@ using ES.Data.Models;
 
 namespace UserControls.ViewModels.Invoices
 {
-    public class InventoryWriteOffViewModel : SaleInvoiceViewModel
+    public class InventoryWriteOffViewModel : OutputOrderViewModel
     {
         #region Internal properties
 
@@ -28,7 +27,7 @@ namespace UserControls.ViewModels.Invoices
         public InventoryWriteOffViewModel(Guid id)
             : base(id)
         {
-
+            
         }
 
         #region Internal methods
@@ -36,6 +35,9 @@ namespace UserControls.ViewModels.Invoices
         protected override void OnInitialize()
         {
             base.OnInitialize();
+            Invoice.PartnerId = null;
+            Invoice.Partner = null;
+            Invoice.ProviderName = null;
         }
         protected override void PrepareToApprove()
         {
@@ -45,12 +47,12 @@ namespace UserControls.ViewModels.Invoices
         #endregion
 
         #region External methods
-        protected override void OnAddInvoiceItem(object o)
+        protected override void PreviewAddInvoiceItem(object o)
         {
-            base.OnAddInvoiceItem(o);
             InvoiceItem.Price = 0;
+            base.PreviewAddInvoiceItem(o);
         }
-        protected override decimal GetProductPrice(EsProductModel product)
+        protected override decimal GetProductPrice(ProductModel product)
         {
             return product != null ? (product.Price ?? 0) : 0;
         }
@@ -99,7 +101,7 @@ namespace UserControls.ViewModels.Invoices
 
                     if (closeOnExit && Invoice.ApproveDate != null && Application.Current != null)
                     {
-                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => OnClose(null)));
+                        OnClose();
                     }
                 }
             }

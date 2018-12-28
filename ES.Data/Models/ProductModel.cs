@@ -103,6 +103,14 @@ namespace ES.Data.Models
                 DealerPrice = DealerPrice
             };
         }
+        public decimal GetProductDealerPrice()
+        {
+            return (DealerPrice ?? 0) * (1 - (DealerDiscount ?? 0) / 100);
+        }
+        public decimal GetProductPrice()
+        {
+            return (Price ?? 0) * (1 - (Discount ?? 0) / 100);
+        }
     }
 
     public class ProductProvider

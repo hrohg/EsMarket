@@ -6,7 +6,9 @@
                     xmlns:controls="clr-namespace:UserControls.Controls"
                     xmlns:models1="clr-namespace:ES.DataAccess.Models;assembly=ES.DataAccess"
                     xmlns:reports="clr-namespace:ES.Data.Models.Reports;assembly=ES.Data"
-                    xmlns:enumerations1="clr-namespace:ES.Common.Enumerations;assembly=ES.Common">
+                    xmlns:enumerations1="clr-namespace:ES.Common.Enumerations;assembly=ES.Common"
+                    xmlns:orders="clr-namespace:UserControls.ViewModels.Reports.Orders"
+                    xmlns:helpers="clr-namespace:Shared.Helpers;assembly=Shared">
 
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     <converters:InvertVisibilityConverter x:Key="InvertVisibilityConverter"/>
@@ -21,8 +23,8 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                <Border  Name="Productorder">
+            <!--<ScrollViewer  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">-->
+                <Border Grid.Row="1" Name="Productorder">
                     <Grid>
                         <DataGrid ItemsSource="{Binding ViewList}" Visibility="Collapsed"  VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled"
                                CanUserAddRows="False" CanUserDeleteRows="False" FontSize="12" AutoGenerateColumns="False" >
@@ -32,8 +34,7 @@
                                 
                                     <DataTemplate DataType="{x:Type viewModels:SaleInvoiceReportByPartnersDetiledViewModel}">
                                         <DataGrid x:Name="DataGrid" ItemsSource="{Binding ViewList}" CanUserAddRows="False" CanUserDeleteRows="False"
-                                      FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True"
-                                      VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
+                                      FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True">
                                             <DataGrid.Columns>
 
                                                 <DataGridTemplateColumn Header="Ապրանքագիր" CanUserSort="True">
@@ -103,10 +104,10 @@
                                         </DataGrid>
                                     </DataTemplate>
                                 
-                                    <DataTemplate DataType="{x:Type viewModels:ProductOrderBySaleViewModel}">
+                                    <DataTemplate DataType="{x:Type orders:ProductOrderBySaleViewModel}">
                                         <DataGrid x:Name="DataGrid" ItemsSource="{Binding ViewList}" CanUserAddRows="False" CanUserDeleteRows="False" 
                                           FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True"
-                                          VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
+                                          EnableRowVirtualization="True">
                                             <DataGrid.Columns>
                                                 <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding Index, Mode=OneWay}"/>
                                                 <DataGridTemplateColumn Header="Մատակարար" CanUserSort="True" SortMemberPath="Provider">
@@ -192,8 +193,7 @@
 
                                     <DataTemplate DataType="{x:Type viewModels:SaleProductsViewModel}">
                                         <DataGrid x:Name="DataGrid" ItemsSource="{Binding ViewList}" CanUserAddRows="False" CanUserDeleteRows="False" 
-                                          FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True"
-                                          VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
+                                          FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True">
                                             <DataGrid.Columns>
                                                 <DataGridTemplateColumn Header="Կոդ" CanUserSort="True">
                                                     <DataGridTemplateColumn.CellTemplate>
@@ -256,8 +256,7 @@
                                             </Grid.RowDefinitions>
 
                                             <DataGrid Grid.Row="0" x:Name="DataGrid" ItemsSource="{Binding ViewList}" CanUserAddRows="False" CanUserDeleteRows="False" 
-                                          FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True"
-                                          VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
+                                          FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True">
                                                 <DataGrid.Columns>
                                                     <DataGridTemplateColumn Header="Ապրանքագիր" CanUserSort="True">
                                                         <DataGridTemplateColumn.CellTemplate>
@@ -296,6 +295,7 @@
                                                     </DataGridTemplateColumn>
                                                 </DataGrid.Columns>
                                             </DataGrid>
+                                            
                                             <Border Grid.Row="1" BorderThickness="1" BorderBrush="#ACB3BC" Padding="5" Margin="0 3" VerticalAlignment="Center">
                                                 <StackPanel  Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                                                     <TextBlock Text="Քանակ"/>
@@ -309,8 +309,7 @@
 
                                     <DataTemplate DataType="{x:Type viewModels:InternalWayBillDetileViewModel}">
                                         <DataGrid x:Name="DataGrid" ItemsSource="{Binding ViewList}" CanUserAddRows="False" CanUserDeleteRows="False" 
-                                          FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True"
-                                          VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
+                                          FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True">
                                             <DataGrid.Columns>
                                                 <DataGridTemplateColumn Header="Ապրանքագիր" CanUserSort="True">
                                                     <DataGridTemplateColumn.CellTemplate>
@@ -395,8 +394,7 @@
 
                                     <DataTemplate DataType="{x:Type viewModels:InvoiceReportViewModel}">
                                         <DataGrid x:Name="DataGrid" ItemsSource="{Binding ViewList}" CanUserAddRows="False" CanUserDeleteRows="False"
-                                      FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True"
-                                      VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
+                                      FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True">
                                             <DataGrid.Columns>
                                                 <DataGridTemplateColumn Header="Ապրանքագրի տեսակ" CanUserSort="True">
                                                     <DataGridTemplateColumn.CellTemplate>
@@ -454,8 +452,7 @@
 
                                     <DataTemplate DataType="{x:Type viewModels:SaleInvoiceReportByPartnerViewModel}">
                                         <DataGrid x:Name="DataGrid" ItemsSource="{Binding ViewList}" CanUserAddRows="False" CanUserDeleteRows="False"
-                                      FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True"
-                                      VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
+                                      FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True">
                                             <DataGrid.Columns>
                                                 <DataGridTemplateColumn Header="Ապրանքագիր" CanUserSort="True" CanUserReorder="True" SortMemberPath="Invoice">
                                                     <DataGridTemplateColumn.CellTemplate>
@@ -526,8 +523,7 @@
 
                                     <DataTemplate DataType="{x:Type viewModels:ReportBaseViewModel}">
                                         <DataGrid x:Name="DataGrid" ItemsSource="{Binding ViewList}" CanUserAddRows="False" CanUserDeleteRows="False" 
-                                          FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True"
-                                          VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled">
+                                          FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True">
                                             <DataGrid.Columns>
                                                 <DataGridTemplateColumn Header="Անվանում" CanUserSort="True">
                                                     <DataGridTemplateColumn.CellTemplate>
@@ -581,16 +577,12 @@
                                             </DataGrid.Columns>
                                         </DataGrid>
                                     </DataTemplate>
-
-
-
-
                                     
                                 </ContentControl.Resources>
                         </ContentControl>
                     </Grid>
                 </Border>
-            </ScrollViewer>
+            <!--</ScrollViewer>-->
             <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                 <TextBlock Text="Տող" Margin="5 0 1 0"/>
                 <TextBlock Text="{Binding TotalRows}" Foreground="Blue"/>
@@ -601,8 +593,7 @@
 
                 <CheckBox Margin="3" Content="Ցուցադրել 0 ները" IsChecked="{Binding IsShowNulls}" Visibility="{Binding IsShowUpdateButton, Converter={StaticResource BoolToVisibility}}"/>
                 <Button Content="Թարմացնել" Margin="1" Visibility="{Binding IsShowUpdateButton, Converter={StaticResource BoolToVisibility}}" Command="{Binding UpdateCommand}"/>
-                <Button Content="Արտահանել" Margin="1" Visibility="{Binding IsShowUpdateButton, Converter={StaticResource BoolToVisibility}}" Command="{Binding ExportToExcelCommand}" 
-                        CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}}"/>
+                    <Button Content="Արտահանել" Margin="1" Visibility="{Binding IsShowUpdateButton, Converter={StaticResource BoolToVisibility}}" Command="{Binding ExportCommand}" CommandParameter="{x:Static helpers:ExportImportEnum.Excel}"/>
                 <Button Content="Տպել" Margin="1" Visibility="{Binding IsShowUpdateButton, Converter={StaticResource BoolToVisibility}}" Command="{Binding PrintCommand}" 
                         CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}}"/>
             </StackPanel>

@@ -18,7 +18,8 @@
     <xcad:ActivateCommandLayoutItemFromLayoutModelConverter x:Key="ActivateCommandLayoutItemFromLayoutModelConverter"/>
 
     <SolidColorBrush x:Key="BackgroundBrush" Color="#FFF4F4F4" />
-    <SolidColorBrush x:Key="TabItemBackgroundBrush" Color="#FFE0E0E0" />
+    <SolidColorBrush x:Key="SelectedTabBackgroundBrush" Color="#FFF9F9F9" />
+    <SolidColorBrush x:Key="TabItemBackgroundBrush" Color="#FFE3E1E1" />
     <SolidColorBrush x:Key="TabItemBackgroundLightBrush" Color="#FF0F0F0F" />
     <SolidColorBrush x:Key="TabItemForegroundBrush" Color="#1B2024" />
     <SolidColorBrush x:Key="ShadowBorderBrush" Color="#FFCACACA" />
@@ -114,7 +115,7 @@
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type TabItem}">
                                 <Grid SnapsToDevicePixels="true">
-                                    <Border Padding="6 1 4 1"  x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="2 2 0 0">
+                                    <Border   x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="2 2 0 0" BorderBrush="{StaticResource ShadowBorderBrush}" BorderThickness="1 0" Padding="6 1 4 1">
                                         <ContentPresenter x:Name="Content" 
                                                                       ContentSource="Header" 
                                                                       HorizontalAlignment="Stretch" 
@@ -126,7 +127,8 @@
                                 </Grid>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="Selector.IsSelected" Value="true">
-                                        <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+                                        <Setter Property="Margin" Value="0 0 0 -1"/>
+                                        <Setter Property="Background" Value="{StaticResource SelectedTabBackgroundBrush}" />
                                         <Setter TargetName="ShadowBorder" Property="Visibility" Value="Collapsed" />
                                         <Setter TargetName="ShadowBorder" Property="Background" Value="{StaticResource ShadowBorderBrush}" />
                                         <Setter Property="Panel.ZIndex" Value="0" />

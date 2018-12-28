@@ -325,8 +325,8 @@
                         <TextBlock Grid.Column="4" Grid.Row="0" Text="Գին"/>
                         <TextBox Grid.Column="4" Grid.Row="1" 
                              Text="{Binding Path=InvoiceItem.Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" 
-                             IsReadOnly="{Binding Path = DenayChangePrice}" Width="105" VerticalContentAlignment="Center" 
-                             Focusable="{Binding DenayChangePrice, Converter={StaticResource InverseBooleanConverter}}"
+                             IsReadOnly="{Binding Path = DenyChangePrice}" Width="105" VerticalContentAlignment="Center" 
+                             Focusable="{Binding DenyChangePrice, Converter={StaticResource InverseBooleanConverter}}"
                              HorizontalContentAlignment="Right" TabIndex="2">
                             <i:Interaction.Behaviors>
                                 <behaviors:TextBoxBehavior IsSelectTextOnFocus="True" />
@@ -396,7 +396,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
                                     <TextBox Text="{Binding Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0.##}}" 
-                                             HorizontalContentAlignment="Right" IsReadOnly="{Binding ElementName=DgInvoiceItems, Path=DataContext.DenayChangePrice, Mode=OneWay}"/>
+                                             HorizontalContentAlignment="Right" IsReadOnly="{Binding ElementName=DgInvoiceItems, Path=DataContext.DenyChangePrice, Mode=OneWay}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -527,6 +527,7 @@
                                 <ContextMenu>
                                     <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"  />
                                     <MenuItem Header="Հաստատել" Command="{Binding ApproveInvoiceCommand}"  />
+                                    <MenuItem Header="Առկայության ստուգում" Command="{Binding CheckExistingCommand}"/>
                                     <Separator/>
                                     <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
                                     <MenuItem Header="Տպել վաճառքի կտրոն Ctrl+Shift+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Small}"/>

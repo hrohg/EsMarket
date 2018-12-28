@@ -404,6 +404,8 @@ namespace ES.Business.Managers
                     return false;
                 }
                 dbServer.Dispose();
+                MessageManager.OnMessage("Օգտագործողների տեսակները բեռնվել են հաջողությամբ:");
+
                 return true;
             }
         }
@@ -431,7 +433,8 @@ namespace ES.Business.Managers
                         }
                     }
                     db.SaveChanges();
-                    #endregion
+                    MessageManager.OnMessage("Հաշվառման պլանը բեռնվել է հաջողությամբ:");
+                    #endregion Download AccountingPlan
 
                     #region Download Invoice types
                     MessageManager.OnMessage("Downloading invoices data");
@@ -448,11 +451,15 @@ namespace ES.Business.Managers
                                 Name = item.Name,
                                 Description = item.Description
                             };
-                            db.EsInvoiceTypes.Add(exItem);
+                            MessageManager.OnMessage(string.Format("{0} {1}", exItem.Id, item.Id));
+
+                            db.EsInvoiceTypes.Add(exItem); 
+                            db.SaveChanges();
                         }
                     }
-                    db.SaveChanges();
-                    #endregion
+                   
+                    MessageManager.OnMessage("Ապրանքագրերի տեսակները բեռնվել են հաջողությամբ:");
+                    #endregion Download Invoice types
 
                     #region Download Partner types
                     MessageManager.OnMessage("Downloading partners data");
@@ -465,14 +472,15 @@ namespace ES.Business.Managers
                         {
                             var partnerType = new EsPartnersTypes
                             {
-                                Id = item.Id,
+                                //Id = item.Id,
                                 Description = item.Description
                             };
                             db.EsPartnersTypes.Add(partnerType);
                         }
                     }
                     db.SaveChanges();
-                    #endregion
+                    MessageManager.OnMessage("Պատվիրատուների տեսակները բեռնվել են հաջողությամբ:");
+                    #endregion Download Partner types
 
                     #region Download Roles
                     var roles = dbServer.MembersRoles;
@@ -552,6 +560,7 @@ namespace ES.Business.Managers
                     dbServer.SaveChanges();
                     db.SaveChanges();
                     #endregion
+
                     #region Syncronize user member role
                     //foreach (var user in users)
                     //{
@@ -601,102 +610,108 @@ namespace ES.Business.Managers
                     //}
                     //db.SaveChanges();
                     #endregion
+
+                    //Disabled
                     #region Syncronize CashDesks
-                    var cashDesks = dbServer.CashDesk.Where(s => s.MemberId == memberId);
-                    foreach (var item in cashDesks)
-                    {
-                        var exCashDesk = db.CashDesk.SingleOrDefault(s => s.Id == item.Id);
-                        if (exCashDesk == null)
-                        {
-                            db.CashDesk.Add(new CashDesk
-                            {
-                                Id = item.Id,
-                                MemberId = item.MemberId,
-                                Total = item.Total,
-                                Name = item.Name,
-                                Description = item.Description,
-                                Notes = item.Notes,
-                                IsCash = item.IsCash,
-                                IsActive = item.IsActive,
-                            });
-                        }
-                        else
-                        {
-                            // ToDo
-                            exCashDesk.MemberId = item.MemberId;
-                            //exCashDesk.Total = item.Total;
-                            exCashDesk.Name = item.Name;
-                            exCashDesk.Description = item.Description;
-                            exCashDesk.Notes = item.Notes;
-                            exCashDesk.IsCash = item.IsCash;
-                            exCashDesk.IsActive = item.IsActive;
-                        }
+                    //var cashDesks = dbServer.CashDesk.Where(s => s.MemberId == memberId);
+                    //foreach (var item in cashDesks)
+                    //{
+                    //    var exCashDesk = db.CashDesk.SingleOrDefault(s => s.Id == item.Id);
+                    //    if (exCashDesk == null)
+                    //    {
+                    //        db.CashDesk.Add(new CashDesk
+                    //        {
+                    //            Id = item.Id,
+                    //            MemberId = item.MemberId,
+                    //            Total = item.Total,
+                    //            Name = item.Name,
+                    //            Description = item.Description,
+                    //            Notes = item.Notes,
+                    //            IsCash = item.IsCash,
+                    //            IsActive = item.IsActive,
+                    //        });
+                    //    }
+                    //    else
+                    //    {
+                    //        // ToDo
+                    //        exCashDesk.MemberId = item.MemberId;
+                    //        //exCashDesk.Total = item.Total;
+                    //        exCashDesk.Name = item.Name;
+                    //        exCashDesk.Description = item.Description;
+                    //        exCashDesk.Notes = item.Notes;
+                    //        exCashDesk.IsCash = item.IsCash;
+                    //        exCashDesk.IsActive = item.IsActive;
+                    //    }
 
-                    }
-                    db.SaveChanges();
+                    //}
+                    //db.SaveChanges();
                     #endregion
+
+                    //Disabled
                     #region Syncronize stocks
-                    var stocks = dbServer.EsStock.Where(s => s.EsMemberId == memberId);
-                    foreach (var item in stocks)
-                    {
-                        var exStock = db.EsStock.SingleOrDefault(s => s.Id == item.Id);
-                        if (exStock == null)
-                        {
-                            //todo exception on adding new stock
-                            db.EsStock.Add(new EsStock()
-                            {
-                                Id = item.Id,
-                                ParentStockId = item.ParentStockId,
-                                StorekeeperId = item.StorekeeperId,
-                                Name = item.Name,
-                                Description = item.Description,
-                                Address = item.Address,
-                                SpecialCode = item.SpecialCode,
-                                IsEnable = item.IsEnable,
-                                EsMemberId = item.EsMemberId
-                            });
-                        }
-                        else
-                        {
-                            // ToDo
-                            exStock.ParentStockId = item.ParentStockId;
-                            exStock.StorekeeperId = item.StorekeeperId;
-                            exStock.Name = item.Name;
-                            exStock.Description = item.Description;
-                            exStock.Address = item.Address;
-                            exStock.SpecialCode = item.SpecialCode;
-                            exStock.IsEnable = item.IsEnable;
-                            exStock.EsMemberId = item.EsMemberId;
-                        }
-                    }
-                    db.SaveChanges();
+                    //var stocks = dbServer.EsStock.Where(s => s.EsMemberId == memberId);
+                    //foreach (var item in stocks)
+                    //{
+                    //    var exStock = db.EsStock.SingleOrDefault(s => s.Id == item.Id);
+                    //    if (exStock == null)
+                    //    {
+                    //        //todo exception on adding new stock
+                    //        db.EsStock.Add(new EsStock()
+                    //        {
+                    //            Id = item.Id,
+                    //            ParentStockId = item.ParentStockId,
+                    //            StorekeeperId = item.StorekeeperId,
+                    //            Name = item.Name,
+                    //            Description = item.Description,
+                    //            Address = item.Address,
+                    //            SpecialCode = item.SpecialCode,
+                    //            IsEnable = item.IsEnable,
+                    //            EsMemberId = item.EsMemberId
+                    //        });
+                    //    }
+                    //    else
+                    //    {
+                    //        // ToDo
+                    //        exStock.ParentStockId = item.ParentStockId;
+                    //        exStock.StorekeeperId = item.StorekeeperId;
+                    //        exStock.Name = item.Name;
+                    //        exStock.Description = item.Description;
+                    //        exStock.Address = item.Address;
+                    //        exStock.SpecialCode = item.SpecialCode;
+                    //        exStock.IsEnable = item.IsEnable;
+                    //        exStock.EsMemberId = item.EsMemberId;
+                    //    }
+                    //}
+                    //db.SaveChanges();
                     #endregion
+                    
+                    //Disabled
                     #region Syncronize Default data
-                    var defaults = dbServer.EsDefaults.Where(s => s.MemberId == memberId);
-                    foreach (var item in defaults)
-                    {
-                        var exDefault = db.EsDefaults.SingleOrDefault(s => s.Id == item.Id);
-                        if (exDefault == null)
-                        {
-                            db.EsDefaults.Add(new EsDefaults()
-                            {
-                                Id = item.Id,
-                                MemberId = item.MemberId,
-                                Control = item.Control,
-                                ValueInGuid = item.ValueInGuid,
-                                ValueInLong = item.ValueInLong
-                            });
-                        }
-                        else
-                        {
-                            exDefault.MemberId = item.MemberId;
-                            exDefault.Control = item.Control;
-                            exDefault.ValueInGuid = item.ValueInGuid;
-                            exDefault.ValueInLong = item.ValueInLong;
+                    //var defaults = dbServer.EsDefaults.Where(s => s.MemberId == memberId);
+                    //foreach (var item in defaults)
+                    //{
+                    //    var exDefault = db.EsDefaults.SingleOrDefault(s => s.Id == item.Id);
+                    //    if (exDefault == null)
+                    //    {
+                    //        db.EsDefaults.Add(new EsDefaults()
+                    //        {
+                    //            Id = item.Id,
+                    //            MemberId = item.MemberId,
+                    //            Control = item.Control,
+                    //            ValueInGuid = item.ValueInGuid,
+                    //            ValueInLong = item.ValueInLong
+                    //        });
+                    //    }
+                    //    else
+                    //    {
+                    //        exDefault.MemberId = item.MemberId;
+                    //        exDefault.Control = item.Control;
+                    //        exDefault.ValueInGuid = item.ValueInGuid;
+                    //        exDefault.ValueInLong = item.ValueInLong;
 
-                        }
-                    }
-                    db.SaveChanges();
+                    //    }
+                    //}
+                    //db.SaveChanges();
                     #endregion
                 }
                 catch (Exception ex)
@@ -705,6 +720,7 @@ namespace ES.Business.Managers
                     return false;
                 }
                 dbServer.Dispose();
+                MessageManager.OnMessage("Սերվերի համաժամանակեցումն իրականացել է հաջողությամբ:");
                 return true;
             }
         }
@@ -778,13 +794,15 @@ namespace ES.Business.Managers
                 }
             }
         }
+
         /// <summary>
         /// Download Member Data
         /// </summary>
-        /// <param name="memberId"></param>
+        /// <param name="syncronizeMode"></param>
         /// <returns></returns>
-        public static bool SyncronizeServers(SyncronizeServersMode syncronizeMode, long memberId)
+        public static bool SyncronizeServers(SyncronizeServersMode syncronizeMode)
         {
+            var memberId = ApplicationManager.Member.Id;
             switch (syncronizeMode)
             {
                 case SyncronizeServersMode.DownloadMemberData:
@@ -801,36 +819,7 @@ namespace ES.Business.Managers
                     return false;
             }
         }
-        public static bool DownloadMemberData(long memberId)
-        {
-            return TryDownloadMemberData(memberId);
-        }
-        public static bool DownloadUserData(long userId)
-        {
-            return TryDownloadUserData(userId);
-        }
-        public static bool DownloadMemberBaseData(long memberId)
-        {
-            return TryDownloadMemberBaseData(memberId);
-        }
-        public static bool SyncronizeMemberData(long memberId)
-        {
-            return TrySyncronizeMemberBaseData(memberId);
-        }
-
-
-
-        public static bool DownloadEsServerData(long memberId)
-        {
-            if (!UpdateServerBaseData()) return false;
-
-            return true;
-        }
-        public static bool UpdateServerBaseData()
-        {
-            return true;
-        }
-
+        
         public static void SyncronizeProducts()
         {
             MessageManager.OnMessage("Տվյալների համաժամանակեցումն սկսված է։", MessageTypeEnum.Success);

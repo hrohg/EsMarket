@@ -16,13 +16,17 @@ namespace UserControls.ViewModels.Reports
 {
     public abstract class ItemsDataViewModelBase<T> : DocumentViewModel
     {
-        public ObservableCollection<T> Items { get; set; }
+        public ObservableCollection<T> Items
+        {
+            get { return _items; }
+            set { _items = value; RaisePropertyChanged("Items"); }
+        }
 
         protected ItemsDataViewModelBase()
         {
             Init();
-        } 
-        private void Init() { Initialize();}
+        }
+        private void Init() { Initialize(); }
         protected virtual void Initialize()
         {
             Items = new ObservableCollection<T>();
@@ -61,6 +65,7 @@ namespace UserControls.ViewModels.Reports
         }
 
         private ICommand _exportCommand;
+        private ObservableCollection<T> _items;
         public ICommand ExportCommand { get { return _exportCommand ?? (_exportCommand = new RelayCommand<ExportImportEnum>(OnExport, CanExport)); } }
 
 
@@ -86,7 +91,7 @@ namespace UserControls.ViewModels.Reports
     public class FallowProductsViewModel : ItemsDataViewModelBase<ProductModel>
     {
         private int _daysCount = 180;
-        
+
         protected override void Initialize()
         {
             base.Initialize();
@@ -112,20 +117,28 @@ namespace UserControls.ViewModels.Reports
                         Items.Add(nextItem);
                     }
                 });
-            UpdateCompleted(true);
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { UpdateCompleted(true); });
         }
 
         protected override void OnExport(ExportImportEnum obj)
         {
-            ExcelExportManager.ExportList(Items.Select(s => new { Կոդ = s.Code, Անվանում = s.Description, Չմ = s.Mu, Գին = s.Price, Առկա = s.ExistingQuantity }));
+            ExcelExportManager.ExportList(Items.Select(s => new
+            {
+                Կոդ = s.Code,
+                Անվանում = s.Description,
+                Չմ = s.Mu,
+                Գին = s.Price,
+                Առկա = s.ExistingQuantity,
+                Մատակարար = s.Provider != null ? s.Provider.FullName : string.Empty
+            }));
         }
     }
 
     public class CheckProductsRemainderViewModel : ItemsDataViewModelBase<ProductModel>
     {
         private StockModel _stock;
-        private int _daysCount=120;
-        
+        private int _daysCount = 120;
+
         protected override void Initialize()
         {
             base.Initialize();
@@ -138,7 +151,7 @@ namespace UserControls.ViewModels.Reports
             if (selectedStock == null || !selectedStock.Any()) return;
             _stock = selectedStock.FirstOrDefault();
             var days = SelectItemsManager.GetDays(_daysCount);
-            if(days==null) return;
+            if (days == null) return;
             _daysCount = days.Value;
             base.Update();
         }
@@ -156,7 +169,7 @@ namespace UserControls.ViewModels.Reports
                         Items.Add(nextItem);
                     }
                 });
-            UpdateCompleted(true);
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { UpdateCompleted(true); });
         }
 
 
@@ -165,47 +178,39 @@ namespace UserControls.ViewModels.Reports
     public class CheckProductsRemainderByStockViewModel : TableViewModel<ProductModel>
     {
         private StockModel _stock;
-        
+
         protected override void Initialize()
         {
-           Title = Description = "Բաժինների անբավարար մնացորդի ստուգում";
+            Title = Description = "Բաժինների անբավարար մնացորդի ստուգում";
             base.Initialize();
         }
 
-        protected override void OnUpdate()
-        {
-            var selectedStock = SelectItemsManager.SelectStocks();
-            if (selectedStock == null || !selectedStock.Any()) return;
-            _stock = selectedStock.FirstOrDefault();
-            
-            base.OnUpdate();
-            //var thread = new Thread(UpdateAsync);
-            //thread.Start();
-        }
 
         protected override void UpdateAsync()
         {
+            base.UpdateAsync();
+            SetStock();
             if (_stock == null)
             {
-                //UpdateCompleted(false); 
+                UpdateCompleted(false);
                 return;
             }
-            IsLoading = true;
+
             var items = ProductsManager.CheckProductRemainderByStockItems(_stock.Id);
-            if (items != null)
-                DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
-                {
-                    foreach (var item in items)
-                    {
-                        var nextItem = item;
-                        ViewList.Add(nextItem);
-                    }
-                });
-            //UpdateCompleted(true);
-            IsLoading = false;
+            SetResult(items);
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { UpdateCompleted(); });
         }
 
+        private void SetStock()
+        {
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+            {
+                var selectedStock = SelectItemsManager.SelectStocks();
+                if (selectedStock == null || !selectedStock.Any()) return;
+                _stock = selectedStock.FirstOrDefault();
+            });
 
+        }
     }
 
 }

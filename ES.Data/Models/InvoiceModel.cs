@@ -139,7 +139,7 @@ namespace ES.Data.Models
         public string RecipientTaxRegistration { get; set; }
         private string _note;
         private string _invoiceNumber;
-
+        
         public string Notes
         {
             get { return _note; }
@@ -150,6 +150,7 @@ namespace ES.Data.Models
         {
             get { return ApproveDate != null; }
         }
+
         public void Reload(InvoiceModel invoice, long memberId)
         {
             Id = invoice.Id;

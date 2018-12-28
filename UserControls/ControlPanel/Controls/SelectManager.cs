@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
+using ES.Common.Managers;
 
 namespace UserControls.ControlPanel.Controls
 {
@@ -12,42 +12,14 @@ namespace UserControls.ControlPanel.Controls
             window.ShowDialog();
             if (window.DialogResult == null || !(bool)window.DialogResult || window.SelectedItems==null || window.SelectedItems.Count == 0)
             {
-                MessageBox.Show("Գործողությունն ընդհատված է։", "Գործողության ընդհատում", MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
+                MessageManager.ShowMessage("Գործողությունն ընդհատված է։", "Գործողության ընդհատում");
                 return new List<ItemsToSelect>();
             }
             return window.SelectedItems;
         }
-        public static Tuple<DateTime, DateTime> GetDateIntermediate()
-        {
-            var window = new SelectDateIntermediate(DateTime.Today, DateTime.Now);
-            window.ShowDialog();
-            if (window.DialogResult == null || !(bool)window.DialogResult)
-            {
-                return null;
-            }
-            return new Tuple<DateTime, DateTime>(window.StartDate ?? DateTime.Today, window.EndDate != null ? window.EndDate.Value.AddDays(1) : DateTime.Now);
-        }
-        public static Tuple<DateTime, DateTime> GetDateIntermediate(DateTime defaultStartDate , DateTime defaultEndDate)
-        {
-            var window = new SelectDateIntermediate(defaultStartDate, defaultEndDate);
-            window.ShowDialog();
-            if (window.DialogResult == null || !(bool)window.DialogResult)
-            {
-                return new Tuple<DateTime, DateTime>(window.StartDate ?? DateTime.Today, window.EndDate != null ? window.EndDate.Value.AddDays(1) : DateTime.Now);
-            }
-            return new Tuple<DateTime, DateTime>(window.StartDate ?? DateTime.Today, window.EndDate != null ? window.EndDate.Value.AddDays(1) : DateTime.Now);
-        }
-        public static DateTime? GetDate(DateTime? date)
-        {
-            var window = new SelectDateIntermediate(date??DateTime.Now);
-            window.ShowDialog();
-            if (window.DialogResult == null || !(bool)window.DialogResult)
-            {
-                return null;
-            }
-            return window.StartDate;
-        }
+        
+        
+        
         public static string ReadText(string oldText, string description)
         {
             var ui = new InputBox(description, oldText);

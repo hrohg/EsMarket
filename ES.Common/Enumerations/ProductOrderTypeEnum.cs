@@ -6,5 +6,6 @@
         BySale,
         ByProviders,
         ByBrands,
+        ViewPartners
     }
 }

@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:reports="clr-namespace:UserControls.ViewModels.Reports"
                     xmlns:models="clr-namespace:UserControls.ViewModels"
-                    xmlns:helpers="clr-namespace:Shared.Helpers;assembly=Shared">
+                    xmlns:helpers="clr-namespace:Shared.Helpers;assembly=Shared"
+                    xmlns:models1="clr-namespace:UserControls.Models">
 
 
     <DataTemplate DataType="{x:Type reports:ViewProductsByProviderViewModel}">
@@ -16,42 +17,42 @@
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Կոդ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductProviderReportModel}">
+                            <DataTemplate DataType="{x:Type models1:ProductProviderReportModel}">
                                 <TextBlock Text="{Binding Code}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductProviderReportModel}">
+                            <DataTemplate DataType="{x:Type models1:ProductProviderReportModel}">
                                 <TextBlock Text="{Binding Description}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Չմ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductProviderReportModel}">
+                            <DataTemplate DataType="{x:Type models1:ProductProviderReportModel}">
                                 <TextBlock Text="{Binding Mu}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn  Header="Առկա քանակ" Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductProviderReportModel}">
+                            <DataTemplate DataType="{x:Type models1:ProductProviderReportModel}">
                                 <TextBlock Text="{Binding Path=Partner}" Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn  Header="Գին" Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductProviderReportModel}">
+                            <DataTemplate DataType="{x:Type models1:ProductProviderReportModel}">
                                 <TextBlock Text="{Binding Path=Price, StringFormat={}{0:#,#.##}}" Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Նշումներ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductProviderReportModel}">
+                            <DataTemplate DataType="{x:Type models1:ProductProviderReportModel}">
                                 <TextBlock Text="{Binding Description}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -59,7 +60,7 @@
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 3">
-                <Button Content="Արտահանել" Command="{Binding ExportToExcelCommand}" CommandParameter="{x:Static helpers:ExportImportEnum.Excel}"/>
+                <Button Content="Արտահանել" Command="{Binding ExportCommand}" CommandParameter="{x:Static helpers:ExportImportEnum.Excel}"/>
                 <Button Content="Թարմացնել" Command="{Binding UpdateCommand}"/>
             </StackPanel>
         </Grid>

@@ -148,7 +148,7 @@ namespace UserControls.ViewModels.Tools
 
         public void OnUpdateProducts(object o)
         {
-            ApplicationManager.Instance.CashProvider.UpdateProducts();
+            ApplicationManager.Instance.CashProvider.UpdateProductsAsync();
 
         }
         private void OnSelectItem(Guid id)

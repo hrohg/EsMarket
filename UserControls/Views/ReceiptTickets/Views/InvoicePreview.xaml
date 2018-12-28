@@ -12,7 +12,7 @@
         <BooleanToVisibilityConverter x:Key="Bool2VisibilityConverter"/>
         <helpers:MutiplyConverter x:Key="MutiplyConverter"/>
         
-        <DataTemplate DataType="{x:Type receiptTickets:SaleInvocieSmallTicketViewModel}">
+        <DataTemplate DataType="{x:Type receiptTickets:SaleInvoiceSmallTicketViewModel}">
             <Grid Margin="3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

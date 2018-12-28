@@ -6,6 +6,7 @@ using CashReg;
 using CashReg.Helper;
 using CashReg.Interfaces;
 using ES.Business.Managers;
+using ES.Common.Managers;
 using ES.Data.Model;
 using UserControls.ViewModels.Invoices;
 using MessageBox = System.Windows.MessageBox;
@@ -34,10 +35,9 @@ namespace UserControls.Helpers
             
             if (_ecrServer.TryConnection())
             {
-                MessageBox.Show(
+                MessageManager.ShowMessage(
                     "Հսկիչ դրամարկղային մեքենայի կապի ստուգումն իրականացվել է հաջողությամբ։ \n",
-                    "Տեղեկացում",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                    "Տեղեկացում", MessageBoxImage.Information);
                 return true;
             }
             else
@@ -61,7 +61,7 @@ namespace UserControls.Helpers
             }
             else
             {
-                MessageBox.Show(
+                MessageManager.ShowMessage(
                     "Հսկիչ դրամարկղային մեքենայի օպերատորի մուտքի ստուգումը ձախողվել է։ Հնարավոր է կապի խափանում։ \nՍտուգեք կապը և փորձեք ևս մեկ անգամ։ Կրկնվելու դեպքում դիմել ցանցային ադմինիստրատորին կամ ՀԴՄ սպասարկողին։ \n",
                     "Տեղեկացում",
                     MessageBoxButton.OK, MessageBoxImage.Information);
@@ -73,10 +73,10 @@ namespace UserControls.Helpers
             var model = new SaleInvoiceViewModel();
             if (!model.PrintReceiptFromExcel())
             {
-                MessageBox.Show("Գործողությունն ընդհատված է։ \nՏվյալները կարդալու ժամանակ տեղի է ունեցել սխալ։ Տվյալները թերի են կամ ոչ Լիարժեք։", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageManager.ShowMessage("Գործողությունն ընդհատված է։ \nՏվյալները կարդալու ժամանակ տեղի է ունեցել սխալ։ Տվյալները թերի են կամ ոչ Լիարժեք։", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
-            if (MessageBox.Show("Տվյալները կարդացվել են հաջողությամբ։ \n Դուք ցանկանու՞մ եք տպել " +
+            if (MessageManager.ShowMessage("Տվյալները կարդացվել են հաջողությամբ։ \n Դուք ցանկանու՞մ եք տպել " +
                     (Math.Round((model.Invoice.Total + 4) / 10) * 10).ToString("0,###") + " դրամի հսկիչ դրամարկղային կտրոն", "Հարցում",
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
@@ -89,13 +89,13 @@ namespace UserControls.Helpers
                     }).ToList(), new EcrPaid { PaidAmount = (int)(Math.Round((model.Invoice.Total + 5) / 10) * 10) }, null);
                 if (_ecrServer.ActionCode == EcrException.ResponseCodes.Ok)
                 {
-                    MessageBox.Show("Հսկիչ դրամարկղային կտրոնի տպումն իրականացվել է հաջողությամբ։ \n Խնդրում ենք վերցնել հսկիչ դրամարկղային կտրոնը։", "Տեղեկացում",
+                    MessageManager.ShowMessage("Հսկիչ դրամարկղային կտրոնի տպումն իրականացվել է հաջողությամբ։ \n Խնդրում ենք վերցնել հսկիչ դրամարկղային կտրոնը։", "Տեղեկացում",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                     return true;
                 }
                 else
                 {
-                    if (MessageBox.Show(
+                    if (MessageManager.ShowMessage(
                         "Հսկիչ դրամարկղային կտրոնի տպումն ընդհատվել է։ Հնարավոր է կապի խափանում։ \nՍտուգեք կապը և փորձեք տպել ևս մեկ անգամ։ Կրկնվելու դեպքում դիմել ցանցային ադմինիստրատորին կամ ՀԴՄ սպասարկողին։ \nՏպե՞լ ևս մի անգամ։",
                         "Տեղեկացում",
                         MessageBoxButton.YesNoCancel, MessageBoxImage.Question) != MessageBoxResult.Yes)
@@ -113,10 +113,10 @@ namespace UserControls.Helpers
             var model = new SaleInvoiceViewModel();
             if (!model.PrintReceiptFromExcel())
             {
-                MessageBox.Show("Գործողությունն ընդհատված է։ \nՏվյալները կարդալու ժամանակ տեղի է ունեցել սխալ։ Տվյալները թերի են կամ ոչ Լիարժեք։", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageManager.ShowMessage("Գործողությունն ընդհատված է։ \nՏվյալները կարդալու ժամանակ տեղի է ունեցել սխալ։ Տվյալները թերի են կամ ոչ Լիարժեք։", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
-            if (MessageBox.Show("Տվյալները կարդացվել են հաջողությամբ։ \n Դուք ցանկանու՞մ եք տպել " +
+            if (MessageManager.ShowMessage("Տվյալները կարդացվել են հաջողությամբ։ \n Դուք ցանկանու՞մ եք տպել " +
                     (Math.Round((model.Invoice.Total + 4) / 10) * 10).ToString("0,###") + " դրամի հսկիչ դրամարկղային կտրոն", "Հարցում",
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
@@ -129,13 +129,13 @@ namespace UserControls.Helpers
                     }).ToList(), (IEcrPaid)new EcrPaid { PaidAmount = (int)(Math.Round((model.Invoice.Total + 5) / 10) * 10) }, null);
                 if (_ecrServer.ActionCode == EcrException.ResponseCodes.Ok)
                 {
-                    MessageBox.Show("Հսկիչ դրամարկղային կտրոնի տպումն իրականացվել է հաջողությամբ։ \n Խնդրում ենք վերցնել հսկիչ դրամարկղային կտրոնը։", "Տեղեկացում",
+                    MessageManager.ShowMessage("Հսկիչ դրամարկղային կտրոնի տպումն իրականացվել է հաջողությամբ։ \n Խնդրում ենք վերցնել հսկիչ դրամարկղային կտրոնը։", "Տեղեկացում",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                     return true;
                 }
                 else
                 {
-                    if (MessageBox.Show(
+                    if (MessageManager.ShowMessage(
                         "Հսկիչ դրամարկղային կտրոնի տպումն ընդհատվել է։ Հնարավոր է կապի խափանում։ \nՍտուգեք կապը և փորձեք տպել ևս մեկ անգամ։ Կրկնվելու դեպքում դիմել ցանցային ադմինիստրատորին կամ ՀԴՄ սպասարկողին։ \nՏպե՞լ ևս մի անգամ։",
                         "Տեղեկացում",
                         MessageBoxButton.YesNoCancel, MessageBoxImage.Question) != MessageBoxResult.Yes)
@@ -153,7 +153,7 @@ namespace UserControls.Helpers
            //Print ECR Receiptr
             if (_ecrServer.PrintReceiptLatestCopy())
             {
-                MessageBox.Show(
+                MessageManager.ShowMessage(
                     "Հսկիչ դրամարկղային կտրոնի կրկնօրինակի տպումն իրականացվել է հաջողությամբ։ \nԽնդրում ենք վերցնել հսկիչ դրամարկղային կտրոնը։",
                     "Տեղեկացում",
                     MessageBoxButton.OK, MessageBoxImage.Information);
@@ -161,7 +161,7 @@ namespace UserControls.Helpers
             }
             else
             {
-                if (MessageBox.Show(
+                if (MessageManager.ShowMessage(
                     "Հսկիչ դրամարկղային կտրոնի կրկնօրինակի տպումն ընդհատվել է։ Հնարավոր է կապի խափանում։ \nՍտուգեք կապը և փորձեք տպել ևս մեկ անգամ։ Կրկնվելու դեպքում դիմել ցանցային ադմինիստրատորին կամ ՀԴՄ սպասարկողին։ \nՏպե՞լ ևս մեկ անգամ։",
                     "Տեղեկացում",
                     MessageBoxButton.YesNoCancel, MessageBoxImage.Question) != MessageBoxResult.Yes)
@@ -178,13 +178,13 @@ namespace UserControls.Helpers
                 //returnTicket.ShowDialog();
                 //if (returnTicket.DialogResult!= DialogResult.OK || string.IsNullOrEmpty(returnTicket.InputValue))
                 //{
-                //    MessageBox.Show("Հսկիչ դրամարկղային վերադարձի կտրոնի տպումն ընդհատվել է օգտագործողի կողմից։", "Տեղեկացում",
+                //    MessageManager.ShowMessage("Հսկիչ դրամարկղային վերադարձի կտրոնի տպումն ընդհատվել է օգտագործողի կողմից։", "Տեղեկացում",
                 //        MessageBoxButton.OK, MessageBoxImage.Information);
                 //    return false;
                 //}
                 //if (_ecrServer.GetReturnReceipt( HgConvert.ToInt32(returnTicket.InputValue)))
                 //{
-                //    MessageBox.Show(
+                //    MessageManager.ShowMessage(
                 //        "Հսկիչ դրամարկղային վերադարձի կտրոնի տպումն իրականացվել է հաջողությամբ։ \nԽնդրում ենք վերցնել հսկիչ դրամարկղային կտրոնը։",
                 //        "Տեղեկացում",
                 //        MessageBoxButton.OK, MessageBoxImage.Information);
@@ -192,7 +192,7 @@ namespace UserControls.Helpers
                 //}
                 //else
                 //{
-                //    if (MessageBox.Show(
+                //    if (MessageManager.ShowMessage(
                 //        "Հսկիչ դրամարկղային վերադարձի կտրոնի տպումն ընդհատվել է։ Հնարավոր է կապի խափանում։ \nՍտուգեք կապը և փորձեք տպել ևս մեկ անգամ։ Կրկնվելու դեպքում դիմել ցանցային ադմինիստրատորին կամ ՀԴՄ սպասարկողին։ \nՏպե՞լ ևս մեկ անգամ։",
                 //        "Տեղեկացում",
                 //        MessageBoxButton.YesNoCancel, MessageBoxImage.Question) != MessageBoxResult.Yes)

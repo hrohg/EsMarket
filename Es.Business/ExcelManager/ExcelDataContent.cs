@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using ES.Common.Managers;
 using Microsoft.Office.Interop.Excel;
 //using System.Runtime.InteropServices.WindowsRuntime;
 using Application = Microsoft.Office.Interop.Excel.Application;
@@ -44,7 +45,7 @@ namespace ES.Business.ExcelManager
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageManager.ShowMessage(ex.Message);
             }
         }
         public ExcelDataContent(string filePath, string workSheet)

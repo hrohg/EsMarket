@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using ES.Common.Cultures;
+using ES.Common.Managers;
 
 namespace UserControls.Controls
 {
@@ -25,7 +26,7 @@ namespace UserControls.Controls
 		{
 			if (string.IsNullOrEmpty(pswPassword.Password.Trim()))
 			{
-				MessageBox.Show(CultureResources.Inst["InputPassword"], "", MessageBoxButton.OK, MessageBoxImage.Error);
+			    MessageManager.ShowMessage(CultureResources.Inst["InputPassword"], "", MessageBoxImage.Error);
 				pswPassword.Focus();
 				return;
 			}

@@ -7,7 +7,7 @@ namespace EsMarket.SharedData.Interfaces
     public interface IDeliveryInfo
     {
         
-        DateTime? DeliveryDate { get; set; }
+        DateTime DeliveryDate { get; set; }
         DeliveryTypeEnum DeliveryMethod { get; set; }
         AddressModel DeliveryLocation { get; set; } 
     }

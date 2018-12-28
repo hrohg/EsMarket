@@ -30,8 +30,7 @@ namespace ES.Business.Managers
         private static EsMembersAccountsModel _membersAccounts;
         private static EsUserModel _esUser = new EsUserModel();
         private static List<MembersRoles> _userRoles;
-        private static LocalManager _cashProvider;
-        private static Common.Managers.MessageManager _mesManager;
+        private static CashManager _cashProvider;
 
         #endregion
 
@@ -402,21 +401,20 @@ namespace ES.Business.Managers
             // underlying provider.
         }
         public static string ConnectionString { get; set; }
-        public LocalManager CashProvider
+        public CashManager CashProvider
         {
-            get { return _cashProvider ?? (_cashProvider = new LocalManager()); }
-            set { _cashProvider = value; }
+            get { return CashManager.Instance; }
         }
-        public LocalManager CashManager { get { return Instance.CashProvider; } }
+        public static CashManager CashManager { get { return Instance.CashProvider; } }
         public static MessageManager MessageManager { get { return _insatance._messageManager; } }
 
         #region Main Thread
-        static int mainThreadId;
+        static int _mainThreadId;
 
         // If called in the non main thread, will return false;
         public static bool IsMainThread
         {
-            get { return System.Threading.Thread.CurrentThread.ManagedThreadId == mainThreadId; }
+            get { return System.Threading.Thread.CurrentThread.ManagedThreadId == _mainThreadId; }
         }
         #endregion Main Thread
         #endregion External properties
@@ -436,21 +434,20 @@ namespace ES.Business.Managers
 
         #region Internal methods
 
-        private void Initialize()
+        private static void Initialize()
         {
             // In Main method:
-            mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+            _mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
         }
 
-        private void OnMessageReceived(string message, MessageTypeEnum type)
-        {
-            MessageManager.OnMessage(new MessageModel(message, type));
-        }
+        //private void OnMessageReceived(string message, MessageTypeEnum type)
+        //{
+        //    MessageManager.OnMessage(new MessageModel(message, type));
+        //}
 
         private void ResetMemberData()
         {
             Settings.LoadMemberSettings();
-            CashProvider = new LocalManager();
         }
         #endregion
 
@@ -490,36 +487,55 @@ namespace ES.Business.Managers
                 case UserRoleEnum.Admin:
                     isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Admin);
                     break;
+
+                case UserRoleEnum.Moderator:
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Moderator) || IsInRole(UserRoleEnum.Admin);;
+                    break;
+
                 case UserRoleEnum.Director:
-                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Director) || IsInRole(UserRoleEnum.Admin);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Director);
                     break;
-                case UserRoleEnum.Manager:
-                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Manager) || IsInRole(UserRoleEnum.Director);
-                    break;
+
                 case UserRoleEnum.StockKeeper:
-                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.StockKeeper) || IsInRole(UserRoleEnum.Manager);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.StockKeeper);
                     break;
+
+                //Sellers
                 case UserRoleEnum.SaleManager:
-                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.SaleManager) || IsInRole(UserRoleEnum.Manager);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.SaleManager);
                     break;
                 case UserRoleEnum.SeniorSeller:
-                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.SaleManager) || IsInRole(UserRoleEnum.SaleManager);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.SeniorSeller) || IsInRole(UserRoleEnum.SaleManager);
                     break;
                 case UserRoleEnum.Seller:
                     isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Seller) || IsInRole(UserRoleEnum.SeniorSeller);
                     break;
+                case UserRoleEnum.JuniorSeller:
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.JuniorSeller) || IsInRole(UserRoleEnum.Seller);
+                    break;
+
+                //Cashiers
+                case UserRoleEnum.SeniorCashier:
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.SeniorCashier);
+                    break;
                 case UserRoleEnum.Cashier:
                     isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Cashier) || IsInRole(UserRoleEnum.SeniorCashier);
-                    break;
-                case UserRoleEnum.SeniorCashier:
-                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.SeniorCashier) || IsInRole(UserRoleEnum.Manager);
                     break;
                 case UserRoleEnum.JuniorCashier:
                     isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.JuniorCashier) || IsInRole(UserRoleEnum.Cashier);
                     break;
-                case UserRoleEnum.JuniorSeller:
-                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.JuniorSeller) || IsInRole(UserRoleEnum.Seller);
+
+                //Managers
+                case UserRoleEnum.SeniorManager:
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.SeniorManager);
                     break;
+                case UserRoleEnum.Manager:
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Manager) || IsInRole(UserRoleEnum.SeniorManager);
+                    break;
+                case UserRoleEnum.JuniorManager:
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.JuniorManager) || IsInRole(UserRoleEnum.Manager);
+                    break;
+
                 case null:
                     break;
                 default:
@@ -534,7 +550,7 @@ namespace ES.Business.Managers
 
         public static EcrServerBase CreateEcrConnection()
         {
-            var ecrServer = new EcrServer(ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig);
+            var ecrServer = new EcrServer(Settings.SettingsContainer.MemberSettings.EcrConfig);
             ecrServer.OnError += (ex => MessageManager.OnMessage(ex.ToString(), MessageTypeEnum.Warning));
             return ecrServer;
         }

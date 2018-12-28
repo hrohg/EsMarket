@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using CashReg;
 using CashReg.Helper;
 using CashReg.Interfaces;
 using CashReg.Models;
-using ES.Business.ExcelManager;
-using ES.Business.FileManager;
-using ES.Business.Helpers;
 using ES.Data.Models;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
@@ -27,15 +21,14 @@ using UserControls.Views.ReceiptTickets;
 using UserControls.Views.ReceiptTickets.Views;
 using CashDeskManager = UserControls.Managers.CashDeskManager;
 using ProductModel = ES.Data.Models.ProductModel;
-using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Invoices
 {
     [Serializable]
-    public class SaleInvoiceViewModel : InvoiceViewModel
+    public class SaleInvoiceViewModel : OutputOrderViewModel
     {
         #region Internal properties
-
+        private bool _useExtPos;
         #endregion
 
         #region External properties
@@ -52,16 +45,6 @@ namespace UserControls.ViewModels.Invoices
                 Invoice.RecipientName = value != null ? value.FullName : null;
                 base.Partner = value;
                 SetPrice();
-            }
-        }
-
-        public override bool AddBySingle
-        {
-            get { return base.AddBySingle; }
-            set
-            {
-                base.AddBySingle = value;
-                ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBySingle = value;
             }
         }
 
@@ -149,50 +132,44 @@ namespace UserControls.ViewModels.Invoices
         {
 
         }
-        #endregion
+        #endregion Constructors
 
         #region Internal methods
 
         protected override void OnInitialize()
         {
-            if (Invoice.Partner == null) SetDefaultPartner(PartnersManager.GetDefaultParnerByInvoiceType((InvoiceType)Invoice.InvoiceTypeId) ?? PartnersManager.GetDefaultPartner(PartnerType.None));
             base.OnInitialize();
-            FromStocks = StockManager.GetStocks(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSaleStocks.ToList()).ToList();
-            AddBySingle = ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBySingle;
+            if (Invoice.Partner == null &&
+                Invoice.InvoiceTypeId == (int)ES.Business.Managers.InvoiceTypeEnum.SaleInvoice)
+                SetDefaultPartner(PartnersManager.GetDefaultParnerByInvoiceType((InvoiceType)Invoice.InvoiceTypeId) ??
+                                  PartnersManager.GetDefaultPartner(PartnerType.None));
             PrintEcrTicketCommand = new RelayCommand(OnPrintEcrTicket, CanPrintEcrTicket);
-            CheckForExistingQuantityCommand = new RelayCommand(OnCheckForExistingQuantity, CanCheckForExistingQuantity);
             IsPrintTicket = ApplicationManager.Settings.IsPrintSaleTicket;
             IsEcrActivated = ApplicationManager.Settings.IsEcrActivated;
             UseExtPos = ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.UseExtPos;
+            IsModified = false;
         }
 
         protected override void SetPrice()
         {
-            foreach (var item in InvoiceItems)
-            {
-                item.Price = GetProductPrice(item.Product);
-            }
-            RaisePropertyChanged("InvoiceItems");
-            if (InvoiceItem != null)
-            {
-                InvoiceItem.Price = GetProductPrice(InvoiceItem.Product);
-            }
-            RaisePropertyChanged("InvoiceItem");
-            InvoicePaid.DiscountBond = SolveDiscountBond();
+            base.SetPrice();
+            SetDiscountBond();
         }
 
+        private void SetDiscountBond()
+        {
+            var bond = ApplicationManager.Settings.SettingsContainer.MemberSettings.UseDiscountBond ? InvoiceItems.Sum(s => GetPartnerDiscountBond(s.Product)) : 0;
+            InvoicePaid.DiscountBond = bond;
+        }
         protected override void OnInvoiceItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             base.OnInvoiceItemsChanged(sender, e);
-            InvoicePaid.DiscountBond = SolveDiscountBond();
+            SetDiscountBond();
         }
-        private decimal SolveDiscountBond()
-        {
-            return ApplicationManager.Settings.SettingsContainer.MemberSettings.UseDiscountBond ? InvoiceItems.Sum(s => GetProductDiscountBond(s.Price ?? 0)) : 0;
-        }
+
         private void PrintInvoiceTicket(ResponseReceiptModel ecrResponseReceiptModel)
         {
-            var ticket = new ReceiptTicketSmall(new SaleInvocieSmallTicketViewModel(ecrResponseReceiptModel)
+            var ticket = new ReceiptTicketSmall(new SaleInvoiceSmallTicketViewModel(ecrResponseReceiptModel)
             {
                 Invoice = Invoice,
                 InvoiceItems = InvoiceItems.ToList(),
@@ -200,164 +177,26 @@ namespace UserControls.ViewModels.Invoices
             });
             //PrintPreview
             //new UiPrintPreview(ticket).ShowDialog();
-            
+
             //Print
             PrintManager.Print(ticket, ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSalePrinter);
         }
 
-        protected override InvoiceItemsModel GetInvoiceItem(string code)
+        
+        protected override void InvoiceLoadCompleted()
         {
-            var invoiceItem = base.GetInvoiceItem(code);
-            invoiceItem.Price = GetProductPrice(invoiceItem.Product);
-            return invoiceItem;
+            //SetPrice();
         }
-        protected override void OnGetProduct(object o)
+
+        protected override bool CanRemoveInvoiceItem(object o)
         {
-            base.OnGetProduct(o);
-            OnAddInvoiceItem(o);
-        }
-        protected override bool SetQuantity(bool addSingle)
-        {
-            var exCount = ProductsManager.GetProductItemQuantity(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList());
-
-            if (InvoiceItem.Quantity > exCount)
-            {
-                InvoiceItem.Quantity = null;
-                var message = string.Format("Անբավարար միջոցներ: Կոդ: {0} Տվյալ ապրանքատեսակից բավարար քանակ առկա չէ:", InvoiceItem.Code);
-                MessageManager.OnMessage(new MessageModel(DateTime.Now, message, MessageTypeEnum.Warning));
-                MessageBox.Show(message, "Անբավարար միջոցներ");
-                return false;
-            }
-
-            if ((InvoiceItem.Quantity == null || InvoiceItem.Quantity == 0))
-            {
-                if (addSingle && exCount >= 1)
-                {
-                    InvoiceItem.Quantity = 1;
-                }
-                else
-                {
-                    InvoiceItem.Quantity = GetAddedItemCount(exCount, false);
-                }
-            }
-
-            return InvoiceItem.Quantity != null && InvoiceItem.Quantity > 0;
+            return base.CanRemoveInvoiceItem(o)  && ApplicationManager.IsInRole(UserRoleEnum.Seller);
         }
 
         protected override void OnPaidInvoice(object obj)
         {
             CashDeskManager.OpenCashDesk();
             base.OnPaidInvoice(obj);
-        }
-
-        protected override void OnExportInvoice(ExportImportEnum exportTo)
-        {
-            switch (exportTo)
-            {
-                case ExportImportEnum.AccDocXml:
-                    InvoicesManager.ExportInvoiceToXmlAccDoc(Invoice, InvoiceItems.ToList());
-                    break;
-                case ExportImportEnum.Xml:
-                case ExportImportEnum.Excel:
-                    base.OnExportInvoice(exportTo);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("exportTo", exportTo, null);
-            }
-        }
-        protected override void OnImportInvoice(ExportImportEnum importFrom)
-        {
-            switch (importFrom)
-            {
-                case ExportImportEnum.Xml:
-                    ImportFromXml();
-                    break;
-                case ExportImportEnum.AccDocXml:
-                    break;
-                case ExportImportEnum.Excel:
-                    ImportFromExcel();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("importFrom", importFrom, null);
-            }
-        }
-
-        private void ImportFromXml()
-        {
-            var invoice = InvoicesManager.ImportInvoiceFromXml();
-            //if (invoice == null || invoice.InvoiceInfo == null || invoice.BuyerInfo == null || invoice.GoodsInfo == null) return;
-            // var partner = ApplicationManager.CashManager.GetPartners.FirstOrDefault(s => s.FullName == invoice.BuyerInfo.Name && s.TIN == invoice.BuyerInfo.Tin);
-            //if (partner != null) Partner = partner;
-            //foreach (var goodsInfo in invoice.GoodsInfo)
-            //{
-            //    GetInvoiceItem(goodsInfo.Code);
-            //    if (InvoiceItem != null)
-            //    {
-            //        InvoiceItem.Price = goodsInfo.Price;
-            //        InvoiceItem.Quantity = goodsInfo.Quantity;
-            //        InvoiceItems.Add(InvoiceItem);
-            //        InvoiceItem = null;
-            //    }
-            //}
-        }
-        private void ImportFromExcel()
-        {
-            InvoiceItems.Clear();
-            var filePath = FileManager.OpenExcelFile("Excel files(*.xls *.xlsx *․xlsm)|*.xls;*.xlsm;*․xlsx|Excel with macros|*.xlsm|Excel 97-2003 file|*.xls", "Excel ֆայլի բեռնում", ApplicationManager.Settings.SettingsContainer.MemberSettings.ImportingFilePath);
-            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
-            {
-                IsLoading = false;
-                return;
-            }
-            var memberSettings = ApplicationManager.Settings.SettingsContainer.MemberSettings;
-            memberSettings.ImportingFilePath = Path.GetDirectoryName(filePath);
-            MemberSettings.Save(ApplicationManager.Settings.SettingsContainer.MemberSettings, memberSettings.MemberId);
-            ProductModel product;
-            var invoice = ExcelImportManager.ImportSaleInvoice(filePath);
-            if (invoice == null) return;
-            var invoiceItems = invoice.Item2;
-            foreach (var item in invoiceItems)
-            {
-                product = new ProductsManager().GetProductsByCodeOrBarcode(item.Code);
-                if (product == null)
-                {
-                    product = new ProductModel(item.Code, Member.Id, User.UserId, true)
-                    {
-                        Id = item.ProductId,
-                        Description = item.Description,
-                        Mu = item.Mu,
-                        HcdCs = item.Product != null ? item.Product.HcdCs : null,
-                        Price = item.Price
-                    };
-                    var result = MessageBox.Show(string.Format("{0}({1}) ապրանքը գրանցված չէ: Ցանկանու՞մ եք գրանցել:", item.Description, item.Code), "Ապրանքի գրանցում", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                    if (result != MessageBoxResult.Yes && result != MessageBoxResult.No)
-                    {
-                        return;
-                    }
-
-                    if (result == MessageBoxResult.Yes)
-                    {
-                        product = ProductsManager.EditProduct(product);
-                    }
-                }
-                var exProduct = new ProductsManager().GetProductsByCodeOrBarcode(product.Code);
-                InvoiceItem = new InvoiceItemsModel
-                {
-                    ProductId = product.Id,
-                    Product = product,
-                    Code = product.Code,
-                    Description = product.Description,
-                    Mu = product.Mu,
-                    //Price =  exProduct != null && exProduct.Price != null && exProduct.Price > 0 ? exProduct.Price:item.Price,
-                    Discount = exProduct != null && exProduct.Price != null && exProduct.Price > 0 && exProduct.Price > item.Price ? Math.Round((decimal)(100 - 100 * item.Price / exProduct.Price), 2) : (decimal?)0.00,
-                    Quantity = item.Quantity
-                };
-                if (InvoiceItem.Discount == 0) InvoiceItem.Discount = null;
-                InvoiceItem.Price = exProduct != null && exProduct.Price != null && exProduct.Price > 0 ? exProduct.Price * (100 - (InvoiceItem.Discount ?? 0)) / 100 : item.Price;
-                base.OnAddInvoiceItem(null);
-                InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
-                RaisePropertyChanged("InvoicePaid");
-            }
         }
 
         private bool CanPrintEcrTicket(object o)
@@ -392,145 +231,75 @@ namespace UserControls.ViewModels.Invoices
             MessageManager.OnMessage(message);
         }
 
-        private bool CanCheckForExistingQuantity(object o)
-        {
-            return InvoiceItems.Any(s => s.Quantity > 0);
-        }
-
-        private void OnCheckForExistingQuantity(object o)
-        {
-            InvoicesManager.CheckForQuantityExisting(InvoiceItems.ToList(), FromStocks.Select(s => s.Id).ToList());
-        }
-
-        private void CheckForPrize(InvoiceModel invoice)
-        {
-            if (!InvoicesManager.CheckForPrize(invoice)) return;
-            MessageBox.Show(string.Format("Շնորհավորում ենք դուք շահել եք։ \n Ապրանքագիր։ {0} \n Ամսաթիվ։ {1} \n Պատվիրատու։ {2}", invoice.InvoiceNumber, invoice.ApproveDate, invoice.RecipientName), "Շահում", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-        }
-
-        #endregion
-
-        #region External methods
-
+        //private void CheckForPrize(InvoiceModel invoice)
+        //{
+        //    if (!InvoicesManager.CheckForPrize(invoice)) return;
+        //    MessageManager.ShowMessage(string.Format("Շնորհավորում ենք դուք շահել եք։ \n Ապրանքագիր։ {0} \n Ամսաթիվ։ {1} \n Պատվիրատու։ {2}", invoice.InvoiceNumber, invoice.ApproveDate, invoice.RecipientName), "Շահում", MessageBoxImage.Exclamation);
+        //}
         protected override void OnPrintInvoice(PrintModeEnum printSize)
         {
             if (!CanPrintInvoice(printSize))
             {
                 return;
             }
-            var list = CollectionViewSource.GetDefaultView(InvoiceItems).Cast<InvoiceItemsModel>().ToList();
-            var ctrl = new SaleInvoiceView(new SaleInvocieTicketViewModel(Invoice, InvoiceItems.ToList(), StockManager.GetStock(Invoice.FromStockId), InvoicePaid, Member));
 
             switch (printSize)
             {
                 case PrintModeEnum.Normal:
-                    PrintManager.PrintPreview(ctrl, "Print invoices", true);
+                case PrintModeEnum.Large:
+                    base.OnGetProduct(printSize);
                     break;
                 case PrintModeEnum.Small:
                     PrintInvoiceTicket(null);
-                    break;
-                case PrintModeEnum.Large:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("printSize", printSize, null);
             }
         }
 
-        private int count = 0;
-        private bool _useExtPos;
-
-        public override bool CanAddInvoiceItem(object o)
-        {
-            return base.CanAddInvoiceItem(o);
-        }
-
-        protected override void OnAddInvoiceItem(object o)
-        {
-            if (!CanAddInvoiceItem(o))
-            {
-                MessageBox.Show("Ապրանքի ավելացումը հնարավոր չէ:");
-                return;
-            }
-            ++count;
-
-            if (!SetQuantity(AddBySingle))
-            {
-                return;
-            }
-            base.OnAddInvoiceItem(o);
-            //InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
-            //RaisePropertyChanged("InvoicePaid");
-        }
-
-        protected override decimal GetProductPrice(EsProductModel product)
+        protected override decimal GetProductPrice(ProductModel product)
         {
 
             if (Partner == null || product == null)
             {
                 return 0;
             }
-            var price = base.GetProductPrice(product);
-            var dealerPrice = (product.DealerPrice ?? 0) * (1 - (product.DealerDiscount ?? 0) / 100);
 
+            var price = base.GetProductPrice(product);
             switch (Partner.PartnersTypeId)
             {
                 case (long)PartnerType.Dealer:
-                    if (product.HasDealerPrice) price = dealerPrice;
+
                     break;
                 default:
-                    if (!ApplicationManager.Settings.SettingsContainer.MemberSettings.UseDiscountBond) price -= GetProductDiscountBond(price);
-                    price = Math.Max(price, dealerPrice);
+                    if (!ApplicationManager.Settings.SettingsContainer.MemberSettings.UseDiscountBond) price -= (price * (Partner != null ? (Partner.Discount ?? 0) / 100 : 0));
                     break;
             }
-            return price;
+            return product.HasDealerPrice ? Math.Max(price, product.GetProductDealerPrice()) : price;
         }
 
-        private decimal GetProductDiscountBond(decimal price)
+        private decimal GetPartnerDiscountBond(ProductModel product)
         {
-            return price * (Partner != null ? (Partner.Discount ?? 0) / 100 : 0);
+            var price = GetProductPrice(product);
+            if (ApplicationManager.Settings.SettingsContainer.MemberSettings.UseDiscountBond) price -= (price * (Partner != null ? (Partner.Discount ?? 0) / 100 : 0));
+            return (product.Price ?? 0) - (product.HasDealerPrice ? Math.Max(price, product.GetProductDealerPrice()) : price);
         }
 
         private bool IsPaidValid
         {
             get { return InvoicePaid.IsPaid && InvoicePaid.Change <= (InvoicePaid.Paid ?? 0) && Partner != null && (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit && (InvoicePaid.ReceivedPrepayment ?? 0) <= Partner.Credit; }
         }
-
         protected override bool CanApprove(object o)
         {
             return base.CanApprove(o) && IsPaidValid;
         }
 
-        protected override void OnApprove(object o)
-        {
-            if (!CanApprove(o) && IsModified)
-            {
-                MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);
-                return;
-            }
 
-            IsLoading = true;
-            PrepareToApprove();
-            //Approve Invoice
-            new Thread(() => OnApproveAsync(false)).Start();
-        }
+        #endregion
 
-        protected virtual void PrepareToApprove()
-        {
-            Invoice.ApproverId = ApplicationManager.GetEsUser.UserId;
-            Invoice.Approver = ApplicationManager.GetEsUser.FullName;
+        #region External methods
 
-            InvoicePaid.PartnerId = Invoice.PartnerId;
-            Invoice.RecipientName = Partner.FullName;
-
-            //Paid
-            var cashDesk = InvoicePaid.Paid > 0 ? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleCashDesks).SingleOrDefault() : null;
-            InvoicePaid.CashDeskId = cashDesk != null ? cashDesk.Id : (Guid?)null;
-
-            var bankAccount = InvoicePaid.ByCheck > 0 ? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBankAccounts).SingleOrDefault() : null;
-            InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
-        }
-
-        protected override void OnApproveAsync(bool closeOnExit)
+       protected override void OnApproveAsync(bool closeOnExit)
         {
             try
             {
@@ -576,11 +345,11 @@ namespace UserControls.ViewModels.Invoices
 
 
                 //CheckForPrize(Invoice);
-                MessageManager.OnMessage(string.Format("{0} ապրանքագիրը հաստատվել է հաջողությամբ: Գումար {1} վճարվել է {2}", Invoice.InvoiceNumber, invoice.Amount.ToString("N"), InvoicePaid.ByCash.ToString("N")), MessageTypeEnum.Success);
+                MessageManager.OnMessage(string.Format("{0} ապրանքագիրը հաստատվել է հաջողությամբ: Գումար {1} վճարվել է {2}", Invoice.InvoiceNumber, invoice.Total.ToString("N"), InvoicePaid.ByCash.ToString("N")), MessageTypeEnum.Success);
 
                 if (closeOnExit && invoice.ApproveDate != null)
                 {
-                    DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Normal, new Action(() => OnClose(null)));
+                    OnClose();
                 }
                 else
                 {
@@ -648,28 +417,16 @@ namespace UserControls.ViewModels.Invoices
             }
             return responceReceiptModel;
         }
-
-        public override void OnApproveAndClose(object o)
+        
+        public override bool DenyChangePrice
         {
-            if (!CanApprove(o))
-            {
-                MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);
-                return;
-            }
-
-            IsLoading = true;
-            PrepareToApprove();
-            //Approve Invoice
-            new Thread(() => OnApproveAsync(true)).Start();
+            get { return !ApplicationManager.IsInRole(UserRoleEnum.SaleManager) && base.DenyChangePrice; }
         }
 
         #endregion
 
         #region Commands
-
         public ICommand PrintEcrTicketCommand { get; private set; }
-        public ICommand CheckForExistingQuantityCommand { get; private set; }
-
         #endregion
     }
 }

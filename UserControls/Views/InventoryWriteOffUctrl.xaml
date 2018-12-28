@@ -69,8 +69,8 @@
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding Path=Code}"/>
                             </TextBox.InputBindings>
-                            <i:Interaction.Behaviors>
-                                <behaviors:TextBoxBehavior IsFocusOnLoad="True" IsSelectTextOnFocus="True" />
+                             <i:Interaction.Behaviors>
+                                <behaviors:TextBoxBehavior IsFocusOnLoad="True" IsSelectTextOnFocus="True" IsFocusOnKeyboardFocused="True" IsFocusOnTextChanged="True" />
                             </i:Interaction.Behaviors>
                         </TextBox>
                         <Label Grid.Row="0" Content="Անվանում" VerticalAlignment="Center"  HorizontalContentAlignment="Right" HorizontalAlignment="Left" Margin="150,0,0,0" FontSize="12"/>
@@ -83,7 +83,7 @@
                             </TextBox.ContextMenu>
                         </TextBox>
                         <Label Grid.Row="0" Content="Գին"  VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right" Margin="0,0,65,0" FontSize="12"/>
-                        <TextBox Grid.Row="1" Name="TxtPrice" Text="{Binding Path=InvoiceItem.Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N}" IsReadOnly="{Binding Path = DenayChangePrice}" Width="105" Height="35" FontSize="20" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right"/>
+                        <TextBox Grid.Row="1" Name="TxtPrice" Text="{Binding Path=InvoiceItem.Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N}" IsReadOnly="{Binding Path = DenyChangePrice}" Width="105" Height="35" FontSize="20" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right"/>
                     </Grid>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="3">
@@ -167,10 +167,10 @@
                     <TextBlock Text="Գումար"/>
                     <TextBlock Text="{Binding Invoice.Total, StringFormat=N}" Foreground="Blue"/>
                     <Menu>
-
                         <MenuItem Header="...">
                             <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"  />
                             <MenuItem Header="Հաստատել Ctrl+A" Command="{Binding ApproveInvoiceCommand}"  />
+                            <MenuItem Header="Առկայության ստուգում" Command="{Binding CheckExistingCommand}"/>
                             <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
                             <Separator/>
                             <MenuItem Header="Արտահանել">

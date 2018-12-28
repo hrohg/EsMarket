@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
+using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Data.Enumerations;
-using ES.Data.Model;
 using ES.Data.Models;
 using ES.Data.Models.Reports;
 using Shared.Helpers;
-using UserControls.ControlPanel.Controls;
 using UserControls.Helpers;
 
 namespace UserControls.ViewModels.Reports
@@ -22,19 +20,6 @@ namespace UserControls.ViewModels.Reports
     public class SaleInvoiceReportsBase<T> : TableViewModel<T>
     {
         protected readonly ViewInvoicesEnum ViewInvoicesEnum;
-        protected List<T> _items = new List<T>();
-
-        public override ObservableCollection<T> ViewList
-        {
-            get { return new ObservableCollection<T>(_items); }
-            protected set
-            {
-                _items = value.ToList();
-                RaisePropertyChanged("ViewList");
-                RaisePropertyChanged("Count");
-                RaisePropertyChanged("Total");
-            }
-        }
 
         public SaleInvoiceReportsBase(ViewInvoicesEnum viewInvoicesEnum)
         {
@@ -64,16 +49,22 @@ namespace UserControls.ViewModels.Reports
         #region Internal methods
         protected override void Initialize()
         {
-            Title = Description = "0-ական վաճառքների դիտում";            
+            Title = Description = "0-ական վաճառքների դիտում";
         }
 
         protected override void UpdateAsync()
         {
+            base.UpdateAsync();
+            GetDate();
+            if (_dateIntermediate == null) { UpdateStopped(); return; }
+            Description = string.Format("{0} {1} - {2}", Title, _dateIntermediate.Item1.Date, _dateIntermediate.Item2.Date);
+            RaisePropertyChanged("Description");
+
             List<IInvoiceReport> reports = null;
             List<PartnerModel> partners = null;
             List<PartnerType> partnerTypes = null;
             List<StockModel> stocks = null;
-            List<InvoiceModel> invoices = null;
+            List<InvoiceModel> invoices;
             switch (ViewInvoicesEnum)
             {
                 case ViewInvoicesEnum.None:
@@ -81,7 +72,7 @@ namespace UserControls.ViewModels.Reports
                 case ViewInvoicesEnum.ByDetiles:
                     break;
                 case ViewInvoicesEnum.ByStock:
-                    Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.Instance.CashManager.GetStocks, true).ToList(); }));
+                    Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList(); }));
                     reports = new List<IInvoiceReport>(UpdateByStock(stocks, _dateIntermediate));
                     break;
                 case ViewInvoicesEnum.ByPartner:
@@ -118,7 +109,7 @@ namespace UserControls.ViewModels.Reports
                     }
                     break;
                 case ViewInvoicesEnum.ByStocksDetiles:
-                    Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.Instance.CashManager.GetStocks, true).ToList(); }));
+                    Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList(); }));
 
                     var invoiceItems = InvoicesManager.GetInvoiceItemsByStocks(InvoicesManager.GetInvoices(_dateIntermediate.Item1, _dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).Select(s => s.Id).ToList(), stocks);
 
@@ -144,9 +135,7 @@ namespace UserControls.ViewModels.Reports
                     if (!invoices.Any())
                     {
                         MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
-                        break;
                     }
-
                     break;
                 case ViewInvoicesEnum.ByZeroAmunt:
                     invoices = InvoicesManager.GetInvoices(_dateIntermediate.Item1, _dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice && s.Amount == 0).ToList();
@@ -167,26 +156,19 @@ namespace UserControls.ViewModels.Reports
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            if (reports == null || reports.Count == 0)
-            {
-                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
-            }
-            else
-            {
-                ViewList = new ObservableCollection<IInvoiceReport>(reports);
-            }
-            if (reports != null)
-            {
-                TotalRows = reports.Count;
-                TotalCount = (double)reports.Sum(s => s.Quantity);
-                Total = (double)reports.Sum(i => i.Sale ?? 0);
-            }
-            IsLoading = false;
-            RaisePropertyChanged(IsInProgressProperty);
 
+            SetResult(reports);
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { UpdateCompleted(); });
         }
 
-        private void InitializeReport(List<InvoiceReport> reports)
+        protected override void UpdateCompleted(bool isSuccess = true)
+        {
+            base.UpdateCompleted(isSuccess);
+            TotalCount = (double)ViewList.Sum(s => s.Quantity);
+            Total = (double)ViewList.Sum(i => i.Sale ?? 0);
+        }
+
+        private void InitializeReport(List<IInvoiceReport> reports)
         {
             if (reports == null || reports.Count == 0)
             {
@@ -194,25 +176,15 @@ namespace UserControls.ViewModels.Reports
             }
             else
             {
-                ViewList = new ObservableCollection<IInvoiceReport>(reports);
+                SetResult(reports);
             }
             if (reports != null)
             {
-                TotalRows = reports.Count;
+
                 TotalCount = (double)reports.Sum(s => s.Quantity);
                 Total = (double)reports.Sum(i => i.Sale ?? 0);
             }
             IsLoading = false;
-            RaisePropertyChanged(IsInProgressProperty);
-        }
-        protected override void OnUpdate()
-        {
-            base.OnUpdate();
-            Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
-            if (dateIntermediate == null) return;
-            Description = string.Format("{0} {1} - {2}", Title, dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
-            RaisePropertyChanged("Description");
-            base.OnUpdate();
         }
 
         protected override void OnPrint(object o)
@@ -250,7 +222,13 @@ namespace UserControls.ViewModels.Reports
             });
             return list;
         }
-
+        protected void GetDate()
+        {
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+            {
+                _dateIntermediate = UIHelper.Managers.SelectManager.GetDateIntermediate();
+            });
+        }
         #endregion
     }
 }

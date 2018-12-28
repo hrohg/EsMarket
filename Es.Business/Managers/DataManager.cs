@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Windows;
 using ES.Common.Cultures;
+using ES.Common.Managers;
 using ES.DataAccess.Helpers;
 using ES.DataAccess.Models;
 
@@ -465,7 +466,7 @@ namespace ES.Business.Managers
         {
             if (!File.Exists(backupFilePath))
             {
-                MessageBox.Show(CultureResources.Inst["PleaseSelectArchiveFile"]);
+                MessageManager.ShowMessage(CultureResources.Inst["PleaseSelectArchiveFile"]);
                 return false;
             }
             //TODO:

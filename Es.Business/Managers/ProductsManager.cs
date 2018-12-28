@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Windows.Forms;
 using CashReg.Helper;
-using CashReg.Managers;
 using EsMarket.SharedData.Models;
 using ES.Business.Helpers;
 using ES.Business.Models;
@@ -25,10 +23,8 @@ namespace ES.Business.Managers
     {
 
         private static long MemberId { get { return ApplicationManager.Member.Id; } }
-        /// <summary>
-        /// Categories methods
-        /// </summary>
-        /// <returns></returns>
+        
+
         #region Categories public methods
         public static List<EsCategories> GetCategories()
         {
@@ -46,10 +42,8 @@ namespace ES.Business.Managers
             }
         }
         #endregion
-        /// <summary>
-        /// Brands methods
-        /// </summary>
-        /// <returns></returns>
+        
+
         #region Brand public methods
         public static List<Brands> GetServerBrands()
         {
@@ -121,12 +115,7 @@ namespace ES.Business.Managers
         }
         #endregion
 
-        ///  <summary>
-        ///  ProductMethods
-        ///  </summary>
-        ///  <param name="memberId"></param>
-        /// <param name="item"></param>
-        /// <returns></returns>
+        
 
         #region Products
 
@@ -285,7 +274,7 @@ namespace ES.Business.Managers
         }
         public static ProductModel Convert(EsGood item)
         {
-            var exProducts = ApplicationManager.Instance.CashManager.Products.Where(s => s.Barcode == item.Barcode || s.Code == item.Code).ToList();
+            var exProducts = ApplicationManager.CashManager.Products.Where(s => s.Barcode == item.Barcode || s.Code == item.Code).ToList();
             if (exProducts.Count > 0)
             {
                 return null;
@@ -407,6 +396,20 @@ namespace ES.Business.Managers
         public static List<ProductModel> GetProducts()
         {
             return TryGetProducts().Select(Convert).ToList();
+        }
+        public static List<ProductModel> GetProductsForView()
+        {
+            return TryGetProducts().Select(s => new ProductModel
+            {
+                Id = s.Id,
+                Code = s.Code,
+                Description = s.Description,
+                Mu = s.Mu,
+                ExistingQuantity = 0,
+                Price = s.Price,
+                OldPrice = s.OldPrice,
+                CostPrice = s.CostPrice
+            }).OrderBy(s => s.Description).ToList();
         }
         public static List<ProductModel> GetChangedProducts(int days)
         {
@@ -565,11 +568,11 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    var products = db.Products.Where(s => s.EsMemberId == memberId && s.IsEnable && s.MinQuantity != null);
+                    var products = db.Products.Where(s => s.EsMemberId == memberId && s.IsEnable && s.MinQuantity != null).ToList();
 
-                    var productIds = products.Select(t => t.Id);
-                    var productItems = db.ProductItems.Where(s => s.MemberId == memberId && productIds.Contains(s.ProductId));
-                    products = products.Where(s => s.MinQuantity > productItems.Where(t => t.ProductId == s.Id).Sum(t => t.Quantity));
+                    var productIds = products.Select(t => t.Id).ToList();
+                    var productItems = db.ProductItems.Where(s => s.MemberId == memberId && s.Quantity > 0 && productIds.Contains(s.ProductId)).ToList();
+                    products = products.Where(s => productItems.All(t => t.ProductId != s.Id) || s.MinQuantity > productItems.Where(t => t.ProductId == s.Id).Sum(t => t.Quantity)).ToList();
 
                     var productOrderItems = products
                         .Select(p => new
@@ -577,27 +580,27 @@ namespace ES.Business.Managers
                             p,
                             ii = db.InvoiceItems
                                 .Where(ii =>
-                                ii.Invoices.MemberId == memberId &&
-                                ii.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice &&
-                                ii.Invoices.ApproveDate != null &&
-                                ii.ProductId == p.Id)
+                                    ii.Invoices.MemberId == memberId &&
+                                    ii.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice &&
+                                    ii.Invoices.ApproveDate != null &&
+                                    ii.ProductId == p.Id)
                                 .OrderByDescending(ii => ii.Invoices.CreateDate).FirstOrDefault()
-                        })
-                        .Select(s => new ProductOrderModel
-                        {
-                            Index = 0,
-                            ProductId = s.p.Id,
-                            Code = s.p.Code,
-                            Description = s.p.Description,
-                            Mu = s.p.Mu,
-                            CostPrice = s.p.CostPrice,
-                            Price = s.p.Price,
-                            MinQuantity = s.p.MinQuantity,
-                            ExistingQuantity = productItems.Where(t => t.ProductId == s.p.Id).Sum(t => t.Quantity),
-                            Provider = s.ii != null ? s.ii.Invoices.ProviderName : string.Empty
-                            //Notes = s.Note
                         }).ToList();
-                    return productOrderItems;
+                    return productOrderItems.Select(s => new ProductOrderModel
+                     {
+                         Index = 0,
+                         ProductId = s.p.Id,
+                         Code = s.p.Code,
+                         Description = s.p.Description,
+                         Mu = s.p.Mu,
+                         CostPrice = s.p.CostPrice,
+                         Price = s.p.Price,
+                         MinQuantity = s.p.MinQuantity,
+                         ExistingQuantity = productItems.Where(t => t.ProductId == s.p.Id).Sum(t => t.Quantity),
+                         Provider = s.ii != null ? s.ii.Invoices.ProviderName : string.Empty
+                         //Notes = s.Note
+                     }).ToList();
+                    //return productOrderItems;
 
 
 
@@ -619,15 +622,19 @@ namespace ES.Business.Managers
                 }
                 catch (Exception)
                 {
-                    return null;
+                    return new List<ProductOrderModel>();
                 }
             }
         }
-
+        public static PartnerModel GetProductsProvider(Guid productId)
+        {
+            return PartnersManager.Convert(TryGetProductsProvider(productId));
+        }
         public static List<ProductProvider> GetProductsProviders(List<Guid> productIds)
         {
             return TryGetProductsProviders(productIds);
         }
+
         public static int GetNextProductCode(long memberId)
         {
             return TryGetNextProductCode(memberId);
@@ -713,14 +720,13 @@ namespace ES.Business.Managers
                     var exItem = db.Products.FirstOrDefault(s => s.EsMemberId == memberId && s.Code == code);
                     if (exItem != null)
                     {
-                        MessageBox.Show(code + " կոդը զբաղված է։", "Գործողության ընդհատում", MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning);
+                        MessageManager.ShowMessage(code + " կոդը զբաղված է։", "Գործողության ընդհատում");
                         return false;
                     }
                     exItem = db.Products.SingleOrDefault(s => s.EsMemberId == memberId && s.Id == id);
                     if (exItem == null)
                     {
-                        MessageBox.Show("Սխալ գործողություն։", "Գործողության ընդհատում", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageManager.ShowMessage("Սխալ գործողություն։", "Գործողության ընդհատում");
                         return false;
                     }
                     exItem.Code = code;
@@ -742,8 +748,7 @@ namespace ES.Business.Managers
                     var exItem = db.Products.FirstOrDefault(s => s.EsMemberId == memberId && s.Id == id);
                     if (exItem == null)
                     {
-                        MessageBox.Show("Ապրանքը հայտնաբերված չէ։", "Գործողության ընդհատում", MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning);
+                        MessageManager.ShowMessage("Ապրանքը հայտնաբերված չէ։", "Գործողության ընդհատում");
                         return false;
                     }
                     exItem.IsEnable = !exItem.IsEnable;
@@ -765,8 +770,8 @@ namespace ES.Business.Managers
                 try
                 {
                     var items = db.ProductItems.Where(s =>
-                            s.MemberId == memberId && s.ProductId == productId.Value && s.StockId != null && fromStocks.Contains(s.StockId.Value));
-                    return items.Sum(s => s.Quantity);
+                            s.MemberId == memberId && s.ProductId == productId.Value && s.StockId != null && fromStocks.Contains(s.StockId.Value)).Select(s=>s.Quantity).ToList();
+                    return items.Sum(s => s);
                 }
                 catch (Exception)
                 {
@@ -1156,7 +1161,7 @@ namespace ES.Business.Managers
                 {
                     if (db.Products.Count(s => (s.Code == item.Code || (!string.IsNullOrEmpty(item.Barcode) && s.Barcode == item.Barcode) || s.Id == item.Id) && s.EsMemberId == item.EsMemberId) > 1)
                     {
-                        MessageBox.Show("Code-ը կամ Barcode-ը կրկնվում է։ Գործողությունը հնարավոր չէ շարունակել։");
+                        MessageManager.ShowMessage("Code-ը կամ Barcode-ը կրկնվում է։ Գործողությունը հնարավոր չէ շարունակել։");
                         return null;
                     }
                     var exItem = db.Products.Include(s => s.ProductsAdditionalData).SingleOrDefault(s => s.Code == item.Code && s.EsMemberId == item.EsMemberId);
@@ -1164,8 +1169,7 @@ namespace ES.Business.Managers
                     {
                         if (exItem.Id != item.Id && item.Id != Guid.Empty)
                         {
-                            MessageBox.Show("Գործողությունը դադարեցված է։ \nԱպրանքի կոդն արդեն գրանցված է։ Խնդրում ենք փոխել կոդը և նորից փորձել։",
-                                "Թերի տվյալներ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            MessageManager.ShowMessage("Գործողությունը դադարեցված է։ \nԱպրանքի կոդն արդեն գրանցված է։ Խնդրում ենք փոխել կոդը և նորից փորձել։", "Թերի տվյալներ");
                             return null;
                         }
                         exItem.LastModifiedDate = exItem.LastModifiedDate.AddMilliseconds(-exItem.LastModifiedDate.Millisecond);
@@ -1179,9 +1183,9 @@ namespace ES.Business.Managers
                     var exItemsByBarcode = db.Products.Where(s => s.EsMemberId == item.EsMemberId && (s.Code == item.Code || (!string.IsNullOrEmpty(item.Barcode) && s.Barcode == item.Barcode))).ToList();
                     if ((exItemsByBarcode.Count > 1 || (exItem == null && exItemsByBarcode.Count == 1)))
                     {
-                        MessageBox.Show(
+                        MessageManager.ShowMessage(
                            "Գործողությունը դադարեցված է։ \nԱպրանքի բարկոդը կրկնվում է։ Խնդրում ենք փոխել բարկոդը և նորից փորձել։",
-                           "Թերի տվյալներ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                           "Թերի տվյալներ");
                         return null;
                     }
                     if (exItem != null)
@@ -1209,10 +1213,10 @@ namespace ES.Business.Managers
                         exItem.BrandId = item.BrandId;
                         exItem.LastModifierId = item.LastModifierId;
                         exItem.LastModifiedDate = item.LastModifiedDate = DateTime.Now;
+                        item.Id = exItem.Id;
                     }
                     else
                     {
-                        //item.Id = Guid.NewGuid();
                         item.LastModifiedDate = DateTime.Now;
                         if (item.Id == Guid.Empty) item.Id = Guid.NewGuid();
                         db.Products.Add(item);
@@ -1235,6 +1239,7 @@ namespace ES.Business.Managers
                     }
 
                     db.SaveChanges();
+
                     var exProductGrups = db.ProductGroup.Where(s => s.ProductId == item.Id && s.MemberId == item.EsMemberId).ToList();
                     foreach (var exProductGrup in exProductGrups)
                     {
@@ -1242,14 +1247,17 @@ namespace ES.Business.Managers
                     }
                     foreach (var productItem in item.ProductGroup)
                     {
+                        productItem.ProductId = item.Id;
                         db.ProductGroup.Add(productItem);
                     }
                     db.SaveChanges();
+
                     return item;
                 }
             }
             catch (Exception ex)
             {
+                MessageManager.OnMessage(ex.Message);
                 return null;
             }
 
@@ -1351,7 +1359,7 @@ namespace ES.Business.Managers
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("Կապի խափանում", "Հարցման սխալ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageManager.ShowMessage("Կապի խափանում", "Հարցման սխալ");
                     return new List<ProductItems>();
                 }
             }
@@ -1384,30 +1392,58 @@ namespace ES.Business.Managers
                 }
             }
         }
+        private static Partners TryGetProductsProvider(Guid productId)
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    var partnerId  = db.InvoiceItems
+                        .Where(s => s.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice && s.ProductId==productId && s.Invoices.PartnerId != null && s.Invoices.MemberId==ApplicationManager.Member.Id)
+                        .OrderByDescending(s => s.Invoices.CreateDate).Select(s=>s.Invoices.PartnerId).FirstOrDefault();
 
+                   
+                        if (partnerId==null) { return null; }
+
+                    return db.Partners.Include(s=>s.EsPartnersTypes).FirstOrDefault(s =>s.EsMemberId == ApplicationManager.Member.Id && s.Id == partnerId);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+        }
         private static List<ProductProvider> TryGetProductsProviders(List<Guid> productIds)
         {
             using (var db = GetDataContext())
             {
                 try
                 {
-                    var invoceiItems = db.InvoiceItems.Where(s => s.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice && productIds.Contains(s.ProductId) && s.Invoices.PartnerId != null)
+                    var invoceiItems = db.InvoiceItems
+                        .Where(s => s.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice && productIds.Contains(s.ProductId) && s.Invoices.PartnerId != null)
                         .OrderByDescending(s => s.Invoices.CreateDate).GroupBy(s => s.ProductId);
+
                     var items = new List<ProductProvider>();
-                    foreach (var invoceiItem in invoceiItems)
+                    foreach (var invoceItem in invoceiItems)
                     {
-                        if (invoceiItem.FirstOrDefault() == null || invoceiItem.First().Invoices == null) { continue; }
-                        items.Add(new ProductProvider { ProductId = invoceiItem.First().ProductId, ProviderId = ((Guid)invoceiItem.First().Invoices.PartnerId) });
+                        if (!invoceItem.Any()) { continue; }
+                        var invoice = invoceItem.First();
+                        items.Add(new ProductProvider
+                                        {
+                                            ProductId = invoice.ProductId,
+                                            ProviderId = invoice.Invoices != null && invoice.Invoices.PartnerId != null ? ((Guid)invoice.Invoices.PartnerId) : Guid.Empty
+                                        });
                     }
                     return items;
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("Կապի խափանում", "Հարցման սխալ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageManager.ShowMessage("Կապի խափանում", "Հարցման սխալ");
                     return new List<ProductProvider>();
                 }
             }
         }
+
         private static int TryGetNextProductCode(long memberId)
         {
             var nextcode = 10000;
@@ -1532,6 +1568,7 @@ namespace ES.Business.Managers
                     {
                         var product = Convert(productItems.First().s.Products);
                         product.ExistingQuantity = productItems.Sum(t => t.s.Quantity);
+                        product.Provider = GetProductsProvider(product.Id);
                         products.Add(product);
                     }
                     return products;
@@ -1656,26 +1693,41 @@ namespace ES.Business.Managers
             }
         }
 
-        public static List<IInvoiceReport> GetProductsBalance(DateTime? date)
+        public static IInvoiceReport GetProductsBalance(DateTime? date)
         {
             using (var db = GetDataContext())
             {
                 try
                 {
-                    var pi = db.ProductItems.Include(s => s.Products).Where(s => s.Quantity > 0);
-                    return new List<IInvoiceReport>(){ new InvoiceReport
+                    var pi = db.ProductItems.Where(s => s.MemberId == ApplicationManager.Member.Id).Include(s => s.Products).Where(s => s.Quantity > 0);
+                    var saleInvoiceItems =
+                        db.InvoiceItems.Where(
+                            s => s.Invoices.MemberId == ApplicationManager.Member.Id && s.Invoices.ApproveDate > date &&
+                                 (s.Invoices.InvoiceTypeId == (int)InvoiceType.SaleInvoice ||
+                                  s.Invoices.InvoiceTypeId == (int)InvoiceType.InventoryWriteOff ||
+                                  s.Invoices.InvoiceTypeId == (int)InvoiceType.ReturnTo)).ToList();
+                    var salePrice = saleInvoiceItems.Sum(s => (s.Price ?? 0) * (s.Quantity ?? 0) + (s.Discount ?? 0));
+                    var saleCostPrice = saleInvoiceItems.Sum(s => (s.CostPrice ?? 0) * (s.Quantity ?? 0));
+
+                    var purchaseInvoiceItems = db.InvoiceItems.Where(s => s.Invoices.MemberId == ApplicationManager.Member.Id && s.Invoices.ApproveDate > date &&
+                        (s.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice ||
+                        s.Invoices.InvoiceTypeId == (int)InvoiceType.ReturnFrom)).ToList();
+                    var purchasePrice = purchaseInvoiceItems.Sum(s => (s.Price ?? 0) * (s.Quantity ?? 0) + (s.Discount ?? 0));
+                    var purchaseCostPrice = purchaseInvoiceItems.Sum(s => (s.CostPrice ?? 0) * (s.Quantity ?? 0));
+
+                    return new InvoiceReport
                     {
-                        Description = "Stock",
+                        Description = string.Format("Ապրանքային մնացորդ {0} օրվա դրությամբ", date),
                         Count = pi.GroupBy(t => t.ProductId).Count(),
-                        Quantity = pi.Sum(t=>t.Quantity),
-                        Cost = pi.Sum(t => t.Quantity*t.CostPrice),
-                        Price = pi.Sum(t => t.Quantity*(t.Products.Price ?? 0)),
-                        Sale = pi.Sum(t => t.Quantity*((t.Products.Price ?? 0)-t.CostPrice)),
-                    }};
+                        Quantity = pi.Sum(t => t.Quantity),
+                        Cost = pi.Sum(t => t.Quantity * t.CostPrice) + saleCostPrice - purchaseCostPrice,
+                        Price = pi.Sum(t => t.Quantity * (t.Products.Price ?? 0)) + salePrice - purchasePrice,
+                        Sale = pi.Sum(t => t.Quantity * ((t.Products.Price ?? 0) - t.CostPrice)),
+                    };
                 }
                 catch (Exception)
                 {
-                    return new List<IInvoiceReport>();
+                    return new InvoiceReport();
                 }
             }
         }
@@ -1688,18 +1740,19 @@ namespace ES.Business.Managers
                 try
                 {
 
-                    var pI = db.ProductItems.Include(s => s.Products).
-                        Join(db.Invoices.Where(i => i.ApproveDate > date), pi => pi.DeliveryInvoiceId, i => i.Id, (pi, i) => new { pi, i }).
-                        Where(s => s.pi.Quantity > 0 && s.i != null);
+                    var pI = db.ProductItems.Where(s => s.MemberId == ApplicationManager.Member.Id).Include(s => s.Products).
+                        Join(db.Invoices.Where(s => s.MemberId == ApplicationManager.Member.Id), pi => pi.DeliveryInvoiceId, i => i.Id, (pi, i) => new { pi, i }).
+                        Where(s => s.pi.Quantity > 0 || s.i.CreateDate > date).ToList();
 
-                    var invoiceItems = db.InvoiceItems.Where(ii => ii.Invoices.ApproveDate > date).Include(ii => ii.Invoices);
+                    var invoiceItems = db.InvoiceItems.Where(ii => ii.Invoices.ApproveDate > date).Include(ii => ii.Invoices).ToList();
 
 
-                    foreach (var productItem in pI.GroupBy(t => t.pi.ProductId))
+                    foreach (var productItem in pI.GroupBy(t => t.pi.ProductId).ToList())
                     {
-                        var invoiceItemsCur = invoiceItems.Where(ii => productItem.Select(t => t.i.Id).Contains(ii.InvoiceId));
+                        var invoiceItemsCur = invoiceItems.Where(ii => productItem.Select(t => t.i.Id).Contains(ii.InvoiceId)).ToList();
                         result.Add(new InvoiceReport
                     {
+                        Code = productItem.First().pi.Products.Code,
                         Description = productItem.First().pi.Products.Description,
                         Count = productItem.Count(),
                         Quantity = productItem.Sum(t => t.pi.Quantity) +
@@ -1716,6 +1769,41 @@ namespace ES.Business.Managers
 
                 }
                 return result;
+            }
+        }
+
+        public static decimal GetProductQuantity(Guid id, DateTime? date)
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+
+                    var exCount = db.ProductItems.Where(s => s.MemberId == ApplicationManager.Member.Id && s.ProductId == id).ToList().Sum(s => s.Quantity);
+                    exCount +=
+                        db.InvoiceItems.Where(s =>
+                                s.Invoices.MemberId == ApplicationManager.Member.Id &&
+                                s.Invoices.ApproveDate >= date &&
+                                (s.Invoices.InvoiceTypeId == (int)InvoiceType.SaleInvoice ||
+                                s.Invoices.InvoiceTypeId == (int)InvoiceType.ReturnTo ||
+                                s.Invoices.InvoiceTypeId == (int)InvoiceType.InventoryWriteOff) &&
+                                s.ProductId == id).ToList().Sum(s => s.Quantity ?? 0);
+
+                    exCount -=
+                        db.InvoiceItems.Where(s =>
+                                s.Invoices.MemberId == ApplicationManager.Member.Id &&
+                                s.Invoices.ApproveDate >= date &&
+                                (s.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice ||
+                                s.Invoices.InvoiceTypeId == (int)InvoiceType.ReturnFrom) &&
+                                s.ProductId == id).ToList().Sum(s => s.Quantity ?? 0);
+                    return exCount;
+                }
+                catch (Exception ex)
+                {
+                    MessageManager.OnMessage(ex.ToString());
+                    return 0;
+                }
+
             }
         }
     }

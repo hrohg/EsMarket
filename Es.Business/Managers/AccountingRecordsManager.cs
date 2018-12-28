@@ -5,48 +5,11 @@ using System.Transactions;
 using ES.Business.Helpers;
 using ES.Business.Models;
 using ES.DataAccess.Models;
+using AccountingTools.Enums;
 
 namespace ES.Business.Managers
 {
-    public enum AccountingPlanEnum
-    {
-        None = 0,
-        //1 Ոչ ընթացիկ ակտիվներ
-        //2 Ընթացիկ ակտիվներ
-        //Ապրանքներ
-        Purchase = 216,
-        //Դեբիտորական պարտքեր վաճառքի գծով
-        AccountingReceivable = 221,
-        //Տրված ընթացիկ կանխավճարներ
-        Prepayments = 224,
-        //Դրամարկղ
-        CashDesk = 251,
-        //Հաշվարկային հաշիվ
-        Accounts = 252,
-        //3 Սեփական կապիտալ
-        //Կանոնադրական կապիտալ
-        EquityBase = 311,
-        //4 Ոչ ընթացիկ պարտավորություններ
-        //5 Ընթացիկ պարտավորություններ
-        //Կրեդիտորական պերտքեր գնումների գծով
-        PurchasePayables = 521,
-        //Ստացված կանխավճարներ
-        ReceivedInAdvance = 523,
-        //
-        Debit_For_Salary = 527,
-        //6 Եկամուտներ
-        //Հասույթ
-        Proceeds = 611,
-        //7 Ծախսեր
-        //711 Իրացված արտադրանքի, ապրանքների, աշխատանքների, ծառայությունների ինքնարժեք
-        CostPrice = 711,
-        //Իրացման ծախսեր
-        CostOfSales = 712,
-        OtherOperationalExpenses = 714,
-        //8 Կառավարչական հաշվառման հաշիվներ
-        //9 Արտահաշվեկշռային հաշիվներ
-
-    }
+    
 
     public enum AccountingActionsEnum
     {
@@ -57,6 +20,7 @@ namespace ES.Business.Managers
         Prepayments = AccountingPlanEnum.Prepayments,
         PurchasePayables = AccountingPlanEnum.PurchasePayables,
         ReceivedInAdvance = AccountingPlanEnum.ReceivedInAdvance,
+        Partly = 2,
 
 
     }
@@ -226,6 +190,24 @@ namespace ES.Business.Managers
         {
             return TrySetPartnerPrepayment(Convert(accountingRecord));
         }
+
+        public static List<AccountingAccounts> GetAccountingRecords()
+        {
+            return new List<AccountingAccounts>
+            {
+                new AccountingAccounts {Id = 216, Description = GetAccountingRecordsDescription(216)},
+                new AccountingAccounts {Id = 221, Description = GetAccountingRecordsDescription(221)},
+                new AccountingAccounts {Id = 224, Description = GetAccountingRecordsDescription(224)},
+                new AccountingAccounts {Id = 251, Description = GetAccountingRecordsDescription(251)},
+                new AccountingAccounts {Id = 521, Description = GetAccountingRecordsDescription(521)},
+                new AccountingAccounts {Id = 523, Description = GetAccountingRecordsDescription(523)},
+                new AccountingAccounts {Id = 527, Description = GetAccountingRecordsDescription(527)},
+                new AccountingAccounts {Id = 611, Description = GetAccountingRecordsDescription(611)},
+                new AccountingAccounts {Id = 711, Description = GetAccountingRecordsDescription(711)},
+                new AccountingAccounts {Id = 712, Description = GetAccountingRecordsDescription(712)},
+
+            };
+        }
         public static List<AccountingRecordsModel> GetAccountingRecords(DateTime beginDate, DateTime endDate)
         {
             return TryGetAccountingRecords(beginDate, endDate).Select(Convert).ToList();
@@ -238,7 +220,7 @@ namespace ES.Business.Managers
         {
             return TryGetAccountingRecords(beginDate, endDate, debit, credit).Select(Convert).ToList();
         }
-        public static List<ES.DataAccess.Models.AccountingPlan> GetAccountingPlan()
+        public static List<AccountingPlan> GetAccountingPlan()
         {
             return TryGetAccountingPlan();
         }
@@ -474,7 +456,7 @@ namespace ES.Business.Managers
                     return db.AccountingRecords.Where(s =>
                         s.MemberId == memberId
                         && s.RegisterDate >= beginDate.Date
-                        && s.RegisterDate < endDate).OrderBy(s => s.RegisterDate).ToList();
+                        && s.RegisterDate <= endDate).OrderBy(s => s.RegisterDate).ToList();
                 }
                 catch (Exception)
                 {
@@ -492,7 +474,7 @@ namespace ES.Business.Managers
                     return db.AccountingRecords.Where(s =>
                         s.MemberId == memberId
                         && s.RegisterDate >= beginDate.Date
-                        && s.RegisterDate < endDate && (plans.Contains((int)s.Debit) || plans.Contains((int)s.Credit))).OrderBy(s => s.RegisterDate).ToList();
+                        && s.RegisterDate <= endDate && (plans.Contains((int)s.Debit) || plans.Contains((int)s.Credit))).OrderBy(s => s.RegisterDate).ToList();
                 }
                 catch (Exception)
                 {
@@ -510,7 +492,7 @@ namespace ES.Business.Managers
                     return db.AccountingRecords.Where(s =>
                         s.MemberId == memberId
                         && s.RegisterDate >= beginDate
-                        && s.RegisterDate < endDate
+                        && s.RegisterDate <= endDate
                         && s.Debit == debit
                         && s.Credit == credit).ToList();
                 }
@@ -529,7 +511,7 @@ namespace ES.Business.Managers
                     return db.AccountingRecords.Where(s =>
                         s.MemberId == MemberId
                         && s.RegisterDate >= beginDate
-                        && s.RegisterDate < endDate
+                        && s.RegisterDate <= endDate
                         && ((s.DebitGuidId != null && ids.Contains((Guid)s.DebitGuidId)) || (s.CreditGuidId != null && ids.Contains((Guid)s.CreditGuidId)))).ToList();
                 }
                 catch (Exception)
@@ -538,7 +520,7 @@ namespace ES.Business.Managers
                 }
             }
         }
-        private static List<ES.DataAccess.Models.AccountingPlan> TryGetAccountingPlan()
+        private static List<AccountingPlan> TryGetAccountingPlan()
         {
             using (var db = GetDataContext())
             {
@@ -548,7 +530,7 @@ namespace ES.Business.Managers
                 }
                 catch (Exception)
                 {
-                    return new List<ES.DataAccess.Models.AccountingPlan>();
+                    return new List<AccountingPlan>();
                 }
             }
         }
@@ -613,6 +595,23 @@ namespace ES.Business.Managers
         public static List<AccountingRecordsModel> GetAccountingRecordsByPartner(DateTime beginDate, DateTime endDate, List<Guid> partners)
         {
             return TryGetAccountingRecords(beginDate, endDate, partners).Select(Convert).ToList();
+        }
+
+        public static Tuple<decimal, decimal> GetAccountingRecordsByAccountingPlan(DateTime startDate, DateTime endDate, AccountingPlanEnum accountingPlan)
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    var debit = db.AccountingRecords.Where(s => s.MemberId == ApplicationManager.Member.Id && s.RegisterDate >= startDate && s.RegisterDate<=endDate && s.Debit == (int)accountingPlan && s.Credit != (int)accountingPlan).ToList().Sum(s => s.Amount);
+                    var credit = db.AccountingRecords.Where(s => s.MemberId == ApplicationManager.Member.Id && s.RegisterDate >= startDate && s.RegisterDate<=endDate && s.Debit != (int)accountingPlan && s.Credit == (int)accountingPlan).ToList().Sum(s => s.Amount);
+                return new Tuple<decimal, decimal>(debit, credit);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
         }
     }
 

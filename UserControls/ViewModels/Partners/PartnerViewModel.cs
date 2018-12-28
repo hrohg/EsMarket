@@ -74,7 +74,7 @@ namespace UserControls.ViewModels.Partners
         }
         private void GetPartners()
         {
-            ApplicationManager.Instance.CashProvider.UpdatePartners(false);
+            ApplicationManager.Instance.CashProvider.UpdatePartnersAsync();
             Partners = new ObservableCollection<PartnerModel>(ApplicationManager.Instance.CashProvider.GetPartners);
             RaisePropertyChanged("Partners");
         }
@@ -114,7 +114,7 @@ namespace UserControls.ViewModels.Partners
                 if (PartnersManager.SetDefault(partner))
                 {
                     MessageManager.OnMessage("Գործողության բարեհաջող ավարտ։", MessageTypeEnum.Success);
-                    ApplicationManager.Instance.CashManager.UpdatePartners();
+                    ApplicationManager.CashManager.UpdatePartnersAsync();
                 }
                 else
                 {

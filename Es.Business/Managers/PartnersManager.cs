@@ -17,33 +17,33 @@ namespace ES.Business.Managers
         public static PartnerModel Convert(Partners item)
         {
             if (item == null) return null;
-            return new PartnerModel(item.EsMemberId)
-            {
-                Id = item.Id,
-                EsMemberId = item.EsMemberId,
-                //EsMember = MembersManager.ConvertMember(item.EsMembers),
-                PartnersTypeId = item.EsPartnersTypeId,
-                PartnersType = Convert(item.EsPartnersTypes),
-                EsUserId = item.EsUserId,
-                //EsUser = UsersManager.ConvertEsUser(item.EsUsers),
-                ClubSixteenId = item.ClubSixteenId,
-                FullName = item.FullName,
-                FirstName = item.FirstName,
-                LastName = item.LastName,
-                Mobile = item.Mobile,
-                Email = item.Email,
-                Address = item.Address,
-                Discount = item.Discount,
-                Debit = item.Debit ?? 0,
-                Credit = item.Credit ?? 0,
-                MaxDebit = item.MaxDebit,
-                TIN = item.TIN,
-                PasportData = item.PasportData,
-                JuridicalAddress = item.JuridicalAddress,
-                Bank = item.Bank,
-                BankAccount = item.BankAccount,
-                Notes = item.Notes
-            };
+            var partner = new PartnerModel(item.EsMemberId);
+
+            partner.Id = item.Id;
+            partner.EsMemberId = item.EsMemberId;
+            //EsMember = MembersManager.ConvertMember(item.EsMembers);
+            partner.PartnersTypeId = item.EsPartnersTypeId;
+            partner.PartnersType = Convert(item.EsPartnersTypes);
+            partner.EsUserId = item.EsUserId;
+            //EsUser = UsersManager.ConvertEsUser(item.EsUsers);
+            partner.ClubSixteenId = item.ClubSixteenId;
+            partner.FullName = item.FullName;
+            partner.FirstName = item.FirstName;
+            partner.LastName = item.LastName;
+            partner.Mobile = item.Mobile;
+            partner.Email = item.Email;
+            partner.Address = item.Address;
+            partner.Discount = item.Discount;
+            partner.Debit = item.Debit ?? 0;
+            partner.Credit = item.Credit ?? 0;
+            partner.MaxDebit = item.MaxDebit;
+            partner.TIN = item.TIN;
+            partner.PasportData = item.PasportData;
+            partner.JuridicalAddress = item.JuridicalAddress;
+            partner.Bank = item.Bank;
+            partner.BankAccount = item.BankAccount;
+            partner.Notes = item.Notes;
+            return partner;
         }
         public static Partners Convert(PartnerModel item)
         {
@@ -380,7 +380,7 @@ namespace ES.Business.Managers
                 try
                 {
                     var partnerid =
-                        db.InvoiceItems.Where(s => s.ProductId == item.Id && s.Invoices.InvoiceTypeId==(long)InvoiceType.PurchaseInvoice && s.Invoices.MemberId == ApplicationManager.Member.Id)
+                        db.InvoiceItems.Where(s => s.ProductId == item.Id && s.Invoices.InvoiceTypeId == (long)InvoiceType.PurchaseInvoice && s.Invoices.MemberId == ApplicationManager.Member.Id)
                         .OrderByDescending(s => s.Invoices.ApproveDate)
                         .Select(s => s.Invoices.PartnerId).FirstOrDefault();
                     return GetPartner(partnerid);

@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
-using ES.Common.Managers;
+using ES.Common.Helpers;
 using ES.Data.Models.Reports;
 using Shared.Helpers;
-using UserControls.ControlPanel.Controls;
 using UserControls.Helpers;
 
 namespace UserControls.ViewModels
@@ -19,23 +18,11 @@ namespace UserControls.ViewModels
     {
 
         #region Internal properties
-        private List<InternalWayBillDetilesModel> _items = new List<InternalWayBillDetilesModel>();
+
         private Tuple<DateTime, DateTime> _dateIntermediate;
         #endregion
 
         #region External properties
-        public override ObservableCollection<InternalWayBillDetilesModel> ViewList
-        {
-            get
-            {
-                return new ObservableCollection<InternalWayBillDetilesModel>(_items);
-            }
-            protected set
-            {
-                _items = value.ToList();
-                RaisePropertyChanged("ViewList");
-            }
-        }
         #endregion
 
         #region Constructors
@@ -54,22 +41,26 @@ namespace UserControls.ViewModels
         }
         protected override void UpdateAsync()
         {
-            if(_dateIntermediate==null) {IsLoading=false; return;}
-            RaisePropertyChanged(IsInProgressProperty);
-            ViewList = new ObservableCollection<InternalWayBillDetilesModel>(InvoicesManager.GetWillBillByDetile(_dateIntermediate.Item1, _dateIntermediate.Item2, ApplicationManager.Instance.GetMember.Id));
-            TotalRows = _items.Count;
-            TotalCount = (double)_items.Sum(s => s.Quantity ?? 0);
-            Total = (double)_items.Sum(i => (i.Quantity ?? 0) * (i.Price ?? 0));
-            IsLoading = false;
-            RaisePropertyChanged(IsInProgressProperty);
+            base.UpdateAsync();
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, new Action(() =>
+            {
+                _dateIntermediate = UIHelper.Managers.SelectManager.GetDateIntermediate();
+            }));
+            if (_dateIntermediate == null) { IsLoading = false; return; }
+
+            SetResult(InvoicesManager.GetWillBillByDetile(_dateIntermediate.Item1, _dateIntermediate.Item2, ApplicationManager.Instance.GetMember.Id));
+
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { UpdateCompleted(); });
         }
-        protected override void OnUpdate()
+
+        protected override void UpdateCompleted(bool isSuccess = true)
         {
-            Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
-            if (dateIntermediate == null) return;
-            Description = string.Format("Տեղափոխություն {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
-            base.OnUpdate();
+            base.UpdateCompleted(isSuccess);
+            Description = string.Format("Տեղափոխություն {0} - {1}", _dateIntermediate.Item1.Date, _dateIntermediate.Item2.Date);
+            TotalCount = (double)ViewList.Sum(s => s.Quantity ?? 0);
+            Total = (double)ViewList.Sum(i => (i.Quantity ?? 0) * (i.Price ?? 0));
         }
+
         protected override void OnPrint(object o)
         {
             base.OnPrint(o);
@@ -85,63 +76,52 @@ namespace UserControls.ViewModels
     {
 
         #region Internal properties
-        private List<InternalWayBillModel> _items = new List<InternalWayBillModel>();
+        private Tuple<DateTime, DateTime> _dateIntermediate;
         #endregion
 
         #region External properties
-        public override ObservableCollection<InternalWayBillModel> ViewList
-        {
-            get
-            {
-                return new ObservableCollection<InternalWayBillModel>(_items);
-            }
-            protected set
-            {
-                _items = value.ToList();
-                RaisePropertyChanged("ViewList");
-                RaisePropertyChanged("Count");
-                RaisePropertyChanged("Total");
-            }
-        }
-        public int Count { get { return _items.Count; } }
-        public override double Total { get { return (double)_items.Sum(s => s.Amount); } }
+        public int Count { get { return ViewList.Count; } }
+        public override double Total { get { return (double)ViewList.Sum(s => s.Amount); } }
         #endregion
 
         #region Constructors
         public ViewInternalWayBillViewModel(ViewInvoicesEnum o)
             : base()
         {
-            Title = Description = "Տեղափոխություն";
+
             IsShowUpdateButton = true;
-            Initialize(o);
+
         }
         #endregion
 
         #region Internal methods
-        private void Initialize(object o)
-        {
-            OnUpdate();
-        }
-        private void Update(Tuple<DateTime, DateTime> dateIntermediate)
-        {
-            IsLoading = true;
-            RaisePropertyChanged(IsInProgressProperty);
-            ViewList = new ObservableCollection<InternalWayBillModel>(InvoicesManager.GetWillBill(dateIntermediate.Item1, dateIntermediate.Item2, ApplicationManager.Instance.GetMember.Id));
-            TotalRows = _items.Count;
-            //TotalCount = (double)_items.Sum(s => s.Quantity ?? 0);
-            IsLoading = false;
-            RaisePropertyChanged(IsInProgressProperty);
-        }
-        protected override void OnUpdate()
-        {
-            base.OnUpdate();
-            Tuple<DateTime, DateTime> dateIntermediate = SelectManager.GetDateIntermediate();
-            if (dateIntermediate == null) return;
 
-            Description = string.Format("Տեղափոխություն {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
-            var thread = new Thread(() => Update(dateIntermediate));
-            thread.Start();
+        protected override void Initialize()
+        {
+            base.Initialize();
+            Title = Description = "Տեղափոխություն";
         }
+
+        protected override void UpdateAsync()
+        {
+            base.UpdateAsync();
+
+            GetDate();
+            if (_dateIntermediate == null) { IsLoading = false; return; }
+
+
+            var items = InvoicesManager.GetWillBill(_dateIntermediate.Item1, _dateIntermediate.Item2, ApplicationManager.Instance.GetMember.Id);
+
+            SetResult(items);
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { UpdateCompleted(); });
+        }
+
+        protected override void UpdateCompleted(bool isSuccess = true)
+        {
+            base.UpdateCompleted(isSuccess);
+            Description = string.Format("Տեղափոխություն {0} - {1}", _dateIntermediate.Item1.Date, _dateIntermediate.Item2.Date);
+        }
+
         protected override void OnPrint(object o)
         {
             base.OnPrint(o);
@@ -149,6 +129,13 @@ namespace UserControls.ViewModels
             var productOrder = ((FrameworkElement)o).FindVisualChildren<Border>().FirstOrDefault();
             if (productOrder == null) return;
             PrintManager.PrintEx(productOrder);
+        }
+        protected void GetDate()
+        {
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, new Action(() =>
+            {
+                _dateIntermediate = UIHelper.Managers.SelectManager.GetDateIntermediate();
+            }));
         }
         #endregion
     }

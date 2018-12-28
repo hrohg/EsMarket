@@ -9,7 +9,6 @@ namespace ES.Common.ViewModels.Base
     public class PaneViewModel : ViewModelBase
     {
         public delegate void CloseModel(PaneViewModel vm);
-
         public event CloseModel OnClosed;
 
         #region External properties

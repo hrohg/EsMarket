@@ -135,7 +135,7 @@ namespace ES.MsOffice.ExcelManager
        //         }
        //         catch (Exception e)
        //         {
-       //             //MessageBox.Show("Ֆայլի խմբագրումը հնարավոր չէ, խնդրում ենք փորձել մի փոքր ուշ կամ դիմել ադմինիստրատորին։" + e.Message, "Խմբագրում", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //             //MessageManager.ShowMessage("Ֆայլի խմբագրումը հնարավոր չէ, խնդրում ենք փորձել մի փոքր ուշ կամ դիմել ադմինիստրատորին։" + e.Message, "Խմբագրում", MessageBoxButtons.OK, MessageBoxIcon.Error);
        //             return null;
        //         }
        //         finally

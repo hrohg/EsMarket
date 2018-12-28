@@ -79,9 +79,9 @@ namespace UserControls.ViewModels.Invoices
         protected override void OnGetProduct(object o)
         {
             base.OnGetProduct(o);
-            OnAddInvoiceItem(o);
+            PreviewAddInvoiceItem(o);
         }
-        protected override decimal GetProductPrice(EsProductModel product)
+        protected override decimal GetProductPrice(ProductModel product)
         {
             return product != null ? (product.CostPrice ?? 0) : 0;
         }
@@ -93,11 +93,16 @@ namespace UserControls.ViewModels.Invoices
         #endregion
 
         #region External Methods
-        protected override void OnAddInvoiceItem(object o)
+        protected override void PreviewAddInvoiceItem(object o)
         {
             if (!CanAddInvoiceItem(o)) { return; }
             if (!SetQuantity(AddBySingle)) { return; }
-            base.OnAddInvoiceItem(o);
+            base.PreviewAddInvoiceItem(o);
+        }
+
+        protected override void OnAddInvoiceItem()
+        {
+            base.OnAddInvoiceItem();
             InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
             RaisePropertyChanged("InvoicePaid");
         }
@@ -126,7 +131,7 @@ namespace UserControls.ViewModels.Invoices
             }
             if (ToStock == null)
             {
-                MessageBox.Show("Պահեստ ընտրված չէ: Խնդրում ենք խմբագրել նոր պահեստ:", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageManager.ShowMessage("Պահեստ ընտրված չէ: Խնդրում ենք խմբագրել նոր պահեստ:", "Գործողության ընդհատում", MessageBoxImage.Error);
                 return;
             }
             Invoice.ToStockId = ToStock.Id;

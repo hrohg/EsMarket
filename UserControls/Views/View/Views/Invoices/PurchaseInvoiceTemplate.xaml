@@ -298,8 +298,8 @@
                     <TextBlock Grid.Column="4" Grid.Row="0" Text="Գին"/>
                     <TextBox Grid.Column="4" Grid.Row="1" 
                              Text="{Binding Path=InvoiceItem.Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" 
-                             IsReadOnly="{Binding Path = DenayChangePrice}" Width="105" VerticalContentAlignment="Center" 
-                             Focusable="{Binding DenayChangePrice, Converter={StaticResource InverseBooleanConverter}}"
+                             IsReadOnly="{Binding Path = DenyChangePrice}" Width="105" VerticalContentAlignment="Center" 
+                             Focusable="{Binding DenyChangePrice, Converter={StaticResource InverseBooleanConverter}}"
                              HorizontalContentAlignment="Right" Margin="1 0" TabIndex="2">
                         <i:Interaction.Behaviors>
                             <behaviors:TextBoxBehavior IsSelectTextOnFocus="True" />
@@ -813,8 +813,8 @@
                     <TextBlock Grid.Column="4" Grid.Row="0" Text="Գին"/>
                     <TextBox Grid.Column="4" Grid.Row="1" 
                              Text="{Binding Path=InvoiceItem.Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" 
-                             IsReadOnly="{Binding Path = DenayChangePrice}" Width="105" VerticalContentAlignment="Center" 
-                             Focusable="{Binding DenayChangePrice, Converter={StaticResource InverseBooleanConverter}}"
+                             IsReadOnly="{Binding Path = DenyChangePrice}" Width="105" VerticalContentAlignment="Center" 
+                             Focusable="{Binding DenyChangePrice, Converter={StaticResource InverseBooleanConverter}}"
                              HorizontalContentAlignment="Right" Margin="1 0" TabIndex="2">
                         <i:Interaction.Behaviors>
                             <behaviors:TextBoxBehavior IsSelectTextOnFocus="True" />

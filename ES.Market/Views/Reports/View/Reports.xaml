@@ -10,8 +10,7 @@
         Title="Reports" Height="300" Width="300">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
-        <converters:UserRoleToBoolConverter x:Key="UserRoleToBoolConverter"/>
-
+        <converters:UserRoleToBoolMultiValueConverter x:Key="UserRoleToBoolMultiValueConverter"/>
     </Window.Resources>
     <Grid>
         <Grid>
@@ -23,83 +22,185 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Menu Grid.Row ="0">
-                <MenuItem Header="Վաճառք"
-                          IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
-                    <MenuItem Header="Դիտում" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.None}" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"/>
-                    <MenuItem Header="Վաճառքի մանրամասն վերլուծություն" 
-                              Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.BySaleChart}"
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"/>
-                    <Separator/>
-                    <MenuItem Header="Դիտել ըստ" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}">
-                        <MenuItem Header="Բաժինների" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByStock}" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"/>
-                        <MenuItem Header="Բաժինների (մանրամասն)" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByStocksDetiles}" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"/>
-                                <MenuItem Header="Պատվիրատուների" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartner}" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"/>
-                                    <MenuItem Header="Պատվիրատուների մանրամասն" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartnersDetiles}" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"/>
-                                        <MenuItem Header="Պատվիրատուների (ըստ խմբերի)" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartnerType}" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"/>
+                <MenuItem Header="Վաճառք">
+                    <MenuItem.IsEnabled>
+                        <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                        </MultiBinding>
+                    </MenuItem.IsEnabled>
+                    <MenuItem Header="Դիտում" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.None}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                     </MenuItem>
-                    <MenuItem Header="Վաճառք 0 - ական" 
-                              Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByZeroAmunt}"
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"/>
+                    <MenuItem Header="Վաճառքի մանրամասն վերլուծություն" 
+                              Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.BySaleChart}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Դիտել ըստ">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
+                        <MenuItem Header="Բաժինների" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByStock}"/>
+                        <MenuItem Header="Բաժինների (մանրամասն)" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByStocksDetiles}"/>
+                        <MenuItem Header="Պատվիրատուների" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartner}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
+                        </MenuItem>
+                        <MenuItem Header="Պատվիրատուների մանրամասն" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartnersDetiles}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
+                        </MenuItem>
+                        <MenuItem Header="Պատվիրատուների (ըստ խմբերի)" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartnerType}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
+                        </MenuItem>
+                        <MenuItem Header="Վաճառք 0 - ական" 
+                              Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByZeroAmunt}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
+                        </MenuItem>
 
+                    </MenuItem>
                 </MenuItem>
-                
-                <MenuItem Header="Տեղափոխություն" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.StockKeeper}}">
+
+                <MenuItem Header="Տեղափոխություն">
+                    <MenuItem.IsEnabled>
+                        <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.StockKeeper}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                        </MultiBinding>
+                    </MenuItem.IsEnabled>
                     <MenuItem Header="Դիտում" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.None}">
-                        
+
                     </MenuItem>
                     <MenuItem Header="Ըստ բաժիննների" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByStock}">
-                        
+
                     </MenuItem>
                     <MenuItem Header="Դիտում մանրամասն" Command="{Binding ViewInternalWayBillCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByDetiles}">
-                        
+
                     </MenuItem>
                 </MenuItem>
-                
+
                 <MenuItem Header="Գնում">
-                    
-                    <MenuItem Header="Դիտում" Command="{Binding ViewPurchaseCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.None}">
-                       
+
+                    <MenuItem Header="Դիտում" Command="{Binding ViewPurchaseCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.None}">
+
                     </MenuItem>
-                    <MenuItem Header="Ըստ բաժիննների" Command="{Binding ViewPurchaseCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByStock}">
-                       
+                    <MenuItem Header="Ըստ բաժիննների" Command="{Binding ViewPurchaseCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByStock}">
+
                     </MenuItem>
-                    <MenuItem Header="Դիտում մանրամասն" Command="{Binding ViewPurchaseCommands}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByDetiles}">
-                        
+                    <MenuItem Header="Դիտում մանրամասն" Command="{Binding ViewPurchaseCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByDetiles}">
+
                     </MenuItem>
                 </MenuItem>
-                
-                <MenuItem Header="Ապրանքներ" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}">
-                    <MenuItem Header="Ապրանքների գնում ըստ մատակարարների" 
-                              Click="MiViewProductReportByProviders_OnClick" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"/>
-                    
+
+                <MenuItem Header="Ապրանքներ">
+                    <MenuItem.IsEnabled>
+                        <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.Seller}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                        </MultiBinding>
+                    </MenuItem.IsEnabled>
+                    <MenuItem Header="Ապրանքների գնում ըստ մատակարարների" Click="MiViewProductReportByProviders_OnClick"/>
+                    <MenuItem Header="Ապրանքների դիտում ըստ մատակարարների" 
+                              Command="{Binding ViewProductsCommand}"
+                              CommandParameter="{x:Static enumerations:ProductsViewEnum.ByProviders}"/>
                     <MenuItem Header="Մնացորդի արժեքի դիտում" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
                               Command="{Binding ViewProductsCommand}"
-                              CommandParameter="{x:Static enumerations:ProductsViewEnum.ByPrice}"/>
+                              CommandParameter="{x:Static enumerations:ProductsViewEnum.ByPrice}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
+                    </MenuItem>
                     <MenuItem Header="Մնացորդի դիտում" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
                               Command="{Binding ViewProductsCommand}"
-                              CommandParameter="{x:Static enumerations:ProductsViewEnum.ByStocks}"/>
+                              CommandParameter="{x:Static enumerations:ProductsViewEnum.ByStocks}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
+                    </MenuItem>
+                    <MenuItem Header="Մնացորդի դիտում քանակական" 
+                              Command="{Binding ViewProductsCommand}"
+                              CommandParameter="{x:Static enumerations:ProductsViewEnum.ByProducts}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
+                    </MenuItem>
                     <MenuItem Header="Մնացորդի դիտում (մանրամասն)" 
-                              IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"
                               Command="{Binding ViewProductsCommand}"
-                              CommandParameter="{x:Static enumerations:ProductsViewEnum.ByDetile}"/>
+                              CommandParameter="{x:Static enumerations:ProductsViewEnum.ByDetile}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
+                    </MenuItem>
                     <Separator/>
                     <MenuItem Header="Կորդ մնացորդ" 
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
                                   Command="{Binding GetFallowProductsCommand}"/>
                     <MenuItem Header="Բաժինների մնացորդի ստուգում"
-                                  IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
                                   Command="{Binding CheckProductsRemainderForStockCommand}"/>
                 </MenuItem>
-                
-                <MenuItem Header="Գնորդ" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}">
-                    <MenuItem Header="Գնումներ" Command="{Binding SallByCustomersCommand}" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"/>
-                    <MenuItem Header="Գնումներ ըստ գնորդների" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartner}" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.SaleManager}}"/>
-                    <MenuItem Header="Գնումներ մանրամասն" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartnersDetiles}" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Seller}}"/>
+
+                <MenuItem Header="Գնորդ">
+                    <MenuItem.IsEnabled>
+                        <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.Seller}"/>
+                        </MultiBinding>
+                    </MenuItem.IsEnabled>
+                    <MenuItem Header="Գնումներ" Command="{Binding SallByCustomersCommand}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
+                    </MenuItem>
+                    <MenuItem Header="Գնումներ ըստ գնորդների" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartner}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
+                    </MenuItem>
+                    <MenuItem Header="Գնումներ մանրամասն" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartnersDetiles}"/>
                 </MenuItem>
             </Menu>
             <TabControl Grid.Row="1" Margin="10" Width="Auto"  

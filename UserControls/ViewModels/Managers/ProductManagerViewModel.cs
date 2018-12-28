@@ -175,11 +175,11 @@ namespace UserControls.ViewModels.Managers
                 item.ExistingQuantity = productResidue.Any(pr => pr.ProductId == product.Id) ?
                     productResidue.Where(pr => pr.ProductId == product.Id).Select(pr => pr.Quantity).First() : 0;
             }
-            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, new Action(() =>
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
             {
                 CompletedUpdate();
                 RaisePropertyChanged("Products");
-            }));
+            });
 
             IsLoading = false;
         }
@@ -206,7 +206,7 @@ namespace UserControls.ViewModels.Managers
         private void OnGetProduct(object o)
         {
             if (!CanGetProduct(o)) { return; }
-            var product = new ProductsManager().GetProductsByCodeOrBarcode(o as string);
+            var product = Products.Any(s=>s.Code==(string) o)? Products.FirstOrDefault(s=>s.Code==(string) o): new ProductsManager().GetProductsByCodeOrBarcode(o as string);
             Product = product ?? new ProductModel(ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId, true) { Code = o as string };
         }
         private bool CanGenerateBarcode(object o)

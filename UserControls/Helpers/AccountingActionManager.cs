@@ -2,11 +2,9 @@
 using System.Globalization;
 using System.Linq;
 using System.Windows;
-using CashReg;
-using CashReg.Managers;
+using AccountingTools.Enums;
 using ES.Business.Managers;
 using ES.Business.Models;
-using ES.Common.Enumerations;
 using ES.Common.Managers;
 using UserControls.ControlPanel.Controls;
 using UserControls.ViewModels;
@@ -24,22 +22,22 @@ namespace UserControls.Helpers
             var cashDesk = SelectItemsManager.SelectDefaultSaleCashDesks(null, false, "Ընտրել դրամարկղ").FirstOrDefault();
             if (cashDesk == null)
             {
-                MessageBox.Show("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
+                MessageManager.ShowMessage("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
                 return;
             }
             accountingRecords.DebitGuidId = cashDesk.Id;
             var partner = SelectItemsManager.SelectPartner();
             if (partner == null)
             {
-                MessageBox.Show("Գործընկեր ընտրված չէ։", "Թերի տվյալներ");
+                MessageManager.ShowMessage("Գործընկեր ընտրված չէ։", "Թերի տվյալներ");
                 return;
             }
             accountingRecords.CreditGuidId = partner.Id;
             var ctrlAccountingRecords =
                 new CtrlAccountingRecords(new AccountingRecordsViewModel(accountingRecords,
                     "Դեբիտորական պարտքի մարում \n Գործընկեր։ " + partner.FullName + "\n" +
-                    "Դեբտորական պարտք։ " + (partner.Debit != null ? partner.Debit.ToString() : "0") + "\n" +
-                    "Կերդիտորական պարտք։ " + (partner.Credit != null ? partner.Credit.ToString() : "0")));
+                    "Դեբտորական պարտք։ " + partner.Debit + "\n" +
+                    "Կերդիտորական պարտք։ " + partner.Credit));
             ctrlAccountingRecords.ShowDialog();
             var repaymentAccountingRecord = ctrlAccountingRecords.AccountingRecord;
             repaymentAccountingRecord.DebitGuidId = cashDesk.Id;
@@ -72,7 +70,7 @@ namespace UserControls.Helpers
             if (AccountingRecordsManager.SetPartnerPayment(depositeAccountRecords: depositAccountingRecords,
                 repaymentAccountingRecords: repaymentAccountingRecord))
             {
-                MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
+                MessageManager.ShowMessage("Վճարումն իրականացվել է հաջողությամբ։");
                 if (ApplicationManager.Settings.IsEcrActivated && depositAccountingRecords.Amount > 0)
                 {
                     new EcrManager().RepaymentOfDebts(depositAccountingRecords.Amount, partner.FullName);
@@ -80,7 +78,7 @@ namespace UserControls.Helpers
             }
             else
             {
-                MessageBox.Show("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
+                MessageManager.ShowMessage("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
             }
         }
         //521
@@ -93,7 +91,7 @@ namespace UserControls.Helpers
             var fromCashDesk = SelectItemsManager.SelectDefaultSaleCashDesks(null, false, "Ընտրել ելքագրվող դրամարկղը").FirstOrDefault();
             if (partner == null || fromCashDesk == null)
             {
-                MessageBox.Show("Թերի տվյալներ");
+                MessageManager.ShowMessage("Թերի տվյալներ");
                 return;
             }
             accountingRecords.CreditGuidId = fromCashDesk.Id;
@@ -108,19 +106,17 @@ namespace UserControls.Helpers
                 accountingRecords.Amount == 0) return;
             if (accountingRecords.Amount > fromCashDesk.Total)
             {
-                MessageBox.Show("Գործողությունն ընդհատված է։ Վճարվել է ավելի շատ քան առկա է։", "Գործողության ընդհատում",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageManager.ShowMessage("Գործողությունն ընդհատված է։ Վճարվել է ավելի շատ քան առկա է։", "Գործողության ընդհատում");
                 return;
             }
             if (accountingRecords.Amount > partner.Credit)
             {
-                MessageBox.Show("Գործողությունն ընդհատված է։ Վճարվել է ավելի շատ քան կրեդիտորական պարտքն է։", "Գործողության ընդհատում",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageManager.ShowMessage("Գործողությունն ընդհատված է։ Վճարվել է ավելի շատ քան կրեդիտորական պարտքն է։", "Գործողության ընդհատում");
                 return;
             }
             if (AccountingRecordsManager.SetRepaymentOfDebts(accountingRecords, ApplicationManager.Instance.GetMember.Id))
             {
-                MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
+                MessageManager.ShowMessage("Վճարումն իրականացվել է հաջողությամբ։");
                 if (ApplicationManager.Settings.IsEcrActivated)
                 {
                     new EcrManager().RepaymentOfDebts(accountingRecords.Amount, partner.FullName);
@@ -128,7 +124,7 @@ namespace UserControls.Helpers
             }
             else
             {
-                MessageBox.Show("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
+                MessageManager.ShowMessage("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
             }
         }
         //523
@@ -140,14 +136,14 @@ namespace UserControls.Helpers
             var cashDesk = SelectItemsManager.SelectDefaultSaleCashDesks(null, false, "Ընտրել դրամարկղ").FirstOrDefault();
             if (cashDesk == null)
             {
-                MessageBox.Show("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
+                MessageManager.ShowMessage("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
                 return;
             }
             accountingRecords.DebitGuidId = cashDesk.Id;
             var partner = SelectItemsManager.SelectPartner();
             if (partner == null)
             {
-                MessageBox.Show("Գործընկեր ընտրված չէ։", "Թերի տվյալներ");
+                MessageManager.ShowMessage("Գործընկեր ընտրված չէ։", "Թերի տվյալներ");
                 return;
             }
             accountingRecords.CreditGuidId = partner.Id;
@@ -178,7 +174,7 @@ namespace UserControls.Helpers
             var partner = SelectItemsManager.SelectPartner();
             if (partner == null)
             {
-                MessageBox.Show("Գործընկեր ընտրված չէ։", "Թերի տվյալներ");
+                MessageManager.ShowMessage("Գործընկեր ընտրված չէ։", "Թերի տվյալներ");
                 return;
             }
             accountingRecords.DebitGuidId = partner.Id;
@@ -186,7 +182,7 @@ namespace UserControls.Helpers
             var cashDesk = SelectItemsManager.SelectDefaultSaleCashDesks(null, false, "Ընտրել դրամարկղ").FirstOrDefault();
             if (cashDesk == null)
             {
-                MessageBox.Show("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
+                MessageManager.ShowMessage("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
                 return;
             }
             accountingRecords.CreditGuidId = cashDesk.Id;
@@ -203,10 +199,10 @@ namespace UserControls.Helpers
             if (!ctrlAccountingRecords.Result || accountingRecord.Amount == 0) return;
             if (cashDesk.Total < accountingRecord.Amount)
             {
-                MessageBox.Show("Անբավարար միջոցներ:", "Անբավարար միջոցներ", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageManager.ShowMessage("Անբավարար միջոցներ:", "Անբավարար միջոցներ");
                 return;
             }
-            if (AccountingRecordsManager.SetPartnerPrepayment(accountingRecord)) ApplicationManager.Instance.CashManager.UpdatePartners();
+            if (AccountingRecordsManager.SetPartnerPrepayment(accountingRecord)) ApplicationManager.CashManager.UpdatePartnersAsync();
 
         }
         public static void Action(AccountingPlanEnum accountingPlan)
@@ -235,7 +231,7 @@ namespace UserControls.Helpers
                 case AccountingPlanEnum.ReceivedInAdvance:
                     ReceivedInAdvance();
                     break;
-                case AccountingPlanEnum.Debit_For_Salary:
+                case AccountingPlanEnum.DebitForSalary:
                     break;
                 case AccountingPlanEnum.Proceeds:
                     break;

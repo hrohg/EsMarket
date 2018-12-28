@@ -92,7 +92,7 @@
     <Compile Include="Managers\ApplicationManager.cs" />
     <Compile Include="Managers\CashDeskManager.cs" />
     <Compile Include="Managers\DataManager.cs" />
-    <Compile Include="Managers\LocalManager.cs" />
+    <Compile Include="Managers\CashManager.cs" />
     <Compile Include="Managers\DatabaseManager.cs" />
     <Compile Include="Managers\DefaultsManager.cs" />
     <Compile Include="Managers\EslUpdateManager.cs" />
@@ -123,6 +123,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AccountingTools\AccountingTools.csproj">
+      <Project>{4bc4d97d-bf4c-4290-b6c5-87927f9c72fd}</Project>
+      <Name>AccountingTools</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ES.Common\ES.Common.csproj">
       <Project>{7baa5615-1224-4f30-8e69-8ec0b3c1e5ab}</Project>
       <Name>ES.Common</Name>

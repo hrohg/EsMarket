@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data"
                     xmlns:controls="clr-namespace:UserControls.Controls"
-                    xmlns:view="clr-namespace:UserControls.Views.View">
+                    xmlns:view="clr-namespace:UserControls.Views.View"
+                    xmlns:helpers="clr-namespace:Shared.Helpers;assembly=Shared">
 
     <DataTemplate DataType="{x:Type view:ProductItemsViewModel}">
         <Grid>
@@ -95,7 +96,7 @@
                 </StackPanel>
                 <StackPanel Grid.Row="4" HorizontalAlignment="Right" Orientation="Horizontal" Margin="1">
                     <Button Content="Թարմացնել" Width="80" Command="{Binding UpdateCommand}"/>
-                    <Button Content="Արտահանել" Margin="1" Width="80" Command="{Binding ExportCommand}"/>
+                    <Button Content="Արտահանել" Margin="1" Width="80" Command="{Binding ExportCommand}" CommandParameter="{x:Static helpers:ExportImportEnum.Excel}"/>
                     <Button Content ="Տպել" Width="80" Command="{Binding PrintCommand}"/>
                 </StackPanel>
             </Grid>
@@ -195,7 +196,7 @@
                 </StackPanel>
                 <StackPanel Grid.Row="4" HorizontalAlignment="Right" Orientation="Horizontal" Margin="1">
                     <Button Content="Թարմացնել" Width="80" Command="{Binding UpdateCommand}"/>
-                    <Button Content="Արտահանել" Margin="1" Width="80" Command="{Binding ExportCommand}"/>
+                    <Button Content="Արտահանել" Margin="1" Width="80" Command="{Binding ExportCommand}" CommandParameter="{x:Static helpers:ExportImportEnum.Excel}"/>
                     <Button Content ="Տպել" Width="80" Command="{Binding PrintCommand}"/>
                 </StackPanel>
             </Grid>

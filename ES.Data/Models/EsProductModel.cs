@@ -126,6 +126,7 @@ namespace ES.Data.Models
                 OnPropertyChanged(DiscountProperty);
             }
         }
+
         [XmlIgnore]
         public decimal? ProfitPercent
         {

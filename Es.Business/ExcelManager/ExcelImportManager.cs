@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using ES.Business.Managers;
+using ES.Common.Managers;
 using ES.Data.Models;
 using HG.Tools.Helper;
 using ProductModel = ES.Data.Models.ProductModel;
@@ -134,7 +135,7 @@ namespace ES.Business.ExcelManager
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + " " + nextRow + " տող");
+                MessageManager.ShowMessage(ex.Message + " " + nextRow + " տող");
                 return null;
             }
             finally

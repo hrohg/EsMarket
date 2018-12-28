@@ -61,7 +61,7 @@ namespace UserControls.Views.View
         public ProductHistoryViewModel()
         {
             Initialize();
-            var date = SelectManager.GetDateIntermediate();
+            var date = UIHelper.Managers.SelectManager.GetDateIntermediate();
             if(date==null) return;
             var products = Helpers.SelectItemsManager.SelectProductByCheck(true);
             InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetProductHistory(products.Select(s => s.Id).ToList(), date.Item1, date.Item2, ApplicationManager.Instance.GetMember.Id));

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ES.Business.Managers;
 using ES.Business.Models;
-using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Data.Enumerations;
 using ES.Data.Model;
@@ -19,16 +18,16 @@ namespace ES.Business.Helpers
         {
             if (servers == null) return null;
             if (servers.Count < 2) { return servers.FirstOrDefault(); }
-            var selectItem = new SelectItems(servers.Select(s => new ItemsToSelect {DisplayName =string.Format("{0} ({1})",s.Description, s.Name)  , SelectedValue = s.Name }).ToList(), false, "Ընտրել սերվեր");
+            var selectItem = new SelectItems(servers.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1})", s.Description, s.Name), SelectedValue = s.Name }).ToList(), false, "Ընտրել սերվեր");
             if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return null; }
             return servers.FirstOrDefault(s => selectItem.SelectedItems.Select(t => t.SelectedValue).Contains(s.Name));
         }
-        
+
         public static List<PartnerModel> SelectPartners(List<PartnerModel> partners, bool allowMultipleSelect, string title)
         {
             if (partners == null || partners.Count == 0) return new List<PartnerModel>();
             if (partners.Count == 1) { return partners; }
-            var selectItem = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1})",s.FullName,s.ClubSixteenId), SelectedValue = s.Id }).ToList(), allowMultipleSelect, title);
+            var selectItem = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1})", s.FullName, s.ClubSixteenId), SelectedValue = s.Id }).ToList(), allowMultipleSelect, title);
             if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return new List<PartnerModel>(); }
             return partners.Where(s => selectItem.SelectedItems.Select(t => (Guid)t.SelectedValue).Contains(s.Id)).ToList();
         }
@@ -37,15 +36,15 @@ namespace ES.Business.Helpers
             var partners = PartnersManager.GetPartners();
             if (partners == null || partners.Count == 0) return new List<PartnerModel>();
             if (partners.Count == 1) { return partners; }
-            var selectItem = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1})",s.FullName,s.ClubSixteenId), SelectedValue = s.Id }).ToList(), allowMultipleSelect,title);
+            var selectItem = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1})", s.FullName, s.ClubSixteenId), SelectedValue = s.Id }).ToList(), allowMultipleSelect, title);
             if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return new List<PartnerModel>(); }
             return partners.Where(s => selectItem.SelectedItems.Select(t => (Guid)t.SelectedValue).Contains(s.Id)).ToList();
         }
-        public static List<PartnerType> SelectPartnersTypes(bool allowMultipleSelect = false,  string title = "Ընտրել")
+        public static List<PartnerType> SelectPartnersTypes(bool allowMultipleSelect = false, string title = "Ընտրել")
         {
             var partnerTypes = PartnersManager.GetPartnersTypes();
             if (partnerTypes == null || partnerTypes.Count == 0) return new List<PartnerType>();
-            if (partnerTypes.Count == 1) { return partnerTypes.Select(s=>(PartnerType)s.Id).ToList(); }
+            if (partnerTypes.Count == 1) { return partnerTypes.Select(s => (PartnerType)s.Id).ToList(); }
             var selectItem = new SelectItems(partnerTypes.Select(s => new ItemsToSelect { DisplayName = s.Description, SelectedValue = s.Id }).ToList(), allowMultipleSelect, title);
             if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return new List<PartnerType>(); }
             return partnerTypes.Where(s => selectItem.SelectedItems.Select(t => (long)t.SelectedValue).Contains(s.Id)).Select(s => ((PartnerType)s.Id)).ToList();
@@ -58,24 +57,24 @@ namespace ES.Business.Helpers
             if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return new List<StockModel>(); }
             return stocks.Where(s => selectItem.SelectedItems.Select(t => (long)t.SelectedValue).Contains(s.Id)).ToList();
         }
-        public static List<EsMemberModel> SelectEsMembers(List<EsMemberModel> members, bool allowMultipleChoise, string title ="Ընտրել համակարգ")
+        public static List<EsMemberModel> SelectEsMembers(List<EsMemberModel> members, bool allowMultipleChoise, string title = "Ընտրել համակարգ")
         {
-            if(members == null || members.Count==0) return new List<EsMemberModel>();
-            if(members.Count==1) return members;
-            var ui = new SelectItems(members.Select(s => new ItemsToSelect {DisplayName = s.FullName, SelectedValue = s.Id}).ToList(), allowMultipleChoise,title);
-            if (ui.ShowDialog()==true && ui.SelectedItems != null)
+            if (members == null || members.Count == 0) return new List<EsMemberModel>();
+            if (members.Count == 1) return members;
+            var ui = new SelectItems(members.Select(s => new ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), allowMultipleChoise, title);
+            if (ui.ShowDialog() == true && ui.SelectedItems != null)
             {
-                return members.Where(s => ui.SelectedItems.Select(t =>(long)t.SelectedValue).Contains(s.Id)).ToList();
+                return members.Where(s => ui.SelectedItems.Select(t => (long)t.SelectedValue).Contains(s.Id)).ToList();
             }
             return new List<EsMemberModel>();
         }
-        
+
         public static List<CashDesk> SelectCashDesks(bool? isCash, bool allowMultipleChoise = false, string title = "Ընտրել դրամարկղ")
         {
             var cashDesks = CashDeskManager.GetCashDesks(isCash);
             if (cashDesks == null || cashDesks.Count == 0) return new List<CashDesk>();
             if (cashDesks.Count == 1) return cashDesks;
-            var ui = new SelectItems(cashDesks.Select(s => new ItemsToSelect { DisplayName = s.Name, SelectedValue = s.Id }).ToList(), allowMultipleChoise,title);
+            var ui = new SelectItems(cashDesks.Select(s => new ItemsToSelect { DisplayName = s.Name, SelectedValue = s.Id }).ToList(), allowMultipleChoise, title);
             if (ui.ShowDialog() == true && ui.SelectedItems != null)
             {
                 return cashDesks.Where(s => ui.SelectedItems.Select(t => (Guid)t.SelectedValue).Contains(s.Id)).ToList();
@@ -107,21 +106,20 @@ namespace ES.Business.Helpers
         {
             if (items == null || items.Count == 0) return new List<Brands>();
             if (items.Count == 1) { return items; }
-            var selectItem = new SelectItemsByCheck(items.Select(s => new ItemsToSelectByCheck() {IsChecked = selectedItems.Select(t=>t.Id).Contains(s.Id),  Description= s.BrandName, Value = s.Id }).ToList(), title);
+            var selectItem = new SelectItemsByCheck(items.Select(s => new ItemsToSelectByCheck() { IsChecked = selectedItems.Select(t => t.Id).Contains(s.Id), Description = s.BrandName, Value = s.Id }).ToList(), title);
             if (selectItem.ShowDialog() != true || selectItem.SelectedProductItems == null) { return new List<Brands>(); }
             return items.Where(s => selectItem.SelectedItems.Select(t => (long)t.Value).Contains(s.Id)).ToList();
         }
 
-        public static List<ProductModel> SelectProduct(bool multipleChoose=false)
+        public static List<ProductModel> SelectProduct(bool multipleChoose = false)
         {
             var products = ApplicationManager.Instance.CashProvider.Products.ToList();
             if (products.Count < 2) return products;
-            var selectedItems = new SelectItems(products.Select(s => new ItemsToSelect
-                 {  DisplayName = string.Format("{0} ({1} {2} {3})", s.Description, s.Code, s.Barcode, s.Price), SelectedValue = s.Id }).ToList(), false, "Ընտրել արտահանվող ապրանքները");
+            var selectedItems = new SelectItems(products.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1} {2} {3})", s.Description, s.Code, s.Barcode, s.Price), SelectedValue = s.Id }).ToList(), false, "Ընտրել արտահանվող ապրանքները");
             return (selectedItems.ShowDialog() == true && selectedItems.SelectedItems != null)
                 ? products.Where(s => selectedItems.SelectedItems.Select(t => t.SelectedValue).ToList().Contains(s.Id)).ToList()
                 : new List<ProductModel>();
-            
+
         }
         public static List<ProductModel> SelectProductByCheck(long memberId, bool multipleChoose = false)
         {
@@ -133,7 +131,7 @@ namespace ES.Business.Helpers
                 : new List<ProductModel>();
 
         }
-        public static List<InvoiceModel> SelectInvoice(long invoiceTypeId, bool? isApproved = null, bool selectMultiple=false)
+        public static List<InvoiceModel> SelectInvoice(long invoiceTypeId, bool? isApproved = null, bool selectMultiple = false)
         {
             var items = InvoicesManager.GetInvoices((InvoiceType)invoiceTypeId);
             if (items == null) return new List<InvoiceModel>();
@@ -146,21 +144,22 @@ namespace ES.Business.Helpers
 
         public static List<InvoiceModel> SelectInvoice(List<InvoiceModel> invoices, bool selectMultiple)
         {
-            if(invoices==null) return new List<InvoiceModel>();
-            if (invoices.Count <2)
+            if (invoices == null) return new List<InvoiceModel>();
+            if (invoices.Count < 2)
             {
                 return invoices;
             }
             var ui = new SelectItems(
                     invoices.Select(s => new ItemsToSelect
                     {
-                        DisplayName = string.Format("{0} {1} {2} -> {3} {4} Գումար - {5}", 
+                        DisplayName = string.Format("{0} {1} {2} -> {3} {4} Գումար - {5}",
                         s.InvoiceNumber,
                         s.CreateDate,
                         s.ProviderName,
-                        (s.ApproveDate!=null?s.ApproveDate.ToString():""), 
+                        (s.ApproveDate != null ? s.ApproveDate.ToString() : ""),
                         s.RecipientName,
-                        s.Total), SelectedValue = s.Id
+                        s.Total),
+                        SelectedValue = s.Id
                     }).ToList(), selectMultiple);
             if (ui.ShowDialog() == true && ui.SelectedItems != null)
             {
@@ -171,7 +170,7 @@ namespace ES.Business.Helpers
         public static List<InvoiceItemsModel> SelectInvoiceItems(Guid invoiceId, bool selectMultiple = false)
         {
             var invoiceItems = InvoicesManager.GetInvoiceItems(invoiceId);
-            if(invoiceItems == null || invoiceItems.Count==0) {return new List<InvoiceItemsModel>();}
+            if (invoiceItems == null || invoiceItems.Count == 0) { return new List<InvoiceItemsModel>(); }
             var ui = new SelectItemsByCheck(invoiceItems.Select(ii => new ProductToSelectByCheck(ii.Id, ii.Code, ii.Description, ii.Quantity)).ToList(), selectMultiple);
             ui.ShowDialog();
             if (ui.DialogResult == null || ui.DialogResult == false)
@@ -181,10 +180,10 @@ namespace ES.Business.Helpers
             var selectedItems = ui.SelectedProductItems.Where(si => si.Count != null && si.Count > 0).ToList();
             foreach (var ii in invoiceItems)
             {
-                ii.Quantity = selectedItems.SingleOrDefault(si => si.GuidId == ii.Id) != null? 
-                    selectedItems.Where(si => si.GuidId == ii.Id).Select(si => si.Count).SingleOrDefault(): 0;
+                ii.Quantity = selectedItems.SingleOrDefault(si => si.GuidId == ii.Id) != null ?
+                    selectedItems.Where(si => si.GuidId == ii.Id).Select(si => si.Count).SingleOrDefault() : 0;
             }
-            return invoiceItems.Where(ii =>ii.Quantity>0).ToList();
+            return invoiceItems.Where(ii => ii.Quantity > 0).ToList();
         }
         public static List<InvoiceItemsModel> SelectProductItems(List<long> stockId, bool selectMultiple = false)
         {
@@ -196,12 +195,12 @@ namespace ES.Business.Helpers
             {
                 return new List<InvoiceItemsModel>();
             }
-            
+
             var selectedItems = ui.SelectedProductItems.Where(si => si.Count != null && si.Count > 0).ToList();
             var invoiceItems = new List<InvoiceItemsModel>();
             foreach (var ii in productItems)
             {
-                if(ii.Product==null) {continue;}
+                if (ii.Product == null) { continue; }
                 var invoiceItem = new InvoiceItemsModel
                 {
                     ProductItemId = ii.Id,
@@ -213,18 +212,28 @@ namespace ES.Business.Helpers
                     Mu = ii.Product.Mu,
                     CostPrice = ii.CostPrice,
                     Price = ii.Product.Price,
-                    Quantity =  selectedItems.SingleOrDefault(si => si.GuidId == ii.Id) != null ?
+                    Quantity = selectedItems.SingleOrDefault(si => si.GuidId == ii.Id) != null ?
                     selectedItems.Where(si => si.GuidId == ii.Id).Select(si => si.Count).SingleOrDefault() : 0,
                     Discount = ii.Product.Discount,
                     Note = ii.Product.Note
                 };
-                if (invoiceItem.Quantity == 0) { continue;}
+                if (invoiceItem.Quantity == 0) { continue; }
                 invoiceItems.Add(invoiceItem);
             }
             return invoiceItems.Where(ii => ii.Quantity > 0).ToList();
         }
-        #region Select SubAccounting
-         public static List<SubAccountingPlanModel> SelectSubAccountingPlan(List<SubAccountingPlanModel> items, bool allowMultipleSelect=false, string title="Ընտրել")
+        #region Select Accounting
+        public static List<AccountingAccounts> SelectAccountingPlan(bool allowMultipleSelect = false, string title = "Ընտրել")
+        {
+            var accountinPlans = AccountingRecordsManager.GetAccountingRecords();
+            var items = accountinPlans.Select(accountingPlan => new ItemsToSelect {DisplayName = accountingPlan.Description, SelectedValue = accountingPlan.Id}).ToList();
+            if (!items.Any()) return new List<AccountingAccounts>();
+            if (items.Count == 1) { return accountinPlans.Where(s => items.Select(t => (int)t.SelectedValue).Contains(s.Id)).ToList(); }
+            var selectItem = new SelectItems(items, allowMultipleSelect, title);
+            if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return new List<AccountingAccounts>(); }
+            return accountinPlans.Where(s => selectItem.SelectedItems.Select(t => (int)t.SelectedValue).Contains(s.Id)).ToList();
+        }
+        public static List<SubAccountingPlanModel> SelectSubAccountingPlan(List<SubAccountingPlanModel> items, bool allowMultipleSelect = false, string title = "Ընտրել")
         {
             if (items == null || items.Count == 0) return new List<SubAccountingPlanModel>();
             if (items.Count == 1) { return items; }
@@ -232,7 +241,7 @@ namespace ES.Business.Helpers
             if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return new List<SubAccountingPlanModel>(); }
             return items.Where(s => selectItem.SelectedItems.Select(t => (Guid)t.SelectedValue).Contains(s.Id)).ToList();
         }
-        #endregion
-        
+        #endregion Select Accounting
+
     }
 }

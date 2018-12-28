@@ -16,6 +16,7 @@ namespace UserControls.Views
         #region External properties
         public DataGrid DataGrid { get; private set; }
         #endregion
+
         public UctrlViewTable(object vm)
         {
             InitializeComponent();
@@ -26,6 +27,7 @@ namespace UserControls.Views
         {
             InitializeComponent();
         }
+
         protected void BtnClose_Click(object sender, EventArgs e)
         {
             var tabitem = this.Parent as TabItem;

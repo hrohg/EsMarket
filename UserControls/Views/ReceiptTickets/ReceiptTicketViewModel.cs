@@ -8,7 +8,7 @@ using ES.Data.Models;
 
 namespace UserControls.Views.ReceiptTickets
 {
-    public class SaleInvocieSmallTicketViewModel : ResponseReceiptViewModel, INotifyPropertyChanged
+    public class SaleInvoiceSmallTicketViewModel : ResponseReceiptViewModel, INotifyPropertyChanged
     {
         #region Properties
 
@@ -47,7 +47,7 @@ namespace UserControls.Views.ReceiptTickets
         public bool IsReceiptExists { get { return ResponseReceipt != null; } }
         
         #endregion
-        public SaleInvocieSmallTicketViewModel(ResponseReceiptModel responceReceiptModel): base(responceReceiptModel)
+        public SaleInvoiceSmallTicketViewModel(ResponseReceiptModel responceReceiptModel): base(responceReceiptModel)
         {
             
         }

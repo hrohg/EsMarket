@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using AccountingTools.Enums;
 using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Business.Models;
@@ -43,7 +44,7 @@ namespace ES.Market
             var invoice = SelectItemsManager.SelectInvoice(invoiceTypeId, isAccepted, false).FirstOrDefault();
             if (invoice == null)
             {
-                MessageBox.Show("Ապրանքագիր չի հայտնաբերվել։");
+                MessageManager.ShowMessage("Ապրանքագիր չի հայտնաբերվել։");
                 return;
             }
             var nextTab = TabShop.Items.Add(new TabItem
@@ -69,8 +70,8 @@ namespace ES.Market
         public MarketShell()
         {
             if(DataContext==null)
-            MessageBox.Show("Ոչ արտոնագրված գործողություն։ Ծրագիրը կփակվի։ Խնդրում ենք արտոնագրել ծրագրային ապահովումը։",
-                 "Արտոնագրային սխալ", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageManager.ShowMessage("Ոչ արտոնագրված գործողություն։ Ծրագիրը կփակվի։ Խնդրում ենք արտոնագրել ծրագրային ապահովումը։",
+                 "Արտոնագրային սխալ", MessageBoxImage.Information);
             Close();
             //InitializeComponent();
         }
@@ -79,15 +80,15 @@ namespace ES.Market
             DataContext = vm;
             if (ApplicationManager.Instance.GetMember == null || ApplicationManager.GetEsUser == null)
             {
-                MessageBox.Show("Ոչ արտոնագրված գործողություն։ Ծրագիրը կփակվի։ Խնդրում ենք արտոնագրել ծրագրային ապահովումը։",
-                 "Արտոնագրային սխալ", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageManager.ShowMessage("Ոչ արտոնագրված գործողություն։ Ծրագիրը կփակվի։ Խնդրում ենք արտոնագրել ծրագրային ապահովումը։",
+                 "Արտոնագրային սխալ", MessageBoxImage.Information);
                 Close();
                 return;
             }
 
             if (ApplicationManager.Instance.UserRoles == null || !ApplicationManager.Instance.UserRoles.Any())
             {
-                MessageBox.Show("Ծրագիրը կփակվի, քանի որ դուք ոչ մի համակարգում ընդգրկված չեք։ Ընդգրկվելու համար խնդրում ենք դիմել տնօրինություն։ ");
+                MessageManager.ShowMessage("Ծրագիրը կփակվի, քանի որ դուք ոչ մի համակարգում ընդգրկված չեք։ Ընդգրկվելու համար խնդրում ենք դիմել տնօրինություն։ ");
                 Close();
                 return;
             }
@@ -112,7 +113,7 @@ namespace ES.Market
                     var tab = item.DataContext as ITabItem;
                     if(tab==null) continue;
                     if (tab.IsModified &&
-                        MessageBox.Show("Դուք իսկապե՞ս ցանկանում եք փակել ծրագիրը:\n" +
+                        MessageManager.ShowMessage("Դուք իսկապե՞ս ցանկանում եք փակել ծրագիրը:\n" +
                                         "Եթե չհիշած ապրանքագրեր կան տվյալները չեն պահպանվի։ Խնդրում ենք համոզվել որ բոլոր տվյալները պահպանված են։",
                     "Աշխատանքի ավարտ",
                     MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
@@ -164,12 +165,12 @@ namespace ES.Market
             var toCashDesk = SelectItemsManager.SelectCashDesks(null, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
             if (fromCashDesk == null || toCashDesk == null)
             {
-                MessageBox.Show("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
+                MessageManager.ShowMessage("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
                 return;
             }
             if (fromCashDesk.Id == toCashDesk.Id)
             {
-                MessageBox.Show("Հնարավոր չէ տեղափոխել նույն դրամարկղում։", "Սխալ տվյալներ");
+                MessageManager.ShowMessage("Հնարավոր չէ տեղափոխել նույն դրամարկղում։", "Սխալ տվյալներ");
                 return;
             }
             accountingRecords.DebitGuidId = toCashDesk.Id;
@@ -184,8 +185,7 @@ namespace ES.Market
                 repaymentAccountingRecord.Amount == 0) return;
             if (accountingRecords.Amount > fromCashDesk.Total)
             {
-                MessageBox.Show("Գործողությունն ընդհատված է։ Վճարվել է ավելի շատ քան առկա է։", "Գործողության ընդհատում",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageManager.ShowMessage("Գործողությունն ընդհատված է։ Վճարվել է ավելի շատ քան առկա է։", "Գործողության ընդհատում");
                 return;
             }
             accountingRecords.DebitGuidId = toCashDesk.Id;
@@ -193,11 +193,11 @@ namespace ES.Market
             
             if (AccountingRecordsManager.SetCashTransfer(accountingRecords, ApplicationManager.Instance.GetMember.Id))
             {
-                MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
+                MessageManager.ShowMessage("Վճարումն իրականացվել է հաջողությամբ։");
             }
             else
             {
-                MessageBox.Show("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
+                MessageManager.ShowMessage("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
             }
         }
         //311
@@ -210,7 +210,7 @@ namespace ES.Market
             var toCashDesk = SelectItemsManager.SelectCashDesks(null, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
             if (fromUser == null || toCashDesk == null)
             {
-                MessageBox.Show("Թերի տվյալներ");
+                MessageManager.ShowMessage("Թերի տվյալներ");
                 return;
             }
             accountingRecords.DebitGuidId = toCashDesk.Id;
@@ -227,11 +227,11 @@ namespace ES.Market
             accountingRecords.CreditLongId = fromUser.UserId;
             if (AccountingRecordsManager.SetEquityBase(accountingRecords, ApplicationManager.Instance.GetMember.Id))
             {
-                MessageBox.Show("Վճարումն իրականացվել է հաջողությամբ։");
+                MessageManager.ShowMessage("Վճարումն իրականացվել է հաջողությամբ։");
             }
             else
             {
-                MessageBox.Show("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
+                MessageManager.ShowMessage("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
             }
         }
         
@@ -246,9 +246,9 @@ namespace ES.Market
         protected void MiCostOfSales_Salary_Click(object sender, EventArgs e)
         {
             var costOfSales = SelectItemsManager.SelectSubAccountingPlan(
-                SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingPlanEnum.Debit_For_Salary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել");
+                SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingPlanEnum.DebitForSalary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել");
             var debitForSalary = SelectItemsManager.SelectSubAccountingPlan(
-                SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingPlanEnum.Debit_For_Salary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել աշխատակից");
+                SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingPlanEnum.DebitForSalary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել աշխատակից");
             var cashDesk = SelectItemsManager.SelectCashDesks(true, false);
 
             if (costOfSales.First() == null || debitForSalary.First() == null || cashDesk.First() == null)
@@ -259,11 +259,11 @@ namespace ES.Market
             var accountingRecords1 = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords1.Debit = (long)AccountingPlanEnum.CostOfSales;
             accountingRecords1.DebitGuidId = costOfSales.First().Id;
-            accountingRecords1.Credit = (long)AccountingPlanEnum.Debit_For_Salary;
+            accountingRecords1.Credit = (long)AccountingPlanEnum.DebitForSalary;
             accountingRecords1.CreditGuidId = debitForSalary.First().Id;
 
             var accountingRecords2 = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords2.Debit = (long)AccountingPlanEnum.Debit_For_Salary;
+            accountingRecords2.Debit = (long)AccountingPlanEnum.DebitForSalary;
             accountingRecords2.DebitGuidId = debitForSalary.First().Id;
             accountingRecords2.Credit = (long)AccountingPlanEnum.CashDesk;
             accountingRecords2.CreditGuidId = cashDesk.First().Id;
@@ -374,11 +374,11 @@ namespace ES.Market
         {
             if (UpdateManager.UpdateMainProvisions())
             {
-                MessageBox.Show("Թարմացումն իրականացվել է հաջողությամբ։");
+                MessageManager.ShowMessage("Թարմացումն իրականացվել է հաջողությամբ։");
             }
             else
             {
-                MessageBox.Show("Թարմացումն ընդհատվել է։");
+                MessageManager.ShowMessage("Թարմացումն ընդհատվել է։");
             }
         }
 

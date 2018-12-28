@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -168,9 +169,14 @@ namespace ES.Business.Managers
                     var user = db.EsUsers.FirstOrDefault(s =>
                         (s.UserName.ToLower() == userName.ToLower() ||
                          s.Email.ToLower() == userName.ToLower()) &&
-                         s.IsActive &&
-                         s.Password == encodePassword);
+                        s.IsActive &&
+                        s.Password == encodePassword);
                     return user;
+                }
+                catch (EntityException ex)
+                {
+                    MessageBox.Show("Սերվերն անհասանելի է:");
+                    return new EsUsers();
                 }
                 catch (Exception ex)
                 {
@@ -239,7 +245,7 @@ namespace ES.Business.Managers
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageManager.ShowMessage(ex.Message);
                     return null;
                 }
 
@@ -384,7 +390,7 @@ namespace ES.Business.Managers
                 else
                 {
                     //exUser.IsActive = false;
-                    var roles = db.MemberUsersRoles.Where(s => s.EsUserId == exUser.UserId);
+                    var roles = db.MemberUsersRoles.Where(s => s.EsUserId == exUser.UserId && s.MemberId==ApplicationManager.Member.Id);
                     foreach (var memberUsersRolese in roles)
                     {
                         db.MemberUsersRoles.Remove(memberUsersRolese);

@@ -13,6 +13,7 @@ using ES.Common.ViewModels.Base;
 using ES.Data.Models.Reports;
 using Shared.Helpers;
 using UserControls.Enumerations;
+using UserControls.Interfaces;
 using UserControls.ViewModels;
 using UserControls.ViewModels.Reports;
 using UserControls.Views;
@@ -77,18 +78,31 @@ namespace ES.Market.Views.Reports.ViewModels
             SallByCustomersCommand = new RelayCommand(OnSallByCustomers);
         }
 
-        private void OnSallByCustomers(object o)
+        private void AddDocument(DocumentViewModel vm)
         {
-            var vm = new ReportBaseViewModel();
-            vm.OnUpdate += UpdateSallByCustomers;
+            if (vm.IsClosable)
+            {
+                vm.OnClosed += OnRemoveDocument;
+            }
+            vm.ActiveTabChangedEvent += OnActiveTabChanged;
+            vm.IsActive = true;
+            vm.IsSelected = true;
+            lock (_sync)
+            {
+                Documents.Add(vm);
+            }
 
-            var tabControl = new UctrlViewTable { DataContext = vm };
-            AddTab(tabControl, vm);
-        }
-
-        private List<InvoiceReport> UpdateSallByCustomers(Tuple<DateTime, DateTime> dateIntermediate)
-        {
-            return InvoicesManager.GetSaleByPartners(dateIntermediate, ApplicationManager.Instance.GetMember.Id);
+            var tab = _parentTabControl.FindChild<TabControl>();
+            if (tab == null) { return; }
+            var content = new UctrlViewTable(vm) { DataContext = vm };
+            vm.OnClosed += CloseTab;
+            var nextTab = tab.Items.Add(new TabItem
+            {
+                Content = content,
+                DataContext = vm,
+                AllowDrop = true,
+            });
+            tab.SelectedIndex = nextTab;
         }
         private void AddTab<T>(TableViewModel<T> vm)
         {
@@ -117,7 +131,6 @@ namespace ES.Market.Views.Reports.ViewModels
             });
             tab.SelectedIndex = nextTab;
         }
-
         private void CloseTab(PaneViewModel vm)
         {
             var tab = _parentTabControl.FindChild<TabControl>();
@@ -127,20 +140,6 @@ namespace ES.Market.Views.Reports.ViewModels
             tab.Items.RemoveAt(tab.Items.IndexOf(tabItem));
         }
 
-        private void AddDocument(FallowProductsViewModel vm)
-        {
-            if (vm.IsClosable)
-            {
-                vm.OnClosed += OnRemoveDocument;
-            }
-            vm.ActiveTabChangedEvent += OnActiveTabChanged;
-            vm.IsActive = true;
-            vm.IsSelected = true;
-            lock (_sync)
-            {
-                Documents.Add(vm);
-            }
-        }
         private void OnActiveTabChanged(DocumentViewModel document, ActivityChangedEventArgs e)
         {
             foreach (var doc in Documents)
@@ -161,43 +160,10 @@ namespace ES.Market.Views.Reports.ViewModels
             Documents.Remove((DocumentViewModel)vm);
         }
 
-        private bool CanViewViewInternalWayBillCommands(ViewInvoicesEnum o)
-        {
-            switch (o)
-            {
-                case ViewInvoicesEnum.None:
-                case ViewInvoicesEnum.ByDetiles:
-                    return true;
-                case ViewInvoicesEnum.ByStock:
-                    return false;
-
-
-                default:
-                    return false;
-            }
-        }
-        private void OnViewViewInternalWayBillCommands(ViewInvoicesEnum o)
-        {
-
-            DocumentViewModel viewModel = null;
-            switch (o)
-            {
-                case ViewInvoicesEnum.None:
-                    viewModel = new ViewInternalWayBillViewModel(o);
-                    break;
-                case ViewInvoicesEnum.ByStock:
-                    break;
-                case ViewInvoicesEnum.ByDetiles:
-                    viewModel = new InternalWayBillDetileViewModel(o);
-                    break;
-            }
-            var tabControl = new UctrlViewTable { DataContext = viewModel };
-            AddTab(tabControl, viewModel);
-        }
-
+        //Sale
         private void OnViewSale(ViewInvoicesEnum type)
         {
-            DocumentViewModel viewModel = null;
+            TableViewModelBase viewModel = null;
             switch (type)
             {
                 case ViewInvoicesEnum.None:
@@ -230,10 +196,12 @@ namespace ES.Market.Views.Reports.ViewModels
             }
             var tabControl = new UctrlViewTable { DataContext = viewModel };
             AddTab(tabControl, viewModel);
+            if (viewModel != null) ((ITableViewModel)viewModel).Update();
         }
+        //Purchase
         private void OnViewPurchase(ViewInvoicesEnum type)
         {
-            DocumentViewModel viewModel = null;
+            TableViewModelBase viewModel = null;
             switch (type)
             {
                 case ViewInvoicesEnum.None:
@@ -263,6 +231,60 @@ namespace ES.Market.Views.Reports.ViewModels
             }
             var tabControl = new UctrlViewTable { DataContext = viewModel };
             AddTab(tabControl, viewModel);
+            if (viewModel != null) ((ITableViewModel)viewModel).Update();
+        }
+        private void OnSallByCustomers(object o)
+        {
+            var vm = new ReportBaseViewModel();
+            var tabControl = new UctrlViewTable { DataContext = vm };
+            AddTab(tabControl, vm);
+        }
+        //WayBill
+        private bool CanViewViewInternalWayBillCommands(ViewInvoicesEnum o)
+        {
+            switch (o)
+            {
+                case ViewInvoicesEnum.None:
+                case ViewInvoicesEnum.ByDetiles:
+                    return true;
+                case ViewInvoicesEnum.ByStock:
+                    return false;
+
+
+                case ViewInvoicesEnum.ByPartnerType:
+                    break;
+                case ViewInvoicesEnum.ByPartner:
+                    break;
+                case ViewInvoicesEnum.ByPartnersDetiles:
+                    break;
+                case ViewInvoicesEnum.ByStocksDetiles:
+                    break;
+                case ViewInvoicesEnum.BySaleChart:
+                    break;
+                case ViewInvoicesEnum.ByZeroAmunt:
+                    break;
+                default:
+                    return false;
+            }
+            return false;
+        }
+        private void OnViewViewInternalWayBillCommands(ViewInvoicesEnum o)
+        {
+
+            DocumentViewModel viewModel = null;
+            switch (o)
+            {
+                case ViewInvoicesEnum.None:
+                    viewModel = new ViewInternalWayBillViewModel(o);
+                    break;
+                case ViewInvoicesEnum.ByStock:
+                    break;
+                case ViewInvoicesEnum.ByDetiles:
+                    viewModel = new InternalWayBillDetileViewModel(o);
+                    break;
+            }
+            var tabControl = new UctrlViewTable { DataContext = viewModel };
+            AddTab(tabControl, viewModel);
         }
         #endregion
 
@@ -275,7 +297,6 @@ namespace ES.Market.Views.Reports.ViewModels
         public ICommand ViewInternalWayBillCommands { get; private set; }
         private ICommand _viewSaleCommand;
         public ICommand ViewSaleCommand { get { return _viewSaleCommand ?? (_viewSaleCommand = new RelayCommand<ViewInvoicesEnum>(OnViewSale)); } }
-
         private ICommand _viewPurchaseCommand;
         public ICommand ViewPurchaseCommand { get { return _viewPurchaseCommand ?? (_viewPurchaseCommand = new RelayCommand<ViewInvoicesEnum>(OnViewPurchase)); } }
         public ICommand SallByCustomersCommand { get; private set; }
@@ -289,6 +310,7 @@ namespace ES.Market.Views.Reports.ViewModels
         private void OnViewProductsCommand(ProductsViewEnum viewEnum)
         {
             TableViewModel<IInvoiceReport> vm = null;
+            DocumentViewModel vmDoc;
             switch (viewEnum)
             {
                 case ProductsViewEnum.ByDetile:
@@ -300,12 +322,30 @@ namespace ES.Market.Views.Reports.ViewModels
                 case ProductsViewEnum.ByStocks:
                     vm = new ViewProductsResidualViewModel();
                     break;
+                case ProductsViewEnum.ByProducts:
+                    vmDoc = new ViewProductsBalanceViewModel(viewEnum);
+                    AddDocument(vmDoc);
+                    break;
+                case ProductsViewEnum.ByProductItems:
+                    break;
+                case ProductsViewEnum.ByCategories:
+                    break;
+                case ProductsViewEnum.ByProviders:
+                    vmDoc = new ViewProductsViewModel();
+                    AddDocument(vmDoc);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("viewEnum", viewEnum, null);
             }
             if (vm != null) AddTab(vm);
         }
 
         private ICommand _checkProductsRemainderForStockCommand;
-        public ICommand CheckProductsRemainderForStockCommand { get { return _checkProductsRemainderForStockCommand ?? (_checkProductsRemainderForStockCommand = new RelayCommand(OnCheckProductsRemainderForStock, CanCheckProductsRemainderForStock)); } }
+
+        public ICommand CheckProductsRemainderForStockCommand
+        {
+            get { return _checkProductsRemainderForStockCommand ?? (_checkProductsRemainderForStockCommand = new RelayCommand(OnCheckProductsRemainderForStock, CanCheckProductsRemainderForStock)); }
+        }
 
         private bool CanCheckProductsRemainderForStock(object obj)
         {
@@ -314,11 +354,18 @@ namespace ES.Market.Views.Reports.ViewModels
 
         private void OnCheckProductsRemainderForStock(object obj)
         {
-            AddTab(new CheckProductsRemainderByStockViewModel());
+            var vm = new CheckProductsRemainderByStockViewModel();
+            vm.Update();
+            AddTab(vm);
         }
 
         private ICommand _getFallowProductsCommand;
-        public ICommand GetFallowProductsCommand { get { return _getFallowProductsCommand ?? (_getFallowProductsCommand = new RelayCommand(OnGetFalowProducts)); } }
+
+        public ICommand GetFallowProductsCommand
+        {
+            get { return _getFallowProductsCommand ?? (_getFallowProductsCommand = new RelayCommand(OnGetFalowProducts)); }
+        }
+
         private void OnGetFalowProducts(object obj)
         {
             var vm = new FallowProductsViewModel();

@@ -12,6 +12,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Xps;
+using ES.Common.Managers;
 using Shared.Helpers;
 using UserControls.Views.PrintPreview;
 using UserControls.Views.PrintPreview.Views;
@@ -99,7 +100,7 @@ namespace UserControls.Helpers
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageManager.ShowMessage(ex.Message);
             }
         }
         public static void Print(Grid ctrl, string title, bool showDialog)
@@ -184,7 +185,7 @@ namespace UserControls.Helpers
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageManager.ShowMessage(ex.Message);
             }
         }
 
@@ -215,7 +216,7 @@ namespace UserControls.Helpers
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageManager.ShowMessage(ex.Message);
             }
         }
         #endregion
@@ -433,7 +434,7 @@ namespace UserControls.Helpers
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageManager.ShowMessage(ex.Message);
             }
         }
 
@@ -482,7 +483,7 @@ namespace UserControls.Helpers
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageManager.ShowMessage(ex.Message);
             }
         }
         public static void Print(UserControl ctrl, string printer)
@@ -531,7 +532,7 @@ namespace UserControls.Helpers
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageManager.ShowMessage(ex.Message);
             }
         }
         //public static void Print(UserControl ctrl, string printer)
@@ -568,7 +569,7 @@ namespace UserControls.Helpers
         //    }
         //    catch (Exception ex)
         //    {
-        //        MessageBox.Show(ex.Message);
+        //        MessageManager.ShowMessage(ex.Message);
         //    }
         //}
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using ES.Business.ExcelManager;
 using ES.Business.Helpers;
 using ES.Business.Managers;
@@ -103,54 +104,63 @@ namespace UserControls.Views.Accountant
         {
             Title = string.Format("Հաշվային պլանի վերծանում {0} - {1}", StartDate, EndDate);
         }
-        private void OnUpdateAccountingRecords(AccountingActionsEnum actionEnum)
+        private void OnUpdateAccountingRecordsAsync(AccountingActionsEnum actionEnum)
         {
-            List<Guid> guidIds;
+            List<Guid> guidIds = new List<Guid>();
+            var list = new List<AccountingRecordsModel>();
             switch (actionEnum)
             {
                 case AccountingActionsEnum.None:
-                    new Thread(delegate()
-                    {
-                        _accountingRecords = AccountingRecordsManager.GetAccountingRecords(StartDate, EndDate);
-                        OnUpdate();
-                    }).Start();
+                    _accountingRecords = AccountingRecordsManager.GetAccountingRecords(StartDate, EndDate);
+                    OnUpdate();
                     break;
                 case AccountingActionsEnum.PurchasePayables:
                 case AccountingActionsEnum.ReceivedInAdvance:
                 case AccountingActionsEnum.AccountingReceivable:
                 case AccountingActionsEnum.Prepayments:
-                    guidIds = SelectItemsManager.SelectPartners(true).Select(s => s.Id).ToList();
-                    new Thread(delegate()
+                    DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
                     {
-                        var list = AccountingRecordsManager.GetAccountingRecords(StartDate, EndDate, new List<int> { (int)actionEnum });
-                        _accountingRecords = list.Where(s => (s.DebitGuidId != null && guidIds.Contains(s.DebitGuidId.Value)) ||
-                                    (s.CreditGuidId != null && guidIds.Contains(s.CreditGuidId.Value))).ToList();
-                        OnUpdate();
-                    }).Start();
+                        guidIds = SelectItemsManager.SelectPartners(true).Select(s => s.Id).ToList();
+                    });
+
+                    list = AccountingRecordsManager.GetAccountingRecords(StartDate, EndDate, new List<int> { (int)actionEnum });
+                    _accountingRecords = list.Where(s => (s.DebitGuidId != null && guidIds.Contains(s.DebitGuidId.Value)) ||
+                                (s.CreditGuidId != null && guidIds.Contains(s.CreditGuidId.Value))).ToList();
+                    OnUpdate();
                     break;
                 case AccountingActionsEnum.CashDesk:
-                    var cashDesks = SelectItemsManager.SelectCashDesks(null, true).Select(s => s.Id).ToList();
-
-                    new Thread(delegate(){
-                        var list = AccountingRecordsManager.GetAccountingRecords(StartDate, EndDate, new List<int> { (int)actionEnum });
-                        _accountingRecords = list.Where(s => (s.DebitGuidId != null && cashDesks.Contains(s.DebitGuidId.Value)) ||
-                                    (s.CreditGuidId != null && cashDesks.Contains(s.CreditGuidId.Value))).ToList();
-                                             OnUpdate();
-                    }).Start();
-                    break;
-               
-                case AccountingActionsEnum.Partner:
-                    guidIds = SelectItemsManager.SelectPartners().Select(s => s.Id).ToList();
-                    new Thread(delegate()
+                    var cashDesks = new List<Guid>();
+                    DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
                     {
-                        _accountingRecords = AccountingRecordsManager.GetAccountingRecordsByPartner(StartDate, EndDate, guidIds);
-                        OnUpdate();
-                    }).Start();
+                        cashDesks = SelectItemsManager.SelectCashDesks(null, true).Select(s => s.Id).ToList();
+                    });
+                    list = AccountingRecordsManager.GetAccountingRecords(StartDate, EndDate, new List<int> { (int)actionEnum });
+                    _accountingRecords = list.Where(s => (s.DebitGuidId != null && cashDesks.Contains(s.DebitGuidId.Value)) ||
+                                (s.CreditGuidId != null && cashDesks.Contains(s.CreditGuidId.Value))).ToList();
+                    OnUpdate();
+                    break;
+
+                case AccountingActionsEnum.Partner:
+                    DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+                    {
+                        guidIds = SelectItemsManager.SelectPartners().Select(s => s.Id).ToList();
+                    });
+                    _accountingRecords = AccountingRecordsManager.GetAccountingRecordsByPartner(StartDate, EndDate, guidIds);
+                    OnUpdate();
+                    break;
+                case AccountingActionsEnum.Partly:
+                    int accountinId = 0;
+                    DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+                    {
+                        accountinId = SelectItemsManager.SelectAccountingPlan().Select(s => s.Id).FirstOrDefault();
+                    });
+                    _accountingRecords = AccountingRecordsManager.GetAccountingRecords(StartDate, EndDate, new List<int> { accountinId });
+                    OnUpdate();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("actionEnum", actionEnum, null);
             }
-            
+
         }
 
         private void OnUpdate()
@@ -166,7 +176,7 @@ namespace UserControls.Views.Accountant
 
         public void UpdateAccountingRecords(AccountingActionsEnum actionEnum)
         {
-            OnUpdateAccountingRecords(actionEnum);
+            new Thread(() => { OnUpdateAccountingRecordsAsync(actionEnum); }).Start();
         }
 
         #endregion External methods

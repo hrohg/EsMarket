@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.RightsManagement;
+using System.Runtime.Hosting;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
 using System.Xml.Serialization;
+using AccountingTools.Enums;
 using CashReg;
 using CashReg.Helper;
 using ES.Business.FileManager;
@@ -48,6 +49,7 @@ using UserControls.ViewModels.Managers;
 using UserControls.ViewModels.Partners;
 using UserControls.ViewModels.Products;
 using UserControls.ViewModels.Reports;
+using UserControls.ViewModels.Reports.Orders;
 using UserControls.ViewModels.Settings;
 using UserControls.ViewModels.StockTakeings;
 using UserControls.ViewModels.Tools;
@@ -203,8 +205,8 @@ namespace ES.Market.ViewModels
         }
         public void Dispose()
         {
-            ApplicationManager.Instance.CashManager.BeginCashUpdateing -= BeginCashUpdateing;
-            ApplicationManager.Instance.CashManager.CashUpdated -= CashUpdated;
+            ApplicationManager.CashManager.BeginCashUpdateing -= BeginCashUpdateing;
+            ApplicationManager.CashManager.CashUpdated -= CashUpdated;
         }
         #endregion
 
@@ -213,9 +215,9 @@ namespace ES.Market.ViewModels
         {
             IsLocalMode = ApplicationManager.Settings.IsOfflineMode;
 
-            ApplicationManager.Instance.CashManager.BeginCashUpdateing += BeginCashUpdateing;
-            ApplicationManager.Instance.CashManager.CashUpdated += CashUpdated;
-
+            ApplicationManager.CashManager.BeginCashUpdateing += BeginCashUpdateing;
+            ApplicationManager.CashManager.CashUpdated += CashUpdated;
+            IsLoading = ApplicationManager.CashManager.IsUpdateing;
             Documents = new ObservableCollection<DocumentViewModel>();
             Tools = new ObservableCollection<ToolsViewModel>();
             ApplicationManager.MessageManager.MessageReceived += OnNewMessage;
@@ -309,7 +311,7 @@ namespace ES.Market.ViewModels
                     invoiceVm.InvoiceItem.Quantity = quantity;
                     invoiceVm.InvoiceItem.Price = invoiceItemsModel.Price;
                     invoiceVm.InvoiceItem.Index = invoiceVm.InvoiceItems.Count + 1;
-                    invoiceVm.AddInvoiceItem(invoiceVm.InvoiceItem);
+                    invoiceVm.AddInvoiceItem();
                     invoiceVm.InvoiceItem = new InvoiceItemsModel();
                 }
                 AddInvoiceDocument(invoiceVm);
@@ -623,18 +625,18 @@ namespace ES.Market.ViewModels
             List<StockTakeModel> stockTakes;
             if (isClosed)
             {
-                var dateIntermediate = SelectManager.GetDateIntermediate();
+                var dateIntermediate = UIHelper.Managers.SelectManager.GetDateIntermediate();
                 if (dateIntermediate == null)
                 {
-                    MessageBox.Show("Գործողությունն ընդհատված է։", "Թերի տվյալներ", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageManager.ShowMessage("Գործողությունն ընդհատված է։", "Թերի տվյալներ");
                     return null;
                 }
-                var startDate = (DateTime)dateIntermediate.Item1;
-                var endDate = (DateTime)dateIntermediate.Item2;
+                var startDate = dateIntermediate.Item1;
+                var endDate = dateIntermediate.Item2;
                 stockTakes = StockTakeManager.GetStockTakeByCreateDate(startDate, endDate);
                 if (stockTakes == null || !stockTakes.Any())
                 {
-                    MessageBox.Show("Տվյալ ժամանակահատվածում հաշվառում չի իրականացվել։", "Թերի տվյալներ", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageManager.ShowMessage("Տվյալ ժամանակահատվածում հաշվառում չի իրականացվել։", "Թերի տվյալներ");
                     return null;
                 }
             }
@@ -677,11 +679,11 @@ namespace ES.Market.ViewModels
                 case SyncronizeServersMode.DownloadMemberData:
                     return ApplicationManager.IsInRole(UserRoleEnum.Admin) && ApplicationManager.IsEsServer;
                 case SyncronizeServersMode.DownloadUserData:
-                    return (ApplicationManager.IsInRole(UserRoleEnum.Admin) || ApplicationManager.IsInRole(UserRoleEnum.Director)) && ApplicationManager.IsEsServer;
+                    return (ApplicationManager.IsInRole(UserRoleEnum.Moderator) || ApplicationManager.IsInRole(UserRoleEnum.Director)) && ApplicationManager.IsEsServer;
                 case SyncronizeServersMode.DownloadBaseData:
-                    return (ApplicationManager.IsInRole(UserRoleEnum.Admin) || ApplicationManager.IsInRole(UserRoleEnum.Director)) && !ApplicationManager.IsEsServer;
+                    return (ApplicationManager.IsInRole(UserRoleEnum.Moderator) || ApplicationManager.IsInRole(UserRoleEnum.Director)) && !ApplicationManager.IsEsServer;
                 case SyncronizeServersMode.SyncronizeBaseData:
-                    return (ApplicationManager.IsInRole(UserRoleEnum.Admin) || ApplicationManager.IsInRole(UserRoleEnum.Manager)) && !ApplicationManager.IsEsServer;
+                    return (ApplicationManager.IsInRole(UserRoleEnum.Moderator) || ApplicationManager.IsInRole(UserRoleEnum.SeniorManager)) && !ApplicationManager.IsEsServer;
                 case SyncronizeServersMode.None:
                     return false;
                 default:
@@ -693,14 +695,9 @@ namespace ES.Market.ViewModels
         private void OnSyncronizeServerData(object o)
         {
             var syncronizeMode = o as SyncronizeServersMode? ?? SyncronizeServersMode.None;
-            if (DatabaseManager.SyncronizeServers(syncronizeMode, ApplicationManager.Instance.GetMember.Id))
-            {
-                MessageManager.OnMessage(new MessageModel("Տվյալների համաժամանակեցումն իրականացել է հաջողությամբ։", MessageTypeEnum.Success));
-            }
-            else
-            {
-                MessageManager.OnMessage(new MessageModel("Տվյալների համաժամանակեցումը ձախողվել է։", MessageTypeEnum.Error));
-            }
+            MessageManager.OnMessage(DatabaseManager.SyncronizeServers(syncronizeMode)
+                ? new MessageModel("Տվյալների համաժամանակեցումն իրականացել է հաջողությամբ։", MessageTypeEnum.Success)
+                : new MessageModel("Տվյալների համաժամանակեցումը ձախողվել է։", MessageTypeEnum.Error));
         }
 
         private void OnSyncronizeProducts(object o)
@@ -719,7 +716,7 @@ namespace ES.Market.ViewModels
                     break;
                 case InvoiceTypeEnum.PurchaseInvoice:
                 case InvoiceTypeEnum.SaleInvoice:
-                    _dataIntermidiate = SelectManager.GetDateIntermediate();
+                    _dataIntermidiate = UIHelper.Managers.SelectManager.GetDateIntermediate();
                     break;
                 case InvoiceTypeEnum.ProductOrder:
                     break;
@@ -855,13 +852,12 @@ namespace ES.Market.ViewModels
             {
                 return;
             }
-            var td = new Thread(() => { ApplicationManager.Instance.CashProvider.UpdateCash(); });
-            td.Start();
+            ApplicationManager.Instance.CashProvider.UpdateCashAsync();
         }
 
         private bool CanEditUserCommand(object o)
         {
-            return ApplicationManager.IsInRole(UserRoleEnum.Director);
+            return ApplicationManager.IsInRole(UserRoleEnum.Director) || ApplicationManager.IsInRole(UserRoleEnum.Moderator) || ApplicationManager.IsInRole(UserRoleEnum.Admin);
         }
 
         private void OnEditUsers(object o)
@@ -907,7 +903,7 @@ namespace ES.Market.ViewModels
             var insertedProuctCount = 0;
             bool insertAll = false;
             bool exitLoop = false;
-            var result = MessageBox.Show(string.Format("Իրականացվել է {0} անվանում ապրանքի բեռնում: Ցանկանու՞մ եք ավելացնել ամբողջությամբ։", products.Count), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
+            var result = MessageManager.ShowMessage(string.Format("Իրականացվել է {0} անվանում ապրանքի բեռնում: Ցանկանու՞մ եք ավելացնել ամբողջությամբ։", products.Count), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
             switch (result)
             {
                 case MessageBoxResult.None:
@@ -937,7 +933,7 @@ namespace ES.Market.ViewModels
                     continue;
                 }
                 if (exitLoop) break;
-                result = MessageBox.Show(string.Format("Ցանականու՞մ եք ավելացնել {0} ({1}) ապրանքը։", product.Description, product.Code), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
+                result = MessageManager.ShowMessage(string.Format("Ցանականու՞մ եք ավելացնել {0} ({1}) ապրանքը։", product.Description, product.Code), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
                 switch (result)
                 {
                     case MessageBoxResult.None:
@@ -963,7 +959,7 @@ namespace ES.Market.ViewModels
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            MessageBox.Show(string.Format("Իրականացվել է {0} անվանում ապրանքի ավելացում:", insertedProuctCount), "Ապրանքների ավելացում", MessageBoxButton.OK);
+            MessageManager.ShowMessage(string.Format("Իրականացվել է {0} անվանում ապրանքի ավելացում:", insertedProuctCount), "Ապրանքների ավելացում");
         }
 
         private void ImportDsProducts(string fileName)
@@ -979,7 +975,7 @@ namespace ES.Market.ViewModels
             var insertedProuctCount = 0;
             bool insertAll = false;
             bool exitLoop = false;
-            var result = MessageBox.Show(string.Format("Իրականացվել է {0} անվանում ապրանքի բեռնում: Ցանկանու՞մ եք ավելացնել ամբողջությամբ։", products.Count), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
+            var result = MessageManager.ShowMessage(string.Format("Իրականացվել է {0} անվանում ապրանքի բեռնում: Ցանկանու՞մ եք ավելացնել ամբողջությամբ։", products.Count), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
             switch (result)
             {
                 case MessageBoxResult.None:
@@ -1019,7 +1015,7 @@ namespace ES.Market.ViewModels
                     continue;
                 }
                 if (exitLoop) break;
-                result = MessageBox.Show(string.Format("Ցանականու՞մ եք ավելացնել {0} ({1}) ապրանքը։", product.Description, product.Code), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
+                result = MessageManager.ShowMessage(string.Format("Ցանականու՞մ եք ավելացնել {0} ({1}) ապրանքը։", product.Description, product.Code), "Ապրանքների ավելացում", MessageBoxButton.YesNoCancel);
                 switch (result)
                 {
                     case MessageBoxResult.None:
@@ -1045,7 +1041,7 @@ namespace ES.Market.ViewModels
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            MessageBox.Show(string.Format("Իրականացվել է {0} անվանում ապրանքի ավելացում:", insertedProuctCount), "Ապրանքների ավելացում", MessageBoxButton.OK);
+            MessageManager.ShowMessage(string.Format("Իրականացվել է {0} անվանում ապրանքի ավելացում:", insertedProuctCount), "Ապրանքների ավելացում");
         }
 
         private ProductModel Convert(EsProductModel item)
@@ -1073,7 +1069,7 @@ namespace ES.Market.ViewModels
 
         public void OnLogoff(object o)
         {
-            if (MessageBox.Show("Դուք իսկապե՞ս ցանկանում եք դուրս գալ համակարգից:", "Աշխատանքի ավարտ", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageManager.ShowMessage("Դուք իսկապե՞ս ցանկանում եք դուրս գալ համակարգից:", "Աշխատանքի ավարտ", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 var handler = OnLogOut;
                 if (handler != null)
@@ -1102,13 +1098,13 @@ namespace ES.Market.ViewModels
                     return null;
 
                 case InvoiceState.Accepted:
-                    return InvoicesManager.GetInvoicesDescriptions(type, count, ApplicationManager.Instance.GetMember.Id);
+                    return InvoicesManager.GetInvoicesDescriptions(type, count);
 
-                case InvoiceState.Saved:
-                    return InvoicesManager.GetUnacceptedInvoicesDescriptions(type, ApplicationManager.Instance.GetMember.Id);
+                case InvoiceState.Draft:
+                    return InvoicesManager.GetUnacceptedInvoicesDescriptions(type);
 
                 case InvoiceState.Approved:
-                    return InvoicesManager.GetInvoicesDescriptions(type, ApplicationManager.Instance.GetMember.Id);
+                    return InvoicesManager.GetInvoicesDescriptions(type);
             }
             return null;
         }
@@ -1181,7 +1177,7 @@ namespace ES.Market.ViewModels
                         IsLoading = false;
                         break;
                     case EcrExecuiteActions.PrintReturnTicket:
-                        var resoult = MessageBox.Show("Դուք ցանկանու՞մ եք վերադարձնել ՀԴՄ կտրոնն ամբողջությամբ:", "ՀԴՄ կտրոնի վերադարձ", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        var resoult = MessageManager.ShowMessage("Դուք ցանկանու՞մ եք վերադարձնել ՀԴՄ կտրոնն ամբողջությամբ:", "ՀԴՄ կտրոնի վերադարձ", MessageBoxButton.YesNo, MessageBoxImage.Question);
                         if (resoult == MessageBoxResult.Yes)
                         {
                             message = ecrserver.PrintReceiptReturnTicket(true) ? new MessageModel("ՀԴՄ կտրոնի վերադարձն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Error);
@@ -1332,10 +1328,10 @@ namespace ES.Market.ViewModels
                 cashDeskContent += string.Format("Կրեդիտորական - {0} դր․ \n\n", partnersCredit.ToString("N"));
                 cashDeskContent += string.Format("Ընդամենը դրամական միջոցներ - {0} դր․ \n\n", (cashDesks.Sum(s => s.Total) + partnersDebit + partnersCredit).ToString("N"));
             }
-            MessageBox.Show(cashDeskContent, title, MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageManager.ShowMessage(cashDeskContent, title, MessageBoxImage.Information);
         }
 
-        private void OnExecuteEcrAction(object o)
+       private void OnExecuteEcrAction(object o)
         {
             var td = new Thread(() => { ExecuteEcrAction(o); });
             td.SetApartmentState(ApartmentState.STA);
@@ -1348,9 +1344,9 @@ namespace ES.Market.ViewModels
 
         private bool CanGetProductOrder(ProductOrderTypeEnum productOrderType)
         {
-            return ApplicationManager.IsInRole(UserRoleEnum.Admin) || 
-                ApplicationManager.IsInRole(UserRoleEnum.Director) || 
-                ApplicationManager.IsInRole(UserRoleEnum.Manager) || 
+            return ApplicationManager.IsInRole(UserRoleEnum.Admin) ||
+                ApplicationManager.IsInRole(UserRoleEnum.Director) ||
+                ApplicationManager.IsInRole(UserRoleEnum.Manager) ||
                 ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
         }
 
@@ -1358,6 +1354,7 @@ namespace ES.Market.ViewModels
         {
             var vm = new ProductOrderBySaleViewModel(productOrderType);
             AddDocument(vm);
+            vm.Update();
         }
 
         private void OnGetSaleProducts(object o)
@@ -1384,7 +1381,7 @@ namespace ES.Market.ViewModels
             var isTrimInvoice = false;
             if (items.Count > 500)
             {
-                var result = MessageBox.Show("", "", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                var result = MessageManager.ShowMessage(string.Format("Առկա է {0} անվանում ապրանք: Ցանակու՞մ եք տրոհել 500 ական տողերի:", items.Count), "Հարցում", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                 switch (result)
                 {
                     case MessageBoxResult.Cancel:
@@ -1399,7 +1396,7 @@ namespace ES.Market.ViewModels
             var vm = new InventoryWriteOffViewModel();
             vm.Invoice.FromStockId = stockId;
             vm.Invoice.Notes = notes;
-            vm.FromStock = ApplicationManager.Instance.CashManager.GetStocks.SingleOrDefault(s => s.Id == stockId);
+            vm.FromStock = ApplicationManager.CashManager.GetStocks.SingleOrDefault(s => s.Id == stockId);
             foreach (var item in items)
             {
                 var productId = item.ProductId;
@@ -1508,7 +1505,7 @@ namespace ES.Market.ViewModels
 
         private bool CanGetProductHistory(object o)
         {
-            return ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
+            return ApplicationManager.IsInRole(UserRoleEnum.SaleManager) || ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
         }
 
         private void OnGetProductsHistory(object o)
@@ -1545,9 +1542,9 @@ namespace ES.Market.ViewModels
 
         #region Manager
 
-        private bool CanManageProcucts(object o)
+        private bool CanManageProducts(object o)
         {
-            return ApplicationManager.IsInRole(UserRoleEnum.Manager);
+            return ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
         }
 
         private void OnManageProducts(object o)
@@ -1700,22 +1697,37 @@ namespace ES.Market.ViewModels
             switch (type)
             {
                 case InvoiceTypeEnum.PurchaseInvoice:
-                    return ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
+                    return ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
+
                 case InvoiceTypeEnum.SaleInvoice:
-                    return ApplicationManager.IsInRole(UserRoleEnum.Seller);
+                    switch (state)
+                    {
+                        case InvoiceState.Approved:
+                        case InvoiceState.Accepted:
+                        case InvoiceState.All:
+                            return ApplicationManager.IsInRole(UserRoleEnum.Seller);
+
+                        case InvoiceState.Draft:
+                        case InvoiceState.New:
+                            return ApplicationManager.IsInRole(UserRoleEnum.Seller) || ApplicationManager.IsInRole(UserRoleEnum.JuniorSeller);
+
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 case InvoiceTypeEnum.ProductOrder:
-                    return ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
+                    return ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
                 case InvoiceTypeEnum.MoveInvoice:
-                    return ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
+                    return ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
                 case InvoiceTypeEnum.InventoryWriteOff:
                     return ApplicationManager.IsInRole(UserRoleEnum.Manager);
                 case InvoiceTypeEnum.ReturnFrom:
+                    return ApplicationManager.IsInRole(UserRoleEnum.Seller);
                 case InvoiceTypeEnum.ReturnTo:
                 case InvoiceTypeEnum.Statements:
-                    return ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
+                    return ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
                 case InvoiceTypeEnum.None:
                     return false;
-                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1761,7 +1773,7 @@ namespace ES.Market.ViewModels
                         }
                         AddInvoiceDocument(newInvocieViewmodel);
                         return;
-                    case InvoiceState.Saved:
+                    case InvoiceState.Draft:
                     case InvoiceState.All:
                     case InvoiceState.Accepted:
                     case InvoiceState.Approved:
@@ -1834,6 +1846,11 @@ namespace ES.Market.ViewModels
             get { return _viewDebitByPartnerCommand ?? (_viewDebitByPartnerCommand = new RelayCommand<DebitEnum>(OnViewDebitByPartner, CanViewDebitByPartner)); }
         }
 
+        private ICommand _checkDebitByPartnerCommand;
+        public ICommand CheckDebitByPartnerCommand
+        {
+            get { return _checkDebitByPartnerCommand ?? (_checkDebitByPartnerCommand = new RelayCommand<DebitEnum>(OnCheckCashDeskInfo, CanCheckCashDeskInfo)); }
+        }
         private bool CanViewDebitByPartner(DebitEnum obj)
         {
             return true;
@@ -1843,7 +1860,15 @@ namespace ES.Market.ViewModels
         {
             UserControls.Managers.CashDeskManager.ViewDebitByPartner(value);
         }
+        private bool CanCheckCashDeskInfo(DebitEnum obj)
+        {
+            return true;
+        }
 
+        private void OnCheckCashDeskInfo(DebitEnum value)
+        {
+            UserControls.Managers.CashDeskManager.CheckDebitByPartner(value);
+        }   
         #endregion View
 
         #region View report
@@ -1857,7 +1882,7 @@ namespace ES.Market.ViewModels
 
         private void OnViewAccountantTable(AccountingActionsEnum accountingPlanEnum)
         {
-            var dates = SelectManager.GetDateIntermediate();
+            var dates = UIHelper.Managers.SelectManager.GetDateIntermediate();
             if (dates == null) return;
             var vm = new ViewAccountantTableViewModel(dates.Item1, dates.Item2);
             AddInvoiceDocument(vm);
@@ -1879,24 +1904,29 @@ namespace ES.Market.ViewModels
             {
                 case AccountingPlanEnum.Purchase:
                     break;
+
                 case AccountingPlanEnum.AccountingReceivable:
                     return ApplicationManager.IsInRole(UserRoleEnum.JuniorCashier);
-                    break;
+
                 case AccountingPlanEnum.Prepayments:
                     return ApplicationManager.IsInRole(UserRoleEnum.JuniorCashier);
-                    break;
+
                 case AccountingPlanEnum.CashDesk:
                     break;
+
                 case AccountingPlanEnum.Accounts:
                     break;
+
                 case AccountingPlanEnum.EquityBase:
                     break;
+
                 case AccountingPlanEnum.PurchasePayables:
-                    break;
+                    return ApplicationManager.IsInRole(UserRoleEnum.JuniorCashier);
+
                 case AccountingPlanEnum.ReceivedInAdvance:
                     return ApplicationManager.IsInRole(UserRoleEnum.JuniorCashier);
-                    break;
-                case AccountingPlanEnum.Debit_For_Salary:
+
+                case AccountingPlanEnum.DebitForSalary:
                     break;
                 case AccountingPlanEnum.Proceeds:
                     break;
@@ -1906,6 +1936,7 @@ namespace ES.Market.ViewModels
                     break;
                 case AccountingPlanEnum.OtherOperationalExpenses:
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException("accountingPlan", accountingPlan, null);
             }
@@ -1928,7 +1959,7 @@ namespace ES.Market.ViewModels
         {
             var partners = SelectItemsManager.SelectPartners(true).Select(s => s.Id).ToList();
             if (!partners.Any()) return;
-            var dates = SelectManager.GetDateIntermediate();
+            var dates = UIHelper.Managers.SelectManager.GetDateIntermediate();
             if (dates == null) return;
             var repayment = AccountingRecordsManager.GetAccountingRecords(dates.Item1, dates.Item2, (long)AccountingPlanEnum.CashDesk, (long)AccountingPlanEnum.AccountingReceivable);
             var ui = new UIListView(repayment.Where(s => (s.CreditGuidId != null && partners.Contains(s.CreditGuidId.Value))).Select(s => new { Ամսաթիվ = s.RegisterDate, Վճարված = s.Amount, Նշումներ = s.Description }).ToList()) { Title = "Դեբիտորական պարտքի մարում ըստ պատվիրատուների" };
@@ -1938,9 +1969,14 @@ namespace ES.Market.ViewModels
         #endregion CashDesk
 
         #region Data
+
         //View
         private ICommand _changedProductsCommand;
-        public ICommand ChangedProductsCommand { get { return _changedProductsCommand ?? (_changedProductsCommand = new RelayCommand(OnViewChangedProducts)); } }
+
+        public ICommand ChangedProductsCommand
+        {
+            get { return _changedProductsCommand ?? (_changedProductsCommand = new RelayCommand(OnViewChangedProducts)); }
+        }
 
         private void OnViewChangedProducts()
         {
@@ -2014,7 +2050,11 @@ namespace ES.Market.ViewModels
         #region Help
 
         private ICommand _aboutCommand;
-        public ICommand AboutCommand { get { return _aboutCommand ?? (_aboutCommand = new RelayCommand(OnAbout)); } }
+
+        public ICommand AboutCommand
+        {
+            get { return _aboutCommand ?? (_aboutCommand = new RelayCommand(OnAbout)); }
+        }
 
         private void OnAbout(object obj)
         {
@@ -2030,8 +2070,6 @@ namespace ES.Market.ViewModels
             var Version = String.Empty;
             try
             {
-
-
                 var assembly = Assembly.GetEntryAssembly();
 
                 if (assembly != null)
@@ -2064,13 +2102,8 @@ namespace ES.Market.ViewModels
             {
             }
 
-            var info = string.Format("Application: {0}\n" +
-                                 "Product: {1}\n" +
-                                 "Company: {2}\n" +
-                                 "Version: {3}\n\n" +
-                                 "Copyright: {4}",
-                                 Title, ProductName, CompanyName, Version, Copyright);
-            MessageBox.Show(info, "Es Market");
+            var info = string.Format("Application: {0}\n" + "Product: {1}\n" + "Company: {2}\n" + "Version: {3}\n\n" + "Copyright: {4}", Title, ProductName, CompanyName, Version, Copyright);
+            MessageManager.ShowMessage(info, "Es Market");
         }
 
         #endregion Help
@@ -2106,7 +2139,7 @@ namespace ES.Market.ViewModels
 
         private bool CanCorrectProducts(object obj)
         {
-            return ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
+            return ApplicationManager.IsInRole(UserRoleEnum.SeniorSeller);
         }
 
         private void OnCorrectProducts(object obj)
@@ -2118,7 +2151,7 @@ namespace ES.Market.ViewModels
 
         public ICommand ManageProductsCommand
         {
-            get { return new RelayCommand(OnManageProducts, CanManageProcucts); }
+            get { return new RelayCommand(OnManageProducts, CanManageProducts); }
         }
 
         public ICommand ManageParnersCommand
@@ -2203,6 +2236,24 @@ namespace ES.Market.ViewModels
                     throw new ArgumentOutOfRangeException("toolsEnum", toolsEnum, null);
             }
             return true;
+        }
+
+        public bool CanOpenTools(ToolsEnum toolEnum)
+        {
+            switch (toolEnum)
+            {
+                case ToolsEnum.Log:
+                    return true;
+
+                case ToolsEnum.ProductItems:
+                    return ApplicationManager.IsInRole(UserRoleEnum.JuniorSeller) || ApplicationManager.IsInRole(UserRoleEnum.Seller) || ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
+
+                case ToolsEnum.Categories:
+                    return ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
+
+                default:
+                    throw new ArgumentOutOfRangeException("toolEnum", toolEnum, null);
+            }
         }
 
         public void OnTools(ToolsEnum toolsEnum)
@@ -2351,7 +2402,7 @@ namespace ES.Market.ViewModels
             var stockTaking = StockTakeManager.GetLastStockTake();
             if (stockTaking == null)
             {
-                MessageBox.Show("Որևէ հաշվառում չի հայտնաբերվել։", "Հաշվառում", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageManager.ShowMessage("Որևէ հաշվառում չի հայտնաբերվել։", "Հաշվառում", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return null;
             }
             return stockTaking;

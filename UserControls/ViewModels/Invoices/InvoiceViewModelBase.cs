@@ -11,7 +11,6 @@ using ES.Business.ExcelManager;
 using ES.Business.Managers;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
-using ES.Data.Enumerations;
 using ES.Data.Model;
 using ES.Data.Models;
 using Shared.Helpers;
@@ -72,10 +71,11 @@ namespace UserControls.ViewModels.Invoices
                 {
                     InvoiceItems.Add(invoiceItemsModel);
                 }
-                IsModified = true;
+                IsModified = false;
+                InvoiceLoadCompleted();
             }
         }
-
+        protected virtual void InvoiceLoadCompleted() { }
         private ObservableCollection<InvoiceItemsModel> _invoiceItems = new ObservableCollection<InvoiceItemsModel>();
 
         public ObservableCollection<InvoiceItemsModel> InvoiceItems
@@ -219,7 +219,7 @@ namespace UserControls.ViewModels.Invoices
                 foreach (InvoiceItemsModel item in e.OldItems)
                 {
                     //Removed items
-                    item.PropertyChanged -= OnInvoiceItemsPropertyChanged;
+                    if (item != null) item.PropertyChanged -= OnInvoiceItemsPropertyChanged;
                 }
             }
             else if (e.Action == NotifyCollectionChangedAction.Add)
@@ -227,7 +227,11 @@ namespace UserControls.ViewModels.Invoices
                 foreach (InvoiceItemsModel item in e.NewItems)
                 {
                     //Added items
-                    item.PropertyChanged += OnInvoiceItemsPropertyChanged;
+                    if (item != null)
+                    {
+                        item.PropertyChanged -= OnInvoiceItemsPropertyChanged;
+                        item.PropertyChanged += OnInvoiceItemsPropertyChanged;
+                    }
                 }
             }
             OnInvoiceItemsPropertyChanged(null, null);

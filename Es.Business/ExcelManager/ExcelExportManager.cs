@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using ES.Business.Models;
+using ES.Common.Managers;
 using ES.Data.Models;
 using Microsoft.Office.Interop.Excel;
 using ProductOrderModel = ES.Data.Models.ProductOrderModel;
@@ -657,7 +658,7 @@ namespace ES.Business.ExcelManager
             int indexC, indexR;
             try
             {
-                MessageBox.Show(dg.Items.Count.ToString(), "Արտահանման սխալ", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageManager.ShowMessage(dg.Items.Count.ToString(), "Արտահանման սխալ", MessageBoxImage.Error);
                 for (indexR = 0; indexR < dg.Items.Count; indexR++)
                 {
                     var obj = (List<object>)dg.Items[indexR];
@@ -667,13 +668,13 @@ namespace ES.Business.ExcelManager
                         xlWSh.Cells[indexR + 1, indexC + 1] = obj[indexC].ToString();
                     }
                 }
-                MessageBox.Show(indexR.ToString(), "Արտահանման սխալ", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageManager.ShowMessage(indexR.ToString(), "Արտահանման սխալ",MessageBoxImage.Error);
                 xlApp.Show();
                 return;
             }
             catch (Exception)
             {
-                MessageBox.Show("Արտահանման ժամանակ տեղի է ունեցել սխալ։", "Արտահանման սխալ", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageManager.ShowMessage("Արտահանման ժամանակ տեղի է ունեցել սխալ։", "Արտահանման սխալ", MessageBoxImage.Error);
                 xlApp.Dispose();
                 return;
             }
@@ -714,7 +715,7 @@ namespace ES.Business.ExcelManager
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Արտահանման ժամանակ տեղի է ունեցել սխալ։ \n " + ex.Message, "Արտահանման սխալ", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageManager.ShowMessage("Արտահանման ժամանակ տեղի է ունեցել սխալ։ \n " + ex.Message, "Արտահանման սխալ", MessageBoxImage.Error);
             }
             finally
             {

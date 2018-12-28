@@ -42,10 +42,17 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn  Header="Գին" Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">
+                    <DataGridTemplateColumn  Header="Գին" Width="Auto" CanUserSort="True" SortMemberPath="Price">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type models:EsProductModel}">
                                 <TextBlock Text="{Binding Path=Price, StringFormat={}{0:#,#.##}}" Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Մատակարար" CanUserSort="True" CanUserReorder="True" SortMemberPath="Provider.FullName">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                                <TextBlock Text="{Binding Provider.FullName}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -254,36 +261,37 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <DataGrid Grid.Row="1" ItemsSource="{Binding Items}" AutoGenerateColumns="False" IsReadOnly="True" Margin="0 3">
+            <DataGrid Grid.Row="1" ItemsSource="{Binding ViewList}" AutoGenerateColumns="False" Margin="0 3">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Կոդ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Code">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type reports1:InvoiceReport}">
                                 <TextBlock Text="{Binding Code}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type reports1:InvoiceReport}">
                                 <TextBlock Text="{Binding Description}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Չմ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Mu">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type reports1:InvoiceReport}">
                                 <TextBlock Text="{Binding Mu}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Նշումներ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Note">
+                    <DataGridTemplateColumn Header="Քանակ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Mu">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
-                                <TextBlock Text="{Binding Note}" FontSize="18"/>
+                            <DataTemplate DataType="{x:Type reports1:InvoiceReport}">
+                                <TextBlock Text="{Binding Quantity}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+                    
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 3">
@@ -302,7 +310,7 @@
                 <DataGridTemplateColumn Header="Անվանում" CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type reports1:IInvoiceReport}">
-                            <TextBlock Text="{Binding Description}" HorizontalAlignment="Right"/>
+                            <TextBlock Text="{Binding Description}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -320,7 +328,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Հասույթ">
+                <DataGridTemplateColumn Header="Գումար">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type reports1:IInvoiceReport}">
                             <TextBlock Text="{Binding Sale, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>

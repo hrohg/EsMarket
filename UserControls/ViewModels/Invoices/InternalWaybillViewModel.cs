@@ -8,7 +8,6 @@ using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
-using ES.Data.Model;
 using ES.Data.Models;
 using Shared.Helpers;
 using UserControls.Helpers;
@@ -56,12 +55,12 @@ namespace UserControls.ViewModels.Invoices
             Invoice.ApproverId = User.UserId;
             Invoice.Approver = User.FullName;
             InvoicePaid.PartnerId = Invoice.PartnerId; // todo
-            Invoice.ApproveDate = DateTime.Now;
+            //Invoice.ApproveDate = DateTime.Now;
 
-            var invocie = InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), new List<StockModel>{FromStock}, InvoicePaid);
-            if (invocie != null)
+            var invoice = InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), new List<StockModel>{FromStock}, InvoicePaid);
+            if (invoice != null)
             {
-                Invoice = Invoice;
+                Invoice = invoice;
                 IsModified = false;
                 RaisePropertyChanged("InvoiceStateImageState");
                 RaisePropertyChanged("InvoiceStateTooltip");
@@ -71,7 +70,7 @@ namespace UserControls.ViewModels.Invoices
                 Invoice.ApproverId = null;
                 Invoice.Approver = null;
                 Invoice.ApproveDate = null;
-                MessageBox.Show("Գործողությունն իրականացման ժամանակ տեղի է ունեցել սխալ:", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageManager.ShowMessage("Գործողությունն իրականացման ժամանակ տեղի է ունեցել սխալ:", "Գործողության ընդհատում", MessageBoxImage.Error);
             }
             ApproveCompleted(true);
         }
@@ -99,7 +98,7 @@ namespace UserControls.ViewModels.Invoices
 
         #region Internal methods
 
-        protected override sealed void OnInitialize()
+        protected sealed override void OnInitialize()
         {
             base.OnInitialize();
             FromStock = StockManager.GetStock(Invoice.FromStockId);
@@ -110,9 +109,9 @@ namespace UserControls.ViewModels.Invoices
         protected override void OnGetProduct(object o)
         {
             base.OnGetProduct(o);
-            OnAddInvoiceItem(o);
+            PreviewAddInvoiceItem(o);
         }
-        protected override decimal GetProductPrice(EsProductModel product)
+        protected override decimal GetProductPrice(ProductModel product)
         {
             return product != null ? (product.Price ?? 0) : 0;
 
@@ -139,16 +138,16 @@ namespace UserControls.ViewModels.Invoices
                 InvoiceItem.Quantity = null;
                 var message = string.Format("Անբավարար միջոցներ: Կոդ: {0} Տվյալ ապրանքատեսակից բավարար քանակ առկա չէ:", InvoiceItem.Code);
                 MessageManager.OnMessage(new MessageModel(DateTime.Now, message, MessageTypeEnum.Warning));
-                MessageBox.Show(message, "Անբավարար միջոցներ");
+                MessageManager.ShowMessage(message, "Անբավարար միջոցներ");
                 return false;
             }
             return InvoiceItem.Quantity != null && InvoiceItem.Quantity > 0;
         }
-        protected override void OnAddInvoiceItem(object o)
+        protected override void PreviewAddInvoiceItem(object o)
         {
             if (!CanAddInvoiceItem(o)) { return; }
             if (!SetQuantity(MoveBySingle)) { return; }
-            base.OnAddInvoiceItem(o);
+            base.PreviewAddInvoiceItem(o);
         }
         #endregion
 

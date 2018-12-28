@@ -17,12 +17,10 @@ using ES.Business.ExcelManager;
 using ES.Business.FileManager;
 using ES.Business.Helpers;
 using ES.Business.Managers;
-using ES.Business.Models;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
-using ES.Data.Model;
 using ES.Data.Models;
 using Shared.Helpers;
 using UserControls.Helpers;
@@ -70,7 +68,7 @@ namespace UserControls.ViewModels.Invoices
             base.OnInvoiceItemsChanged(sender, e);
             RaisePropertyChanged("CanChangePartner");
         }
-        protected override decimal GetProductPrice(EsProductModel product)
+        protected override decimal GetProductPrice(ProductModel product)
         {
             return (product != null) ? (product.Price ?? 0) * (product.Discount != null && product.Discount > 0 ?
                 1 - (product.Discount ?? 0) / 100 : 1 - (Partner.Discount ?? 0) / 100) : 0;
@@ -84,7 +82,7 @@ namespace UserControls.ViewModels.Invoices
                 && InvoicePaid.Change == 0
                 && Partner != null
                 && (InvoicePaid.AccountsReceivable ?? 0) >= Partner.Debit - (Partner.MaxDebit ?? 0)
-                && ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
+                && ApplicationManager.IsInRole(UserRoleEnum.SeniorSeller);
         }
         protected override void OnApprove(object o)
         {
@@ -103,7 +101,7 @@ namespace UserControls.ViewModels.Invoices
             }
             if (ToStock == null)
             {
-                MessageBox.Show("Պահեստ ընտրված չէ: Խնդրում ենք խմբագրել նոր պահեստ:", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageManager.ShowMessage("Պահեստ ընտրված չէ: Խնդրում ենք խմբագրել նոր պահեստ:", "Գործողության ընդհատում", MessageBoxImage.Error);
                 return;
             }
             Invoice.ToStockId = ToStock.Id;
@@ -182,7 +180,7 @@ namespace UserControls.ViewModels.Invoices
                         HcdCs = item.Product != null ? item.Product.HcdCs : null,
                         Price = item.Price
                     };
-                    MessageBox.Show(string.Format("{0}({1}) ապրանքը գրանցված չէ:", item.Description, item.Code), "Անհայտ ապրանք", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageManager.ShowMessage(string.Format("{0}({1}) ապրանքը գրանցված չէ:", item.Description, item.Code), "Անհայտ ապրանք");
                     return;
                 }
                 var exProduct = new ProductsManager().GetProductsByCodeOrBarcode(product.Code);
@@ -200,9 +198,7 @@ namespace UserControls.ViewModels.Invoices
                 if (InvoiceItem.Discount == 0) InvoiceItem.Discount = null;
                 InvoiceItem.Price = exProduct != null && exProduct.Price != null && exProduct.Price > 0 ? exProduct.Price * (100 - (InvoiceItem.Discount ?? 0)) / 100 : item.Price;
                 InvoiceItem.Quantity = item.Quantity;
-                base.OnAddInvoiceItem(null);
-                InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
-                RaisePropertyChanged("InvoicePaid");
+                OnAddInvoiceItem();
             }
         }
         #endregion Internal methods
@@ -320,18 +316,18 @@ namespace UserControls.ViewModels.Invoices
         protected override void OnInitialize()
         {
             base.OnInitialize();
-            Title = "Վերադարձ";
+            Title = "Վերադարձ մատակարարին";
         }
         protected override void OnGetProduct(object o)
         {
             base.OnGetProduct(o);
-            OnAddInvoiceItem(o);
+            PreviewAddInvoiceItem(o);
         }
-        protected override decimal GetProductPrice(EsProductModel product)
+        protected override decimal GetProductPrice(ProductModel product)
         {
             return product != null ? (product.CostPrice ?? 0) : 0;
         }
-        protected override void OnAddInvoiceItem(object o)
+        protected override void PreviewAddInvoiceItem(object o)
         {
             if (!CanAddInvoiceItem(o))
             {
@@ -341,10 +337,6 @@ namespace UserControls.ViewModels.Invoices
             {
                 return;
             }
-
-            base.OnAddInvoiceItem(o);
-
-
             //var exCount = ProductsManager.GetProductItemQuantity(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList());
             if (!Invoice.PartnerId.HasValue) return;
             if (InvoiceItem.Quantity == null || InvoiceItem.Quantity == 0)
@@ -358,7 +350,7 @@ namespace UserControls.ViewModels.Invoices
                     quantity -= InvoiceItem.Quantity.Value;
                     invoiceItem.Price = invoiceItem.Price;
                     invoiceItem.ProductItemId = invoiceItem.ProductItemId;
-                    base.OnAddInvoiceItem(o);
+                    base.PreviewAddInvoiceItem(o);
                     if (quantity > 0)
                     {
                         InvoiceItem = new InvoiceItemsModel(Invoice, invoiceItem.Product);
@@ -381,7 +373,7 @@ namespace UserControls.ViewModels.Invoices
                 InvoiceItem.Quantity = null;
                 var message = string.Format("Անբավարար միջոցներ: Կոդ: {0} Տվյալ ապրանքատեսակից բավարար քանակ առկա չէ:", InvoiceItem.Code);
                 MessageManager.OnMessage(new MessageModel(DateTime.Now, message, MessageTypeEnum.Warning));
-                MessageBox.Show(message, "Անբավարար միջոցներ");
+                MessageManager.ShowMessage(message, "Անբավարար միջոցներ");
             }
 
             if ((InvoiceItem.Quantity == null || InvoiceItem.Quantity == 0))
@@ -423,7 +415,7 @@ namespace UserControls.ViewModels.Invoices
                 {
                     UserControls.Managers.CashDeskManager.OpenCashDesk();
                 }
-                var invoice = InvoicesManager.ApproveSaleInvoice(Invoice, InvoiceItems.ToList(), FromStocks.Select(s => s.Id).ToList(), InvoicePaid);
+                var invoice = InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), FromStocks, InvoicePaid);
                 if (invoice == null || Application.Current == null)
                 {
                     Invoice.AcceptDate = Invoice.ApproveDate = null;
@@ -433,7 +425,7 @@ namespace UserControls.ViewModels.Invoices
                 }
                 if (closeOnExit && invoice.ApproveDate != null && Application.Current != null)
                 {
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => OnClose(null)));
+                    OnClose();
                 }
                 else
                 {
@@ -475,7 +467,7 @@ namespace UserControls.ViewModels.Invoices
                         HcdCs = item.Product != null ? item.Product.HcdCs : null,
                         Price = item.Price
                     };
-                    MessageBox.Show(string.Format("{0}({1}) ապրանքը գրանցված չէ:", item.Description, item.Code), "Անհայտ ապրանք", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageManager.ShowMessage(string.Format("{0}({1}) ապրանքը գրանցված չէ:", item.Description, item.Code), "Անհայտ ապրանք");
                     return;
                 }
                 var exProduct = new ProductsManager().GetProductsByCodeOrBarcode(product.Code);
@@ -492,7 +484,7 @@ namespace UserControls.ViewModels.Invoices
                 };
                 if (InvoiceItem.Discount == 0) InvoiceItem.Discount = null;
                 InvoiceItem.Price = exProduct != null && exProduct.Price != null && exProduct.Price > 0 ? exProduct.Price * (100 - (InvoiceItem.Discount ?? 0)) / 100 : item.Price;
-                base.OnAddInvoiceItem(null);
+                OnAddInvoiceItem();
                 InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
                 RaisePropertyChanged("InvoicePaid");
             }

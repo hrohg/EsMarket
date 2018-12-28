@@ -255,7 +255,7 @@ namespace UserControls.ViewModels.Products
             }
             if (ProductsManager.EditProducts(products))
             {
-                ApplicationManager.Instance.CashProvider.UpdateCash();
+                ApplicationManager.Instance.CashProvider.UpdateProductsAsync();
                 Products = ApplicationManager.Instance.CashProvider.Products;
                 MessageManager.OnMessage("Ապրանքների բեռնումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
             }

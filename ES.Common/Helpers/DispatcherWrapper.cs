@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Threading;
 using ES.Common.Interfaces;
+using ES.Common.Managers;
 
 namespace ES.Common.Helpers
 {
@@ -79,7 +80,7 @@ namespace ES.Common.Helpers
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show((ex.InnerException != null ? ex.InnerException.Message : string.Empty) + "Outer stack: " + stackTrace, "Invoke error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageManager.ShowMessage((ex.InnerException != null ? ex.InnerException.Message : string.Empty) + "Outer stack: " + stackTrace, "Invoke error", MessageBoxImage.Error);
                     }
                 }));
             }

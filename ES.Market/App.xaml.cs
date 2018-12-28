@@ -8,6 +8,7 @@ using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Common;
 using ES.Common.Helpers;
+using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Data.Model;
 using ES.Login;
@@ -113,20 +114,29 @@ namespace ES.Market
         {
             try
             {
+                //if(BeginTest()) return;
                 base.OnStartup(e);
                 this.DispatcherUnhandledException += Application_DispatcherUnhandledException;
             }
             catch (ApplicationException ex)
             {
-                MessageBox.Show(ex.Message, "Application error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageManager.ShowMessage(ex.Message, "Application error", MessageBoxImage.Error);
                 if (Application.Current != null) Current.Shutdown();
             }
             catch
             {
-                MessageBox.Show("Unknown exception.", "Application error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageManager.ShowMessage("Unknown exception.", "Application error", MessageBoxImage.Error);
                 if (Application.Current != null) Current.Shutdown();
             }
         }
+
+        private bool BeginTest()
+        {
+
+            return InvoicesManager.BeginTest();
+            return false;
+        }
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
 
@@ -185,7 +195,7 @@ namespace ES.Market
                 var members = MembersManager.GetMembersByUser(esuser.UserId);
                 if (members == null || members.Count == 0)
                 {
-                    MessageBox.Show("Դուք ոչ մի համակարգում ընդգրկված չեք։ Ընդգրկվելու համար խնդրում ենք դիմել տնօրինություն կամ ծրագրային համակարգի ադմինիստրացիա։");
+                    MessageManager.ShowMessage("Դուք ոչ մի համակարգում ընդգրկված չեք։ Ընդգրկվելու համար խնդրում ենք դիմել տնօրինություն կամ ծրագրային համակարգի ադմինիստրացիա։");
                     LoginWindow.ShowDialog();
                 }
                 else

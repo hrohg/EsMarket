@@ -11,7 +11,7 @@ namespace UserControls.Views.ReceiptTickets.Views
         {
             InitializeComponent();
         }
-        public ReceiptTicketSmall(SaleInvocieSmallTicketViewModel vm)
+        public ReceiptTicketSmall(SaleInvoiceSmallTicketViewModel vm)
         {
             InitializeComponent();
             DataContext = vm;

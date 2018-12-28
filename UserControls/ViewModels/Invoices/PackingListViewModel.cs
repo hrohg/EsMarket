@@ -62,11 +62,6 @@ namespace UserControls.ViewModels.Invoices
 
         }
 
-        protected override void OnAddInvoiceItem(object o)
-        {
-            base.OnAddInvoiceItem(o);
-        }
-
         protected override void OnApprove(object o)
         {
             

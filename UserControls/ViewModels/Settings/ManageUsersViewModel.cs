@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Common.Helpers;
+using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
@@ -147,6 +148,11 @@ namespace UserControls.ViewModels.Settings
                 }).ToList(), memberId))
             {
                 UsersRoles = UsersManager.GetUsersRoles();
+                MessageManager.OnMessage("Օգտագործողների խմբագրումն իրականացել է հաջողությամբ:");
+            }
+            else
+            {
+                MessageManager.OnMessage("Օգտագործողների խմբագրումը ձախողվել է:");
             }
         }
         #endregion //Internal methods

@@ -349,7 +349,7 @@ namespace Zen.Barcode
 			Match m = Regex.Match(text, @"^\s*(?<barcode>[0-9]{13})\s*$");
 			if (!m.Success)
 			{
-                //MessageBox.Show("Սխալ բարկոդ։");
+                //MessageManager.ShowMessage("Սխալ բարկոդ։");
 			    return null;
 			}
 			string barcodeText = m.Groups["barcode"].Value;

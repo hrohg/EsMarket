@@ -1,0 +1,36 @@
+﻿<Window x:Class="UIHelper.Windows.SelectWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:viewModels="clr-namespace:UIHelper.ViewModels"
+        Title="SelectDateIntermediate" Height="100" Width="350"
+        ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
+        <DataTemplate DataType="{x:Type viewModels:SelectDataIntermediateViewModel}">
+            <Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding StartDateTooltip}"/>
+                    <DatePicker Name="DtpStartDate" SelectedDate="{Binding Path=StartDate}" Margin="3" ToolTip="{Binding StartDateTooltip}"
+                                FirstDayOfWeek="Monday" HorizontalAlignment="Right" />
+
+                    <TextBlock Text="{Binding EndDateTooltip}" Visibility="{Binding Path = IsEndDateEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <DatePicker SelectedDate="{Binding Path=EndDate}" Margin="3" ToolTip="{Binding EndDateTooltip}"
+                                FirstDayOfWeek="Monday" HorizontalAlignment="Right" />
+                </StackPanel>
+
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ContentPresenter Content="{Binding}"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="3">
+            <Button  Width="100" Content="Հաստատել" Margin="1" Click="BtnOk_Click"/>
+            <Button  Width="100" Content="Թողնել" Margin="1" Click="BtnCancel_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Windows.Forms;
+using System.Windows;
+using ES.Common.Managers;
 
 namespace ES.Business.Helpers
 {
@@ -105,7 +106,7 @@ namespace ES.Business.Helpers
             {
                 if (!Int32.TryParse(sTemp.Substring(i - 1, 1), out iDigit))
                 {
-                    MessageBox.Show("Բարկոդը սխալ է կամ ոչ լիարժեք։", "Բար կոդի սխալ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageManager.ShowMessage("Բարկոդը սխալ է կամ ոչ լիարժեք։", "Բար կոդի սխալ", MessageBoxImage.Error);
                     return null;
                 }
                  // This appears to be backwards but the 

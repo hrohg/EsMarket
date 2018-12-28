@@ -8,7 +8,7 @@ namespace UserControls.Views.ReceiptTickets.Views
     /// </summary>
     public partial class InvoicePreview : UserControl
     {
-        public InvoicePreview(SaleInvocieSmallTicketViewModel vm)
+        public InvoicePreview(SaleInvoiceSmallTicketViewModel vm)
         {
             InitializeComponent();
             DataContext = vm;

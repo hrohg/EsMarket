@@ -8,6 +8,7 @@ using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
+using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Model;
 using ES.Data.Models;
@@ -232,7 +233,7 @@ namespace UserControls.ViewModels.StockTakeings
             var handler = CreateWriteInInvoiceEvent;
             if (handler != null)
             {
-                var products = ApplicationManager.Instance.CashManager.Products;
+                var products = ApplicationManager.CashManager.Products;
                 handler(StockTakeItems.Where(s => s.Balance > 0).Where(s => products.Any(t => t.Id == s.ProductId)).Select(s => new InvoiceItemsModel
                 {
                     ProductId = s.ProductId ?? Guid.Empty,
@@ -247,7 +248,7 @@ namespace UserControls.ViewModels.StockTakeings
             var handler = CreateWriteOffInvoiceEvent;
             if (handler != null)
             {
-                var products = ApplicationManager.Instance.CashManager.Products;
+                var products = ApplicationManager.CashManager.Products;
                 handler(StockTakeItems.Where(s => s.Balance < 0).Where(s=>products.Any(t=>t.Id==s.ProductId)).Select(s => new InvoiceItemsModel
                 {
                     ProductId = s.ProductId??Guid.Empty,
@@ -420,7 +421,7 @@ namespace UserControls.ViewModels.StockTakeings
             var index = exItem != null ? exItem.Index : StockTakeItems.Any() ? StockTakeItems.Max(s => s.Index) + 1 : 1;
             if (exItem != null && !alwaysAdd)
             {
-                if (MessageBox.Show("Տվյալ կոդով ապրանք արդեն գույքագրվել է " + exItem.StockTakeQuantity + " հատ։ \n Ցանկանու՞մ եք ավելացնել ևս " + StockTakeItem.StockTakeQuantity + "-ով։",
+                if (MessageManager.ShowMessage("Տվյալ կոդով ապրանք արդեն գույքագրվել է " + exItem.StockTakeQuantity + " հատ։ \n Ցանկանու՞մ եք ավելացնել ևս " + StockTakeItem.StockTakeQuantity + "-ով։",
                     "Կրկնակի գույքագրում", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) { return; }
                 StockTakeItem.StockTakeQuantity += exItem.StockTakeQuantity;
             }
@@ -489,10 +490,10 @@ namespace UserControls.ViewModels.StockTakeings
                 if (product == null) continue;
                 if (StockTakeItems.Any(s => s.ProductId == product.Id))
                 {
-                    MessageBox.Show(product.Description + " (" + product.Code + ") ապրանքից արդեն հաշվառվել է։ \n", "Հաշվառում", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageManager.ShowMessage(product.Description + " (" + product.Code + ") ապրանքից արդեն հաշվառվել է։ \n", "Հաշվառում");
                     continue;
                 }
-                switch (MessageBox.Show(product.Description + " (" + product.Code + ") ապրանքից " + quantity + " հատ չի հաշվառվել։ \n Ցանկանու՞մ եք հաշվառել։", "Հաշվառում",
+                switch (MessageManager.ShowMessage(product.Description + " (" + product.Code + ") ապրանքից " + quantity + " հատ չի հաշվառվել։ \n Ցանկանու՞մ եք հաշվառել։", "Հաշվառում",
                     MessageBoxButton.YesNoCancel, MessageBoxImage.Question))
                 {
                     case MessageBoxResult.Cancel:
@@ -608,7 +609,7 @@ namespace UserControls.ViewModels.StockTakeings
 
         private void OnCompletedStockTaking(object o)
         {
-            if (MessageBox.Show("Դուք իսկապե՞ս ցանկանում եք ամփոփել գույքագրումը: Ուշադրություն, ամփոփումից հետո այլևս հնարավոր չի լինի խմբագրել այն:", "Գույքագրման ամփոփում", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageManager.ShowMessage("Դուք իսկապե՞ս ցանկանում եք ամփոփել գույքագրումը: Ուշադրություն, ամփոփումից հետո այլևս հնարավոր չի լինի խմբագրել այն:", "Գույքագրման ամփոփում", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 StockTakeManager.CompletedStockTake(StockTake);
                 RaisePropertyChanged("StockTake");

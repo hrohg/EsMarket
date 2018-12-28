@@ -16,6 +16,7 @@ namespace ES.Business.Models
         private const string MemberidProperty = "MemberId";
         private const string IsActiveProperty = "IsActive";
         #endregion
+
         #region private properties
         private int _accountingPlanId;
         private int? _subAccountingPlanId;
