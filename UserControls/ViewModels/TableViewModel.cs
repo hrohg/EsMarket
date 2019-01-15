@@ -34,8 +34,8 @@ namespace UserControls.ViewModels
         private bool _isShowNulls;
         private double _totalCount;
         private double _total;
-        protected ObservableCollection<T> Reports;
-        //protected List<T> _reports;
+        protected ObservableCollection<T> Reports { get; private set; }
+
         #endregion
 
         #region External Properties
@@ -61,7 +61,7 @@ namespace UserControls.ViewModels
         }
         public bool IsShowUpdateButton { get; set; }
         public bool IsShowCloseButton { get; set; }
-        protected virtual ObservableCollection<T> ViewFilteredList { get { return Reports ?? (Reports = new ObservableCollection<T>()); } }
+        protected virtual ObservableCollection<T> ViewFilteredList { get { return Reports; } }
         public ObservableCollection<T> ViewList
         {
             get { return ViewFilteredList; }
@@ -82,6 +82,7 @@ namespace UserControls.ViewModels
         }
         public TableViewModel()
         {
+            Reports = new ObservableCollection<T>();
             ViewList.CollectionChanged += OnViewListCollectionChanged;
         }
 
@@ -140,8 +141,9 @@ namespace UserControls.ViewModels
             {
                 foreach (var report in reports)
                 {
-                    ViewList.Add(report);
+                    Reports.Add(report);
                 }
+                RaisePropertyChanged("ViewList");
                 RaisePropertyChanged("TotalRows");
                 RaisePropertyChanged("TotalCount");
                 RaisePropertyChanged("Total");

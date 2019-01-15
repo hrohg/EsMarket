@@ -99,13 +99,15 @@ namespace ES.Business.Managers
         private static Dictionary<Guid?, decimal> TryGetDebitByPartners(DateTime startDate)
         {
 
-            var memberId = ApplicationManager.Instance.GetMember.Id;
             using (var db = GetDataContext())
             {
                 try
                 {
 
-                    var reg = db.AccountingRecords.Where(s => s.MemberId == memberId && s.RegisterDate >= startDate && (s.Credit == (int)AccountingPlanEnum.AccountingReceivable || s.Debit == (int)AccountingPlanEnum.AccountingReceivable)).ToList();
+                    var reg = db.AccountingRecords.Where(s => 
+                        s.MemberId == ApplicationManager.Instance.GetMember.Id && 
+                        s.RegisterDate >= startDate && 
+                        (s.Credit == (int)AccountingPlanEnum.AccountingReceivable || s.Debit == (int)AccountingPlanEnum.AccountingReceivable)).ToList();
 
                     Dictionary<Guid?, decimal> data = reg
                         .GroupBy(s => s.Credit == (int)AccountingPlanEnum.AccountingReceivable ? s.CreditGuidId : s.DebitGuidId)

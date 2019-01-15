@@ -1995,7 +1995,7 @@ namespace ES.Business.Managers
 
         private static Invoices TryApproveInventoryWriteOffInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, IEnumerable<long> fromStockIds)
         {
-            using (var transaction = new TransactionScope())
+            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 15, 0)))
             {
                 using (var db = GetDataContext())
                 {
@@ -2114,8 +2114,8 @@ namespace ES.Business.Managers
                                     quantity -= curQuantity;
                                     db.InvoiceItems.Add(newInvoiceItem);
                                     costPrice += (newInvoiceItem.CostPrice ?? 0) * curQuantity;
+                                    db.SaveChanges();
                                 }
-                                db.SaveChanges();
                             }
                         }
                         catch (Exception ex)
@@ -2155,7 +2155,7 @@ namespace ES.Business.Managers
 
         private static Invoices TryApproveMoveingInvoice(Invoices invoice, List<InvoiceItems> invoiceItems)
         {
-            using (var transaction = new TransactionScope())
+            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 5, 0)))
             {
                 using (var db = GetDataContext())
                 {
@@ -2295,6 +2295,7 @@ namespace ES.Business.Managers
                     }
                     catch (Exception ex)
                     {
+                        MessageManager.OnMessage(ex.ToString());
                         invoice.ApproveDate = null;
                         return null;
                     }

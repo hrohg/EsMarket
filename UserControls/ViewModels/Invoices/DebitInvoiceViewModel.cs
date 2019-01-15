@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Managers;
@@ -15,19 +13,24 @@ namespace UserControls.ViewModels.Invoices
         #region Internal properties
 
         #endregion
+
         #region External properties
-        public override string Title { get { return "Դուրսգրման ակտ"; } }
+
+        public override string Title
+        {
+            get { return "Դուրսգրման ակտ"; }
+        }
+
         #endregion
+
         public InventoryWriteOffViewModel()
             : base(InvoiceType.InventoryWriteOff)
         {
-
         }
 
         public InventoryWriteOffViewModel(Guid id)
             : base(id)
         {
-            
         }
 
         #region Internal methods
@@ -39,19 +42,23 @@ namespace UserControls.ViewModels.Invoices
             Invoice.Partner = null;
             Invoice.ProviderName = null;
         }
+
         protected override void PrepareToApprove()
         {
             Invoice.ApproverId = ApplicationManager.GetEsUser.UserId;
             Invoice.Approver = ApplicationManager.GetEsUser.FullName;
         }
+
         #endregion
 
         #region External methods
+
         protected override void PreviewAddInvoiceItem(object o)
         {
             InvoiceItem.Price = 0;
             base.PreviewAddInvoiceItem(o);
         }
+
         protected override decimal GetProductPrice(ProductModel product)
         {
             return product != null ? (product.Price ?? 0) : 0;
@@ -78,9 +85,8 @@ namespace UserControls.ViewModels.Invoices
             else
             {
                 Invoice = invoice;
-                InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index));
-                IsModified = false;
             }
+
             IsLoading = false;
         }
 
@@ -88,18 +94,18 @@ namespace UserControls.ViewModels.Invoices
         {
             try
             {
+                base.OnApproveAsync(closeOnExit);
                 if (IsModified && !Save())
                 {
                     IsLoading = false;
                     return;
                 }
-
                 if (FromStocks != null && FromStocks.Any())
                 {
                     Approve(FromStocks.Select(s => s.Id).ToList());
-                    if (Invoice.ApproveDate != null) MessageManager.OnMessage(string.Format("{0} ապրանքագիրը հաստատվել է հաջողությամբ:", Invoice.InvoiceNumber), MessageTypeEnum.Success);
+                    if (Invoice.ApproveDate != null) MessageManager.OnMessage(string.Format("{0} ապրանքագիրը հաստատվել է հաջողությամբ:", Invoice.InvoiceNumber),MessageTypeEnum.Success);
 
-                    if (closeOnExit && Invoice.ApproveDate != null && Application.Current != null)
+                    if (closeOnExit && Invoice.ApproveDate != null)
                     {
                         OnClose();
                     }
@@ -109,6 +115,7 @@ namespace UserControls.ViewModels.Invoices
             {
                 MessageManager.OnMessage(ex.Message, MessageTypeEnum.Error);
             }
+
             IsLoading = false;
         }
 
@@ -117,6 +124,5 @@ namespace UserControls.ViewModels.Invoices
         #region Commands
 
         #endregion //Commands
-
     }
 }

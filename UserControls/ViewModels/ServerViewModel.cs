@@ -4,7 +4,6 @@ using System.Security;
 using System.Windows.Input;
 using ES.Business.Helpers;
 using ES.Business.Managers;
-using ES.Common;
 using ES.Common.Helpers;
 using ES.Common.Enumerations;
 using ES.Common.Managers;
@@ -75,7 +74,7 @@ namespace UserControls.ViewModels
         public void OnSave(object o)
         {
             DataServer.Password = SnPassword.ToUnsecureString();
-            if (!DataServerSettings.SetDataServer(new List<DataServer>(){ DataServer}))
+            if (!DataServerSettings.SetDataServer(new List<DataServer>{ DataServer}))
             {
                 MessageManager.OnMessage("Գրանցումը ձախողվել է։", MessageTypeEnum.Warning);
                 return;

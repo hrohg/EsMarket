@@ -210,12 +210,7 @@ namespace ES.Market
                     {
                         Shutdown();
                     }
-
                 }
-
-
-
-
             }
         }
 

@@ -107,6 +107,7 @@ namespace ES.Business.Managers
             {
                 try
                 {
+                    var stocks = db.EsStock.ToList();
                     return db.EsStock
                         .Include(s => s.EsUsers)
                         .Include(s => s.EsMembers)

@@ -28,9 +28,9 @@ namespace UserControls.Helpers
                 servers = DataServerSettings.GetDataServers();
             }
             if (servers.Count < 2) { return servers; }
-            var selectItem = new SelectItems(servers.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1})", s.Description, s.Name), SelectedValue = s.Name }).ToList(), false, "Ընտրել սերվեր");
+            var selectItem = new SelectItems(servers.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1})", s.Description, s.Name), SelectedValue = s.Description }).ToList(), false, "Ընտրել սերվեր");
             if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return null; }
-            return servers.Where(s => selectItem.SelectedItems.Select(t => t.SelectedValue).Contains(s.Name)).ToList();
+            return servers.Where(s => selectItem.SelectedItems.Select(t => t.SelectedValue).Contains(s.Description)).ToList();
         }
         public static List<XmlSettingsItem> SelectServer(List<XmlSettingsItem> servers)
         {
