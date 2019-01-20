@@ -63,11 +63,16 @@ namespace UserControls.ViewModels.Tools
 
         #region Items
 
-        private List<CustomItem> _items;
+        private List<ProductNodes> _items;
 
-        public List<CustomItem> Items
+        public List<ProductNodes> Items
         {
-            get { return _items != null ? _items.Where(s => s.Metadata.ToLower().Contains(Filter.ToLower()) || s.ProductGroups.Contains(Filter, new FilterComparer())).ToList() : null; }
+            get
+            {
+                return _items != null ?
+                    _items.Where(s => string.IsNullOrEmpty(Filter) || string.Equals(s.Metadata, Filter, StringComparison.InvariantCultureIgnoreCase)).ToList() :
+                    new List<ProductNodes>();
+            }
             private set
             {
                 _items = value;
@@ -84,7 +89,11 @@ namespace UserControls.ViewModels.Tools
         public ItemsToSelect CurrentProductsViewMode
         {
             get { return _currentProductsViewMode; }
-            set { _currentProductsViewMode = value; }
+            set
+            {
+                _currentProductsViewMode = value;
+                UpdateProducts(false);
+            }
         }
 
         #endregion External proeprties
@@ -106,7 +115,7 @@ namespace UserControls.ViewModels.Tools
             CanFloat = true;
             AnchorSide = AnchorSide.Left;
 
-            SelectItemCommand = new RelayCommand<Guid>(OnSelectItem);
+            SelectItemCommand = new RelayCommand<ProductNodes>(OnSelectItem);
             EditProductCommand = new RelayCommand(OnManagingProduct, CanManageProduct);
             ApplicationManager.Instance.CashProvider.ProductsUpdateing += OnProductsUpdating;
             ApplicationManager.Instance.CashProvider.ProductUpdated += OnProductsUpdated;
@@ -132,26 +141,58 @@ namespace UserControls.ViewModels.Tools
 
         private void OnProductsUpdated()
         {
-            _products = ApplicationManager.Instance.CashProvider.Products;
-            if (_products != null)
+            var productNode = new ProductNodes("Products", "Products");
+            switch ((ProductsViewEnum)CurrentProductsViewMode.SelectedValue)
             {
-                _products = _products.OrderBy(s => s.Description).ToList();
-                Items = _products.Select(p =>
-                    new CustomItem(p.Id, string.Format("{0} {1} {2}", p.Code, p.Description, p.Price),
-                        string.Format("{0} {1} {2} {3}", p.Code, p.Description, p.Price, p.Barcode))
+                case ProductsViewEnum.ByStocks:
+                    var productItems = ApplicationManager.CashManager.ProductItems;
+                    foreach (var productItemModel in productItems.GroupBy(s => s.StockId))
                     {
-                        ProductGroups = p.ProductGroups != null ? p.ProductGroups.Select(t => t.Barcode).ToList() : new List<string>()
-                    }).ToList();
+                        var stock = ApplicationManager.CashManager.GetStocks.FirstOrDefault(s => s.Id == productItemModel.Key);
+                        var nodes = new ProductNodes(stock != null ? stock.Name : "Անհայտ պահեստ", stock != null ? stock.FullName : "");
+                        nodes.Nodes.AddRange(productItemModel.Select(s => new ProductNodes(s.Product)));
+                        productNode.Nodes.Add(nodes);
+                    }
+                    Items.Add(productNode);
+                    break;
+                case ProductsViewEnum.ByDetile:
+                    break;
+                case ProductsViewEnum.ByProducts:
+                    _products = ApplicationManager.CashManager.Products;
+                    if (_products != null)
+                    {
+                        _products = _products.OrderBy(s => s.Description).ToList();
+                        Items = _products.Select(p => new ProductNodes(p)).ToList();
+                    }
+
+                    //Items = _products.Select(p =>
+                    //    new CustomItem(p.Id, string.Format("{0} {1} {2}", p.Code, p.Description, p.Price),
+                    //        string.Format("{0} {1} {2} {3}", p.Code, p.Description, p.Price, p.Barcode))
+                    //    {
+                    //        ProductGroups = p.ProductGroups != null ? p.ProductGroups.Select(t => t.Barcode).ToList() : new List<string>()
+                    //    }).ToList();
+                    break;
+                case ProductsViewEnum.ByProductItems:
+                    break;
+                case ProductsViewEnum.ByCategories:
+                    break;
+                case ProductsViewEnum.ByPrice:
+                    break;
+                case ProductsViewEnum.ByProviders:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
+
             IsLoading = false;
+            RaisePropertyChanged("Items");
         }
 
         public void OnUpdateProducts(object o)
         {
             ApplicationManager.Instance.CashProvider.UpdateProductsAsync();
-
         }
-        private void OnSelectItem(Guid id)
+        private void OnSelectItem(ProductNodes productNode)
         {
             var product = _products.FirstOrDefault(s => s.Id == SelectedItem.Value);
             if (product == null) return;
@@ -232,6 +273,46 @@ namespace UserControls.ViewModels.Tools
         public int GetHashCode(string obj)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class ProductNodes
+    {
+        private string _description;
+        private string _name;
+
+        public string Name
+        {
+            get { return _name ?? string.Format("{0} ({1}) {2} {3}", Product.Code, Product.Barcode, Product.Description, Product.Price); }
+            set { _name = value; }
+        }
+
+        public string Description
+        {
+            get { return _description; }
+            set { _description = value; }
+        }
+
+        public List<ProductNodes> Nodes { get; set; }
+        public string Metadata { get; set; }
+        public ProductModel Product { get; set; }
+        public ProductItemModel ProductItem { get; set; }
+
+        public ProductNodes(ProductModel product)
+            : this()
+        {
+            Product = product;
+        }
+        public ProductNodes(string name, string description)
+            : this()
+        {
+            Name = name;
+            Description = description;
+        }
+
+        private ProductNodes()
+        {
+            Nodes = new List<ProductNodes>();
         }
     }
 }

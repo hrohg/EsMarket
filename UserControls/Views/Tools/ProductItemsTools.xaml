@@ -3,7 +3,8 @@
                     xmlns:tools="clr-namespace:UserControls.ViewModels.Tools"
                     xmlns:controls="clr-namespace:UserControls.Controls"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common">
+                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
+                    xmlns:behaviors1="clr-namespace:UserControls.Behaviors">
 
     <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
@@ -42,46 +43,57 @@
                     </Button>
                 </StackPanel>
                 <TextBox VerticalAlignment="Top" Grid.Row="1" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Stretch" Height="25" FontSize="15" VerticalContentAlignment="Center" Width="Auto" BorderThickness="1" BorderBrush="Black">
-                <i:Interaction.Behaviors>
+                    <i:Interaction.Behaviors>
                         <behaviors:FocusNextElementBehaviors />
                     </i:Interaction.Behaviors>
                 </TextBox>
 
-                <ListView Grid.Row="2" x:Name="ListView" ItemsSource="{Binding Items}" 
-                      DisplayMemberPath="Description" 
-                      SelectedValuePath="Value"
-                      SelectedItem="{Binding SelectedItem}"
-                      VerticalAlignment="Stretch">
-                    <ListView.InputBindings>
-                        <KeyBinding Key="Enter" Command="{Binding SelectItemCommand}" CommandParameter="{Binding ElementName=ListView, Path=SelectedValue}"/>
-                        <!--<MouseBinding MouseAction="LeftDoubleClick" Gesture="LeftDoubleClick" Command="{Binding SelectItemCommand}" CommandParameter="{Binding Path=SelectedItem}"/>-->
-                    </ListView.InputBindings>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:Name="DataTemplate" DataType="{x:Type tools:CustomItem}">
+                <TreeView Grid.Row="2" x:Name="TreeView" ItemsSource="{Binding Items}" VerticalAlignment="Stretch">
+                    <i:Interaction.Behaviors>
+                        <behaviors1:BindableSelectedItemBehavior SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+                    </i:Interaction.Behaviors>
+                    <TreeView.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding SelectItemCommand}" CommandParameter="{Binding ElementName=ListView, Path=SelectedItem}"/>
+                        <MouseBinding MouseAction="LeftDoubleClick" Gesture="LeftDoubleClick" Command="{Binding SelectItemCommand}" CommandParameter="{Binding Path=SelectedItem}"/>
+                    </TreeView.InputBindings>
+                    <TreeView.ItemTemplate>
+                        <!--<DataTemplate x:Name="DataTemplate" DataType="{x:Type tools:ProductNodes}">
                             <Border x:Name="Border">
-                                <TextBlock x:Name="TextBlock" Text="{Binding Description}" />
+                                <TextBlock x:Name="TextBlock" Text="{Binding Name}" ToolTip="{Binding Description}" />
                             </Border>
                             <DataTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="TextBlock" Property="Foreground" Value="White"/>
                                 </Trigger>
                             </DataTemplate.Triggers>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
+                        </DataTemplate>-->
+                        <HierarchicalDataTemplate ItemsSource="{Binding ChildNodes}" DataType="{x:Type tools:ProductNodes}">
+                            <Border x:Name="Border">
+                                <TextBlock x:Name="TextBlock" Text="{Binding Name}" ToolTip="{Binding Description}" />
+                            </Border>
+                            <HierarchicalDataTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="TextBlock" Property="Foreground" Value="White"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="#FF9903"/>
+                                </Trigger>
+                            </HierarchicalDataTemplate.Triggers>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+
+                    <!--<TreeView.ItemContainerStyle>
+                        <Style TargetType="TreeViewItem">
                             <Setter Property="Template">
                                 <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                    <ControlTemplate TargetType="{x:Type TreeViewItem}">
                                         <Border x:Name="Border">
                                             <Border.InputBindings>
                                                 <MouseBinding MouseAction="LeftDoubleClick" 
-                                              Command="{Binding Path= DataContext.SelectItemCommand, ElementName=ListView}" 
+                                              Command="{Binding Path= DataContext.SelectItemCommand, ElementName=TreeView}" 
                                               CommandParameter="{Binding Path=Value}"/>
                                             </Border.InputBindings>
-                                            <ContentPresenter
-                            Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                                            <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsSelected" Value="True">
@@ -96,8 +108,8 @@
                             </Setter>
                         </Style>
 
-                    </ListView.ItemContainerStyle>
-                </ListView>
+                    </TreeView.ItemContainerStyle>-->
+                </TreeView>
             </Grid>
             <controls:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
         </Grid>

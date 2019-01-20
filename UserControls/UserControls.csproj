@@ -90,6 +90,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviors\BindableSelectedItemBehavior.cs" />
     <Compile Include="Controls\PriceTagViewControl.xaml.cs">
       <DependentUpon>PriceTagViewControl.xaml</DependentUpon>
     </Compile>
