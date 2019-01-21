@@ -301,6 +301,7 @@ namespace UserControls.ViewModels.Invoices
 
        protected override void OnApproveAsync(bool closeOnExit)
         {
+           base.OnApproveAsync(closeOnExit);
             try
             {
                 if (IsModified && !Save())
@@ -323,7 +324,7 @@ namespace UserControls.ViewModels.Invoices
                 }
 
                 var invoice = InvoicesManager.ApproveSaleInvoice(Invoice, InvoiceItems.ToList(), FromStocks.Select(s => s.Id).ToList(), InvoicePaid);
-                if (invoice == null || Application.Current == null)
+                if (invoice == null)
                 {
                     Invoice.AcceptDate = Invoice.ApproveDate = null;
                     MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);

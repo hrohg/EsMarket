@@ -69,6 +69,11 @@
                         </DataTemplate>-->
                         <HierarchicalDataTemplate ItemsSource="{Binding ChildNodes}" DataType="{x:Type tools:ProductNodes}">
                             <Border x:Name="Border">
+                                <Border.InputBindings>
+                                    <MouseBinding MouseAction="LeftDoubleClick" 
+                                              Command="{Binding Path= DataContext.SelectItemCommand, ElementName=TreeView}" 
+                                              CommandParameter="{Binding Path=Product}"/>
+                                </Border.InputBindings>
                                 <TextBlock x:Name="TextBlock" Text="{Binding Name}" ToolTip="{Binding Description}" />
                             </Border>
                             <HierarchicalDataTemplate.Triggers>

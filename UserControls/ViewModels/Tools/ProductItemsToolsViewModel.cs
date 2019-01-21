@@ -48,6 +48,10 @@ namespace UserControls.ViewModels.Tools
         }
         private void TimerElapsed(object obj)
         {
+            foreach (var nodes in Items)
+            {
+                nodes.SetFilter(_filter);
+            }
             RaisePropertyChanged("Items");
             DisposeTimer();
         }
@@ -70,7 +74,7 @@ namespace UserControls.ViewModels.Tools
             get
             {
                 return _items != null ?
-                    _items.Where(s => string.IsNullOrEmpty(Filter) || string.Equals(s.Metadata, Filter, StringComparison.InvariantCultureIgnoreCase)).ToList() :
+                    _items.Where(s => string.IsNullOrEmpty(Filter) || s.HasItems(Filter)).ToList() :
                     new List<ProductNodes>();
             }
             private set
@@ -114,8 +118,8 @@ namespace UserControls.ViewModels.Tools
             IsFloating = true;
             CanFloat = true;
             AnchorSide = AnchorSide.Left;
-
-            SelectItemCommand = new RelayCommand<ProductNodes>(OnSelectItem);
+            _items = new List<ProductNodes>();
+            SelectItemCommand = new RelayCommand<ProductModel>(OnSelectItem);
             EditProductCommand = new RelayCommand(OnManagingProduct, CanManageProduct);
             ApplicationManager.Instance.CashProvider.ProductsUpdateing += OnProductsUpdating;
             ApplicationManager.Instance.CashProvider.ProductUpdated += OnProductsUpdated;
@@ -126,10 +130,10 @@ namespace UserControls.ViewModels.Tools
 
             ProductsViewModes = new List<ItemsToSelect>
         {
-            new ItemsToSelect("By Products", ProductsViewEnum.ByProducts),
-            new ItemsToSelect("By Product Items", ProductsViewEnum.ByProductItems),
-            new ItemsToSelect("By Categories", ProductsViewEnum.ByCategories),
-            new ItemsToSelect("By Stocks", ProductsViewEnum.ByStocks)
+            new ItemsToSelect("Ըստ ապրանքների", ProductsViewEnum.ByProducts),
+           // new ItemsToSelect("By Product Items", ProductsViewEnum.ByProductItems),
+            //new ItemsToSelect("By Categories", ProductsViewEnum.ByCategories),
+            new ItemsToSelect("Ըստ բաժինների", ProductsViewEnum.ByStocks)
         };
             CurrentProductsViewMode = ProductsViewModes.FirstOrDefault();
         }
@@ -141,6 +145,7 @@ namespace UserControls.ViewModels.Tools
 
         private void OnProductsUpdated()
         {
+            _items.Clear();
             var productNode = new ProductNodes("Products", "Products");
             switch ((ProductsViewEnum)CurrentProductsViewMode.SelectedValue)
             {
@@ -150,10 +155,9 @@ namespace UserControls.ViewModels.Tools
                     {
                         var stock = ApplicationManager.CashManager.GetStocks.FirstOrDefault(s => s.Id == productItemModel.Key);
                         var nodes = new ProductNodes(stock != null ? stock.Name : "Անհայտ պահեստ", stock != null ? stock.FullName : "");
-                        nodes.Nodes.AddRange(productItemModel.Select(s => new ProductNodes(s.Product)));
-                        productNode.Nodes.Add(nodes);
+                        nodes.AddRange(productItemModel.Select(s => new ProductNodes(s.Product)));
+                        _items.Add(nodes);
                     }
-                    Items.Add(productNode);
                     break;
                 case ProductsViewEnum.ByDetile:
                     break;
@@ -162,7 +166,7 @@ namespace UserControls.ViewModels.Tools
                     if (_products != null)
                     {
                         _products = _products.OrderBy(s => s.Description).ToList();
-                        Items = _products.Select(p => new ProductNodes(p)).ToList();
+                        _items = _products.Select(p => new ProductNodes(p)).ToList();
                     }
 
                     //Items = _products.Select(p =>
@@ -192,9 +196,9 @@ namespace UserControls.ViewModels.Tools
         {
             ApplicationManager.Instance.CashProvider.UpdateProductsAsync();
         }
-        private void OnSelectItem(ProductNodes productNode)
+        private void OnSelectItem(ProductModel product)
         {
-            var product = _products.FirstOrDefault(s => s.Id == SelectedItem.Value);
+            //var product = _products.FirstOrDefault(s => s.Id == SelectedItem.Value);
             if (product == null) return;
             var handle = OnProductItemSelected;
             if (handle != null)
@@ -278,8 +282,11 @@ namespace UserControls.ViewModels.Tools
 
     public class ProductNodes
     {
+        private ProductNodes _parent;
         private string _description;
         private string _name;
+        private string _filter;
+        private List<ProductNodes> _childNodes;
 
         public string Name
         {
@@ -293,15 +300,25 @@ namespace UserControls.ViewModels.Tools
             set { _description = value; }
         }
 
-        public List<ProductNodes> Nodes { get; set; }
+        public List<ProductNodes> ChildNodes
+        {
+            get { return _childNodes.Where(s => s.HasItems(_filter)).ToList(); }
+        }
+
         public string Metadata { get; set; }
+
         public ProductModel Product { get; set; }
         public ProductItemModel ProductItem { get; set; }
 
-        public ProductNodes(ProductModel product)
+        public ProductNodes(ProductModel product, ProductNodes parent = null)
             : this()
         {
             Product = product;
+            Metadata = string.Format("{0} {1} {2} {3}",
+                Name,
+                Description,
+                product != null ? product.Price.ToString() : string.Empty,
+                product != null ? product.ProductGroups.Aggregate("", (current, productGroupModel) => current + productGroupModel.Barcode + " ") : string.Empty);
         }
         public ProductNodes(string name, string description)
             : this()
@@ -309,10 +326,30 @@ namespace UserControls.ViewModels.Tools
             Name = name;
             Description = description;
         }
-
         private ProductNodes()
         {
-            Nodes = new List<ProductNodes>();
+            _childNodes = new List<ProductNodes>();
+        }
+        public bool HasItems(string filter)
+        {
+            return string.IsNullOrEmpty(filter) || (!string.IsNullOrEmpty(Metadata) && Metadata.ToLower().Contains(filter.ToLower())) || ChildNodes.Any(s => s.HasItems(filter));
+        }
+        public void SetFilter(string filter)
+        {
+            _filter = filter;
+            foreach (var nodes in ChildNodes)
+            {
+                nodes.SetFilter(_filter);
+            }
+        }
+
+        public void Add(ProductNodes item)
+        {
+            _childNodes.Add(item);
+        }
+        public void AddRange(IEnumerable<ProductNodes> items)
+        {
+            _childNodes.AddRange(items);
         }
     }
 }

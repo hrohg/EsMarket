@@ -93,7 +93,17 @@ namespace UserControls.ViewModels.Invoices
 
         protected override void OnApproveAsync(bool closeOnExit)
         {
-            
+            lock (_sync)
+            {
+                if (!CanApprove(null))
+                {
+                    MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);
+                    return;
+                }
+
+                IsLoading = true;
+                PrepareToApprove();
+            }
         }
         protected virtual void PrepareToApprove()
         {
@@ -186,14 +196,6 @@ namespace UserControls.ViewModels.Invoices
         }
         protected override void OnApprove(object o)
         {
-            if (!CanApprove(o))
-            {
-                MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);
-                return;
-            }
-
-            IsLoading = true;
-            PrepareToApprove();
             //Approve Invoice
             new Thread(() => OnApproveAsync(false)).Start();
         }
@@ -203,14 +205,6 @@ namespace UserControls.ViewModels.Invoices
         #region External methods
         public override void OnApproveAndClose(object o)
         {
-            if (!CanApprove(o))
-            {
-                MessageManager.OnMessage("Գործողության ձախողում:", MessageTypeEnum.Warning);
-                return;
-            }
-
-            IsLoading = true;
-            PrepareToApprove();
             //Approve Invoice
             new Thread(() => OnApproveAsync(true)).Start();
         }
