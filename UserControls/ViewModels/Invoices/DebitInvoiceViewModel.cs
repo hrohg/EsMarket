@@ -55,7 +55,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected override void PreviewAddInvoiceItem(object o)
         {
-            InvoiceItem.Price = 0;
+            //InvoiceItem.Price = 0;
             base.PreviewAddInvoiceItem(o);
         }
 

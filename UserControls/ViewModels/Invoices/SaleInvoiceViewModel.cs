@@ -247,7 +247,7 @@ namespace UserControls.ViewModels.Invoices
             {
                 case PrintModeEnum.Normal:
                 case PrintModeEnum.Large:
-                    base.OnGetProduct(printSize);
+                    base.OnPrintInvoice(printSize);
                     break;
                 case PrintModeEnum.Small:
                     PrintInvoiceTicket(null);
