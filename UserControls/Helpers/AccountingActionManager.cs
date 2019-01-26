@@ -73,7 +73,7 @@ namespace UserControls.Helpers
                 MessageManager.ShowMessage("Վճարումն իրականացվել է հաջողությամբ։");
                 if (ApplicationManager.Settings.IsEcrActivated && depositAccountingRecords.Amount > 0)
                 {
-                    new EcrManager().RepaymentOfDebts(depositAccountingRecords.Amount, partner.FullName);
+                    EcrManager.RepaymentOfDebts(depositAccountingRecords.Amount, partner.FullName);
                 }
             }
             else
@@ -119,7 +119,7 @@ namespace UserControls.Helpers
                 MessageManager.ShowMessage("Վճարումն իրականացվել է հաջողությամբ։");
                 if (ApplicationManager.Settings.IsEcrActivated)
                 {
-                    new EcrManager().RepaymentOfDebts(accountingRecords.Amount, partner.FullName);
+                     EcrManager.RepaymentOfDebts(accountingRecords.Amount, partner.FullName);
                 }
             }
             else
@@ -161,7 +161,7 @@ namespace UserControls.Helpers
 
             if (ApplicationManager.Settings.IsEcrActivated)
             {
-                ApplicationManager.CreateEcrConnection().SetCashReceipt(receivedInAdvance.Amount, partner.FullName);
+                EcrManager.EcrServer.SetCashReceipt(receivedInAdvance.Amount, partner.FullName);
             }
         }
 

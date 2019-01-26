@@ -48,7 +48,7 @@
                     </i:Interaction.Behaviors>
                 </TextBox>
 
-                <TreeView Grid.Row="2" x:Name="TreeView" ItemsSource="{Binding Items}" VerticalAlignment="Stretch">
+                <TreeView Grid.Row="2" x:Name="TreeView" ItemsSource="{Binding Items}" VerticalAlignment="Stretch" VirtualizingStackPanel.IsVirtualizing="True">
                     <i:Interaction.Behaviors>
                         <behaviors1:BindableSelectedItemBehavior SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
                     </i:Interaction.Behaviors>

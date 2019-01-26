@@ -13,7 +13,7 @@
                 <Button VerticalAlignment="Top" Grid.Row="0" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" Click="BtnSearch_Click" IsTabStop="False">
                     <Image Height="20" Width="20" Source="pack://application:,,,/Shared;component/Images/Search.png"></Image>
                 </Button>
-        <DataGrid Name="DgItems" Grid.Row="1" VerticalAlignment="Stretch" MouseDoubleClick="LvItems_MouseDoubleClick" KeyDown="LvItems_KeyDown" AutoGenerateColumns="True" CanUserAddRows="False">
+        <DataGrid Name="DgItems" Grid.Row="1" VerticalAlignment="Stretch" KeyDown="LvItems_KeyDown" AutoGenerateColumns="True" CanUserAddRows="False">
            
         </DataGrid>
         <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5">

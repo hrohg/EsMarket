@@ -21,7 +21,7 @@
 
         <DataTemplate DataType="{x:Type viewModels:SelectItemsViewModel}">
             <DataGrid ItemsSource="{Binding Items}"
-                VerticalAlignment="Stretch" MouseDoubleClick="LvItems_MouseDoubleClick" KeyDown="LvItems_KeyDown" AutoGenerateColumns="False" CanUserAddRows="False">
+                VerticalAlignment="Stretch" KeyDown="LvItems_KeyDown" AutoGenerateColumns="False" CanUserAddRows="False">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn  Header=".." Width="Auto" CanUserSort="True" SortMemberPath="IsChecked">
                         <DataGridTemplateColumn.CellTemplate>
@@ -52,7 +52,7 @@
 
         <DataTemplate DataType="{x:Type viewModels:SelectProductItemsViewModel}">
             <DataGrid ItemsSource="{Binding Items}"
-                VerticalAlignment="Stretch" MouseDoubleClick="LvItems_MouseDoubleClick" KeyDown="LvItems_KeyDown" AutoGenerateColumns="False" CanUserAddRows="False">
+                VerticalAlignment="Stretch" KeyDown="LvItems_KeyDown" AutoGenerateColumns="False" CanUserAddRows="False">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn  Header=".." Width="Auto" CanUserSort="True" SortMemberPath="IsChecked">
                         <DataGridTemplateColumn.CellTemplate>
@@ -98,9 +98,12 @@
 
         <DataTemplate DataType="{x:Type viewModels:SelectProductItemsByCheckViewModel}">
             <DataGrid ItemsSource="{Binding Items}"
-                VerticalAlignment="Stretch" MouseDoubleClick="LvItems_MouseDoubleClick" KeyDown="LvItems_KeyDown" AutoGenerateColumns="False" CanUserAddRows="False">
+                VerticalAlignment="Stretch" KeyDown="LvItems_KeyDown" AutoGenerateColumns="False" CanUserAddRows="False">
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn  Header=".." Width="Auto" CanUserSort="True" SortMemberPath="IsChecked">
+                    <DataGridTemplateColumn Width="Auto" CanUserSort="True" SortMemberPath="IsChecked">
+                        <DataGridTemplateColumn.Header>
+                            <CheckBox IsChecked="{Binding IsChecked}"></CheckBox>
+                        </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type controls:ProductItemsByCheck}">
                                 <CheckBox x:Name="Part_CheckBox" IsChecked="{Binding Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3"/>

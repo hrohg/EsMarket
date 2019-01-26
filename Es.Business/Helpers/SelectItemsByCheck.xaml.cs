@@ -154,10 +154,6 @@ namespace ES.Business.Helpers
                     break;
             }
         }
-        private void LvItems_MouseDoubleClick(object sender, EventArgs e)
-        {
-            //BtnAccept_Click(null, null);
-        }
         #endregion
     }
 

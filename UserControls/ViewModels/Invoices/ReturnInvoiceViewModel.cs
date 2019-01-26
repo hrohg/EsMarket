@@ -220,9 +220,7 @@ namespace UserControls.ViewModels.Invoices
 
         private void OnPrintEcrTicket(object obj)
         {
-            var ecrManager = new EcrServer(ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig);
-            ecrManager.OnError += delegate(Exception ex) { MessageManager.OnMessage(ex.ToString()); };
-
+            var ecrManager = EcrManager.EcrServer;
             var invoicePaid = new EcrPaid
                 {
                     PaidAmount = InvoicePaid.Paid != null ? (double)InvoicePaid.Paid : 0,

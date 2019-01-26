@@ -16,19 +16,29 @@ namespace UserControls.Helpers
     public class EcrManager
     {
         #region Private properties
-        private string _ecrServerIp = "217.113.7.68";
-        private int _ecrServerPort = 9999;
-        private string _ecrPass = "HS0FBZZZ";
-        private string _cashierCrn;
-        private int _cashierId = 3;
-        private string _cashierPas = "3";
-        private EcrServer _ecrServer { get; set; }
+        private static EcrServer _ecrServer;
+        //private string _ecrServerIp = "217.113.7.68";
+        //private int _ecrServerPort = 9999;
+        //private string _ecrPass = "HS0FBZZZ";
+        //private string _cashierCrn;
+        //private int _cashierId = 3;
+        //private string _cashierPas = "3";
+        
         #endregion
-        public EcrManager()
-        {
-            _ecrServer = new EcrServer(ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig);
-        }
 
+        public static EcrServer EcrServer
+        {
+            get
+            {
+                if (_ecrServer == null)
+                {
+                    _ecrServer = new EcrServer(ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig);
+                    _ecrServer.OnErrorEvent += delegate(Exception ex) { MessageManager.OnMessage(ex.ToString()); };
+                }
+                return _ecrServer;
+            }
+        }
+        
         #region Public Methods
         public bool ConnectionCheck()
         {
@@ -73,7 +83,7 @@ namespace UserControls.Helpers
             var model = new SaleInvoiceViewModel();
             if (!model.PrintReceiptFromExcel())
             {
-                MessageManager.ShowMessage("Գործողությունն ընդհատված է։ \nՏվյալները կարդալու ժամանակ տեղի է ունեցել սխալ։ Տվյալները թերի են կամ ոչ Լիարժեք։", "Գործողության ընդհատում", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageManager.ShowMessage("Գործողությունն ընդհատված է։ \nՏվյալները կարդալու ժամանակ տեղի է ունեցել սխալ։ Տվյալները թերի են կամ ոչ Լիարժեք։", "Գործողության ընդհատում", MessageBoxButton.OK);
                 return false;
             }
             if (MessageManager.ShowMessage("Տվյալները կարդացվել են հաջողությամբ։ \n Դուք ցանկանու՞մ եք տպել " +
@@ -210,12 +220,12 @@ namespace UserControls.Helpers
         }
         public void ReceivedInAdvance(decimal amount, string fullName)
         {
-            new Thread(() => _ecrServer.SetCashReceipt(amount, fullName)).Start();
+            new Thread(() => EcrServer.SetCashReceipt(amount, fullName)).Start();
         }
 
-        public void RepaymentOfDebts(decimal amount, string fullName)
+        public static void RepaymentOfDebts(decimal amount, string fullName)
         {
-            new Thread(() => _ecrServer.SetCashWithdrawal(amount, fullName)).Start();
+            new Thread(() => EcrServer.SetCashWithdrawal(amount, fullName)).Start();
         }
     }
 }

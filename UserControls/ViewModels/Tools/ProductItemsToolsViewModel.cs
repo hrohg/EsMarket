@@ -123,7 +123,7 @@ namespace UserControls.ViewModels.Tools
             EditProductCommand = new RelayCommand(OnManagingProduct, CanManageProduct);
             ApplicationManager.Instance.CashProvider.ProductsUpdateing += OnProductsUpdating;
             ApplicationManager.Instance.CashProvider.ProductUpdated += OnProductsUpdated;
-            OnUpdateProducts(null);
+            //OnUpdateProducts(null);
             UpdateProductsCommand = new RelayCommand(OnUpdateProducts);
             _products = ApplicationManager.Instance.CashProvider.Products;
 
@@ -155,9 +155,11 @@ namespace UserControls.ViewModels.Tools
                     {
                         var stock = ApplicationManager.CashManager.GetStocks.FirstOrDefault(s => s.Id == productItemModel.Key);
                         var nodes = new ProductNodes(stock != null ? stock.Name : "Անհայտ պահեստ", stock != null ? stock.FullName : "");
-                        nodes.AddRange(productItemModel.Select(s => new ProductNodes(s.Product)));
+                        nodes.AddRange(productItemModel.Select(s => new ProductNodes(s.Product)).OrderBy(s => s.Name));
                         _items.Add(nodes);
                     }
+
+                    _items = _items.OrderBy(s => s.Name).ToList();
                     break;
                 case ProductsViewEnum.ByDetile:
                     break;
@@ -166,7 +168,7 @@ namespace UserControls.ViewModels.Tools
                     if (_products != null)
                     {
                         _products = _products.OrderBy(s => s.Description).ToList();
-                        _items = _products.Select(p => new ProductNodes(p)).ToList();
+                        _items = _products.Select(p => new ProductNodes(p)).OrderBy(s => s.Name).ToList();
                     }
 
                     //Items = _products.Select(p =>
@@ -290,7 +292,7 @@ namespace UserControls.ViewModels.Tools
 
         public string Name
         {
-            get { return _name ?? string.Format("{0} ({1}) {2} {3}", Product.Code, Product.Barcode, Product.Description, Product.Price); }
+            get { return _name ?? string.Format("{0} ({1}) {2}", Product.Description, Product.Code, Product.Price); }
             set { _name = value; }
         }
 
@@ -316,7 +318,7 @@ namespace UserControls.ViewModels.Tools
             Product = product;
             Metadata = string.Format("{0} {1} {2} {3}",
                 Name,
-                Description,
+                product != null ? product.Barcode : string.Empty,
                 product != null ? product.Price.ToString() : string.Empty,
                 product != null ? product.ProductGroups.Aggregate("", (current, productGroupModel) => current + productGroupModel.Barcode + " ") : string.Empty);
         }

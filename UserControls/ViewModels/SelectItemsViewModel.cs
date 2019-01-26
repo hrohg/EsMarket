@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+using System.Windows.Forms;
 using ES.Common.ViewModels.Base;
 using UserControls.Controls;
+using Timer = System.Threading.Timer;
 
 namespace UserControls.ViewModels
 {
@@ -119,7 +120,8 @@ namespace UserControls.ViewModels
 
         #region Constructors
 
-        public SelectItemsViewModel(List<ItemsToSelectByCheck> items, string title = "Ընտրել"):base(items, title)
+        public SelectItemsViewModel(List<ItemsToSelectByCheck> items, string title = "Ընտրել")
+            : base(items, title)
         {
             Initialize();
         }
@@ -186,7 +188,7 @@ namespace UserControls.ViewModels
 
         public override List<ProductItemsToSelect> GetItems()
         {
-            return Items.Where(s =>s.IsChecked).ToList();
+            return Items.Where(s => s.IsChecked).ToList();
         }
         #endregion External methods
     }
@@ -213,6 +215,21 @@ namespace UserControls.ViewModels
                 RaisePropertyChanged("Items");
             }
         }
+
+        public bool? IsChecked
+        {
+            get { return Items.All(s => s.IsChecked) ? true : Items.All(s => !s.IsChecked) ? false : (bool?)null; }
+            set
+            {
+                if (IsChecked == null) return;
+                foreach (var item in Items)
+                {
+                    item.IsChecked = value != null && (bool)value;
+                }
+                RaisePropertyChanged("IsChecked");
+            }
+        }
+
         #endregion External properties
 
         #region Constructors

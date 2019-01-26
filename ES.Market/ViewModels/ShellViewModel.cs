@@ -1163,28 +1163,28 @@ namespace ES.Market.ViewModels
             try
             {
                 var actionMode = o as EcrExecuiteActions?;
-                var ecrserver = new EcrServer(ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig);
+                var ecServer = EcrManager.EcrServer;
                 IsLoading = true;
                 MessageModel message = null;
                 switch (actionMode)
                 {
                     case EcrExecuiteActions.CheckConnection:
-                        message = ecrserver.TryConnection() ? new MessageModel("ՀԴՄ կապի ստուգումն իրականացել է հաջողությամբ: " + ecrserver.ActionDescription, MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageTypeEnum.Warning);
+                        message = ecServer.TryConnection() ? new MessageModel("ՀԴՄ կապի ստուգումն իրականացել է հաջողությամբ: " + ecServer.ActionDescription, MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageTypeEnum.Warning);
                         IsLoading = false;
                         break;
                     case EcrExecuiteActions.OperatorLogin:
-                        message = ecrserver.TryOperatorLogin() ? new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
+                        message = ecServer.TryOperatorLogin() ? new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Warning);
                         IsLoading = false;
                         break;
                     case EcrExecuiteActions.PrintReturnTicket:
                         var resoult = MessageManager.ShowMessage("Դուք ցանկանու՞մ եք վերադարձնել ՀԴՄ կտրոնն ամբողջությամբ:", "ՀԴՄ կտրոնի վերադարձ", MessageBoxButton.YesNo, MessageBoxImage.Question);
                         if (resoult == MessageBoxResult.Yes)
                         {
-                            message = ecrserver.PrintReceiptReturnTicket(true) ? new MessageModel("ՀԴՄ կտրոնի վերադարձն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Error);
+                            message = ecServer.PrintReceiptReturnTicket(true) ? new MessageModel("ՀԴՄ կտրոնի վերադարձն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Error);
                         }
                         else if (resoult == MessageBoxResult.No)
                         {
-                            message = ecrserver.PrintReceiptReturnTicket(false) ? new MessageModel("ՀԴՄ կտրոնի մասնակի վերադարձն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի մասնակի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Error);
+                            message = ecServer.PrintReceiptReturnTicket(false) ? new MessageModel("ՀԴՄ կտրոնի մասնակի վերադարձն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի մասնակի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Error);
                         }
                         else
                         {
@@ -1193,15 +1193,15 @@ namespace ES.Market.ViewModels
                         IsLoading = false;
                         break;
                     case EcrExecuiteActions.PrintLatestTicket:
-                        message = ecrserver.PrintReceiptLatestCopy() ? new MessageModel("ՀԴՄ վերջին կտրոնի տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ վերջին կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
+                        message = ecServer.PrintReceiptLatestCopy() ? new MessageModel("ՀԴՄ վերջին կտրոնի տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ վերջին կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Warning);
                         IsLoading = false;
                         break;
                     case EcrExecuiteActions.PrintReportX:
-                        message = ecrserver.GetReport(ReportType.X) ? new MessageModel("ՀԴՄ X հաշվետվության տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ X հաշվետվության տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
+                        message = ecServer.GetReport(ReportType.X) ? new MessageModel("ՀԴՄ X հաշվետվության տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ X հաշվետվության տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Warning);
                         IsLoading = false;
                         break;
                     case EcrExecuiteActions.PrintReportZ:
-                        message = ecrserver.GetReport(ReportType.Z) ? new MessageModel("ՀԴՄ Z հաշվետվության տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ Z հաշվետվության տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
+                        message = ecServer.GetReport(ReportType.Z) ? new MessageModel("ՀԴՄ Z հաշվետվության տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ Z հաշվետվության տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Warning);
                         IsLoading = false;
                         break;
                     case EcrExecuiteActions.CheckEcrConnection:
@@ -1213,7 +1213,6 @@ namespace ES.Market.ViewModels
                     case EcrExecuiteActions.LogoutOperator:
                         break;
                     case EcrExecuiteActions.PrintReceiptTicket:
-                        var ecrServer = new EcrServer(ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig);
                         var filePath = FileManager.OpenExcelFile("Excel files(*.xls *.xlsx *․xlsm)|*.xls;*.xlsm;*․xlsx|Excel with macros|*.xlsm|Excel 97-2003 file|*.xls", "Excel ֆայլի բեռնում", ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.ExcelFilePath);
                         if (string.IsNullOrEmpty(filePath))
                         {
@@ -1222,7 +1221,7 @@ namespace ES.Market.ViewModels
                         }
                         try
                         {
-                            if (ecrServer.PrintReceiptFromExcelFile(filePath))
+                            if (ecServer.PrintReceiptFromExcelFile(filePath))
                             {
                                 IsLoading = false;
                                 MessageManager.OnMessage(new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success));
@@ -1230,7 +1229,7 @@ namespace ES.Market.ViewModels
                             else
                             {
                                 IsLoading = false;
-                                MessageManager.OnMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումն ընդհատվել է: {1} ({0})", ecrServer.ActionCode, ecrServer.ActionDescription), MessageTypeEnum.Warning));
+                                MessageManager.OnMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումն ընդհատվել է: {1} ({0})", ecServer.ActionCode, ecServer.ActionDescription), MessageTypeEnum.Warning));
                             }
                         }
                         catch (Exception ex)
@@ -1254,10 +1253,10 @@ namespace ES.Market.ViewModels
                         if (partner == null) break;
                         var amountForm = new InputForm("Վերադարձվող գումար");
                         if (amountForm.ShowDialog() != DialogResult.OK) break;
-                        if (ecrserver.SetCashWithdrawal(HgConvert.ToDecimal(amountForm.TicketValue), partner.FullName))
+                        if (ecServer.SetCashWithdrawal(HgConvert.ToDecimal(amountForm.TicketValue), partner.FullName))
                             MessageManager.OnMessage("Կանխավճարի վերադարձն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
                         else
-                            MessageManager.OnMessage("Կանխավճարի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
+                            MessageManager.OnMessage("Կանխավճարի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Warning);
                         break;
                     case EcrExecuiteActions.PrintCash:
                         break;
@@ -1266,10 +1265,10 @@ namespace ES.Market.ViewModels
                         if (cashInPartner == null) break;
                         var cashInAmountForm = new InputForm("Կանխավճար");
                         if (cashInAmountForm.ShowDialog() != DialogResult.OK) break;
-                        if (ecrserver.SetCashWithdrawal(HgConvert.ToDecimal(cashInAmountForm.TicketValue), cashInPartner.FullName))
+                        if (ecServer.SetCashWithdrawal(HgConvert.ToDecimal(cashInAmountForm.TicketValue), cashInPartner.FullName))
                             MessageManager.OnMessage("Կանխավճարի կտրոնի տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
                         else
-                            MessageManager.OnMessage("Կանխավճարի կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
+                            MessageManager.OnMessage("Կանխավճարի կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Warning);
                         break;
                     case null:
                         break;
@@ -1331,7 +1330,7 @@ namespace ES.Market.ViewModels
             MessageManager.ShowMessage(cashDeskContent, title, MessageBoxImage.Information);
         }
 
-       private void OnExecuteEcrAction(object o)
+        private void OnExecuteEcrAction(object o)
         {
             var td = new Thread(() => { ExecuteEcrAction(o); });
             td.SetApartmentState(ApartmentState.STA);
@@ -1868,7 +1867,7 @@ namespace ES.Market.ViewModels
         private void OnCheckCashDeskInfo(DebitEnum value)
         {
             UserControls.Managers.CashDeskManager.CheckDebitByPartner(value);
-        }   
+        }
         #endregion View
 
         #region View report

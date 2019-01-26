@@ -421,10 +421,12 @@ namespace ES.Business.Managers
 
         #region Constructors
         private static ApplicationManager _insatance;
+        
         public static ApplicationManager Instance
         {
             get { return _insatance ?? (_insatance = new ApplicationManager()); }
         }
+
         public ApplicationManager()
         {
             _messageManager = MessageManager.Manager;
@@ -546,13 +548,6 @@ namespace ES.Business.Managers
         public static bool IsInRole(List<UserRoleEnum> types)
         {
             return types.Any(s => IsInRole(s));
-        }
-
-        public static EcrServerBase CreateEcrConnection()
-        {
-            var ecrServer = new EcrServer(Settings.SettingsContainer.MemberSettings.EcrConfig);
-            ecrServer.OnError += (ex => MessageManager.OnMessage(ex.ToString(), MessageTypeEnum.Warning));
-            return ecrServer;
         }
         #endregion
     }

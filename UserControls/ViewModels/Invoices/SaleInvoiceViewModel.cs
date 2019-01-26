@@ -206,8 +206,7 @@ namespace UserControls.ViewModels.Invoices
 
         private void OnPrintEcrTicket(object o)
         {
-            var ecrManager = new EcrServer(ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig);
-            ecrManager.OnError += delegate(Exception ex) { MessageManager.OnMessage(ex.ToString()); };
+            var ecrManager = EcrManager.EcrServer;
 
             var products = InvoiceItems.Select(ii => (IEcrProduct)new EcrProduct(ii.Code, ii.Description, ii.Mu)
             {
@@ -394,7 +393,7 @@ namespace UserControls.ViewModels.Invoices
                     //    s.Price * s.Qty * (1 - (s.Discount ?? 0)) / 100: 
                     //    s.Price * s.Qty - (s.Discount ?? 0))
                     //    - paid.PaidAmountCard - paid.PartialAmount - paid.PrePaymentAmount;
-                    var ecrManager = new EcrServer(ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig);
+                    var ecrManager = EcrManager.EcrServer;
                     responceReceiptModel = ecrManager.PrintReceipt(items, paid, Partner.TIN);
 
                     if (responceReceiptModel != null)
