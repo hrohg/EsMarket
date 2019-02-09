@@ -11,6 +11,7 @@ using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
+using Shared.Helpers;
 
 namespace UserControls.Views.Accountant
 {
@@ -183,14 +184,14 @@ namespace UserControls.Views.Accountant
 
         #region Commands
 
-        private ICommand _exportToExcelCommand;
+        private ICommand _exportCommand;
 
-        public ICommand ExportToExcelCommand
+        public ICommand ExportCommand
         {
-            get { return _exportToExcelCommand ?? (_exportToExcelCommand = new RelayCommand(OnExportToExcel)); }
+            get { return _exportCommand ?? (_exportCommand = new RelayCommand<ExportImportEnum>(OnExportToExcel)); }
         }
 
-        private void OnExportToExcel(object obj)
+        private void OnExportToExcel(ExportImportEnum obj)
         {
             ExcelExportManager.ExportList(AccountingRecords);
         }
