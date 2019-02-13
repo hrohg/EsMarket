@@ -42,7 +42,7 @@ namespace ES.Business.Helpers
         }
         public static List<PartnerType> SelectPartnersTypes(bool allowMultipleSelect = false, string title = "Ընտրել")
         {
-            var partnerTypes = PartnersManager.GetPartnersTypes();
+            var partnerTypes = CashManager.PartnersTypes;
             if (partnerTypes == null || partnerTypes.Count == 0) return new List<PartnerType>();
             if (partnerTypes.Count == 1) { return partnerTypes.Select(s => (PartnerType)s.Id).ToList(); }
             var selectItem = new SelectItems(partnerTypes.Select(s => new ItemsToSelect { DisplayName = s.Description, SelectedValue = s.Id }).ToList(), allowMultipleSelect, title);

@@ -18,7 +18,6 @@ namespace ES.DataAccess.Models
         {
             this.AccountingRecords = new HashSet<AccountingRecords>();
             this.AccountsReceivable = new HashSet<AccountsReceivable>();
-            this.EsStock = new HashSet<EsStock>();
             this.Invoices = new HashSet<Invoices>();
             this.Invoices1 = new HashSet<Invoices>();
             this.Invoices2 = new HashSet<Invoices>();
@@ -30,6 +29,7 @@ namespace ES.DataAccess.Models
             this.ProductOrderItems = new HashSet<ProductOrderItems>();
             this.Products = new HashSet<Products>();
             this.SaleInCash = new HashSet<SaleInCash>();
+            this.EsStock = new HashSet<EsStock>();
         }
     
         public long UserId { get; set; }
@@ -43,7 +43,6 @@ namespace ES.DataAccess.Models
     
         public virtual ICollection<AccountingRecords> AccountingRecords { get; set; }
         public virtual ICollection<AccountsReceivable> AccountsReceivable { get; set; }
-        public virtual ICollection<EsStock> EsStock { get; set; }
         public virtual ICollection<Invoices> Invoices { get; set; }
         public virtual ICollection<Invoices> Invoices1 { get; set; }
         public virtual ICollection<Invoices> Invoices2 { get; set; }
@@ -55,5 +54,6 @@ namespace ES.DataAccess.Models
         public virtual ICollection<ProductOrderItems> ProductOrderItems { get; set; }
         public virtual ICollection<Products> Products { get; set; }
         public virtual ICollection<SaleInCash> SaleInCash { get; set; }
+        public virtual ICollection<EsStock> EsStock { get; set; }
     }
 }

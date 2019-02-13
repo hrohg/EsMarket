@@ -34,11 +34,11 @@ namespace ES.DataAccess.Models
         public long MemberId { get; set; }
     
         public virtual EsMembers EsMembers { get; set; }
-        public virtual EsStock EsStock { get; set; }
         public virtual EsUsers EsUsers { get; set; }
         public virtual ICollection<InvoiceItems> InvoiceItems { get; set; }
         public virtual ProductItems ProductItems1 { get; set; }
         public virtual ProductItems ProductItems2 { get; set; }
         public virtual Products Products { get; set; }
+        public virtual EsStock EsStock { get; set; }
     }
 }

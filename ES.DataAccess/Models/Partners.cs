@@ -43,7 +43,7 @@ namespace ES.DataAccess.Models
     
         public virtual ICollection<AccountsReceivable> AccountsReceivable { get; set; }
         public virtual EsMembers EsMembers { get; set; }
-        public virtual EsPartnersTypes EsPartnersTypes { get; set; }
         public virtual EsUsers EsUsers { get; set; }
+        public virtual EsPartnersTypes EsPartnersTypes { get; set; }
     }
 }

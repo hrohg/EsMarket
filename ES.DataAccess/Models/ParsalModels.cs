@@ -4,6 +4,7 @@ namespace ES.DataAccess.Models
 {
     public partial class EsStockDBEntities : DbContext
     {
+        
         public EsStockDBEntities(string connectionString)
             : base(connectionString)
         {

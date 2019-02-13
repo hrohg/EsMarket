@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using ES.Business.Helpers;
 using ES.Common;
@@ -21,11 +20,8 @@ namespace ES.Business.Managers
 
             partner.Id = item.Id;
             partner.EsMemberId = item.EsMemberId;
-            //EsMember = MembersManager.ConvertMember(item.EsMembers);
             partner.PartnersTypeId = item.EsPartnersTypeId;
-            partner.PartnersType = Convert(item.EsPartnersTypes);
             partner.EsUserId = item.EsUserId;
-            //EsUser = UsersManager.ConvertEsUser(item.EsUsers);
             partner.ClubSixteenId = item.ClubSixteenId;
             partner.FullName = item.FullName;
             partner.FirstName = item.FirstName;
@@ -82,13 +78,12 @@ namespace ES.Business.Managers
                 Description = item.Description
             };
         }
-        public static PartnerTypeModel Convert(EsPartnersTypes item)
+        public static PartnerTypeModel Convert(long id)
         {
-            if (item == null) return null;
             return new PartnerTypeModel
             {
-                Id = item.Id,
-                Description = item.Description
+                Id = id,
+                Description = CashManager.PartnersTypes.Where(s => s.Id == id).Select(s => s.Description).FirstOrDefault()
             };
         }
         #endregion
@@ -217,9 +212,7 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    return db.Partners.Include(s => s.EsMembers)
-                                        .Include(s => s.EsPartnersTypes)
-                                        .SingleOrDefault(s => s.Id == id && s.EsMemberId == ApplicationManager.Member.Id);
+                    return db.Partners.SingleOrDefault(s => s.Id == id && s.EsMemberId == ApplicationManager.Member.Id);
                 }
                 catch (Exception)
                 {
@@ -235,8 +228,7 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    var partners = db.Partners.Where(s => s.EsMemberId == memberId)
-                                        .Include(s => s.EsPartnersTypes).ToList();
+                    var partners = db.Partners.Where(s => s.EsMemberId == memberId).ToList();
                     return partners;
                 }
                 catch (Exception)
@@ -268,10 +260,7 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    return db.Partners
-                                        .Include(s => s.EsMembers)
-                                        .Include(s => s.EsPartnersTypes)
-                                        .Where(s => s.EsMemberId == memberId && (partnerType == PartnerType.None || s.EsPartnersTypeId == (long)partnerType))
+                    return db.Partners.Where(s => s.EsMemberId == memberId && (partnerType == PartnerType.None || s.EsPartnersTypeId == (long)partnerType))
                                         .ToList();
                 }
                 catch (Exception)
@@ -288,9 +277,7 @@ namespace ES.Business.Managers
                 try
                 {
                     var partnerIds = db.InvoiceItems.Where(s => productIds.Contains(s.ProductId)).OrderByDescending(s => s.Invoices.CreateDate).Select(s => s.Invoices.PartnerId).Distinct();
-                    return db.Partners.Include(s => s.EsMembers)
-                                       .Include(s => s.EsPartnersTypes)
-                                       .Where(s => partnerIds.Contains(s.Id))
+                    return db.Partners.Where(s => partnerIds.Contains(s.Id))
                                        .ToList();
                 }
                 catch (Exception)
@@ -306,9 +293,7 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    return db.Partners.Include(s => s.EsMembers)
-                                        .Include(s => s.EsPartnersTypes)
-                                        .Where(s => ids.Contains(s.Id)).ToList();
+                    return db.Partners.Where(s => ids.Contains(s.Id)).ToList();
                 }
                 catch (Exception)
                 {

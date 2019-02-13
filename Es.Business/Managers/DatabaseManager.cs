@@ -442,7 +442,7 @@ namespace ES.Business.Managers
                     var invoiceTypes = dbServer.EsInvoiceTypes.ToList();
                     foreach (var item in invoiceTypes)
                     {
-                        var exItem = db.EsInvoiceTypes.SingleOrDefault(s => s.Id == item.Id);
+                        var exItem = db.EsInvoiceTypes.FirstOrDefault(s => s.Id == item.Id);
                         if (exItem == null)
                         {
                             exItem = new EsInvoiceTypes
@@ -451,8 +451,7 @@ namespace ES.Business.Managers
                                 Name = item.Name,
                                 Description = item.Description
                             };
-                            MessageManager.OnMessage(string.Format("{0} {1}", exItem.Id, item.Id));
-
+                            
                             db.EsInvoiceTypes.Add(exItem); 
                             db.SaveChanges();
                         }
@@ -472,7 +471,7 @@ namespace ES.Business.Managers
                         {
                             var partnerType = new EsPartnersTypes
                             {
-                                //Id = item.Id,
+                                Id = item.Id,
                                 Description = item.Description
                             };
                             db.EsPartnersTypes.Add(partnerType);

@@ -66,7 +66,7 @@ namespace UserControls.ViewModels.Partners
         private void Initialize()
         {
             Title = "Պատվիրատուների խմբագրում";
-            PartnersTypes = ApplicationManager.Instance.CashProvider.GetPartnersTypes;
+            PartnersTypes = CashManager.PartnersTypes;
             GetPartners();
             GetNewPartner();
 

@@ -695,9 +695,11 @@ namespace ES.Market.ViewModels
         private void OnSyncronizeServerData(object o)
         {
             var syncronizeMode = o as SyncronizeServersMode? ?? SyncronizeServersMode.None;
-            MessageManager.OnMessage(DatabaseManager.SyncronizeServers(syncronizeMode)
+            var isResult = DatabaseManager.SyncronizeServers(syncronizeMode);
+            MessageManager.OnMessage(isResult
                 ? new MessageModel("Տվյալների համաժամանակեցումն իրականացել է հաջողությամբ։", MessageTypeEnum.Success)
                 : new MessageModel("Տվյալների համաժամանակեցումը ձախողվել է։", MessageTypeEnum.Error));
+            if (isResult) MessageManager.ShowMessage("Փոփոխությունները թարմացնելու համար վերբեռնեք ծրագիրը:","Բազայի թարմացում", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
         private void OnSyncronizeProducts(object o)

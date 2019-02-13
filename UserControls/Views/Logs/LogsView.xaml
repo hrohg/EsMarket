@@ -12,8 +12,26 @@
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                         <Image Source="" Margin="5 0"/>
-                        <TextBlock Text="{Binding Path = Date}" Margin="5 0" Foreground="{Binding Path = MessageForeground}" />
-                        <TextBlock Text="{Binding Path = Message}" Margin="5 0" Foreground="{Binding Path = MessageForeground}" AllowDrop="True"/>
+                        <TextBox x:Name="TextBox"  IsReadOnly="True" Margin="5 0" Foreground="{Binding Path = MessageForeground}">
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected}" Value="True">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Resources>
+                            <TextBox.Text>
+                                <MultiBinding StringFormat="{}{0} {1}">
+                                    <Binding Path="Date"/>
+                                    <Binding Path="Message"/>
+                                </MultiBinding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <!--<TextBlock Text="{Binding Path = Message}" Margin="5 0" Foreground="{Binding Path = MessageForeground}" AllowDrop="True"/>-->
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>

@@ -26,7 +26,7 @@
                     <ColumnDefinition Width="2*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-               
+
                 <TextBlock  Grid.Row="0" Grid.Column="1" Text="Անվանում" HorizontalAlignment="Right"/>
                 <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding SelectedItem.Name}" VerticalContentAlignment="Center"/>
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="Հասցե" HorizontalAlignment="Right"/>
@@ -35,9 +35,21 @@
                 <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding SelectedItem.Description }" VerticalContentAlignment="Center"/>
                 <TextBlock Grid.Row="4" Grid.Column="1" Text="Պահեստապետ" HorizontalAlignment="Right"/>
                 <ComboBox Grid.Row="4" Grid.Column="2" Text="{Binding SelectedItem.Storekeeper}" VerticalContentAlignment="Center" IsEnabled="False"/>
-                <TextBlock Grid.Row="5" Grid.Column="1" Text="Կոդ" ToolTip="Հատուկ հատկացված կոդ" HorizontalAlignment="Right"/>
-                <TextBox Grid.Row="5" Grid.Column="2" Text="{Binding SelectedItem.SpecialCode}" VerticalContentAlignment="Center" />
-                <TextBlock Grid.Row="6" Grid.Column="1" Text="Ակտիվ" HorizontalAlignment="Right"/>
+                <Grid Grid.Row="5" Grid.Column="2" Margin="0 1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Ակտիվ" HorizontalAlignment="Right"/>
+                    <TextBlock Grid.Row="5" Grid.Column="1" Text="ID" ToolTip="" HorizontalAlignment="Right" MinWidth="50"/>
+                    <TextBox Grid.Row="5" Grid.Column="2" Text="{Binding SelectedItem.Id}" VerticalContentAlignment="Center" Margin="3 0"/>
+                    <TextBlock Grid.Row="5" Grid.Column="3" Text="Կոդ" ToolTip="Հատուկ հատկացված կոդ" HorizontalAlignment="Right"/>
+                    <TextBox Grid.Row="5" Grid.Column="4" Text="{Binding SelectedItem.SpecialCode}" MinWidth="100" VerticalContentAlignment="Center" Margin="3 0"/>
+                </Grid>
+
                 <CheckBox Grid.Row="6" Grid.Column="2" IsChecked="{Binding SelectedItem.IsEnable}" VerticalContentAlignment="Center"/>
             </Grid>
             <Grid Grid.Row="1" HorizontalAlignment="Right">
@@ -73,6 +85,7 @@
                         </Style>
                     </DataGrid.RowStyle>
                     <DataGrid.Columns>
+                        <DataGridTextColumn IsReadOnly="True" Header="ID" Binding="{Binding Id}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Name}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Հասցե" Binding="{Binding Path=Address}" CellStyle="{StaticResource CellRightAlign}" />
                     </DataGrid.Columns>

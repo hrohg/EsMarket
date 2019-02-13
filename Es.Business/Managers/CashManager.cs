@@ -46,9 +46,9 @@ namespace ES.Business.Managers
         #region Partners
         private List<EsPartnersTypes> _partnersTypes;
 
-        public List<EsPartnersTypes> GetPartnersTypes
+        public static List<EsPartnersTypes> PartnersTypes
         {
-            get { return _partnersTypes ?? (_partnersTypes = PartnersManager.GetPartnersTypes()); }
+            get { return Instance._partnersTypes ?? (Instance._partnersTypes = PartnersManager.GetPartnersTypes()); }
         }
         private List<PartnerModel> _partners;
 
@@ -194,12 +194,12 @@ namespace ES.Business.Managers
             if (updatedHandler != null) updatedHandler();
             OnUpdateCompleted();
         }
-        private void SetPartners()
+        private void UpdatePartners()
         {
             _isPartnersUpdating = true;
             lock (_syncPartners)
             {
-                _partners = PartnersManager.GetPartners();
+                                _partners = PartnersManager.GetPartners();
             }
             _isPartnersUpdating = false;
             OnUpdateCompleted();
@@ -216,7 +216,7 @@ namespace ES.Business.Managers
             OnUpdateCompleted();
         }
 
-        private void SetProductItems()
+        private void UpdateProductItems()
         {
             _isProductItemsUpdating = true;
             lock (_syncProductItems)
@@ -268,7 +268,7 @@ namespace ES.Business.Managers
             if (_isUpdateing) return;
             OnBeginCashUpdateing();
             UpdateProductsAsync();
-            UpdateProductItemsAsync();
+            //UpdateProductItemsAsync();
             UpdateStocksAsync();
             UpdatePartnersAsync();
             OnUpdateCompleted();
@@ -292,7 +292,7 @@ namespace ES.Business.Managers
         {
             lock (_syncProductItems)
             {
-                var thread = new Thread(SetProductItems);
+                var thread = new Thread(UpdateProductItems);
                 thread.Start();
             }
         }
@@ -300,7 +300,7 @@ namespace ES.Business.Managers
         {
             lock (_syncPartners)
             {
-                new Thread(SetPartners).Start();
+                new Thread(UpdatePartners).Start();
             }
 
         }
@@ -315,6 +315,7 @@ namespace ES.Business.Managers
         {
             _esDefaults = DefaultsManager.GetDefaults();
         }
+
         #endregion
 
         #region Events

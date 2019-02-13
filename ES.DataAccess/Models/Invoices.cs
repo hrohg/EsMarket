@@ -53,13 +53,13 @@ namespace ES.DataAccess.Models
         public decimal Summ { get; set; }
         public string Notes { get; set; }
     
-        public virtual EsInvoiceTypes EsInvoiceTypes { get; set; }
         public virtual EsMembers EsMembers { get; set; }
-        public virtual EsStock EsStock { get; set; }
-        public virtual EsStock EsStock1 { get; set; }
         public virtual EsUsers EsUsers { get; set; }
         public virtual EsUsers EsUsers1 { get; set; }
         public virtual EsUsers EsUsers2 { get; set; }
         public virtual ICollection<InvoiceItems> InvoiceItems { get; set; }
+        public virtual EsInvoiceTypes EsInvoiceTypes { get; set; }
+        public virtual EsStock EsStock { get; set; }
+        public virtual EsStock EsStock1 { get; set; }
     }
 }

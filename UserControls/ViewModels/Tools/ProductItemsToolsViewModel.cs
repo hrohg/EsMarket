@@ -85,7 +85,7 @@ namespace UserControls.ViewModels.Tools
         }
         #endregion Items
 
-        public CustomItem SelectedItem { get; set; }
+        public ProductNodes SelectedItem { get; set; }
         public List<ItemsToSelect> ProductsViewModes { get; set; }
 
         private ItemsToSelect _currentProductsViewMode;
@@ -211,13 +211,13 @@ namespace UserControls.ViewModels.Tools
 
         private bool CanManageProduct(object item)
         {
-            return SelectedItem != null && ApplicationManager.IsInRole(UserRoleEnum.Manager);
+            return SelectedItem != null && SelectedItem.Product != null && ApplicationManager.IsInRole(UserRoleEnum.Manager);
         }
 
         private void OnManagingProduct(object item)
         {
             if (!CanManageProduct(item)) return;
-            var product = _products.SingleOrDefault(s => s.Id == SelectedItem.Value);
+            var product = _products.SingleOrDefault(s => s.Id == SelectedItem.Product.Id);
             if (product == null) return;
             ManageProduct(product);
 

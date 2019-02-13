@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="46c8c9eb7e564ba383196a555c9ca030" Name="Diagram1" ZoomLevel="62">
+      <Diagram DiagramId="46c8c9eb7e564ba383196a555c9ca030" Name="Diagram1" ZoomLevel="81">
         <EntityTypeShape EntityType="EsStockDBModel.AccountingPlan" Width="1.5" PointX="5.75" PointY="5.75" />
         <EntityTypeShape EntityType="EsStockDBModel.AccountsReceivable" Width="1.5" PointX="8.25" PointY="23.625" />
         <EntityTypeShape EntityType="EsStockDBModel.Brands" Width="1.5" PointX="0.75" PointY="30.375" />
@@ -13,12 +13,9 @@
         <EntityTypeShape EntityType="EsStockDBModel.EsDefaults" Width="1.5" PointX="7.75" PointY="0.75" />
         <EntityTypeShape EntityType="EsStockDBModel.EsInvoiceItemsArchive" Width="1.5" PointX="7.75" PointY="3.75" />
         <EntityTypeShape EntityType="EsStockDBModel.ESInvoicesArchive" Width="1.5" PointX="0.75" PointY="8.75" />
-        <EntityTypeShape EntityType="EsStockDBModel.EsInvoiceTypes" Width="1.5" PointX="6" PointY="16.375" />
         <EntityTypeShape EntityType="EsStockDBModel.EsMembers" Width="1.5" PointX="0.75" PointY="17.625" />
         <EntityTypeShape EntityType="EsStockDBModel.EsMembersAccounts" Width="1.5" PointX="7.75" PointY="7.75" />
-        <EntityTypeShape EntityType="EsStockDBModel.EsPartnersTypes" Width="1.5" PointX="3.75" PointY="12.75" />
         <EntityTypeShape EntityType="EsStockDBModel.ESSharedProducts" Width="1.5" PointX="9.75" PointY="0.75" />
-        <EntityTypeShape EntityType="EsStockDBModel.EsStock" Width="1.5" PointX="3" PointY="18.5" />
         <EntityTypeShape EntityType="EsStockDBModel.ESUserRoles" Width="1.5" PointX="0.75" PointY="5.875" />
         <EntityTypeShape EntityType="EsStockDBModel.EsUsers" Width="1.5" PointX="0.75" PointY="22.875" />
         <EntityTypeShape EntityType="EsStockDBModel.EsUsersInRole" Width="1.5" PointX="3" PointY="5.875" />
@@ -47,8 +44,6 @@
         <AssociationConnector Association="EsStockDBModel.FK_CashDesk_CashDesk" />
         <AssociationConnector Association="EsStockDBModel.FK_SaleInCash_CashDesk" />
         <AssociationConnector Association="EsStockDBModel.FK_EsCategories_EsCategories" />
-        <AssociationConnector Association="EsStockDBModel.FK_ESInvoices_InvoiceTypes" />
-        <AssociationConnector Association="EsStockDBModel.FK_EsStock_EsMembers" />
         <AssociationConnector Association="EsStockDBModel.FK_Invoices_EsMembers" />
         <AssociationConnector Association="EsStockDBModel.FK_MembersBrands_EsMembers" />
         <AssociationConnector Association="EsStockDBModel.FK_MemberUsersRoles_EsMembers" />
@@ -56,12 +51,6 @@
         <AssociationConnector Association="EsStockDBModel.FK_ProductItems_EsMembers" />
         <AssociationConnector Association="EsStockDBModel.FK_ProductOrder_EsMembers" />
         <AssociationConnector Association="EsStockDBModel.FK_Products_EsMembers" />
-        <AssociationConnector Association="EsStockDBModel.FK_Partners_EsPartnersTypes" />
-        <AssociationConnector Association="EsStockDBModel.FK_EsStock_EsStock" />
-        <AssociationConnector Association="EsStockDBModel.FK_EsStock_EsUsers" />
-        <AssociationConnector Association="EsStockDBModel.FK_Invoices_EsStockFrom" />
-        <AssociationConnector Association="EsStockDBModel.FK_Invoices_EsStockTo" />
-        <AssociationConnector Association="EsStockDBModel.FK_ProductItems_EsStock" />
         <AssociationConnector Association="EsStockDBModel.FK_EsUsersInRole_ESUserRoles" />
         <AssociationConnector Association="EsStockDBModel.FK_Invoices_EsUsersAccepter" />
         <AssociationConnector Association="EsStockDBModel.FK_Invoices_EsUsersApprover" />
@@ -88,7 +77,18 @@
         <AssociationConnector Association="EsStockDBModel.FK_StockTakingItems_StockTaking" />
         <EntityTypeShape EntityType="EsStockDBModel.ProductsAdditionalData" Width="1.5" PointX="0.5" PointY="33.375" />
         <AssociationConnector Association="EsStockDBModel.FK_ProductsAdditionalData_Products" />
-      </Diagram>
+        <EntityTypeShape EntityType="EsStockDBModel.EsInvoiceTypes" Width="1.5" PointX="7.375" PointY="10.875" />
+        <EntityTypeShape EntityType="EsStockDBModel.EsPartnersTypes" Width="1.5" PointX="10.375" PointY="7.875" />
+        <AssociationConnector Association="EsStockDBModel.FK_ESInvoices_InvoiceTypes" />
+        <AssociationConnector Association="EsStockDBModel.FK_Partners_EsPartnersTypes" />
+        <EntityTypeShape EntityType="EsStockDBModel.EsStock" Width="1.5" PointX="6" PointY="13.875" />
+        <AssociationConnector Association="EsStockDBModel.FK_EsStock_EsMembers" />
+        <AssociationConnector Association="EsStockDBModel.FK_EsStock_EsStock" />
+        <AssociationConnector Association="EsStockDBModel.FK_EsStock_EsUsers" />
+        <AssociationConnector Association="EsStockDBModel.FK_Invoices_EsStockFrom" />
+        <AssociationConnector Association="EsStockDBModel.FK_Invoices_EsStockTo" />
+        <AssociationConnector Association="EsStockDBModel.FK_ProductItems_EsStock" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

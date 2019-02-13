@@ -31,12 +31,9 @@ namespace ES.DataAccess.Models
         public virtual DbSet<Brands> Brands { get; set; }
         public virtual DbSet<CashDesk> CashDesk { get; set; }
         public virtual DbSet<EsDefaults> EsDefaults { get; set; }
-        public virtual DbSet<EsInvoiceTypes> EsInvoiceTypes { get; set; }
         public virtual DbSet<EsMembers> EsMembers { get; set; }
         public virtual DbSet<EsMembersAccounts> EsMembersAccounts { get; set; }
-        public virtual DbSet<EsPartnersTypes> EsPartnersTypes { get; set; }
         public virtual DbSet<ESSharedProducts> ESSharedProducts { get; set; }
-        public virtual DbSet<EsStock> EsStock { get; set; }
         public virtual DbSet<ESUserRoles> ESUserRoles { get; set; }
         public virtual DbSet<EsUsers> EsUsers { get; set; }
         public virtual DbSet<EsUsersInRole> EsUsersInRole { get; set; }
@@ -58,5 +55,8 @@ namespace ES.DataAccess.Models
         public virtual DbSet<EsCategories> EsCategories { get; set; }
         public virtual DbSet<ProductCategories> ProductCategories { get; set; }
         public virtual DbSet<ProductsAdditionalData> ProductsAdditionalData { get; set; }
+        public virtual DbSet<EsInvoiceTypes> EsInvoiceTypes { get; set; }
+        public virtual DbSet<EsPartnersTypes> EsPartnersTypes { get; set; }
+        public virtual DbSet<EsStock> EsStock { get; set; }
     }
 }

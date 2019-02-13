@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using ES.Common.ViewModels.Base;
 using UserControls.Controls;
 using Timer = System.Threading.Timer;
@@ -10,7 +9,7 @@ namespace UserControls.ViewModels
     public class SelectItemsViewModelBase<T> : ViewModelBase
     {
         #region Internal properties
-        Timer _timer = null;
+        Timer _timer;
         private List<T> _items;
         #endregion Internal properties
 
@@ -65,7 +64,7 @@ namespace UserControls.ViewModels
         public SelectItemsViewModelBase(List<T> items, string title = "Ընտրել")
         {
             Initialize();
-            Items = items ?? new List<T>();
+            _items = items ?? new List<T>();
             Title = title;
         }
         #endregion Constructors
