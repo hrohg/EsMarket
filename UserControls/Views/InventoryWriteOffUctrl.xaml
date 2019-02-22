@@ -22,7 +22,7 @@
                 <KeyBinding Gesture="Ctrl+Shift+F" Command="{Binding GetProductCommand}" CommandParameter="{x:Static filter:FiltersUsage.WithoutFilters}"/>
                 <KeyBinding Gesture="Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
                 <KeyBinding Gesture="Ctrl+Shift+X" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
-           
+
             </Grid.InputBindings>
             <Grid.ContextMenu>
                 <ContextMenu>
@@ -69,7 +69,7 @@
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Enter" Command="{Binding SetInvoiceItemCommand}" CommandParameter="{Binding Path=Code}"/>
                             </TextBox.InputBindings>
-                             <i:Interaction.Behaviors>
+                            <i:Interaction.Behaviors>
                                 <behaviors:TextBoxBehavior IsFocusOnLoad="True" IsSelectTextOnFocus="True" IsFocusOnKeyboardFocused="True" IsFocusOnTextChanged="True" />
                             </i:Interaction.Behaviors>
                         </TextBox>
@@ -124,6 +124,7 @@
                     <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
                     <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Ինքնարժեք" Binding="{Binding Path=CostAmount, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}"/>
                     <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}"/>
                     <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
                 </DataGrid.Columns>

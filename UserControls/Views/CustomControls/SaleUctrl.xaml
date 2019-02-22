@@ -402,7 +402,6 @@
                         </DataGridTemplateColumn>
                         <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
                         <DataGridTextColumn IsReadOnly="True" Header="Զեղչ" Binding="{Binding Path=Discount, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
-                        <DataGridTextColumn Header="Նշումներ" Binding="{Binding Path=Note, UpdateSourceTrigger=PropertyChanged}" />
                         <DataGridTemplateColumn Header="Նշումներ">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">

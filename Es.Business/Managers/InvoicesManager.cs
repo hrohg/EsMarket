@@ -955,8 +955,7 @@ namespace ES.Business.Managers
 
                     #region Update purchase invoice
 
-                    var exInvoice =
-                        db.Invoices.SingleOrDefault(s => s.Id == invoice.Id && s.MemberId == invoice.MemberId);
+                    var exInvoice = db.Invoices.SingleOrDefault(s => s.Id == invoice.Id && s.MemberId == invoice.MemberId);
 
                     if (exInvoice == null)
                     {
@@ -971,7 +970,7 @@ namespace ES.Business.Managers
                         }
                         exInvoice.FromStockId = invoice.FromStockId;
                         exInvoice.ToStockId = invoice.ToStockId;
-                        exInvoice.ApproveDate = DateTime.Now;
+                        exInvoice.ApproveDate = invoice.ApproveDate = DateTime.Now;
                         exInvoice.ApproverId = invoice.ApproverId;
                         exInvoice.Approver = invoice.Approver;
                         exInvoice.AcceptDate = invoice.AcceptDate;
@@ -2684,14 +2683,36 @@ namespace ES.Business.Managers
                 return new List<InvoiceReport>();
             }
         }
-
+        private static List<InvoiceItems> TryGetPurchaseInvoiceItemsByProductId(Guid productId, Guid partnerId, decimal count)
+        {
+            try
+            {
+                using (var db = GetDataContext())
+                {
+                    var items = db.InvoiceItems.Where(s => s.ProductId == productId && s.Invoices.PartnerId == partnerId && s.Quantity > 0 && s.Invoices.InvoiceTypeId==(int)InvoiceType.PurchaseInvoice && s.Invoices.MemberId == ApplicationManager.Member.Id).OrderByDescending(s => s.Invoices.ApproveDate);
+                    var invoiceItems = new List<InvoiceItems>();
+                    decimal sum = 0;
+                    foreach (var item in items)
+                    {
+                        invoiceItems.Add(item);
+                        sum += item.Quantity ?? 0;
+                        if (sum > count) break;
+                    }
+                    return invoiceItems;
+                }
+            }
+            catch (Exception)
+            {
+                return new List<InvoiceItems>();
+            }
+        }
         private static List<InvoiceItems> TryGetSaleInvoiceItemsByProductId(Guid productId, Guid partnerId, decimal count)
         {
             try
             {
                 using (var db = GetDataContext())
                 {
-                    var items = db.InvoiceItems.Where(s => s.ProductId == productId && s.Invoices.PartnerId == partnerId && s.Quantity > 0 && s.Invoices.MemberId == ApplicationManager.Member.Id).OrderByDescending(s => s.Invoices.ApproveDate);
+                    var items = db.InvoiceItems.Where(s => s.ProductId == productId && s.Invoices.PartnerId == partnerId && s.Quantity > 0 && s.Invoices.InvoiceTypeId == (int)InvoiceType.SaleInvoice && s.Invoices.MemberId == ApplicationManager.Member.Id).OrderByDescending(s => s.Invoices.ApproveDate);
                     var invoiceItems = new List<InvoiceItems>();
                     decimal sum = 0;
                     foreach (var item in items)
@@ -3361,9 +3382,12 @@ namespace ES.Business.Managers
 
         public static List<InvoiceItemsModel> GetSaleInvoiceByProductId(Guid productId, Guid partnerId, decimal count)
         {
+            return TryGetPurchaseInvoiceItemsByProductId(productId, partnerId, count).Select(Convert).ToList();
+        }
+        public static List<InvoiceItemsModel> GetPurchaseInvoiceByProductId(Guid productId, Guid partnerId, decimal count)
+        {
             return TryGetSaleInvoiceItemsByProductId(productId, partnerId, count).Select(Convert).ToList();
         }
-
         public static bool RemoveAutoSaveInvoice(Guid id)
         {
             string filePath = PathHelper.GetMemberTempInvoiceFilePath(id, ApplicationManager.Member.Id);

@@ -206,7 +206,7 @@ namespace UserControls.ViewModels.Managers
         private void OnGetProduct(object o)
         {
             if (!CanGetProduct(o)) { return; }
-            var product = Products.Any(s=>s.Code==(string) o)? Products.FirstOrDefault(s=>s.Code==(string) o): new ProductsManager().GetProductsByCodeOrBarcode(o as string);
+            var product = Products.Any(s => s.Code == (string)o) ? Products.FirstOrDefault(s => s.Code == (string)o) : new ProductsManager().GetProductsByCodeOrBarcode(o as string);
             Product = product ?? new ProductModel(ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId, true) { Code = o as string };
         }
         private bool CanGenerateBarcode(object o)
@@ -633,23 +633,10 @@ namespace UserControls.ViewModels.Managers
             {
                 productModel.Id = Guid.Empty;
                 Product = productModel;
+                Product.LastModifiedDate = DateTime.Now;
                 OnEditProduct(null);
             }
-            //if (ProductsManager.EditProducts(products))
-            //{
-            //    ApplicationManager.Instance.CashProvider.UpdateCash();
-            //    if (Application.Current != null)
-            //    {
-            //        Application.Current.Dispatcher.BeginInvoke(new Action(() => { Products = ApplicationManager.Instance.CashProvider.Products; }));
-
-            //    }
-            //    MessageManager.OnMessage("Ապրանքների բեռնումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
-            //    //NotifyEditedProducts();
-            //}
-            //else
-            //{
-            //    MessageManager.OnMessage("Ապրանքների խմբագրումն ընդհատվել է:", MessageTypeEnum.Warning);
-            //}
+            
             IsLoading = false;
         }
         #endregion

@@ -417,7 +417,10 @@ namespace ES.Market.ViewModels
                 ((DocumentViewModel)vm).ActiveTabChangedEvent -= OnActiveTabChanged;
             }
 
-            Documents.Remove((DocumentViewModel)vm);
+            lock (_sync)
+            {
+                Documents.Remove((DocumentViewModel)vm);
+            }
             if (vm is ProductManagerViewModel)
             {
                 ((ProductManagerViewModel)vm).OnProductEdited -= ProductItemsToolsViewModel.UpdateProducts;
@@ -434,9 +437,7 @@ namespace ES.Market.ViewModels
             if (vm is StockTakeManagerViewModel)
             {
                 ProductItemsToolsViewModel.OnProductItemSelected -= ((StockTakeManagerViewModel)vm).OnSetProductItem;
-                return;
             }
-
         }
 
         private void AddTools(ToolsViewModel vm)
@@ -699,7 +700,7 @@ namespace ES.Market.ViewModels
             MessageManager.OnMessage(isResult
                 ? new MessageModel("Տվյալների համաժամանակեցումն իրականացել է հաջողությամբ։", MessageTypeEnum.Success)
                 : new MessageModel("Տվյալների համաժամանակեցումը ձախողվել է։", MessageTypeEnum.Error));
-            if (isResult) MessageManager.ShowMessage("Փոփոխությունները թարմացնելու համար վերբեռնեք ծրագիրը:","Բազայի թարմացում", MessageBoxButton.OK, MessageBoxImage.Warning);
+            if (isResult) MessageManager.ShowMessage("Փոփոխությունները թարմացնելու համար վերբեռնեք ծրագիրը:", "Բազայի թարմացում", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
         private void OnSyncronizeProducts(object o)

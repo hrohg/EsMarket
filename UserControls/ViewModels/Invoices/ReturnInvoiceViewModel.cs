@@ -9,7 +9,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using CashReg;
 using CashReg.Helper;
 using CashReg.Interfaces;
 using CashReg.Models;
@@ -239,8 +238,8 @@ namespace UserControls.ViewModels.Invoices
                     Gc = s.Code,
                     Gn = s.Description,
                     Mu = s.Mu,
-                    Qty =  (s.Quantity!=null ? s.Quantity.ToString(): "0"),
-                    P = s.Product != null && s.Product.Price!=null ? s.Product.Price.ToString() : "0",
+                    Qty = (s.Quantity != null ? s.Quantity.ToString() : "0"),
+                    P = s.Product != null && s.Product.Price != null ? s.Product.Price.ToString() : "0",
                     Tt = ((s.Quantity ?? 0) * (s.Price ?? 0)).ToString(CultureInfo.InvariantCulture),
 
                     Dsc = s.Discount.ToString(),
@@ -249,12 +248,12 @@ namespace UserControls.ViewModels.Invoices
                 }).ToList();
 
 
-                responceReceiptViewModel = ecrManager.PrintReceiptReturnTicket(products, invoicePaid);
+                responceReceiptViewModel = ecrManager.PrintReceiptReturnTicket(products, null);
             }
             else
             {
                 var returnItems = InvoiceItems.Where(s => s.Quantity > 0).Select(s => (IEcrReturnItem)(new ReturnItem(InvoiceItems.IndexOf(s), (double)(s.Quantity ?? 0)))).ToArray();
-                ecrManager.PrintReceiptReturnTicket(returnItems, invoicePaid);
+                ecrManager.PrintReceiptReturnTicket(returnItems, null);
             }
             var message = responceReceiptViewModel != null ?
                 new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:" + responceReceiptViewModel.Fiscal, MessageTypeEnum.Success)
@@ -337,11 +336,12 @@ namespace UserControls.ViewModels.Invoices
             }
             //var exCount = ProductsManager.GetProductItemQuantity(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList());
             if (!Invoice.PartnerId.HasValue) return;
-            if (InvoiceItem.Quantity == null || InvoiceItem.Quantity == 0)
+            if (InvoiceItem.Quantity != null && InvoiceItem.Quantity != 0)
             {
-
+                base.PreviewAddInvoiceItem(o);
+                return;
                 var quantity = InvoiceItem.Quantity ?? 0;
-                var saleInvoiceItems = InvoicesManager.GetSaleInvoiceByProductId(InvoiceItem.ProductId, (Guid)Invoice.PartnerId, quantity);
+                var saleInvoiceItems = InvoicesManager.GetPurchaseInvoiceByProductId(InvoiceItem.ProductId, (Guid)Invoice.PartnerId, quantity);
                 foreach (var invoiceItem in saleInvoiceItems)
                 {
                     InvoiceItem.Quantity = Math.Min(invoiceItem.Quantity ?? 0, quantity);

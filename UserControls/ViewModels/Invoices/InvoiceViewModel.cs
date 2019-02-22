@@ -734,7 +734,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected void OnClose()
         {
-            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () => { base.OnClose(null); });
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { Close(); });
         }
         #endregion Internal methods
 

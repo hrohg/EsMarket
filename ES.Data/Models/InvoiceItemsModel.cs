@@ -128,7 +128,7 @@ namespace ES.Data.Models
             set
             {
                 _productItem = value;
-                if(value==null) return;
+                if (value == null) return;
                 _productItemId = _productItem.Product != null ? _productItem.Id : (Guid?)null;
                 _productId = _productItem != null ? _productItem.ProductId : Guid.Empty;
                 _code = _productItem.Product != null ? _productItem.Product.Code : null;
@@ -142,9 +142,17 @@ namespace ES.Data.Models
         public string Code { get { return _code; } set { _code = value; OnPropertyChanged(CodeProperties); } }
         public string Description { get { return _description; } set { _description = value; OnPropertyChanged(DescriptionProperties); } }
         public string Mu { get { return _mu; } set { _mu = value; OnPropertyChanged(MuProperties); } }
-        public decimal? Quantity { get { return _quantity; } set { _quantity = value; OnPropertyChanged(QuantityProperties); OnPropertyChanged(AmountProperty); } }
+        public decimal? Quantity { get { return _quantity; } set { _quantity = value; 
+            OnPropertyChanged(QuantityProperties); 
+            OnPropertyChanged(AmountProperty);
+            OnPropertyChanged("CostAmount");
+        } }
         public decimal? Price { get { return _price; } set { _price = value; OnPropertyChanged(PriceProerties); OnPropertyChanged(AmountProperty); OnPropertyChanged(PercentageProperty); } }
-        public decimal? CostPrice { get { return _costPrice; } set { _costPrice = value; OnPropertyChanged(CostPriceProperty); OnPropertyChanged(PercentageProperty); } }
+        public decimal? CostPrice { get { return _costPrice; } set { _costPrice = value; 
+            OnPropertyChanged(CostPriceProperty); 
+            OnPropertyChanged(PercentageProperty);
+            OnPropertyChanged("CostAmount");
+        } }
         public DateTime? ExpiryDate
         {
             get { return _expiryDate; }
@@ -156,6 +164,7 @@ namespace ES.Data.Models
         }
         public decimal Percentage { get { return Price.HasValue && Price != 0 ? Product != null ? ((Product.Price ?? 0) - (Price ?? 0)) * 100 / Price.Value : 0 : 100; } }
         public decimal Amount { get { return (Quantity != null && Price != null) ? (decimal)Price * (decimal)Quantity : 0; } }
+        public decimal CostAmount { get { return (CostPrice ?? 0) * (Quantity ?? 0); } }
         public decimal? Discount { get { return _discount; } set { _discount = value; OnPropertyChanged(DiscountProperties); OnPropertyChanged(AmountProperty); } }
         public string Note { get { return _note; } set { _note = value; OnPropertyChanged(NoteProperties); } }
 
