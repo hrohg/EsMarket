@@ -671,7 +671,7 @@ namespace ES.Business.Managers
                     catch (Exception ex)
                     {
                         invoice.ApproveDate = null;
-                        MessageManager.ShowMessage(ex.Message, "Գրանցման սխալ");
+                        MessageManager.OnMessage(ex.ToString());
                         return false;
                     }
                 }
@@ -1551,7 +1551,7 @@ namespace ES.Business.Managers
         private static Invoices TryApproveSaleInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, List<long> fromStockIds, InvoicePaid invoicePaid)
         {
             if (!invoiceItems.Any() || !fromStockIds.Any() || invoicePaid == null) return null;
-            using (var transaction = new TransactionScope())
+            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 5, 0)))
             {
                 using (var db = GetDataContext())
                 {
@@ -1945,7 +1945,7 @@ namespace ES.Business.Managers
                     }
                     catch (Exception ex)
                     {
-                        MessageManager.OnMessage(string.Format("Exception on approving sale invoice: {0}", ex.Message));
+                        MessageManager.OnMessage(string.Format("Exception on approving sale invoice: {0}", ex));
                         invoice.ApproveDate = null;
                         return null;
                     }

@@ -262,7 +262,7 @@ namespace ES.Market
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             if (Application.Current != null)
-                Application.Current.Dispatcher.Invoke(new Action(() =>
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             new EsExceptionBox { DataContext = new ReportExceptionViewModel(e.Exception) }.ShowDialog()));
             e.Handled = true;
         }

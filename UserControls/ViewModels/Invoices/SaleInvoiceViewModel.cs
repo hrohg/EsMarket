@@ -410,8 +410,7 @@ namespace UserControls.ViewModels.Invoices
             }
             catch (Exception ex)
             {
-                if (Application.Current != null)
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => MessageManager.OnMessage(ex.Message, MessageTypeEnum.Error)));
+                DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Normal, new Action(() => MessageManager.OnMessage(ex.Message, MessageTypeEnum.Error)));
                 // aborting
                 return null;
             }

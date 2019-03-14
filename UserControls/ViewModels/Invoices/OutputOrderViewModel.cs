@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Data.Models;
+using ES.DataAccess.Models;
 using Shared.Helpers;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
@@ -114,10 +117,19 @@ namespace UserControls.ViewModels.Invoices
             Invoice.RecipientName = Partner.FullName;
 
             //Paid
-            var cashDesk = InvoicePaid.Paid > 0 ? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleCashDesks).SingleOrDefault() : null;
+            CashDesk cashDesk = null;
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, new Action(() =>
+            {
+                cashDesk = InvoicePaid.Paid > 0 ? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleCashDesks).SingleOrDefault() : null;
+            }));
             InvoicePaid.CashDeskId = cashDesk != null ? cashDesk.Id : (Guid?)null;
 
-            var bankAccount = InvoicePaid.ByCheck > 0 ? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBankAccounts).SingleOrDefault() : null;
+            CashDesk bankAccount = null;
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, new Action(() =>
+            {
+                bankAccount = InvoicePaid.ByCheck > 0 ? SelectItemsManager.SelectCashDesksByIds(ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBankAccounts).SingleOrDefault() : null;
+            }));
+
             InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
         }
         protected override void PreviewAddInvoiceItem(object o)
@@ -194,10 +206,22 @@ namespace UserControls.ViewModels.Invoices
                     throw new ArgumentOutOfRangeException("printSize", printSize, null);
             }
         }
+
+        private bool CheckBeforeApprove()   
+        {
+            if (InvoiceItems.Any(s => s.Quantity == 0))
+            {
+                MessageBox.Show("0-յական քանակով ելքագրում արտոնված չէ։ Ստուգեք ելքագրվող ապրանքների քանակը։",
+                    "Չարտոնված գործողություն", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            return true;
+        }
         protected override void OnApprove(object o)
         {
             //Approve Invoice
-            new Thread(() => OnApproveAsync(false)).Start();
+            if (CheckBeforeApprove()) new Thread(() => OnApproveAsync(false)).Start();
         }
 
         #endregion Internal methods
@@ -206,7 +230,7 @@ namespace UserControls.ViewModels.Invoices
         public override void OnApproveAndClose(object o)
         {
             //Approve Invoice
-            new Thread(() => OnApproveAsync(true)).Start();
+            if (CheckBeforeApprove()) new Thread(() => OnApproveAsync(true)).Start();
         }
         #endregion External methods
 

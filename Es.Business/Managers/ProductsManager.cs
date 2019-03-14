@@ -23,7 +23,7 @@ namespace ES.Business.Managers
     {
 
         private static long MemberId { get { return ApplicationManager.Member.Id; } }
-        
+
 
         #region Categories public methods
         public static List<EsCategories> GetCategories()
@@ -42,7 +42,7 @@ namespace ES.Business.Managers
             }
         }
         #endregion
-        
+
 
         #region Brand public methods
         public static List<Brands> GetServerBrands()
@@ -115,7 +115,7 @@ namespace ES.Business.Managers
         }
         #endregion
 
-        
+
 
         #region Products
 
@@ -526,15 +526,15 @@ namespace ES.Business.Managers
                         .Sum(t => t.Quantity)).OrderByDescending(s => s.InvoiceItems.First().Invoices.CreateDate).ToList();
                     var productOrderItems =
                         products.Select(s => new ProductOrderModel
-                    {
-                        Code = s.Code,
-                        Description = s.Description,
-                        Price = s.Price,
-                        MinQuantity = s.MinQuantity,
-                        ExistingQuantity = productItems.Where(t => t.ProductId == s.Id).Sum(t => t.Quantity),
-                        Provider = s.InvoiceItems.First().Invoices.ProviderName
+                        {
+                            Code = s.Code,
+                            Description = s.Description,
+                            Price = s.Price,
+                            MinQuantity = s.MinQuantity,
+                            ExistingQuantity = productItems.Where(t => t.ProductId == s.Id).Sum(t => t.Quantity),
+                            Provider = s.InvoiceItems.First().Invoices.ProviderName
 
-                    }).ToList();
+                        }).ToList();
                     return productOrderItems;
 
 
@@ -587,19 +587,19 @@ namespace ES.Business.Managers
                                 .OrderByDescending(ii => ii.Invoices.CreateDate).FirstOrDefault()
                         }).ToList();
                     return productOrderItems.Select(s => new ProductOrderModel
-                     {
-                         Index = 0,
-                         ProductId = s.p.Id,
-                         Code = s.p.Code,
-                         Description = s.p.Description,
-                         Mu = s.p.Mu,
-                         CostPrice = s.p.CostPrice,
-                         Price = s.p.Price,
-                         MinQuantity = s.p.MinQuantity,
-                         ExistingQuantity = productItems.Where(t => t.ProductId == s.p.Id).Sum(t => t.Quantity),
-                         Provider = s.ii != null ? s.ii.Invoices.ProviderName : string.Empty
-                         //Notes = s.Note
-                     }).ToList();
+                    {
+                        Index = 0,
+                        ProductId = s.p.Id,
+                        Code = s.p.Code,
+                        Description = s.p.Description,
+                        Mu = s.p.Mu,
+                        CostPrice = s.p.CostPrice,
+                        Price = s.p.Price,
+                        MinQuantity = s.p.MinQuantity,
+                        ExistingQuantity = productItems.Where(t => t.ProductId == s.p.Id).Sum(t => t.Quantity),
+                        Provider = s.ii != null ? s.ii.Invoices.ProviderName : string.Empty
+                        //Notes = s.Note
+                    }).ToList();
                     //return productOrderItems;
 
 
@@ -769,9 +769,7 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    var items = db.ProductItems.Where(s =>
-                            s.MemberId == memberId && s.ProductId == productId.Value && s.StockId != null && fromStocks.Contains(s.StockId.Value)).Select(s=>s.Quantity).ToList();
-                    return items.Sum(s => s);
+                    return db.ProductItems.Where(s => s.MemberId == memberId && s.Quantity > 0 && s.StockId != null && fromStocks.Contains(s.StockId.Value) && s.ProductId == productId.Value).Sum(s => s.Quantity);
                 }
                 catch (Exception)
                 {
@@ -912,15 +910,15 @@ namespace ES.Business.Managers
                 try
                 {
                     return db.Products.Where(s => s.EsMemberId == memberId && s.IsEnable).Select(p => new ProductModel()
-                            {
-                                Id = p.Id,
-                                Description = p.Description,
-                                Code = p.Code,
-                                Barcode = p.Barcode,
-                                Price = p.Price,
-                                EsMemberId = p.EsMemberId,
-                                IsEnabled = p.IsEnable
-                            }).ToList();
+                    {
+                        Id = p.Id,
+                        Description = p.Description,
+                        Code = p.Code,
+                        Barcode = p.Barcode,
+                        Price = p.Price,
+                        EsMemberId = p.EsMemberId,
+                        IsEnabled = p.IsEnable
+                    }).ToList();
 
                 }
                 catch (Exception)
@@ -1398,14 +1396,14 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    var partnerId  = db.InvoiceItems
-                        .Where(s => s.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice && s.ProductId==productId && s.Invoices.PartnerId != null && s.Invoices.MemberId==ApplicationManager.Member.Id)
-                        .OrderByDescending(s => s.Invoices.CreateDate).Select(s=>s.Invoices.PartnerId).FirstOrDefault();
+                    var partnerId = db.InvoiceItems
+                        .Where(s => s.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice && s.ProductId == productId && s.Invoices.PartnerId != null && s.Invoices.MemberId == ApplicationManager.Member.Id)
+                        .OrderByDescending(s => s.Invoices.CreateDate).Select(s => s.Invoices.PartnerId).FirstOrDefault();
 
-                   
-                        if (partnerId==null) { return null; }
 
-                    return db.Partners.Include(s=>s.EsPartnersTypes).FirstOrDefault(s =>s.EsMemberId == ApplicationManager.Member.Id && s.Id == partnerId);
+                    if (partnerId == null) { return null; }
+
+                    return db.Partners.Include(s => s.EsPartnersTypes).FirstOrDefault(s => s.EsMemberId == ApplicationManager.Member.Id && s.Id == partnerId);
                 }
                 catch (Exception)
                 {
@@ -1429,10 +1427,10 @@ namespace ES.Business.Managers
                         if (!invoceItem.Any()) { continue; }
                         var invoice = invoceItem.First();
                         items.Add(new ProductProvider
-                                        {
-                                            ProductId = invoice.ProductId,
-                                            ProviderId = invoice.Invoices != null && invoice.Invoices.PartnerId != null ? ((Guid)invoice.Invoices.PartnerId) : Guid.Empty
-                                        });
+                        {
+                            ProductId = invoice.ProductId,
+                            ProviderId = invoice.Invoices != null && invoice.Invoices.PartnerId != null ? ((Guid)invoice.Invoices.PartnerId) : Guid.Empty
+                        });
                     }
                     return items;
                 }
@@ -1751,16 +1749,16 @@ namespace ES.Business.Managers
                     {
                         var invoiceItemsCur = invoiceItems.Where(ii => productItem.Select(t => t.i.Id).Contains(ii.InvoiceId)).ToList();
                         result.Add(new InvoiceReport
-                    {
-                        Code = productItem.First().pi.Products.Code,
-                        Description = productItem.First().pi.Products.Description,
-                        Count = productItem.Count(),
-                        Quantity = productItem.Sum(t => t.pi.Quantity) +
+                        {
+                            Code = productItem.First().pi.Products.Code,
+                            Description = productItem.First().pi.Products.Description,
+                            Count = productItem.Count(),
+                            Quantity = productItem.Sum(t => t.pi.Quantity) +
                         invoiceItemsCur.Where(t => t.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice).Sum(t => t.Quantity ?? 0),
-                        //Cost = pI.Sum(t => t.pi.Quantity*t.pi.CostPrice),
-                        Price = productItem.Sum(t => t.pi.Quantity * (t.pi.Products.Price ?? 0)),
-                        Sale = productItem.Sum(t => t.pi.Quantity * ((t.pi.Products.Price ?? 0) - t.pi.CostPrice)),
-                    });
+                            //Cost = pI.Sum(t => t.pi.Quantity*t.pi.CostPrice),
+                            Price = productItem.Sum(t => t.pi.Quantity * (t.pi.Products.Price ?? 0)),
+                            Sale = productItem.Sum(t => t.pi.Quantity * ((t.pi.Products.Price ?? 0) - t.pi.CostPrice)),
+                        });
                     }
 
                 }

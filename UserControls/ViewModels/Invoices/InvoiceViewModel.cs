@@ -678,7 +678,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected bool Save()
         {
-            if (Invoice.ApproveDate != null || InvoiceItems.Count == 0)
+            if (Invoice.ApproveDate != null || InvoiceItems.Any())
             {
                 MessageManager.OnMessage("Գրանցումը հնարավոր չէ իրականացնել:Գործողության ընդհատում:", MessageTypeEnum.Warning);
                 return false;
@@ -734,7 +734,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected void OnClose()
         {
-            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { Close(); });
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () => { Close(); });
         }
         #endregion Internal methods
 
@@ -982,6 +982,7 @@ namespace UserControls.ViewModels.Invoices
 
         public override bool Close()
         {
+            IsActive = true;
             if (IsModified)
             {
                 var result = MessageManager.ShowMessage("Ապրանքագիրը փոփոխված է։ Դուք ցանկանու՞մ եք պահպանել փոփոխությունները։", "Պահպանել", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
