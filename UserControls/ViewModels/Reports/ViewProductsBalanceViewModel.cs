@@ -11,6 +11,7 @@ using ES.Common.Helpers;
 using ES.Data.Models;
 using ES.Data.Models.Reports;
 using Shared.Helpers;
+using UIHelper.Managers;
 using UserControls.Enumerations;
  
 namespace UserControls.ViewModels.Reports
@@ -18,8 +19,8 @@ namespace UserControls.ViewModels.Reports
     public class ViewProductsViewModel : ItemsDataViewModelBase<ProductModel>
     {
         private readonly bool _changedOnly;
-        private int _days;
         private DateTime? _date;
+        private Tuple<DateTime, DateTime> _dateIntermediate;
         public ViewProductsViewModel(bool changedOnly = false)
         {
             _changedOnly = changedOnly;
@@ -36,20 +37,24 @@ namespace UserControls.ViewModels.Reports
 
             DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
             {
-                if (_changedOnly)
-                {
-                    var win = new SelectCount(new SelectCountModel(_days, "Մուտքագրել օրերի քանակը"), Visibility.Collapsed);
-                    win.ShowDialog();
-                    if (!win.DialogResult.HasValue || !win.DialogResult.Value) { UpdateCompleted(false); return; }
-                    _days = (int)win.SelectedCount;
-                    _date = DateTime.Now;
-                }
-                else
-                {
-                    _date = UIHelper.Managers.SelectManager.GetDate(_date);
-                }
+                _date = _changedOnly ? DateTime.Now : SelectManager.GetDate(_date);
+                _dateIntermediate = SelectManager.GetDateIntermediate();
+            //    if (_changedOnly)
+            //  {
+            //        var win = new SelectCount(new SelectCountModel(_days, "Մուտքագրել օրերի քանակը"), Visibility.Collapsed);
+            //        win.ShowDialog();
+            //        if (!win.DialogResult.HasValue || !win.DialogResult.Value) { UpdateCompleted(false); return; }
+            //        _days = (int)win.SelectedCount;
+            //        _date = DateTime.Now;
+            //    }
+            //    else
+            //    {
+            //        _date = UIHelper.Managers.SelectManager.GetDate(_date);
+            //    }
             });
-            var items = _changedOnly ? ProductsManager.GetChangedProducts(_days) : ProductsManager.GetProductsForView();
+            
+            
+            var items = _changedOnly ? ProductsManager.GetChangedProducts(_dateIntermediate) : ProductsManager.GetProductsForView();
             if (items != null && _date != null)
             {
                 foreach (var item in items)

@@ -584,7 +584,7 @@ namespace ES.Business.Managers
         /// <returns></returns>
         private static bool TrySaveInvoice(Invoices invoice, List<InvoiceItems> invoiceItems)
         {
-            using (var transaction = new TransactionScope())
+            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 5, 0)))
             {
                 using (var db = GetDataContext())
                 {

@@ -411,9 +411,9 @@ namespace ES.Business.Managers
                 CostPrice = s.CostPrice
             }).OrderBy(s => s.Description).ToList();
         }
-        public static List<ProductModel> GetChangedProducts(int days)
+        public static List<ProductModel> GetChangedProducts(Tuple<DateTime, DateTime> dateIntermediate)
         {
-            return TryGetChangedProducts(days).Select(ConvertLight).ToList();
+            return TryGetChangedProducts(dateIntermediate).Select(ConvertLight).ToList();
         }
         public List<ProductModel> GetProductsShortData(long memberId)
         {
@@ -882,10 +882,10 @@ namespace ES.Business.Managers
 
             }
         }
-        private static List<Products> TryGetChangedProducts(int days)
+        private static List<Products> TryGetChangedProducts(Tuple<DateTime, DateTime> dateIntermediate)
         {
+            if (dateIntermediate == null) return null;
             var memberId = ApplicationManager.Member.Id;
-            var date = DateTime.Today.AddDays(-days);
             using (var db = GetDataContext())
             {
                 try
@@ -894,7 +894,7 @@ namespace ES.Business.Managers
                         .Include(s => s.ProductCategories)
                         .Include(s => s.ProductGroup)
                         .Include(s => s.ProductsAdditionalData)
-                        .Where(s => s.EsMemberId == memberId && s.IsEnable && s.LastModifiedDate >= date).ToList();
+                        .Where(s => s.EsMemberId == memberId && s.IsEnable && s.LastModifiedDate >= dateIntermediate.Item1 && s.LastModifiedDate<=dateIntermediate.Item2).ToList();
                 }
                 catch (Exception)
                 {

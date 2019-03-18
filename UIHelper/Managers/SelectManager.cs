@@ -19,11 +19,14 @@ namespace UIHelper.Managers
             return new Tuple<DateTime, DateTime>(vm.StartDate, vm.EndDate);
         }
 
-        public static DateTime? GetDate(DateTime? date=null)
+        public static DateTime? GetDate(DateTime? date = null)
         {
             var vm = new SelectDataIntermediateViewModel(date);
             var window = new SelectWindow(vm);
-            window.ShowDialog();
+            //DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+            //{
+                window.ShowDialog();
+            //});
             if (window.DialogResult == null || !(bool)window.DialogResult)
             {
                 return null;

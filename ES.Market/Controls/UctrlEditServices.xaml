@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls;assembly=UserControls"
+             xmlns:controls="clr-namespace:UIHelper.Controls;assembly=UIHelper"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="800">
     <Grid Margin="10">
@@ -63,7 +63,7 @@
             </DockPanel>
             <Separator/>
         </StackPanel>
-        <extendedControls:ExtendedDataGrid Grid.Row="1" ItemsSource="{Binding Services}" SelectedItem="{Binding SelectedService}" VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="14" >
+        <controls:ExtendedDataGrid Grid.Row="1" ItemsSource="{Binding Services}" SelectedItem="{Binding SelectedService}" VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="14" >
             <DataGrid.Resources>
                 <Style x:Key="CellRightAlign">
                     <Setter Property="Control.HorizontalAlignment" Value="Right" />
@@ -86,7 +86,7 @@
                 <DataGridTextColumn IsReadOnly="True" Header="Զեղչ" Binding="{Binding Path=Discount}" CellStyle="{StaticResource CellRightAlign}"/>
                 <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
             </DataGrid.Columns>
-        </extendedControls:ExtendedDataGrid>
+        </controls:ExtendedDataGrid>
 
     </Grid>
 </UserControl>
