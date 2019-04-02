@@ -678,7 +678,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected bool Save()
         {
-            if (Invoice.ApproveDate != null || InvoiceItems.Any())
+            if (Invoice.ApproveDate != null || !InvoiceItems.Any())
             {
                 MessageManager.OnMessage("Գրանցումը հնարավոր չէ իրականացնել:Գործողության ընդհատում:", MessageTypeEnum.Warning);
                 return false;

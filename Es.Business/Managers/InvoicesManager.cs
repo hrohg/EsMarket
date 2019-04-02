@@ -645,7 +645,7 @@ namespace ES.Business.Managers
                         if (exItem != null)
                         {
                             exItem.InvoiceId = invoice.Id;
-                            CopyInvoiceItem(exItem, exInvoiceItem);
+                            //CopyInvoiceItem(exItem, exInvoiceItem);
                             invoiceItems.RemoveAt(invoiceItems.IndexOf(exItem));
                         }
                         else
@@ -670,7 +670,6 @@ namespace ES.Business.Managers
                     }
                     catch (Exception ex)
                     {
-                        invoice.ApproveDate = null;
                         MessageManager.OnMessage(ex.ToString());
                         return false;
                     }
@@ -2395,7 +2394,9 @@ namespace ES.Business.Managers
                 using (var db = GetDataContext())
                 {
                     var invoiceIds = db.Invoices.Where(s => s.MemberId == memberId && s.CreateDate >= fromDate && s.CreateDate < toDate && s.ApproveDate != null).Select(s => s.Id);
-                    return db.InvoiceItems.Include(s => s.Invoices).Include(s => s.Products).Include(s => s.Products.ProductCategories).Include(s => s.Products.ProductGroup).Include(s => s.ProductItems).Include(s => s.Products.ProductsAdditionalData).Where(s => invoiceIds.Contains(s.InvoiceId) && productIds.Contains(s.ProductId)).OrderBy(s => s.Invoices.ApproveDate).ThenBy(s => s.Code).ToList();
+                    return db.InvoiceItems.Include(s => s.Invoices).Include(s => s.Products).Include(s => s.Products.ProductCategories).Include(s => s.Products.ProductGroup)
+                        .Include(s => s.ProductItems).Include(s => s.Products.ProductsAdditionalData)
+                        .Where(s => invoiceIds.Contains(s.InvoiceId) && productIds.Contains(s.ProductId)).OrderBy(s => s.Invoices.ApproveDate).ThenBy(s => s.Code).ToList();
                 }
             }
             catch (Exception)

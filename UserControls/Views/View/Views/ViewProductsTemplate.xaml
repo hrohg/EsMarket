@@ -21,7 +21,10 @@
                     <ContentControl.Resources>
                         <DataTemplate DataType="{x:Type view:ProductItemsViewModel}">
 
-                            <controls:ProductItemDataGrid ColumnHeaders="{Binding Stocks}" ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                            <controls:ProductItemDataGrid ColumnHeaders="{Binding Stocks}" ItemsSource="{Binding Items}" 
+                                                          AutoGenerateColumns="False" CanUserAddRows="False" 
+                                                          CanUserSortColumns="True"
+                                                          CanUserDeleteRows="False">
                                 <!--<DataGrid.Columns>
                                     <DataGridTemplateColumn Header="Կոդ" CanUserSort="True" SortMemberPath="Code">
                                         <DataGridTemplateColumn.CellTemplate>

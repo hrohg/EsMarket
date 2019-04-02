@@ -124,7 +124,7 @@
                     </Style>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Ամսաթիվ" Width="Auto" CanUserSort="True" SortMemberPath="CreateDate">
+                    <DataGridTemplateColumn Header="Ամսաթիվ" Width="Auto" CanUserSort="True" SortMemberPath="Invoice.CreateDate">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Border>
@@ -169,7 +169,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Անվանում" Width="*" CanUserSort="True" SortMemberPath="Description">
+                    <DataGridTemplateColumn Header="Անվանում" Width="*" CanUserSort="True" SortMemberPath="Content">
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}"/>

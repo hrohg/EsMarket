@@ -38,7 +38,7 @@ namespace UserControls.Controls
                 {
                     Header = value.Name,
                     Binding = new Binding("StockProducts") { ConverterParameter = value.Name, Converter = new StockProductsConverter() },
-                    SortMemberPath = "Name",
+                    SortMemberPath = value.Name,
                     CanUserSort = true
                 };
                 dataGrid.Columns.Add(column);
@@ -53,9 +53,9 @@ namespace UserControls.Controls
             var items = value as IEnumerable<StockProducts>;
             if (items != null && parameter != null)
             {
-                var phone = items.FirstOrDefault(s => s.Stock.Name == parameter.ToString());
-                if (phone != null)
-                    return phone.Quantity;
+                var item = items.FirstOrDefault(s => s.Stock.Name == parameter.ToString());
+                if (item != null)
+                    return item.Quantity;
                 return 0;
             }
             return 0;
