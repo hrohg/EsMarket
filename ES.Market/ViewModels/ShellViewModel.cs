@@ -1577,7 +1577,9 @@ namespace ES.Market.ViewModels
 
         private void OnManagePartners(object o)
         {
-            AddDocument(new PartnerViewModel());
+            var partVm = new PartnerViewModel();
+            //ApplicationManager.CashManager.
+            AddDocument(partVm);
         }
 
         #endregion

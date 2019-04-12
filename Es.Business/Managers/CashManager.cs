@@ -196,12 +196,13 @@ namespace ES.Business.Managers
         }
         private void UpdatePartners()
         {
-            _isPartnersUpdating = true;
             lock (_syncPartners)
             {
-                                _partners = PartnersManager.GetPartners();
+                _isPartnersUpdating = true;
+                _partners = PartnersManager.GetPartners();
+                _isPartnersUpdating = false;
             }
-            _isPartnersUpdating = false;
+
             OnUpdateCompleted();
         }
 
@@ -296,13 +297,14 @@ namespace ES.Business.Managers
                 thread.Start();
             }
         }
-        public void UpdatePartnersAsync()
+        public void UpdatePartnersAsync(bool isAsync = true)
         {
-            lock (_syncPartners)
+            if (_isPartnersUpdating) return;
+            if (!isAsync) UpdatePartners();
+            else
             {
                 new Thread(UpdatePartners).Start();
             }
-
         }
         public void UpdateStocksAsync()
         {

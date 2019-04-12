@@ -41,22 +41,21 @@ namespace UserControls.Views.View
                 _timer = new Timer(TimerElapsed, null, 300, 300);
             }
         }
-        public decimal Count { get { return Items != null ? Items.GroupBy(s => s.Code).Count() : 0; } }
-        public decimal Quantity { get { return Items != null ? Items.Sum(s => s.ExistingQuantity) : 0; } }
-        public decimal CostPrice { get { return Items != null ? Items.Sum(s => s.ExistingQuantity * (s.Product.CostPrice ?? 0)) : 0; } }
-        public decimal Price { get { return Items != null ? Items.Sum(s => s.ExistingQuantity * s.Product.Price ?? 0) : 0; } }
+        public decimal Count { get { return Items != null ? _items.GroupBy(s => s.Code).Count() : 0; } }
+        public decimal Quantity { get { return Items != null ? _items.Sum(s => s.ExistingQuantity) : 0; } }
+        public decimal CostPrice { get { return Items != null ? _items.Sum(s => s.ExistingQuantity * (s.Product.CostPrice ?? 0)) : 0; } }
+        public decimal Price { get { return Items != null ? _items.Sum(s => s.ExistingQuantity * s.Product.Price ?? 0) : 0; } }
 
-        public ObservableCollection<ProductOrderModel> Items
+        public CollectionView Items
         {
             get
             {
-                return _items == null ? new ObservableCollection<ProductOrderModel>()
-                    : new ObservableCollection<ProductOrderModel>(_items.Where(s =>
-                        s.Product.Code.ToLower().Contains(FilterText) ||
-                        s.Product.Description.ToLower().Contains(FilterText)));
+                return new ListCollectionView(_items == null ? new List<ProductOrderModel>()
+                    : _items.Where(s => s.Product.Code.ToLower().Contains(FilterText) ||
+                        s.Product.Description.ToLower().Contains(FilterText)).ToList());
             }
         }
-        public ObservableCollection<StockModel> Stocks { get { return new ObservableCollection<StockModel>(_stocks??new List<StockModel>()); } }
+        public ObservableCollection<StockModel> Stocks { get { return new ObservableCollection<StockModel>(_stocks ?? new List<StockModel>()); } }
         #endregion
 
         #region Constructors
@@ -159,12 +158,12 @@ namespace UserControls.Views.View
         private void OnExport(object o)
         {
             if (!CanExport(o)) { return; }
-            ExcelExportManager.ExportProducts(Items.ToList());
+            ExcelExportManager.ExportProducts(_items);
         }
 
         private void OnPrint(object o)
         {
-            var model = (from item in Items.ToList()
+            var model = (from item in _items
                          select
                              new
                              {
@@ -295,7 +294,7 @@ namespace UserControls.Views.View
             {
                 _stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(), true);
             });
-            
+
             if (_stocks == null || !_stocks.Any() || IsLoading) return;
             IsLoading = true;
             _productItems = ProductsManager.GetProductItems();

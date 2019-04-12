@@ -2999,7 +2999,8 @@ namespace ES.Business.Managers
 
         public static InvoiceModel RegisterInventoryWriteOffInvoice(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems, IEnumerable<long> stockIds)
         {
-            return ConvertInvoice(TryApproveInventoryWriteOffInvoice(ConvertInvoice(invoice), invoiceItems.Select(Convert).ToList(), stockIds), null);
+            var approvedInvoice = TryApproveInventoryWriteOffInvoice(ConvertInvoice(invoice),invoiceItems.Select(Convert).ToList(), stockIds);
+            return ConvertInvoice(approvedInvoice, null);
         }
 
         public static InvoiceModel ApproveInvoice(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems, List<StockModel> stocks, InvoicePaid invoicePaid = null)

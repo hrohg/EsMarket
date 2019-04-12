@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows.Threading;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
@@ -29,7 +29,7 @@ namespace UserControls.ViewModels.Partners
         #region Public properties
         #region Partners
         private PartnerModel _partner;
-        private ObservableCollection<PartnerModel> _partners;
+        private List<PartnerModel> _partners;
         private List<EsPartnersTypes> _partnersTypes;
         public PartnerModel Partner
         {
@@ -37,9 +37,9 @@ namespace UserControls.ViewModels.Partners
             set { _partner = value; RaisePropertyChanged(PartnerProperties); }
         }
 
-        public ObservableCollection<PartnerModel> Partners
+        public List<PartnerModel> Partners
         {
-            get { return (string.IsNullOrEmpty(_filter) ? _partners : new ObservableCollection<PartnerModel>(_partners.Where(s => s.PartnerFull.ToLower().Contains(_filter.ToLower())).ToList())); }
+            get { return string.IsNullOrEmpty(_filter) ? _partners : _partners.Where(s => s.PartnerFull.ToLower().Contains(_filter.ToLower())).ToList(); }
             set { _partners = value; }
         }
         public List<EsPartnersTypes> PartnersTypes
@@ -74,26 +74,11 @@ namespace UserControls.ViewModels.Partners
         }
         private void GetPartners()
         {
-            ApplicationManager.Instance.CashProvider.UpdatePartnersAsync();
-            Partners = new ObservableCollection<PartnerModel>(ApplicationManager.Instance.CashProvider.GetPartners);
+            ApplicationManager.CashManager.UpdatePartnersAsync(false);
+            _partners = ApplicationManager.CashManager.GetPartners; 
             RaisePropertyChanged("Partners");
         }
-        //    private bool CheckLuhn(string purportedCC)
-        //    {
-        //        if (string.IsNullOrEmpty(purportedCC)) return false;
-        //        int sum = 0;
-        //        int nDigits = purportedCC.Length;
-        //        int parity = nDigits%2;
-        //for(int i=0;i<nDigits;++i){
-        //    int digit = integer([i]);
-        //    if (i%2 == parity)
-        //        digit = digit*2;
-        //    if (digit > 9)
-        //        digit = digit - 9;
-        //    sum = sum + digit;
-        //}
-        //        return (sum%10) == 0;
-        //    }
+
         private void InitializeCommands()
         {
             NewPartnerCommand = new PartnerNewCommand(this);

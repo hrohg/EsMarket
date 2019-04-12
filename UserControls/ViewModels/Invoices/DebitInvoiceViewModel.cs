@@ -69,7 +69,7 @@ namespace UserControls.ViewModels.Invoices
             return Invoice != null && Invoice.ApproveDate == null && InvoiceItems != null && InvoiceItems.Count > 0;
         }
 
-        private void Approve(List<long> fromStocks)
+        private void Approve(List<long> fromStocks, bool closeOnExit)
         {
             IsLoading = true;
             Invoice.ApproverId = User.UserId;
@@ -84,7 +84,10 @@ namespace UserControls.ViewModels.Invoices
             }
             else
             {
-                Invoice = invoice;
+                Invoice.InvoiceNumber = invoice.InvoiceNumber;
+                Invoice.ApproveDate = invoice.ApproveDate;
+                
+                if (!closeOnExit) Invoice = invoice;
             }
 
             IsLoading = false;
@@ -102,7 +105,7 @@ namespace UserControls.ViewModels.Invoices
                 }
                 if (FromStocks != null && FromStocks.Any())
                 {
-                    Approve(FromStocks.Select(s => s.Id).ToList());
+                    Approve(FromStocks.Select(s => s.Id).ToList(), closeOnExit);
                     if (Invoice.ApproveDate != null) MessageManager.OnMessage(string.Format("{0} ապրանքագիրը հաստատվել է հաջողությամբ:", Invoice.InvoiceNumber),MessageTypeEnum.Success);
 
                     if (closeOnExit && Invoice.ApproveDate != null)
