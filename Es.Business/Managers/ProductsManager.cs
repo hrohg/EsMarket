@@ -464,11 +464,11 @@ namespace ES.Business.Managers
         {
             return TryGetProductItemCountFromStock(productId, stockIds, memeberId);
         }
-        public static List<ProductItemModel> GetProductItems()
+        public static List<ProductItemModel> GetProductItems(string productKey=null)
         {
             try
             {
-                var productItems = TryGetProductItems();
+                var productItems = TryGetProductItems(productKey);
                 var products = productItems.GroupBy(s => s.Products).Select(s => Convert(s.Key)).ToList();
                 return productItems.Select(s => Convert(s, products)).ToList();
             }
@@ -1292,7 +1292,7 @@ namespace ES.Business.Managers
                     .Where(s => s.MemberId == memberId).ToList();
             }
         }
-        private static List<ProductItems> TryGetProductItems()
+        private static List<ProductItems> TryGetProductItems(string productKey = null)
         {
             var db = GetDataContext();
             try
@@ -1300,7 +1300,7 @@ namespace ES.Business.Managers
                 return db.ProductItems.Include(s => s.Products)
                     .Include(s => s.Products.ProductGroup)
                     .Include(s => s.Products.ProductCategories)
-                    .Where(s => s.MemberId == ApplicationManager.Instance.GetMember.Id && s.Quantity != 0).ToList();
+                    .Where(s => s.MemberId == ApplicationManager.Member.Id && s.Quantity != 0 ).ToList();
             }
             catch (Exception)
             {

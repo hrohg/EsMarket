@@ -165,11 +165,10 @@ namespace ES.Business.Managers
             return TryGetPartnersForProducts(productIds).Select(Convert).ToList();
         }
 
-        public static bool SetDefault(PartnerModel partner)
+        public static string GetControlByPartnerType(PartnerType type)
         {
-            if (partner == null || partner.PartnersTypeId == null) return false;
             string controlKey;
-            switch (partner.PartnerTypeEnum)
+            switch (type)
             {
                 case PartnerType.Provider:
                     controlKey = DefaultControls.Provider;
@@ -184,9 +183,15 @@ namespace ES.Business.Managers
                     controlKey = DefaultControls.Branch;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("partner", partner.PartnersTypeId, null);
+                    throw new ArgumentOutOfRangeException("partner", type, null);
             }
-            return DefaultsManager.SetDefault(controlKey, null, partner.Id);
+            return controlKey;
+        }
+        public static bool SetDefault(PartnerModel partner, bool isDefault)
+        {
+            if (partner == null || partner.PartnersTypeId == null) return false;
+            string controlKey = GetControlByPartnerType(partner.PartnerTypeEnum);
+            return DefaultsManager.SetDefault(controlKey, null, isDefault? partner.Id:(Guid?)null);
         }
         #endregion
 

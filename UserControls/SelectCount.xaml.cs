@@ -65,6 +65,7 @@ namespace UserControls
         private decimal? _count;
         private bool _isCountFree;
         #endregion
+
         #region Select count model public properties
 
         public decimal? Count

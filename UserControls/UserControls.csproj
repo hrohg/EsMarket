@@ -198,6 +198,7 @@
     <Compile Include="ViewModels\Invoices\PackingListViewModel.cs" />
     <Compile Include="ViewModels\Logs\LogViewModel.cs" />
     <Compile Include="ViewModels\Managers\ProductManagerViewModel.cs" />
+    <Compile Include="Views\Products\ProductItemsViewModel.cs" />
     <Compile Include="Views\View\Models\ProductItemsModel.cs" />
     <Compile Include="Views\View\ProductItemsViewModel.cs" />
     <Compile Include="ViewModels\ReportExceptionViewModel.cs" />
@@ -689,6 +690,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Editors\EditPartners\" />
+    <Folder Include="Views\Products\Views\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

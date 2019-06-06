@@ -24,5 +24,11 @@ namespace UserControls.ControlPanel.Controls
             LblDescription.Content = description;
             TxtImput.Text = inputValue;
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
+            Close();
+        }
     }
 }

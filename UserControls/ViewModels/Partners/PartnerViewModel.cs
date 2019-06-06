@@ -8,6 +8,7 @@ using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
+using ES.Data.Enumerations;
 using ES.Data.Models;
 using ES.DataAccess.Models;
 using UserControls.Commands;
@@ -34,7 +35,13 @@ namespace UserControls.ViewModels.Partners
         public PartnerModel Partner
         {
             get { return _partner; }
-            set { _partner = value; RaisePropertyChanged(PartnerProperties); }
+            set
+            {
+                _partner = value;
+                RaisePropertyChanged(PartnerProperties);
+                IsDefault = Partner != null && CashManager.Instance.EsDefaults.Where(s => Partner.PartnerTypeEnum != PartnerType.None && s.Control == PartnersManager.GetControlByPartnerType(Partner.PartnerTypeEnum)).Any(s => s.ValueInGuid == Partner.Id);
+                RaisePropertyChanged("IsDefault");
+            }
         }
 
         public List<PartnerModel> Partners
@@ -51,6 +58,18 @@ namespace UserControls.ViewModels.Partners
             }
         }
         #endregion Partners
+
+        private bool _isDefault;
+        public bool IsDefault
+        {
+            get { return _isDefault; }
+            set
+            {
+                _isDefault = value;
+                CashManager.Instance.UpdateDefaults();
+                RaisePropertyChanged("IsDefault");
+            }
+        }
         public string FilterText { get { return _filter; } set { _filter = value; RaisePropertyChanged(PartnersProperty); } }
         #endregion
 
@@ -75,7 +94,7 @@ namespace UserControls.ViewModels.Partners
         private void GetPartners()
         {
             ApplicationManager.CashManager.UpdatePartnersAsync(false);
-            _partners = ApplicationManager.CashManager.GetPartners; 
+            _partners = ApplicationManager.CashManager.GetPartners;
             RaisePropertyChanged("Partners");
         }
 
@@ -87,24 +106,29 @@ namespace UserControls.ViewModels.Partners
             RemovePartnerCommand = new PartnerRemoveCommand(this);
             SetDefaultPartnerCommand = new RelayCommand<PartnerModel>(OnSetDefault, CanSetDefault);
         }
+
+        private void UpdatePartners()
+        {
+            ApplicationManager.CashManager.UpdatePartnersAsync();
+
+        }
         #region Command methods
+
         private bool CanSetDefault(PartnerModel partner)
         {
             return partner != null;
         }
         private void OnSetDefault(PartnerModel partner)
         {
-            if (CanSetDefault(partner))
+            if (!CanSetDefault(partner)) return;
+            if (PartnersManager.SetDefault(partner, IsDefault))
             {
-                if (PartnersManager.SetDefault(partner))
-                {
-                    MessageManager.OnMessage("Գործողության բարեհաջող ավարտ։", MessageTypeEnum.Success);
-                    ApplicationManager.CashManager.UpdatePartnersAsync();
-                }
-                else
-                {
-                    MessageManager.OnMessage("Գործողության ձախողում։", MessageTypeEnum.Warning);
-                }
+                UpdatePartners();
+                MessageManager.OnMessage("Գործողության բարեհաջող ավարտ։", MessageTypeEnum.Success);
+            }
+            else
+            {
+                MessageManager.OnMessage("Գործողության ձախողում։", MessageTypeEnum.Warning);
             }
         }
 

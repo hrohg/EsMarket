@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
 using ES.Business.ExcelManager;
@@ -12,7 +13,12 @@ using ES.Business.Managers;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
+using UserControls.ControlPanel.Controls;
 using UserControls.Helpers;
+using Binding = System.Windows.Data.Binding;
+using DataGrid = System.Windows.Controls.DataGrid;
+using Timer = System.Threading.Timer;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace UserControls.Views.View
 {
@@ -102,7 +108,17 @@ namespace UserControls.Views.View
             _items.Clear();
             if (_stocks == null || !_stocks.Any() || IsLoading) return;
             IsLoading = true;
-            _productItems = ProductsManager.GetProductItems();
+            string productKey=null;
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+            {
+                var inputBox = new InputBox("Input product key");
+                var inputBoxResult = inputBox.ShowDialog();
+                if (inputBoxResult != null && (bool)inputBoxResult)
+                {
+                    productKey = inputBox.InputValue;
+                }
+            });
+            _productItems = ProductsManager.GetProductItems(productKey);
             _productItems = _productItems.Where(pi => pi.StockId != null && _stocks.Select(s => s.Id).ToList().Contains((long)pi.StockId)).ToList();
             var items = (from item in _productItems
                          group item by item.ProductId

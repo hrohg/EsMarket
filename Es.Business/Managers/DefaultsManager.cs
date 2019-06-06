@@ -26,7 +26,7 @@ namespace ES.Business.Managers
             return defaultControl.ValueInGuid;
         }
 
-        public static bool SetDefault(string control, int? valueInInt, Guid valueInGuid)
+        public static bool SetDefault(string control, int? valueInInt, Guid? valueInGuid)
         {
             return TrySetDefault(control, valueInInt, valueInGuid);
         }
@@ -60,7 +60,7 @@ namespace ES.Business.Managers
                 }
             }
         }
-        private static bool TrySetDefault(string control, long? valueInLong, Guid valueInGuid)
+        private static bool TrySetDefault(string control, long? valueInLong, Guid? valueInGuid)
         {
             using (var db = GetDataContext())
             {
