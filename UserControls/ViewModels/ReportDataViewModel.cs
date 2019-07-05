@@ -308,6 +308,28 @@ namespace UserControls.ViewModels
             TotalCount = (double)ViewList.Sum(s => s.Quantity);
             Total = (double)ViewList.Sum(i => i.Sale ?? 0);
         }
+
+        protected override void OnExport(ExportImportEnum o)
+        {
+            //base.OnExport(o);
+            ExcelExportManager.ExportList(ViewList.Select(s => new { 
+                Բաժին = ((InvoiceReport)s).Description, 
+                Ապրանքագիր = ((InvoiceReport)s).Count, 
+                Քանակ = ((InvoiceReport)s).Quantity,
+                Հասույթ = ((InvoiceReport)s).Sale,
+                ԻՆքնարժեք = ((InvoiceReport)s).Cost,
+                Եկամուտ = ((InvoiceReport)s).Profit,
+                Եկամտի_Տոկոս = ((InvoiceReport)s).Pers,
+                Ետվերադարձ = ((InvoiceReport)s).ReturnAmount,
+                Ընդամենը = ((InvoiceReport)s).Total
+            }));
+
+        }
+
+        protected override void OnPrint(object o)
+        {
+            base.OnPrint(o);
+        }
     }
 
 
@@ -476,7 +498,11 @@ namespace UserControls.ViewModels
                 return;
             }
             var productOrder = ((FrameworkElement)o).FindVisualChildren<Border>().FirstOrDefault();
-            if (productOrder == null) return;
+            //if (productOrder == null)
+            {
+                PrintManager.PrintEx((FrameworkElement)o);
+                return;
+            }
             PrintManager.PrintEx(productOrder);
         }
 
@@ -562,6 +588,27 @@ namespace UserControls.ViewModels
         {
             base.Initialize();
             Title = Description = "Վաճառք ըստ բաժինների մանրամասն";
+        }
+
+        protected override void OnExport(ExportImportEnum o)
+        {
+            //base.OnExport(o);
+            ExcelExportManager.ExportList(ViewList.Select(s => new
+            {
+                Բաժին = ((SaleReportByPartnerDetiled)s).Partner,
+                Ապրանքագիր = ((SaleReportByPartnerDetiled)s).Invoice,
+                Ամսաթիվ = ((SaleReportByPartnerDetiled)s).Date,
+                Կոդ = ((SaleReportByPartnerDetiled)s).Code,
+                Անվանում = ((SaleReportByPartnerDetiled)s).Description,
+                Չմ = ((SaleReportByPartnerDetiled)s).Mu,
+                Քանակ = ((SaleReportByPartnerDetiled)s).Quantity,
+                ԻՆքնարժեք = ((SaleReportByPartnerDetiled)s).Cost,
+                Գին = ((SaleReportByPartnerDetiled)s).Price,
+                Գումար = ((SaleReportByPartnerDetiled)s).Sale,
+                Եկամուտ = ((SaleReportByPartnerDetiled)s).Profit,
+                Եկամտի_Տոկոս = ((SaleReportByPartnerDetiled)s).Pers
+            }));
+
         }
 
         #endregion

@@ -74,7 +74,7 @@ namespace UserControls.Views.View
             : this()
         {
             _stocks = stocks;
-            Initialize();
+            OnUpdate(null);
         }
         #endregion
 
@@ -84,7 +84,6 @@ namespace UserControls.Views.View
         {
             _items = new List<ProductOrderModel>();
             Title = "Ապրանքների դիտում ըստ պահեստների";
-            OnUpdate(null);
         }
         private void TimerElapsed(object obj)
         {

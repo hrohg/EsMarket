@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using CashReg.Helper;
 using EsMarket.SharedData.Models;
 using ES.Business.Helpers;
@@ -464,7 +465,7 @@ namespace ES.Business.Managers
         {
             return TryGetProductItemCountFromStock(productId, stockIds, memeberId);
         }
-        public static List<ProductItemModel> GetProductItems(string productKey=null)
+        public static List<ProductItemModel> GetProductItems(string productKey = null)
         {
             try
             {
@@ -894,7 +895,7 @@ namespace ES.Business.Managers
                         .Include(s => s.ProductCategories)
                         .Include(s => s.ProductGroup)
                         .Include(s => s.ProductsAdditionalData)
-                        .Where(s => s.EsMemberId == memberId && s.IsEnable && s.LastModifiedDate >= dateIntermediate.Item1 && s.LastModifiedDate<=dateIntermediate.Item2).ToList();
+                        .Where(s => s.EsMemberId == memberId && s.IsEnable && s.LastModifiedDate >= dateIntermediate.Item1 && s.LastModifiedDate <= dateIntermediate.Item2).ToList();
                 }
                 catch (Exception)
                 {
@@ -1297,10 +1298,15 @@ namespace ES.Business.Managers
             var db = GetDataContext();
             try
             {
+                //var produtitems = db.ProductItems.Include(s => s.Products).Include(s => s.Products.ProductGroup).Include(s => s.Products.ProductCategories)
+                //    .Where(s => s.MemberId == ApplicationManager.Member.Id && s.Quantity != 0).ToList();
+                productKey = productKey != null ? productKey.ToLower() : "";
+                string key = "";
                 return db.ProductItems.Include(s => s.Products)
                     .Include(s => s.Products.ProductGroup)
                     .Include(s => s.Products.ProductCategories)
-                    .Where(s => s.MemberId == ApplicationManager.Member.Id && s.Quantity != 0 ).ToList();
+                    .Where(s => s.MemberId == ApplicationManager.Member.Id && s.Quantity != 0 &&
+                                (productKey == null || s.Products.Code.ToLower().Contains(productKey) || s.Products.Description.ToLower().Contains(productKey))).ToList();
             }
             catch (Exception)
             {

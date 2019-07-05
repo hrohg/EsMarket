@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Managers;
+using ES.Common.Models;
 using ES.Data.Models;
+using UIHelper.Managers;
 
 namespace UserControls.ViewModels.Invoices
 {
@@ -103,15 +106,21 @@ namespace UserControls.ViewModels.Invoices
                     IsLoading = false;
                     return;
                 }
-                if (FromStocks != null && FromStocks.Any())
+                var fromStocks = SelectItemsManager.SelectStocks(FromStocks, true);
+
+                if (fromStocks != null && fromStocks.Any())
                 {
-                    Approve(FromStocks.Select(s => s.Id).ToList(), closeOnExit);
+                    Approve(fromStocks.Select(s => s.Id).ToList(), closeOnExit);
                     if (Invoice.ApproveDate != null) MessageManager.OnMessage(string.Format("{0} ապրանքագիրը հաստատվել է հաջողությամբ:", Invoice.InvoiceNumber),MessageTypeEnum.Success);
 
                     if (closeOnExit && Invoice.ApproveDate != null)
                     {
                         OnClose();
                     }
+                }
+                else
+                {
+                    MessageManager.OnMessage(new MessageModel("Դուրսգրման պահեստ ընտրված չէ:", MessageTypeEnum.Warning));
                 }
             }
             catch (Exception ex)

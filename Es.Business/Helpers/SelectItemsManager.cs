@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Threading;
 using ES.Business.Managers;
 using ES.Business.Models;
+using ES.Common.Helpers;
 using ES.Common.Models;
 using ES.Data.Enumerations;
 using ES.Data.Model;
@@ -51,11 +53,16 @@ namespace ES.Business.Helpers
         }
         public static List<StockModel> SelectStocks(List<StockModel> stocks, bool allowMultipleSelect = false)
         {
-            if (stocks == null) return new List<StockModel>();
+            if (stocks == null) stocks = new List<StockModel>();
             if (stocks.Count < 2) { return stocks; }
-            var selectItem = new SelectItems(stocks.Select(s => new ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), allowMultipleSelect);
-            if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { return new List<StockModel>(); }
-            return stocks.Where(s => selectItem.SelectedItems.Select(t => (long)t.SelectedValue).Contains(s.Id)).ToList();
+
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+            {
+                var selectItem = new SelectItems(stocks.Select(s => new ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), allowMultipleSelect);
+                if (selectItem.ShowDialog() != true || selectItem.SelectedItems == null) { stocks = new List<StockModel>(); }
+                stocks = stocks.Where(s => selectItem.SelectedItems.Select(t => (long)t.SelectedValue).Contains(s.Id)).ToList();
+            });
+            return stocks;
         }
         public static List<EsMemberModel> SelectEsMembers(List<EsMemberModel> members, bool allowMultipleChoise, string title = "Ընտրել համակարգ")
         {
@@ -226,7 +233,7 @@ namespace ES.Business.Helpers
         public static List<AccountingAccounts> SelectAccountingPlan(bool allowMultipleSelect = false, string title = "Ընտրել")
         {
             var accountinPlans = AccountingRecordsManager.GetAccountingRecords();
-            var items = accountinPlans.Select(accountingPlan => new ItemsToSelect {DisplayName = accountingPlan.Description, SelectedValue = accountingPlan.Id}).ToList();
+            var items = accountinPlans.Select(accountingPlan => new ItemsToSelect { DisplayName = accountingPlan.Description, SelectedValue = accountingPlan.Id }).ToList();
             if (!items.Any()) return new List<AccountingAccounts>();
             if (items.Count == 1) { return accountinPlans.Where(s => items.Select(t => (int)t.SelectedValue).Contains(s.Id)).ToList(); }
             var selectItem = new SelectItems(items, allowMultipleSelect, title);

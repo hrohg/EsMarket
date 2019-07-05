@@ -7,7 +7,7 @@ namespace UserControls.ControlPanel.Controls
     /// </summary>
     public partial class InputBox : Window
     {
-        public string Description { get { return (string)LblDescription.Content; } set { LblDescription.Content = value; }}
+        public string Description { get { return txtDescription.Text; } set { txtDescription.Text = value; } }
         public string InputValue { get { return TxtImput.Text; } set { TxtImput.Text = value; } }
         public InputBox()
         {
@@ -16,12 +16,12 @@ namespace UserControls.ControlPanel.Controls
         public InputBox(string description)
         {
             InitializeComponent();
-            LblDescription.Content = description;
+            txtDescription.Text = description;
         }
         public InputBox(string description, string inputValue)
         {
             InitializeComponent();
-            LblDescription.Content = description;
+            txtDescription.Text = description;
             TxtImput.Text = inputValue;
         }
 

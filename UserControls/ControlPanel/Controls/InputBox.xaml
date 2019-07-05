@@ -1,12 +1,19 @@
 ﻿<Window x:Class="UserControls.ControlPanel.Controls.InputBox"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Մուտքագրում" MinHeight="130" MinWidth="120" Width="200">
+        Title="Մուտքագրում" MinHeight="130" MinWidth="170" 
+        WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight">
     <Grid>
-        <StackPanel>
-            <Label Name="LblDescription" Width="Auto" Margin="10"></Label>
-            <TextBox Name="TxtImput" Width="100"></TextBox>
-            <Button Content="Հաստատել" Width="80" Margin="10" VerticalAlignment="Bottom" Click="Button_Click"/>
-        </StackPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>  
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Name="txtDescription" Width="Auto" Margin="10"/>
+            <TextBox Grid.Row="1" Name="TxtImput" Width="100"/>
+            <Button Grid.Row="2" Content="Հաստատել" Width="80" Margin="10" VerticalAlignment="Bottom" Click="Button_Click"/>
+        </Grid>
     </Grid>
 </Window>

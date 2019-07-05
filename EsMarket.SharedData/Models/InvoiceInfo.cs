@@ -7,7 +7,7 @@ namespace EsMarket.SharedData.Models
 {
     [XmlInclude(typeof(InvoiceInfo))]
     [Serializable]
-    public class InvoiceInfo:IInvoiceInfo
+    public class InvoiceInfo : IInvoiceInfo
     {
         private InvoiceTypeEnum _type;
         private string _invoiceNumber;
@@ -23,5 +23,7 @@ namespace EsMarket.SharedData.Models
             get { return _invoiceNumber ?? string.Empty; }
             set { _invoiceNumber = value; }
         }
+
+        public string EcrReceipt { get; set; }
     }
 }

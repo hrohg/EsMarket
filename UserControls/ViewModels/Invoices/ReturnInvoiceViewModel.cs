@@ -70,7 +70,7 @@ namespace UserControls.ViewModels.Invoices
         protected override decimal GetProductPrice(ProductModel product)
         {
             return (product != null) ? (product.Price ?? 0) * (product.Discount != null && product.Discount > 0 ?
-                1 - (product.Discount ?? 0) / 100 : 1 - (Partner.Discount ?? 0) / 100) : 0;
+                1 - (product.Discount ?? 0) / 100 : 1 - (Partner != null && Partner.Discount != null ? Partner.Discount ?? 0 : 0) / 100) : 0;
 
         }
 
@@ -397,6 +397,7 @@ namespace UserControls.ViewModels.Invoices
         {
             return base.CanApprove(o) && ApplicationManager.IsInRole(UserRoleEnum.Manager);
         }
+        
         protected override void OnApproveAsync(bool closeOnExit)
         {
             try
@@ -408,6 +409,7 @@ namespace UserControls.ViewModels.Invoices
                 }
 
                 IsLoading = true;
+                PrepareToApprove();
                 //Open Cash desk
                 if (!string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort) && InvoicePaid.Paid > 0)
                 {

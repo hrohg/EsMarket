@@ -853,7 +853,7 @@
                     </DataGrid.InputBindings>
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
-                            <Setter Property="ContextMenu" Value="{StaticResource DataGridRowContextMenuStyle}"/>
+                            <Setter Property="ContextMenu" Value="{DynamicResource DataGridRowContextMenuStyle}"/>
                         </Style>
                     </DataGrid.RowStyle>
                     <DataGrid.Columns>

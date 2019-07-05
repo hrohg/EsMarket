@@ -3464,6 +3464,7 @@ namespace ES.Business.Managers
                 InvoiceInfo = new InvoiceInfo
                 {
                     InvoiceNumber = invoice.InvoiceNumber,
+                    Type = EsMarket.SharedData.Enums.InvoiceTypeEnum.Sale
                 },
                 BuyerInfo = new EsMarketPartner
                 {

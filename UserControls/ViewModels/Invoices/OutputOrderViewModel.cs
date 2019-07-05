@@ -30,7 +30,7 @@ namespace UserControls.ViewModels.Invoices
                 ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBySingle = value;
             }
         }
-
+        
         #endregion External properties
 
         #region Contructors

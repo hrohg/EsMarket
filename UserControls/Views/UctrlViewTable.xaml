@@ -46,8 +46,6 @@
 
                             </ContentControl.Resources>
                         </ContentControl>
-
-
                     </Grid>
                 </Border>
             </ScrollViewer>

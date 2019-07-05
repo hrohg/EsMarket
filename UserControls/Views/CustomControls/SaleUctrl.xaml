@@ -327,6 +327,7 @@
                              Text="{Binding Path=InvoiceItem.Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" 
                              IsReadOnly="{Binding Path = DenyChangePrice}" Width="105" VerticalContentAlignment="Center" 
                              Focusable="{Binding DenyChangePrice, Converter={StaticResource InverseBooleanConverter}}"
+                                 IsEnabled="{Binding IsInvoiceItemEnabled}"
                              HorizontalContentAlignment="Right" TabIndex="2">
                             <i:Interaction.Behaviors>
                                 <behaviors:TextBoxBehavior IsSelectTextOnFocus="True" />

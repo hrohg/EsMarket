@@ -798,7 +798,7 @@
 
                     </MenuItem>
                 </MenuItem>
-
+                <!--Help menu-->
                 <MenuItem Header="Օգնություն">
                     <MenuItem.Icon>
                         <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Help.ico" />
@@ -828,11 +828,7 @@
                                 <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="Ծրագրի մասին" Margin="3" Command="{Binding AboutCommand}">
-                            <MenuItem.Icon>
-                                <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/light_bulb_help.png"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
+                        
                     </MenuItem>
                     <MenuItem Header="Հաշվիչ" Command="{Binding OpenCarculatorCommand}">
                         <MenuItem.Icon>
@@ -856,6 +852,65 @@
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="Տպել գնապիտակ LP" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.LargePrice}"/>
+                        <MenuItem Header="Տպել գնապիտակ">
+                            <MenuItem.Icon>
+                                <Image Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Price/PriceTicket.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem Header="Գնապիտակ" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.PriceTag}"/>
+                            <MenuItem Header="Տպել գնապիտակ" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.PriceOnly}"/>
+                            <MenuItem Header="Տպել գնապիտակ S" Click ="MiPrintBarcode_Click">
+                                <MenuItem.Icon>
+                                    <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Տպել գնապիտակ L" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.Large}">
+                                <MenuItem.Icon>
+                                    <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Տպել գնապիտակ LP" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.LargePrice}"/>
+                        </MenuItem>
+                        <MenuItem Header="Տպել գնապիտակ">
+                            <MenuItem.Icon>
+                                <Image Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Price/PriceTicket.png"/>
+                            </MenuItem.Icon>
+                            <MenuItem Header="Գնապիտակ" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.PriceTag}"/>
+                            <MenuItem Header="Տպել գնապիտակ" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.PriceOnly}"/>
+                            <MenuItem Header="Տպել գնապիտակ S" Click ="MiPrintBarcode_Click">
+                                <MenuItem.Icon>
+                                    <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Տպել գնապիտակ L" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.Large}">
+                                <MenuItem.Icon>
+                                    <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Տպել գնապիտակ LP" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.LargePrice}"/>
+                            <MenuItem Header="Տպել գնապիտակ">
+                                <MenuItem.Icon>
+                                    <Image Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Price/PriceTicket.png"/>
+                                </MenuItem.Icon>
+                                <MenuItem Header="Գնապիտակ" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.PriceTag}"/>
+                                <MenuItem Header="Տպել գնապիտակ" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.PriceOnly}"/>
+                                <MenuItem Header="Տպել գնապիտակ S" Click ="MiPrintBarcode_Click">
+                                    <MenuItem.Icon>
+                                        <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Տպել գնապիտակ L" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.Large}">
+                                    <MenuItem.Icon>
+                                        <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Տպել գնապիտակ LP" Command="{Binding PrintPriceTicketCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.LargePrice}"/>
+                            </MenuItem>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Ծրագրի մասին" Command="{Binding AboutCommand}">
+                        <MenuItem.Icon>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/light_bulb_help.png"/>
+                        </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
             </Menu>

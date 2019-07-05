@@ -156,6 +156,7 @@ namespace UserControls.ViewModels.Invoices
                 RaisePropertyChanged("InvoiceItem");
                 RaisePropertyChanged("DenyChangePrice");
                 RaisePropertyChanged(IsExpiringProperty);
+                RaisePropertyChanged("IsInvoiceItemEnabled");
             }
         }
 
@@ -845,14 +846,13 @@ namespace UserControls.ViewModels.Invoices
         {
             get { return Invoice != null; }
         }
+        public bool IsInvoiceItemEnabled { get { return Invoice.ApproveDate == null && InvoiceItem.Product != null && InvoiceItem.Code == InvoiceItem.Product.Code && !IsLoading; } }
 
         public virtual bool CanAddInvoiceItem(object o)
         {
             return Invoice.ApproveDate == null && InvoiceItem.Product != null && InvoiceItem.Code == InvoiceItem.Product.Code && !IsLoading;
         }
-
-
-
+        
         protected virtual bool CanRemoveInvoiceItem(object o)
         {
             return !Invoice.IsApproved && SelectedInvoiceItem != null;
