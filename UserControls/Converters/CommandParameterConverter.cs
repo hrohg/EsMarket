@@ -4,7 +4,7 @@ using ES.Business.Managers;
 
 namespace UserControls.Converters
 {
-    public class GetInvocieParameterConverter:IMultiValueConverter
+    public class GetInvoiceParameterConverter:IMultiValueConverter
     {
 
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)

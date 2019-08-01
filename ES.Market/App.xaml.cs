@@ -4,6 +4,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Threading;
 using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Common;
@@ -262,8 +263,7 @@ namespace ES.Market
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             if (Application.Current != null)
-                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-            new EsExceptionBox { DataContext = new ReportExceptionViewModel(e.Exception) }.ShowDialog()));
+                DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { EsExceptionBox.Instance.OnException(e); });
             e.Handled = true;
         }
         private static void ShutdownApplication()

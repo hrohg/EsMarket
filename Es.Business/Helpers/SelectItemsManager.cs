@@ -250,5 +250,10 @@ namespace ES.Business.Helpers
         }
         #endregion Select Accounting
 
+
+        public static object SelectProduct(List<ProductModel> products)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

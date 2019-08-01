@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using System.Windows.Data;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
@@ -26,7 +28,7 @@ namespace UserControls.ViewModels.Tools
 
         #region Internal proeprties
 
-        private List<ProductModel> _products;
+        private readonly object _sync = new object();
         #endregion Internal properties
 
         #region External properties
@@ -73,14 +75,21 @@ namespace UserControls.ViewModels.Tools
         {
             get
             {
-                return _items != null ?
+                lock (_sync)
+                {
+                    return _items != null ?
                     _items.Where(s => string.IsNullOrEmpty(Filter) || s.HasItems(Filter)).ToList() :
                     new List<ProductNodes>();
+                }
+
             }
             private set
             {
-                _items = value;
-                RaisePropertyChanged("Items");
+                lock (_sync)
+                {
+                    _items = value;
+                    RaisePropertyChanged("Items");
+                }
             }
         }
         #endregion Items
@@ -125,9 +134,6 @@ namespace UserControls.ViewModels.Tools
             ApplicationManager.Instance.CashProvider.ProductUpdated += OnProductsUpdated;
             //OnUpdateProducts(null);
             UpdateProductsCommand = new RelayCommand(OnUpdateProducts);
-            _products = ApplicationManager.Instance.CashProvider.Products;
-
-
             ProductsViewModes = new List<ItemsToSelect>
         {
             new ItemsToSelect("Ըստ ապրանքների", ProductsViewEnum.ByProducts),
@@ -145,51 +151,43 @@ namespace UserControls.ViewModels.Tools
 
         private void OnProductsUpdated()
         {
-            _items.Clear();
-            var productNode = new ProductNodes("Products", "Products");
-            switch ((ProductsViewEnum)CurrentProductsViewMode.SelectedValue)
+            lock (_sync)
             {
-                case ProductsViewEnum.ByStocks:
-                    var productItems = ApplicationManager.CashManager.ProductItems;
-                    foreach (var productItemModel in productItems.GroupBy(s => s.StockId))
-                    {
-                        var stock = ApplicationManager.CashManager.GetStocks.FirstOrDefault(s => s.Id == productItemModel.Key);
-                        var nodes = new ProductNodes(stock != null ? stock.Name : "Անհայտ պահեստ", stock != null ? stock.FullName : "");
-                        nodes.AddRange(productItemModel.Select(s => new ProductNodes(s.Product)).OrderBy(s => s.Name));
-                        _items.Add(nodes);
-                    }
+                _items.Clear();
 
-                    _items = _items.OrderBy(s => s.Name).ToList();
-                    break;
-                case ProductsViewEnum.ByDetile:
-                    break;
-                case ProductsViewEnum.ByProducts:
-                    _products = ApplicationManager.CashManager.Products;
-                    if (_products != null)
-                    {
-                        _products = _products.OrderBy(s => s.Description).ToList();
-                        _items = _products.Select(p => new ProductNodes(p)).OrderBy(s => s.Name).ToList();
-                    }
 
-                    //Items = _products.Select(p =>
-                    //    new CustomItem(p.Id, string.Format("{0} {1} {2}", p.Code, p.Description, p.Price),
-                    //        string.Format("{0} {1} {2} {3}", p.Code, p.Description, p.Price, p.Barcode))
-                    //    {
-                    //        ProductGroups = p.ProductGroups != null ? p.ProductGroups.Select(t => t.Barcode).ToList() : new List<string>()
-                    //    }).ToList();
-                    break;
-                case ProductsViewEnum.ByProductItems:
-                    break;
-                case ProductsViewEnum.ByCategories:
-                    break;
-                case ProductsViewEnum.ByPrice:
-                    break;
-                case ProductsViewEnum.ByProviders:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                var productNode = new ProductNodes("Products", "Products");
+                switch ((ProductsViewEnum)CurrentProductsViewMode.SelectedValue)
+                {
+                    case ProductsViewEnum.ByStocks:
+                        var productItems = ApplicationManager.CashManager.ProductItems;
+                        foreach (var productItemModel in productItems.GroupBy(s => s.StockId))
+                        {
+                            var stock = ApplicationManager.CashManager.GetStocks.FirstOrDefault(s => s.Id == productItemModel.Key);
+                            var nodes = new ProductNodes(stock != null ? stock.Name : "Անհայտ պահեստ", stock != null ? stock.FullName : "");
+                            nodes.AddRange(productItemModel.Select(s => new ProductNodes(s.Product)).OrderBy(s => s.Name));
+                            _items.Add(nodes);
+                        }
+
+                        _items = _items.OrderBy(s => s.Name).ToList();
+                        break;
+                    case ProductsViewEnum.ByDetile:
+                        break;
+                    case ProductsViewEnum.ByProducts:
+                        _items = ApplicationManager.CashManager.Products.OrderBy(s => s.Description).Select(p => new ProductNodes(p)).OrderBy(s => s.Name).ToList();
+                        break;
+                    case ProductsViewEnum.ByProductItems:
+                        break;
+                    case ProductsViewEnum.ByCategories:
+                        break;
+                    case ProductsViewEnum.ByPrice:
+                        break;
+                    case ProductsViewEnum.ByProviders:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
-
             IsLoading = false;
             RaisePropertyChanged("Items");
         }
@@ -217,10 +215,7 @@ namespace UserControls.ViewModels.Tools
         private void OnManagingProduct(object item)
         {
             if (!CanManageProduct(item)) return;
-            var product = _products.SingleOrDefault(s => s.Id == SelectedItem.Product.Id);
-            if (product == null) return;
-            ManageProduct(product);
-
+            ManageProduct(CashManager.Instance.Products.SingleOrDefault(s => s.Id == SelectedItem.Product.Id));
         }
         private void ManageProduct(ProductModel product)
         {

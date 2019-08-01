@@ -421,10 +421,6 @@ namespace ES.Market.ViewModels
             {
                 Documents.Remove((DocumentViewModel)vm);
             }
-            if (vm is ProductManagerViewModel)
-            {
-                ((ProductManagerViewModel)vm).OnProductEdited -= ProductItemsToolsViewModel.UpdateProducts;
-            }
             if (vm is InvoiceViewModel)
             {
                 ProductItemsToolsViewModel.OnProductItemSelected -= ((InvoiceViewModel)vm).OnSetProductItem;
@@ -799,7 +795,7 @@ namespace ES.Market.ViewModels
                 case ExportForScale.All:
                     break;
                 default:
-                    ExportManager.ExportPriceForScaleToXml(ApplicationManager.Instance.CashProvider.Products);
+                    ExportManager.ExportPriceForScaleToXml(ApplicationManager.Instance.CashProvider.Products.ToList());
                     break;
             }
         }
@@ -1554,7 +1550,6 @@ namespace ES.Market.ViewModels
             var vm = new ProductManagerViewModel();
             ApplicationManager.Instance.CashProvider.ProductUpdated += vm.OnUpdate;
             AddDocument(vm);
-            vm.OnProductEdited += ProductItemsToolsViewModel.UpdateProducts;
         }
 
         private void OnManageProduct(ProductModel product)
@@ -2179,7 +2174,6 @@ namespace ES.Market.ViewModels
         {
             var vm = new CorrectProductsViewModel();
             AddDocument(vm);
-            vm.OnProductEdited += ProductItemsToolsViewModel.UpdateProducts;
         }
 
         public ICommand ManageProductsCommand

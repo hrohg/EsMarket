@@ -498,8 +498,8 @@ namespace UserControls.ViewModels.Invoices
                         foreach (var invoiceItem in importInvoiceItems)
                         {
                             if (invoiceItem == null || string.IsNullOrEmpty(invoiceItem.Code)) return;
-                            var product = new ProductsManager().GetProductsByCodeOrBarcode(invoiceItem.Code);
-                            if (product == null)
+                            var products = ProductsManager.GetProductsByCodeOrBarcode(invoiceItem.Code);
+                            if (!products.Any())
                             {
                                 MessageManager.ShowMessage(
                                     invoiceItem.Code +
@@ -507,6 +507,10 @@ namespace UserControls.ViewModels.Invoices
                                     "Գործողության ընդհատում");
                                 return;
                             }
+
+                            var product = SelectItemsManager.SelectProduct(products).FirstOrDefault();
+                            if(product==null) return;
+
                             invoiceItem.InvoiceId = Invoice.Id;
                             invoiceItem.ProductId = product.Id;
                             invoiceItem.Description = product.Description;
@@ -554,13 +558,14 @@ namespace UserControls.ViewModels.Invoices
             var memberSettings = ApplicationManager.Settings.SettingsContainer.MemberSettings;
             memberSettings.ImportingFilePath = Path.GetDirectoryName(filePath);
             MemberSettings.Save(ApplicationManager.Settings.SettingsContainer.MemberSettings, memberSettings.MemberId);
-            ProductModel product;
             var invoice = ExcelImportManager.ImportSaleInvoice(filePath);
             if (invoice == null) return;
             var invoiceItems = invoice.Item2;
             foreach (var item in invoiceItems)
             {
-                product = new ProductsManager().GetProductsByCodeOrBarcode(item.Code);
+                var products = ProductsManager.GetProductsByCodeOrBarcode(item.Code);
+                var product = SelectItemsManager.SelectProduct(products).FirstOrDefault();
+                
                 if (product == null)
                 {
                     product = new ProductModel(item.Code, Member.Id, User.UserId, true)
@@ -582,7 +587,9 @@ namespace UserControls.ViewModels.Invoices
                         product = ProductsManager.EditProduct(product);
                     }
                 }
-                var exProduct = new ProductsManager().GetProductsByCodeOrBarcode(product.Code);
+                var exProducts = ProductsManager.GetProductsByCodeOrBarcode(product.Code);
+                var exProduct = SelectItemsManager.SelectProduct(exProducts).FirstOrDefault();
+                if (exProduct == null) return;
                 InvoiceItem = new InvoiceItemsModel
                 {
                     ProductId = product.Id,
@@ -642,6 +649,7 @@ namespace UserControls.ViewModels.Invoices
                 if (exInvocieItem != null)
                 {
                     exInvocieItem.Quantity += InvoiceItem.Quantity;
+                    exInvocieItem.Description = InvoiceItem.Description;
                     SelectedInvoiceItem = exInvocieItem;
                 }
                 else
@@ -754,14 +762,14 @@ namespace UserControls.ViewModels.Invoices
 
         protected virtual InvoiceItemsModel GetInvoiceItem(string code)
         {
-            var product = new ProductsManager().GetProductsByCodeOrBarcode(code);
+            var products = ProductsManager.GetProductsByCodeOrBarcode(code);
             decimal count = 0;
-            if (product == null && code.Substring(0, 1) == "2" && code.Length == 13)
+            if (products == null && code.Substring(0, 1) == "2" && code.Length == 13)
             {
-                product = new ProductsManager().GetProductsByCodeOrBarcode(code.Substring(2, 5));
+                products = ProductsManager.GetProductsByCodeOrBarcode(code.Substring(2, 5));
                 count = HgConvert.ToDecimal((code.Substring(7, 5))) / 1000;
             }
-
+            var product = SelectItemsManager.SelectProduct(products).FirstOrDefault();
             if (product == null)
             {
                 return null;
@@ -818,13 +826,17 @@ namespace UserControls.ViewModels.Invoices
             {
                 return;
             }
-            var product = new ProductsManager().GetProductsByCodeOrBarcode(code);
+            var products = ProductsManager.GetProductsByCodeOrBarcode(code);
+            var product = SelectItemsManager.SelectProduct(products).FirstOrDefault();
+            
             decimal? count = null;
             if (product == null && code.Substring(0, 1) == "2" && code.Length == 13)
             {
-                product = new ProductsManager().GetProductsByCodeOrBarcode(code.Substring(2, 5));
+                products = ProductsManager.GetProductsByCodeOrBarcode(code.Substring(2, 5));
+                product = SelectItemsManager.SelectProduct(products).FirstOrDefault();
+
                 count = HgConvert.ToDecimal(code.Substring(7, 5)) / 1000;
-                if (!product.IsWeight) MessageManager.ShowMessage("Ապրանքը քաշային չէ:", "Ապրանքի անհամապատասխանություն");
+                if (product==null || !product.IsWeight) MessageManager.ShowMessage("Ապրանքը քաշային չէ:", "Ապրանքի անհամապատասխանություն");
             }
             InvoiceItem = new InvoiceItemsModel(Invoice, product);
             if (product != null)

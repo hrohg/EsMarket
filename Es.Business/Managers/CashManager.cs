@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Windows.Threading;
@@ -99,7 +101,7 @@ namespace ES.Business.Managers
                 if (!IsLocalMode || _productItems == null) _productItems = ProductsManager.GetProductItems();
                 return _productItems.Select(s => s.Product).ToList();
             }
-            set { _products = value; }
+            //set { _products = value; }
         }
         public List<ProductItemModel> ProductItems
         {
@@ -117,8 +119,7 @@ namespace ES.Business.Managers
         {
             get
             {
-                if (!IsLocalMode || _productResidues == null)
-                    _productResidues = ProductsManager.GeProductResidues(Member.Id);
+                if (!IsLocalMode || _productResidues == null) _productResidues = ProductsManager.GeProductResidues(Member.Id);
                 return _productResidues;
             }
             set { _productResidues = value; }
@@ -182,11 +183,17 @@ namespace ES.Business.Managers
         #region Constructors
         private CashManager()
         {
+            Initialize();
             UpdateCashAsync();
         }
         #endregion
 
         #region Internal methods
+
+        private void Initialize()
+        {
+            _products = new List<ProductModel>();
+        }
         private void OnProductsUpdated()
         {
             _isProductsUpdating = false;
@@ -234,7 +241,7 @@ namespace ES.Business.Managers
             if (updateingHandler != null) updateingHandler();
             lock (_syncProducts)
             {
-                _products = ProductsManager.GetProducts();
+                UpdateProducts(ProductsManager.GetProducts());
             }
             OnProductsUpdated();
         }
@@ -268,10 +275,10 @@ namespace ES.Business.Managers
         {
             if (_isUpdateing) return;
             OnBeginCashUpdateing();
-            UpdateProductsAsync();
-            //UpdateProductItemsAsync();
             UpdateStocksAsync();
             UpdatePartnersAsync();
+            UpdateProductsAsync();
+            //UpdateProductItemsAsync();
             OnUpdateCompleted();
         }
         public void UpdateProductsAsync()
@@ -285,10 +292,28 @@ namespace ES.Business.Managers
         {
             lock (_syncProducts)
             {
-                _products = products;
+                _products.Clear();
+                _products.AddRange(products);
+                new Thread(() =>
+                {
+                    var productResidue = ProductResidues;
+                    foreach (var item in _products)
+                    {
+                        var product = item;
+                        item.ExistingQuantity = productResidue.Any(pr => pr.ProductId == product.Id)
+                            ? productResidue.Where(pr => pr.ProductId == product.Id).Select(pr => pr.Quantity).First()
+                            : 0;
+                    }
+                }).Start();
                 OnProductsUpdated();
             }
         }
+
+        private void OnProdutsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            OnProductsUpdated();
+        }
+
         private void UpdateProductItemsAsync()
         {
             lock (_syncProductItems)
@@ -329,5 +354,24 @@ namespace ES.Business.Managers
         public event CashUpdatedDelegate CashUpdated;
         #endregion Events
 
+        public void EditProduct(ProductModel product)
+        {
+            var exProduct = Products.SingleOrDefault(s => s.Id == product.Id);
+            if (exProduct != null)
+            {
+                ProductsManager.CopyProduct(exProduct, product);
+            }
+            else
+            {
+                _products.Add(product);
+            }
+            OnProductsUpdated();
+        }
+
+        public void RemoveProduct(ProductModel product)
+        {
+            _products.Remove(product);
+            OnProductsUpdated();
+        }
     }
 }

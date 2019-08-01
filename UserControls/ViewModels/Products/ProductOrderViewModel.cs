@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Data.Models;
 using ES.DataAccess.Models;
 using UserControls.Commands;
+using UserControls.Helpers;
 using ProductModel = ES.Data.Models.ProductModel;
 using ProductOrderModel = ES.Business.Models.ProductOrdersModel;
 
@@ -45,7 +47,9 @@ namespace UserControls.ViewModels.Products
 
         public void SetProductOrderItem(string code)
         {
-            var product = new ProductsManager().GetProductsByCodeOrBarcode(code);
+            var products = ProductsManager.GetProductsByCodeOrBarcode(code);
+            var product = SelectItemsManager.SelectProduct(products).FirstOrDefault();
+            if (product == null) return;
             SetProductOrderItem(product);
         }
         private void SetProductOrderItem(ProductModel product)

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Threading;
 using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Business.Models;
+using ES.Common.Helpers;
 using ES.Data.Enumerations;
 using ES.Data.Model;
 using ES.Data.Models;
@@ -199,12 +201,17 @@ namespace UserControls.Helpers
         }
         public static List<ProductModel> SelectProduct(List<ProductModel> products, bool multipleChoose = false)
         {
+            if (products == null) return null;
             if (products.Count < 2) return products;
-            var selectedItems = new SelectItems(products.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1} {2} {3})", s.Description, s.Code, s.Barcode, s.Price), SelectedValue = s.Id }).ToList(), false, "Ընտրել արտահանվող ապրանքները");
-            return (selectedItems.ShowDialog() == true && selectedItems.SelectedItems != null)
-                ? products.Where(s => selectedItems.SelectedItems.Select(t => t.SelectedValue).ToList().Contains(s.Id)).ToList()
-                : new List<ProductModel>();
 
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+            {
+                var selectedItems = new SelectItems(products.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1} {2} {3})", s.Description, s.Code, s.Barcode, s.Price), SelectedValue = s.Id }).ToList(), false, "Ընտրել արտահանվող ապրանքները");
+                products = (selectedItems.ShowDialog() == true && selectedItems.SelectedItems != null)
+                    ? products.Where(s => selectedItems.SelectedItems.Select(t => t.SelectedValue).ToList().Contains(s.Id)).ToList()
+                    : new List<ProductModel>();
+            });
+            return products;
         }
         public static List<ProductModel> SelectProductByCheck(bool multipleChoose = false)
         {

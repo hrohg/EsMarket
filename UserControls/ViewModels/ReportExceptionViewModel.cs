@@ -16,6 +16,7 @@ namespace UserControls.ViewModels
 
         #region External properties
 
+        private string _exeptionDetile;
         #region Is show detiles
         private bool _isShowDetiles;
 
@@ -38,15 +39,23 @@ namespace UserControls.ViewModels
 
         public string Title { get; private set; }
         public string ExceptionText { get { return _ex != null ? _ex.Message : string.Empty; } }
-        public string ExceptionDetail { get { return IsShowDetiles && _ex != null ? _ex.ToString() : string.Empty; } }
+
+        public string ExceptionDetail
+        {
+            get { return _exeptionDetile; }
+            private set { _exeptionDetile = value; RaisePropertyChanged("ExceptionDetail"); }
+        }
         public string Note { get; set; }
         #endregion External properties
 
         #region Constructors
-        public ReportExceptionViewModel(Exception ex)
+        public ReportExceptionViewModel(Exception ex):this()
+        {
+            _ex = ex;
+        }
+        public ReportExceptionViewModel()
         {
             Title = "Տեղեկացում սխալի վերաբերյալ";
-            _ex = ex;
             Initialize();
         }
         #endregion Contructors
@@ -55,6 +64,7 @@ namespace UserControls.ViewModels
 
         private void Initialize()
         {
+            _exeptionDetile = string.Empty;
             CloseCommand = new RelayCommand(OnClose);
             SendExceptionCommand = new RelayCommand(OnSendErrorReport);
         }
@@ -69,6 +79,13 @@ namespace UserControls.ViewModels
         #endregion Internal methods
 
         #region External methods
+
+        public void OnException(Exception ex)
+        {
+            _ex = ex;
+            ExceptionDetail += ex.ToString() + " \n\n";
+            RaisePropertyChanged("ExceptionText"); 
+        }
         #endregion External methods
 
         #region Commands

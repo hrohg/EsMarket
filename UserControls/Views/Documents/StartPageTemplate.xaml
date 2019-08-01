@@ -10,7 +10,7 @@
 
     <converters:UserRoleToBoolConverter x:Key="UserRoleToBoolConverter"/>
     <converters:UserRoleToBoolMultiValueConverter x:Key="UserRoleToBoolMultiValueConverter"/>
-    <converters:GetInvocieParameterConverter x:Key="GetInvocieParameterConverter"/>
+    <converters:GetInvoiceParameterConverter x:Key="GetInvocieParameterConverter"/>
 
     <Style x:Key="SeparatorStyle"
            TargetType="{x:Type Border}">

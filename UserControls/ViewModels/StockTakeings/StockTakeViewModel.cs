@@ -368,7 +368,10 @@ namespace UserControls.ViewModels.StockTakeings
         }
         protected void GetProduct(string code)
         {
-            SetStockTakeItem(new ProductsManager().GetProductsByCodeOrBarcode(code));
+            var products = ProductsManager.GetProductsByCodeOrBarcode(code);
+            var product = SelectItemsManager.SelectProduct(products).FirstOrDefault();
+            if (product == null) return;
+            SetStockTakeItem(product);
         }
         #endregion Get product command
 

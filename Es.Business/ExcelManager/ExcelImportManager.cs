@@ -89,7 +89,8 @@ namespace ES.Business.ExcelManager
                         DealerDiscount = string.IsNullOrEmpty(xlWSh.Cells[nextRow, 11].Text) ? null : HgConvert.ToDecimal(xlWSh.Cells[nextRow, 11].Text, CultureInfo.InvariantCulture),
                     };
                     //nextRow++;
-                    if(string.IsNullOrEmpty(product.Code)) continue;
+                    //if(string.IsNullOrEmpty(product.Code)) continue;
+                    if (string.IsNullOrEmpty(product.Description)) continue;
                     products.Add(product);
                 }
             }

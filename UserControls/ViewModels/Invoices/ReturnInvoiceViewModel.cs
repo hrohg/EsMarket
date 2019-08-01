@@ -22,6 +22,7 @@ using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Data.Models;
 using Shared.Helpers;
+using UserControls.ControlPanel.Controls;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
 using UserControls.Views.ReceiptTickets.Views;
@@ -168,7 +169,8 @@ namespace UserControls.ViewModels.Invoices
             var invoiceItems = invoice.Item2;
             foreach (var item in invoiceItems)
             {
-                product = new ProductsManager().GetProductsByCodeOrBarcode(item.Code);
+                var products = ProductsManager.GetProductsByCodeOrBarcode(item.Code);
+                product = Helpers.SelectItemsManager.SelectProduct(products).FirstOrDefault();
                 if (product == null)
                 {
                     product = new ProductModel(item.Code, Member.Id, User.UserId, true)
@@ -182,7 +184,8 @@ namespace UserControls.ViewModels.Invoices
                     MessageManager.ShowMessage(string.Format("{0}({1}) ապրանքը գրանցված չէ:", item.Description, item.Code), "Անհայտ ապրանք");
                     return;
                 }
-                var exProduct = new ProductsManager().GetProductsByCodeOrBarcode(product.Code);
+                var exProducts = ProductsManager.GetProductsByCodeOrBarcode(product.Code);
+                var exProduct = Helpers.SelectItemsManager.SelectProduct(exProducts).FirstOrDefault();
                 InvoiceItem = new InvoiceItemsModel
                 {
                     ProductId = product.Id,
@@ -456,7 +459,8 @@ namespace UserControls.ViewModels.Invoices
             var invoiceItems = invoice.Item2;
             foreach (var item in invoiceItems)
             {
-                product = new ProductsManager().GetProductsByCodeOrBarcode(item.Code);
+                var products = ProductsManager.GetProductsByCodeOrBarcode(item.Code);
+                product = Helpers.SelectItemsManager.SelectProduct(products).FirstOrDefault();
                 if (product == null)
                 {
                     product = new ProductModel(item.Code, Member.Id, User.UserId, true)
@@ -470,7 +474,8 @@ namespace UserControls.ViewModels.Invoices
                     MessageManager.ShowMessage(string.Format("{0}({1}) ապրանքը գրանցված չէ:", item.Description, item.Code), "Անհայտ ապրանք");
                     return;
                 }
-                var exProduct = new ProductsManager().GetProductsByCodeOrBarcode(product.Code);
+                var exProducts = ProductsManager.GetProductsByCodeOrBarcode(product.Code);
+                var exProduct = Helpers.SelectItemsManager.SelectProduct(exProducts).FirstOrDefault();
                 InvoiceItem = new InvoiceItemsModel
                 {
                     ProductId = product.Id,

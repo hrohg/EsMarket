@@ -10,6 +10,7 @@ using ES.Business.Helpers;
 using ES.Business.Models;
 using ES.Common;
 using ES.Common.Enumerations;
+using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Data.Models;
 using ES.Data.Models.EsModels;
@@ -366,9 +367,10 @@ namespace ES.Business.Managers
         //{
         //    return TryGetProductsByMember(memberId).Select(ConvertProduct).OrderByDescending(s => s.Code).ToList();
         //}
-        public ProductModel GetProductsByCodeOrBarcode(string code)
+        public static List<ProductModel> GetProductsByCodeOrBarcode(string code)
         {
-            return Convert(TryGetProductsByCodeOrBarcode(code));
+            var products = TryGetProductsByCodeOrBarcode(code);
+            return products != null ? products.Select(Convert).ToList() : new List<ProductModel>();
         }
         public static ProductModel GetProduct(Guid id)
         {
@@ -821,7 +823,7 @@ namespace ES.Business.Managers
             }
 
         }
-        private static Products TryGetProductsByCodeOrBarcode(string code)
+        private static List<Products> TryGetProductsByCodeOrBarcode(string code)
         {
             try
             {
@@ -832,8 +834,8 @@ namespace ES.Business.Managers
                         Include(s => s.ProductCategories).
                         Include(s => s.ProductGroup).
                         Include(s => s.ProductsAdditionalData).
-                        Where(s => s.EsMemberId == ApplicationManager.Member.Id && s.IsEnable && (s.Code == code || s.ProductGroup.Any(t => t.Barcode == code) || s.Barcode == code))
-                        .OrderBy(s => s.ProductGroup.Count).FirstOrDefault();
+                        Where(s => s.EsMemberId == ApplicationManager.Member.Id && s.IsEnable && (s.Code == code || s.ProductGroup.Any(t => t.Barcode == code) || s.Barcode == code)).ToList();
+                        //.OrderBy(s => s.ProductGroup.Count)
                     return product;
                 }
             }
@@ -1160,7 +1162,7 @@ namespace ES.Business.Managers
                 {
                     if (db.Products.Count(s => (s.Code == item.Code || (!string.IsNullOrEmpty(item.Barcode) && s.Barcode == item.Barcode) || s.Id == item.Id) && s.EsMemberId == item.EsMemberId) > 1)
                     {
-                        MessageManager.ShowMessage("Code-ը կամ Barcode-ը կրկնվում է։ Գործողությունը հնարավոր չէ շարունակել։");
+                        MessageManager.OnMessage("Code-ը կամ Barcode-ը կրկնվում է։ Գործողությունը հնարավոր չէ շարունակել։");
                         return null;
                     }
                     var exItem = db.Products.Include(s => s.ProductsAdditionalData).SingleOrDefault(s => s.Code == item.Code && s.EsMemberId == item.EsMemberId);
@@ -1168,7 +1170,7 @@ namespace ES.Business.Managers
                     {
                         if (exItem.Id != item.Id && item.Id != Guid.Empty)
                         {
-                            MessageManager.ShowMessage("Գործողությունը դադարեցված է։ \nԱպրանքի կոդն արդեն գրանցված է։ Խնդրում ենք փոխել կոդը և նորից փորձել։", "Թերի տվյալներ");
+                            MessageManager.OnMessage("Գործողությունը դադարեցված է։ \nԱպրանքի կոդն արդեն գրանցված է։ Խնդրում ենք փոխել կոդը և նորից փորձել։");
                             return null;
                         }
                         exItem.LastModifiedDate = exItem.LastModifiedDate.AddMilliseconds(-exItem.LastModifiedDate.Millisecond);
@@ -1182,9 +1184,8 @@ namespace ES.Business.Managers
                     var exItemsByBarcode = db.Products.Where(s => s.EsMemberId == item.EsMemberId && (s.Code == item.Code || (!string.IsNullOrEmpty(item.Barcode) && s.Barcode == item.Barcode))).ToList();
                     if ((exItemsByBarcode.Count > 1 || (exItem == null && exItemsByBarcode.Count == 1)))
                     {
-                        MessageManager.ShowMessage(
-                           "Գործողությունը դադարեցված է։ \nԱպրանքի բարկոդը կրկնվում է։ Խնդրում ենք փոխել բարկոդը և նորից փորձել։",
-                           "Թերի տվյալներ");
+                        MessageManager.OnMessage(
+                           "Գործողությունը դադարեցված է։ \nԱպրանքի բարկոդը կրկնվում է։ Խնդրում ենք փոխել բարկոդը և նորից փորձել։");
                         return null;
                     }
                     if (exItem != null)
@@ -1450,7 +1451,8 @@ namespace ES.Business.Managers
 
         private static int TryGetNextProductCode(long memberId)
         {
-            var nextcode = 10000;
+            //Reserve 1000 codes
+            var nextcode = 11000;
             using (var db = GetDataContext())
             {
                 try
@@ -1462,11 +1464,11 @@ namespace ES.Business.Managers
                     {
                         nextcode--;
                         code = string.Format("{0}{1}", ApplicationManager.Settings.SettingsContainer.MemberSettings.UseShortCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextcode);
-
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    MessageManager.OnMessage(e.ToString());
                 }
                 return nextcode;
             }

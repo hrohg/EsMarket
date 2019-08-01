@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -20,6 +21,7 @@ using UserControls.Helpers;
 using UserControls.Interfaces;
 using UserControls.PriceTicketControl.ViewModels;
 using ProductModel = ES.Data.Models.ProductModel;
+using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Products
 {
@@ -82,7 +84,7 @@ namespace UserControls.ViewModels.Products
         {
             get
             {
-                return string.IsNullOrEmpty(FilterText) ? _products :
+                return string.IsNullOrEmpty(FilterText) ? _products.ToList() :
                      _products.Where(s => (s.Code + s.Barcode + s.Description + s.Price + s.CostPrice + s.Note).ToLower().Contains(FilterText)
                          || s.ProductGroups.Any(t => t.Barcode.ToLower().Contains(FilterText.ToLower()))).ToList();
             }
@@ -205,7 +207,9 @@ namespace UserControls.ViewModels.Products
         private void OnGetProduct(object o)
         {
             if (!CanGetProduct(o)) { return; }
-            var product = new ProductsManager().GetProductsByCodeOrBarcode(o as string);
+            var products = ProductsManager.GetProductsByCodeOrBarcode(o as string);
+            var product = SelectItemsManager.SelectProduct(products).FirstOrDefault();
+            
             Product = product ?? new ProductModel(ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId, true) { Code = o as string };
         }
         private bool CanGenerateBarcode(object o)
