@@ -174,7 +174,7 @@ namespace UserControls.ViewModels.Tools
                     case ProductsViewEnum.ByDetile:
                         break;
                     case ProductsViewEnum.ByProducts:
-                        _items = ApplicationManager.CashManager.Products.OrderBy(s => s.Description).Select(p => new ProductNodes(p)).OrderBy(s => s.Name).ToList();
+                        _items = ApplicationManager.CashManager.GetProducts().OrderBy(s => s.Description).Select(p => new ProductNodes(p)).OrderBy(s => s.Name).ToList();
                         break;
                     case ProductsViewEnum.ByProductItems:
                         break;
@@ -215,7 +215,7 @@ namespace UserControls.ViewModels.Tools
         private void OnManagingProduct(object item)
         {
             if (!CanManageProduct(item)) return;
-            ManageProduct(CashManager.Instance.Products.SingleOrDefault(s => s.Id == SelectedItem.Product.Id));
+            ManageProduct(CashManager.Instance.GetProducts().SingleOrDefault(s => s.Id == SelectedItem.Product.Id));
         }
         private void ManageProduct(ProductModel product)
         {

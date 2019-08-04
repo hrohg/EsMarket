@@ -174,7 +174,7 @@ namespace UserControls.ViewModels.Products
         private void OnUpdateProducts()
         {
             IsLoading = true;
-            _products = ApplicationManager.Instance.CashProvider.Products;
+            _products = ApplicationManager.Instance.CashProvider.GetProducts();
             var productResidue = ApplicationManager.Instance.CashProvider.ProductResidues;
             foreach (var item in _products)
             {
@@ -260,7 +260,7 @@ namespace UserControls.ViewModels.Products
             if (ProductsManager.EditProducts(products))
             {
                 ApplicationManager.Instance.CashProvider.UpdateProductsAsync();
-                Products = ApplicationManager.Instance.CashProvider.Products;
+                Products = ApplicationManager.Instance.CashProvider.GetProducts();
                 MessageManager.OnMessage("Ապրանքների բեռնումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
             }
             else

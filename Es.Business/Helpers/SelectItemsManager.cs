@@ -120,7 +120,7 @@ namespace ES.Business.Helpers
 
         public static List<ProductModel> SelectProduct(bool multipleChoose = false)
         {
-            var products = ApplicationManager.Instance.CashProvider.Products.ToList();
+            var products = ApplicationManager.Instance.CashProvider.GetProducts().ToList();
             if (products.Count < 2) return products;
             var selectedItems = new SelectItems(products.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1} {2} {3})", s.Description, s.Code, s.Barcode, s.Price), SelectedValue = s.Id }).ToList(), false, "Ընտրել արտահանվող ապրանքները");
             return (selectedItems.ShowDialog() == true && selectedItems.SelectedItems != null)

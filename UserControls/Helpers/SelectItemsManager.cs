@@ -196,7 +196,7 @@ namespace UserControls.Helpers
 
         public static List<ProductModel> SelectProduct(bool multipleChoose = false)
         {
-            var products = ApplicationManager.Instance.CashProvider.Products.ToList();
+            var products = ApplicationManager.Instance.CashProvider.GetProducts().ToList();
             return SelectProduct(products, multipleChoose);
         }
         public static List<ProductModel> SelectProduct(List<ProductModel> products, bool multipleChoose = false)
@@ -215,7 +215,7 @@ namespace UserControls.Helpers
         }
         public static List<ProductModel> SelectProductByCheck(bool multipleChoose = false)
         {
-            var products = ApplicationManager.Instance.CashProvider.Products;
+            var products = ApplicationManager.Instance.CashProvider.GetProducts();
             if (products.Count < 2) return products;
             var vm = new SelectItemsViewModel(products.Select(s => new ItemsToSelectByCheck
             {

@@ -67,10 +67,10 @@ namespace UserControls.ViewModels.Managers
         {
             get
             {
-                var products = CashManager.Instance.Products;
+                var products = CashManager.Instance.GetProducts();
                 if (!string.IsNullOrEmpty(FilterText))
                 {
-                    products = CashManager.Instance.Products.Where(s =>
+                    products = CashManager.Instance.GetProducts().Where(s =>
                             (s.Code + s.Barcode + s.Description + s.Price + s.CostPrice + s.Note).ToLower()
                             .Contains(FilterText.ToLower())
                             || s.ProductGroups.Any(t => t.Barcode.ToLower().Contains(FilterText.ToLower()))).ToList();
@@ -143,7 +143,7 @@ namespace UserControls.ViewModels.Managers
         {
             get
             {
-                return Product != null && CashManager.Instance.Products.Any(s => s.Id == Product.Id) ? "Խմբագրել" : "Ավելացնել";
+                return Product != null && CashManager.Instance.GetProducts().Any(s => s.Id == Product.Id) ? "Խմբագրել" : "Ավելացնել";
                 //return ProductsManager.GetProduct(Id) != null ? "Խմբագրել" : "Ավելացնել";
             }
         }
@@ -256,7 +256,7 @@ namespace UserControls.ViewModels.Managers
             var code = string.IsNullOrEmpty(Product.Code) ?
                 string.Format("{0}{1}", ApplicationManager.Settings.SettingsContainer.MemberSettings.UseShortCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextCode) :
                 Product.Code;
-            while (nextCode > 0 && CashManager.Instance.Products.Any(s => s.Id != Product.Id && (s.Barcode == Product.Barcode || (string.IsNullOrEmpty(Product.Code) && s.Code == code))))
+            while (nextCode > 0 && CashManager.Instance.GetProducts().Any(s => s.Id != Product.Id && (s.Barcode == Product.Barcode || (string.IsNullOrEmpty(Product.Code) && s.Code == code))))
             {
                 nextCode--;
                 Product.Barcode = new BarCodeGenerator(nextCode).Barcode;
@@ -400,23 +400,20 @@ namespace UserControls.ViewModels.Managers
         {
             IsLoading = true;
             var product = ProductsManager.EditProduct(Product);
-            lock (Sync)
+            if (product != null)
             {
-                if (product != null)
-                {
-                    CashManager.Instance.EditProduct(product);
-                    MessageManager.OnMessage(
-                        string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումն իրականացել է հաջողությամբ։",
-                            product.Code, product.Description), MessageTypeEnum.Success);
-                }
-                else
-                {
-                    MessageManager.OnMessage(
-                        string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումը ձախողվել է։", Product.Code,
-                            Product.Description), MessageTypeEnum.Error);
-                    IsLoading = false;
-                    return;
-                }
+                CashManager.Instance.EditProduct(product);
+                MessageManager.OnMessage(
+                    string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումն իրականացել է հաջողությամբ։",
+                        product.Code, product.Description), MessageTypeEnum.Success);
+            }
+            else
+            {
+                MessageManager.OnMessage(
+                    string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումը ձախողվել է։", Product.Code,
+                        Product.Description), MessageTypeEnum.Error);
+                IsLoading = false;
+                return;
             }
 
             IsLoading = false;
@@ -480,10 +477,7 @@ namespace UserControls.ViewModels.Managers
 
         protected virtual bool CanChangeProductEnabled(object o)
         {
-            lock (Sync)
-            {
-                return Product != null && CashManager.Instance.Products.Any(s => s.Id == Product.Id);
-            }
+            return Product != null && CashManager.Instance.GetProducts().Any(s => s.Id == Product.Id);
         }
 
         protected virtual void ChangeProductEnabled(object o)
@@ -605,12 +599,12 @@ namespace UserControls.ViewModels.Managers
         }
         private bool IsProductExist()
         {
-            return (CashManager.Instance.Products.SingleOrDefault(s => s.Id == Product.Id) != null);
+            return (CashManager.Instance.GetProducts().SingleOrDefault(s => s.Id == Product.Id) != null);
         }
 
         private bool IsProductSingle()
         {
-            return CashManager.Instance.Products.Count(s => s.Id == Product.Id && s.Code == Product.Code) == 1;
+            return CashManager.Instance.GetProducts().Count(s => s.Id == Product.Id && s.Code == Product.Code) == 1;
         }
 
         private bool CanImportProducts(ExportImportEnum o)
@@ -668,7 +662,7 @@ namespace UserControls.ViewModels.Managers
             else
             {
                 //MessageManager.OnMessage(string.Format("Բեռնվել է {0} անվանում ապրանք", products.Count));
-                
+
             }
             foreach (var productModel in products)
             {
@@ -692,16 +686,14 @@ namespace UserControls.ViewModels.Managers
         protected override void OnEditProduct(object o)
         {
             IsLoading = true;
-            if(!EditProduct(Product)) MessageBox.Show("խմբագրումը ձախողվել է:", "խմբագրում", MessageBoxButton.OK, MessageBoxImage.Warning);
+            if (!EditProduct(Product)) MessageBox.Show("խմբագրումը ձախողվել է:", "խմբագրում", MessageBoxButton.OK, MessageBoxImage.Warning);
             IsLoading = false;
         }
 
         private bool EditProduct(ProductModel product)
         {
             product = ProductsManager.EditProduct(product);
-            lock (Sync)
-            {
-                if (product != null)
+            if (product != null)
                 {
                     CashManager.Instance.EditProduct(product);
                     MessageManager.OnMessage(
@@ -718,15 +710,13 @@ namespace UserControls.ViewModels.Managers
                     IsLoading = false;
                     return false;
                 }
-            }
         }
         public void DeleteProduct(object o)
         {
-            lock (Sync)
-            {
+            
                 if (ProductsManager.DeleteProduct(Product.Id, MemberId))
                     ApplicationManager.Instance.CashProvider.RemoveProduct(Product);
-            }
+            
             Product = new ProductModel(MemberId, UserId, true);
             RaisePropertyChanged("Product");
         }
@@ -777,15 +767,15 @@ namespace UserControls.ViewModels.Managers
         {
             return Product != null && !string.IsNullOrEmpty(Product.Code) && !string.IsNullOrEmpty(Product.Description) && IsProductSingle();
         }
+
         protected override void OnEditProduct(object o)
         {
             IsLoading = true;
             var product = ProductsManager.EditProduct(Product);
-            lock (Sync)
             {
                 if (product != null)
                 {
-                    if (CashManager.Instance.Products.All(s => s.Code != product.Code))
+                    if (CashManager.Instance.GetProducts().All(s => s.Code != product.Code))
                     {
 
                         MessageManager.OnMessage("Ապրանքը գոյություն չունի: Ապրանքի խմբագրումն ընդհատվել է։",
@@ -810,6 +800,7 @@ namespace UserControls.ViewModels.Managers
                 }
             }
         }
+
         #endregion
 
         #region External methods

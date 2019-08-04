@@ -455,7 +455,7 @@ namespace UserControls.ViewModels.Reports
         {
             _partners = ApplicationManager.Instance.CashProvider.GetPartners;
             _users = ApplicationManager.Instance.CashProvider.GetUsers;
-            _products = ApplicationManager.Instance.CashProvider.Products;
+            _products = ApplicationManager.Instance.CashProvider.GetProducts();
             _productItems = ApplicationManager.Instance.CashProvider.ProductItems;
             OnUpdateInvoices();
         }

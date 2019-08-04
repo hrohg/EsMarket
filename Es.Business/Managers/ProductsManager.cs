@@ -276,7 +276,7 @@ namespace ES.Business.Managers
         }
         public static ProductModel Convert(EsGood item)
         {
-            var exProducts = ApplicationManager.CashManager.Products.Where(s => s.Barcode == item.Barcode || s.Code == item.Code).ToList();
+            var exProducts = ApplicationManager.CashManager.GetProducts().Where(s => s.Barcode == item.Barcode || s.Code == item.Code).ToList();
             if (exProducts.Count > 0)
             {
                 return null;

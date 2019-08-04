@@ -98,8 +98,11 @@ namespace ES.Business.Managers
         {
             get
             {
-                if (!IsLocalMode || _productItems == null) _productItems = ProductsManager.GetProductItems();
-                return _productItems.Select(s => s.Product).ToList();
+                lock (_syncProductItems)
+                {
+                    if (!IsLocalMode || _productItems == null) _productItems = ProductsManager.GetProductItems();
+                    return _productItems != null ? _productItems.Select(s => s.Product).ToList() : new List<ProductModel>();
+                }
             }
             //set { _products = value; }
         }
@@ -131,14 +134,11 @@ namespace ES.Business.Managers
         public delegate void ProductUpdatedDelegate();
         public event ProductUpdatedDelegate ProductUpdated;
 
-        public List<ProductModel> Products
+        public List<ProductModel> GetProducts()
         {
-            get
+            lock (_syncProducts)
             {
-                lock (_syncProducts)
-                {
-                    return _products;
-                }
+                return _products;
             }
         }
 
@@ -234,7 +234,7 @@ namespace ES.Business.Managers
             _isProductItemsUpdating = false;
             OnUpdateCompleted();
         }
-        private void GetProducts()
+        private void UpdateProducts()
         {
             _isProductsUpdating = true;
             var updateingHandler = ProductsUpdateing;
@@ -285,7 +285,7 @@ namespace ES.Business.Managers
         {
             lock (_syncProducts)
             {
-                new Thread(GetProducts).Start();
+                new Thread(UpdateProducts).Start();
             }
         }
         public void UpdateProducts(List<ProductModel> products)
@@ -294,19 +294,22 @@ namespace ES.Business.Managers
             {
                 _products.Clear();
                 _products.AddRange(products);
-                new Thread(() =>
-                {
-                    var productResidue = ProductResidues;
-                    foreach (var item in _products)
-                    {
-                        var product = item;
-                        item.ExistingQuantity = productResidue.Any(pr => pr.ProductId == product.Id)
-                            ? productResidue.Where(pr => pr.ProductId == product.Id).Select(pr => pr.Quantity).First()
-                            : 0;
-                    }
-                }).Start();
-                OnProductsUpdated();
+                products = GetProducts().ToList();
             }
+
+            new Thread(() =>
+            {
+                var productResidue = ProductResidues;
+                foreach (var item in products)
+                {
+                    var product = item;
+                    item.ExistingQuantity = productResidue.Any(pr => pr.ProductId == product.Id)
+                        ? productResidue.Where(pr => pr.ProductId == product.Id).Select(pr => pr.Quantity).First()
+                        : 0;
+                }
+            }).Start();
+            OnProductsUpdated();
+
         }
 
         private void OnProdutsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -356,21 +359,31 @@ namespace ES.Business.Managers
 
         public void EditProduct(ProductModel product)
         {
-            var exProduct = Products.SingleOrDefault(s => s.Id == product.Id);
+
+
+
+            var exProduct = GetProducts().SingleOrDefault(s => s.Id == product.Id);
             if (exProduct != null)
             {
                 ProductsManager.CopyProduct(exProduct, product);
             }
             else
             {
-                _products.Add(product);
+                lock (_syncProducts)
+                {
+                    _products.Add(product);
+                }
             }
             OnProductsUpdated();
         }
 
         public void RemoveProduct(ProductModel product)
         {
-            _products.Remove(product);
+            lock (_syncProducts)
+            {
+                _products.Remove(product);
+            }
+
             OnProductsUpdated();
         }
     }

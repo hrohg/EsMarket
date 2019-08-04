@@ -795,7 +795,7 @@ namespace ES.Market.ViewModels
                 case ExportForScale.All:
                     break;
                 default:
-                    ExportManager.ExportPriceForScaleToXml(ApplicationManager.Instance.CashProvider.Products.ToList());
+                    ExportManager.ExportPriceForScaleToXml(ApplicationManager.Instance.CashProvider.GetProducts().ToList());
                     break;
             }
         }

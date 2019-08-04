@@ -137,7 +137,7 @@ namespace UserControls.ViewModels.Reports.Orders
                     break;
                 case ProductOrderTypeEnum.ViewPartners:
                     IsShowNulls = true;
-                    var products = ApplicationManager.Instance.CashProvider.Products;
+                    var products = ApplicationManager.Instance.CashProvider.GetProducts();
                     productProviders = ProductsManager.GetProductsProviders(products.Select(s => s.Id).ToList());
 
                     var partners = ApplicationManager.Instance.CashProvider.GetPartners;

@@ -233,7 +233,7 @@ namespace UserControls.ViewModels.StockTakeings
             var handler = CreateWriteInInvoiceEvent;
             if (handler != null)
             {
-                var products = ApplicationManager.CashManager.Products;
+                var products = ApplicationManager.CashManager.GetProducts();
                 handler(StockTakeItems.Where(s => s.Balance > 0).Where(s => products.Any(t => t.Id == s.ProductId)).Select(s => new InvoiceItemsModel
                 {
                     ProductId = s.ProductId ?? Guid.Empty,
@@ -248,7 +248,7 @@ namespace UserControls.ViewModels.StockTakeings
             var handler = CreateWriteOffInvoiceEvent;
             if (handler != null)
             {
-                var products = ApplicationManager.CashManager.Products;
+                var products = ApplicationManager.CashManager.GetProducts();
                 handler(StockTakeItems.Where(s => s.Balance < 0).Where(s=>products.Any(t=>t.Id==s.ProductId)).Select(s => new InvoiceItemsModel
                 {
                     ProductId = s.ProductId??Guid.Empty,
@@ -380,7 +380,7 @@ namespace UserControls.ViewModels.StockTakeings
         public ICommand GetProductByNameCommand { get { return _getProductByNameCommand ?? (_getProductByNameCommand = new RelayCommand(OnGetProduct)); } }
         protected void OnGetProduct(object o)
         {
-            var products = ApplicationManager.Instance.CashProvider.Products.OrderBy(s => s.Description);
+            var products = ApplicationManager.Instance.CashProvider.GetProducts().OrderBy(s => s.Description);
             var selectedItems = new SelectItems(products.Select(s => new ItemsToSelect { DisplayName = string.Format("{0} ({1} {2})", s.Description, s.Code, s.Price), SelectedValue = s.Id }).ToList(), false);
             selectedItems.SearchKey = o is FiltersUsage && ((FiltersUsage)o) == FiltersUsage.WithFilters ? _productSearchKey : string.Empty;
             var product = (selectedItems.ShowDialog() == true && selectedItems.SelectedItems != null)

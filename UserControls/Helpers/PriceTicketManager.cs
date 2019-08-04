@@ -21,7 +21,7 @@ namespace UserControls.Helpers
             }
             if (product == null)
             {
-                product = SelectItemsManager.SelectProduct(ApplicationManager.CashManager.Products.Where(s => !string.IsNullOrEmpty(s.Barcode)).ToList()).FirstOrDefault();
+                product = SelectItemsManager.SelectProduct(ApplicationManager.CashManager.GetProducts().Where(s => !string.IsNullOrEmpty(s.Barcode)).ToList()).FirstOrDefault();
             }
             if (product == null) return;
             UserControl priceTicket = null;
