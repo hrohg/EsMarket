@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Threading;
 using UserControls.ViewModels;
 
@@ -12,6 +13,7 @@ namespace UserControls.Controls
         #region Internal properties
         private static EsExceptionBox _instance;
         private static readonly ReportExceptionViewModel Context = new ReportExceptionViewModel();
+        private static bool isShown;
         #endregion Internal properties
 
         #region External properties
@@ -30,7 +32,7 @@ namespace UserControls.Controls
         #endregion External properties
 
         #region Constructors
-        public EsExceptionBox()
+        private EsExceptionBox()
         {
             InitializeComponent();
         }
@@ -40,7 +42,9 @@ namespace UserControls.Controls
 
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
+            Hide();
             Visibility = Visibility.Collapsed;
+            isShown = false;
         }
         #endregion Internal methods
 
@@ -50,8 +54,16 @@ namespace UserControls.Controls
 
         public void OnException(DispatcherUnhandledExceptionEventArgs e)
         {
-            Context.OnException(e.Exception);
-            this.ShowDialog();
+            OnException(e.Exception);
+        }
+        public void OnException(Exception e)
+        {
+            Context.OnException(e);
+            if (!isShown)
+                isShown = true;
+            {
+                this.ShowDialog();
+            }
         }
     }
 }

@@ -151,11 +151,7 @@ namespace UserControls.ViewModels.Tools
 
         private void OnProductsUpdated()
         {
-            lock (_sync)
-            {
-                _items.Clear();
-
-
+         var items = new List<ProductNodes>();   
                 var productNode = new ProductNodes("Products", "Products");
                 switch ((ProductsViewEnum)CurrentProductsViewMode.SelectedValue)
                 {
@@ -166,15 +162,15 @@ namespace UserControls.ViewModels.Tools
                             var stock = ApplicationManager.CashManager.GetStocks.FirstOrDefault(s => s.Id == productItemModel.Key);
                             var nodes = new ProductNodes(stock != null ? stock.Name : "Անհայտ պահեստ", stock != null ? stock.FullName : "");
                             nodes.AddRange(productItemModel.Select(s => new ProductNodes(s.Product)).OrderBy(s => s.Name));
-                            _items.Add(nodes);
+                            items.Add(nodes);
                         }
 
-                        _items = _items.OrderBy(s => s.Name).ToList();
+                        items = items.OrderBy(s => s.Name).ToList();
                         break;
                     case ProductsViewEnum.ByDetile:
                         break;
                     case ProductsViewEnum.ByProducts:
-                        _items = ApplicationManager.CashManager.GetProducts().OrderBy(s => s.Description).Select(p => new ProductNodes(p)).OrderBy(s => s.Name).ToList();
+                        items = ApplicationManager.CashManager.GetProducts().OrderBy(s => s.Description).Select(p => new ProductNodes(p)).OrderBy(s => s.Name).ToList();
                         break;
                     case ProductsViewEnum.ByProductItems:
                         break;
@@ -187,6 +183,11 @@ namespace UserControls.ViewModels.Tools
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+            lock (_sync)
+            {
+                _items.Clear();
+                _items.AddRange(items);
+
             }
             IsLoading = false;
             RaisePropertyChanged("Items");

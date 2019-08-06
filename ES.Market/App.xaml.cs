@@ -158,7 +158,8 @@ namespace ES.Market
             }
             catch (Exception ex)
             {
-                new EsExceptionBox { DataContext = new ReportExceptionViewModel(ex) }.ShowDialog();
+                var messageBox = EsExceptionBox.Instance;
+                messageBox.OnException(ex);
             }
         }
 

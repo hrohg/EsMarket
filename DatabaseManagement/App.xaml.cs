@@ -38,12 +38,10 @@ namespace DatabaseManagement
 
 		private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
 		{
-			EsExceptionBox box = new EsExceptionBox
-			{
-				DataContext = new ReportExceptionViewModel(e.Exception)
-			};
+		    EsExceptionBox box = EsExceptionBox.Instance;
+		    box.OnException(e);
+		    e.Handled = true;
 			box.ShowDialog();
-			e.Handled = true;
 			Current.Shutdown();
 		}
 	}

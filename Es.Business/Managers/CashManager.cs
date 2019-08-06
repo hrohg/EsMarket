@@ -239,10 +239,7 @@ namespace ES.Business.Managers
             _isProductsUpdating = true;
             var updateingHandler = ProductsUpdateing;
             if (updateingHandler != null) updateingHandler();
-            lock (_syncProducts)
-            {
-                UpdateProducts(ProductsManager.GetProducts());
-            }
+            UpdateProducts(ProductsManager.GetProducts());
             OnProductsUpdated();
         }
 
@@ -283,10 +280,7 @@ namespace ES.Business.Managers
         }
         public void UpdateProductsAsync()
         {
-            lock (_syncProducts)
-            {
-                new Thread(UpdateProducts).Start();
-            }
+            new Thread(UpdateProducts).Start();
         }
         public void UpdateProducts(List<ProductModel> products)
         {
@@ -359,9 +353,6 @@ namespace ES.Business.Managers
 
         public void EditProduct(ProductModel product)
         {
-
-
-
             var exProduct = GetProducts().SingleOrDefault(s => s.Id == product.Id);
             if (exProduct != null)
             {
