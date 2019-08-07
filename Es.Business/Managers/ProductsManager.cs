@@ -1303,11 +1303,18 @@ namespace ES.Business.Managers
                 //    .Where(s => s.MemberId == ApplicationManager.Member.Id && s.Quantity != 0).ToList();
                 productKey = productKey != null ? productKey.ToLower() : "";
                 string key = "";
-                return db.ProductItems.Include(s => s.Products)
+                var productItems = db.ProductItems.Include(s => s.Products)
                     .Include(s => s.Products.ProductGroup)
                     .Include(s => s.Products.ProductCategories)
-                    .Where(s => s.MemberId == ApplicationManager.Member.Id && s.Quantity != 0 &&
-                                (productKey == null || s.Products.Code.ToLower().Contains(productKey) || s.Products.Description.ToLower().Contains(productKey))).ToList();
+                    .Where(s => s.MemberId == ApplicationManager.Member.Id && s.Quantity != 0);
+                if (!string.IsNullOrWhiteSpace(productKey))
+                {
+                    return productItems.Where(s=>s.Products.Code.ToLower().Contains(productKey) || s.Products.Description.ToLower().Contains(productKey)).ToList();
+                }
+                else
+                {
+                    return productItems.ToList();
+                }
             }
             catch (Exception)
             {
