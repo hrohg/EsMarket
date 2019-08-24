@@ -5,18 +5,19 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using CashReg.Helper;
+using CashReg.Managers;
 using EsMarket.SharedData.Models;
 using ES.Business.Helpers;
 using ES.Business.Models;
 using ES.Common;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
-using ES.Common.Managers;
 using ES.Data.Models;
 using ES.Data.Models.EsModels;
 using ES.Data.Models.Reports;
 using ES.DataAccess.Models;
 using DataTable = System.Data.DataTable;
+using MessageManager = ES.Common.Managers.MessageManager;
 using ProductModel = ES.Data.Models.ProductModel;
 
 namespace ES.Business.Managers
@@ -653,7 +654,7 @@ namespace ES.Business.Managers
             exItem.ProductId = item.ProductId;
             if (products != null)
             {
-                exItem.Product = products.SingleOrDefault(s => s.Id == item.ProductId);
+                exItem.Product = products.SingleOrDefault(s => s != null && s.Id == item.ProductId);
             }
             if (exItem.Product == null)
             {
@@ -835,7 +836,7 @@ namespace ES.Business.Managers
                         Include(s => s.ProductGroup).
                         Include(s => s.ProductsAdditionalData).
                         Where(s => s.EsMemberId == ApplicationManager.Member.Id && s.IsEnable && (s.Code == code || s.ProductGroup.Any(t => t.Barcode == code) || s.Barcode == code)).ToList();
-                        //.OrderBy(s => s.ProductGroup.Count)
+                    //.OrderBy(s => s.ProductGroup.Count)
                     return product;
                 }
             }
@@ -1309,7 +1310,7 @@ namespace ES.Business.Managers
                     .Where(s => s.MemberId == ApplicationManager.Member.Id && s.Quantity != 0);
                 if (!string.IsNullOrWhiteSpace(productKey))
                 {
-                    return productItems.Where(s=>s.Products.Code.ToLower().Contains(productKey) || s.Products.Description.ToLower().Contains(productKey)).ToList();
+                    return productItems.Where(s => s.Products.Code.ToLower().Contains(productKey) || s.Products.Description.ToLower().Contains(productKey)).ToList();
                 }
                 else
                 {
@@ -1706,11 +1707,13 @@ namespace ES.Business.Managers
             }
         }
 
-        public static IInvoiceReport GetProductsBalance(DateTime? date)
+        public static List<IInvoiceReport> GetProductsBalance(DateTime? date)
         {
-            using (var db = GetDataContext())
+            var reports = new List<IInvoiceReport>();
+
+            try
             {
-                try
+                using (var db = GetDataContext())
                 {
                     var pi = db.ProductItems.Where(s => s.MemberId == ApplicationManager.Member.Id).Include(s => s.Products).Where(s => s.Quantity > 0);
                     var saleInvoiceItems =
@@ -1728,21 +1731,28 @@ namespace ES.Business.Managers
                     var purchasePrice = purchaseInvoiceItems.Sum(s => (s.Price ?? 0) * (s.Quantity ?? 0) + (s.Discount ?? 0));
                     var purchaseCostPrice = purchaseInvoiceItems.Sum(s => (s.CostPrice ?? 0) * (s.Quantity ?? 0));
 
-                    return new InvoiceReport
+                    var stocks = ApplicationManager.CashManager.GetStocks;
+                    foreach (var stock in stocks)
                     {
-                        Description = string.Format("Ապրանքային մնացորդ {0} օրվա դրությամբ", date),
-                        Count = pi.GroupBy(t => t.ProductId).Count(),
-                        Quantity = pi.Sum(t => t.Quantity),
-                        Cost = pi.Sum(t => t.Quantity * t.CostPrice) + saleCostPrice - purchaseCostPrice,
-                        Price = pi.Sum(t => t.Quantity * (t.Products.Price ?? 0)) + salePrice - purchasePrice,
-                        Sale = pi.Sum(t => t.Quantity * ((t.Products.Price ?? 0) - t.CostPrice)),
-                    };
-                }
-                catch (Exception)
-                {
-                    return new InvoiceReport();
+
+                        var productItems = pi.Where(s => s.StockId == stock.Id).ToList(); 
+                        reports.Add(new InvoiceReport
+                            {
+                                Description = string.Format("{0}", stock.FullName),
+                                Count = productItems.GroupBy(t => t.ProductId).Count(),
+                                Quantity = productItems.Sum(t => t.Quantity),
+                                Cost = productItems.Sum(t => t.Quantity * t.CostPrice) + saleCostPrice - purchaseCostPrice,
+                                Price = productItems.Sum(t => t.Quantity * (t.Products.Price ?? 0)) + salePrice - purchasePrice,
+                                Sale = productItems.Sum(t => t.Quantity * ((t.Products.Price ?? 0) - t.CostPrice)),
+                            });
+                    }
                 }
             }
+            catch (Exception)
+            {
+                MessageManager.OnMessage("Գործողութւոնը ձախողվել է:");
+            }
+            return reports;
         }
 
         public static List<IInvoiceReport> GetProductsByStock(DateTime? date, List<StockModel> stocks)

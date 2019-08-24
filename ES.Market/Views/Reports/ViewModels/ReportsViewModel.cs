@@ -337,7 +337,12 @@ namespace ES.Market.Views.Reports.ViewModels
                 default:
                     throw new ArgumentOutOfRangeException("viewEnum", viewEnum, null);
             }
-            if (vm != null) AddTab(vm);
+
+            if (vm != null)
+            {
+                AddTab(vm);
+                vm.Update();
+            }
         }
 
         private ICommand _checkProductsRemainderForStockCommand;

@@ -13,7 +13,7 @@ using ES.Data.Models.Reports;
 using Shared.Helpers;
 using UIHelper.Managers;
 using UserControls.Enumerations;
- 
+
 namespace UserControls.ViewModels.Reports
 {
     public class ViewProductsViewModel : ItemsDataViewModelBase<ProductModel>
@@ -39,21 +39,21 @@ namespace UserControls.ViewModels.Reports
             {
                 _date = _changedOnly ? DateTime.Now : SelectManager.GetDate(_date);
                 _dateIntermediate = SelectManager.GetDateIntermediate();
-            //    if (_changedOnly)
-            //  {
-            //        var win = new SelectCount(new SelectCountModel(_days, "Մուտքագրել օրերի քանակը"), Visibility.Collapsed);
-            //        win.ShowDialog();
-            //        if (!win.DialogResult.HasValue || !win.DialogResult.Value) { UpdateCompleted(false); return; }
-            //        _days = (int)win.SelectedCount;
-            //        _date = DateTime.Now;
-            //    }
-            //    else
-            //    {
-            //        _date = UIHelper.Managers.SelectManager.GetDate(_date);
-            //    }
+                //    if (_changedOnly)
+                //  {
+                //        var win = new SelectCount(new SelectCountModel(_days, "Մուտքագրել օրերի քանակը"), Visibility.Collapsed);
+                //        win.ShowDialog();
+                //        if (!win.DialogResult.HasValue || !win.DialogResult.Value) { UpdateCompleted(false); return; }
+                //        _days = (int)win.SelectedCount;
+                //        _date = DateTime.Now;
+                //    }
+                //    else
+                //    {
+                //        _date = UIHelper.Managers.SelectManager.GetDate(_date);
+                //    }
             });
-            
-            
+
+
             var items = _changedOnly ? ProductsManager.GetChangedProducts(_dateIntermediate) : ProductsManager.GetProductsForView();
             if (items != null && _date != null)
             {
@@ -85,9 +85,10 @@ namespace UserControls.ViewModels.Reports
         public ViewProductsBalanceViewModel(ProductsViewEnum viewEnum)
         {
             _viewEnum = viewEnum;
+            Initialize();
         }
 
-        protected override void Initialize()
+        protected sealed override void Initialize()
         {
             base.Initialize();
             Title = (_viewEnum == ProductsViewEnum.ByPrice) ? "Մնացորդ (արժեք)" : "Մնացորդ";
@@ -134,11 +135,32 @@ namespace UserControls.ViewModels.Reports
                     }
                     var dateNow = DateTime.Now;
                     var productBalance = ProductsManager.GetProductsBalance(dateNow);
+
                     DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
                     {
-                        ViewList.Add(productBalance);
+                        foreach (var invoiceReport in productBalance)
+                        {
+                            ViewList.Add(invoiceReport);
+                        }
                     });
-                    if (dateNow.Date == _date.Value.Date) break;
+
+                    if (dateNow.Date == _date.Value.Date)
+                    {
+                        DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+                        {
+                            ViewList.Add(new InvoiceReport
+                            {
+                                Description = string.Format("Ընդամենը մնացորդ {0} դրությամբ", _date),
+                                Count = productBalance.Count(),
+                                Quantity = productBalance.Sum(t => t.Quantity),
+                                Cost = productBalance.Sum(t => t.Cost),
+                                Price = productBalance.Sum(t => t.Price),
+                                Sale = productBalance.Sum(t => t.Sale),
+                            });
+                        });
+                        break;
+                    }
+
                     var purcaseCostPrice = AccountingRecordsManager.GetAccountingRecordsByAccountingPlan(_date.Value, dateNow, AccountingPlanEnum.Purchase);
                     //var salePrice = AccountingRecordsManager.GetAccountingRecordsByAccountingPlan(_date.Value, dateNow, AccountingPlanEnum.Proceeds);
                     var salePrice = InvoicesManager.GetSaleInvoicesPrice(_date);
@@ -146,6 +168,7 @@ namespace UserControls.ViewModels.Reports
 
                     DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
                     {
+
                         ViewList.Add(new InvoiceReport
                         {
                             Description = string.Format("Ապրանքի ձեռքբերում մինչև {0}", _date),
@@ -172,8 +195,8 @@ namespace UserControls.ViewModels.Reports
                             Description = string.Format("Ընդամենը մնացորդ {0} դրությամբ", _date),
                             //Count = pi.GroupBy(t => t.ProductId).Count(),
                             //Quantity = pi.Sum(t => t.Quantity),
-                            Cost = purcaseCostPrice != null ? productBalance.Cost - (purcaseCostPrice.Item1 - purcaseCostPrice.Item2) : 0,
-                            Price = productBalance.Price + (salePrice != null ? (salePrice.Item2) : 0) - saleCostPrice,
+                            Cost = purcaseCostPrice != null && productBalance.Any() ? productBalance.Last().Cost - (purcaseCostPrice.Item1 - purcaseCostPrice.Item2) : 0,
+                            Price = productBalance.Any() ? productBalance.Last().Price : 0 + (salePrice != null ? (salePrice.Item2) : 0) - saleCostPrice,
                             //Sale = pi.Sum(t => t.Quantity * ((t.Products.Price ?? 0) - t.CostPrice)),
 
                         });
@@ -215,7 +238,7 @@ namespace UserControls.ViewModels.Reports
                     var products = ProductsManager.GetProducts();
                     break;
             }
-            
+
             DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { UpdateCompleted(); });
         }
 
