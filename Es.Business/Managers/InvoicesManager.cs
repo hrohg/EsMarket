@@ -448,14 +448,20 @@ namespace ES.Business.Managers
                     if (startDate == null) startDate = DateTime.Today;
                     if (endDate == null) endDate = DateTime.Today.AddDays(1);
 
-                    return db.Invoices.Where(s =>
+                    var list = db.Invoices.Where(s =>
                         s.ApproveDate.HasValue &&
                         s.ApproveDate >= startDate &&
                         s.ApproveDate < endDate &&
                         s.MemberId == memberId)
-                        .OrderByDescending(s => s.InvoiceIndex)
-                        .Include(s => s.InvoiceItems)
-                        .ToList();
+                        .OrderByDescending(s => s.InvoiceIndex).ToList();
+                    return list;
+                    return db.Invoices.Where(s =>
+                            s.ApproveDate.HasValue &&
+                            s.ApproveDate >= startDate &&
+                            s.ApproveDate < endDate &&
+                            s.MemberId == memberId).Include(s => s.InvoiceItems)
+                        .OrderByDescending(s => s.InvoiceIndex).ToList();
+
                 }
             }
             catch (Exception ex)
@@ -696,8 +702,7 @@ namespace ES.Business.Managers
 
                     #region Update purchase invoice
 
-                    var exInvoice =
-                        db.Invoices.SingleOrDefault(s => s.Id == invoice.Id && s.MemberId == invoice.MemberId);
+                    var exInvoice = db.Invoices.SingleOrDefault(s => s.Id == invoice.Id && s.MemberId == invoice.MemberId);
 
                     if (exInvoice == null)
                     {
@@ -719,6 +724,9 @@ namespace ES.Business.Managers
                         {
                             return null;
                         }
+
+                        invoice.InvoiceNumber = exInvoice.InvoiceNumber;
+
                         exInvoice.FromStockId = invoice.FromStockId;
                         exInvoice.ToStockId = invoice.ToStockId;
                         exInvoice.ApproveDate = DateTime.Now;
@@ -943,8 +951,7 @@ namespace ES.Business.Managers
         /// <param name="stockId"></param>
         /// <param name="invoicePaid"></param>
         /// <returns></returns>
-        private static Invoices TryApproveReturnFromInvoice(Invoices invoice, List<InvoiceItems> invoiceItems,
-            long stockId, InvoicePaid invoicePaid)
+        private static Invoices TryApproveReturnFromInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, long stockId, InvoicePaid invoicePaid)
         {
             using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 3, 0)))
             {
@@ -967,6 +974,9 @@ namespace ES.Business.Managers
                         {
                             return null;
                         }
+
+                        invoice.InvoiceNumber = exInvoice.InvoiceNumber;
+
                         exInvoice.FromStockId = invoice.FromStockId;
                         exInvoice.ToStockId = invoice.ToStockId;
                         exInvoice.ApproveDate = invoice.ApproveDate = DateTime.Now;
@@ -1180,8 +1190,7 @@ namespace ES.Business.Managers
             }
         }
 
-        private static Invoices TryApproveReturnToInvoice(Invoices invoice, List<InvoiceItems> invoiceItems,
-            List<long> fromStockIds, InvoicePaid invoicePaid)
+        private static Invoices TryApproveReturnToInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, List<long> fromStockIds, InvoicePaid invoicePaid)
         {
             if (!invoiceItems.Any() || !fromStockIds.Any() || invoicePaid == null) return null;
             using (var transaction = new TransactionScope())
@@ -1226,6 +1235,9 @@ namespace ES.Business.Managers
                         {
                             return null;
                         }
+
+                        invoice.InvoiceNumber = exInvoice.InvoiceNumber;
+
                         exInvoice.FromStockId = invoice.FromStockId;
                         exInvoice.ToStockId = invoice.ToStockId;
                         exInvoice.ApproveDate = invoice.ApproveDate = DateTime.Now;
@@ -1516,7 +1528,7 @@ namespace ES.Business.Managers
                         exPartner.Debit += (invoicePaid.AccountsReceivable ?? 0);
                         if (exPartner.Debit > exPartner.MaxDebit)
                         {
-                            MessageManager.ShowMessage("Դեպիտորական պարտքը սահմանվածից ավել է։", "Անբավարար միջոցներ");
+                            MessageManager.ShowMessage("Դեբիտորական պարտքը սահմանվածից ավել է։", "Անբավարար միջոցներ");
                             return null;
                         }
                     }
@@ -1929,7 +1941,7 @@ namespace ES.Business.Managers
                             RegisterId = (long)invoice.ApproverId,
                         };
                         db.AccountingRecords.Add(accountingRecords);
-                        exPartner.Debit += invoicePaid.DiscountBond;
+                        //exPartner.Debit += invoicePaid.DiscountBond;
                         //exCashDesk.Total += invoicePaid.Prepayment ?? 0;
                         return null;
                     }
@@ -3041,13 +3053,13 @@ namespace ES.Business.Managers
                 case InvoiceType.ReturnFrom:
                     invoiceDb = ConvertInvoice(invoice);
                     invoiceDb.InvoiceIndex = invoiceIndex;
-                    invoiceDb.InvoiceNumber = string.Format("{0}{1}", "RF", invoiceDb.InvoiceIndex);
+                    invoiceDb.InvoiceNumber = string.Format("{0}{1}", "RFI", invoiceDb.InvoiceIndex);
                     return ConvertInvoice(TryApproveReturnFromInvoice(invoiceDb, invoiceItems.Select(Convert).ToList(), (long)invoice.ToStockId, invoicePaid), ApplicationManager.Instance.CashProvider.GetPartners.SingleOrDefault(p => p.Id == invoice.PartnerId));
                     break;
                 case InvoiceType.ReturnTo:
                     invoiceDb = ConvertInvoice(invoice);
                     invoiceDb.InvoiceIndex = invoiceIndex;
-                    invoiceDb.InvoiceNumber = string.Format("{0}{1}", "RF", invoiceDb.InvoiceIndex);
+                    invoiceDb.InvoiceNumber = string.Format("{0}{1}", "RTI", invoiceDb.InvoiceIndex);
                     return ConvertInvoice(TryApproveReturnToInvoice(invoiceDb, invoiceItems.Select(Convert).ToList(), stocks.Select(s => s.Id).ToList(), invoicePaid), ApplicationManager.Instance.CashProvider.GetPartners.SingleOrDefault(p => p.Id == invoice.PartnerId));
                     break;
                 default:
