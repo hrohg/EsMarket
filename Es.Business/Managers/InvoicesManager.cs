@@ -1487,7 +1487,7 @@ namespace ES.Business.Managers
 
                     if ((invoicePaid.ReceivedPrepayment ?? 0) > 0)
                     {
-                        // 221 - 523 Register in AccountingRecoords
+                        // 221 - 523 Register in AccountingRecoords Կանխավճար
                         var accountingRecords = new AccountingRecords
                         {
                             Id = Guid.NewGuid(),
@@ -1525,7 +1525,7 @@ namespace ES.Business.Managers
                             AccountingRecordsId = apAccountingRecords.Id
                         };
                         db.AccountsReceivable.Add(newAccountsReceivable);
-                        exPartner.Debit += (invoicePaid.AccountsReceivable ?? 0);
+                        //exPartner.Debit += (invoicePaid.AccountsReceivable ?? 0);
                         if (exPartner.Debit > exPartner.MaxDebit)
                         {
                             MessageManager.ShowMessage("Դեբիտորական պարտքը սահմանվածից ավել է։", "Անբավարար միջոցներ");
