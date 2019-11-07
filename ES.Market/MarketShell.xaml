@@ -488,6 +488,7 @@
 
                         <MenuItem Header="Դրամարկղ" Command="{Binding ViewAccountantTableCommand}" CommandParameter="{x:Static managers1:AccountingActionsEnum.CashDesk}"/>
                         <MenuItem Header="Պատվիրատու" Command="{Binding ViewAccountantTableCommand}" CommandParameter="{x:Static managers1:AccountingActionsEnum.Partner}"/>
+                        <MenuItem Header="Պատվիրատու մանրամասն" Command="{Binding ViewPartnersBalanceDetailedCommand}"/>
                         <Separator/>
                         <MenuItem Header="Հաշվային պլան" Command="{Binding ViewAccountantTableCommand}" CommandParameter="{x:Static managers1:AccountingActionsEnum.None}"/>
                         <Separator/>
@@ -513,6 +514,7 @@
                         <Separator/>
                         <MenuItem Header="Կապի ստուգում" Command="{Binding ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.CheckConnection}"/>
                         <MenuItem Header="ՀԴՄ Օպերատորի մուտքի ստուգում" Command="{Binding ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.OperatorLogin}"/>
+                        <MenuItem Header="Տեխնիկական օգնություն" Command="{Binding AboutEcrCommand}"/>
                     </MenuItem>
                 </MenuItem>
 

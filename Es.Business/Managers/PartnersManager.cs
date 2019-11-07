@@ -191,7 +191,7 @@ namespace ES.Business.Managers
         {
             if (partner == null || partner.PartnersTypeId == null) return false;
             string controlKey = GetControlByPartnerType(partner.PartnerTypeEnum);
-            return DefaultsManager.SetDefault(controlKey, null, isDefault? partner.Id:(Guid?)null);
+            return DefaultsManager.SetDefault(controlKey, null, isDefault ? partner.Id : (Guid?)null);
         }
         #endregion
 
@@ -379,6 +379,14 @@ namespace ES.Business.Managers
                 {
                     return null;
                 }
+            }
+        }
+
+        public static List<AccountsReceivable> GetPartnersDebit(List<Guid> guidIds, DateTime startDate, DateTime endDate)
+        {
+            using (var db = GetDataContext())
+            {
+                return db.AccountsReceivable.Where(s => s.MemberId == ApplicationManager.Member.Id && s.Date >= startDate && s.Date <= endDate && guidIds.Contains(s.PartnerId)).ToList();
             }
         }
     }

@@ -60,8 +60,8 @@ namespace UserControls.Controls
         {
             Context.OnException(e);
             if (!isShown)
-                isShown = true;
             {
+                isShown = true;
                 this.ShowDialog();
             }
         }

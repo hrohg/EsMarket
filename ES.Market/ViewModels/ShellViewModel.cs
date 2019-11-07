@@ -1336,6 +1336,11 @@ namespace ES.Market.ViewModels
             td.Start();
         }
 
+        private void OnAboutEcr(object o)
+        {
+            MessageBox.Show("ՀԴՄ ծրագրային ապահովում \nԹողարկում: 1.06 \nՊրոտոկոլ: v0.6 \nՏեխնիկական հարցերով դիմել: support@ess.am", "ՀԴՄ տեխնիական օգնություն", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
         #endregion
 
         #region Data
@@ -1830,14 +1835,12 @@ namespace ES.Market.ViewModels
         #endregion Documents
 
         #region CashDesk
-
+        
+        #region View
         public ICommand GetChashDesksInfoCommand
         {
             get { return new RelayCommand(OnGetCashDeskInfo); }
         }
-
-        #region View
-
         private ICommand _viewDebitByPartnerCommand;
 
         public ICommand ViewDebitByPartnerCommand
@@ -1876,16 +1879,25 @@ namespace ES.Market.ViewModels
 
         public ICommand ViewAccountantTableCommand
         {
-            get { return _viewAccountantTableCommand ?? (_viewAccountantTableCommand = new RelayCommand<AccountingActionsEnum>(OnViewAccountantTable)); }
+            get { return _viewAccountantTableCommand ?? (_viewAccountantTableCommand = new RelayCommand<AccountingActionsEnum?>(OnViewAccountantTable)); }
         }
 
-        private void OnViewAccountantTable(AccountingActionsEnum accountingPlanEnum)
+        private void OnViewAccountantTable(AccountingActionsEnum? accountingPlanEnum)
         {
             var dates = UIHelper.Managers.SelectManager.GetDateIntermediate();
             if (dates == null) return;
             var vm = new ViewAccountantTableViewModel(dates.Item1, dates.Item2);
             AddInvoiceDocument(vm);
-            vm.UpdateAccountingRecords(accountingPlanEnum);
+            vm.UpdateAccountingRecords(accountingPlanEnum ?? AccountingActionsEnum.None);
+        }
+
+        public ICommand ViewPartnersBalanceDetailedCommand{get{return new RelayCommand(OnViewPartnersBalanceDetailed);}}
+
+        private void OnViewPartnersBalanceDetailed(object obj)
+        {
+            var vm = new ViewPartnersBalanceViewModel();
+            AddInvoiceDocument(vm);
+            vm.Update();
         }
 
         #endregion View report
@@ -1964,7 +1976,13 @@ namespace ES.Market.ViewModels
             var ui = new UIListView(repayment.Where(s => (s.CreditGuidId != null && partners.Contains(s.CreditGuidId.Value))).Select(s => new { Ամսաթիվ = s.RegisterDate, Վճարված = s.Amount, Նշումներ = s.Description }).ToList()) { Title = "Դեբիտորական պարտքի մարում ըստ պատվիրատուների" };
             ui.Show();
         }
+        #region Ecr commands
 
+        #endregion Ecr commands
+        public ICommand AboutEcrCommand
+        {
+            get { return new RelayCommand(OnAboutEcr); }
+        }
         #endregion CashDesk
 
         #region Data

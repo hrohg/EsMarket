@@ -15,7 +15,7 @@ namespace ES.Business.Managers
     {
         None = 0,
         CashDesk = AccountingPlanEnum.CashDesk,
-        Partner = 1,
+        Partner = 10,
         AccountingReceivable = AccountingPlanEnum.AccountingReceivable,
         Prepayments = AccountingPlanEnum.Prepayments,
         PurchasePayables = AccountingPlanEnum.PurchasePayables,

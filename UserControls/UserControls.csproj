@@ -198,6 +198,7 @@
     <Compile Include="ViewModels\Invoices\PackingListViewModel.cs" />
     <Compile Include="ViewModels\Logs\LogViewModel.cs" />
     <Compile Include="ViewModels\Managers\ProductManagerViewModel.cs" />
+    <Compile Include="Views\Accountant\ViewPartnersBalanceViewModel.cs" />
     <Compile Include="Views\Products\ProductItemsViewModel.cs" />
     <Compile Include="Views\View\Models\ProductItemsModel.cs" />
     <Compile Include="Views\View\ProductItemsViewModel.cs" />
@@ -373,6 +374,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accountant\View\ViewAccountantTableTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accountant\View\ViewPartnersBalanceTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

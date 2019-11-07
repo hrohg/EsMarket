@@ -26,6 +26,7 @@
 
         <!--Views-->
         <ResourceDictionary Source="Accountant/View/ViewAccountantTableTemplate.xaml"/>
+        <ResourceDictionary Source="Accountant/View/ViewPartnersBalanceTemplate.xaml"/>
         <ResourceDictionary Source="View/Views/ProductHistoryTemplate.xaml"/>
         <ResourceDictionary Source="View/Views/ViewProductsTemplate.xaml"/>
         <ResourceDictionary Source="Reports/ItemsDataView.xaml"/>
