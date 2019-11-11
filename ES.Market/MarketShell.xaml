@@ -408,6 +408,7 @@
                         <MenuItem Header="Դեբիտորական պարտքեր (մանրամասն)"  Command="{Binding ViewDebitByPartnerCommand}" CommandParameter="{x:Static enumerations1:DebitEnum.Debit}"/>
                         <MenuItem Header="Կրեդիտորական պարտքեր"  Command="{Binding ViewDebitByPartnerCommand}" CommandParameter="{x:Static enumerations1:DebitEnum.Credit}"/>
                         <MenuItem Header="Դեբիտորական պարտքերի ստուգում"  Command="{Binding CheckDebitByPartnerCommand}" CommandParameter="{x:Static enumerations1:DebitEnum.Debit}"/>
+                        <MenuItem Header="Պատվիրատու մանրամասն" Command="{Binding ViewPartnersBalanceDetailedCommand}"/>
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="Հաշիվ"
@@ -488,7 +489,6 @@
 
                         <MenuItem Header="Դրամարկղ" Command="{Binding ViewAccountantTableCommand}" CommandParameter="{x:Static managers1:AccountingActionsEnum.CashDesk}"/>
                         <MenuItem Header="Պատվիրատու" Command="{Binding ViewAccountantTableCommand}" CommandParameter="{x:Static managers1:AccountingActionsEnum.Partner}"/>
-                        <MenuItem Header="Պատվիրատու մանրամասն" Command="{Binding ViewPartnersBalanceDetailedCommand}"/>
                         <Separator/>
                         <MenuItem Header="Հաշվային պլան" Command="{Binding ViewAccountantTableCommand}" CommandParameter="{x:Static managers1:AccountingActionsEnum.None}"/>
                         <Separator/>

@@ -343,8 +343,8 @@ namespace ES.Business.Managers
                     exItem.Email = item.Email;
                     exItem.Address = item.Address;
                     exItem.Discount = item.Discount;
-                    exItem.Debit = item.Debit;
-                    exItem.Credit = item.Credit;
+                    //exItem.Debit = item.Debit;
+                    //exItem.Credit = item.Credit;
                     exItem.MaxDebit = item.MaxDebit;
                     exItem.TIN = item.TIN;
                     exItem.PasportData = item.PasportData;

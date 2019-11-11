@@ -651,8 +651,9 @@ namespace ES.Business.Managers
                         if (exItem != null)
                         {
                             exItem.InvoiceId = invoice.Id;
-                            //CopyInvoiceItem(exItem, exInvoiceItem);
                             invoiceItems.RemoveAt(invoiceItems.IndexOf(exItem));
+
+                            exInvoiceItem.Quantity = exItem.Quantity;
                         }
                         else
                         {
