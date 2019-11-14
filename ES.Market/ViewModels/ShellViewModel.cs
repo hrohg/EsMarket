@@ -1370,8 +1370,8 @@ namespace ES.Market.ViewModels
         {
             var stock = SelectItemsManager.SelectStocks(StockManager.GetStocks()).FirstOrDefault();
             if (stock == null) return;
-            var existingProducts = ProductsManager.GetProductItemsByStock(stock.Id, ApplicationManager.Instance.GetMember.Id);
-            OnCreateWriteOffInvoice(existingProducts.Select(s => new InvoiceItemsModel() { Code = s.Product.Code, Quantity = s.Quantity }).ToList(), stock.Id);
+            var existingProducts = ProductsManager.GetProductItemsByStock(stock.Id);
+            OnCreateWriteOffInvoice(existingProducts.Select(s => new InvoiceItemsModel { Code = s.Product.Code, Quantity = s.Quantity }).ToList(), stock.Id);
         }
 
         private void OnCreateWriteOffInvoice(List<InvoiceItemsModel> items, long? stockId, string notes = null)

@@ -654,6 +654,8 @@ namespace ES.Business.Managers
                             invoiceItems.RemoveAt(invoiceItems.IndexOf(exItem));
 
                             exInvoiceItem.Quantity = exItem.Quantity;
+                            exInvoiceItem.CostPrice = exItem.CostPrice  ;
+                            exInvoiceItem.Price = exItem.Price;
                         }
                         else
                         {
@@ -2004,7 +2006,7 @@ namespace ES.Business.Managers
             }
         }
 
-        private static Invoices TryApproveInventoryWriteOffInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, IEnumerable<long> fromStockIds)
+        private static Invoices TryApproveInventoryWriteOffInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, List<long> fromStockIds)
         {
             using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 15, 0)))
             {
@@ -3010,7 +3012,7 @@ namespace ES.Business.Managers
             return ConvertInvoice(TryApproveSaleInvoice(ConvertInvoice(invoice), invoiceItems.Select(Convert).ToList(), stockIds, invoicePaid), ApplicationManager.Instance.CashProvider.GetPartners.SingleOrDefault(p => p.Id == invoice.PartnerId));
         }
 
-        public static InvoiceModel RegisterInventoryWriteOffInvoice(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems, IEnumerable<long> stockIds)
+        public static InvoiceModel RegisterInventoryWriteOffInvoice(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems, List<long> stockIds)
         {
             var approvedInvoice = TryApproveInventoryWriteOffInvoice(ConvertInvoice(invoice),invoiceItems.Select(Convert).ToList(), stockIds);
             return ConvertInvoice(approvedInvoice, null);

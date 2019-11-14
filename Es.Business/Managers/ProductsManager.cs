@@ -483,12 +483,18 @@ namespace ES.Business.Managers
             }
 
         }
-        public static List<ProductItemModel> GetProductItemsByStock(long stockId, long memberId)
+        public static List<ProductItemModel> GetProductItemsByStocks(List<long> stockIds, string productkey = null)
         {
-            var productItems = TryGetProductItemsByStock(stockId, memberId);
+            var productItems = TryGetProductItemsByStocks(stockIds, productkey);
             var products = productItems.GroupBy(s => s.Products).Select(s => Convert(s.Key)).ToList();
             return productItems.Select(s => Convert(s, products)).ToList();
         }
+
+        public static List<ProductItemModel> GetProductItemsByStock(long stockId)
+        {
+            return GetProductItemsByStocks(new List<long> { stockId });
+        }
+
         public static List<ProductResidue> GeProductResidues(long memberId)
         {
             return TryGetProductResidue(memberId);
@@ -1323,17 +1329,21 @@ namespace ES.Business.Managers
             }
 
         }
-        private static List<ProductItems> TryGetProductItemsByStock(long stockId, long memberId)
+        private static List<ProductItems> TryGetProductItemsByStocks(List<long> stockIds, string productKey = null)
         {
             var db = GetDataContext();
             try
             {
-                return db.ProductItems
+                var productIds = db.Products.Where(s => s.EsMemberId == ApplicationManager.Member.Id && (productKey == null || s.Code.Contains(productKey) || s.Description.Contains(productKey))).Select(s => s.Id).ToList();
+                var productItems = db.ProductItems.Where(s => s.MemberId == ApplicationManager.Member.Id &&
+                                    s.StockId.HasValue && stockIds.Contains((int)s.StockId) && s.Quantity != 0 &&
+                                   productIds.Contains(s.ProductId))
                     .Include(s => s.Products)
                     .Include(s => s.Products.ProductGroup)
                     .Include(s => s.Products.ProductCategories)
                     .Include(s => s.Products.ProductsAdditionalData)
-                    .Where(s => s.MemberId == memberId && s.StockId == stockId && s.Quantity != 0).ToList();
+                    .ToList();
+                return productItems;
             }
             catch (Exception)
             {
@@ -1735,7 +1745,7 @@ namespace ES.Business.Managers
                     foreach (var stock in stocks)
                     {
 
-                        var productItems = pi.Where(s => s.StockId == stock.Id).ToList(); 
+                        var productItems = pi.Where(s => s.StockId == stock.Id).ToList();
                         reports.Add(new InvoiceReport
                             {
                                 Description = string.Format("{0}", stock.FullName),

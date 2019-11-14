@@ -117,8 +117,8 @@ namespace UserControls.Views.View
                     productKey = inputBox.InputValue;
                 }
             });
-            _productItems = ProductsManager.GetProductItems(productKey);
-            _productItems = _productItems.Where(pi => pi.StockId != null && _stocks.Select(s => s.Id).ToList().Contains((long)pi.StockId)).ToList();
+            _productItems = ProductsManager.GetProductItemsByStocks(_stocks.Select(s=>s.Id).ToList(), productKey);
+            //_productItems = _productItems.Where(pi => pi.StockId != null && _stocks.Select(s => s.Id).ToList().Contains((long)pi.StockId)).ToList();
             var items = (from item in _productItems
                          group item by item.ProductId
                              into product
