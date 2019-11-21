@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Linq;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -1085,7 +1086,11 @@ namespace ES.Business.Managers
                             {
                                 MessageManager.OnMessage(string.Format("Ապրանքն ավելի վաղ արդեն խմբագրվել է։ Ապրանքի խմբագրումը չի իրականացել։ \n Կոդ։ {0} \nԲարկոդ: {1}", item.Code, item.Barcode), MessageTypeEnum.Warning);
                                 continue;
-                            }
+                            }       
+                     
+                            exItem.LastModifiedDate = item.LastModifiedDate = DateTime.Now;
+                            CheckIsProductPriceWasChanged(item, exItem, db);
+
                             exItem.Code = item.Code;
                             exItem.Barcode = item.Barcode;
                             exItem.HCDCS = item.HCDCS;
@@ -1095,10 +1100,6 @@ namespace ES.Business.Managers
                             exItem.Note = item.Note;
                             exItem.CostPrice = item.CostPrice;
                             exItem.ExpiryDays = item.ExpiryDays;
-                            if (exItem.Price != item.Price)
-                            {
-                                exItem.OldPrice = exItem.Price;
-                            }
                             exItem.Price = item.Price;
                             exItem.Discount = item.Discount;
                             exItem.DealerPrice = item.DealerPrice;
@@ -1107,7 +1108,7 @@ namespace ES.Business.Managers
                             exItem.IsEnable = item.IsEnable;
                             exItem.BrandId = item.BrandId;
                             exItem.LastModifierId = userId;
-                            exItem.LastModifiedDate = item.LastModifiedDate = DateTime.Now;
+                            
                         }
                         else
                         {
@@ -1198,6 +1199,9 @@ namespace ES.Business.Managers
                     if (exItem != null)
                     {
                         if (exItem.Code != item.Code) return null;
+                        exItem.LastModifiedDate = item.LastModifiedDate = DateTime.Now;
+                        CheckIsProductPriceWasChanged(item, exItem, db);
+
                         exItem.Barcode = item.Barcode;
                         exItem.HCDCS = item.HCDCS;
                         exItem.Description = item.Description;
@@ -1205,10 +1209,6 @@ namespace ES.Business.Managers
                         exItem.IsWeight = item.IsWeight;
                         exItem.Note = item.Note;
                         exItem.CostPrice = item.CostPrice;
-                        if (exItem.Price != item.Price)
-                        {
-                            exItem.OldPrice = exItem.Price;
-                        }
                         exItem.Price = item.Price;
                         exItem.Discount = item.Discount;
                         exItem.DealerPrice = item.DealerPrice;
@@ -1219,7 +1219,7 @@ namespace ES.Business.Managers
                         exItem.IsEnable = item.IsEnable;
                         exItem.BrandId = item.BrandId;
                         exItem.LastModifierId = item.LastModifierId;
-                        exItem.LastModifiedDate = item.LastModifiedDate = DateTime.Now;
+                        
                         item.Id = exItem.Id;
                     }
                     else
@@ -1268,6 +1268,36 @@ namespace ES.Business.Managers
                 return null;
             }
 
+        }
+
+        private static void CheckIsProductPriceWasChanged(Products product, Products existingProduct, EsStockDBEntities db)
+        {
+            if (existingProduct.Price != product.Price)
+            {
+                existingProduct.OldPrice = existingProduct.Price;
+                if (db != null)
+                {
+                    //todo:
+                    new ProductPrice()
+                    {
+                        Date = product.LastModifiedDate,
+
+                    };
+                }
+            }
+
+
+        }
+        private struct ProductPrice
+        {
+            private DateTime Date;
+            private string Code;
+            private string Description;
+            private double CostPrice;
+            private double Price;
+            private bool IsEmpty;
+            private long MemberId;
+            private long UserId;
         }
         private static bool TryDeleteProduct(Products item)
         {
