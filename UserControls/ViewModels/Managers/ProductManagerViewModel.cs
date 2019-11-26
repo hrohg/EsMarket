@@ -1,12 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using CashReg.Helper;
@@ -21,7 +18,6 @@ using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
 using ES.Data.Models.EsModels;
-using ES.DataAccess.Models;
 using Shared.Helpers;
 using UserControls.PriceTicketControl;
 using UserControls.Helpers;
@@ -68,7 +64,15 @@ namespace UserControls.ViewModels.Managers
                 RaisePropertyChanged("EditProductStage");
             }
         }
-        public List<ProductModel> SelectedProducts { get; set; }
+
+        public IList SelectedProducts
+        {
+            get { return _selectedProducts; }
+            set { _selectedProducts = value; OnSelectedProductsChanged(); }
+        }
+
+        public SelectionMode SelectionMode { get { return SelectedProducts.Count > 1 ? SelectionMode.Multiple : SelectionMode.Single; } }
+        public bool IsSingleModeSelected { get { return SelectedProducts.Count <= 1; } }
         private List<ProductModel> _products;
         public List<ProductModel> Products
         {
@@ -103,11 +107,11 @@ namespace UserControls.ViewModels.Managers
                     case ProductViewType.ByActivity:
                         break;
                     case ProductViewType.WeigthsOnly:
-                        _products = _products.Where(s => s.IsWeight).ToList();
+                        _products = _products.Where(s => s.IsWeight != null && (bool)s.IsWeight).ToList();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
-                } 
+                }
                 //if (sortDescriptions != null)
                 //    foreach (var sortDescription in sortDescriptions)
                 //    {
@@ -120,6 +124,8 @@ namespace UserControls.ViewModels.Managers
         }
         #region Filter
         private string _filterText;
+        private IList _selectedProducts = new List<object>();
+
         public string FilterText
         {
             get
@@ -156,7 +162,7 @@ namespace UserControls.ViewModels.Managers
         {
             get
             {
-                return Product != null && CashManager.Instance.GetProducts().Any(s => s.Id == Product.Id) ? "Խմբագրել" : "Ավելացնել";
+                return (Product != null && CashManager.Instance.GetProducts().Any(s => s.Id == Product.Id)) || !IsSingleModeSelected ? "Խմբագրել" : "Ավելացնել";
                 //return ProductsManager.GetProduct(Id) != null ? "Խմբագրել" : "Ավելացնել";
             }
         }
@@ -174,32 +180,59 @@ namespace UserControls.ViewModels.Managers
         private void Initialize()
         {
             Title = "Ապրանքների խմբագրում";
-            //SelectedProducts = new ObservableCollection<ProductModel>();
-            //SelectedProducts.CollectionChanged += OnSelectedProductsChanged;
             SetCommands();
             LoadProducts();
         }
 
-        private void OnSelectedProductsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnSelectedProductsChanged()
         {
-            if (SelectedProducts.Count > 1)
+            if (!IsSingleModeSelected)
             {
+                var selectedProducts = SelectedProducts.Cast<ProductModel>().ToList();
                 Product = new ProductModel();
 
-                var costPrice = SelectedProducts.First().CostPrice;
-                Product.CostPrice = SelectedProducts.Any(s => s.CostPrice == costPrice) ? costPrice : null;
 
-                var price = SelectedProducts.First().Price;
-                Product.Price = SelectedProducts.Any(s => s.Price == price) ? price : null;
 
-                var dealerPrice = SelectedProducts.First().DealerPrice;
-                Product.Price = SelectedProducts.Any(s => s.DealerPrice == dealerPrice) ? dealerPrice : null;
+                var hcdCs = selectedProducts.First().HcdCs;
+                Product.HcdCs = selectedProducts.All(s => s.HcdCs == hcdCs) ? hcdCs : null;
+
+                var mu = selectedProducts.First().Mu;
+                Product.Mu = selectedProducts.All(s => s.Mu == mu) ? mu : null;
+
+                var isWeight = selectedProducts.First().IsWeight;
+                Product.IsWeight = selectedProducts.All(s => s.IsWeight == isWeight) && isWeight;
+
+                //Prices
+                var costPrice = selectedProducts.First().CostPrice;
+                Product.CostPrice = selectedProducts.All(s => s.CostPrice == costPrice) ? costPrice : null;
+
+                var profitPercent = selectedProducts.First().ProfitPercent;
+                Product.ProfitPercent = selectedProducts.All(s => s.ProfitPercent == profitPercent) ? profitPercent : null;
+                var price = selectedProducts.First().Price;
+                Product.Price = selectedProducts.All(s => s.Price == price) ? price : null;
+                var discount = selectedProducts.First().Discount;
+                Product.Discount = selectedProducts.All(s => s.Discount == discount) ? discount : null;
+
+                var dealerProfitPercent = selectedProducts.First().DealerProfitPercent;
+                Product.DealerProfitPercent = selectedProducts.All(s => s.DealerProfitPercent == dealerProfitPercent) ? dealerProfitPercent : null;
+                var dealerPrice = selectedProducts.First().DealerPrice;
+                Product.Price = selectedProducts.All(s => s.DealerPrice == dealerPrice) ? dealerPrice : null;
+                var dealerDiscount = selectedProducts.First().DealerDiscount;
+                Product.DealerDiscount = selectedProducts.All(s => s.DealerDiscount == dealerDiscount) ? dealerDiscount : null;
+
+                var minQuantity = selectedProducts.First().MinQuantity;
+                Product.MinQuantity = selectedProducts.All(s => s.MinQuantity == minQuantity) ? minQuantity : null;
+                
             }
             else
             {
 
 
             }
+
+            RaisePropertyChanged("SelectionMode");
+            RaisePropertyChanged("IsSingleModeSelected");
+            RaisePropertyChanged("Product");
         }
 
         private void SetCommands()
@@ -431,12 +464,40 @@ namespace UserControls.ViewModels.Managers
 
         protected virtual bool CanEdit(object o)
         {
-            return Product != null && !string.IsNullOrEmpty(Product.Code) && !string.IsNullOrEmpty(Product.Description) && (!IsProductExist() || IsProductSingle());
+            return Product != null && (!string.IsNullOrEmpty(Product.Code) && !string.IsNullOrEmpty(Product.Description) && (!IsProductExist() || IsProductSingle())) || !IsSingleModeSelected;
         }
 
         protected virtual void OnEditProduct(object o)
         {
             IsLoading = true;
+            if (!IsSingleModeSelected)
+            {
+                var products = SelectedProducts.Cast<ProductModel>().ToList();
+                foreach (var productModel in products)
+                {
+                    
+
+                    if (Product.Mu != null) productModel.Mu = Product.Mu;
+                    if (Product.HcdCs != null) productModel.HcdCs = Product.HcdCs;
+                    productModel.IsWeight = Product.IsWeight;
+
+                    //Prices
+                    if (Product.CostPrice != null) productModel.CostPrice = Product.CostPrice;
+                    if (Product.DealerDiscount != null) productModel.DealerDiscount = Product.DealerDiscount;
+                    if (Product.DealerProfitPercent != null) productModel.DealerProfitPercent = Product.DealerProfitPercent;
+                    if (Product.DealerPrice != null) productModel.DealerPrice = Product.DealerPrice;
+                    if (Product.Discount != null) productModel.Discount = Product.Discount;
+                    if (Product.ProfitPercent != null) productModel.ProfitPercent = Product.ProfitPercent;
+                    if (Product.Price != null) productModel.Price = Product.Price;
+
+                    if (Product.MinQuantity != null) productModel.MinQuantity = Product.MinQuantity;
+
+                    //if (Product.TypeOfTaxes!= ) productModel.TypeOfTaxes = Product.TypeOfTaxes;
+                    
+                }
+                ProductsManager.EditProducts(products);
+                return;
+            }
             var product = ProductsManager.EditProduct(Product);
             if (product != null)
             {
@@ -724,7 +785,14 @@ namespace UserControls.ViewModels.Managers
         protected override void OnEditProduct(object o)
         {
             IsLoading = true;
-            if (!EditProduct(Product)) MessageBox.Show("խմբագրումը ձախողվել է:", "խմբագրում", MessageBoxButton.OK, MessageBoxImage.Warning);
+            if (IsSingleModeSelected)
+            {
+                if (!EditProduct(Product)) MessageBox.Show("խմբագրումը ձախողվել է:", "խմբագրում", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else
+            {
+                base.OnEditProduct(o);
+            }
             IsLoading = false;
         }
 

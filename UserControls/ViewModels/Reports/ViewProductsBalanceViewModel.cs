@@ -61,7 +61,7 @@ namespace UserControls.ViewModels.Reports
                 {
                     var provider = PartnersManager.GetProviderForProduct(item);
                     item.Provider = provider;
-                    item.ExistingQuantity = ProductsManager.GetProductQuantity(item.Id, _date);
+                    item.ExistingQuantity = ProductsManager.GetProductQuantityFromInvoices(item.Id, _date);
                     AddNewItem(item);
                 }
             }
@@ -219,7 +219,7 @@ namespace UserControls.ViewModels.Reports
                         {
                             var provider = PartnersManager.GetProviderForProduct(item);
                             item.Provider = provider;
-                            item.ExistingQuantity = ProductsManager.GetProductQuantity(item.Id, _date);
+                            item.ExistingQuantity = ProductsManager.GetProductQuantityFromInvoices(item.Id, _date);
                             var item1 = item;
                             DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
                             {

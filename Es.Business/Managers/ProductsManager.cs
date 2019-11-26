@@ -1081,15 +1081,22 @@ namespace ES.Business.Managers
 
                         if (exItem != null)
                         {
-                            exItem.LastModifiedDate = exItem.LastModifiedDate.AddMilliseconds(-exItem.LastModifiedDate.Millisecond);
+                            exItem.LastModifiedDate =
+                                exItem.LastModifiedDate.AddMilliseconds(-exItem.LastModifiedDate.Millisecond);
                             if (exItem.LastModifiedDate > item.LastModifiedDate)
                             {
-                                MessageManager.OnMessage(string.Format("Ապրանքն ավելի վաղ արդեն խմբագրվել է։ Ապրանքի խմբագրումը չի իրականացել։ \n Կոդ։ {0} \nԲարկոդ: {1}", item.Code, item.Barcode), MessageTypeEnum.Warning);
+                                MessageManager.OnMessage(
+                                    string.Format(
+                                        "Ապրանքն ավելի վաղ արդեն խմբագրվել է։ Ապրանքի խմբագրումը չի իրականացել։ \n Կոդ։ {0} \nԲարկոդ: {1}",
+                                        item.Code, item.Barcode), MessageTypeEnum.Warning);
                                 continue;
-                            }       
-                     
+                            }
+                        }
+
+                        CheckIsProductPriceWasChanged(item, exItem, db);
+                        if (exItem != null)
+                        {
                             exItem.LastModifiedDate = item.LastModifiedDate = DateTime.Now;
-                            CheckIsProductPriceWasChanged(item, exItem, db);
 
                             exItem.Code = item.Code;
                             exItem.Barcode = item.Barcode;
@@ -1108,7 +1115,7 @@ namespace ES.Business.Managers
                             exItem.IsEnable = item.IsEnable;
                             exItem.BrandId = item.BrandId;
                             exItem.LastModifierId = userId;
-                            
+
                         }
                         else
                         {
@@ -1196,11 +1203,11 @@ namespace ES.Business.Managers
                            "Գործողությունը դադարեցված է։ \nԱպրանքի բարկոդը կրկնվում է։ Խնդրում ենք փոխել բարկոդը և նորից փորձել։");
                         return null;
                     }
+                    CheckIsProductPriceWasChanged(item, exItem, db);
                     if (exItem != null)
                     {
                         if (exItem.Code != item.Code) return null;
                         exItem.LastModifiedDate = item.LastModifiedDate = DateTime.Now;
-                        CheckIsProductPriceWasChanged(item, exItem, db);
 
                         exItem.Barcode = item.Barcode;
                         exItem.HCDCS = item.HCDCS;
@@ -1219,7 +1226,7 @@ namespace ES.Business.Managers
                         exItem.IsEnable = item.IsEnable;
                         exItem.BrandId = item.BrandId;
                         exItem.LastModifierId = item.LastModifierId;
-                        
+
                         item.Id = exItem.Id;
                     }
                     else
@@ -1272,16 +1279,23 @@ namespace ES.Business.Managers
 
         private static void CheckIsProductPriceWasChanged(Products product, Products existingProduct, EsStockDBEntities db)
         {
-            if (existingProduct.Price != product.Price)
+            if (existingProduct == null || existingProduct.Price != product.Price)
             {
-                existingProduct.OldPrice = existingProduct.Price;
+                if (existingProduct != null) existingProduct.OldPrice = existingProduct.Price;
                 if (db != null)
                 {
                     //todo:
                     new ProductPrice()
                     {
+                        Id = product.Id,
+                        Code = product.Code,
+                        Description = product.Description,
+                        CostPrice = (double)(product.CostPrice ?? 0),
+                        Price = (double)(product.Price ?? 0),
                         Date = product.LastModifiedDate,
-
+                        IsEmpty = GetProductQuantity(product.Id) == 0,
+                        UserId = product.LastModifierId,
+                        MemberId = product.EsMemberId
                     };
                 }
             }
@@ -1290,14 +1304,15 @@ namespace ES.Business.Managers
         }
         private struct ProductPrice
         {
-            private DateTime Date;
-            private string Code;
-            private string Description;
-            private double CostPrice;
-            private double Price;
-            private bool IsEmpty;
-            private long MemberId;
-            private long UserId;
+            public Guid Id;
+            public DateTime Date;
+            public string Code;
+            public string Description;
+            public double CostPrice;
+            public double Price;
+            public bool IsEmpty;
+            public long MemberId;
+            public long UserId;
         }
         private static bool TryDeleteProduct(Products item)
         {
@@ -1835,7 +1850,23 @@ namespace ES.Business.Managers
             }
         }
 
-        public static decimal GetProductQuantity(Guid id, DateTime? date)
+        public static decimal? GetProductQuantity(Guid id)
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    var productItems = db.ProductItems.Where(s => s.MemberId == ApplicationManager.Member.Id && s.ProductId == id);
+                    return productItems.Any() ? productItems.Sum(s => s.Quantity) : 0;
+                }
+                catch (Exception ex)
+                {
+                    MessageManager.OnMessage(ex.Message);
+                    return null;
+                }
+            }
+        }
+        public static decimal GetProductQuantityFromInvoices(Guid id, DateTime? date)
         {
             using (var db = GetDataContext())
             {

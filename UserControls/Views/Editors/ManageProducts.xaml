@@ -8,7 +8,8 @@
                     xmlns:helper1="clr-namespace:UserControls.PriceTicketControl.Helper"
                     xmlns:helpers1="clr-namespace:UserControls.Helpers"
                     xmlns:helper="clr-namespace:CashReg.Helper;assembly=CashReg"
-                    xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data">
+                    xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data"
+                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common">
 
 
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
@@ -57,17 +58,17 @@
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
                                             <TextBlock Text="Կոդ" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"/>
-                                            <TextBox Grid.Column="1" Grid.Row="0" x:Name="TextBoxCode" Text="{Binding Path=Product.Code, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="auto"  TabIndex="1">
+                                            <TextBox Grid.Column="1" Grid.Row="0" x:Name="TextBoxCode" Text="{Binding Path=Product.Code, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="auto"  TabIndex="1" IsEnabled="{Binding IsSingleModeSelected}">
                                                 <TextBox.InputBindings>
                                                     <KeyBinding Key="Enter" Command="{Binding GetProductCommand}" CommandParameter="{Binding ElementName=TextBoxCode, Path=Text}"/>
                                                 </TextBox.InputBindings>
                                             </TextBox>
                                             <TextBlock Text="Անվանում" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Right" Margin="0 1 1 1"/>
-                                            <TextBox Grid.Column="3" Grid.Row="0" Text="{Binding Product.Description, UpdateSourceTrigger=PropertyChanged}" Width="Auto" MinWidth="300" TabIndex="2"/>
+                                            <TextBox Grid.Column="3" Grid.Row="0" Text="{Binding Product.Description, UpdateSourceTrigger=PropertyChanged}" Width="Auto" MinWidth="300" TabIndex="2" IsEnabled="{Binding IsSingleModeSelected}"/>
 
-                                            <Label Grid.Column="0" Grid.Row="1" Content="Բարկոդ"  HorizontalContentAlignment="Right" VerticalAlignment="Top" Margin="0 1"/>
+                                            <TextBlock Grid.Column="0" Grid.Row="1" Text="Բարկոդ"  HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 1"/>
                                             <TextBox Grid.Column="1" Grid.Row="1" x:Name="TextBoxBarcode" 
-                           Text="{Binding Product.Barcode, UpdateSourceTrigger=PropertyChanged}" 
+                           Text="{Binding Product.Barcode, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsSingleModeSelected}"
                            Width="Auto" VerticalAlignment="Top" Height="26" 
                            TabIndex="4" Margin="0 1"
      HorizontalContentAlignment="Center" 
@@ -129,7 +130,7 @@
                                     </Border>
                                 </Grid>
                             </TabItem>
-                            <TabItem Header="Ապրանքատեսակ">
+                            <TabItem Header="Ապրանքատեսակ" IsEnabled="False">
                                 <Border Grid.Row="0" Margin="0 1" BorderThickness=".5" BorderBrush="LightSkyBlue" Padding="2">
                                     <StackPanel>
                                         <StackPanel Orientation ="Horizontal">
@@ -153,7 +154,7 @@
                                     </StackPanel>
                                 </Border>
                             </TabItem>
-                            <TabItem Header="Ապրանքային խումբ">
+                            <TabItem Header="Ապրանքային խումբ" IsEnabled="{Binding IsSingleModeSelected}">
                                 <Border Grid.Row="0" Margin="0 1" BorderThickness=".5" BorderBrush="LightSkyBlue" Padding="2">
                                     <Grid>
                                         <Grid.RowDefinitions>
@@ -195,7 +196,7 @@
                                                   SelectedValue="{Binding Product.TypeOfTaxes, Converter={StaticResource IntToEnumConverter}, ConverterParameter={x:Type helper:TypeOfTaxes}}" Margin="0 3" IsEditable="False"/>
 
                                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Նշումներ" HorizontalAlignment="Right"/>
-                                        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="5" Text="{Binding Product.Note, UpdateSourceTrigger=PropertyChanged}" Height="50" AcceptsReturn="True" TextWrapping="Wrap" TabIndex="5"/>
+                                        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="5" Text="{Binding Product.Note, UpdateSourceTrigger=PropertyChanged}" Height="50" AcceptsReturn="True" TextWrapping="Wrap" VerticalAlignment="Top" TabIndex="5"/>
                                     </Grid>
                                 </Border>
                             </TabItem>
@@ -280,9 +281,10 @@
                                                        ItemsSource="{Binding Path=Products}" 
                                                        AutoGenerateColumns="False"
                                                        SelectedItem="{Binding Path = Product}" 
-                                                       
+                                                       behaviors:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding SelectedProducts, Mode=OneWayToSource}"
+                                                       behaviors:MultiSelectorBehaviours.IsSynchronizeSelectedItems="True"
                                                        SelectionMode="Extended"
-                                                       AlternatingRowBackground ="GhostWhite" 
+                                                       AlternatingRowBackground ="GhostWhite"
                                                        AlternationCount="2"
                                                        CanUserAddRows="False" 
                                                        CanUserDeleteRows="False" 
