@@ -188,7 +188,7 @@ namespace ES.Business.Managers
             product.LastModifierId = item.LastModifierId;
             product.LastModifiedDate = item.LastModifiedDate;
             product.ProductGroups = item.ProductGroups;
-            product.TypeOfTaxes = item.TypeOfTaxes;
+            //product.TypeOfTaxes = item.TypeOfTaxes;
             product.IsEnabled = item.IsEnabled;
 
             //Additional data

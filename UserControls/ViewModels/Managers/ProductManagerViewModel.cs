@@ -222,7 +222,13 @@ namespace UserControls.ViewModels.Managers
 
                 var minQuantity = selectedProducts.First().MinQuantity;
                 Product.MinQuantity = selectedProducts.All(s => s.MinQuantity == minQuantity) ? minQuantity : null;
-                
+
+                var expiryDays = selectedProducts.First().ExpiryDays;
+                Product.ExpiryDays = selectedProducts.All(s => s.ExpiryDays == expiryDays) ? expiryDays : null;
+
+                var typeOfTaxes = selectedProducts.First().TypeOfTaxes;
+                Product.TypeOfTaxes = selectedProducts.All(s => s.TypeOfTaxes == typeOfTaxes) ? typeOfTaxes : default(TypeOfTaxes);
+
             }
             else
             {
@@ -237,7 +243,7 @@ namespace UserControls.ViewModels.Managers
 
         private void SetCommands()
         {
-            EditCommand = new RelayCommand(OnEditProduct, CanEdit);
+            EditCommand = new RelayCommand(OnEditProducts, CanEdit);
             PrintBarcodeCommand = new RelayCommand<PrintPriceTicketEnum?>(OnPrintBarcode, CanPrintBarcode);
             ProductCopyCommand = new RelayCommand(CopyProduct, CanCopyProduct);
             ProductPastCommand = new RelayCommand(PastProduct, CanPastProduct);
@@ -388,7 +394,27 @@ namespace UserControls.ViewModels.Managers
         #endregion
 
         #region External methods
-
+        protected bool OnEditProduct(ProductModel product)
+        {
+            product = ProductsManager.EditProduct(product);
+            if (product != null)
+            {
+                CashManager.Instance.EditProduct(product);
+                MessageManager.OnMessage(
+                    string.Format("{0} {1} (խմբագրումը հաջողվել է)",
+                        product.Code, product.Description), MessageTypeEnum.Success);
+                product.LastModifiedDate = product.LastModifiedDate;
+                return true;
+            }
+            else
+            {
+                MessageManager.OnMessage(
+                    string.Format("{0} {1} (խմբագրումը ձախողվել է)", Product.Code,
+                        Product.Description), MessageTypeEnum.Error);
+                IsLoading = false;
+                return false;
+            }
+        }
         /// <summary>
         /// Buffer
         /// </summary>
@@ -467,7 +493,7 @@ namespace UserControls.ViewModels.Managers
             return Product != null && (!string.IsNullOrEmpty(Product.Code) && !string.IsNullOrEmpty(Product.Description) && (!IsProductExist() || IsProductSingle())) || !IsSingleModeSelected;
         }
 
-        protected virtual void OnEditProduct(object o)
+        protected virtual void OnEditProducts(object o)
         {
             IsLoading = true;
             if (!IsSingleModeSelected)
@@ -475,7 +501,7 @@ namespace UserControls.ViewModels.Managers
                 var products = SelectedProducts.Cast<ProductModel>().ToList();
                 foreach (var productModel in products)
                 {
-                    
+
 
                     if (Product.Mu != null) productModel.Mu = Product.Mu;
                     if (Product.HcdCs != null) productModel.HcdCs = Product.HcdCs;
@@ -492,10 +518,11 @@ namespace UserControls.ViewModels.Managers
 
                     if (Product.MinQuantity != null) productModel.MinQuantity = Product.MinQuantity;
 
-                    //if (Product.TypeOfTaxes!= ) productModel.TypeOfTaxes = Product.TypeOfTaxes;
-                    
+                    if (Product.TypeOfTaxes != (default(TypeOfTaxes))) productModel.TypeOfTaxes = Product.TypeOfTaxes;
+                    if (Product.ExpiryDays != null) productModel.ExpiryDays = Product.ExpiryDays;
+                    OnEditProduct(productModel);
                 }
-                ProductsManager.EditProducts(products);
+
                 return;
             }
             var product = ProductsManager.EditProduct(Product);
@@ -626,6 +653,7 @@ namespace UserControls.ViewModels.Managers
                 RaisePropertyChanged("Product");
             }
         }
+        
         #endregion
 
         #region Product Commands
@@ -768,7 +796,7 @@ namespace UserControls.ViewModels.Managers
                 productModel.Id = Guid.Empty;
                 if (string.IsNullOrEmpty(productModel.Code)) productModel.Code = GetNextProductCode();
                 productModel.LastModifiedDate = DateTime.Now;
-                EditProduct(productModel);
+                OnEditProduct(productModel);
             }
             MessageManager.OnMessage(string.Format("Խմբագրվել է {0} անվանում ապրանք", products.Count));
             IsLoading = false;
@@ -782,41 +810,21 @@ namespace UserControls.ViewModels.Managers
             Product = new ProductModel(MemberId, UserId, true);
         }
 
-        protected override void OnEditProduct(object o)
+        protected override void OnEditProducts(object o)
         {
             IsLoading = true;
             if (IsSingleModeSelected)
             {
-                if (!EditProduct(Product)) MessageBox.Show("խմբագրումը ձախողվել է:", "խմբագրում", MessageBoxButton.OK, MessageBoxImage.Warning);
+                if (!OnEditProduct(Product)) MessageBox.Show("խմբագրումը ձախողվել է:", "խմբագրում", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             else
             {
-                base.OnEditProduct(o);
+                base.OnEditProducts(o);
             }
             IsLoading = false;
         }
 
-        private bool EditProduct(ProductModel product)
-        {
-            product = ProductsManager.EditProduct(product);
-            if (product != null)
-            {
-                CashManager.Instance.EditProduct(product);
-                MessageManager.OnMessage(
-                    string.Format("{0} {1} (խմբագրումը հաջողվել է)",
-                        product.Code, product.Description), MessageTypeEnum.Success);
-                Product.LastModifiedDate = product.LastModifiedDate;
-                return true;
-            }
-            else
-            {
-                MessageManager.OnMessage(
-                    string.Format("{0} {1} (խմբագրումը ձախողվել է)", Product.Code,
-                        Product.Description), MessageTypeEnum.Error);
-                IsLoading = false;
-                return false;
-            }
-        }
+
         public void DeleteProduct(object o)
         {
 
@@ -874,7 +882,7 @@ namespace UserControls.ViewModels.Managers
             return Product != null && !string.IsNullOrEmpty(Product.Code) && !string.IsNullOrEmpty(Product.Description) && IsProductSingle();
         }
 
-        protected override void OnEditProduct(object o)
+        protected override void OnEditProducts(object o)
         {
             IsLoading = true;
             var product = ProductsManager.EditProduct(Product);
