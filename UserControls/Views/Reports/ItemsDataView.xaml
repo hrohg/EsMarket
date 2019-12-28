@@ -321,28 +321,27 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Գին" CanUserSort="True">
+                <DataGridTemplateColumn Header="Ինքնարժեք">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type reports1:IInvoiceReport}">
-                            <TextBlock Text="{Binding Price, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
+                            <TextBlock Text="{Binding Cost, StringFormat='{}{0:#,0}', TargetNullValue=0}" HorizontalAlignment="Right"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Հասույթ" CanUserSort="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="{x:Type reports1:IInvoiceReport}">
+                            <TextBlock Text="{Binding Sale, StringFormat='{}{0:#,0}', TargetNullValue=0}" HorizontalAlignment="Right"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Գումար">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type reports1:IInvoiceReport}">
-                            <TextBlock Text="{Binding Sale, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
+                            <TextBlock Text="{Binding Price, StringFormat='{}{0:#,0}', TargetNullValue=0}" HorizontalAlignment="Right"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Ինքնարժեք">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate DataType="{x:Type reports1:IInvoiceReport}">
-                            <TextBlock Text="{Binding Cost, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-               
             </DataGrid.Columns>
         </DataGrid>
     </DataTemplate>

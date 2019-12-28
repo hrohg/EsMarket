@@ -61,7 +61,7 @@ namespace UserControls.ViewModels.Invoices
             if (invoice != null)
             {
                 Invoice = invoice;
-                IsModified = false;
+                LoadInvoice();
                 RaisePropertyChanged("InvoiceStateImageState");
                 RaisePropertyChanged("InvoiceStateTooltip");
             }
@@ -196,11 +196,7 @@ namespace UserControls.ViewModels.Invoices
         }
 
         #endregion Commands
-
-        protected override void SetPrice()
-        {
-            
-        }
+        
     }
 
     [Flags]

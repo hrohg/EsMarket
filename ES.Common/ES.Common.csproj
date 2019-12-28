@@ -90,6 +90,7 @@
     <Compile Include="Behaviors\GetFocusBehavior.cs" />
     <Compile Include="Behaviors\ExtendedTextBoxBehavior.cs" />
     <Compile Include="Behaviors\MultiSelectBehaviours.cs" />
+    <Compile Include="Behaviors\PasswordHelper.cs" />
     <Compile Include="Controls\DropDownMenuButton.cs" />
     <Compile Include="Controls\ExtendedLayoutAnchorablePane.cs" />
     <Compile Include="Controls\ExtendedLayoutDocumentPane.cs" />

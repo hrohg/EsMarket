@@ -78,7 +78,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Behaviors\FocusNextElementBehaviors.cs" />
-    <Compile Include="Behaviors\PasswordHelper.cs" />
     <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
       <SubType>Code</SubType>

@@ -7,7 +7,6 @@ using System.Windows.Threading;
 using CashReg.Helper;
 using CashReg.Interfaces;
 using CashReg.Models;
-using ES.Data.Models;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
@@ -35,16 +34,6 @@ namespace UserControls.ViewModels.Invoices
         public override string Description
         {
             get { return string.Format("{0}{1}", Title, Partner != null ? string.Format(" ({0})", Partner.FullName) : string.Empty); }
-        }
-        public override PartnerModel Partner
-        {
-            get { return base.Partner; }
-            set
-            {
-                Invoice.RecipientName = value != null ? value.FullName : null;
-                base.Partner = value;
-                SetPrice();
-            }
         }
 
         #region IsEcrActivated
@@ -148,22 +137,22 @@ namespace UserControls.ViewModels.Invoices
             UseExtPos = ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.UseExtPos;
             IsModified = false;
         }
-
-        protected override void SetPrice()
+        protected override void OnPartnerChanged()
         {
-            base.SetPrice();
+            base.OnPartnerChanged();
+            Invoice.RecipientName = Partner != null ? Partner.FullName : null;
             SetDiscountBond();
-        }
-
-        private void SetDiscountBond()
-        {
-            var bond = ApplicationManager.Settings.SettingsContainer.MemberSettings.UseDiscountBond ? InvoiceItems.Sum(s => GetPartnerDiscountBond(s.Product)) : 0;
-            InvoicePaid.DiscountBond = bond;
         }
         protected override void OnInvoiceItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             base.OnInvoiceItemsChanged(sender, e);
             SetDiscountBond();
+        }
+
+        private void SetDiscountBond()
+        {
+            var bond = ApplicationManager.Settings.Branch != null && ApplicationManager.Settings.Branch.IsActive && ApplicationManager.Settings.Branch.UseDiscountBond ? Invoice.Amount - Invoice.Total : 0;
+            InvoicePaid.DiscountBond = bond;
         }
 
         private void PrintInvoiceTicket(ResponseReceiptModel ecrResponseReceiptModel)
@@ -181,20 +170,20 @@ namespace UserControls.ViewModels.Invoices
             PrintManager.Print(ticket, ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSalePrinter);
         }
 
-        
-        protected override void InvoiceLoadCompleted()
-        {
-            //SetPrice();
-        }
 
         protected override bool CanRemoveInvoiceItem(object o)
         {
-            return base.CanRemoveInvoiceItem(o)  && ApplicationManager.IsInRole(UserRoleEnum.Seller);
+            return base.CanRemoveInvoiceItem(o) && ApplicationManager.IsInRole(UserRoleEnum.Seller);
         }
-
+        protected bool UseDiscountBond { get { return ApplicationManager.Settings.Branch != null && ApplicationManager.Settings.Branch.IsActive && ApplicationManager.Settings.Branch.UseDiscountBond; } }
         protected override void OnPaidInvoice(object obj)
         {
             CashDeskManager.OpenCashDesk();
+            if (UseDiscountBond)
+            {
+                InvoicePaid.Paid = Invoice.Amount;
+                return;
+            }
             base.OnPaidInvoice(obj);
         }
 
@@ -264,28 +253,37 @@ namespace UserControls.ViewModels.Invoices
             }
 
             var price = base.GetProductPrice(product);
+            var discount = Partner.Discount ?? (ApplicationManager.Settings.Branch != null && ApplicationManager.Settings.Branch.UseDiscountBond && ApplicationManager.Settings.Branch.DefaultDiscount != null ? (decimal)ApplicationManager.Settings.Branch.DefaultDiscount : 0);
             switch (Partner.PartnersTypeId)
             {
                 case (long)PartnerType.Dealer:
-
                     break;
                 default:
-                    if (!ApplicationManager.Settings.SettingsContainer.MemberSettings.UseDiscountBond) price -= (price * (Partner != null ? (Partner.Discount ?? 0) / 100 : 0));
+                    //if (!ApplicationManager.Settings.Branch.UseDiscountBond) 
+                    price -= (price * (Partner != null ? discount / 100 : 0));
                     break;
             }
             return product.HasDealerPrice ? Math.Max(price, product.GetProductDealerPrice()) : price;
         }
 
-        private decimal GetPartnerDiscountBond(ProductModel product)
-        {
-            var price = GetProductPrice(product);
-            if (ApplicationManager.Settings.SettingsContainer.MemberSettings.UseDiscountBond) price -= (price * (Partner != null ? (Partner.Discount ?? 0) / 100 : 0));
-            return (product.Price ?? 0) - (product.HasDealerPrice ? Math.Max(price, product.GetProductDealerPrice()) : price);
-        }
+        //private decimal GetPartnerDiscountBond(ProductModel product)
+        //{
+        //    var price = GetProductPrice(product);
+        //    //if (ApplicationManager.Settings.Branch.UseDiscountBond)
+        //        price -= (price * (Partner != null ? (Partner.Discount ?? 0) / 100 : 0));
+        //    return (product.Price ?? 0) - (product.HasDealerPrice ? Math.Max(price, product.GetProductDealerPrice()) : price);
+        //}
 
         private bool IsPaidValid
         {
-            get { return InvoicePaid.IsPaid && InvoicePaid.Change <= (InvoicePaid.Paid ?? 0) && Partner != null && (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit && (InvoicePaid.ReceivedPrepayment ?? 0) <= Partner.Credit; }
+            get
+            {
+                return InvoicePaid.IsPaid &&
+                       InvoicePaid.Change <= (InvoicePaid.Paid ?? 0) &&
+                       Partner != null &&
+                       (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit &&
+                       (InvoicePaid.ReceivedPrepayment ?? 0) <= Partner.Credit;
+            }
         }
         protected override bool CanApprove(object o)
         {
@@ -297,9 +295,9 @@ namespace UserControls.ViewModels.Invoices
 
         #region External methods
 
-       protected override void OnApproveAsync(bool closeOnExit)
+        protected override void OnApproveAsync(bool closeOnExit)
         {
-           base.OnApproveAsync(closeOnExit);
+            base.OnApproveAsync(closeOnExit);
             try
             {
                 if (IsModified && !Save())
@@ -415,10 +413,15 @@ namespace UserControls.ViewModels.Invoices
             }
             return responceReceiptModel;
         }
-        
+
         public override bool DenyChangePrice
         {
             get { return !ApplicationManager.IsInRole(UserRoleEnum.SaleManager) && base.DenyChangePrice; }
+        }
+
+        public override bool Close()
+        {
+            return base.Close();
         }
 
         #endregion

@@ -60,22 +60,9 @@ namespace UserControls.ViewModels.Invoices
                 if (value == null) return;
                 _invoice = value;
                 RaisePropertyChanged(InvoiceProperty);
-                FromStock = _invoice.FromStockId != null ? StockManager.GetStock(_invoice.FromStockId) : null;
-                ToStock = _invoice.ToStockId != null ? StockManager.GetStock(_invoice.ToStockId) : null;
-                Partner = Invoice.Partner ?? PartnersManager.GetPartner(Invoice.PartnerId);
-
-                var invoiceItems = InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index);
-                InvoiceItems = new ObservableCollection<InvoiceItemsModel>();
-                InvoiceItems.CollectionChanged += OnInvoiceItemsChanged;
-                foreach (var invoiceItemsModel in invoiceItems)
-                {
-                    InvoiceItems.Add(invoiceItemsModel);
-                }
-                IsModified = false;
-                InvoiceLoadCompleted();
             }
         }
-        protected virtual void InvoiceLoadCompleted() { }
+
         private ObservableCollection<InvoiceItemsModel> _invoiceItems = new ObservableCollection<InvoiceItemsModel>();
 
         public ObservableCollection<InvoiceItemsModel> InvoiceItems
@@ -159,18 +146,22 @@ namespace UserControls.ViewModels.Invoices
         protected const string PartnerProperty = "Partner";
         private PartnerModel _partner;
 
-        public virtual PartnerModel Partner
+        public PartnerModel Partner
         {
             get { return _partner; }
             set
             {
                 _partner = value;
-                Invoice.PartnerId = value != null ? value.Id : (Guid?)null;
-                IsModified = true;
                 RaisePropertyChanged(PartnerProperty);
+                OnPartnerChanged();
             }
         }
 
+        protected virtual void OnPartnerChanged()
+        {
+            Invoice.PartnerId = Partner != null ? Partner.Id : (Guid?)null;
+            IsModified = true;
+        }
         #endregion Partner
 
         #endregion External properties
@@ -205,8 +196,15 @@ namespace UserControls.ViewModels.Invoices
         private void Initialize()
         {
             Title = "Ապրանքագիր";
+            InvoiceItems.CollectionChanged += OnInvoiceItemsChanged;
             if (Invoice == null)
+            {
                 Invoice = new InvoiceModel(ApplicationManager.GetEsUser, ApplicationManager.Instance.GetMember);
+            }
+            else
+            {
+                LoadInvoice();
+            }
             PrintInvoiceCommand = new RelayCommand<PrintModeEnum>(OnPrintInvoice, CanPrintInvoice);
             ExportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnExportInvoice, CanExportInvoice);
 
@@ -244,6 +242,21 @@ namespace UserControls.ViewModels.Invoices
             RaisePropertyChanged(FilteredInvoiceItemsProperty);
         }
 
+        protected void LoadInvoice()
+        {
+            FromStock = _invoice.FromStockId != null ? StockManager.GetStock(_invoice.FromStockId) : null;
+            ToStock = _invoice.ToStockId != null ? StockManager.GetStock(_invoice.ToStockId) : null;
+            Partner = Invoice.Partner ?? PartnersManager.GetPartner(Invoice.PartnerId);
+
+            InvoiceItems.Clear();
+            var invoiceItems = InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index);
+            foreach (var invoiceItemsModel in invoiceItems)
+            {
+                InvoiceItems.Add(invoiceItemsModel);
+            }
+            IsModified = false;
+        }
+
         #endregion Internal methods
 
         #region External methods
@@ -271,7 +284,7 @@ namespace UserControls.ViewModels.Invoices
 
         #endregion
 
-       
+
 
         #region Export
 

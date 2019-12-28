@@ -490,7 +490,6 @@ namespace ES.Market.ViewModels
                     //
                     break;
                 case Key.F2:
-                    if (!ApplicationManager.IsInRole(UserRoleEnum.Seller)) return;
                     //handle X key reate new sale invoice
                     if (ApplicationManager.IsInRole(UserRoleEnum.Seller) || ApplicationManager.IsInRole(UserRoleEnum.JuniorSeller))
                     {
@@ -1948,6 +1947,11 @@ namespace ES.Market.ViewModels
                 case AccountingPlanEnum.OtherOperationalExpenses:
                     break;
 
+                case AccountingPlanEnum.None:
+                    break;
+                case AccountingPlanEnum.BalanceDebetCredit:
+                    return ApplicationManager.IsInRole(UserRoleEnum.SeniorCashier);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException("accountingPlan", accountingPlan, null);
             }

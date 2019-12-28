@@ -206,6 +206,7 @@ namespace ES.Market
                     if (members.Any())
                     {
                         ApplicationManager.Instance.SetEsMember = members.Single();
+                        EsExceptionBox.Instance.Company = new Reporter() { Company = ApplicationManager.Instance.GetMember.FullName, User = String.Format("{0} (mobile:{1} mail:{2})", esuser.FullName, esuser.Mobile, esuser.Email) };
                         Market.ShowDialog();
                     }
                     else

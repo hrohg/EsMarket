@@ -70,6 +70,7 @@ namespace UserControls.Helpers
             if (AccountingRecordsManager.SetPartnerPayment(depositeAccountRecords: depositAccountingRecords,
                 repaymentAccountingRecords: repaymentAccountingRecord))
             {
+                CashManager.Instance.UpdatePartnersAsync();
                 MessageManager.ShowMessage("Վճարումն իրականացվել է հաջողությամբ։");
                 if (ApplicationManager.Settings.IsEcrActivated && depositAccountingRecords.Amount > 0)
                 {
@@ -87,15 +88,16 @@ namespace UserControls.Helpers
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (long)AccountingPlanEnum.PurchasePayables;
             accountingRecords.Credit = (long)AccountingPlanEnum.CashDesk;
-            var partner = SelectItemsManager.SelectPartners(false, "Ընտրել գործընկեր դրամարկղը").FirstOrDefault();
+            var partner = SelectItemsManager.SelectPartners(false, "Ընտրել գործընկեր").FirstOrDefault();
             var fromCashDesk = SelectItemsManager.SelectDefaultSaleCashDesks(null, false, "Ընտրել ելքագրվող դրամարկղը").FirstOrDefault();
             if (partner == null || fromCashDesk == null)
             {
                 MessageManager.ShowMessage("Թերի տվյալներ");
                 return;
             }
-            accountingRecords.CreditGuidId = fromCashDesk.Id;
             accountingRecords.DebitGuidId = partner.Id;
+            accountingRecords.CreditGuidId = fromCashDesk.Id;
+
             var description = "Գործընկեր։ " + partner.FullName + "։ Կրեդիտորական պարտք։" + partner.Credit + " դր․" + "\n" +
                 "Ելքագրվող դրամարկդ։ " + fromCashDesk.Name + " առկա է։ " + fromCashDesk.Total + " դր․";
             var ui = new CtrlAccountingRecords(new AccountingRecordsViewModel(accountingRecords, description));
@@ -116,10 +118,11 @@ namespace UserControls.Helpers
             }
             if (AccountingRecordsManager.SetRepaymentOfDebts(accountingRecords, ApplicationManager.Instance.GetMember.Id))
             {
+                CashManager.Instance.UpdatePartnersAsync();
                 MessageManager.ShowMessage("Վճարումն իրականացվել է հաջողությամբ։");
                 if (ApplicationManager.Settings.IsEcrActivated)
                 {
-                     EcrManager.RepaymentOfDebts(accountingRecords.Amount, partner.FullName);
+                    EcrManager.RepaymentOfDebts(accountingRecords.Amount, partner.FullName);
                 }
             }
             else
@@ -157,12 +160,16 @@ namespace UserControls.Helpers
             receivedInAdvance.CreditGuidId = partner.Id;
             receivedInAdvance.DebitGuidId = cashDesk.Id;
             if (!ctrlAccountingRecords.Result || receivedInAdvance == null || receivedInAdvance.Amount == 0) return;
-            AccountingRecordsManager.SetPartnerPayment(depositeAccountRecords: receivedInAdvance, repaymentAccountingRecords: null);
-
-            if (ApplicationManager.Settings.IsEcrActivated)
+            if (AccountingRecordsManager.SetPartnerPayment(depositeAccountRecords: receivedInAdvance,
+                repaymentAccountingRecords: null))
             {
-                EcrManager.EcrServer.SetCashReceipt(receivedInAdvance.Amount, partner.FullName);
+                CashManager.Instance.UpdatePartnersAsync();
+                if (ApplicationManager.Settings.IsEcrActivated)
+                {
+                    EcrManager.EcrServer.SetCashReceipt(receivedInAdvance.Amount, partner.FullName);
+                }
             }
+            else { MessageManager.ShowMessage("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։"); }
         }
 
         private static void OnPrepayments()
@@ -202,9 +209,48 @@ namespace UserControls.Helpers
                 MessageManager.ShowMessage("Անբավարար միջոցներ:", "Անբավարար միջոցներ");
                 return;
             }
-            if (AccountingRecordsManager.SetPartnerPrepayment(accountingRecord)) ApplicationManager.CashManager.UpdatePartnersAsync();
+
+            if (AccountingRecordsManager.SetPartnerPrepayment(accountingRecord))
+            {
+                ApplicationManager.CashManager.UpdatePartnersAsync();
+            }
+            else
+            {
+                MessageManager.ShowMessage("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
+            }
 
         }
+
+        //
+        private static void BalnceDebetCredit()
+        {
+            var partner = SelectItemsManager.SelectPartner();
+            if (partner == null) return;
+            if (partner.Credit <= 0 || partner.Debit <= 0)
+            {
+                MessageBox.Show(string.Format("Պատվիրատու: {0}\nԿանխավճար: {1}\nՊարտք: {2}\n Գործողությունը հնարավոր չէ շարունակել:", partner.FullName, partner.Credit, partner.Debit), "Դեբիտորական և կրեդիտորական պարտքերի մարում", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
+            accountingRecords.Debit = (long)AccountingPlanEnum.PurchasePayables;
+            accountingRecords.Credit = (long)AccountingPlanEnum.AccountingReceivable;
+
+            accountingRecords.CreditGuidId = partner.Id;
+            accountingRecords.DebitGuidId = partner.Id;
+            accountingRecords.Amount = partner.Credit < partner.Debit ? partner.Credit : partner.Debit;
+
+            if (AccountingRecordsManager.BalanceDebetCredit(accountingRecords))
+            {
+                CashManager.Instance.UpdatePartnersAsync();
+                MessageBox.Show(string.Format("Պատվիրատու: {0}\nԿանխավճար: {1}\nՊարտք: {2}\n Վճարումն իրականացվել է հաջողությամբ։", partner.FullName, partner.Credit, partner.Debit), "Դեբիտորական և կրեդիտորական պարտքերի մարում", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageManager.ShowMessage("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
+            }
+        }
+
         public static void Action(AccountingPlanEnum accountingPlan)
         {
             switch (accountingPlan)
@@ -240,6 +286,10 @@ namespace UserControls.Helpers
                 case AccountingPlanEnum.CostOfSales:
                     break;
                 case AccountingPlanEnum.OtherOperationalExpenses:
+                    break;
+                //Other
+                case AccountingPlanEnum.BalanceDebetCredit:
+                    BalnceDebetCredit();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("accountingPlan", accountingPlan, null);

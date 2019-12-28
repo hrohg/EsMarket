@@ -127,6 +127,10 @@
       <Project>{a425b85d-c3eb-4bcc-b307-17daaee9237d}</Project>
       <Name>ES.DataAccess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ES.Data\ES.Data.csproj">
+      <Project>{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}</Project>
+      <Name>ES.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

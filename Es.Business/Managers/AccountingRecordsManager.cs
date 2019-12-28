@@ -9,7 +9,7 @@ using AccountingTools.Enums;
 
 namespace ES.Business.Managers
 {
-    
+
 
     public enum AccountingActionsEnum
     {
@@ -244,6 +244,10 @@ namespace ES.Business.Managers
         {
             return TrySetRepaymentOfDebts(Convert(accountingRecords), memberId);
         }
+        public static bool BalanceDebetCredit(AccountingRecordsModel accountingRecords)
+        {
+            return TryBalanceDebetCredit(Convert(accountingRecords));
+        }
         public static bool SetCashTransfer(AccountingRecordsModel accountingRecords, long memberId)
         {
             return TrySetCashTransfere(Convert(accountingRecords), memberId);
@@ -282,9 +286,33 @@ namespace ES.Business.Managers
                     {
                         var fromCashdesk = db.CashDesk.Single(s => s.Id == accountingRecords.CreditGuidId && s.MemberId == memberId);
                         var partner = db.Partners.Single(s => s.Id == accountingRecords.DebitGuidId && s.EsMemberId == memberId);
-                        if (partner.Credit == null) { partner.Credit = 0; }
                         fromCashdesk.Total -= accountingRecords.Amount;
                         partner.Credit -= accountingRecords.Amount;
+                        db.AccountingRecords.Add(accountingRecords);
+                        db.SaveChanges();
+                        scope.Complete();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        private static bool TryBalanceDebetCredit(AccountingRecords accountingRecords)
+        {
+            using (var scope = new TransactionScope())
+            {
+                using (var db = GetDataContext())
+                {
+                    try
+                    {
+                        var partner = db.Partners.Single(s => s.Id == accountingRecords.DebitGuidId && s.EsMemberId == accountingRecords.MemberId);
+                        if (partner.Credit < accountingRecords.Amount || partner.Debit < accountingRecords.Amount) return false;
+                        partner.Credit -= accountingRecords.Amount;
+                        partner.Debit -= accountingRecords.Amount;
                         db.AccountingRecords.Add(accountingRecords);
                         db.SaveChanges();
                         scope.Complete();
@@ -438,7 +466,7 @@ namespace ES.Business.Managers
                         AccountingRecordsId = accountingRecord.Id
                     };
                     db.AccountsReceivable.Add(newAccountsReceivable);
-                    
+
                     db.SaveChanges();
                     transaction.Complete();
                 }
@@ -603,9 +631,9 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    var debit = db.AccountingRecords.Where(s => s.MemberId == ApplicationManager.Member.Id && s.RegisterDate >= startDate && s.RegisterDate<=endDate && s.Debit == (int)accountingPlan && s.Credit != (int)accountingPlan).ToList().Sum(s => s.Amount);
-                    var credit = db.AccountingRecords.Where(s => s.MemberId == ApplicationManager.Member.Id && s.RegisterDate >= startDate && s.RegisterDate<=endDate && s.Debit != (int)accountingPlan && s.Credit == (int)accountingPlan).ToList().Sum(s => s.Amount);
-                return new Tuple<decimal, decimal>(debit, credit);
+                    var debit = db.AccountingRecords.Where(s => s.MemberId == ApplicationManager.Member.Id && s.RegisterDate >= startDate && s.RegisterDate <= endDate && s.Debit == (int)accountingPlan && s.Credit != (int)accountingPlan).ToList().Sum(s => s.Amount);
+                    var credit = db.AccountingRecords.Where(s => s.MemberId == ApplicationManager.Member.Id && s.RegisterDate >= startDate && s.RegisterDate <= endDate && s.Debit != (int)accountingPlan && s.Credit == (int)accountingPlan).ToList().Sum(s => s.Amount);
+                    return new Tuple<decimal, decimal>(debit, credit);
                 }
                 catch (Exception)
                 {

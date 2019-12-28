@@ -1,4 +1,6 @@
-﻿using ES.Common.ViewModels.Base;
+﻿using ES.Business.Managers;
+using ES.Common.ViewModels.Base;
+using ES.Data.Models;
 
 namespace ES.Business.Helpers
 {
@@ -41,7 +43,7 @@ namespace ES.Business.Helpers
                 RaisePropertyChanged("IsPrintSaleTicket");
             }
         }
-
+        public BranchModel Branch { get; private set; }
         #endregion External properties
 
         #region Constructors
@@ -64,6 +66,8 @@ namespace ES.Business.Helpers
             IsEcrActivated = SettingsContainer.MemberSettings.IsEcrActivated;
             IsPrintSaleTicket = SettingsContainer.MemberSettings.IsPrintSaleTicket;
             IsOfflineMode = SettingsContainer.MemberSettings.IsOfflineMode;
+
+            Branch = SettingsContainer.MemberSettings.BranchSettings ?? new BranchModel(ApplicationManager.Member.Id);
         }
         #endregion Internal methods
 

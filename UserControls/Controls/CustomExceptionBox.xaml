@@ -26,9 +26,12 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" HorizontalAlignment="Stretch" TextWrapping="Wrap"               
+                        <StackPanel Grid.Row="0">
+                            <TextBlock Text="Ծրագրում տեղի է ունեցել սխալ: Խնդրում եմ սխալի մասին տեղեկացնել սպասարկման թիմին լրացնելով հաղորդագրութուն դաշտում անհրաժեշտ տեղեկություները սխալի և դրա ստացման վերաբերյալ ապա սեղմել 'Տեղեկացնել' կոճակը: Հայցում եմ Ձեր ներողամտությունը պատճառված անհարմարությունների համար:" FontSize="10"/>
+                            <TextBlock  HorizontalAlignment="Stretch" TextWrapping="Wrap"               
                                      FontSize="12" VerticalAlignment="Center" ForceCursor="False"
                                      Text="{Binding Path=ExceptionText}" />
+                        </StackPanel>
                         <Border Grid.Row="1" BorderThickness="1" BorderBrush="LightSkyBlue" Margin="0 5" MaxHeight="300" 
                                 Visibility="{Binding IsShowDetiles, Converter={StaticResource BoolToVisibilityConverter}}">
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -37,17 +40,24 @@
                  Text="{Binding ExceptionDetail, Mode=OneWay}" />
                             </ScrollViewer>
                         </Border>
-                        <TextBox Grid.Row="2" Text="{Binding Note}" 
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Հաղորդագրություն" VerticalAlignment="Top" ToolTip="Ուղարկել հաղորդագրություն սխալի վերաբերյալ: Հնարավորության դեպքում մանարամասնել սխալի առաջացման քայլերի վերաբերյալ: Հարկ եղած դեպքում թողնել հեռախոսահամար:"/>
+                            <TextBox Grid.Column="1"  Text="{Binding Note}"
                                  MaxWidth="510"
                                  Margin="0 5"
                                  FontSize="10"
                                  TextWrapping="Wrap"
-                                 HorizontalAlignment="Stretch" 
+                                 HorizontalAlignment="Stretch"
                                  VerticalAlignment="Top"
                                  VerticalContentAlignment="Top"
-                                 Height="70" 
-                                 VerticalScrollBarVisibility="Auto" 
+                                 Height="70"
+                                 VerticalScrollBarVisibility="Auto"
                                  HorizontalScrollBarVisibility="Disabled"/>
+                        </Grid>
                         <StackPanel Grid.Row="3"  Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                             <ToggleButton Content="Մանրամասն" IsChecked = "{Binding IsShowDetiles}" />
                             <Button Content="Տեղեկացնել" Command = "{Binding SendExceptionCommand}" IsDefault="True"/>

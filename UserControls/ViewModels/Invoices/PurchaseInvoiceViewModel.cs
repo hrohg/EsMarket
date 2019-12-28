@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Managers;
-using ES.Data.Model;
 using ES.Data.Models;
 using Shared.Helpers;
 using UserControls.Helpers;
@@ -28,17 +26,13 @@ namespace UserControls.ViewModels.Invoices
         {
             get { return string.Format("{0}{1}", Title, Partner != null ? string.Format(" ({0})", Partner.FullName) : string.Empty); }
         }
-        public override PartnerModel Partner
+        
+        protected override void OnPartnerChanged()
         {
-            get { return base.Partner; }
-            set
-            {
-                base.Partner = value;
-                Invoice.ProviderName = value != null ? value.FullName : null;
-                IsModified = true;
-                RaisePropertyChanged(PartnerProperty);
-            }
+            base.OnPartnerChanged();
+            Invoice.ProviderName = Partner != null ? Partner.FullName : null;
         }
+
         public override bool AddBySingle
         {
             get { return base.AddBySingle; }
@@ -155,9 +149,7 @@ namespace UserControls.ViewModels.Invoices
                 return;
             }
             Invoice = invoice;
-            var items = InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index);
-            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(items);
-            IsModified = false;
+            LoadInvoice();
             RaisePropertyChanged("InvoiceStateImageState");
             RaisePropertyChanged("InvoiceStateTooltip");
             MessageManager.OnMessage(string.Format("Ապրանքագիր {0} հաստատված է։", Invoice.InvoiceNumber), MessageTypeEnum.Success);
@@ -184,12 +176,7 @@ namespace UserControls.ViewModels.Invoices
                     StockManager.GetStock(Invoice.ToStockId), InvoicePaid));
             PrintManager.PrintPreview(ctrl, "Print purchase invoice", true);
         }
-
-        protected override void SetPrice()
-        {
-
-        }
-
+        
         #endregion
     }
 }

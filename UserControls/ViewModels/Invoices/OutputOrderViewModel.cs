@@ -53,8 +53,9 @@ namespace UserControls.ViewModels.Invoices
             AddBySingle = ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBySingle;
         }
 
-        protected override void SetPrice()
+        protected override void OnPartnerChanged()
         {
+            base.OnPartnerChanged();
             foreach (var item in InvoiceItems)
             {
                 item.Price = GetProductPrice(item.Product);

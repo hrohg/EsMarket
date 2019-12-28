@@ -35,7 +35,7 @@
     <Grid>
         <StackPanel>
             <Grid Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}">
-                <TextBlock Text="Տվյալների բազայի կարգաբերում: Խնդրում ենք լրացնել բոլոր անհրաժեշտ դաշտերը:" TextWrapping="Wrap" Margin="5" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"/>
+                <TextBlock Text="Տվյալների բազայի կարգավորում: Խնդրում ենք լրացնել բոլոր անհրաժեշտ դաշտերը:" TextWrapping="Wrap" Margin="5" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"/>
             </Grid>
             <Grid Margin="20 10 10 5">
                 <Grid.ColumnDefinitions>
@@ -82,14 +82,14 @@
                 <TextBlock Grid.Column="0" Grid.Row="7" Text="New Password:"   Style="{StaticResource TextBlockStyle}"/>
                 <PasswordBox Grid.Column="1" Grid.Row="7" PasswordChar="*">
                     <i:Interaction.Behaviors>
-                        <behaviors1:PasswordBoxBindingBehavior Password="{Binding SnPassword, Mode=TwoWay}"/>
+                        <behaviors:PasswordBoxBindingBehavior Password="{Binding SnPassword, Mode=TwoWay}"/>
                         <behaviors:FocusNextElementBehaviors />
                     </i:Interaction.Behaviors>
                 </PasswordBox>
                 <TextBlock Grid.Column="0" Grid.Row="8" Text="Repeat New Password:" Style="{StaticResource TextBlockStyle}"/>
                 <PasswordBox Grid.Column="1" Grid.Row="8" PasswordChar="*">
                     <i:Interaction.Behaviors>
-                        <behaviors1:PasswordBoxBindingBehavior Password="{Binding SrPassword, Mode=TwoWay}"/>
+                        <behaviors:PasswordBoxBindingBehavior Password="{Binding SrPassword, Mode=TwoWay}"/>
                         <behaviors:FocusNextElementBehaviors />
                     </i:Interaction.Behaviors>
                 </PasswordBox>

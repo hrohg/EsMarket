@@ -331,13 +331,13 @@ namespace UserControls.ViewModels.Managers
             var nextCode = GetNextCode();
             Product.Barcode = new BarCodeGenerator(nextCode).Barcode;
             var code = string.IsNullOrEmpty(Product.Code) ?
-                string.Format("{0}{1}", ApplicationManager.Settings.SettingsContainer.MemberSettings.UseShortCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextCode) :
+                string.Format("{0}{1}", !ApplicationManager.Settings.SettingsContainer.MemberSettings.UseUnicCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextCode) :
                 Product.Code;
             while (nextCode > 0 && CashManager.Instance.GetProducts().Any(s => s.Id != Product.Id && (s.Barcode == Product.Barcode || (string.IsNullOrEmpty(Product.Code) && s.Code == code))))
             {
                 nextCode--;
                 Product.Barcode = new BarCodeGenerator(nextCode).Barcode;
-                code = string.IsNullOrEmpty(Product.Code) ? string.Format("{0}{1}", ApplicationManager.Settings.SettingsContainer.MemberSettings.UseShortCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextCode) :
+                code = string.IsNullOrEmpty(Product.Code) ? string.Format("{0}{1}", !ApplicationManager.Settings.SettingsContainer.MemberSettings.UseUnicCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextCode) :
                     Product.Code;
             }
             if (string.IsNullOrEmpty(Product.Code)) Product.Code = code;
@@ -592,7 +592,7 @@ namespace UserControls.ViewModels.Managers
 
         protected string GetNextProductCode()
         {
-            return string.Format("{0}{1}", ApplicationManager.Settings.SettingsContainer.MemberSettings.UseShortCode ? string.Empty : ApplicationManager.Member.Id.ToString("D2"), GetNextCode());
+            return string.Format("{0}{1}", !ApplicationManager.Settings.SettingsContainer.MemberSettings.UseUnicCode ? string.Empty : ApplicationManager.Member.Id.ToString("D2"), GetNextCode());
         }
 
         protected virtual void GetProductBy(object o)

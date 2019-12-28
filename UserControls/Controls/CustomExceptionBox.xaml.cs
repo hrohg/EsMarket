@@ -12,8 +12,20 @@ namespace UserControls.Controls
     {
         #region Internal properties
         private static EsExceptionBox _instance;
-        private static readonly ReportExceptionViewModel Context = new ReportExceptionViewModel();
-        private static bool isShown;
+
+        protected ReportExceptionViewModel Context
+        {
+            get { return _context; }
+            set
+            {
+                _context = value;
+                DataContext = value;
+            }
+        }
+
+        protected static bool IsShown;
+        private ReportExceptionViewModel _context;
+
         #endregion Internal properties
 
         #region External properties
@@ -23,12 +35,20 @@ namespace UserControls.Controls
             {
                 if (_instance == null)
                 {
-                    _instance = new EsExceptionBox() { DataContext = Context };
-
+                    _instance = new EsExceptionBox();
+                    var context = new ReportExceptionViewModel();
+                    _instance.Context = context;
                 }
                 return _instance;
             }
         }
+
+        public Reporter Company
+        {
+            get { return Context.Reporter; }
+            set { Context.Reporter = value; }
+        }
+
         #endregion External properties
 
         #region Constructors
@@ -44,7 +64,7 @@ namespace UserControls.Controls
         {
             Hide();
             Visibility = Visibility.Collapsed;
-            isShown = false;
+            IsShown = false;
         }
         #endregion Internal methods
 
@@ -59,10 +79,10 @@ namespace UserControls.Controls
         public void OnException(Exception e)
         {
             Context.OnException(e);
-            if (!isShown)
+            if (!IsShown)
             {
-                isShown = true;
-                this.ShowDialog();
+                IsShown = true;
+                ShowDialog();
             }
         }
     }

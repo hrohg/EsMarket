@@ -17,6 +17,8 @@ using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Common.ViewModels.Base;
+using ES.Data.Models;
+using Shared.Helpers;
 
 namespace UserControls.ViewModels
 {
@@ -33,6 +35,7 @@ namespace UserControls.ViewModels
                 return _settings ?? (_settings = new SettingsContainer());
             }
         }
+
         #endregion Settings
 
         #endregion Internal properties
@@ -96,9 +99,18 @@ namespace UserControls.ViewModels
         public EcrServiceSettings EcrServiceSettings { get { return _settings.MemberSettings.EcrServiceSettings; } }
 
         public bool NotifyAboutIncomingInvoices { get { return _settings.MemberSettings.NotifyAboutIncomingInvoices; } set { _settings.MemberSettings.NotifyAboutIncomingInvoices = value; RaisePropertyChanged("NotifyAboutIncomingInvoices"); } }
-        public bool UseShortCode { get { return _settings.MemberSettings.UseShortCode; } set { _settings.MemberSettings.UseShortCode = value; RaisePropertyChanged("UseShortCode"); } }
-        public bool UseDiscountBond { get { return _settings.MemberSettings.UseDiscountBond; } set { _settings.MemberSettings.UseDiscountBond = value; RaisePropertyChanged("UseDiscountBond"); } }
+        public bool UseUnicCode { get { return _settings.MemberSettings.UseUnicCode; } set { _settings.MemberSettings.UseUnicCode = value; RaisePropertyChanged("UseShortCode"); } }
 
+        #region Brunch settings
+        public ObservableCollection<BranchModel> Branches { get; set; }
+
+        public BranchModel SelectedBranch
+        {
+            get { return _selectedBranch ?? (_selectedBranch = new BranchModel(ApplicationManager.Member.Id)); }
+            set { _selectedBranch = value; RaisePropertyChanged("SelectedBranch"); }
+        }
+        public BranchModel BranchSettings { get { return Settings.MemberSettings.BranchSettings; } }
+        #endregion Brunch settings
         #endregion General
 
         #region Sale
@@ -212,7 +224,7 @@ namespace UserControls.ViewModels
             }
         }
 
-        public bool IsDefault
+        public bool IsSelectedBranchDefault
         {
             get
             {
@@ -298,9 +310,18 @@ namespace UserControls.ViewModels
         #endregion Destop settings
 
         #region Ecr settings
-        
+
         public string ManageButtonContent { get { return EcrSettings.Any(s => s == SelectedEcrSettings) ? "Հեռացնել" : "Ավելացնել"; } }
         #endregion Ecr settings
+
+        #region Member settings
+
+        #endregion MemberSettings
+
+        #region Branch Properties
+        public bool IsLocalBranch { get { return BranchSettings != null && BranchSettings.Id == SelectedBranch.Id; } }
+        public string SetAsLocalBranchButtonText { get { return IsLocalBranch ? "Ակտիվ" : "Պասիվ"; } }
+        #endregion Branch properties
 
         #endregion External properties
 
@@ -324,6 +345,8 @@ namespace UserControls.ViewModels
         private void LoadProperties()
         {
             Settings.MemberSettings = MemberSettings.GetSettings(ApplicationManager.Member.Id);
+            Branches = new ObservableCollection<BranchModel>(BranchManager.GetBranches());
+            //Branches.SingleOrDefault(s=>s.Id == Settings.MemberSettings.BranchId);
 
             //Ecr Settings
             //var ecrConfig = ConfigSettings.GetEcrConfig();
@@ -353,6 +376,8 @@ namespace UserControls.ViewModels
                     IsChecked = string.Equals(name, Settings.MemberSettings.ActiveLablePrinter)
                 });
             }
+
+            SelectedBranch = BranchSettings;
         }
 
         #endregion Internal methods
@@ -371,7 +396,7 @@ namespace UserControls.ViewModels
         {
             //General
             _settings.MemberSettings.ActiveLablePrinter = LablePrinters.Where(s => s.IsChecked).Select(s => (string)s.Value).SingleOrDefault();
-            
+
             //Sale
             _settings.MemberSettings.ActiveSaleStocks = SaleStocks.Where(s => s.IsChecked).Select(s => (long)s.Value).ToList();
             _settings.MemberSettings.SaleCashDesks = SaleCashDesks.Where(s => s.IsChecked).Select(s => (Guid)s.Value).ToList();
@@ -570,6 +595,7 @@ namespace UserControls.ViewModels
         }
 
         private ICommand _saveEcrServiceSettingsCommand;
+        private BranchModel _selectedBranch;
 
         public ICommand SaveEcrServiceSettingsCommand
         {
@@ -588,6 +614,60 @@ namespace UserControls.ViewModels
             MemberSettings.SaveEcrService(SelectedEcrSettings, ApplicationManager.Member.Id);
         }
         #endregion Ecr commands
+
+        #region Branch commands
+
+        private ICommand _createNewBranchCmmand;
+        public ICommand CreateNewBranchCommand { get { return _createNewBranchCmmand ?? (_createNewBranchCmmand = new RelayCommand(OnCreateNewBranch)); } }
+
+        private void OnCreateNewBranch()
+        {
+            SelectedBranch = new BranchModel(ApplicationManager.Member.Id);
+        }
+
+        private ICommand _editBranchCommand;
+        public ICommand EditBranchCommand { get { return _editBranchCommand ?? (_editBranchCommand = new RelayCommand(OnEditBranch)); } }
+
+        private void OnEditBranch()
+        {
+            Branches.Add(SelectedBranch);
+        }
+
+        private ICommand _sendTestEmailCommand;
+        public ICommand SendTestMailCommand { get { return _sendTestEmailCommand ?? (_sendTestEmailCommand = new RelayCommand(OnSendTestEmail, CanSendTestMail)); } }
+
+        private bool CanSendTestMail(object obj)
+        {
+            return SelectedBranch.NoReplayMailSettings!=null && !string.IsNullOrEmpty(SelectedBranch.Name) && !string.IsNullOrEmpty(SelectedBranch.NoReplayMailSettings.Email) && !string.IsNullOrEmpty(SelectedBranch.NoReplayMailSettings.SmtpServer) && SelectedBranch.NoReplayMailSettings.SmtpPort > 0;
+        }
+
+        private void OnSendTestEmail(object obj)
+        {
+            if (MailSender.SendMessageFromBrunch(SelectedBranch.NoReplayMailSettings.Email, "Թեսթային հաղորդագրություն", string.Format("Ուղարկվել է թեսթային հաղորդագրություն -ի կողմից ({1}): <br/>Եթե ստացել եք այս հաղոդագրությունը նշանակում է տվյալները ճիշտ են մուտքագրված: {0}", ApplicationManager.GetEsUser.FullName, SelectedBranch.Name), SelectedBranch))
+            {
+                MessageBox.Show("Փորձնական հաղորդագորությունն ուղարկվել է հաջողությամբ:");
+            }
+        }
+
+        private ICommand _setLocalBranchCommand;
+        public ICommand SetLocalBranchCommand { get { return _setLocalBranchCommand ?? (_setLocalBranchCommand = new RelayCommand(OnSetLocalBranch)); } }
+
+        private void OnSetLocalBranch()
+        {
+            if (!IsLocalBranch)
+            {
+                Settings.MemberSettings.BranchSettings = SelectedBranch;
+            }
+            else
+            {
+                Settings.MemberSettings.BranchSettings = null;
+            }
+            RaisePropertyChanged("IsLocalBranch");
+            RaisePropertyChanged("SendTestMailCommand");
+            RaisePropertyChanged("SetAsLocalBranchButtonText");
+        }
+
+        #endregion Branch commands
 
         #endregion Commands
     }

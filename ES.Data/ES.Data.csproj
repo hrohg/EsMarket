@@ -50,6 +50,7 @@
     <Compile Include="Helper\SerializableInvoices.cs" />
     <Compile Include="Models\Bases\TreeViewItemBaseModel.cs" />
     <Compile Include="Models\BrandModel.cs" />
+    <Compile Include="Models\BranchModel.cs" />
     <Compile Include="Models\CashierModel.cs" />
     <Compile Include="Models\CategoriesModel.cs" />
     <Compile Include="Models\EsMemberModel.cs" />
@@ -73,6 +74,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ES.Common\ES.Common.csproj">
+      <Project>{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}</Project>
+      <Name>ES.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EsMarket.SharedData\EsMarket.SharedData.csproj">
       <Project>{03419848-b59b-49d5-9cdc-8a3cfd634fad}</Project>
       <Name>EsMarket.SharedData</Name>

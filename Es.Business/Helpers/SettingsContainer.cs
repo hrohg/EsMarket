@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -13,6 +12,7 @@ using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
+using ES.Data.Models;
 
 namespace ES.Business.Helpers
 {
@@ -135,6 +135,7 @@ namespace ES.Business.Helpers
         public long MemberId { get; set; }
 
         #region General
+
         public string LastSelectedLanguage { get; set; }
         public string ActiveLablePrinter { get; set; }
         public bool IsOfflineMode { get; set; }
@@ -146,6 +147,11 @@ namespace ES.Business.Helpers
         {
             get { return _cashDeskPort; }
             set { _cashDeskPort = value; }
+        }
+        public bool UseUnicCode
+        {
+            get { return _useUnicCode; }
+            set { _useUnicCode = value; }
         }
         #endregion General
 
@@ -220,7 +226,7 @@ namespace ES.Business.Helpers
         private EcrConfig _ecrConfig;
         private List<EcrConfig> _ecrModels;
         private bool _useUnicCode;
-        private bool _useDiscountBond;
+
         private EcrServiceSettings _ecrServiceSettings;
 
         [XmlIgnore]
@@ -234,18 +240,6 @@ namespace ES.Business.Helpers
             set { _ecrModels = value; }
         }
 
-        public bool UseShortCode
-        {
-            get { return _useUnicCode; }
-            set { _useUnicCode = value; }
-        }
-
-        public bool UseDiscountBond
-        {
-            get { return _useDiscountBond; }
-            set { _useDiscountBond = value; }
-        }
-
         public EcrServiceSettings EcrServiceSettings
         {
             get { return _ecrServiceSettings ?? (_ecrServiceSettings = new EcrServiceSettings()); }
@@ -253,6 +247,10 @@ namespace ES.Business.Helpers
         }
 
         #endregion Ecr settings
+
+        #region Branch settings
+        public BranchModel BranchSettings { get; set; }
+        #endregion Branch settings
 
         #endregion External properties
 

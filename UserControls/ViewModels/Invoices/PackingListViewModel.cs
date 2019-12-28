@@ -57,11 +57,7 @@ namespace UserControls.ViewModels.Invoices
         public PackingListViewModel(Guid id) : base(id) { }
         #endregion Constructors
         protected override void OnInitialize() { }
-        protected override void SetPrice()
-        {
-
-        }
-
+        
         protected override void OnApprove(object o)
         {
             

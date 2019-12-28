@@ -1,49 +1,117 @@
-﻿using System;
-using System.Net.Mail;
+﻿using System.Net.Mail;
 using System.Text;
 using System.Net;
+using System.Windows;
+using System.Windows.Threading;
+using ES.Common.Helpers;
+using ES.Data.Models;
 
 namespace Shared.Helpers
 {
-	/// <summary>
-	/// Summary description for MailSender
-	/// </summary>
-	public class MailSender
-	{
-		public static bool Send(string sMailTo, string sSubject, string sBody)
-		{
-			MailMessage oMessage = new MailMessage();
-			SmtpClient smtpClient = new SmtpClient("mail.gmail.com");
+    /// <summary>
+    /// Summary description for MailSender
+    /// </summary>
+    public class MailSender
+    {
+        public static bool SendMessageToSupport(string sMailTo, string sSubject, string sBody)
+        {
+            var host = "smtp.gmail.com";
+            var port = 587;
+
+
+            MailMessage oMessage = new MailMessage();
 
             oMessage.From = new MailAddress("easyshoplogistics@gmail.com", "ES market", Encoding.UTF8);
+            oMessage.HeadersEncoding = Encoding.UTF8;
+            oMessage.BodyEncoding = Encoding.UTF8;
+            oMessage.Subject = sSubject;
+            oMessage.IsBodyHtml = true;
+            oMessage.Body = sBody;
+            oMessage.To.Clear();
+            oMessage.To.Add(new MailAddress(sMailTo));
 
-			oMessage.Subject = sSubject;
-			oMessage.IsBodyHtml = true;
-			oMessage.Body = sBody;
+            using (SmtpClient smtpClient = new SmtpClient())
+            {
+                smtpClient.Host = host;
+                smtpClient.Port = port;
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.EnableSsl = true;
+                smtpClient.Credentials = new NetworkCredential("easyshoplogistics@gmail.com", "easyshop@)!$");
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                try
+                {
+                    smtpClient.Send(oMessage);
+                    smtpClient.Dispose();
+                    return true;
+                }
+                catch
+                {
+                    smtpClient.Dispose();
+                    MessageBox.Show(string.Format("Ողջույն \n'{0}' հաղորդագրությունն ուղարկել չի ստացվել: Խնդրում եմ փորձել ևս մեկ անգամ կամ դիմել ծրագրի սպասարկման թիմին {1} հասցեով: \nՇնորհակլություն համագործակցության համար:", sSubject, "support@ess.am"), "Հաղորդագրություններ", MessageBoxButton.OK, MessageBoxImage.Warning);
 
-            smtpClient.Credentials = new NetworkCredential("easyshoplogistics@gmail.com", "easyshop@)!$");
+                    return false;
+                }
+            }
+        }
 
-			smtpClient.Port = 587;
-			oMessage.To.Clear();
-			oMessage.To.Add(new MailAddress(sMailTo));
-			try
-			{
-				smtpClient.Send(oMessage);
-				return true;
-			}
-			catch
-			{
-				return false;
-			}
-		}
+        public static void SendErrorReport(string exceptionText, string exceptionDetails, string note, string reporter)
+        {
 
-		public static void SendErrorReport(string exceptionText, string exceptionDetails)
-		{
-			Send("hrayrgishyan@gmail.com", 
-				string.Format("ES Error from {0}", "Company"), 
-				string.Format("Exception Text: <b>{0}</b><br />Exception Details: <b>{1}</b>", 
-				exceptionText, 
-				exceptionDetails));
-		}
-	}
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Background, () =>
+            {
+                SendMessageToSupport("support@ess.am",
+                    string.Format("ES Market exception ({0})", reporter),
+                    string.Format(" <b>Ծանուցում սխալի վերաբերյալ</b><br/>" +
+
+                                  "<p style=\"\"font-family:Arial;font-size: 12pt;>{0}</p><br/>" +
+
+                                  "Exception Text: <b>{1}</b><br />" +
+
+                                  "<p style=\"\"font-family:Arial;font-size: 12pt;\"\">" +
+                                  "Exception Details: <b>{2}</b></p>",
+                    note,
+                    exceptionText,
+                    exceptionDetails));
+            });
+
+        }
+
+        public static bool SendMessageFromBrunch(string sMailTo, string sSubject, string sBody, BranchModel branch)
+        {
+            sBody = string.Format("{0}<br/><br/>{1}<br/><br/>{2}", branch.NoReplayMailSettings.MailHeader, sBody, branch.NoReplayMailSettings.MailFooter);
+            MailMessage oMessage = new MailMessage();
+
+            oMessage.From = new MailAddress(branch.NoReplayMailSettings.Email, branch.Name, Encoding.UTF8);
+            oMessage.HeadersEncoding = Encoding.UTF8;
+            oMessage.BodyEncoding = Encoding.UTF8;
+            oMessage.Subject = sSubject;
+            oMessage.IsBodyHtml = true;
+            oMessage.Body = sBody;
+            oMessage.To.Clear();
+            oMessage.To.Add(new MailAddress(sMailTo));
+
+            using (SmtpClient smtpClient = new SmtpClient())
+            {
+                smtpClient.Host = branch.NoReplayMailSettings.SmtpServer;
+                smtpClient.Port = branch.NoReplayMailSettings.SmtpPort;
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.EnableSsl = true;
+                smtpClient.Credentials = new NetworkCredential(branch.NoReplayMailSettings.Email, branch.NoReplayMailSettings.MailPassword);
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                try
+                {
+                    smtpClient.Send(oMessage);
+                    smtpClient.Dispose();
+                    return true;
+                }
+                catch
+                {
+                    smtpClient.Dispose();
+                    MessageBox.Show(string.Format("Ողջույն \n'{0}' հաղորդագրությունն ուղարկել չի ստացվել: Խնդրում եմ փորձել ևս մեկ անգամ կամ դիմել ծրագրի սպասարկման թիմին {1} հասցեով: \nՇնորհակլություն համագործակցության համար:", sSubject, "support@ess.am"), "Հաղորդագրություններ", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+                    return false;
+                }
+            }
+        }
+    }
 }

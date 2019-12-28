@@ -4,7 +4,10 @@
                     xmlns:helper="clr-namespace:CashReg.Helper;assembly=CashReg"
                     xmlns:controls="clr-namespace:UserControls.Controls"
                     xmlns:helpers="clr-namespace:ES.Business.Helpers;assembly=ES.Business"
-                    xmlns:models="clr-namespace:ES.Common.Models;assembly=ES.Common">
+                    xmlns:models="clr-namespace:ES.Common.Models;assembly=ES.Common"
+                    xmlns:models1="clr-namespace:ES.Data.Models;assembly=ES.Data"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common">
 
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
 
@@ -152,7 +155,7 @@
                                         <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding LocalMode}" Content="Լոկալ" Margin="5"/>
 
                                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Ապրանքային կոդ"/>
-                                        <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding UseShortCode}" Content="Կարճ կոդ" Margin="5"/>
+                                        <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding UseUnicCode}" Content="Հատուկ կոդ" Margin="5"/>
                                     </Grid>
                                 </GroupBox>
 
@@ -238,7 +241,6 @@
                                     <StackPanel>
                                         <CheckBox IsChecked="{Binding SaleBySingle}" Content="Վաճառել մեկական" Margin="5"/>
                                         <CheckBox IsChecked="{Binding IsPrintSaleTicket}" Content="Տպել վաճառքի ապրանքագիր" Margin="5"/>
-                                        <CheckBox IsChecked="{Binding UseDiscountBond}" Content= "Զեղչ (Կուտակային)" Margin="5"/>
                                     </StackPanel>
                                 </GroupBox>
                             </Grid>
@@ -311,7 +313,7 @@
                             </Grid>
                         </ScrollViewer>
                     </TabItem>
-                    <TabItem Header="ՀԴՄ կարգաբերում">
+                    <TabItem Header="ՀԴՄ կարգավորում">
                         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                             <Grid>
                                 <StackPanel>
@@ -454,7 +456,155 @@
                             </Grid>
                         </ScrollViewer>
                     </TabItem>
-                    <TabItem Header="Գործընկերներ"></TabItem>
+                    <TabItem Header="Մասնաճյուղի կարգավորումներ">
+                        <TabItem.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Margin" Value="3"/>
+                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                <Setter Property="VerticalAlignment" Value="Top"/>
+                            </Style>
+                            <Style TargetType="{x:Type TextBox}">
+                                <Setter Property="Margin" Value="3"/>
+                                <Setter Property="Width" Value="300"/>
+                                <Setter Property="HorizontalAlignment" Value="Left"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            </Style>
+                        </TabItem.Resources>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <GroupBox Grid.Row="0" Grid.Column="1" Header="Մասնաճյուղ" Height="Auto">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition MinWidth="250"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Անվանում"/>
+                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedBranch.Name}"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Զեղչ կուտակային (%)"/>
+                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedBranch.DefaultDiscount, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" Width="80" HorizontalContentAlignment="Right"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Ակտիվ"/>
+                                    <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding SelectedBranch.IsActive}" VerticalAlignment="Center" Margin="3"/>
+
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Grid.Row="0" Grid.Column="2" Header="Էլ փոստ">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition MinWidth="250"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Էլ փոստ"/>
+                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedBranch.NoReplayMailSettings.Email}"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Գաղտնաբառ"/>
+                                    <PasswordBox Grid.Row="1" Grid.Column="1" PasswordChar="*" Margin="3">
+                                        <i:Interaction.Behaviors>
+                                            <behaviors:PasswordBoxBindingBehavior Password="{Binding SelectedBranch.NoReplayMailSettings.MailPassword, Mode=TwoWay}" IsClear="{Binding IsClearPassword, Mode= OneWay}"/>
+                                        </i:Interaction.Behaviors>
+                                    </PasswordBox>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Սերվեր"/>
+                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SelectedBranch.NoReplayMailSettings.SmtpServer}"/>
+
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Պորտ"/>
+                                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SelectedBranch.NoReplayMailSettings.SmtpPort, StringFormat='{}{0:#,0}', TargetNullValue=0}" Width="80" HorizontalContentAlignment="Right"/>
+
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Էջագլուխ" VerticalAlignment="Top"/>
+                                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding SelectedBranch.NoReplayMailSettings.MailHeader}" Height="50" VerticalContentAlignment="Top" TextWrapping="Wrap"/>
+
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Էջատակ"/>
+                                    <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SelectedBranch.NoReplayMailSettings.MailFooter}" Height="50" VerticalContentAlignment="Top" TextWrapping="Wrap"/>
+
+                                    <Button Grid.Row="6" Grid.Column="1" Content="Ստուգել" Command="{Binding SendTestMailCommand}" HorizontalAlignment="Right"/>
+
+                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Կիրառել կուտակային զեղչ"/>
+                                    <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding SelectedBranch.UseDiscountBond}" VerticalAlignment="Center" Margin="3"/>
+
+                                    <TextBlock Grid.Row="8" Grid.Column="0" Text="Ծանուցել"/>
+                                    <CheckBox Grid.Row="8" Grid.Column="1" IsChecked="{Binding SelectedBranch.IsNotify}" VerticalAlignment="Center" Margin="3"/>
+                                </Grid>
+                            </GroupBox>
+                            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <ToggleButton Content="{Binding SetAsLocalBranchButtonText}" IsChecked="{Binding IsLocalBranch, Mode=OneWay}" Command="{Binding SetLocalBranchCommand}" MinWidth="80"/>
+                                <Button Content="Նոր" Command="{Binding Path=CreateNewBranchCommand}" MinWidth="80" CommandParameter="{x:Static helper:EcrExecuiteActions.OperatorLogin}"/>
+                                <Button Content="{Binding ManageButtonContent}" Command="{Binding Path=EditBranchCommand}" MinWidth="80" IsEnabled="False"/>
+                            </StackPanel>
+                            <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4">
+                                <DataGrid ItemsSource="{Binding Branches, Mode=OneWay}" SelectedItem="{Binding SelectedBranch}" 
+                                                  AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                                                  AlternatingRowBackground ="GhostWhite" AlternationCount="2">
+                                    <DataGrid.Columns>
+                                        <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" SortMemberPath="Code">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate DataType="{x:Type models1:BranchModel}">
+                                                    <TextBlock Text="{Binding Name}"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="Հասցե" CanUserSort="True" SortMemberPath="Code">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate DataType="{x:Type models1:BranchModel}">
+                                                    <TextBlock Text="{Binding Address}"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="Domain" CanUserSort="True" SortMemberPath="Code">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate DataType="{x:Type models1:BranchModel}">
+                                                    <TextBlock Text="{Binding Domain}"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="Mail" CanUserSort="True" SortMemberPath="Code">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate DataType="{x:Type models1:BranchModel}">
+                                                    <TextBlock Text="{Binding Mail}"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="Default discount" CanUserSort="True" SortMemberPath="Code">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate DataType="{x:Type models1:BranchModel}">
+                                                    <TextBlock Text="{Binding DefaultDiscount}"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </GroupBox>
+                        </Grid>
+                    </TabItem>
                 </TabControl>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="Հիշել" Width="80" Command="{Binding SaveCommand}"/>

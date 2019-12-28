@@ -90,6 +90,7 @@
     <Compile Include="Helpers\SettingsContainer.cs" />
     <Compile Include="Managers\AccountingRecordsManager.cs" />
     <Compile Include="Managers\ApplicationManager.cs" />
+    <Compile Include="Managers\BranchManager.cs" />
     <Compile Include="Managers\CashDeskManager.cs" />
     <Compile Include="Managers\DataManager.cs" />
     <Compile Include="Managers\CashManager.cs" />

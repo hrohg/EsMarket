@@ -1522,11 +1522,11 @@ namespace ES.Business.Managers
                 {
                     var items = db.Products.Where(s => s.EsMemberId == memberId).Select(s => s.Code).ToList();
                     nextcode += items.Count;
-                    var code = string.Format("{0}{1}", ApplicationManager.Settings.SettingsContainer.MemberSettings.UseShortCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextcode);
+                    var code = string.Format("{0}{1}", !ApplicationManager.Settings.SettingsContainer.MemberSettings.UseUnicCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextcode);
                     while (items.Any(s => s == code))
                     {
                         nextcode--;
-                        code = string.Format("{0}{1}", ApplicationManager.Settings.SettingsContainer.MemberSettings.UseShortCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextcode);
+                        code = string.Format("{0}{1}", !ApplicationManager.Settings.SettingsContainer.MemberSettings.UseUnicCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextcode);
                     }
                 }
                 catch (Exception e)

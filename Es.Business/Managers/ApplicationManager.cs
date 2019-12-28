@@ -513,7 +513,7 @@ namespace ES.Business.Managers
                     isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Seller) || IsInRole(UserRoleEnum.SeniorSeller);
                     break;
                 case UserRoleEnum.JuniorSeller:
-                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.JuniorSeller) || IsInRole(UserRoleEnum.Seller);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.JuniorSeller);
                     break;
 
                 //Cashiers

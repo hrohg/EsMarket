@@ -125,9 +125,7 @@ namespace UserControls.ViewModels.Invoices
                 return;
             }
             Invoice = invoice;
-            var items = InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index);
-            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(items);
-            IsModified = false;
+            LoadInvoice();
             RaisePropertyChanged("InvoiceStateImageState");
             RaisePropertyChanged("InvoiceStateTooltip");
             MessageManager.OnMessage(string.Format("Ապրանքագիր {0} հաստատված է։", Invoice.InvoiceNumber), MessageTypeEnum.Success);
@@ -147,10 +145,6 @@ namespace UserControls.ViewModels.Invoices
             PrintManager.PrintPreview(ctrl, "Print purchase invoice", true);
         }
 
-        protected override void SetPrice()
-        {
-
-        }
         protected override void OnImportInvoice(ExportImportEnum importFrom)
         {
             InvoiceItems.Clear();
@@ -364,7 +358,6 @@ namespace UserControls.ViewModels.Invoices
             base.SetInvoiceItem(code);
             //var productItems = SelectItemsManager.SelectProductItems(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSaleStocks, true);
         }
-        protected override void SetPrice() { }
         protected override bool SetQuantity(bool addSingle)
         {
             var exCount = ProductsManager.GetProductItemQuantity(InvoiceItem.ProductId, FromStocks.Select(s => s.Id).ToList());

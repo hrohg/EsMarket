@@ -44,10 +44,9 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,5">
                 <Label Content="Գաղտնաբառ" />
-                <PasswordBox HorizontalAlignment="Right" Width="200" Height="25" 
-                             HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TabIndex="1">
+                <PasswordBox HorizontalAlignment="Right" Width="200" Height="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TabIndex="1">
                     <i:Interaction.Behaviors>
-                        <behaviors1:PasswordBoxBindingBehavior Password="{Binding Password, Mode=TwoWay}" IsClear="{Binding IsClearPassword, Mode= OneWay}"/>
+                        <behaviors:PasswordBoxBindingBehavior Password="{Binding Password, Mode=TwoWay}" IsClear="{Binding IsClearPassword, Mode= OneWay}"/>
                         <behaviors1:FocusNextElementBehaviors />
                     </i:Interaction.Behaviors>
                     <PasswordBox.InputBindings>

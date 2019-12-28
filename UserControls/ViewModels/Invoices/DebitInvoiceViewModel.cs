@@ -7,7 +7,6 @@ using ES.Common.Enumerations;
 using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Data.Models;
-using UIHelper.Managers;
 
 namespace UserControls.ViewModels.Invoices
 {
@@ -89,8 +88,12 @@ namespace UserControls.ViewModels.Invoices
             {
                 Invoice.InvoiceNumber = invoice.InvoiceNumber;
                 Invoice.ApproveDate = invoice.ApproveDate;
-                
-                if (!closeOnExit) Invoice = invoice;
+
+                if (!closeOnExit)
+                {
+                    Invoice = invoice;
+                    LoadInvoice();
+                }
             }
 
             IsLoading = false;

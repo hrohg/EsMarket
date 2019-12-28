@@ -388,7 +388,7 @@
                         <DataGridTemplateColumn Header="Քանակ">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
-                                    <TextBox Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0.###}}" 
+                                    <TextBox Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0.###}}" IsReadOnly="{Binding ElementName=DgInvoiceItems, Path=DataContext.DenyChangeQuantity, Mode=OneWay}"
                                              HorizontalContentAlignment="Right"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -535,6 +535,7 @@
                                 <ContextMenu>
                                     <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"  />
                                     <MenuItem Header="Հաստատել" Command="{Binding ApproveInvoiceCommand}"  />
+                                    <MenuItem Header="Հեռացնել" Command="{Binding RemoveInvoiceCommand}"  />
                                     <MenuItem Header="Առկայության ստուգում" Command="{Binding CheckExistingCommand}"/>
                                     <Separator/>
                                     <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
