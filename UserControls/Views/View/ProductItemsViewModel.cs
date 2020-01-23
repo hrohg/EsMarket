@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
 using ES.Business.ExcelManager;
@@ -28,7 +28,7 @@ namespace UserControls.Views.View
         private string _filterText = string.Empty;
         Timer _timer = null;
         private List<ProductItemModel> _productItems;
-        private List<ProductOrderModel> _items;
+        //private List<ProductOrderModel> _items;
         private List<StockModel> _stocks;
         #endregion
 
@@ -47,19 +47,22 @@ namespace UserControls.Views.View
                 _timer = new Timer(TimerElapsed, null, 300, 300);
             }
         }
-        public decimal Count { get { return Items != null ? _items.GroupBy(s => s.Code).Count() : 0; } }
-        public decimal Quantity { get { return Items != null ? _items.Sum(s => s.ExistingQuantity) : 0; } }
-        public decimal CostPrice { get { return Items != null ? _items.Sum(s => s.ExistingQuantity * (s.Product.CostPrice ?? 0)) : 0; } }
-        public decimal Price { get { return Items != null ? _items.Sum(s => s.ExistingQuantity * s.Product.Price ?? 0) : 0; } }
+        public decimal Count { get { return GetViewItems().GroupBy(s => s.Code).Count(); } }
+        public decimal Quantity { get { return GetViewItems().Sum(s => s.ExistingQuantity); } }
+        public decimal CostPrice { get { return GetViewItems().Sum(s => s.ExistingQuantity * (s.Product.CostPrice ?? 0)); } }
+        public decimal Price { get { return GetViewItems().Sum(s => s.ExistingQuantity * s.Product.Price ?? 0); } }
 
-        public CollectionView Items
+        public CollectionViewSource ItemsView { get; set; }
+        private ObservableCollection<ProductOrderModel> Items
         {
-            get
-            {
-                return new ListCollectionView(_items == null ? new List<ProductOrderModel>()
-                    : _items.Where(s => s.Product.Code.ToLower().Contains(FilterText) ||
-                        s.Product.Description.ToLower().Contains(FilterText)).ToList());
-            }
+            get;
+            set;
+            //get
+            //{
+            //    return new ObservableCollection<ProductOrderModel>(_items == null ? new List<ProductOrderModel>()
+            //        : _items.Where(s => s.Product.Code.ToLower().Contains(FilterText) ||
+            //            s.Product.Description.ToLower().Contains(FilterText)).ToList());
+            //}
         }
         public ObservableCollection<StockModel> Stocks { get { return new ObservableCollection<StockModel>(_stocks ?? new List<StockModel>()); } }
         #endregion
@@ -82,17 +85,29 @@ namespace UserControls.Views.View
 
         private void Initialize()
         {
-            _items = new List<ProductOrderModel>();
+            Items = new ObservableCollection<ProductOrderModel>();
+            Items.CollectionChanged += OnItemsChanged;
+            ItemsView = new CollectionViewSource { Source = Items };
+            ItemsView.View.Filter = Filter;
             Title = "Ապրանքների դիտում ըստ պահեստների";
+        }
+
+        private List<ProductOrderModel> GetViewItems()
+        {
+            return ItemsView.View.OfType<ProductOrderModel>().ToList();
         }
         private void TimerElapsed(object obj)
         {
-            RaisePropertyChanged("Items");
-            RaisePropertyChanged("Count");
-            RaisePropertyChanged("Quantity");
-            RaisePropertyChanged("CostPrice");
-            RaisePropertyChanged("Price");
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
+            {
+                ItemsView.View.Refresh();
+                RaisePropertyChanged("Count");
+                RaisePropertyChanged("Quantity");
+                RaisePropertyChanged("CostPrice");
+                RaisePropertyChanged("Price");
+            });
             DisposeTimer();
+
         }
         private void DisposeTimer()
         {
@@ -102,14 +117,29 @@ namespace UserControls.Views.View
                 _timer = null;
             }
         }
+        protected bool Filter(object item)
+        {
+            var product = item as ProductOrderModel;
+            if (product == null) return false;
+            return product.Description.Contains(FilterText) ||
+                   product.Code.Contains(FilterText);
+        }
+        private void OnItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged("Count");
+            RaisePropertyChanged("Quantity");
+            RaisePropertyChanged("CostPrice");
+            RaisePropertyChanged("Price");
+            RaisePropertyChanged("ItemsView");
+        }
         private void Update(object o)
         {
-            _items.Clear();
             if (_stocks == null || !_stocks.Any() || IsLoading) return;
             IsLoading = true;
-            string productKey=null;
+            string productKey = null;
             DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
             {
+                Items.Clear();
                 var inputBox = new InputBox("Input product key");
                 var inputBoxResult = inputBox.ShowDialog();
                 if (inputBoxResult != null && (bool)inputBoxResult)
@@ -117,7 +147,7 @@ namespace UserControls.Views.View
                     productKey = inputBox.InputValue;
                 }
             });
-            _productItems = ProductsManager.GetProductItemsByStocks(_stocks.Select(s=>s.Id).ToList(), productKey);
+            _productItems = ProductsManager.GetProductItemsByStocks(_stocks.Select(s => s.Id).ToList(), productKey);
             //_productItems = _productItems.Where(pi => pi.StockId != null && _stocks.Select(s => s.Id).ToList().Contains((long)pi.StockId)).ToList();
             var items = (from item in _productItems
                          group item by item.ProductId
@@ -125,36 +155,35 @@ namespace UserControls.Views.View
                              where product != null
                              select product);
 
-            foreach (var product in items)
+            foreach (var productItem in items)
             {
+                if (productItem.First() == null) continue;
                 var productOrderModel = new ProductOrderModel
                 {
-                    Product = product.First().Product,
-                    Code = product.First().Product.Code,
-                    Description = product.First().Product.Description,
-                    Mu = product.First().Product.Mu,
-                    Price = product.First().Product.Price,
-                    ExistingQuantity = product.Sum(s => s.Quantity)
+                    Product = productItem.First().Product,
+                    Code = productItem.First().Product.Code,
+                    Description = productItem.First().Product.Description,
+                    Mu = productItem.First().Product.Mu,
+                    Price = productItem.First().Product.Price,
+                    ExistingQuantity = productItem.Sum(s => s.Quantity)
                 };
                 foreach (var stockModel in _stocks)
                 {
                     productOrderModel.StockProducts.Add(
                         new StockProducts
                         {
-                            Product = product.First(),
+                            Product = productItem.First(),
                             Stock = stockModel,
-                            Quantity = product.Where(s => s.StockId == stockModel.Id).Sum(s => s.Quantity)
+                            Quantity = productItem.Where(s => s.StockId == stockModel.Id).Sum(s => s.Quantity)
                         });
                 }
-                _items.Add(productOrderModel);
+                DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
+                {
+                    Items.Add(productOrderModel);
+                });
             }
-
-            RaisePropertyChanged("Items");
-            RaisePropertyChanged("Count");
-            RaisePropertyChanged("Quantity");
-            RaisePropertyChanged("CostPrice");
-            RaisePropertyChanged("Price");
             IsLoading = false;
+
         }
 
         private void OnUpdate(object o)
@@ -164,21 +193,21 @@ namespace UserControls.Views.View
         }
         private bool CanExport(object o)
         {
-            return Items != null && Items.Count > 0;
+            return GetViewItems().Any();
         }
         private bool CanPrint(object o)
         {
-            return Items != null && Items.Count > 0;
+            return GetViewItems().Any();
         }
         private void OnExport(object o)
         {
             if (!CanExport(o)) { return; }
-            ExcelExportManager.ExportProducts(_items);
+            ExcelExportManager.ExportProducts(GetViewItems());
         }
 
         private void OnPrint(object o)
         {
-            var model = (from item in _items
+            var model = (from item in GetViewItems()
                          select
                              new
                              {
@@ -226,8 +255,9 @@ namespace UserControls.Views.View
         private string _filterText = string.Empty;
         Timer _timer = null;
         private List<ProductItemModel> _productItems;
-        private List<ProductOrderModel> _items;
+        private ObservableCollection<ProductOrderModel> Items;
         private List<StockModel> _stocks;
+
         #endregion
 
         #region External properties
@@ -245,21 +275,12 @@ namespace UserControls.Views.View
                 _timer = new Timer(TimerElapsed, null, 300, 300);
             }
         }
-        public decimal Count { get { return Items != null ? Items.GroupBy(s => s.Code).Count() : 0; } }
-        public decimal Quantity { get { return Items != null ? Items.Sum(s => s.ExistingQuantity) : 0; } }
-        public decimal CostPrice { get { return Items != null ? Items.Sum(s => s.ExistingQuantity * (s.Product.CostPrice ?? 0)) : 0; } }
-        public decimal Price { get { return Items != null ? Items.Sum(s => s.ExistingQuantity * s.Product.Price ?? 0) : 0; } }
+        public decimal Quantity { get { return GetViewItems().Sum(s => s.ExistingQuantity); } }
+        public decimal CostPrice { get { return GetViewItems().Sum(s => s.ExistingQuantity * (s.Product.CostPrice ?? 0)); } }
+        public decimal Price { get { return GetViewItems().Sum(s => s.ExistingQuantity * s.Product.Price ?? 0); } }
+        public decimal Count { get { return GetViewItems().GroupBy(s => s.Code).Count(); } }
 
-        public ObservableCollection<ProductOrderModel> Items
-        {
-            get
-            {
-                return _items == null ? new ObservableCollection<ProductOrderModel>()
-                    : new ObservableCollection<ProductOrderModel>(_items.Where(s =>
-                        s.Product.Code.ToLower().Contains(FilterText) ||
-                        s.Product.Description.ToLower().Contains(FilterText)));
-            }
-        }
+        public CollectionViewSource ItemsView { get; private set; }
         public ObservableCollection<StockModel> Stocks { get { return new ObservableCollection<StockModel>(_stocks ?? new List<StockModel>()); } }
         #endregion
 
@@ -281,17 +302,36 @@ namespace UserControls.Views.View
 
         private void Initialize()
         {
-            _items = new List<ProductOrderModel>();
+            Items = new ObservableCollection<ProductOrderModel>();
+            Items.CollectionChanged += OnItemsChanged;
+            ItemsView = new CollectionViewSource { Source = Items };
+            ItemsView.View.Filter = Filter;
             Title = "Ապրանքների դիտում մանրամասն";
             OnUpdate(null);
         }
-        private void TimerElapsed(object obj)
+
+        protected List<ProductOrderModel> GetViewItems()
         {
-            RaisePropertyChanged("Items");
+            return ItemsView.View.OfType<ProductOrderModel>().ToList();
+        }
+        private void OnItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
             RaisePropertyChanged("Count");
             RaisePropertyChanged("Quantity");
             RaisePropertyChanged("CostPrice");
             RaisePropertyChanged("Price");
+            RaisePropertyChanged("ItemsView");
+        }
+        private void TimerElapsed(object obj)
+        {
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
+            {
+                ItemsView.View.Refresh();
+                RaisePropertyChanged("Count");
+                RaisePropertyChanged("Quantity");
+                RaisePropertyChanged("CostPrice");
+                RaisePropertyChanged("Price");
+            });
             DisposeTimer();
         }
         private void DisposeTimer()
@@ -302,11 +342,19 @@ namespace UserControls.Views.View
                 _timer = null;
             }
         }
+
+        protected bool Filter(object item)
+        {
+            var product = item as ProductOrderModel;
+            if (product == null) return false;
+            return product.Description.Contains(FilterText) ||
+                   product.Code.Contains(FilterText);
+        }
         private void Update(object o)
         {
-            _items.Clear();
             DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
             {
+                Items.Clear();
                 _stocks = SelectItemsManager.SelectStocks(StockManager.GetStocks(), true);
             });
 
@@ -340,17 +388,10 @@ namespace UserControls.Views.View
                             Quantity = product.Where(s => s.StockId == stockModel.Id).Sum(s => s.Quantity)
                         });
                 }
-                _items.Add(productOrderModel);
+                DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { Items.Add(productOrderModel); });
             }
-
-            RaisePropertyChanged("Items");
-            RaisePropertyChanged("Count");
-            RaisePropertyChanged("Quantity");
-            RaisePropertyChanged("CostPrice");
-            RaisePropertyChanged("Price");
             IsLoading = false;
         }
-
         private void OnUpdate(object o)
         {
             var td = new Thread(() => Update(o));
@@ -358,21 +399,22 @@ namespace UserControls.Views.View
         }
         private bool CanExport(object o)
         {
-            return Items != null && Items.Count > 0;
+
+            return GetViewItems().Any();
         }
         private bool CanPrint(object o)
         {
-            return Items != null && Items.Count > 0;
+            return GetViewItems().Any();
         }
         private void OnExport(object o)
         {
             if (!CanExport(o)) { return; }
-            ExcelExportManager.ExportProducts(Items.ToList());
+            ExcelExportManager.ExportProducts(GetViewItems());
         }
 
         private void OnPrint(object o)
         {
-            var model = (from item in Items.ToList()
+            var model = (from item in GetViewItems()
                          select
                              new
                              {

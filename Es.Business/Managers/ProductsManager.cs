@@ -5,6 +5,7 @@ using System.Data.Linq;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Transactions;
 using CashReg.Helper;
 using CashReg.Managers;
 using EsMarket.SharedData.Models;
@@ -272,7 +273,8 @@ namespace ES.Business.Managers
             exItem.LastModifiedDate = item.LastModifiedDate;
             //_products.Add(exItem.Id, exItem);
 
-            exItem.TypeOfTaxes = item.ProductsAdditionalData != null && item.ProductsAdditionalData.TypeOfTaxes != null ? (TypeOfTaxes)item.ProductsAdditionalData.TypeOfTaxes : default(TypeOfTaxes);
+            var typeOfTaxes = item.ProductsAdditionalData;
+            exItem.TypeOfTaxes = typeOfTaxes != null && typeOfTaxes.TypeOfTaxes != null ? (TypeOfTaxes)typeOfTaxes.TypeOfTaxes : default(TypeOfTaxes);
 
             return exItem;
         }
@@ -398,13 +400,13 @@ namespace ES.Business.Managers
         {
             return TryGetExistingProduct(memberId);
         }
-        public static List<ProductModel> GetProducts()
+        public static List<ProductModel> GetProducts(bool isActive = true)
         {
-            return TryGetProducts().Select(Convert).ToList();
+            return TryGetProducts(isActive).Select(Convert).ToList();
         }
         public static List<ProductModel> GetProductsForView()
         {
-            return TryGetProducts().Select(s => new ProductModel
+            return TryGetProducts(true).Select(s => new ProductModel
             {
                 Id = s.Id,
                 Code = s.Code,
@@ -474,8 +476,16 @@ namespace ES.Business.Managers
             try
             {
                 var productItems = TryGetProductItems(productKey);
-                var products = productItems.GroupBy(s => s.Products).Select(s => Convert(s.Key)).ToList();
-                return productItems.Select(s => Convert(s, products)).ToList();
+                var products = ApplicationManager.CashManager.GetProducts();
+                return productItems.Select(s => new ProductItemModel
+                {
+                    Id = s.Id,
+                    ProductId = s.ProductId,
+                    Product = products.SingleOrDefault(p => p.Id == s.ProductId),
+                    StockId = s.StockId,
+                    Quantity = s.Quantity,
+                    MemberId = s.MemberId
+                }).ToList();
             }
             catch (Exception ex)
             {
@@ -487,8 +497,18 @@ namespace ES.Business.Managers
         public static List<ProductItemModel> GetProductItemsByStocks(List<long> stockIds, string productkey = null)
         {
             var productItems = TryGetProductItemsByStocks(stockIds, productkey);
-            var products = productItems.GroupBy(s => s.Products).Select(s => Convert(s.Key)).ToList();
-            return productItems.Select(s => Convert(s, products)).ToList();
+            var productIds = productItems.Select(s => s.ProductId).GroupBy(s => s).Select(s => s.Key).ToList();
+            var products = ApplicationManager.CashManager.GetProducts().Where(s => productIds.Contains(s.Id)).ToList();
+            //convertAsProduct
+            return productItems.Select(s => new ProductItemModel
+            {
+                Id = s.Id,
+                ProductId = s.ProductId,
+                Product = products.FirstOrDefault(t => t.Id == s.ProductId),
+                Quantity = s.Quantity,
+                StockId = s.StockId,
+                MemberId = s.MemberId
+            }).ToList();
         }
 
         public static List<ProductItemModel> GetProductItemsByStock(long stockId)
@@ -873,7 +893,7 @@ namespace ES.Business.Managers
 
             }
         }
-        private static List<Products> TryGetProducts()
+        private static List<Products> TryGetProducts(bool isActive)
         {
             var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
@@ -884,7 +904,7 @@ namespace ES.Business.Managers
                         .Include(s => s.ProductCategories)
                         .Include(s => s.ProductGroup)
                         .Include(s => s.ProductsAdditionalData)
-                        .Where(s => s.EsMemberId == memberId && s.IsEnable).ToList();
+                        .Where(s => s.EsMemberId == memberId && s.IsEnable == isActive).ToList();
                 }
                 catch (Exception)
                 {
@@ -1282,37 +1302,51 @@ namespace ES.Business.Managers
             if (existingProduct == null || existingProduct.Price != product.Price)
             {
                 if (existingProduct != null) existingProduct.OldPrice = existingProduct.Price;
-                if (db != null)
+                //todo: insert to DB
+                var log = new LogOfProducts
                 {
-                    //todo:
-                    new ProductPrice()
-                    {
-                        Id = product.Id,
-                        Code = product.Code,
-                        Description = product.Description,
-                        CostPrice = (double)(product.CostPrice ?? 0),
-                        Price = (double)(product.Price ?? 0),
-                        Date = product.LastModifiedDate,
-                        IsEmpty = GetProductQuantity(product.Id) == 0,
-                        UserId = product.LastModifierId,
-                        MemberId = product.EsMemberId
-                    };
-                }
+                    Action = ModificationTypeEnum.Modified,
+                    ProductId = product.Id,
+                    Code = product.Code,
+                    Description = product.Description,
+                    CostPrice = (double)(product.CostPrice ?? 0),
+                    Price = (double)(product.Price ?? 0),
+                    Date = product.LastModifiedDate,
+                    IsEmpty = GetProductQuantity(product.Id) == 0,
+                    ModifierId = product.LastModifierId,
+                    MemberId = product.EsMemberId
+                };
+                AddLog(log, db);
             }
+        }
 
+        private static void AddLog(LogOfProducts log, EsStockDBEntities db)
+        {
+            if (log == null || db == null)
+            {
+                return;
+            }
+            //Add log todo
 
         }
-        private struct ProductPrice
+        private class LogOfProducts
         {
             public Guid Id;
             public DateTime Date;
+            public Guid ProductId;
             public string Code;
             public string Description;
             public double CostPrice;
             public double Price;
+            public ModificationTypeEnum Action;
             public bool IsEmpty;
             public long MemberId;
-            public long UserId;
+            public long ModifierId;
+            public LogOfProducts()
+            {
+                Id = Guid.NewGuid();
+                Date = DateTime.Now;
+            }
         }
         private static bool TryDeleteProduct(Products item)
         {
@@ -1351,13 +1385,10 @@ namespace ES.Business.Managers
             var db = GetDataContext();
             try
             {
-                //var produtitems = db.ProductItems.Include(s => s.Products).Include(s => s.Products.ProductGroup).Include(s => s.Products.ProductCategories)
-                //    .Where(s => s.MemberId == ApplicationManager.Member.Id && s.Quantity != 0).ToList();
                 productKey = productKey != null ? productKey.ToLower() : "";
-                string key = "";
-                var productItems = db.ProductItems.Include(s => s.Products)
-                    .Include(s => s.Products.ProductGroup)
-                    .Include(s => s.Products.ProductCategories)
+
+                var productItems = db.ProductItems
+
                     .Where(s => s.MemberId == ApplicationManager.Member.Id && s.Quantity != 0);
                 if (!string.IsNullOrWhiteSpace(productKey))
                 {
@@ -1379,14 +1410,14 @@ namespace ES.Business.Managers
             var db = GetDataContext();
             try
             {
-                var productIds = db.Products.Where(s => s.EsMemberId == ApplicationManager.Member.Id && (productKey == null || s.Code.Contains(productKey) || s.Description.Contains(productKey))).Select(s => s.Id).ToList();
+                var productIds = db.Products.Where(s => s.EsMemberId == ApplicationManager.Member.Id && (productKey == null || s.Code.Contains(productKey) || s.Description.Contains(productKey))).Select(s => s.Id);
                 var productItems = db.ProductItems.Where(s => s.MemberId == ApplicationManager.Member.Id &&
                                     s.StockId.HasValue && stockIds.Contains((int)s.StockId) && s.Quantity != 0 &&
                                    productIds.Contains(s.ProductId))
-                    .Include(s => s.Products)
-                    .Include(s => s.Products.ProductGroup)
-                    .Include(s => s.Products.ProductCategories)
-                    .Include(s => s.Products.ProductsAdditionalData)
+                    //.Include(s => s.Products)
+                    //.Include(s => s.Products.ProductGroup)
+                    //.Include(s => s.Products.ProductCategories)
+                    //.Include(s => s.Products.ProductsAdditionalData)
                     .ToList();
                 return productItems;
             }
@@ -1898,6 +1929,52 @@ namespace ES.Business.Managers
                     return 0;
                 }
 
+            }
+        }
+
+        public static void RemoveProducts(List<ProductModel> products)
+        {
+            if (products.Any(s => TryRemoveProduct(s)))
+            {
+
+            }
+        }
+
+        private static bool TryRemoveProduct(ProductModel productModel)
+        {
+            using (var db = GetDataContext())
+            {
+                var exProduct = db.Products.SingleOrDefault(s => s.Id == productModel.Id && s.EsMemberId == productModel.EsMemberId);
+                if (exProduct == null || db.ProductItems.Any(s => s.ProductId == productModel.Id)) return false;
+                using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 3, 0)))
+                {
+                    try
+                    {
+                        db.Products.Remove(exProduct);
+                        var log = new LogOfProducts
+                        {
+                            Action = ModificationTypeEnum.Removed,
+                            ProductId = exProduct.Id,
+                            Code = exProduct.Code,
+                            Description = exProduct.Description,
+                            CostPrice = (double)(exProduct.CostPrice ?? 0),
+                            Price = (double)(exProduct.Price ?? 0),
+                            IsEmpty = true,
+                            ModifierId = exProduct.LastModifierId,
+                            MemberId = exProduct.EsMemberId
+                        };
+                        AddLog(log, db);
+                        transaction.Complete();
+                        MessageManager.OnMessage(string.Format("'{0} ({1})' ապրանքի հեռացումը հաջողվել է", productModel.Description, productModel.Code), MessageTypeEnum.Success);
+                        return true;
+                    }
+                    catch (Exception e)
+                    {
+                        MessageManager.OnMessage(string.Format("'{0} ({1})' ապրանքի հեռացումը ձախողվել է", productModel.Description, productModel.Code), MessageTypeEnum.Warning);
+                        return false;
+                    }
+
+                }
             }
         }
     }

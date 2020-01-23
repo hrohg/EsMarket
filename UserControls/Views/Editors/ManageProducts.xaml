@@ -216,7 +216,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Menu Grid.Row="0" Margin="1">
-                        <MenuItem Header="Դիտել">
+                        <MenuItem Header="Դիտում">
                             <MenuItem Header="Դիտել ակտիվները" Command="{Binding GetProductsCommand}" CommandParameter="{x:Static enumerations:ProductViewType.ByActive}"/>
                             <MenuItem Header="Դիտել պասիվները" Command="{Binding GetProductsCommand}" CommandParameter="{x:Static enumerations:ProductViewType.ByPasive}"/>
                             <MenuItem Header="Դիտել 0-յականները" Command="{Binding GetProductsCommand}" CommandParameter="{x:Static enumerations:ProductViewType.ByEmpty}"/>
@@ -227,7 +227,7 @@
                             <Separator/>
                             <MenuItem Header="Դիտել բոլորը"  Command="{Binding GetProductsCommand}" CommandParameter="{x:Static enumerations:ProductViewType.All}"/>
                         </MenuItem>
-                        <MenuItem Header="...">
+                        <MenuItem Header="Խմբագրել">
                             <MenuItem Header="Պատճենել" Command="{Binding ProductCopyCommand}">
                                 <MenuItem.Icon>
                                     <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Copy.png"/>
@@ -256,6 +256,11 @@
                                 <MenuItem Header="Արտահանել Excel" Command="{Binding ExportProductsCommand}" CommandParameter="{x:Static helpers:ExportImportEnum.Excel}"/>
                             </MenuItem>
                             <Separator/>
+                            <MenuItem Header="Կոդի փոփոխում" Command="{Binding ChangeProductCodeCommand}"/>
+                            <MenuItem Header="Հեռացնել" Command="{Binding RemoveProductCommand}"/>
+                            <Separator/>
+                        </MenuItem>
+                        <MenuItem Header="Գնապիտակ">
                             <MenuItem Header="Տպել Բարկոդ" Command="{Binding PrintBarcodeCommand}" CommandParameter="{x:Static helper1:PrintPriceTicketEnum.Small}">
                                 <MenuItem.Icon>
                                     <Image Height="16" Width="16" Source="pack://application:,,,/Shared;component/Images/Print.png"/>
@@ -270,8 +275,7 @@
                                 <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/PrintPreview120.png" SnapsToDevicePixels="True"/>
                             </MenuItem.Icon>-->
                             </MenuItem>
-                            <MenuItem Header="Կոդի փոփոխում" Command="{Binding ChangeProductCodeCommand}"/>
-                            <Separator/>
+
                         </MenuItem>
                     </Menu>
                     <TextBox Grid.Row="1" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" Margin="1"/>
@@ -316,7 +320,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            
+
                             <DataGridTemplateColumn  Header="Առկա քանակ" Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate DataType="{x:Type models:ProductModel}">

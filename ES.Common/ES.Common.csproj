@@ -102,6 +102,7 @@
     <Compile Include="CustomControls\CustomTextBox.cs" />
     <Compile Include="Enumerations\Enums.cs" />
     <Compile Include="Enumerations\MessageTypeEnum.cs" />
+    <Compile Include="Enumerations\ModificationEnums.cs" />
     <Compile Include="Enumerations\ProductEnums.cs" />
     <Compile Include="Enumerations\ProductOrderTypeEnum.cs" />
     <Compile Include="Enumerations\Scale.cs" />
@@ -131,7 +132,6 @@
     <Compile Include="DemandPrintData.cs" />
     <Compile Include="Enumerations\ChangePageActions.cs" />
     <Compile Include="Enumerations\DemandTypes.cs" />
-    <Compile Include="Enumerations\EarthPlaceTypes.cs" />
     <Compile Include="Enumerations\GarageTypes.cs" />
     <Compile Include="Enumerations\ImageTypes.cs" />
     <Compile Include="Enumerations\Languages.cs" />

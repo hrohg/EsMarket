@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -79,10 +80,10 @@ namespace UserControls.ViewModels.Managers
             get
             {
                 //var sortDescriptions = _products != null ? CollectionViewSource.GetDefaultView(_products).SortDescriptions : SortDescriptionCollection.Empty;
-                _products = CashManager.Instance.GetProducts();
+                _products = _viewType != ProductViewType.ByPasive ? CashManager.Instance.GetProducts() : ProductsManager.GetProducts(false);
                 if (!string.IsNullOrEmpty(FilterText))
                 {
-                    _products = CashManager.Instance.GetProducts().Where(s =>
+                    _products = _products.Where(s =>
                             (s.Code + s.Barcode + s.Description + s.Price + s.CostPrice + s.Note).ToLower()
                             .Contains(FilterText.ToLower())
                             || s.ProductGroups.Any(t => t.Barcode.ToLower().Contains(FilterText.ToLower()))).ToList();
@@ -653,7 +654,7 @@ namespace UserControls.ViewModels.Managers
                 RaisePropertyChanged("Product");
             }
         }
-        
+
         #endregion
 
         #region Product Commands
@@ -723,7 +724,20 @@ namespace UserControls.ViewModels.Managers
             ChangeProductCodeCommand = new RelayCommand(ChangeProductCode, CanChangeProductCode);
             ImportProductsCommand = new RelayCommand<ExportImportEnum>(OnImportProducts, CanImportProducts);
             ChangeProductEnabledCommand = new RelayCommand(ChangeProductEnabled, CanChangeProductEnabled);
+
+            RemoveProductCommand = new RelayCommand<List<ProductModel>>(OnRemoveProducts, CanRemoveProducts);
         }
+
+        private bool CanRemoveProducts(List<ProductModel> products)
+        {
+            return products != null && products.All(s => s.ExistingQuantity == null);
+        }
+
+        private void OnRemoveProducts(List<ProductModel> products)
+        {
+            ProductsManager.RemoveProducts(products);
+        }
+
         private bool IsProductExist()
         {
             return (CashManager.Instance.GetProducts().SingleOrDefault(s => s.Id == Product.Id) != null);
@@ -843,6 +857,7 @@ namespace UserControls.ViewModels.Managers
         public ICommand ImportProductsCommand { get; private set; }
         public ICommand ChangeProductEnabledCommand { get; private set; }
         public ICommand ChangeProductCodeCommand { get; private set; }
+        public ICommand RemoveProductCommand { get; private set; }
 
         #endregion
     }

@@ -238,7 +238,11 @@ namespace ES.Business.Managers
             _isProductsUpdating = true;
             var updateingHandler = ProductsUpdateing;
             if (updateingHandler != null) updateingHandler();
-            UpdateProducts(ProductsManager.GetProducts());
+            lock (_syncProducts)
+            {
+                UpdateProducts(ProductsManager.GetProducts());
+            }
+
             OnProductsUpdated();
         }
 
@@ -355,13 +359,27 @@ namespace ES.Business.Managers
             var exProduct = GetProducts().SingleOrDefault(s => s.Id == product.Id);
             if (exProduct != null)
             {
-                ProductsManager.CopyProduct(exProduct, product);
+                if (product.IsEnabled)
+                {
+                    ProductsManager.CopyProduct(exProduct, product);
+                }
+                else
+                {
+                    lock (_syncProducts)
+                    {
+                        _products.Remove(exProduct);
+                    }
+                }
+
             }
             else
             {
-                lock (_syncProducts)
+                if (product.IsEnabled)
                 {
-                    _products.Add(product);
+                    lock (_syncProducts)
+                    {
+                        _products.Add(product);
+                    }
                 }
             }
             OnProductsUpdated();

@@ -60,10 +60,13 @@ namespace UserControls.Controls
 
             var customSort = ((SortableDataGridTextColumn)eventArgs.Column).CustomSort;
             customSort.SortDirection = eventArgs.Column.SortDirection ?? ListSortDirection.Ascending;
-            view.CustomSort = customSort;
-            eventArgs.Column.SortDirection = customSort.SortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
-            eventArgs.Handled = true;
 
+            var sortDirection = customSort.SortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+            view.CustomSort = customSort;
+            eventArgs.Column.SortDirection = sortDirection;
+            view.SortDescriptions.Add(new SortDescription(((SortableDataGridTextColumn)eventArgs.Column).Header.ToString(), sortDirection));
+            //eventArgs.Handled = true;
+            base.OnSorting(eventArgs);
         }
 
 

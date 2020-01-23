@@ -19,7 +19,7 @@ namespace ES.Data.Models
         public decimal? CostPrice { get; set; }
         public decimal? Price { get; set; }
         public decimal CostAmount { get { return ExistingQuantity*(CostPrice??0); } }
-        public decimal Amount { get { return ExistingQuantity*(Price??0); } }
+        public decimal Amount { get { return ExistingQuantity * (Product.Price ?? 0); } }
         public decimal? MinQuantity { get; set; }
         public decimal ExistingQuantity { get; set; }
         public decimal SaleQuantity { get; set; }

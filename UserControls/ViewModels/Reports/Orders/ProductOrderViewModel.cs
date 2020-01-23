@@ -100,7 +100,7 @@ namespace UserControls.ViewModels.Reports.Orders
                     break;
                 case ProductOrderTypeEnum.BySale:
                     Tuple<DateTime, DateTime> dateIntermediate = null;
-                    Application.Current.Dispatcher.Invoke(new Action(() => { dateIntermediate = UIHelper.Managers.SelectManager.GetDateIntermediate(); }));
+                    DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () => { dateIntermediate = UIHelper.Managers.SelectManager.GetDateIntermediate(); });
 
                     if (dateIntermediate == null) { UpdateCompleted(false); return; }
                     Title = Description = string.Format("Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն) {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);

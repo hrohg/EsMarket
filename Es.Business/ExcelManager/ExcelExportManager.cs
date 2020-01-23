@@ -21,6 +21,7 @@ namespace ES.Business.ExcelManager
 
         public static bool ExportProducts(List<ProductOrderModel> productOrderItems)
         {
+            if (productOrderItems == null) return false;
             var xlApp = new ExcelDataContent(false);
 
             var xlWSh = xlApp.GetWorksheet();

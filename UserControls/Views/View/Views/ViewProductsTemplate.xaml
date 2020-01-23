@@ -21,7 +21,7 @@
                     <ContentControl.Resources>
                         <DataTemplate DataType="{x:Type view:ProductItemsViewModel}">
 
-                            <controls:ProductItemDataGrid ColumnHeaders="{Binding Stocks}" ItemsSource="{Binding Items}" 
+                            <controls:ProductItemDataGrid ColumnHeaders="{Binding Stocks}" ItemsSource="{Binding ItemsView.View}" IsSynchronizedWithCurrentItem="True" 
                                                           AutoGenerateColumns="False" CanUserAddRows="False" 
                                                           CanUserSortColumns="True"
                                                           CanUserDeleteRows="False">
@@ -124,7 +124,7 @@
                     <ContentControl.Resources>
                         <DataTemplate DataType="{x:Type view:ProductItemsViewByDetileViewModel}">
 
-                            <controls:ProductItemDataGrid ColumnHeaders="{Binding Stocks}" ItemsSource="{Binding Items}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+                            <controls:ProductItemDataGrid ItemsSource="{Binding ItemsView.View}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
                                 <DataGrid.Columns>
                                     <DataGridTemplateColumn Header="Կոդ" CanUserSort="True" SortMemberPath="Code">
                                         <DataGridTemplateColumn.CellTemplate>
@@ -147,7 +147,7 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="Մին քանակ" CanUserSort="True" SortMemberPath="MinQuantity">
+                                    <DataGridTemplateColumn Header="Մին քանակ" CanUserSort="True" SortMemberPath="Product.MinQuantity">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="{x:Type models:ProductOrderModel}">
                                                 <TextBlock Text="{Binding Product.MinQuantity, StringFormat='# ##0.##'}" HorizontalAlignment="Right"/>
@@ -161,7 +161,7 @@
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="Գին" CanUserSort="True" SortMemberPath="Price">
+                                    <DataGridTemplateColumn Header="Գին" CanUserSort="True" SortMemberPath="Product.Price">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="{x:Type models:ProductOrderModel}">
                                                 <TextBlock Text="{Binding Product.Price, StringFormat='# ##0.##'}" FontStyle="Italic" HorizontalAlignment="Right"/>
