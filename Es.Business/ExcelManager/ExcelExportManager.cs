@@ -6,10 +6,12 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common.Managers;
 using ES.Data.Models;
 using Microsoft.Office.Interop.Excel;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 using ProductOrderModel = ES.Data.Models.ProductOrderModel;
 
 namespace ES.Business.ExcelManager
@@ -62,6 +64,50 @@ namespace ES.Business.ExcelManager
                 //xlApp.Dispose();
             }
         }
+        public static bool Export(List<ProductOrderModelBase> productOrderItems)
+        {
+            if (productOrderItems == null) return false;
+            var xlApp = new ExcelDataContent(false);
+
+            var xlWSh = xlApp.GetWorksheet();
+            if (xlWSh == null) return false;
+            xlWSh.Activate();
+
+            var nextRow = 1;
+            try
+            {
+                xlWSh.Cells[nextRow, 1] = "Կոդ";
+                xlWSh.Cells[nextRow, 2] = "Անվանում";
+                xlWSh.Cells[nextRow, 3] = "Պահանջարկ";
+                xlWSh.Cells[nextRow, 4] = "Առկա քանակ";
+                xlWSh.Cells[nextRow, 5] = "Ինքնարժեք";
+                xlWSh.Cells[nextRow, 6] = "Գին";
+                xlWSh.Cells[nextRow, 7] = "Նշումներ";
+                nextRow++;
+                foreach (var item in productOrderItems)
+                {
+                    if (item.Product == null) continue;
+                    xlWSh.Cells[nextRow, 1] = item.Product.Code;
+                    xlWSh.Cells[nextRow, 2] = item.Product.Description;
+                    xlWSh.Cells[nextRow, 3] = item.DemandQuantity;
+                    xlWSh.Cells[nextRow, 4] = item.Product.ExistingQuantity;
+                    xlWSh.Cells[nextRow, 5] = item.Product.CostPrice;
+                    xlWSh.Cells[nextRow, 6] = item.Product.Price;
+                    xlWSh.Cells[nextRow, 7] = item.Product.Note;
+                    nextRow++;
+                }
+                xlApp.Show();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                //xlApp.Dispose();
+            }
+        }
         public static bool ExportProducts(List<ProductModel> products)
         {
             var xlApp = new ExcelDataContent(false);
@@ -100,22 +146,22 @@ namespace ES.Business.ExcelManager
                 foreach (var product in products)
                 {
                     Range cell;
-                    
+
                     //Code
-                    cell = xlWSh.Cells[nextRow, 1] ;
+                    cell = xlWSh.Cells[nextRow, 1];
                     cell.NumberFormat = "@";
                     cell.Value2 = product.Code;
-                    
+
                     //Barcode
                     cell = xlWSh.Cells[nextRow, 2];
                     cell.NumberFormat = "@";
                     cell.Value2 = product.Barcode;
-                    
+
                     //HcdCs
                     cell = xlWSh.Cells[nextRow, 3];
                     cell.NumberFormat = "@";
                     cell.Value2 = product.HcdCs;
-                     
+
                     //Description
                     xlWSh.Cells[nextRow, 4] = product.Description;
                     //Mu
@@ -139,12 +185,12 @@ namespace ES.Business.ExcelManager
             }
             catch (Exception)
             {
-                return false; 
+                return false;
                 xlApp.Dispose();
             }
             finally
             {
-               
+
             }
         }
 
@@ -669,7 +715,7 @@ namespace ES.Business.ExcelManager
                         xlWSh.Cells[indexR + 1, indexC + 1] = obj[indexC].ToString();
                     }
                 }
-                MessageManager.ShowMessage(indexR.ToString(), "Արտահանման սխալ",MessageBoxImage.Error);
+                MessageManager.ShowMessage(indexR.ToString(), "Արտահանման սխալ", MessageBoxImage.Error);
                 xlApp.Show();
                 return;
             }
@@ -686,7 +732,7 @@ namespace ES.Business.ExcelManager
 
 
         }
-        public static void ExportList(IEnumerable<object> list)
+        public static void ExportList<T>(IEnumerable<T> list)
         {
             if (list == null || list.Count() == 0) return;
             var xlApp = new ExcelDataContent(false);
@@ -708,7 +754,7 @@ namespace ES.Business.ExcelManager
                     foreach (var propInfo in el.GetType().GetProperties())
                     {
                         var value = propInfo.GetValue(el, null);
-                        xlWSh.Cells[indexR, indexC] =value!=null? value.ToString() : string.Empty;
+                        xlWSh.Cells[indexR, indexC] = value != null ? value.ToString() : string.Empty;
                         indexC++;
                     }
                     indexR++;

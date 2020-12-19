@@ -30,7 +30,7 @@ namespace ES.Business.Models
         private decimal? _price;
         private decimal? _discount;
         private string _note;
-        private long _memberId;
+        private int _memberId;
         private bool? _isActive;
         #endregion
         #region Public properties
@@ -66,11 +66,11 @@ namespace ES.Business.Models
             set { Price = CostPrice + CostPrice * value / 100; }
         }
         public decimal? Discount { get { return _discount; } set { _discount = value; OnPropertyChanged(DiscountProperty);}}
-        public long MemberId { get { return _memberId; } set { _memberId = value; } }
+        public int MemberId { get { return _memberId; } set { _memberId = value; } }
         public bool? IsActive { get { return _isActive; } set { _isActive = value;} }
         #endregion
 
-        public ServicesModel(long memberId, bool isActive = true)
+        public ServicesModel(int memberId, bool isActive = true)
         {
             MemberId = memberId;
             IsActive = isActive;

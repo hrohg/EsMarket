@@ -32,7 +32,7 @@
                 <DataGridTextColumn IsReadOnly="True" Header="Բրենդ" Binding="{Binding Product.Brand.BrandName}"/>
                 <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" CanUserSort="True" />
                 <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
-                <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" />
                 <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" CellStyle="{StaticResource CellRightAlign}" />
                 <DataGridTextColumn IsReadOnly="False" Header="Վաճառքի գին" Binding="{Binding Path=Product.Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N1}" CellStyle="{StaticResource CellRightAlign}" />
                 <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat=N1}" CellStyle="{StaticResource CellRightAlign}"/>

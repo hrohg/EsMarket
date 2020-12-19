@@ -49,7 +49,7 @@
         </Style>
       </extendedControls:ExtendedDataGrid.Resources>
             <extendedControls:ExtendedDataGrid.Columns>
-        <DataGridTextColumn Header="ՀՀ" Binding="{Binding Index, Mode=OneWay}" Width="Auto"/> 
+        <DataGridTextColumn Header="ՀՀ" Binding="{Binding DisplayOrder, Mode=OneWay}" Width="Auto"/> 
         <DataGridTextColumn Header="Կոդ" Binding="{Binding Code, Mode=OneWay}" Width="Auto"/>
         <DataGridTextColumn Header="Անվանում" Binding="{Binding Description, Mode=OneWay}" Width="1*" />
         <DataGridTextColumn Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" Width="Auto" />

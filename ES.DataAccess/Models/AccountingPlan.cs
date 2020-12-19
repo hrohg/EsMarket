@@ -14,8 +14,8 @@ namespace ES.DataAccess.Models
     
     public partial class AccountingPlan
     {
-        public int Id { get; set; }
-        public int DebitId { get; set; }
-        public int CreditId { get; set; }
+        public short Id { get; set; }
+        public short DebitId { get; set; }
+        public short CreditId { get; set; }
     }
 }

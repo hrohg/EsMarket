@@ -32,7 +32,7 @@
       </StackPanel>
       <StackPanel Orientation="Horizontal">
         <TextBlock Text="Մատակարար։ " />
-        <TextBlock Text="{Binding Member.FullName}" />
+        <TextBlock Text="{Binding Member.Name}" />
       </StackPanel>
       <StackPanel Orientation="Horizontal" Visibility="Collapsed">
         <TextBlock Text="Բաժին։ " />
@@ -48,7 +48,7 @@
         </Style>
       </DataGrid.Resources>
       <DataGrid.Columns>
-        <DataGridTextColumn Header="ՀՀ" Binding="{Binding Index, Mode=OneWay}" Width="Auto"/>
+        <DataGridTextColumn Header="ՀՀ" Binding="{Binding DisplayOrder, Mode=OneWay}" Width="Auto"/>
         <DataGridTextColumn Header="Կոդ" Binding="{Binding Code, Mode=OneWay}" Width="Auto"/>
         <DataGridTextColumn Header="Անվանում" Binding="{Binding Description, Mode=OneWay}" Width="1*" />
         <DataGridTextColumn Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" Width="Auto" />
@@ -56,7 +56,7 @@
                             Binding="{Binding Path=Quantity, StringFormat=N3, Mode=OneWay}"
                             CellStyle="{StaticResource CellRightAlign}"
                             Width="Auto"/>
-        <DataGridTextColumn Header="Գին" Binding="{Binding Path=Price, Mode=OneWay, StringFormat='# ###.##'}" CellStyle="{StaticResource CellRightAlign}" Width="Auto"/>
+        <DataGridTextColumn Header="Գին" Binding="{Binding Path=Price, Mode=OneWay, StringFormat='# ###.##'}" IsReadOnly="True" CellStyle="{StaticResource CellRightAlign}" Width="Auto"/>
         <DataGridTextColumn Header="Գումար" Binding="{Binding Path=Amount, Mode=OneWay, StringFormat='# ###.##'}" CellStyle="{StaticResource CellRightAlign}" Width="Auto"/>
         <DataGridTextColumn Header="Նշումներ" CellStyle="{StaticResource CellRightAlign}" Width="150"/>
       </DataGrid.Columns>

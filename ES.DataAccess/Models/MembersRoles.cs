@@ -19,7 +19,7 @@ namespace ES.DataAccess.Models
             this.MemberUsersRoles = new HashSet<MemberUsersRoles>();
         }
     
-        public long Id { get; set; }
+        public int Id { get; set; }
         public string RoleName { get; set; }
         public string Description { get; set; }
     

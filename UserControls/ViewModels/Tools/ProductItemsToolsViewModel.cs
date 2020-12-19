@@ -12,6 +12,7 @@ using ES.Common.ViewModels.Base;
 using ES.Data.Models;
 using UserControls.Enumerations;
 using Xceed.Wpf.AvalonDock.Layout;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 
 namespace UserControls.ViewModels.Tools
 {
@@ -251,7 +252,7 @@ namespace UserControls.ViewModels.Tools
         public Guid Value { get; private set; }
         public string Description { get; private set; }
         public string Metadata { get; private set; }
-        public List<string> ProductGroups { get; set; }
+        public List<string> ProductKeyss { get; set; }
         public CustomItem(Guid id, string description, string metadata)
         {
             Value = id;
@@ -316,7 +317,7 @@ namespace UserControls.ViewModels.Tools
                 Name,
                 product != null ? product.Barcode : string.Empty,
                 product != null ? product.Price.ToString() : string.Empty,
-                product != null ? product.ProductGroups.Aggregate("", (current, productGroupModel) => current + productGroupModel.Barcode + " ") : string.Empty);
+                product != null ? product.ProductKeys.Aggregate("", (current, ProductKeysModel) => current + ProductKeysModel.ProductKey + " ") : string.Empty);
         }
         public ProductNodes(string name, string description)
             : this()

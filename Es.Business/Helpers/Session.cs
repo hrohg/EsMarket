@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Threading;
 using ES.Common;
-using ES.Data.Model;
+using ES.Data.Models;
 
 namespace ES.Business.Helpers
 {

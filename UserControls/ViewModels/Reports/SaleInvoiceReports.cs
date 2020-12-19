@@ -75,6 +75,7 @@ namespace UserControls.ViewModels.Reports
                     Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList(); }));
                     reports = new List<IInvoiceReport>(UpdateByStock(stocks, _dateIntermediate));
                     break;
+                case ViewInvoicesEnum.ByProvider:
                 case ViewInvoicesEnum.ByPartner:
                     Application.Current.Dispatcher.Invoke(new Action(() =>
                     {
@@ -83,7 +84,7 @@ namespace UserControls.ViewModels.Reports
 
                     if (partners != null && partners.Count > 0)
                     {
-                        reports = new List<IInvoiceReport>(InvoicesManager.GetSaleInvoicesReportsByPartners(_dateIntermediate.Item1, _dateIntermediate.Item2, InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList(), ApplicationManager.Instance.GetMember.Id));
+                        reports = new List<IInvoiceReport>(InvoicesManager.GetSaleInvoicesReportsByPartners(_dateIntermediate.Item1, _dateIntermediate.Item2, ViewInvoicesEnum == ViewInvoicesEnum.ByProvider ? InvoiceType.PurchaseInvoice : InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList(), ApplicationManager.Instance.GetMember.Id));
                     }
                     break;
                 case ViewInvoicesEnum.ByPartnerType:
@@ -111,7 +112,7 @@ namespace UserControls.ViewModels.Reports
                 case ViewInvoicesEnum.ByStocksDetiles:
                     Application.Current.Dispatcher.Invoke(new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList(); }));
 
-                    var invoiceItems = InvoicesManager.GetInvoiceItemsByStocks(InvoicesManager.GetInvoices(_dateIntermediate.Item1, _dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).Select(s => s.Id).ToList(), stocks);
+                    var invoiceItems = InvoicesManager.GetInvoiceItemsByStocks(InvoicesManager.GetInvoices(_dateIntermediate.Item1, _dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (short)InvoiceType.SaleInvoice).Select(s => s.Id).ToList(), stocks);
 
                     reports = new List<IInvoiceReport>(invoiceItems.Select(s =>
                         new SaleReportByPartnerDetiled
@@ -131,14 +132,14 @@ namespace UserControls.ViewModels.Reports
                     break;
                 case ViewInvoicesEnum.BySaleChart:
                     invoices = InvoicesManager.GetInvoices(_dateIntermediate.Item1, _dateIntermediate.Item2)
-                            .Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).ToList();
+                            .Where(s => s.InvoiceTypeId == (short)InvoiceType.SaleInvoice).ToList();
                     if (!invoices.Any())
                     {
                         MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
                     }
                     break;
                 case ViewInvoicesEnum.ByZeroAmunt:
-                    invoices = InvoicesManager.GetInvoices(_dateIntermediate.Item1, _dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice && s.Amount == 0).ToList();
+                    invoices = InvoicesManager.GetInvoices(_dateIntermediate.Item1, _dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (short)InvoiceType.SaleInvoice && s.Amount == 0).ToList();
                     if (!invoices.Any())
                     {
                         MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
@@ -201,15 +202,15 @@ namespace UserControls.ViewModels.Reports
 
         private List<InvoiceReport> UpdateByStock(List<StockModel> stocks, Tuple<DateTime, DateTime> dateIntermediate)
         {
-            var invoiceItems = InvoicesManager.GetInvoiceItemsByStocks(InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice || s.InvoiceTypeId == (long)InvoiceType.ReturnFrom).Select(s => s.Id).ToList(), stocks);
+            var invoiceItems = InvoicesManager.GetInvoiceItemsByStocks(InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (short)InvoiceType.SaleInvoice || s.InvoiceTypeId == (short)InvoiceType.ReturnFrom).Select(s => s.Id).ToList(), stocks);
             var list = stocks.Select(s => new InvoiceReport
             {
                 Description = s.FullName,
-                Count = invoiceItems.Where(ii => ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice).Count(ii => ii.ProductItem.StockId == s.Id),
-                Quantity = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0)),
-                Cost = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.CostPrice ?? 0)),
-                Sale = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0)),
-                ReturnAmount = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.ReturnFrom)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0))
+                Count = invoiceItems.Where(ii => ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice).Count(ii => ii.StockId == s.Id),
+                Quantity = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0)),
+                Cost = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.CostPrice ?? 0)),
+                Sale = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0)),
+                ReturnAmount = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.ReturnFrom)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0))
             }).ToList();
             list.Add(new InvoiceReport
             {
@@ -230,5 +231,12 @@ namespace UserControls.ViewModels.Reports
             });
         }
         #endregion
+    }
+
+    public class PurchaseInvoiceReportViewModel : SaleInvoiceReportTypeViewModel
+    {
+        public PurchaseInvoiceReportViewModel(ViewInvoicesEnum viewInvoicesEnum) : base(viewInvoicesEnum)
+        {
+        }
     }
 }

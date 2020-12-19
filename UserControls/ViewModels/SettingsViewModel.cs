@@ -75,6 +75,16 @@ namespace UserControls.ViewModels
 
         #region CashDesk port
 
+        private List<ItemsForChoose> _cashDeskPrinters;
+        public List<ItemsForChoose> CashDeskPrinters
+        {
+            get
+            {
+                return _cashDeskPrinters ?? (_cashDeskPrinters = new List<ItemsForChoose>());
+            }
+            set { _cashDeskPrinters = value; }
+        }
+
         public List<string> CashDeskPorts
         {
             get
@@ -97,6 +107,19 @@ namespace UserControls.ViewModels
         #endregion Cashdesk port
 
         public EcrServiceSettings EcrServiceSettings { get { return _settings.MemberSettings.EcrServiceSettings; } }
+
+        public bool EnableAI
+        {
+            get
+            {
+                return false;
+            }
+            set
+            {
+                if (value == true)
+                    MessageBox.Show("Ողջու՛յն, Ես Էմին եմ: \nԻնձ ակտիվացնելու համար հարկավոր է բաժանորդագրվել:", "Հաղորդագրություն Էմիից", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+            }
+        }
 
         public bool NotifyAboutIncomingInvoices { get { return _settings.MemberSettings.NotifyAboutIncomingInvoices; } set { _settings.MemberSettings.NotifyAboutIncomingInvoices = value; RaisePropertyChanged("NotifyAboutIncomingInvoices"); } }
         public bool UseUnicCode { get { return _settings.MemberSettings.UseUnicCode; } set { _settings.MemberSettings.UseUnicCode = value; RaisePropertyChanged("UseShortCode"); } }
@@ -357,19 +380,27 @@ namespace UserControls.ViewModels
 
             LablePrinters = new List<ItemsForChoose>();
             SalePrinters = new List<ItemsForChoose>();
+            CashDeskPrinters = new List<ItemsForChoose>();
+
             foreach (var printer in printerQuery.Get())
             {
                 var name = printer.GetPropertyValue("Name");
                 var status = printer.GetPropertyValue("Status");
                 var isDefault = printer.GetPropertyValue("Default");
                 //var isNetworkPrinter = printer.GetPropertyValue("Network");
-                SalePrinters.Add(new ItemsForChoose()
+                SalePrinters.Add(new ItemsForChoose
                 {
                     Data = string.Format("{0} Status:{1}{2}", name, status, isDefault is bool && (bool)isDefault ? " (Default)" : ""),
                     Value = name,
                     IsChecked = string.Equals(name, Settings.MemberSettings.ActiveSalePrinter)
                 });
-                LablePrinters.Add(new ItemsForChoose()
+                CashDeskPrinters.Add(new ItemsForChoose
+                {
+                    Data = string.Format("{0} Status:{1}{2}", name, status, isDefault is bool && (bool)isDefault ? " (Default)" : ""),
+                    Value = name,
+                    IsChecked = string.Equals(name, Settings.MemberSettings.ActiveCashDeskPrinter)
+                });
+                LablePrinters.Add(new ItemsForChoose
                 {
                     Data = string.Format("{0} Status:{1}{2}", name, status, isDefault is bool && (bool)isDefault ? " (Default)" : ""),
                     Value = name,
@@ -396,15 +427,15 @@ namespace UserControls.ViewModels
         {
             //General
             _settings.MemberSettings.ActiveLablePrinter = LablePrinters.Where(s => s.IsChecked).Select(s => (string)s.Value).SingleOrDefault();
-
+            _settings.MemberSettings.ActiveCashDeskPrinter = CashDeskPrinters.Where(s => s.IsChecked).Select(s => (string)s.Value).SingleOrDefault();
             //Sale
-            _settings.MemberSettings.ActiveSaleStocks = SaleStocks.Where(s => s.IsChecked).Select(s => (long)s.Value).ToList();
+            _settings.MemberSettings.ActiveSaleStocks = SaleStocks.Where(s => s.IsChecked).Select(s => (short)s.Value).ToList();
             _settings.MemberSettings.SaleCashDesks = SaleCashDesks.Where(s => s.IsChecked).Select(s => (Guid)s.Value).ToList();
             _settings.MemberSettings.SaleBankAccounts = SaleBankAccounts.Where(s => s.IsChecked).Select(s => (Guid)s.Value).ToList();
             _settings.MemberSettings.ActiveSalePrinter = SalePrinters.Where(s => s.IsChecked).Select(s => (string)s.Value).SingleOrDefault();
 
             //Purchase
-            _settings.MemberSettings.ActivePurchaseStocks = PurchaseStocks.Where(s => s.IsChecked).Select(s => (long)s.Value).ToList();
+            _settings.MemberSettings.ActivePurchaseStocks = PurchaseStocks.Where(s => s.IsChecked).Select(s => (short)s.Value).ToList();
             _settings.MemberSettings.PurchaseCashDesks = PurchaseCashDesks.Where(s => s.IsChecked).Select(s => (Guid)s.Value).ToList();
             _settings.MemberSettings.PurchaseBankAccounts = PurchaseBankAccounts.Where(s => s.IsChecked).Select(s => (Guid)s.Value).ToList();
 
@@ -436,8 +467,12 @@ namespace UserControls.ViewModels
                 case EcrExecuiteActions.CheckConnection:
                     return EcrSettings != null && !string.IsNullOrEmpty(SelectedEcrSettings.Ip) && SelectedEcrSettings.Port > 0;
                 case EcrExecuiteActions.OperatorLogin:
-                case EcrExecuiteActions.GetOperatorsAndDepList:
                     return EcrSettings != null && !string.IsNullOrEmpty(SelectedEcrSettings.Ip) && SelectedEcrSettings.Port > 0 && SelectedEcrSettings.EcrCashier != null && !string.IsNullOrEmpty(SelectedEcrSettings.EcrCashier.Pin);
+                    break;
+                case EcrExecuiteActions.GetOperatorsList:
+                case EcrExecuiteActions.GetDepsList:
+                case EcrExecuiteActions.GetOperatorsAndDepList:
+                    return EcrSettings != null && !string.IsNullOrEmpty(SelectedEcrSettings.Ip) && SelectedEcrSettings.Port > 0;
                 case EcrExecuiteActions.CheckEcrConnection:
                     return SelectedEcrSettings.IsActive && SelectedEcrSettings.EcrServiceSettings.IsActive && !string.IsNullOrEmpty(SelectedEcrSettings.EcrServiceSettings.Ip) && SelectedEcrSettings.EcrServiceSettings.Port > 0;
                 case EcrExecuiteActions.Zero:
@@ -464,6 +499,10 @@ namespace UserControls.ViewModels
                     break;
                 case EcrExecuiteActions.CashWithdrawal:
                     break;
+                case EcrExecuiteActions.PrintCash:
+                    break;
+                case EcrExecuiteActions.CashIn:
+                    break;
                 default:
                     return false;
             }
@@ -479,6 +518,7 @@ namespace UserControls.ViewModels
             IsInProgress = true;
             var ecrserver = new EcrServer(SelectedEcrSettings);
             MessageModel message = null;
+            UsersAndDepartments operatorDeps;
             switch (actionMode)
             {
                 case EcrExecuiteActions.CheckEcrConnection:
@@ -490,7 +530,32 @@ namespace UserControls.ViewModels
                 case EcrExecuiteActions.Zero:
                     break;
                 case EcrExecuiteActions.GetOperatorsAndDepList:
-                    var operatorDeps = ecrserver.GetUsersDepsList();
+                    operatorDeps = ecrserver.GetUsersDepsList();
+                    break;
+                case EcrExecuiteActions.GetOperatorsList:
+                    operatorDeps = ecrserver.GetUsersDepsList();
+                    if (operatorDeps == null)
+                    {
+                        message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
+                    }
+                    else
+                    {
+                        SelectedEcrSettings.TypeOfOperatorDeps = operatorDeps.d;
+                        SelectedEcrSettings.CashierDepartment = SelectedEcrSettings.TypeOfOperatorDeps.FirstOrDefault();
+                        RaisePropertyChanged("SelectedEcrSettings");
+                        message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
+                        var operators = operatorDeps.c;
+                        string operatorsList = "";
+                        for (int i = 0; i < operators.Count; i++)
+                        {
+                            operatorsList += operators[i].Id + " : " + operators[i].Name + "\n";
+                        }
+
+                        MessageBox.Show(operatorsList, "Operators list");
+                    }
+                    break;
+                case EcrExecuiteActions.GetDepsList:
+                    operatorDeps = ecrserver.GetUsersDepsList();
                     if (operatorDeps == null)
                     {
                         message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
@@ -638,7 +703,7 @@ namespace UserControls.ViewModels
 
         private bool CanSendTestMail(object obj)
         {
-            return SelectedBranch.NoReplayMailSettings!=null && !string.IsNullOrEmpty(SelectedBranch.Name) && !string.IsNullOrEmpty(SelectedBranch.NoReplayMailSettings.Email) && !string.IsNullOrEmpty(SelectedBranch.NoReplayMailSettings.SmtpServer) && SelectedBranch.NoReplayMailSettings.SmtpPort > 0;
+            return SelectedBranch.NoReplayMailSettings != null && !string.IsNullOrEmpty(SelectedBranch.Name) && !string.IsNullOrEmpty(SelectedBranch.NoReplayMailSettings.Email) && !string.IsNullOrEmpty(SelectedBranch.NoReplayMailSettings.SmtpServer) && SelectedBranch.NoReplayMailSettings.SmtpPort > 0;
         }
 
         private void OnSendTestEmail(object obj)

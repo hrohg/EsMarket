@@ -101,8 +101,7 @@
                                             </Style>
                                         </Grid.Resources>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="100"/>
-                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
@@ -110,12 +109,29 @@
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
 
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Միացում"/>
-                                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding CashDeskPorts}" SelectedItem="{Binding CashDeskPort}"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Միացում" HorizontalAlignment="Left"/>
+                                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding CashDeskPorts}" SelectedItem="{Binding CashDeskPort}" Width="100" HorizontalAlignment="Left"/>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Կցված տպիչ"  VerticalAlignment="Top"/>
+                                        <Grid x:Name="Grid_CashDeskPrinter" Grid.Row="1" Grid.Column="1">
+                                            <ItemsControl  ItemsSource="{Binding Path = CashDeskPrinters}">
+                                                <ItemsControl.ItemTemplate >
+                                                    <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
+                                                        <RadioButton Content="{Binding Path=Data}" IsChecked="{Binding Path=IsChecked}"  GroupName="SalePrinters" Margin ="5"/>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid_CashDeskPrinter, Path=ActualWidth}"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                        </Grid>
+
                                     </Grid>
                                 </GroupBox>
 
-                                <GroupBox Grid.Row="4" Header="Ծանուցում">
+                                <GroupBox Grid.Row="4" Header="Արհեստական բանականություն">
                                     <Grid>
                                         <Grid.Resources>
                                             <Style TargetType="{x:Type TextBlock}">
@@ -125,15 +141,16 @@
                                             </Style>
                                         </Grid.Resources>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="100"/>
-                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition SharedSizeGroup="W"/>
+                                            <ColumnDefinition SharedSizeGroup="W"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
                                             <RowDefinition/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <CheckBox IsChecked="{Binding NotifyAboutIncomingInvoices}" Content="Մուտքային ապրանքագրերի մասին" Margin="5" IsEnabled="False"/>
+                                        <CheckBox Grid.Row="0" IsChecked="{Binding EnableAI}" Content="Միացնել արհեստական բանականությունը" Margin="5"/>
+                                        <CheckBox Grid.Row="1" IsChecked="{Binding NotifyAboutIncomingInvoices}" Content="Ծանուցում մուտքային ապրանքագրերի մասին" Margin="5" IsEnabled="{Binding EnableAI}"/>
                                     </Grid>
                                 </GroupBox>
 
@@ -376,7 +393,10 @@
                                                 <TextBlock Grid.Row="3" Grid.Column="0" Text="Գրանցման համար"/>
                                                 <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SelectedEcrSettings.Crn}"/>
                                                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Օպերատոր"/>
-                                                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding SelectedEcrSettings.EcrCashier.Cashier, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}" Width="100" HorizontalContentAlignment="Right"/>
+                                                <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
+                                                    <TextBox  Text="{Binding SelectedEcrSettings.EcrCashier.Cashier, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}" Width="100" HorizontalContentAlignment="Right"/>
+                                                    <Button Content="Բեռնել" Command="{Binding Path=ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.GetOperatorsList}" Margin="3" Padding="5 0"/>
+                                                </StackPanel>
                                                 <TextBlock Grid.Row="5" Grid.Column="0" Text="Գաղտնաբառ"/>
                                                 <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SelectedEcrSettings.EcrCashier.Pin, UpdateSourceTrigger=PropertyChanged}"/>
                                                 <TextBlock Grid.Row="6" Grid.Column="0" Text="Հարկման տեսակը"/>
@@ -391,7 +411,7 @@
                                                     HorizontalAlignment="Left" 
                                                     Margin="1" 
                                                     VerticalAlignment="Center"/>
-                                                    <Button Content="Բեռնել" Command="{Binding Path=ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.GetOperatorsAndDepList}" Margin="3" Padding="5 0"/>
+                                                    <Button Content="Բեռնել" Command="{Binding Path=ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.GetDepsList}" Margin="3" Padding="5 0"/>
                                                 </StackPanel>
                                                 <TextBlock Grid.Row="7" Grid.Column="0" Text="Տպել կտրոնն արտաքին տպիչով"/>
                                                 <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding SelectedEcrSettings.UseExternalPrinter}" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>

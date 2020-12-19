@@ -18,7 +18,7 @@ using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
 using UserControls.Views.ReceiptTickets.Views;
 using CashDeskManager = UserControls.Managers.CashDeskManager;
-using ProductModel = ES.Data.Models.ProductModel;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 
 namespace UserControls.ViewModels.Invoices
 {
@@ -198,12 +198,12 @@ namespace UserControls.ViewModels.Invoices
 
             var products = InvoiceItems.Select(ii => (IEcrProduct)new EcrProduct(ii.Code, ii.Description, ii.Mu)
             {
-                Price = ii.Product.Price ?? 0,
-                Qty = ii.Quantity ?? 0,
-                Discount = ii.Discount,
-                DiscountType = ii.Discount != null && ii.Discount > 0 ? 1 : (int?)null,
-                Dep = ii.Product.TypeOfTaxes == default(TypeOfTaxes) || ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.All(s => s.IsActive && s.CashierDepartment.Type != (int)ii.Product.TypeOfTaxes) ? ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.CashierDepartment.Id : ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.Single(s => s.IsActive && s.CashierDepartment.Type == (int)ii.Product.TypeOfTaxes).CashierDepartment.Id,
-                AdgCode = ii.Product.HcdCs
+                price = ii.Product.Price ?? 0,
+                qty = ii.Quantity ?? 0,
+                discount = ii.Discount,
+                discountType = ii.Discount != null && ii.Discount > 0 ? 1 : (int?)null,
+                dep = ii.Product.TypeOfTaxes == default(TypeOfTaxes) || ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.All(s => s.IsActive && s.CashierDepartment.Type != (int)ii.Product.TypeOfTaxes) ? ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.CashierDepartment.Id : ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.Single(s => s.IsActive && s.CashierDepartment.Type == (int)ii.Product.TypeOfTaxes).CashierDepartment.Id,
+                adgCode = ii.Product.HcdCs
             }).ToList();
             var invoicePaid = new EcrPaid
             {
@@ -256,7 +256,7 @@ namespace UserControls.ViewModels.Invoices
             var discount = Partner.Discount ?? (ApplicationManager.Settings.Branch != null && ApplicationManager.Settings.Branch.UseDiscountBond && ApplicationManager.Settings.Branch.DefaultDiscount != null ? (decimal)ApplicationManager.Settings.Branch.DefaultDiscount : 0);
             switch (Partner.PartnersTypeId)
             {
-                case (long)PartnerType.Dealer:
+                case (short)PartnerType.Dealer:
                     break;
                 default:
                     //if (!ApplicationManager.Settings.Branch.UseDiscountBond) 
@@ -329,15 +329,15 @@ namespace UserControls.ViewModels.Invoices
                 }
 
                 //Open Cash desk
-                if (!string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort) && InvoicePaid.ByCash > 0)
+                if (!string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort) || !string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveCashDeskPrinter) && InvoicePaid.ByCash > 0)
                 {
-                    CashDeskManager.OpenCashDesk();
+                    DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Normal, CashDeskManager.OpenCashDesk);
                 }
 
                 //Print ticket
                 if (IsPrintTicket && (!IsEcrActivated || ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.UseExternalPrinter) && Application.Current != null)
                 {
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => PrintInvoiceTicket(responceReceiptModel)));
+                    DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Normal, (() => PrintInvoiceTicket(responceReceiptModel)));
                 }
 
 
@@ -370,12 +370,12 @@ namespace UserControls.ViewModels.Invoices
                     //todo
                     var items = InvoiceItems.Select(ii => (IEcrProduct)new EcrProduct(ii.Code, ii.Description, ii.Mu)
                     {
-                        Price = ii.Product.Price ?? 0,
-                        Qty = ii.Quantity ?? 0,
-                        Discount = ii.Discount,
-                        DiscountType = ii.Discount != null ? 1 : (int?)null,
-                        Dep = ii.Product.TypeOfTaxes == default(TypeOfTaxes) || ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.All(s => s.IsActive && s.CashierDepartment.Type != (int)ii.Product.TypeOfTaxes) ? ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.CashierDepartment.Id : ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.Single(s => s.IsActive && s.CashierDepartment.Type == (int)ii.Product.TypeOfTaxes).CashierDepartment.Id,
-                        AdgCode = ii.Product.HcdCs
+                        price = ii.Product.Price ?? 0,
+                        qty = ii.Quantity ?? 0,
+                        discount = ii.Discount,
+                        discountType = ii.Discount != null ? 1 : (int?)null,
+                        dep = ii.Product.TypeOfTaxes == default(TypeOfTaxes) || ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.All(s => s.IsActive && s.CashierDepartment.Type != (int)ii.Product.TypeOfTaxes) ? ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.CashierDepartment.Id : ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.Single(s => s.IsActive && s.CashierDepartment.Type == (int)ii.Product.TypeOfTaxes).CashierDepartment.Id,
+                        adgCode = ii.Product.HcdCs
                     }).ToList();
                     var paid = new EcrPaid
                     {

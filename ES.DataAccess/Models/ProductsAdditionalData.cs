@@ -15,7 +15,7 @@ namespace ES.DataAccess.Models
     public partial class ProductsAdditionalData
     {
         public System.Guid ProductId { get; set; }
-        public Nullable<int> TypeOfTaxes { get; set; }
+        public Nullable<short> TypeOfTaxes { get; set; }
     
         public virtual Products Products { get; set; }
     }

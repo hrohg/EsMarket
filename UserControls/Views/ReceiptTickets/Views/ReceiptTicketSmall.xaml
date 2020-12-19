@@ -274,7 +274,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" Text="{Binding Index}" Style="{StaticResource TextBlockStyle}"/>
+                        <TextBlock Grid.Column="0" Text="{Binding DisplayOrder}" Style="{StaticResource TextBlockStyle}"/>
                         <TextBlock Grid.Column="1" Text="{Binding Converter={StaticResource InvoiceItemToStringConverter}}" 
                                    Style="{StaticResource TextBlockStyle}" TextWrapping="Wrap" AllowDrop="True"/>
                     </Grid>

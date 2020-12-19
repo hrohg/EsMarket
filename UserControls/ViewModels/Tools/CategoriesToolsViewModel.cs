@@ -199,7 +199,7 @@ namespace UserControls.ViewModels.Tools
         }
         private void OnRefresh(object obj)
         {
-            Items = ProductsManager.GetEsCategories();
+            Items = CashManager.GetEsCategories();
         }
         #endregion Refresh command
 

@@ -150,7 +150,7 @@ namespace ES.Business.Managers
                         exItem.IsActive = item.IsActive;
                         exItem.IsCash = item.IsCash;
                         exItem.Name = item.Name;
-                        exItem.Notes = item.Notes;
+                        exItem.Note = item.Note;
                     }
                     db.SaveChanges();
                     return true;

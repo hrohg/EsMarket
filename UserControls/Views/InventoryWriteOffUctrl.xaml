@@ -117,11 +117,11 @@
                     <KeyBinding Gesture="Delete" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemoveInvoiceItemCommand}" CommandParameter="{Binding InvoiceItem.Id}"/>
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>
-                    <DataGridTextColumn IsReadOnly="True" Header="ՀՀ" Binding="{Binding Index}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="ՀՀ" Binding="{Binding DisplayOrder}"/>
                     <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Բարկոդ" Binding="{Binding Product.Barcode}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
-                    <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" />
                     <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Ինքնարժեք" Binding="{Binding Path=CostAmount, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}"/>

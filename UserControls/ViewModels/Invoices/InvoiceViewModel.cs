@@ -26,6 +26,7 @@ using Shared.Helpers;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets.Views;
 using ExcelImportManager = ES.Business.ExcelManager.ExcelImportManager;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 using ReceiptTicketViewModel = UserControls.Views.ReceiptTickets.SaleInvoiceSmallTicketViewModel;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
@@ -141,11 +142,11 @@ namespace UserControls.ViewModels.Invoices
         #endregion Code
         public virtual bool DenyChangeQuantity
         {
-            get { return ApplicationManager.IsInRole(UserRoleEnum.JuniorSeller); }
+            get { return !ApplicationManager.IsInRole(UserRoleEnum.JuniorSeller); }
         }
         public virtual bool DenyChangePrice
         {
-            get { return !ApplicationManager.IsInRole(UserRoleEnum.JuniorManager) || InvoiceItem.Product == null; }
+            get { return !ApplicationManager.IsInRole(UserRoleEnum.SaleManager) && !ApplicationManager.IsInRole(UserRoleEnum.Manager) || InvoiceItem.Product == null; }
         }
 
         public InvoiceItemsModel InvoiceItem
@@ -269,7 +270,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected InvoiceViewModel(InvoiceType type)
         {
-            Invoice = new InvoiceModel(User, Member) { InvoiceTypeId = (int)type };
+            Invoice = new InvoiceModel(User, Member) { InvoiceTypeId = (short)type };
             Initialize();
         }
 
@@ -334,7 +335,7 @@ namespace UserControls.ViewModels.Invoices
             if (product == null) return 0;
             switch (Partner.PartnersTypeId)
             {
-                case (long)PartnerType.Dealer:
+                case (short)PartnerType.Dealer:
                     return product.GetProductDealerPrice();
                     break;
                 default:
@@ -352,9 +353,9 @@ namespace UserControls.ViewModels.Invoices
 
         private void RemoveInvoiceItem(InvoiceItemsModel invoiceItem)
         {
-            foreach (var invoiceItemsModel in InvoiceItems.Where(invoiceItemsModel => invoiceItemsModel.Index > invoiceItem.Index))
+            foreach (var invoiceItemsModel in InvoiceItems.Where(invoiceItemsModel => invoiceItemsModel.DisplayOrder > invoiceItem.DisplayOrder))
             {
-                invoiceItemsModel.Index--;
+                invoiceItemsModel.DisplayOrder--;
             }
             InvoiceItems.Remove(invoiceItem);
         }
@@ -517,7 +518,6 @@ namespace UserControls.ViewModels.Invoices
                             invoiceItem.InvoiceId = Invoice.Id;
                             invoiceItem.ProductId = product.Id;
                             invoiceItem.Description = product.Description;
-                            invoiceItem.Mu = product.Mu;
                             invoiceItem.Note += product.Note;
                             invoiceItem.Product = product;
                             InvoiceItems.Add(invoiceItem);
@@ -575,7 +575,7 @@ namespace UserControls.ViewModels.Invoices
                     {
                         Id = item.ProductId,
                         Description = item.Description,
-                        Mu = item.Mu,
+                        //Mu = item.Mu,
                         HcdCs = item.Product != null ? item.Product.HcdCs : null,
                         Price = item.Price
                     };
@@ -599,7 +599,6 @@ namespace UserControls.ViewModels.Invoices
                     Product = product,
                     Code = product.Code,
                     Description = product.Description,
-                    Mu = product.Mu,
                     //Price =  exProduct != null && exProduct.Price != null && exProduct.Price > 0 ? exProduct.Price:item.Price,
                     Discount = exProduct != null && exProduct.Price != null && exProduct.Price > 0 && exProduct.Price > item.Price ? Math.Round((decimal)(100 - 100 * item.Price / exProduct.Price), 2) : (decimal?)0.00,
                     Quantity = item.Quantity
@@ -657,7 +656,7 @@ namespace UserControls.ViewModels.Invoices
                 }
                 else
                 {
-                    InvoiceItem.Index = InvoiceItems.Count + 1;
+                    InvoiceItem.DisplayOrder = (short) (InvoiceItems.Count + 1);
                     InvoiceItems.Insert(0, InvoiceItem);
                     SelectedInvoiceItem = InvoiceItem;
                 }
@@ -679,7 +678,6 @@ namespace UserControls.ViewModels.Invoices
                 //ExpiryDate = product.ExpiryDays != null ? DateTime.Today.AddDays((int)product.ExpiryDays) : (DateTime?)null;
                 Code = productItem.Product.Code,
                 Description = productItem.Product.Description,
-                Mu = productItem.Product.Mu,
                 Price = GetProductPrice(productItem.Product),
                 Discount = productItem.Product.Discount,
                 Note = productItem.Product.Note
@@ -735,7 +733,7 @@ namespace UserControls.ViewModels.Invoices
             }
             else
             {
-                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Գործողության ընդհատում: Գործողությունը հնարավոր չէ իրականացնել:", MessageTypeEnum.Warning));
+                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Գործողության ընդհատում: Գործողությունը ձախողվել է:", MessageTypeEnum.Warning));
 
             }
         }
@@ -780,7 +778,6 @@ namespace UserControls.ViewModels.Invoices
                 ProductId = product.Id,
                 Code = product.Code,
                 Description = product.Description,
-                Mu = product.Mu,
                 Quantity = count,
                 Price = product.CostPrice,
                 Discount = product.Discount,
@@ -871,7 +868,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected virtual void RemoveInvoiceItem(object o)
         {
-            var index = SelectedInvoiceItem.Index;
+            int index = SelectedInvoiceItem.DisplayOrder;
             RemoveInvoiceItem(SelectedInvoiceItem);
             index--;
             if (index < 0) index = 0;
@@ -886,7 +883,7 @@ namespace UserControls.ViewModels.Invoices
             int index = 0;
             foreach (var invoiceItem in items)
             {
-                index = SelectedInvoiceItem.Index;
+                index = SelectedInvoiceItem.DisplayOrder;
                 RemoveInvoiceItem(invoiceItem);
             }
             index--;
@@ -927,7 +924,7 @@ namespace UserControls.ViewModels.Invoices
         {
             if (!CanApprove(o))
             {
-                MessageManager.ShowMessage("Գործողությունը հնարավոր չէ իրականացնել:", "Գործողության ընդհատում", MessageBoxImage.Error);
+                MessageManager.ShowMessage("Գործողությունը հնարավոր չէ իրականացնել: Թերի տվյալներ:", "Գործողության ընդհատում", MessageBoxImage.Error);
                 return;
             }
             Invoice.ApproverId = User.UserId;
@@ -973,7 +970,7 @@ namespace UserControls.ViewModels.Invoices
         {
             var stock = SelectItemsManager.SelectStocks(StockManager.GetStocks(), false).FirstOrDefault();
             if (stock == null) return;
-            var invoiceItems = SelectItemsManager.SelectProductItemsFromStock(new List<long> { stock.Id });
+            var invoiceItems = SelectItemsManager.SelectProductItemsFromStock(new List<short> { stock.Id });
             if (invoiceItems == null) return;
             lock (_sync)
             {
@@ -1097,7 +1094,7 @@ namespace UserControls.ViewModels.Invoices
         private void OnAddItemsFromInvoice(InvoiceTypeEnum? type)
         {
             if (!type.HasValue) return;
-            var invoice = SelectItemsManager.SelectInvoice((long)type.Value).FirstOrDefault();
+            var invoice = SelectItemsManager.SelectInvoice((short)type.Value).FirstOrDefault();
             if (invoice == null) return;
             var invoiceItems = SelectItemsManager.SelectInvoiceItems(invoice.Id);
             if (invoiceItems == null) return;
@@ -1159,7 +1156,7 @@ namespace UserControls.ViewModels.Invoices
 
         private void OnFindPartner(string filter)
         {
-            var partners = PartnersManager.GetPartners().Where(s => string.IsNullOrEmpty(filter) || s.FullName.ToLower().Contains(filter.ToLower()) || (!string.IsNullOrEmpty(s.Mobile) && s.Mobile.ToLower().Contains(filter.ToLower()) || (!string.IsNullOrEmpty(s.Email) && s.Email.ToLower().Contains(filter.ToLower())) || (!string.IsNullOrEmpty(s.ClubSixteenId) && s.ClubSixteenId.ToLower().Contains(filter.ToLower())))).ToList();
+            var partners = PartnersManager.GetPartners().Where(s => string.IsNullOrEmpty(filter) || s.FullName.ToLower().Contains(filter.ToLower()) || (!string.IsNullOrEmpty(s.Mobile) && s.Mobile.ToLower().Contains(filter.ToLower()) || (!string.IsNullOrEmpty(s.Email) && s.Email.ToLower().Contains(filter.ToLower())) || (!string.IsNullOrEmpty(s.CardNumber) && s.CardNumber.ToLower().Contains(filter.ToLower())))).ToList();
             if (SetPrtners(partners)) PartnerFilter = string.Empty;
         }
 

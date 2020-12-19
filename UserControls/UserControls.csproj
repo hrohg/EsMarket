@@ -636,6 +636,10 @@
       <Project>{627FEB10-D0AD-4A87-AB3D-1CFC3018E84D}</Project>
       <Name>ES.MSOffice</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Es.Market.Tools\Es.Market.Tools.csproj">
+      <Project>{07dd8fa5-e4da-4d1c-8cf3-d40899150304}</Project>
+      <Name>Es.Market.Tools</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EsMarket.SharedData\EsMarket.SharedData.csproj">
       <Project>{03419848-b59b-49d5-9cdc-8a3cfd634fad}</Project>
       <Name>EsMarket.SharedData</Name>

@@ -61,6 +61,10 @@
       <Project>{A425B85D-C3EB-4BCC-B307-17DAAEE9237D}</Project>
       <Name>ES.DataAccess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ES.Data\ES.Data.csproj">
+      <Project>{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}</Project>
+      <Name>ES.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HG.Tools\HG.Tools.csproj">
       <Project>{ee29ff43-0a4a-4322-89dd-847dc11f2359}</Project>
       <Name>HG.Tools</Name>

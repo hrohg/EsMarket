@@ -130,11 +130,11 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Կանխավճար" FontSize="10" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Պարտք մատակարարին" FontSize="10" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Partner.Credit, StringFormat={}{0:#,0.##}}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Դեբետ" FontSize="10" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Կանխավճար" FontSize="10" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Partner.Debit, StringFormat={}{0:#,0.##}}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
-                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Մաքսիմալ դեբիտորական պարտք" FontSize="10" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Մաքսիմալ թույլատրելի կանխավճար" FontSize="10" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Partner.MaxDebit, StringFormat={}{0:#,0.##}, TargetNullValue='0'}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="3" Grid.Column="0" Text="Զեղչ" FontSize="10" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Partner.Discount, StringFormat={}{0:#,0.##}%}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
@@ -339,7 +339,7 @@
                         </Style>
                     </DataGrid.RowStyle>
                     <DataGrid.Columns>
-                        <DataGridTextColumn IsReadOnly="True" Header="ՀՀ" Binding="{Binding Index, Mode=OneWay}"/>
+                        <DataGridTextColumn IsReadOnly="True" Header="ՀՀ" Binding="{Binding DisplayOrder, Mode=OneWay}"/>
                         <DataGridTextColumn IsReadOnly="True" Header="Բրենդ" Binding="{Binding Product.Brand.BrandName, Mode=OneWay}"/>
                         <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code, Mode=OneWay}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Բարկոդ" Binding="{Binding Product.Barcode, Mode=OneWay}" />
@@ -430,7 +430,7 @@
   VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" Height="25" Foreground="Blue" TabIndex="8"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment =" Right">
-                                        <TextBlock Text="Կրեդիտորական պարտք" VerticalAlignment="Center" Width="100" TextWrapping="Wrap" TextAlignment="Right" />
+                                        <TextBlock Text="Պարտք մատակարարին" VerticalAlignment="Center" Width="100" TextWrapping="Wrap" TextAlignment="Right" />
 
                                         <TextBox Text="{Binding InvoicePaid.ReceivedPrepayment, StringFormat={}{0:#,#.##}, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
   BorderThickness="1" BorderBrush="Black" Margin="1"
@@ -645,11 +645,11 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Կանխավճար" FontSize="10" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Պարտք մատակարարին" FontSize="10" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Partner.Credit, StringFormat={}{0:#,0.##}}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Դեբետ" FontSize="10" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Կանխավճար" FontSize="10" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Partner.Debit, StringFormat={}{0:#,0.##}}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
-                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Մաքսիմալ դեբիտորական պարտք" FontSize="10" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Մաքսիմալ կանխավճար" FontSize="10" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Partner.MaxDebit, StringFormat={}{0:#,0.##}, TargetNullValue='0'}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="3" Grid.Column="0" Text="Զեղչ" FontSize="10" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Partner.Discount, StringFormat={}{0:#,0.##}%}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
@@ -857,7 +857,7 @@
                         </Style>
                     </DataGrid.RowStyle>
                     <DataGrid.Columns>
-                        <DataGridTextColumn IsReadOnly="True" Header="ՀՀ" Binding="{Binding Index, Mode=OneWay}"/>
+                        <DataGridTextColumn IsReadOnly="True" Header="ՀՀ" Binding="{Binding DisplayOrder, Mode=OneWay}"/>
                         <DataGridTextColumn IsReadOnly="True" Header="Բրենդ" Binding="{Binding Product.Brand.BrandName, Mode=OneWay}"/>
                         <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code, Mode=OneWay}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Բարկոդ" Binding="{Binding Product.Barcode, Mode=OneWay}" />
@@ -940,7 +940,7 @@
   VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" Height="25" Foreground="Blue" TabIndex="8"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment =" Right">
-                                        <TextBlock Text="Կրեդիտորական պարտք" VerticalAlignment="Center" Width="100" TextWrapping="Wrap" TextAlignment="Right" />
+                                        <TextBlock Text="Պարտք մատակարարին" VerticalAlignment="Center" Width="100" TextWrapping="Wrap" TextAlignment="Right" />
 
                                         <TextBox Text="{Binding InvoicePaid.ReceivedPrepayment, StringFormat={}{0:#,#.##}, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
   BorderThickness="1" BorderBrush="Black" Margin="1"

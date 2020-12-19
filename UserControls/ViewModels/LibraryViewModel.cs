@@ -64,7 +64,7 @@ namespace UserControls.ViewModels
             _items = items;
             OnPropertyChanged("Items");
         }
-        public void SelectProductItems(List<long> stockIds)
+        public void SelectProductItems(List<short> stockIds)
         {
             var productItems = ProductsManager.GetProductItemsFromStocks(stockIds);
             if (productItems == null || productItems.Count == 0) { return; }

@@ -16,13 +16,17 @@ namespace ES.DataAccess.Models
     {
         public ProductItems()
         {
-            this.InvoiceItems = new HashSet<InvoiceItems>();
+            this.ProductItems1 = new HashSet<ProductItems>();
         }
     
         public System.Guid Id { get; set; }
         public System.Guid ProductId { get; set; }
-        public System.Guid DeliveryInvoiceId { get; set; }
-        public Nullable<long> StockId { get; set; }
+        public Nullable<System.Guid> ParentProductItemId { get; set; }
+        public System.Guid CreatedInvoiceId { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+        public Nullable<System.Guid> DeliveryInvoiceId { get; set; }
+        public Nullable<System.DateTime> DeliveryDate { get; set; }
+        public Nullable<short> StockId { get; set; }
         public decimal Quantity { get; set; }
         public decimal CostPrice { get; set; }
         public Nullable<System.DateTime> ExpiryDate { get; set; }
@@ -30,15 +34,12 @@ namespace ES.DataAccess.Models
         public string CoordinateY { get; set; }
         public string CoordinateZ { get; set; }
         public string Description { get; set; }
-        public Nullable<long> ReservedById { get; set; }
-        public long MemberId { get; set; }
+        public Nullable<int> ReservedById { get; set; }
+        public int MemberId { get; set; }
     
-        public virtual EsMembers EsMembers { get; set; }
-        public virtual EsUsers EsUsers { get; set; }
-        public virtual ICollection<InvoiceItems> InvoiceItems { get; set; }
-        public virtual ProductItems ProductItems1 { get; set; }
+        public virtual EsStock EsStock { get; set; }
+        public virtual ICollection<ProductItems> ProductItems1 { get; set; }
         public virtual ProductItems ProductItems2 { get; set; }
         public virtual Products Products { get; set; }
-        public virtual EsStock EsStock { get; set; }
     }
 }

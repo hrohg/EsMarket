@@ -14,7 +14,19 @@ namespace ES.DataAccess.Models
     
     public partial class EsMembersAccounts
     {
-        public long MemberId { get; set; }
-        public long TotalScores { get; set; }
+        public int MemberId { get; set; }
+        public decimal TotalScores { get; set; }
+        public bool IsActive { get; set; }
+        public decimal Deposite { get; set; }
+        public decimal Credit { get; set; }
+        public int LicenseId { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string TIN { get; set; }
+        public string BankAccount { get; set; }
+        public string Bank { get; set; }
+        public string Description { get; set; }
     }
 }

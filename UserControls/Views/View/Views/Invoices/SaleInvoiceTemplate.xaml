@@ -344,10 +344,10 @@
                         <KeyBinding Key="Delete" Command="{Binding RemoveInvoiceItemsCommand}" CommandParameter="{Binding ElementName=DgInvoiceItems, Path=SelectedItems}"/>
                     </DataGrid.InputBindings>
                     <DataGrid.Columns>
-                        <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding Index, Mode=OneWay}"/>
+                        <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding DisplayOrder, Mode=OneWay}"/>
                         <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                        <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" />
                         <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}"/>

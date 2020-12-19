@@ -50,7 +50,7 @@ namespace ES.Business.Managers
         #endregion
 
         #region Public methods
-        public static EsStock GetDefaultStock(long memberId)
+        public static EsStock GetDefaultStock(int memberId)
         {
             using (var db = GetDataContext())
             {
@@ -67,11 +67,11 @@ namespace ES.Business.Managers
             return TryGetAllStocks().Select(Convert).ToList();
 
         }
-        public static IEnumerable<StockModel> GetStocks(List<long> ids)
+        public static IEnumerable<StockModel> GetStocks(List<short> ids)
         {
             return TryGetStocks(ids).Select(Convert);
         }
-        public static StockModel GetStock(long? id)
+        public static StockModel GetStock(short? id)
         {
             return Convert(TryGetStock(id));
         }
@@ -82,7 +82,7 @@ namespace ES.Business.Managers
         #endregion
 
         #region Private methods
-        private static EsStock TryGetStock(long? stockId)
+        private static EsStock TryGetStock(short? stockId)
         {
             var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
@@ -140,7 +140,7 @@ namespace ES.Business.Managers
 
             }
         }
-        private static IEnumerable<EsStock> TryGetStocks(IEnumerable<long> ids)
+        private static IEnumerable<EsStock> TryGetStocks(IEnumerable<short> ids)
         {
             using (var db = GetDataContext())
             {

@@ -6,6 +6,7 @@ using ES.Common;
 using ES.Data.Enumerations;
 using ES.Data.Models;
 using ES.DataAccess.Models;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 
 
 namespace ES.Business.Managers
@@ -22,7 +23,7 @@ namespace ES.Business.Managers
             partner.EsMemberId = item.EsMemberId;
             partner.PartnersTypeId = item.EsPartnersTypeId;
             partner.EsUserId = item.EsUserId;
-            partner.ClubSixteenId = item.ClubSixteenId;
+            partner.CardNumber = item.CardNumber;
             partner.FullName = item.FullName;
             partner.FirstName = item.FirstName;
             partner.LastName = item.LastName;
@@ -50,7 +51,7 @@ namespace ES.Business.Managers
                 EsMemberId = item.EsMemberId,
                 EsPartnersTypeId = item.PartnersTypeId,
                 EsUserId = item.EsUserId,
-                ClubSixteenId = item.ClubSixteenId,
+                CardNumber = item.CardNumber,
                 FullName = item.FullName,
                 FirstName = item.FirstName,
                 LastName = item.LastName,
@@ -78,7 +79,7 @@ namespace ES.Business.Managers
                 Description = item.Description
             };
         }
-        public static PartnerTypeModel Convert(long id)
+        public static PartnerTypeModel Convert(short id)
         {
             return new PartnerTypeModel
             {
@@ -265,7 +266,7 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    return db.Partners.Where(s => s.EsMemberId == memberId && (partnerType == PartnerType.None || s.EsPartnersTypeId == (long)partnerType))
+                    return db.Partners.Where(s => s.EsMemberId == memberId && (partnerType == PartnerType.None || s.EsPartnersTypeId == (short)partnerType))
                                         .ToList();
                 }
                 catch (Exception)
@@ -335,7 +336,7 @@ namespace ES.Business.Managers
                     if (exItem == null) return false;
                     exItem.EsPartnersTypeId = item.EsPartnersTypeId;
                     exItem.EsUserId = item.EsUserId;
-                    exItem.ClubSixteenId = item.ClubSixteenId;
+                    exItem.CardNumber = item.CardNumber;
                     exItem.FullName = item.FullName;
                     exItem.FirstName = item.FirstName;
                     exItem.LastName = item.LastName;
@@ -370,7 +371,7 @@ namespace ES.Business.Managers
                 try
                 {
                     var partnerid =
-                        db.InvoiceItems.Where(s => s.ProductId == item.Id && s.Invoices.InvoiceTypeId == (long)InvoiceType.PurchaseInvoice && s.Invoices.MemberId == ApplicationManager.Member.Id)
+                        db.InvoiceItems.Where(s => s.ProductId == item.Id && s.Invoices.InvoiceTypeId == (short)InvoiceType.PurchaseInvoice && s.Invoices.MemberId == ApplicationManager.Member.Id)
                         .OrderByDescending(s => s.Invoices.ApproveDate)
                         .Select(s => s.Invoices.PartnerId).FirstOrDefault();
                     return GetPartner(partnerid);

@@ -13,6 +13,7 @@ using ES.Data.Models.Reports;
 using Shared.Helpers;
 using UIHelper.Managers;
 using UserControls.Enumerations;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 
 namespace UserControls.ViewModels.Reports
 {

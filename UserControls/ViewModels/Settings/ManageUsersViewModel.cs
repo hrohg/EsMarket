@@ -7,7 +7,6 @@ using ES.Business.Managers;
 using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
-using ES.Data.Model;
 using ES.Data.Models;
 using ES.DataAccess.Models;
 using Xceed.Wpf.AvalonDock.Layout;

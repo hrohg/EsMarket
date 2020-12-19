@@ -8,8 +8,8 @@
                     xmlns:helper1="clr-namespace:UserControls.PriceTicketControl.Helper"
                     xmlns:helpers1="clr-namespace:UserControls.Helpers"
                     xmlns:helper="clr-namespace:CashReg.Helper;assembly=CashReg"
-                    xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data"
-                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common">
+                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
+                    xmlns:products="clr-namespace:ES.Data.Models.Products;assembly=ES.Data">
 
 
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
@@ -82,10 +82,7 @@
                                             <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal">
                                                 <TextBox Grid.Column="3" Grid.Row="1" Text="{Binding Product.HcdCs, UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalAlignment="Left" Margin="0 1"/>
                                                 <TextBlock Grid.Column="4" Grid.Row="0"  Text="Չափման միավոր" HorizontalAlignment="Right" Margin="0 1"/>
-                                                <StackPanel Grid.Column="5" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                                    <TextBox Name="TxtMu" Text="{Binding Product.Mu, UpdateSourceTrigger=PropertyChanged}" Width="100"  Margin="0 1" TabIndex="3" HorizontalAlignment="Left"/>
-                                                    <CheckBox IsChecked="{Binding Product.IsWeight}" Content="Քաշային" Margin="10 0" VerticalAlignment="Center"/>
-                                                </StackPanel>
+                                                <ComboBox Grid.Column="5" Grid.Row="0" ItemsSource="{Binding MeasureOfUnits}" SelectedItem="{Binding Product.MeasureUnit}" DisplayMemberPath="Name" Width="250"/>
                                             </StackPanel>
                                         </Grid>
                                     </Border>
@@ -161,9 +158,9 @@
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBox x:Name="Part_TextBox" Text="{Binding ProductGroupDescription}" Height="Auto" VerticalContentAlignment="Top" TextWrapping="Wrap">
+                                        <TextBox x:Name="Part_TextBox" Text="{Binding ProductKeysDescription}" Height="Auto" VerticalContentAlignment="Top" TextWrapping="Wrap">
                                             <TextBox.InputBindings>
-                                                <KeyBinding Key="Enter" Command="{Binding AddProductGroupCommand}" CommandParameter="{Binding Path = Text, ElementName=Part_TextBox}"/>
+                                                <KeyBinding Key="Enter" Command="{Binding AddProductKeysCommand}" CommandParameter="{Binding Path = Text, ElementName=Part_TextBox}"/>
                                             </TextBox.InputBindings>
                                         </TextBox>
                                     </Grid>
@@ -282,7 +279,7 @@
                     <extendedControls:ExtendedDataGrid Grid.Row="2"
                                                        x:Name="DgProducts"  
                                                        Margin="10" 
-                                                       ItemsSource="{Binding Path=Products}" 
+                                                       ItemsSource="{Binding Path=ProductsSource.View}" 
                                                        AutoGenerateColumns="False"
                                                        SelectedItem="{Binding Path = Product}" 
                                                        behaviors:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding SelectedProducts, Mode=OneWayToSource}"
@@ -311,11 +308,11 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Binding="{Binding Path=Description}" Header="Անվանում" Width="Auto" IsReadOnly="True"/>
-                            <DataGridTextColumn Binding="{Binding Path=Mu}" Header="ՉՄ" Width="Auto" IsReadOnly="True"/>
+                            <DataGridTextColumn Binding="{Binding Path=Mu, Mode=OneWay}" Header="ՉՄ" Width="Auto" IsReadOnly="True"/>
 
                             <DataGridTemplateColumn  Header="Մինիմալ քանակ" Width="Auto" CanUserSort="True" SortMemberPath="MinQuantity">
                                 <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate DataType="{x:Type models:ProductModel}">
+                                    <DataTemplate DataType="{x:Type products:ProductModel}">
                                         <TextBlock Text="{Binding Path=MinQuantity, StringFormat={}{0:#,#.##}}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -323,7 +320,7 @@
 
                             <DataGridTemplateColumn  Header="Առկա քանակ" Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">
                                 <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate DataType="{x:Type models:ProductModel}">
+                                    <DataTemplate DataType="{x:Type products:ProductModel}">
                                         <TextBlock Text="{Binding Path=ExistingQuantity, StringFormat={}{0:#,#.##}}" Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -420,10 +417,7 @@
                                             <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal">
                                                 <TextBox Grid.Column="3" Grid.Row="1" Text="{Binding Product.HcdCs, UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalAlignment="Left" Margin="0 1"/>
                                                 <TextBlock Grid.Column="4" Grid.Row="0"  Text="Չափման միավոր" HorizontalAlignment="Right" Margin="0 1"/>
-                                                <StackPanel Grid.Column="5" Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                                    <TextBox Name="TxtMu" Text="{Binding Product.Mu, UpdateSourceTrigger=PropertyChanged}" Width="100"  Margin="0 1" TabIndex="3" HorizontalAlignment="Left"/>
-                                                    <CheckBox IsChecked="{Binding Product.IsWeight}" Content="Քաշային" Margin="10 0" VerticalAlignment="Center"/>
-                                                </StackPanel>
+                                                <ComboBox Grid.Column="5" Grid.Row="0" ItemsSource="{Binding MeasureOfUnits}" SelectedItem="{Binding Product.MeasureUnit}" DisplayMemberPath="Name" Width="250"/>
                                             </StackPanel>
                                         </Grid>
                                     </Border>
@@ -460,9 +454,9 @@
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBox x:Name="Part_TextBox" Text="{Binding ProductGroupDescription}" Height="Auto" VerticalContentAlignment="Top" TextWrapping="Wrap">
+                                        <TextBox x:Name="Part_TextBox" Text="{Binding ProductKeysDescription}" Height="Auto" VerticalContentAlignment="Top" TextWrapping="Wrap">
                                             <TextBox.InputBindings>
-                                                <KeyBinding Key="Enter" Command="{Binding AddProductGroupCommand}" CommandParameter="{Binding Path = Text, ElementName=Part_TextBox}"/>
+                                                <KeyBinding Key="Enter" Command="{Binding AddProductKeysCommand}" CommandParameter="{Binding Path = Text, ElementName=Part_TextBox}"/>
                                             </TextBox.InputBindings>
                                         </TextBox>
                                     </Grid>
@@ -548,7 +542,7 @@
                         </MenuItem>
                     </Menu>
                     <TextBox Grid.Row="1" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" Margin="1"/>
-                    <extendedControls:ExtendedDataGrid Grid.Row="2" x:Name="DgProducts"  Margin="10" ItemsSource="{Binding Path=Products}" 
+                    <extendedControls:ExtendedDataGrid Grid.Row="2" x:Name="DgProducts"  Margin="10" ItemsSource="{Binding Path=ProductsSource.View}" 
                                                        AutoGenerateColumns="False"
                                    SelectedItem="{Binding Path = Product}" AlternatingRowBackground ="GhostWhite" AlternationCount="2"
                                    CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="True" 
@@ -561,7 +555,7 @@
                             <DataGridTextColumn Binding="{Binding Path=Code}" Header="Կոդ" Width="Auto" IsReadOnly="True"/>
                             <DataGridTextColumn Binding="{Binding Path=Barcode}" Header="Բարկոդ" Width="Auto" IsReadOnly="True"/>
                             <DataGridTextColumn Binding="{Binding Path=Description}" Header="Անվանում" Width="Auto" IsReadOnly="True"/>
-                            <DataGridTextColumn Binding="{Binding Path=Mu}" Header="ՉՄ" Width="Auto" IsReadOnly="True"/>
+                            <DataGridTextColumn Binding="{Binding Path=Mu, Mode=OneWay}" Header="ՉՄ" Width="Auto" IsReadOnly="True"/>
                             <DataGridTemplateColumn  Header="Առկա քանակ" Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -589,4 +583,30 @@
         </Grid>
     </DataTemplate>
 
+
+    <DataTemplate DataType="{x:Type managers:ReeditProductsViewModel}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="1" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" Width="250" Margin="5 0"/>
+            </Grid>
+
+            <extendedControls:ExtendedDataGrid Grid.Row="1" ItemsSource="{Binding ProductsSource.View}" ColumnMetadatas ="{Binding DataGridColumnMetadatas}" AutoGenerateColumns="False" Margin="5">
+
+            </extendedControls:ExtendedDataGrid>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0">
+                <Button Content="Վերլուծել (ԱՏԳ)" Command="{Binding ManageCommand}" Width="Auto" Margin="3 0"/>
+                <Button Content="Խմբագրել" Command="{Binding EditCommand}" />
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
 </ResourceDictionary>

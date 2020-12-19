@@ -13,7 +13,7 @@ namespace ES.Data.Models
         public InvoiceItemsModel()
         {
         }
-        public InvoiceItemsModel(InvoiceModel invoice, ProductModel product)
+        public InvoiceItemsModel(InvoiceModel invoice, Products.ProductModel product)
             : this(invoice)
         {
             if (product == null) return;
@@ -22,13 +22,12 @@ namespace ES.Data.Models
             ExpiryDate = product.ExpiryDays != null ? DateTime.Today.AddDays((int)product.ExpiryDays) : (DateTime?)null;
             Code = product.Code;
             Description = product.Description;
-            Mu = product.Mu;
             Discount = product.Discount;
             Note = product.Note;
         }
 
         #region Invoice items model properties
-        private const string IndexProperty = "Index";
+        private const string DisplayOrderProperty = "DisplayOrder";
         private const string ProductProperty = "Product";
         private const string CodeProperties = "Code";
         private const string DescriptionProperties = "Description";
@@ -45,14 +44,12 @@ namespace ES.Data.Models
 
         #region Invoice items model private properties
         private Guid _id = Guid.NewGuid();
-        private int _index;
+        private short _displayOrder;
         private Guid _productId;
-        private ProductModel _product;
-        private ProductItemModel _productItem;
+        private Products.ProductModel _product;
         private Guid? _productItemId;
         private string _code;
         private string _description;
-        private string _mu;
         private string _note;
         private decimal? _quantity;
         private decimal? _price;
@@ -63,14 +60,14 @@ namespace ES.Data.Models
 
         #region Invoice items public properties
         public Guid Id { get { return _id; } set { _id = value; } }
-        public int Index
+        public short DisplayOrder
         {
-            get { return _index; }
+            get { return _displayOrder; }
             set
             {
-                if (_index == value) { return; }
-                _index = value;
-                OnPropertyChanged(IndexProperty);
+                if (_displayOrder == value) { return; }
+                _displayOrder = value;
+                OnPropertyChanged(DisplayOrderProperty);
             }
         }
 
@@ -100,7 +97,7 @@ namespace ES.Data.Models
         }
         #endregion Invoice
         [XmlIgnore]
-        public ProductModel Product
+        public Products.ProductModel Product
         {
             get
             {
@@ -113,46 +110,59 @@ namespace ES.Data.Models
                 _productId = _product.Id;
                 _code = _product != null ? _product.Code : null;
                 _description = _product != null ? _product.Description : null;
-                _mu = _product != null ? _product.Mu : null;
                 _note = _product != null ? _product.Note : null;
-                OnPropertyChanged(ProductProperty);
+                OnPropertyChanged(ProductProperty); 
+                OnPropertyChanged(Mu);
             }
         }
-        [XmlIgnore]
-        public ProductItemModel ProductItem
-        {
-            get
-            {
-                return _productItem;
-            }
-            set
-            {
-                _productItem = value;
-                if (value == null) return;
-                _productItemId = _productItem.Product != null ? _productItem.Id : (Guid?)null;
-                _productId = _productItem != null ? _productItem.ProductId : Guid.Empty;
-                _code = _productItem.Product != null ? _productItem.Product.Code : null;
-                _description = _productItem.Product != null ? _productItem.Product.Description : null;
-                _mu = _productItem.Product != null ? _productItem.Product.Mu : null;
-                _note = _productItem.Product != null ? _productItem.Product.Note : null;
-            }
-        }
+        //[XmlIgnore]
+        //public ProductItemModel ProductItem
+        //{
+        //    get
+        //    {
+        //        return _productItem;
+        //    }
+        //    set
+        //    {
+        //        _productItem = value;
+        //        if (value == null) return;
+        //        _productItemId = _productItem.Product != null ? _productItem.Id : (Guid?)null;
+        //        _productId = _productItem != null ? _productItem.ProductId : Guid.Empty;
+        //        _code = _productItem.Product != null ? _productItem.Product.Code : null;
+        //        _description = _productItem.Product != null ? _productItem.Product.Description : null;
+        //        _mu = _productItem.Product != null ? _productItem.Product.Mu : null;
+        //        _note = _productItem.Product != null ? _productItem.Product.Note : null;
+        //    }
+        //}
         public Guid ProductId { get { return _productId; } set { _productId = value; } }
         public Guid? ProductItemId { get { return _productItemId; } set { _productItemId = value; } }
         public string Code { get { return _code; } set { _code = value; OnPropertyChanged(CodeProperties); } }
         public string Description { get { return _description; } set { _description = value; OnPropertyChanged(DescriptionProperties); } }
-        public string Mu { get { return _mu; } set { _mu = value; OnPropertyChanged(MuProperties); } }
-        public decimal? Quantity { get { return _quantity; } set { _quantity = value; 
-            OnPropertyChanged(QuantityProperties); 
-            OnPropertyChanged(AmountProperty);
-            OnPropertyChanged("CostAmount");
-        } }
+        public string Mu { get { return Product != null ? Product.Mu : null; } }
+        public short? StockId { get; set; }
+        public decimal? Quantity
+        {
+            get { return _quantity; }
+            set
+            {
+                _quantity = value;
+                OnPropertyChanged(QuantityProperties);
+                OnPropertyChanged(AmountProperty);
+                OnPropertyChanged("CostAmount");
+            }
+        }
         public decimal? Price { get { return _price; } set { _price = value; OnPropertyChanged(PriceProerties); OnPropertyChanged(AmountProperty); OnPropertyChanged(PercentageProperty); } }
-        public decimal? CostPrice { get { return _costPrice; } set { _costPrice = value; 
-            OnPropertyChanged(CostPriceProperty); 
-            OnPropertyChanged(PercentageProperty);
-            OnPropertyChanged("CostAmount");
-        } }
+        public decimal? CostPrice
+        {
+            get { return _costPrice; }
+            set
+            {
+                _costPrice = value;
+                OnPropertyChanged(CostPriceProperty);
+                OnPropertyChanged(PercentageProperty);
+                OnPropertyChanged("CostAmount");
+            }
+        }
         public DateTime? ExpiryDate
         {
             get { return _expiryDate; }

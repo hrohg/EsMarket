@@ -20,10 +20,10 @@ namespace ES.DataAccess.Models
         }
     
         public System.Guid Id { get; set; }
-        public long EsMemberId { get; set; }
-        public Nullable<long> EsPartnersTypeId { get; set; }
-        public Nullable<long> EsUserId { get; set; }
-        public string ClubSixteenId { get; set; }
+        public string CardNumber { get; set; }
+        public int EsMemberId { get; set; }
+        public Nullable<short> EsPartnersTypeId { get; set; }
+        public Nullable<int> EsUserId { get; set; }
         public string FullName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -43,7 +43,7 @@ namespace ES.DataAccess.Models
     
         public virtual ICollection<AccountsReceivable> AccountsReceivable { get; set; }
         public virtual EsMembers EsMembers { get; set; }
-        public virtual EsUsers EsUsers { get; set; }
         public virtual EsPartnersTypes EsPartnersTypes { get; set; }
+        public virtual EsUsers EsUsers { get; set; }
     }
 }

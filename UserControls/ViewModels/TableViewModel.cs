@@ -4,8 +4,11 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
+using ES.Business.ExcelManager;
+using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
@@ -13,6 +16,7 @@ using ES.Common.Models;
 using ES.Common.ViewModels.Base;
 using Shared.Helpers;
 using UserControls.Interfaces;
+using Timer = System.Threading.Timer;
 
 namespace UserControls.ViewModels
 {
@@ -23,6 +27,99 @@ namespace UserControls.ViewModels
         protected abstract void Initialize();
     }
 
+    public class TableViewModel : TableViewModelBase, ITableViewModel
+    {
+        #region Internal properties
+        private string _filterText = string.Empty;
+        Timer _timer = null;
+        #endregion
+        public virtual string FilterText
+        {
+            get
+            {
+                return _filterText;
+            }
+            set
+            {
+                _filterText = value.ToLower();
+                RaisePropertyChanged("FilterText");
+                DisposeTimer();
+                _timer = new Timer(TimerElapsed, null, 300, 300);
+            }
+        }
+        protected Tuple<DateTime?, DateTime?> StartEndDate { get; set; }
+        protected List<object> Items;
+        public virtual CollectionViewSource View { get; set; }
+        protected override void Initialize()
+        {
+            StartEndDate = new Tuple<DateTime?, DateTime?>(null, null);
+            Items = new List<object>();
+            View = new CollectionViewSource { Source = Items };
+            UpdateCommand = new RelayCommand(OnUpdate);
+            ExportCommand = new RelayCommand(OnExport);
+            PrintCommand = new RelayCommand(OnPrint);
+        }
+
+        private void TimerElapsed(object obj)
+        {
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
+            {
+                View.View.Refresh();
+                RaisePropertyChanged("ViewList");
+                RaisePropertyChanged("TotalRows");
+                RaisePropertyChanged("TotalCount");
+                RaisePropertyChanged("Total");
+                RaisePropertyChanged("View");
+            });
+            DisposeTimer();
+
+        }
+        private void DisposeTimer()
+        {
+            if (_timer != null)
+            {
+                _timer.Dispose();
+                _timer = null;
+            }
+        }
+        protected bool Filter(object item)
+        {
+            if (string.IsNullOrEmpty(FilterText)) return true;
+            var productOrder = item as ProductOrderModelBase;
+            if (productOrder == null || productOrder.Product == null) return false;
+            return productOrder.Product.Description.ToLower().Contains(FilterText.ToLower()) || productOrder.Product.Code.ToLower().Contains(FilterText);
+        }
+
+        public void Update()
+        {
+            OnUpdate();
+        }
+        protected virtual void OnUpdate()
+        {
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+            {
+                var startEndDate = UIHelper.Managers.SelectManager.GetDateIntermediate(StartEndDate.Item1 ?? DateTime.Today, StartEndDate.Item2 ?? DateTime.Now);
+                StartEndDate = new Tuple<DateTime?, DateTime?>(startEndDate.Item1, startEndDate.Item2);
+            });
+        }
+
+        protected virtual void OnExport(object obj)
+        {
+            ExcelExportManager.ExportList(GetViewItems());
+        }
+        protected List<object> GetViewItems()
+        {
+            return View.View.OfType<object>().ToList();
+        }
+        protected virtual void OnPrint(object obj)
+        {
+
+        }
+        public ICommand UpdateCommand { get; private set; }
+        public ICommand ExportCommand { get; private set; }
+        public ICommand PrintCommand { get; private set; }
+    }
+
     public class TableViewModel<T> : TableViewModelBase, ITableViewModel
     {
         #region Constants
@@ -30,11 +127,14 @@ namespace UserControls.ViewModels
         #endregion
 
         #region Internal properties
+        private string _filterText = string.Empty;
+        Timer _timer = null;
 
         private bool _isShowNulls;
         private double _totalCount;
         private double _total;
         protected ObservableCollection<T> Reports { get; private set; }
+        protected ObservableCollection<ProductOrderModelBase> Items;
 
         #endregion
 
@@ -67,6 +167,21 @@ namespace UserControls.ViewModels
             get { return ViewFilteredList; }
         }
 
+        public CollectionViewSource View { get; set; }
+        public string FilterText
+        {
+            get
+            {
+                return _filterText;
+            }
+            set
+            {
+                _filterText = value.ToLower();
+                RaisePropertyChanged("FilterText");
+                DisposeTimer();
+                _timer = new Timer(TimerElapsed, null, 300, 300);
+            }
+        }
         #endregion
 
         #region Constructors
@@ -97,10 +212,15 @@ namespace UserControls.ViewModels
 
         #region Internal methods
 
+
         //Base
         protected override void Initialize()
         {
-
+            Items = new ObservableCollection<ProductOrderModelBase>();
+            Items.CollectionChanged += OnItemsChanged;
+            View = new CollectionViewSource { Source = Items };
+            View.View.Filter = Filter;
+            Title = "Ապրանքների դիտում ըստ պահեստների";
         }
         protected virtual bool CanExport(ExportImportEnum o) { return ViewList != null && ViewList.Any(); }
         protected virtual void OnExport(ExportImportEnum o)
@@ -108,6 +228,50 @@ namespace UserControls.ViewModels
             //if (!CanExport(o)) { return; }
         }
 
+
+
+        private void TimerElapsed(object obj)
+        {
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
+            {
+                View.View.Refresh();
+                RaisePropertyChanged("ViewList");
+                RaisePropertyChanged("TotalRows");
+                RaisePropertyChanged("TotalCount");
+                RaisePropertyChanged("Total");
+                RaisePropertyChanged("View");
+            });
+            DisposeTimer();
+
+        }
+        private void DisposeTimer()
+        {
+            if (_timer != null)
+            {
+                _timer.Dispose();
+                _timer = null;
+            }
+        }
+        protected bool Filter(object item)
+        {
+            if (string.IsNullOrEmpty(FilterText)) return true;
+            var productOrder = item as ProductOrderModelBase;
+            if (productOrder == null || productOrder.Product == null) return false;
+            return productOrder.Product.Description.ToLower().Contains(FilterText.ToLower()) || productOrder.Product.Code.ToLower().Contains(FilterText);
+        }
+        private void OnItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged("Count");
+            RaisePropertyChanged("Quantity");
+            RaisePropertyChanged("CostPrice");
+            RaisePropertyChanged("Price");
+            RaisePropertyChanged("ItemsView");
+            RaisePropertyChanged("ViewList");
+            RaisePropertyChanged("TotalRows");
+            RaisePropertyChanged("TotalCount");
+            RaisePropertyChanged("Total");
+            RaisePropertyChanged("View");
+        }
         //protected void Update() { OnUpdate(); }
         public void Update()
         {

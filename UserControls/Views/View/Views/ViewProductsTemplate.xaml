@@ -143,7 +143,7 @@
                                     <DataGridTemplateColumn Header="ՉՄ" CanUserSort="True" SortMemberPath="Mu">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate DataType="{x:Type models:ProductOrderModel}">
-                                                <TextBlock Text="{Binding Mu}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Mu, Mode=OneWay}" HorizontalAlignment="Center"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>

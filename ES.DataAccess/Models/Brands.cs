@@ -20,10 +20,9 @@ namespace ES.DataAccess.Models
             this.Products = new HashSet<Products>();
         }
     
-        public long Id { get; set; }
-        public string BrandName { get; set; }
-        public string BrandDescription { get; set; }
-        public string LogoPath { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
         public Nullable<bool> IsActive { get; set; }
     
         public virtual ICollection<MembersBrands> MembersBrands { get; set; }

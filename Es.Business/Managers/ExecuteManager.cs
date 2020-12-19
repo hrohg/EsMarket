@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
 using ES.Business.Helpers;
+using ES.DataAccess.Models;
 using MessageBox = System.Windows.MessageBox;
 
 namespace ES.Business.Managers
 {
-    public class ExecuteManager:BaseManager
+    public class ExecuteManager : BaseManager
     {
         public static bool ExecuteTest()
         {
@@ -35,7 +36,32 @@ namespace ES.Business.Managers
             //    MessageBox.Show("Error.Save error." + ex.Message);
             //    return false;
             //}
-            return true; 
+
+
+            using (var db = GetDataContext())
+            {
+                var productLists = db.Products.GroupBy(s => s.Code).Where(s => s.Count() > 1).Select(s => s.ToList()).ToList();
+                foreach (var products in productLists)
+                {
+                    foreach (var product in products)
+                    {
+                        var p = product;
+                        if (db.InvoiceItems.Any(s => s.ProductId == product.Id) || db.ProductItems.Any(s => s.ProductId == product.Id))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            if (db.Products.Count(s => s.Code == product.Code) < 2) continue;
+                            db.Products.Remove(product);
+                            db.SaveChanges();
+                        }
+                    }
+
+                }
+
+            }
+            return true;
         }
     }
 }

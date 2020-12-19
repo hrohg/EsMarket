@@ -20,11 +20,11 @@ namespace ES.DataAccess.Models
         }
     
         public System.Guid Id { get; set; }
-        public long EsMemberId { get; set; }
+        public int EsMemberId { get; set; }
         public string OrderNumber { get; set; }
-        public long CreatorId { get; set; }
+        public int CreatorId { get; set; }
         public System.DateTime CreateDate { get; set; }
-        public Nullable<long> RsponsibleId { get; set; }
+        public Nullable<int> RsponsibleId { get; set; }
         public string Notes { get; set; }
         public Nullable<bool> Accepted { get; set; }
         public Nullable<bool> InProgress { get; set; }

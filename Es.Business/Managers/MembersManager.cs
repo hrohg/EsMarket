@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using ES.Business.Helpers;
-using ES.Data.Model;
+using ES.Data.Models;
 using ES.DataAccess.Models;
 
 
@@ -13,6 +13,7 @@ namespace ES.Business.Managers
     {
         #region Members enums
         #endregion
+
         #region Es Members
         #region Converters
         public static EsMemberModel Convert(EsMembers item)
@@ -21,9 +22,8 @@ namespace ES.Business.Managers
             var newItem = new EsMemberModel
             {
                 Id = item.Id,
-                FullName = item.FullName,
-                Email = item.FullName,
-                ClubSixteenId = item.ClubSixteenId
+                Name = item.Name,
+                ContractNumber = item.ContractNumber
             };
             return newItem;
         }
@@ -33,9 +33,8 @@ namespace ES.Business.Managers
             var newItem = new EsMembers
             {
                 Id = item.Id,
-                FullName = item.FullName,
-                Email = item.FullName,
-                ClubSixteenId = item.ClubSixteenId
+                Name = item.Name,
+                ContractNumber = item.ContractNumber
             };
             return newItem;
         }
@@ -43,14 +42,15 @@ namespace ES.Business.Managers
         {
             return item == null ? null : new EsMembersAccountsModel(item.MemberId, item.TotalScores);
         }
-        public static EsMembersAccountsModel Convert(EsMembersAccounts item, long memberId)
+        public static EsMembersAccountsModel Convert(EsMembersAccounts item, int memberId)
         {
             return item == null ? new EsMembersAccountsModel(memberId) : new EsMembersAccountsModel(item.MemberId, item.TotalScores);
         }
 
         #endregion
+
         #region public methods
-        public static bool GetMemberFromServerWithData(long memberId)
+        public static bool GetMemberFromServerWithData(int memberId)
         {
             return UpdateManager.GetMemberFromServerWithData(memberId);
         }
@@ -59,7 +59,7 @@ namespace ES.Business.Managers
             return TryGetEsMembers();
         }
 
-        public static EsMemberModel GetEsMember(long id)
+        public static EsMemberModel GetEsMember(int id)
         {
             return Convert(TryGetEsMember(id));
         }
@@ -71,24 +71,25 @@ namespace ES.Business.Managers
         {
             return TryGetEsMembersFromServer().Select(Convert).ToList();
         }
-        public static List<EsMemberModel> GetMembersByUser(long userId)
+        public static List<EsMemberModel> GetMembersByUser(int userId)
         {
             return TryGetMembersByUser(userId).Select(Convert).ToList();
         }
-        public static List<MemberUsersRoles> GetMembersUsersRoles(long userId, long memberId)
+        public static List<MemberUsersRoles> GetMembersUsersRoles(int userId, int memberId)
         {
             return TryGetMembersUsersRoles(userId, memberId);
         }
 
         public static List<EsMembersAccountsModel> GetMembersAccounts()
         {
-            return TryGetEsMembersAccounts().Select(s=>Convert(s)).ToList();
+            return TryGetEsMembersAccounts().Select(s => Convert(s)).ToList();
         }
-        public static EsMembersAccountsModel GetMembersAccounts(long memberId)
+        public static EsMembersAccountsModel GetMembersAccounts(int memberId)
         {
             return Convert(TryGetEsMembersAccounts(memberId), memberId);
         }
         #endregion
+
         #region private methods
         private static EsMembers TryGetEsMember(long id)
         {
@@ -124,15 +125,18 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    return db.MemberUsersRoles.Include(s => s.EsMembers).Where(s => s.EsUserId == userId).GroupBy(s => s.MemberId).Select(s => s.FirstOrDefault().EsMembers).ToList(); ;
+                    var userRoles = db.MemberUsersRoles.Include(s => s.EsMembers).Where(s => s.EsUserId == userId).ToList();
+                    var list = userRoles.GroupBy(s => s.MemberId);
+
+                    return userRoles.Any() ? userRoles.GroupBy(s => s.MemberId).Select(s => s.First().EsMembers).ToList() : new List<EsMembers>();
                 }
                 catch (Exception ex)
                 {
-                    return new List<EsMembers>();
+                    return null;
                 }
             }
         }
-        private static List<MemberUsersRoles> TryGetMembersUsersRoles(long userId, long memberId)
+        private static List<MemberUsersRoles> TryGetMembersUsersRoles(int userId, int memberId)
         {
             using (var db = GetDataContext())
             {
@@ -142,7 +146,7 @@ namespace ES.Business.Managers
                         .Include(s => s.EsMembers)
                         .Include(s => s.EsUsers)
                         .Include(s => s.MembersRoles)
-                        .Where(s => s.EsUserId == userId && s.MemberId==memberId).ToList();
+                        .Where(s => s.EsUserId == userId && s.MemberId == memberId).ToList();
                 }
                 catch (Exception)
                 {
@@ -157,7 +161,7 @@ namespace ES.Business.Managers
                 return db.EsMembersAccounts.ToList();
             }
         }
-        private static EsMembersAccounts TryGetEsMembersAccounts(long memberId)
+        private static EsMembersAccounts TryGetEsMembersAccounts(int memberId)
         {
             using (var db = GetServerDataContext())
             {
@@ -165,6 +169,7 @@ namespace ES.Business.Managers
             }
         }
         #endregion
+
         #endregion
     }
 }

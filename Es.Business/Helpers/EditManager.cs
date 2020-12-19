@@ -4,7 +4,7 @@ namespace ES.Business.Helpers
 {
     public static class EditManager
     {
-        public static bool UpdateBrandsManager(long memberId)
+        public static bool UpdateBrandsManager(int memberId)
         {
             var brands = ProductsManager.GetAllBrands(true);
             var memberBrands = ProductsManager.GetMemberBrands(memberId);

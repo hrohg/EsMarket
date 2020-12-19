@@ -6,7 +6,6 @@ using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common;
-using ES.Data.Model;
 using ES.Common;
 using UserControls.ViewModels.Products;
 

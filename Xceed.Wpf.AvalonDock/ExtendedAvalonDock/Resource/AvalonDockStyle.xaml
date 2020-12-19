@@ -489,7 +489,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style TargetType="{x:Type xcad:LayoutItem}">
         <Setter Property="Title" Value="{Binding Model.Title}" />
         <Setter Property="ToolTip" Value="{Binding Model.Description}"/>
@@ -834,7 +834,9 @@
         <Setter Property="DocumentHeaderTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <TextBlock x:Name="DocumentText" Text="{Binding DataContext.Content.Title, RelativeSource={RelativeSource TemplatedParent}}" Foreground="#ACB3BC" />
+                    <Grid ToolTip="{Binding DataContext.Content.Tooltip, RelativeSource={RelativeSource TemplatedParent}}">
+                        <TextBlock x:Name="DocumentText" Text="{Binding DataContext.Content.Title, RelativeSource={RelativeSource TemplatedParent}}" Foreground="#ACB3BC" />
+                    </Grid>
                     <DataTemplate.Triggers>
                         <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}}" Value="False">
                             <Setter TargetName="DocumentText" Property="Foreground" Value="#ACB3BC"/>
@@ -1016,7 +1018,9 @@
                                     </ContentPresenter>
                                 </xcad:DropDownControlArea>
 
-                                --><!--Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"--><!--
+                                -->
+    <!--Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"-->
+    <!--
                                 <Button x:Name="PART_AutoHidePin" 
                                     UseLayoutRounding="True"
                                     Focusable="False"
@@ -1027,10 +1031,14 @@
                                     Command="{Binding Path=AutoHideCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:ExtendedDockingManager}}}" 
                                     CommandParameter="{Binding Path=Model, RelativeSource={RelativeSource TemplatedParent}}"
                                     ToolTip="{x:Static avalonDockProperties:Resources.Anchorable_BtnAutoHide_Hint}">
-                                    --><!--Image Width="13" Height="13" Source="pack://application:,,,/Xceed.Wpf.AvalonDock;component/Themes/Generic/Images/PinAutoHide.png"/--><!--
+                                    -->
+    <!--Image Width="13" Height="13" Source="pack://application:,,,/Xceed.Wpf.AvalonDock;component/Themes/Generic/Images/PinAutoHide.png"/-->
+    <!--
                                 </Button>
 
-                                --><!--Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"--><!--
+                                -->
+    <!--Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"-->
+    <!--
                                 <Button x:Name="PART_HidePin" 
                                     Grid.Column="3" 
                                     Focusable="False"
@@ -1040,7 +1048,9 @@
                                     CommandParameter="{Binding Path=Model, RelativeSource={RelativeSource TemplatedParent}}"
                                     Style="{DynamicResource SmallCloseButtonStyle}"
                                     ToolTip="{x:Static avalonDockProperties:Resources.Anchorable_BtnClose_Hint}">
-                                    --><!--Image Source="pack://application:,,,/Xceed.Wpf.AvalonDock;component/Themes/Generic/Images/PinClose.png"/--><!--
+                                    -->
+    <!--Image Source="pack://application:,,,/Xceed.Wpf.AvalonDock;component/Themes/Generic/Images/PinClose.png"/-->
+    <!--
                                 </Button>
                             </Grid>
                         </Border>

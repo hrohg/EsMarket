@@ -56,12 +56,11 @@ namespace ES.Business.Managers
             return new StockTakeItemsModel(item.StockTakeId)
             {
                 Id = item.Id,
-                Index = item.Index ?? 0,
+                DisplayOrder = item.DisplayOrder ?? 0,
                 StockTakeId = item.StockTakeId,
                 ProductId = item.ProductId,
                 ProductDescription = item.ProductDescription,
-                CodeOrBarcode = item.CodeOrBarcode,
-                Mu = item.Mu,
+                Code = item.Code,
                 Price = item.Price,
                 Description = item.Description,
                 Quantity = item.Quantity,
@@ -75,12 +74,11 @@ namespace ES.Business.Managers
             return new StockTakeItems
             {
                 Id = item.Id,
-                Index = item.Index,
+                DisplayOrder = item.DisplayOrder,
                 StockTakeId = item.StockTakeId,
                 ProductId = item.ProductId,
                 ProductDescription = item.ProductDescription,
-                CodeOrBarcode = item.CodeOrBarcode,
-                Mu = item.Mu,
+                Code = item.Code,
                 Price = item.Price,
                 Description = item.Description,
                 Quantity = item.Quantity,
@@ -90,7 +88,7 @@ namespace ES.Business.Managers
         }
         #endregion
         #region StockTake public methods
-        public static StockTakeModel GetStockTaking(Guid id, long memberId)
+        public static StockTakeModel GetStockTaking(Guid id, int memberId)
         {
             return ConvertStockTake(TryGetStockTake(id, memberId));
         }
@@ -106,14 +104,14 @@ namespace ES.Business.Managers
         {
             return TryGetStockTakeByCreateDate(startDate, endDate).Select(ConvertStockTake).ToList();
         }
-        public static StockTakeModel CreateStockTaking(long stockId)
+        public static StockTakeModel CreateStockTaking(short stockId)
         {
             return ConvertStockTake(TryCreateStockTake(stockId));
         }
         #endregion
 
         #region StockTakeItems public methods
-        public static StockTakeItemsModel GetStockTakeItem(Guid stockTakeId, string codeOrBarcode, long memberId)
+        public static StockTakeItemsModel GetStockTakeItem(Guid stockTakeId, string codeOrBarcode, int memberId)
         {
             return ConvertStockTakeItem(TryGetStockTakeItem(stockTakeId, codeOrBarcode, memberId));
         }
@@ -121,11 +119,11 @@ namespace ES.Business.Managers
         {
             return TryGetStockTakeItems(stockTakingId).Select(ConvertStockTakeItem).ToList();
         }
-        public static bool EditStockTakeItems(StockTakeItemsModel item, long? stockId, long memberId)
+        public static bool EditStockTakeItems(StockTakeItemsModel item, short? stockId, int memberId)
         {
             return TryEditStockTakeItems(ConvertStockTakeItem(item), stockId, memberId);
         }
-        public static bool RemoveStoCkakeItem(Guid id, long memberId)
+        public static bool RemoveStoCkakeItem(Guid id, int memberId)
         {
             return TryRemoveStoCkakeItem(id, memberId);
         }
@@ -136,7 +134,7 @@ namespace ES.Business.Managers
         #endregion
 
         #region StockTake Private methods
-        private static StockTake TryGetStockTake(Guid id, long memberId)
+        private static StockTake TryGetStockTake(Guid id, int memberId)
         {
             try
             {
@@ -195,7 +193,7 @@ namespace ES.Business.Managers
                 return new List<StockTake>();
             }
         }
-        private static StockTake TryCreateStockTake(long stockId)
+        private static StockTake TryCreateStockTake(short stockId)
         {
             try
             {
@@ -247,14 +245,14 @@ namespace ES.Business.Managers
         #endregion
 
         #region StockTakeItems private methods
-        private static StockTakeItems TryGetStockTakeItem(Guid stockTakeId, string codeOrBarCode, long memberId)
+        private static StockTakeItems TryGetStockTakeItem(Guid stockTakeId, string codeOrBarCode, int memberId)
         {
             try
             {
                 using (var db = GetDataContext())
                 {
                     return db.StockTakeItems.Include(s => s.StockTake).
-                        SingleOrDefault(s => s.StockTake.MemberId == memberId && s.StockTakeId == stockTakeId && s.CodeOrBarcode == codeOrBarCode);
+                        SingleOrDefault(s => s.StockTake.MemberId == memberId && s.StockTakeId == stockTakeId && s.Code == codeOrBarCode);
                 }
             }
             catch (Exception ex)
@@ -280,23 +278,22 @@ namespace ES.Business.Managers
                 return new List<StockTakeItems>();
             }
         }
-        private static bool TryEditStockTakeItems(StockTakeItems item, long? stockId, long memberId)
+        private static bool TryEditStockTakeItems(StockTakeItems item, short? stockId, int memberId)
         {
             try
             {
                 using (var db = GetDataContext())
                 {
-                    //if (item.ProductId != null) item.Quantity = stockId != null ? ProductsManager.GetProductItemCountFromStock(item.ProductId, new List<long> { (long)stockId }, memberId) : 0;
+                    //if (item.ProductId != null) item.Quantity = stockId != null ? ProductsManager.GetProductItemCountFromStock(item.ProductId, new List<short> { (short)stockId }, memberId) : 0;
                     item.StockTakeDate = DateTime.Now;
-                    var exItem = db.StockTakeItems.SingleOrDefault(s => s.StockTakeId == item.StockTakeId && (s.Id == item.Id || s.CodeOrBarcode == item.CodeOrBarcode));
+                    var exItem = db.StockTakeItems.SingleOrDefault(s => s.StockTakeId == item.StockTakeId && (s.Id == item.Id || s.Code == item.Code));
                     if (exItem != null)
                     {
-                        exItem.Index = item.Index;
+                        exItem.DisplayOrder = item.DisplayOrder;
                         exItem.ProductId = item.ProductId;
                         exItem.ProductDescription = item.ProductDescription;
-                        exItem.CodeOrBarcode = item.CodeOrBarcode;
+                        exItem.Code = item.Code;
                         exItem.Description = item.Description;
-                        exItem.Mu = item.Mu;
                         exItem.Price = item.Price;
                         //exItem.Quantity = item.Quantity;
                         exItem.StockTakeQuantity = item.StockTakeQuantity;
@@ -316,7 +313,7 @@ namespace ES.Business.Managers
                 return false;
             }
         }
-        private static bool TryRemoveStoCkakeItem(Guid id, long memberId)
+        private static bool TryRemoveStoCkakeItem(Guid id, int memberId)
         {
             try
             {

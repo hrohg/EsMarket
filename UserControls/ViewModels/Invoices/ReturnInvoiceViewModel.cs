@@ -26,6 +26,8 @@ using UserControls.ControlPanel.Controls;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
 using UserControls.Views.ReceiptTickets.Views;
+using CashDeskManager = UserControls.Managers.CashDeskManager;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 using SelectItemsManager = ES.Business.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Invoices
@@ -121,7 +123,7 @@ namespace UserControls.ViewModels.Invoices
             if (invoice == null)
             {
                 Invoice.AcceptDate = Invoice.ApproveDate = null;
-                MessageManager.OnMessage("Գործողությունը հնարավոր չէ իրականացնել:", MessageTypeEnum.Warning);
+                MessageManager.OnMessage("Գործողությունը ձախողվել է:", MessageTypeEnum.Warning);
                 return;
             }
             Invoice = invoice;
@@ -171,7 +173,7 @@ namespace UserControls.ViewModels.Invoices
                     {
                         Id = item.ProductId,
                         Description = item.Description,
-                        Mu = item.Mu,
+                        //Mu = item.Mu,
                         HcdCs = item.Product != null ? item.Product.HcdCs : null,
                         Price = item.Price
                     };
@@ -186,7 +188,6 @@ namespace UserControls.ViewModels.Invoices
                     Product = product,
                     Code = product.Code,
                     Description = product.Description,
-                    Mu = product.Mu,
                     //Price =  exProduct != null && exProduct.Price != null && exProduct.Price > 0 ? exProduct.Price:item.Price,
                     Discount = exProduct != null && exProduct.Price != null && exProduct.Price > 0 && exProduct.Price > item.Price ? Math.Round((decimal)(100 - 100 * item.Price / exProduct.Price), 2) : (decimal?)0.00,
                     Quantity = item.Quantity
@@ -230,18 +231,18 @@ namespace UserControls.ViewModels.Invoices
             {
                 var products = InvoiceItems.Select(s => new TotalModel
                 {
-                    RpId = InvoiceItems.IndexOf(s).ToString(),
-                    Adg = s.Product.HcdCs,
-                    Gc = s.Code,
-                    Gn = s.Description,
-                    Mu = s.Mu,
-                    Qty = (s.Quantity != null ? s.Quantity.ToString() : "0"),
-                    P = s.Product != null && s.Product.Price != null ? s.Product.Price.ToString() : "0",
-                    Tt = ((s.Quantity ?? 0) * (s.Price ?? 0)).ToString(CultureInfo.InvariantCulture),
+                    rpid = InvoiceItems.IndexOf(s).ToString(),
+                    adg = s.Product.HcdCs,
+                    gc = s.Code,
+                    gn = s.Description,
+                    mu = s.Mu,
+                    qty = (s.Quantity != null ? s.Quantity.ToString() : "0"),
+                    p = s.Product != null && s.Product.Price != null ? s.Product.Price.ToString() : "0",
+                    tt = ((s.Quantity ?? 0) * (s.Price ?? 0)).ToString(CultureInfo.InvariantCulture),
 
-                    Dsc = s.Discount.ToString(),
-                    Adsc = "0",
-                    DscT = s.Discount != null && s.Discount > 0 ? "1" : null
+                    dsc = s.Discount.ToString(),
+                    adsc = "0",
+                    dsct = s.Discount != null && s.Discount > 0 ? "1" : null
                 }).ToList();
 
 
@@ -407,9 +408,9 @@ namespace UserControls.ViewModels.Invoices
                 IsLoading = true;
                 PrepareToApprove();
                 //Open Cash desk
-                if (!string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort) && InvoicePaid.Paid > 0)
+                if (!string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort) || !string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveCashDeskPrinter) && InvoicePaid.ByCash > 0)
                 {
-                    UserControls.Managers.CashDeskManager.OpenCashDesk();
+                    DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Normal, CashDeskManager.OpenCashDesk);
                 }
                 var invoice = InvoicesManager.ApproveInvoice(Invoice, InvoiceItems.ToList(), FromStocks, InvoicePaid);
                 if (invoice == null || Application.Current == null)
@@ -460,7 +461,7 @@ namespace UserControls.ViewModels.Invoices
                     {
                         Id = item.ProductId,
                         Description = item.Description,
-                        Mu = item.Mu,
+                        //Mu = item.Mu,
                         HcdCs = item.Product != null ? item.Product.HcdCs : null,
                         Price = item.Price
                     };
@@ -475,7 +476,6 @@ namespace UserControls.ViewModels.Invoices
                     Product = product,
                     Code = product.Code,
                     Description = product.Description,
-                    Mu = product.Mu,
                     //Price =  exProduct != null && exProduct.Price != null && exProduct.Price > 0 ? exProduct.Price:item.Price,
                     Discount = exProduct != null && exProduct.Price != null && exProduct.Price > 0 && exProduct.Price > item.Price ? Math.Round((decimal)(100 - 100 * item.Price / exProduct.Price), 2) : (decimal?)0.00,
                     Quantity = item.Quantity

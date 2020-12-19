@@ -14,6 +14,7 @@
              xmlns:viewModels1="clr-namespace:UserControls.ViewModels.Reports"
              xmlns:orders="clr-namespace:UserControls.ViewModels.Reports.Orders"
              xmlns:helpers="clr-namespace:Shared.Helpers;assembly=Shared"
+             xmlns:extendedControls="clr-namespace:UserControls.ControlPanel.Controls.ExtendedControls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -51,6 +52,12 @@
             </ScrollViewer>
             <ContentControl Grid.Row="1" Content="{Binding}" Visibility="{Binding ElementName=DgTable, Path=Visibility, Mode=OneWay, Converter={StaticResource InvertVisibilityConverter}}">
                 <ContentControl.Resources>
+
+                    <DataTemplate DataType="{x:Type viewModels:TableViewModel}">
+                        <extendedControls:ExtendedDataGrid x:Name="DataGrid" ItemsSource="{Binding View}" CanUserAddRows="False" CanUserDeleteRows="False"
+                                      FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True"
+                                      VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled"/>
+                    </DataTemplate>
 
                     <DataTemplate DataType="{x:Type viewModels:ViewInternalWayBillViewModel}">
                         <Grid>
@@ -147,7 +154,7 @@
                                 <DataGridTemplateColumn Header="ՉՄ">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate DataType="{x:Type reports:InternalWayBillDetilesModel}">
-                                            <TextBlock Text="{Binding Mu}" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Mu, Mode=OneWay}" HorizontalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -512,7 +519,7 @@
                                 <DataGridTemplateColumn Header="ՉՄ">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate DataType="{x:Type models:ProductOrderModel}">
-                                            <TextBlock Text="{Binding Mu}" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Mu, Mode=OneWay}" HorizontalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -583,7 +590,7 @@
                                 <DataGridTemplateColumn Header="ՉՄ">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate DataType="{x:Type models1:InvoiceItems}">
-                                            <TextBlock Text="{Binding Mu}" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Mu, Mode=OneWay}" HorizontalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -709,7 +716,7 @@
                                 <DataGridTemplateColumn Header="ՉՄ">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate DataType="{x:Type reports:SaleReportByPartnerDetiled}">
-                                            <TextBlock Text="{Binding Mu}" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Mu, Mode=OneWay}" HorizontalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -821,6 +828,51 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Գումար" CanUserSort="True" SortDirection="Descending" SortMemberPath="Sale">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate DataType="{x:Type reports:IInvoiceReport}">
+                                            <TextBlock Text="{Binding Sale, StringFormat='{}{0:#,0.##}'}" FontStyle="Italic" HorizontalAlignment="Right"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Նշումներ">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate DataType="{x:Type models1:InvoiceItems}">
+                                            <TextBlock Text="{Binding Note}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DataTemplate>
+
+
+                    <DataTemplate DataType="{x:Type viewModels1:PurchaseInvoiceReportViewModel}">
+                        <DataGrid x:Name="DataGrid" ItemsSource="{Binding ViewList}" CanUserAddRows="False" CanUserDeleteRows="False" 
+                                          FontSize="12" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserSortColumns="True">
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="Մատակարար" CanUserSort="True">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate DataType="{x:Type reports:InvoiceReportByPartner}">
+                                            <TextBlock Text="{Binding Partner, StringFormat='{}{0:#,0.##}'}" FontStyle="Italic" HorizontalAlignment="Right"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Ապրանքագիր" CanUserSort="True">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate DataType="{x:Type reports:InvoiceReportByPartner}">
+                                            <TextBlock Text="{Binding Invoice}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Ամսաթիվ" CanUserSort="True" SortMemberPath="Count">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate DataType="{x:Type reports:InvoiceReportByPartner}">
+                                            <TextBlock Text="{Binding Date}" HorizontalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
                                 <DataGridTemplateColumn Header="Գումար" CanUserSort="True" SortDirection="Descending" SortMemberPath="Sale">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate DataType="{x:Type reports:IInvoiceReport}">

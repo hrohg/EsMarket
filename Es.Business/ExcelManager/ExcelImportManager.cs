@@ -7,7 +7,7 @@ using ES.Business.Managers;
 using ES.Common.Managers;
 using ES.Data.Models;
 using HG.Tools.Helper;
-using ProductModel = ES.Data.Models.ProductModel;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 
 namespace ES.Business.ExcelManager
 {
@@ -74,7 +74,7 @@ namespace ES.Business.ExcelManager
                         //Description
                         Description = xlWSh.Cells[nextRow, 4].Text,
                         //Mu
-                        Mu = xlWSh.Cells[nextRow, 5].Text,
+                        //Mu = xlWSh.Cells[nextRow, 5].Text,
                         //Note
                         Note = xlWSh.Cells[nextRow, 6].Text,
                         //Cost price
@@ -171,7 +171,7 @@ namespace ES.Business.ExcelManager
                         {
                             Code = xlWSh.Cells[nextRowIndex, 2].Text,
                             Description = xlWSh.Cells[nextRowIndex, 3].Text,
-                            Mu = xlWSh.Cells[nextRowIndex, 4].Text,
+                            //Mu = xlWSh.Cells[nextRowIndex, 4].Text,
                             Price = Math.Round(HgConvert.ToDecimal(xlWSh.Cells[nextRowIndex, 6].Text, CultureInfo.InvariantCulture), 2),
                             HcdCs = xlWSh.Cells[nextRowIndex, 8].Text
                         };
@@ -183,7 +183,6 @@ namespace ES.Business.ExcelManager
                             Product = product,
                             Code = product.Code,
                             Description = product.Description,
-                            Mu = product.Mu,
                             Quantity = HgConvert.ToDecimal(xlWSh.Cells[nextRowIndex, 5].Text, CultureInfo.InvariantCulture),
                             Price = product.Price,
                             Note = xlWSh.Cells[nextRowIndex, 8].Text

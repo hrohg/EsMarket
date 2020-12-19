@@ -175,6 +175,9 @@ namespace ES.Market.Views.Reports.ViewModels
                 case ViewInvoicesEnum.ByStock:
                     viewModel = new SaleInvoiceReportByStocksViewModel(type);
                     break;
+                case ViewInvoicesEnum.ByProvider:
+                    viewModel = new PurchaseInvoiceReportViewModel(type);
+                    break;
                 case ViewInvoicesEnum.ByPartnerType:
                 case ViewInvoicesEnum.ByPartner:
                     viewModel = new SaleInvoiceReportByPartnerViewModel(type);
@@ -249,10 +252,9 @@ namespace ES.Market.Views.Reports.ViewModels
                     return true;
                 case ViewInvoicesEnum.ByStock:
                     return false;
-
-
                 case ViewInvoicesEnum.ByPartnerType:
                     break;
+                case ViewInvoicesEnum.ByProvider:
                 case ViewInvoicesEnum.ByPartner:
                     break;
                 case ViewInvoicesEnum.ByPartnersDetiles:
@@ -262,6 +264,8 @@ namespace ES.Market.Views.Reports.ViewModels
                 case ViewInvoicesEnum.BySaleChart:
                     break;
                 case ViewInvoicesEnum.ByZeroAmunt:
+                    break;
+
                     break;
                 default:
                     return false;
@@ -286,12 +290,21 @@ namespace ES.Market.Views.Reports.ViewModels
             var tabControl = new UctrlViewTable { DataContext = viewModel };
             AddTab(tabControl, viewModel);
         }
+
+        /// <summary>
+        /// Products
+        /// </summary>
+        private void OnViewProductsLog(object obj)
+        {
+            var vm = new ProductsLogViewModel();
+            var tabControl = new UctrlViewTable { DataContext = vm };
+            AddTab(tabControl, vm);
+        }
         #endregion
 
         #region External methods
 
         #endregion
-
         #region Commands
 
         public ICommand ViewInternalWayBillCommands { get; private set; }
@@ -301,12 +314,11 @@ namespace ES.Market.Views.Reports.ViewModels
         public ICommand ViewPurchaseCommand { get { return _viewPurchaseCommand ?? (_viewPurchaseCommand = new RelayCommand<ViewInvoicesEnum>(OnViewPurchase)); } }
         public ICommand SallByCustomersCommand { get; private set; }
 
-
+        private ICommand _viewProdutsLogCommand;
+        public ICommand ViewProductsLogCommand { get { return _viewProdutsLogCommand??(_viewProdutsLogCommand = new RelayCommand(OnViewProductsLog));} }
+        
         #region Products commands
-
-        private ICommand _viewProductsCommand;
-        public ICommand ViewProductsCommand { get { return _viewProductsCommand ?? (_viewProductsCommand = new RelayCommand<ProductsViewEnum>(OnViewProductsCommand)); } }
-
+        
         private void OnViewProductsCommand(ProductsViewEnum viewEnum)
         {
             TableViewModel<IInvoiceReport> vm = null;
@@ -376,7 +388,8 @@ namespace ES.Market.Views.Reports.ViewModels
             var vm = new FallowProductsViewModel();
             AddDocument(vm);
         }
-
+        private ICommand _viewProductsCommand;
+        public ICommand ViewProductsCommand { get { return _viewProductsCommand ?? (_viewProductsCommand = new RelayCommand<ProductsViewEnum>(OnViewProductsCommand)); } }
         #endregion Products commands
 
         #endregion

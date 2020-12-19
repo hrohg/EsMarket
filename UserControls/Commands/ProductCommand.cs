@@ -248,11 +248,11 @@ namespace UserControls.Commands
             _viewModel.ChangeProductEnabled();
         }
     }
-    public class AddProductGroupCommand : ICommand
+    public class AddProductKeysCommand : ICommand
     {
         private ProductViewModel _viewModel;
 
-        public AddProductGroupCommand(ProductViewModel viewModel)
+        public AddProductKeysCommand(ProductViewModel viewModel)
         {
             _viewModel = viewModel;
         }
@@ -269,7 +269,7 @@ namespace UserControls.Commands
 
         public void Execute(object value)
         {
-            _viewModel.OnAddProductGroup(value.ToString());
+            _viewModel.OnAddProductKeys(value.ToString());
         }
     }
 }

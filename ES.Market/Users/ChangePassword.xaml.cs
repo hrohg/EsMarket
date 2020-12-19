@@ -3,10 +3,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using ES.Business.Managers;
-using ES.Data.Model;
+using ES.Data.Models;
 using UserControls.ViewModels;
 
-namespace ES.Shop.Users
+namespace ES.Market.Users
 {
     /// <summary>
     /// Interaction logic for ChangePassword.xaml

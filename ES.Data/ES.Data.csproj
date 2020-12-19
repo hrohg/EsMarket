@@ -55,16 +55,18 @@
     <Compile Include="Models\CategoriesModel.cs" />
     <Compile Include="Models\EsMemberModel.cs" />
     <Compile Include="Models\EsModels\EsCategoriesModel.cs" />
+    <Compile Include="Models\EsModels\EsmMeasureUnitModel.cs" />
     <Compile Include="Models\EsUserModel.cs" />
     <Compile Include="Models\InvoiceItemsModel.cs" />
     <Compile Include="Models\InvoiceModel.cs" />
     <Compile Include="Models\PartnersModel.cs" />
     <Compile Include="Models\PartnerTypeModel.cs" />
     <Compile Include="Models\ProductItemModel.cs" />
-    <Compile Include="Models\EsProductModel.cs" />
-    <Compile Include="Models\ProductModel.cs" />
+    <Compile Include="Models\Products\EsProductModel.cs" />
+    <Compile Include="Models\Products\ProductModel.cs" />
     <Compile Include="Models\ProductOrderModel.cs" />
-    <Compile Include="Models\ProductsAdditionalDataModel.cs" />
+    <Compile Include="Models\Products\ProductsAdditionalDataModel.cs" />
+    <Compile Include="Models\Products\ProductModelBase.cs" />
     <Compile Include="Models\Reports\InternalWayBillModel.cs" />
     <Compile Include="Models\Reports\SaleInvoiceReports.cs" />
     <Compile Include="Models\StockProducts.cs" />
@@ -83,6 +85,7 @@
       <Name>EsMarket.SharedData</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -40,10 +40,10 @@
         <ResourceDictionary Source="Tools/CategoriesTools.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
-    <!--<DataTemplate DataType="{x:Type base:DocumentViewModel}">
+    <DataTemplate DataType="{x:Type base:DocumentViewModel}">
         <Grid>
             <ContentPresenter />
             <controls:WaitingCover Visibility="Visible" />
         </Grid>
-    </DataTemplate>-->
+    </DataTemplate>
 </ResourceDictionary>

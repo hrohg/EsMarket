@@ -1,5 +1,5 @@
 ﻿using System.Windows.Input;
-using ES.Data.Model;
+using ES.Data.Models;
 using UserControls.Commands;
 
 namespace UserControls.ViewModels

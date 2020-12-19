@@ -19,7 +19,7 @@ namespace ES.DataAccess.Models
             this.Partners = new HashSet<Partners>();
         }
     
-        public long Id { get; set; }
+        public short Id { get; set; }
         public string Description { get; set; }
     
         public virtual ICollection<Partners> Partners { get; set; }

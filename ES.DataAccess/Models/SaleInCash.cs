@@ -20,7 +20,7 @@ namespace ES.DataAccess.Models
         public System.DateTime Date { get; set; }
         public decimal Amount { get; set; }
         public string Notes { get; set; }
-        public long CashierId { get; set; }
+        public int CashierId { get; set; }
         public Nullable<System.Guid> AccountingRecordsId { get; set; }
     
         public virtual CashDesk CashDesk { get; set; }

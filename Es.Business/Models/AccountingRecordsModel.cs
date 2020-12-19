@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ES.Business.Managers;
 using ES.Common.ViewModels.Base;
-using ES.Data.Model;
 using ES.Data.Models;
 using ES.DataAccess.Models;
 
@@ -22,10 +21,10 @@ namespace ES.Business.Models
         private DateTime _registerDate = DateTime.Now;
         private string _description;
         private decimal _amount;
-        private long _debit;
-        private long _credit;
-        private long _memberId;
-        private long _registerId;
+        private short _debit;
+        private short _credit;
+        private int _memberId;
+        private int _registerId;
         private Guid? _debitGuidId;
         private Guid? _creditGuidId;
         private long? _debitLongId;
@@ -41,50 +40,50 @@ namespace ES.Business.Models
             get { return _amount; }
             set { _amount = value; RaisePropertyChanged(AmountProperty); }
         }
-        public long Debit
+        public short Debit
         {
             get { return _debit; }
             set { _debit = value; }
         }
-        public long Credit { get { return _credit; } set { _credit = value; } }
-        public long MemberId { get { return _memberId; } set { _memberId = value; } }
-        public long RegisterId { get { return _registerId; } set { _registerId = value; } }
+        public short Credit { get { return _credit; } set { _credit = value; } }
+        public int MemberId { get { return _memberId; } set { _memberId = value; } }
+        public int RegisteredId { get { return _registerId; } set { _registerId = value; } }
         public Guid? DebitGuidId { get { return _debitGuidId; } set { _debitGuidId = value; } }
         public Guid? CreditGuidId { get { return _creditGuidId; } set { _creditGuidId = value; } }
         public long? DebitLongId { get { return _debitLongId; } set { _debitLongId = value; } }
         public long? CreditLongId { get { return _creditLongId; } set { _creditLongId = value; } }
 
-        public string DebitDescription { get { return string.Format("{0} ({1})", AccountanttDescriptions.Description((int)Debit), Debit); } }
+        public string DebitDescription { get { return string.Format("{0} ({1})", AccountanttDescriptions.Description(Debit), Debit); } }
         public string DebitDetile
         {
             get
             {
-                return AccountanttDescriptions.Detile((int)Debit, DebitLongId, DebitGuidId);
+                return AccountanttDescriptions.DebitDetile(Debit, DebitLongId, DebitGuidId);
             }
         }
-        public string CreditDescription { get { return string.Format("{0} ({1})", AccountanttDescriptions.Description((int)Credit), Credit); } }
+        public string CreditDescription { get { return string.Format("{0} ({1})", AccountanttDescriptions.Description(Credit), Credit); } }
         public string CreditDetile
         {
             get
             {
-                return AccountanttDescriptions.Detile((int)Credit, CreditLongId, CreditGuidId);
+                return AccountanttDescriptions.CreditDetile(Credit, CreditLongId, CreditGuidId);
             }
         }
 
-        public EsUserModel Cashier { get { return ApplicationManager.Instance.CashProvider.GetUser(RegisterId); } }
+        public EsUserModel Cashier { get { return ApplicationManager.Instance.CashProvider.GetUser(RegisteredId); } }
         #endregion
 
-        public AccountingRecordsModel(DateTime date, long memberId, long registerId)
+        public AccountingRecordsModel(DateTime date, int memberId, int registeredId)
         {
             RegisterDate = date;
             MemberId = memberId;
-            RegisterId = registerId;
+            RegisteredId = registeredId;
         }
         public AccountingRecordsModel()
         {
             RegisterDate = DateTime.Now;
             MemberId = ApplicationManager.Instance.GetMember.Id;
-            RegisterId = ApplicationManager.GetEsUser.UserId;
+            RegisteredId = ApplicationManager.GetEsUser.UserId;
         }
     }
 
@@ -169,24 +168,60 @@ namespace ES.Business.Models
             PartnerModel partner = null;
             switch (code)
             {
-
                 case 216:
                     var stock = ApplicationManager.Instance.CashProvider.GetStocks.Single(s => s.Id == longId);
-                    detile = stock != null ? stock.Name : "Unknown";
+                    detile = stock != null ? stock.Name : "Unknown(Stock)";
                     break;
                 case 221:
                     partner = ApplicationManager.Instance.CashProvider.GetPartners.Single(s => s.Id == guidId);
-                    detile = partner != null ? partner.Description : "unknown";
+                    detile = partner != null ? partner.Description : "unknown (partner)";
                     break;
                 case 251:
-                    var cashDesk = ApplicationManager.Instance.CashProvider.GetCashDesk.SingleOrDefault(s => s.Id == guidId);
-                    detile = cashDesk != null ? cashDesk.Name : "Unknown";
+                    var cashDesk = ApplicationManager.Instance.CashProvider.GetCashDesks().SingleOrDefault(s => s.Id == guidId);
+                    detile = cashDesk != null ? cashDesk.Name : "Unknown (cashdesk)";
                     break;
                 case 521:
                     partner = ApplicationManager.Instance.CashProvider.GetPartners.Single(s => s.Id == guidId);
-                    detile = partner != null ? partner.Description : "unknown";
+                    detile = partner != null ? partner.Description : "unknown (partner)";
                     break;
                 default:
+                    break;
+            }
+            return detile;
+        }
+
+        public static string DebitDetile(int code, long? longId, Guid? guidId)
+        {
+            if (longId == null && guidId == null) return string.Empty;
+            string detile = null;
+            PartnerModel partner = null;
+            switch (code)
+            {
+                case 224:
+                case 523:
+                    partner = ApplicationManager.Instance.CashProvider.GetPartners.Single(s => s.Id == guidId);
+                    detile = partner != null ? partner.Description : "unknown (partner)";
+                    break;
+                default:
+                    detile = Detile(code, longId, guidId);
+                    break;
+            }
+            return detile;
+        }
+        public static string CreditDetile(int code, long? longId, Guid? guidId)
+        {
+            if (longId == null && guidId == null) return string.Empty;
+            string detile = null;
+            PartnerModel partner = null;
+            switch (code)
+            {
+                case 224:
+                case 523:
+                    var cashDesk = ApplicationManager.Instance.CashProvider.GetCashDesks().SingleOrDefault(s => s.Id == guidId);
+                    detile = cashDesk != null ? cashDesk.Name : "Unknown (cashdesk)";
+                    break;
+                default:
+                    detile = Detile(code, longId, guidId);
                     break;
             }
             return detile;

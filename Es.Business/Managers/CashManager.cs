@@ -5,10 +5,10 @@ using System.Threading;
 using System.Windows.Threading;
 using ES.Business.Models;
 using ES.Common.Helpers;
-using ES.Data.Model;
 using ES.Data.Models;
+using ES.Data.Models.EsModels;
 using ES.DataAccess.Models;
-using ProductModel = ES.Data.Models.ProductModel;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 
 namespace ES.Business.Managers
 {
@@ -70,6 +70,13 @@ namespace ES.Business.Managers
 
         private List<CashDesk> _cashDesks;
 
+        public List<CashDesk> GetCashDesks()
+        {
+            var cashDesk = GetCashDesk;
+            cashDesk.AddRange(GetBankAccounts);
+            return cashDesk;
+        }
+
         public List<CashDesk> GetCashDesk
         {
             get
@@ -91,6 +98,7 @@ namespace ES.Business.Managers
         #endregion Cash desks
 
         #region Products
+        public List<EsmMeasureUnitModel> MeasureOfUnits { get; private set; }
         private List<ProductItemModel> _productItems;
         private List<ProductResidue> _productResidues;
         public List<ProductModel> ExistingProducts
@@ -132,7 +140,8 @@ namespace ES.Business.Managers
         public event ProductsUpdateingEvent ProductsUpdateing;
         public delegate void ProductUpdatedDelegate();
         public event ProductUpdatedDelegate ProductUpdated;
-
+        public delegate void ProductsChangedDelegate(List<ProductModel> products);
+        public event ProductsChangedDelegate ProductsChanged;
         public List<ProductModel> GetProducts()
         {
             lock (_syncProducts)
@@ -150,7 +159,7 @@ namespace ES.Business.Managers
         {
             get { return _esUsers ?? (_esUsers = UsersManager.GetEsUsers(Member.Id)); }
         }
-        public EsUserModel GetUser(long id)
+        public EsUserModel GetUser(int id)
         {
             return GetUsers.SingleOrDefault(s => s.UserId == id);
         }
@@ -192,6 +201,7 @@ namespace ES.Business.Managers
         private void Initialize()
         {
             _products = new List<ProductModel>();
+            MeasureOfUnits = ProductsManager.GetMeasureOfUnits();
         }
         private void OnProductsUpdated()
         {
@@ -238,11 +248,7 @@ namespace ES.Business.Managers
             _isProductsUpdating = true;
             var updateingHandler = ProductsUpdateing;
             if (updateingHandler != null) updateingHandler();
-            lock (_syncProducts)
-            {
-                UpdateProducts(ProductsManager.GetProducts());
-            }
-
+            UpdateProducts(ProductsManager.GetProducts());
             OnProductsUpdated();
         }
 
@@ -266,6 +272,11 @@ namespace ES.Business.Managers
                     if (handler != null) handler();
                 });
             }
+        }
+        private void OnProductsChanged(List<ProductModel> products)
+        {
+            var handler = ProductsChanged;
+            if (handler != null) handler(products);
         }
         #endregion
 
@@ -291,7 +302,7 @@ namespace ES.Business.Managers
             {
                 _products.Clear();
                 _products.AddRange(products);
-                products = GetProducts().ToList();
+                products = _products;
             }
 
             new Thread(() =>
@@ -342,18 +353,6 @@ namespace ES.Business.Managers
         {
             _esDefaults = DefaultsManager.GetDefaults();
         }
-
-        #endregion
-
-        #region Events
-
-        public delegate void BeginCashUpdateingDelegate();
-        public event BeginCashUpdateingDelegate BeginCashUpdateing;
-
-        public delegate void CashUpdatedDelegate();
-        public event CashUpdatedDelegate CashUpdated;
-        #endregion Events
-
         public void EditProduct(ProductModel product)
         {
             var exProduct = GetProducts().SingleOrDefault(s => s.Id == product.Id);
@@ -382,8 +381,18 @@ namespace ES.Business.Managers
                     }
                 }
             }
-            OnProductsUpdated();
+            OnProductsChanged(new List<ProductModel> { product });
         }
+        #endregion
+
+        #region Events
+
+        public delegate void BeginCashUpdateingDelegate();
+        public event BeginCashUpdateingDelegate BeginCashUpdateing;
+
+        public delegate void CashUpdatedDelegate();
+        public event CashUpdatedDelegate CashUpdated;
+        #endregion Events
 
         public void RemoveProduct(ProductModel product)
         {
@@ -393,6 +402,17 @@ namespace ES.Business.Managers
             }
 
             OnProductsUpdated();
+        }
+
+        private static List<EsCategoriesModel> esCategories;
+        public static List<EsCategoriesModel> GetEsCategories()
+        {
+            return esCategories ?? (esCategories = ProductsManager.GetEsCategories());
+        }
+
+        public EsmMeasureUnitModel GetMeasureOfUnit(int? itemMeasureOfUnitsId)
+        {
+            return Instance.MeasureOfUnits.SingleOrDefault(mu => mu.Id == itemMeasureOfUnitsId);
         }
     }
 }

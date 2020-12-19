@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using ES.Data.Models.Products;
 
 namespace ES.Business.Models
 {
@@ -12,33 +13,33 @@ namespace ES.Business.Models
         #endregion
         #region Private properties
         private Guid _id = Guid.NewGuid();
-        private long _memberId;
-        private long? _stockId;
+        private int _memberId;
+        private short? _stockId;
         private DateTime _createDate;
         private DateTime? _closedDate;
-        private long? _stockTakeNumber;
-        private long _creatorId;
-        private long? _modifierId;
-        private long? _closerId;
+        private int? _stockTakeNumber;
+        private int _creatorId;
+        private int? _modifierId;
+        private int? _closerId;
         private string _description;
-        
+
         #endregion
         #region Public properties
         public Guid Id { get { return _id; } set { _id = value; } }
-        public long MemberId { get { return _memberId; } set { _memberId = value; } }
-        public long? StockId { get { return _stockId; } set { _stockId = value; } }
+        public int MemberId { get { return _memberId; } set { _memberId = value; } }
+        public short? StockId { get { return _stockId; } set { _stockId = value; } }
         public DateTime CreateDate { get { return _createDate; } set { _createDate = value; } }
         public DateTime? ClosedDate { get { return _closedDate; } set { _closedDate = value; } }
-        public long? StockTakeNumber { get { return _stockTakeNumber; } set { _stockTakeNumber = value; } }
+        public int? StockTakeNumber { get { return _stockTakeNumber; } set { _stockTakeNumber = value; } }
         public string StockTakeName { get { return _stockTakeNumber != null ? string.Format("ST-{0}{1}", ((DateTime)CreateDate).ToString("yy"), ((long)_stockTakeNumber).ToString("D3")) : null; } }
-        public long CreatorId { get { return _creatorId; } set { _creatorId = value; } }
-        public long? ModifierId { get { return _modifierId; } set { _modifierId = value; } }
-        public long? CloserId { get { return _closerId; } set { _closerId = value; } }
+        public int CreatorId { get { return _creatorId; } set { _creatorId = value; } }
+        public int? ModifierId { get { return _modifierId; } set { _modifierId = value; } }
+        public int? CloserId { get { return _closerId; } set { _closerId = value; } }
         public string Description { get { return _description; } set { _description = value; } }
 
         public bool IsClosed
         {
-            get { return ClosedDate!=null; }
+            get { return ClosedDate != null; }
         }
 
         #endregion
@@ -50,7 +51,7 @@ namespace ES.Business.Models
     {
         #region Properties
         private const string ProductDescriptionProperty = "ProductDescription";
-        private const string CodeOrBarcodeProperty = "CodeOrBarcode";
+        private const string CodeProperty = "Code";
         private const string MuProperty = "Mu";
         private const string PriceProperty = "Price";
         private const string DescriptionProperty = "Description";
@@ -66,7 +67,7 @@ namespace ES.Business.Models
         private Guid _stockTakeId;
         private Guid? _productId;
         private string _productDescription;
-        private string _codeOrBarcode;
+        private string _code;
         private string _mu;
         private decimal? _price;
         private string _description;
@@ -80,29 +81,30 @@ namespace ES.Business.Models
 
         #region Index
 
-        private int _index;
+        private short _displayOrder;
 
-        public int Index
+        public short DisplayOrder
         {
             get
             {
-                return _index;
+                return _displayOrder;
             }
             set
             {
-                if (value == _index) return;
-                _index = value;
-                OnPropertyChanged("Index");
+                if (value == _displayOrder) return;
+                _displayOrder = value;
+                OnPropertyChanged("DisplayOrder");
             }
         }
 
         #endregion Index
         public Guid StockTakeId { get { return _stockTakeId; } set { _stockTakeId = value; } }
         public Guid? ProductId { get { return _productId; } set { _productId = value; } }
+        public ProductModel Product { get; set; }
         public string ProductDescription { get { return _productDescription; } set { _productDescription = value; OnPropertyChanged(ProductDescriptionProperty); } }
-        public string Mu { get { return _mu; } set { _mu = value; OnPropertyChanged(MuProperty); } }
+        public string Mu { get { return Product!=null? Product.Mu:null;} }
         public decimal? Price { get { return _price; } set { _price = value; OnPropertyChanged(PriceProperty); } }
-        public string CodeOrBarcode { get { return _codeOrBarcode; } set { _codeOrBarcode = value; OnPropertyChanged(CodeOrBarcodeProperty); } }
+        public string Code { get { return _code; } set { _code = value; OnPropertyChanged(CodeProperty); } }
         public string Description { get { return _description; } set { _description = value; OnPropertyChanged(DescriptionProperty); } }
 
         public decimal Quantity

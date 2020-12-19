@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -41,7 +42,7 @@ namespace UserControls.Views.View
             }
             set
             {
-                _filterText = value.ToLower();
+                _filterText = value;
                 RaisePropertyChanged("FilterText");
                 DisposeTimer();
                 _timer = new Timer(TimerElapsed, null, 300, 300);
@@ -53,17 +54,7 @@ namespace UserControls.Views.View
         public decimal Price { get { return GetViewItems().Sum(s => s.ExistingQuantity * s.Product.Price ?? 0); } }
 
         public CollectionViewSource ItemsView { get; set; }
-        private ObservableCollection<ProductOrderModel> Items
-        {
-            get;
-            set;
-            //get
-            //{
-            //    return new ObservableCollection<ProductOrderModel>(_items == null ? new List<ProductOrderModel>()
-            //        : _items.Where(s => s.Product.Code.ToLower().Contains(FilterText) ||
-            //            s.Product.Description.ToLower().Contains(FilterText)).ToList());
-            //}
-        }
+        private ObservableCollection<ProductOrderModel> Items { get; set; }
         public ObservableCollection<StockModel> Stocks { get { return new ObservableCollection<StockModel>(_stocks ?? new List<StockModel>()); } }
         #endregion
 
@@ -90,6 +81,12 @@ namespace UserControls.Views.View
             ItemsView = new CollectionViewSource { Source = Items };
             ItemsView.View.Filter = Filter;
             Title = "Ապրանքների դիտում ըստ պահեստների";
+            var tooltip = string.Empty;
+            foreach (var stockModel in Stocks)
+            {
+                tooltip += string.IsNullOrEmpty(tooltip) ? "" : ", " + stockModel.FullName;
+            }
+            Tooltip = string.Format("Պահեստներ ({0})", tooltip);
         }
 
         private List<ProductOrderModel> GetViewItems()
@@ -121,8 +118,7 @@ namespace UserControls.Views.View
         {
             var product = item as ProductOrderModel;
             if (product == null) return false;
-            return product.Description.Contains(FilterText) ||
-                   product.Code.Contains(FilterText);
+            return product.HasKey(FilterText);
         }
         private void OnItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -148,7 +144,7 @@ namespace UserControls.Views.View
                 }
             });
             _productItems = ProductsManager.GetProductItemsByStocks(_stocks.Select(s => s.Id).ToList(), productKey);
-            //_productItems = _productItems.Where(pi => pi.StockId != null && _stocks.Select(s => s.Id).ToList().Contains((long)pi.StockId)).ToList();
+            //_productItems = _productItems.Where(pi => pi.StockId != null && _stocks.Select(s => s.Id).ToList().Contains((short)pi.StockId)).ToList();
             var items = (from item in _productItems
                          group item by item.ProductId
                              into product
@@ -269,7 +265,7 @@ namespace UserControls.Views.View
             }
             set
             {
-                _filterText = value.ToLower();
+                _filterText = value;
                 RaisePropertyChanged("FilterText");
                 DisposeTimer();
                 _timer = new Timer(TimerElapsed, null, 300, 300);
@@ -307,6 +303,13 @@ namespace UserControls.Views.View
             ItemsView = new CollectionViewSource { Source = Items };
             ItemsView.View.Filter = Filter;
             Title = "Ապրանքների դիտում մանրամասն";
+            var tooltip = string.Empty;
+            foreach (var stockModel in Stocks)
+            {
+                tooltip += string.IsNullOrEmpty(tooltip) ? "" : ", " + stockModel.FullName;
+            }
+            Tooltip = string.Format("Պահեստներ ({0})", tooltip);
+
             OnUpdate(null);
         }
 
@@ -347,8 +350,7 @@ namespace UserControls.Views.View
         {
             var product = item as ProductOrderModel;
             if (product == null) return false;
-            return product.Description.Contains(FilterText) ||
-                   product.Code.Contains(FilterText);
+            return product.HasKey(FilterText);
         }
         private void Update(object o)
         {
@@ -361,7 +363,7 @@ namespace UserControls.Views.View
             if (_stocks == null || !_stocks.Any() || IsLoading) return;
             IsLoading = true;
             _productItems = ProductsManager.GetProductItems();
-            _productItems = _productItems.Where(pi => pi.StockId != null && _stocks.Select(s => s.Id).ToList().Contains((long)pi.StockId)).ToList();
+            _productItems = _productItems.Where(pi => pi.StockId != null && _stocks.Select(s => s.Id).ToList().Contains((short)pi.StockId)).ToList();
             var items = (from item in _productItems
                          group item by item.ProductId
                              into product

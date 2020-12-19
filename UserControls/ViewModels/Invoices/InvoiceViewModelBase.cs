@@ -11,7 +11,6 @@ using ES.Business.ExcelManager;
 using ES.Business.Managers;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
-using ES.Data.Model;
 using ES.Data.Models;
 using Shared.Helpers;
 using UserControls.Interfaces;
@@ -113,7 +112,7 @@ namespace UserControls.ViewModels.Invoices
             set
             {
                 _fromStock = value;
-                Invoice.FromStockId = value != null ? value.Id : (long?)null;
+                Invoice.FromStockId = value != null ? value.Id : (short?)null;
                 Invoice.ProviderName = value != null ? value.FullName : string.Empty;
                 if (value != null) FromStocks = new List<StockModel> { value };
                 RaisePropertyChanged(FromStockProperty);
@@ -131,7 +130,7 @@ namespace UserControls.ViewModels.Invoices
             set
             {
                 _toStock = value;
-                Invoice.ToStockId = value != null ? value.Id : (long?)null;
+                Invoice.ToStockId = value != null ? value.Id : (short?)null;
                 Invoice.RecipientName = value != null ? value.FullName : string.Empty;
                 RaisePropertyChanged(ToStockProperty);
                 RaisePropertyChanged("Description");
@@ -206,6 +205,7 @@ namespace UserControls.ViewModels.Invoices
                 LoadInvoice();
             }
             PrintInvoiceCommand = new RelayCommand<PrintModeEnum>(OnPrintInvoice, CanPrintInvoice);
+            PrintPriceTagCommand = new RelayCommand<PrintModeEnum>(OnPrintPriceTag, CanPrintPriceTag);
             ExportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnExportInvoice, CanExportInvoice);
 
         }
@@ -249,7 +249,7 @@ namespace UserControls.ViewModels.Invoices
             Partner = Invoice.Partner ?? PartnersManager.GetPartner(Invoice.PartnerId);
 
             InvoiceItems.Clear();
-            var invoiceItems = InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.Index);
+            var invoiceItems = InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.DisplayOrder);
             foreach (var invoiceItemsModel in invoiceItems)
             {
                 InvoiceItems.Add(invoiceItemsModel);
@@ -282,6 +282,15 @@ namespace UserControls.ViewModels.Invoices
 
         }
 
+        protected virtual bool CanPrintPriceTag(PrintModeEnum obj)
+        {
+            return false;
+        }
+
+        protected virtual void OnPrintPriceTag(PrintModeEnum obj)
+        {
+           
+        }
         #endregion
 
 
@@ -319,7 +328,8 @@ namespace UserControls.ViewModels.Invoices
 
         [XmlIgnore]
         public ICommand PrintInvoiceCommand { get; private set; }
-
+        [XmlIgnore]
+        public ICommand PrintPriceTagCommand { get; private set; }
         [XmlIgnore]
         public ICommand ExportInvoiceCommand { get; private set; }
 

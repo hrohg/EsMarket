@@ -18,10 +18,10 @@ namespace ES.DataAccess.Models
         public System.Guid InvoiceId { get; set; }
         public System.Guid ProductId { get; set; }
         public Nullable<System.Guid> ProductItemId { get; set; }
-        public Nullable<int> Index { get; set; }
+        public Nullable<short> StockId { get; set; }
+        public Nullable<short> DisplayOrder { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }
-        public string Mu { get; set; }
         public Nullable<decimal> Quantity { get; set; }
         public Nullable<decimal> Price { get; set; }
         public Nullable<decimal> CostPrice { get; set; }
@@ -29,7 +29,6 @@ namespace ES.DataAccess.Models
         public Nullable<System.DateTime> ExpiryDate { get; set; }
         public string Note { get; set; }
     
-        public virtual ProductItems ProductItems { get; set; }
         public virtual Invoices Invoices { get; set; }
         public virtual Products Products { get; set; }
     }

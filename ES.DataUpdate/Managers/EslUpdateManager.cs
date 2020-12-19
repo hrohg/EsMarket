@@ -293,7 +293,7 @@ namespace ES.DataUpdate.Managers
                             Total = item.Total,
                             Name = item.Name,
                             Description = item.Description,
-                            Notes = item.Notes,
+                            Note = item.Note,
                             IsCash = item.IsCash,
                             IsActive = item.IsActive
                         };
@@ -674,9 +674,8 @@ namespace ES.DataUpdate.Managers
             var newItem = new EsMembers
             {
                 Id = item.Id,
-                FullName = item.FullName,
-                Email = item.Email,
-                ClubSixteenId = item.ClubSixteenId
+                Name = item.Name,
+                ContractNumber = item.ContractNumber
             };
             return newItem;
         }
@@ -690,7 +689,7 @@ namespace ES.DataUpdate.Managers
                 Password = item.Password,
                 Email = item.Email,
                 Mobile = item.Mobile,
-                ClubSixteenId = item.ClubSixteenId,
+                EssClubId = item.EssClubId,
                 LastActivityDate = item.LastActivityDate,
                 IsActive = item.IsActive
             };
@@ -703,7 +702,7 @@ namespace ES.DataUpdate.Managers
             exItem.Code = item.Code;
             exItem.Barcode = item.Barcode;
             exItem.Description = item.Description;
-            exItem.Mu = item.Mu;
+            exItem.MeasureOfUnitsId = item.MeasureOfUnitsId;
             exItem.Note = item.Note;
             exItem.CostPrice = item.CostPrice;
             exItem.OldPrice = item.OldPrice;
@@ -712,7 +711,7 @@ namespace ES.DataUpdate.Managers
             exItem.DealerPrice = item.DealerPrice;
             exItem.DealerDiscount = item.DealerDiscount;
             exItem.MinQuantity = item.MinQuantity;
-            exItem.ImagePath = item.ImagePath;
+            
             exItem.IsEnable = item.IsEnable;
             exItem.BrandId = item.BrandId;
             //exItem.Brand = item.Brand;
@@ -745,7 +744,7 @@ namespace ES.DataUpdate.Managers
                 EsMemberId = item.EsMemberId,
                 EsPartnersTypeId = item.EsPartnersTypeId,
                 EsUserId = item.EsUserId,
-                ClubSixteenId = item.ClubSixteenId,
+                CardNumber = item.CardNumber,
                 FullName = item.FullName,
                 FirstName = item.FirstName,
                 LastName = item.LastName,
@@ -795,7 +794,7 @@ namespace ES.DataUpdate.Managers
                 Debit=item.Debit,
                 Credit = item.Credit,
                 MemberId = item.MemberId,
-                RegisterId = item.RegisterId,
+                RegisteredId = item.RegisteredId,
                 DebitGuidId = item.DebitGuidId,
                 CreditGuidId = item.CreditGuidId,
                 DebitLongId = item.DebitLongId,
@@ -852,7 +851,6 @@ namespace ES.DataUpdate.Managers
                 ProductItemId = item.ProductItemId,
                 Code = item.Code,
                 Description = item.Description,
-                Mu = item.Mu,
                 Quantity = item.Quantity,
                 Price = item.Price,
                 CostPrice = item.CostPrice,

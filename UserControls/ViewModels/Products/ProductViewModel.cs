@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -14,13 +13,13 @@ using ES.Common;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
-using ES.Data.Models;
+using ES.Data.Models.Products;
 using UserControls.PriceTicketControl;
 using UserControls.Commands;
 using UserControls.Helpers;
 using UserControls.Interfaces;
 using UserControls.PriceTicketControl.ViewModels;
-using ProductModel = ES.Data.Models.ProductModel;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Products
@@ -35,16 +34,16 @@ namespace UserControls.ViewModels.Products
         private const string ProductProperty = "Product";
         private const string ProductsProperty = "Products";
         private const string ChangeProductActivityDescriptionProperty = "ChangeProductActivityDescription";
-        private const string ProductGroupDescriptionProperty = "ProductGroupDescription";
+        private const string ProductKeysDescriptionProperty = "ProductKeysDescription";
         #endregion
 
         #region Private properties
-        private long _memberId { get { return ApplicationManager.Instance.GetMember.Id; } }
-        private long _userId { get { return ApplicationManager.GetEsUser.UserId; } }
+        private int _memberId { get { return ApplicationManager.Instance.GetMember.Id; } }
+        private int _userId { get { return ApplicationManager.GetEsUser.UserId; } }
         private ProductModel _product;
         private List<ProductModel> _products;
         private string _filterText;
-        Timer _timer = null;
+        Timer _timer;
         private ProductModel _productOnBufer;
         private bool _isLoading;
         #endregion
@@ -74,10 +73,18 @@ namespace UserControls.ViewModels.Products
             set
             {
                 if (value == _product) return;
-                _product = ProductsManager.CopyProduct(value);
+                if (value == null)
+                {
+                    _product = null;
+                }
+                else
+                {
+                    _product = value.Clone() as ProductModel;
+                }
+
                 OnPropertyChanged("Product");
                 OnPropertyChanged(ChangeProductActivityDescriptionProperty);
-                OnPropertyChanged(ProductGroupDescriptionProperty);
+                OnPropertyChanged(ProductKeysDescriptionProperty);
             }
         }
         public List<ProductModel> Products
@@ -85,8 +92,7 @@ namespace UserControls.ViewModels.Products
             get
             {
                 return string.IsNullOrEmpty(FilterText) ? _products.ToList() :
-                     _products.Where(s => (s.Code + s.Barcode + s.Description + s.Price + s.CostPrice + s.Note).ToLower().Contains(FilterText)
-                         || s.ProductGroups.Any(t => t.Barcode.ToLower().Contains(FilterText.ToLower()))).ToList();
+                     _products.Where(s => s.HasKey(FilterText) || (s.Price + s.CostPrice + s.Note).Contains(FilterText)).ToList();
             }
             set { _products = value; OnPropertyChanged(ProductsProperty); }
         }
@@ -107,19 +113,19 @@ namespace UserControls.ViewModels.Products
         }
 
         public string ChangeProductActivityDescription { get { return Product != null && Product.IsEnabled ? "Պասիվացում" : "Ակտիվացում"; } }
-        public string ProductGroupDescription
+        public string ProductKeysDescription
         {
             get
             {
-                return Product != null && Product.ProductGroups != null ? " " + Product.ProductGroups.Aggregate(string.Empty, (current, group) => current + (string.Format(" {0};", group.Barcode))).Trim() : string.Empty;
+                return Product != null && Product.ProductKeys != null ? " " + Product.ProductKeys.Aggregate(string.Empty, (current, group) => current + (string.Format(" {0};", group.ProductKey))).Trim() : string.Empty;
             }
             set
             {
                 if (Product == null) { return; }
                 var separators = new[] { @" ", ",", ";" };
-                Product.ProductGroups = !string.IsNullOrEmpty(value)
+                Product.ProductKeys = !string.IsNullOrEmpty(value)
                     ? value.Split(separators, StringSplitOptions.RemoveEmptyEntries).Select(s =>
-                        new ProductGroupModel { ProductId = Product.Id, MemberId = (int)Product.EsMemberId, Barcode = s }).ToList()
+                        new ProductKeysModel {Id = Guid.NewGuid(), ProductId = Product.Id, ProductKey = s }).ToList()
                     : null;
             }
         }
@@ -209,7 +215,7 @@ namespace UserControls.ViewModels.Products
             if (!CanGetProduct(o)) { return; }
             var products = ProductsManager.GetProductsByCodeOrBarcode(o as string);
             var product = SelectItemsManager.SelectProduct(products).FirstOrDefault();
-            
+
             Product = product ?? new ProductModel(ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId, true) { Code = o as string };
         }
         private bool CanGenerateBarcode(object o)
@@ -292,7 +298,7 @@ namespace UserControls.ViewModels.Products
                 Code = Product.Code,
                 Barcode = Product.Barcode,
                 Description = Product.Description,
-                Mu = Product.Mu,
+                MeasureUnit = Product.MeasureUnit,
                 Note = Product.Note,
                 CostPrice = Product.CostPrice,
                 DealerProfitPercent = Product.DealerProfitPercent,
@@ -313,7 +319,7 @@ namespace UserControls.ViewModels.Products
             Product.Code = _productOnBufer.Code;
             Product.Barcode = _productOnBufer.Barcode;
             Product.Description = _productOnBufer.Description;
-            Product.Mu = _productOnBufer.Mu;
+            Product.MeasureUnit = _productOnBufer.MeasureUnit;
             Product.Note = _productOnBufer.Note;
             Product.CostPrice = _productOnBufer.CostPrice;
             Product.DealerProfitPercent = _productOnBufer.DealerProfitPercent;
@@ -437,8 +443,8 @@ namespace UserControls.ViewModels.Products
         private int GetNextCode()
         {
             return ProductsManager.GetNextProductCode(ApplicationManager.Instance.GetMember.Id); //_products.Count + 1;
-                //if (!string.IsNullOrEmpty(Product.Code)) Int32.TryParse(Product.Code, out next);
-                //return next;
+            //if (!string.IsNullOrEmpty(Product.Code)) Int32.TryParse(Product.Code, out next);
+            //return next;
         }
         public void GetProductBy(ProductViewType? type)
         {
@@ -453,14 +459,14 @@ namespace UserControls.ViewModels.Products
                 OnPropertyChanged(ProductProperty); OnPropertyChanged(ProductsProperty);
             }
         }
-        public void OnAddProductGroup(string text)
+        public void OnAddProductKeys(string text)
         {
-            if (!string.IsNullOrEmpty(text)) { ProductGroupDescription = text; }
+            if (!string.IsNullOrEmpty(text)) { ProductKeysDescription = text; }
             else
             {
-                Product.ProductGroups = null;
+                Product.ProductKeys = null;
             }
-            OnPropertyChanged(ProductGroupDescriptionProperty);
+            OnPropertyChanged(ProductKeysDescriptionProperty);
         }
         #endregion
 
@@ -490,7 +496,7 @@ namespace UserControls.ViewModels.Products
         public ICommand ImportProductsCommand { get; private set; }
         public ICommand GetProductsCommand { get { return new GetProductsCommand(this); } }
         public ICommand ChangeProductEnabledCommand { get { return new ChangeProductEnabledCommand(this); } }
-        public ICommand AddProductGroupCommand { get { return new AddProductGroupCommand(this); } }
+        public ICommand AddProductKeysCommand { get { return new AddProductKeysCommand(this); } }
         public ICommand CloseCommand { get { return new RelayCommand(OnClose); } }
         #endregion
 

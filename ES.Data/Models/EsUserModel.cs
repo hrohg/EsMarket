@@ -1,23 +1,20 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace ES.Data.Model
+namespace ES.Data.Models
 {
     public class EsUserModel:INotifyPropertyChanged
     {
         
         #region EsUserModel properties
-
-        private const string UserIdProperty = "UserId";
         private const string UserNameProperty = "UserName";
         private const string EmailProperty = "Email";
         private const string MobileProperty = "Mobile";
-        private const string ClubSixteenIdProperty = "ClubSixteenId";
+        private const string CardNumberProperty = "CardNumber";
         private const string IsActiveProperty = "IsActive";
         private const string PasswordProperty = "Password";
         private const string NewPasswordProperty = "NewPassword";
         private const string ConfirmPasswordProperty = "ConfirmPassword";
-        private const string LastActivityDateProperty = "LastActivityDate";
         private const string FirstNameProperty = "FirstName";
         private const string LastNameProperty = "LastName";
         #endregion
@@ -25,12 +22,12 @@ namespace ES.Data.Model
         /// EsUsermodel private properties
         /// </summary>
         #region Private properties
-        private long _userId=0;
+        private int _userId;
         private string _userName;
         private string _email;
         private string _mobile;
         private bool _isActive;
-        private string _clubSixteenId;
+        private string _essClubId;
         private string _password;
         private string _newPassword;
         private string _confirmPassword;
@@ -43,7 +40,7 @@ namespace ES.Data.Model
         /// EsUserModel public properties
         /// </summary>
         #region Public properties
-        public long UserId
+        public int UserId
         {
             get { return _userId; }
             set { _userId = value; }
@@ -82,10 +79,10 @@ namespace ES.Data.Model
             set { _mobile = value; OnPropertyChanged(MobileProperty); }
         }
 
-        public string ClubSixteenId
+        public string EssClubId
         {
-            get { return _clubSixteenId; }
-            set { _clubSixteenId = value; OnPropertyChanged(ClubSixteenIdProperty); }
+            get { return _essClubId; }
+            set { _essClubId = value; OnPropertyChanged(CardNumberProperty); }
         }
 
         public bool IsActive

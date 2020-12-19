@@ -72,10 +72,10 @@
                             </Style>
                         </DataGrid.Resources>
                         <DataGrid.Columns>
-                            <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding Index}" />
-                            <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding CodeOrBarcode}" />
+                            <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding DisplayOrder}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding ProductDescription}" />
-                            <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Price}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Առկա է պահեստում" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Առկա է" Binding="{Binding Path=StockTakeQuantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
@@ -203,7 +203,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0"  Text="{Binding Path=CodeOrBarcode, UpdateSourceTrigger=PropertyChanged}" 
+                            <TextBox Grid.Column="0"  Text="{Binding Path=ProductKey, UpdateSourceTrigger=PropertyChanged}" 
                                  FontSize="14" HorizontalContentAlignment="Center" TabIndex="1">
                                 <i:Interaction.Behaviors>
                                     <behaviors:TextBoxBehavior IsFocusOnTextChanged="True" IsSelectTextOnFocus="True" />
@@ -280,10 +280,10 @@
                             <KeyBinding Key="Delete" Command="{Binding RemoveStockTakingItemCommand}" CommandParameter="{Binding DataContext.Id, RelativeSource={RelativeSource Self}}"/>
                         </DataGrid.InputBindings>
                         <DataGrid.Columns>
-                            <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding Index}" />
-                            <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding CodeOrBarcode}" />
+                            <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding DisplayOrder}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding ProductDescription}" />
-                            <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                            <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Price}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Առկա է պահեստում" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />
                             <DataGridTextColumn IsReadOnly="True" Header="Առկա է" Binding="{Binding Path=StockTakeQuantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}" />

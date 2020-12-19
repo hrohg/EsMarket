@@ -7,6 +7,7 @@ using ES.Common.Enumerations;
 using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Data.Models;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 
 namespace UserControls.ViewModels.Invoices
 {
@@ -25,14 +26,14 @@ namespace UserControls.ViewModels.Invoices
 
         #endregion
 
-        public InventoryWriteOffViewModel()
-            : base(InvoiceType.InventoryWriteOff)
+        public InventoryWriteOffViewModel(): base(InvoiceType.InventoryWriteOff)
         {
+            if (FromStocks == null) FromStocks = SelectItemsManager.SelectStocks(FromStocks, true);
         }
 
-        public InventoryWriteOffViewModel(Guid id)
-            : base(id)
+        public InventoryWriteOffViewModel(Guid id): base(id)
         {
+
         }
 
         #region Internal methods
@@ -43,6 +44,7 @@ namespace UserControls.ViewModels.Invoices
             Invoice.PartnerId = null;
             Invoice.Partner = null;
             Invoice.ProviderName = null;
+            if (FromStocks == null) FromStocks = SelectItemsManager.SelectStocks(FromStocks, true);
         }
 
         protected override void PrepareToApprove()
@@ -71,7 +73,7 @@ namespace UserControls.ViewModels.Invoices
             return Invoice != null && Invoice.ApproveDate == null && InvoiceItems != null && InvoiceItems.Count > 0;
         }
 
-        private void Approve(List<long> fromStocks, bool closeOnExit)
+        private void Approve(List<short> fromStocks, bool closeOnExit)
         {
             IsLoading = true;
             Invoice.ApproverId = User.UserId;
@@ -114,7 +116,7 @@ namespace UserControls.ViewModels.Invoices
                 if (fromStocks != null && fromStocks.Any())
                 {
                     Approve(fromStocks.Select(s => s.Id).ToList(), closeOnExit);
-                    if (Invoice.ApproveDate != null) MessageManager.OnMessage(string.Format("{0} ապրանքագիրը հաստատվել է հաջողությամբ:", Invoice.InvoiceNumber),MessageTypeEnum.Success);
+                    if (Invoice.ApproveDate != null) MessageManager.OnMessage(string.Format("{0} ապրանքագիրը հաստատվել է հաջողությամբ:", Invoice.InvoiceNumber), MessageTypeEnum.Success);
 
                     if (closeOnExit && Invoice.ApproveDate != null)
                     {

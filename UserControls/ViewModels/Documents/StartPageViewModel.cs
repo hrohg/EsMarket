@@ -6,7 +6,9 @@ using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using UserControls.Enumerations;
+using UserControls.Helpers;
 using UserControls.Interfaces;
+using UserControls.PriceTicketControl.Helper;
 
 namespace UserControls.ViewModels.Documents
 {
@@ -40,6 +42,7 @@ namespace UserControls.ViewModels.Documents
             GetReportCommand = new RelayCommand<ReportTypes>(OnGetReport, CanGetReport);
             OpenCarculatorCommand = new RelayCommand(_parent.OnOpenCalc);
             ToolsCommand = new RelayCommand<ToolsEnum>(_parent.OnTools, _parent.CanOpenTools);
+            PriceTagCommand = new RelayCommand(() => { PriceTicketManager.PrintPriceTicket(PrintPriceTicketEnum.PriceTag);});
         }
 
         private void OnOpenInvoice(Tuple<InvoiceTypeEnum, InvoiceState, MaxInvocieCount> o)
@@ -110,7 +113,8 @@ namespace UserControls.ViewModels.Documents
         #endregion Reports
 
         public ICommand ToolsCommand { get; private set; }
-
+        public bool IsPopupOpened { get; set; }
+        public ICommand PriceTagCommand { get; private set; }
         #endregion Commands
     }
 }

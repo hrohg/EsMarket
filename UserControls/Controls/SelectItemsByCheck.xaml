@@ -8,6 +8,7 @@
         xmlns:res="clr-namespace:ResourceLibrary.Helper;assembly=ResourceLibrary"
         Title="Ընտրել" Height="400" Width="600" WindowStartupLocation="CenterScreen" KeyUp="WinSelectItems_KeyUp">
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
         <Style x:Key="SearchButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Static res:ResourceKeys.NoChromeButtonKey}}">
             <Setter Property="Content">
@@ -102,7 +103,7 @@
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Width="Auto" CanUserSort="True" SortMemberPath="IsChecked">
                         <DataGridTemplateColumn.Header>
-                            <CheckBox IsChecked="{Binding IsChecked}"></CheckBox>
+                            <CheckBox IsChecked="{Binding DataContext.IsChecked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" />
                         </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type controls:ProductItemsByCheck}">
@@ -159,6 +160,7 @@
         <Button Grid.Row="0" VerticalAlignment="Center" Style="{StaticResource SearchButtonStyle}" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" IsTabStop="False" Height="23"/>
         <ContentPresenter Grid.Row="1" Content="{Binding}" />
         <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5">
+            <Button Margin="1" Width="80" Content="Արտահանել" Command="{Binding ExportItemsCommand}" Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
             <Button Margin="1" Width="80" Content="Ընտրել" Click="BtnAccept_Click"/>
             <Button Margin="1" Width="80" Content="Թողնել" Click="BtnCancel_Click"/>
         </StackPanel>

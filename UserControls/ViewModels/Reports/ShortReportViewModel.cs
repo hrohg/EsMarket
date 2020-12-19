@@ -8,8 +8,8 @@ using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
-using ES.Data.Model;
 using ES.Data.Models;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 
 namespace UserControls.ViewModels.Reports
 {

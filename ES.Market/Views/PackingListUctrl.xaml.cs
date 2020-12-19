@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using ES.Data.Model;
 using ES.Data.Models;
 using UserControls.ViewModels.Invoices;
 

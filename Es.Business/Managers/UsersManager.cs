@@ -11,7 +11,6 @@ using System.Text;
 using System.Windows;
 using ES.Business.Helpers;
 using ES.Common.Managers;
-using ES.Data.Model;
 using ES.Data.Models;
 using ES.DataAccess.Models;
 
@@ -21,11 +20,11 @@ namespace ES.Business.Managers
     {
 
         #region EsUsers public methods
-        public static EsUserModel GetEsUser(long userId)
+        public static EsUserModel GetEsUser(int userId)
         {
             return ConvertEsUser(TryGetUser(userId));
         }
-        public static List<EsUserModel> GetEsUsers(long memberId)
+        public static List<EsUserModel> GetEsUsers(int memberId)
         {
             return TryGetUsers(memberId).Select(ConvertEsUser).ToList();
         }
@@ -61,7 +60,7 @@ namespace ES.Business.Managers
                 Password = item.Password,
                 Email = item.Email,
                 Mobile = item.Mobile,
-                ClubSixteenId = item.ClubSixteenId,
+                EssClubId = item.EssClubId,
                 LastActivityDate = item.LastActivityDate,
                 IsActive = item.IsActive
             };
@@ -76,7 +75,7 @@ namespace ES.Business.Managers
                 Password = item.Password,
                 Email = item.Email,
                 Mobile = item.Mobile,
-                ClubSixteenId = item.ClubSixteenId,
+                EssClubId = item.EssClubId,
                 LastActivityDate = item.LastActivityDate,
                 IsActive = item.IsActive
             };
@@ -89,7 +88,7 @@ namespace ES.Business.Managers
             return TryChangePassword(esUserModel.UserId, esUserModel.Password, esUserModel.NewPassword);
         }
 
-        public static List<MembersRoles> GetUserRoles(long userId, long memberId)
+        public static List<MembersRoles> GetUserRoles(int userId, int memberId)
         {
             return TryGetMembersRoles(userId, memberId);
         }
@@ -105,11 +104,11 @@ namespace ES.Business.Managers
         {
             return ConvertEsUser(TryLoadUserByEmail(email));
         }
-        public static bool RemoveEsUser(long userId)
+        public static bool RemoveEsUser(int userId)
         {
             return TryRemoveUser(userId);
         }
-        public static bool EditUser(EsUserModel user, List<MemberUsersRoles> roles, long memberId)
+        public static bool EditUser(EsUserModel user, List<MemberUsersRoles> roles, int memberId)
         {
             return TryEditUser(ConvertEsUser(user), roles, memberId);
         }
@@ -123,7 +122,7 @@ namespace ES.Business.Managers
         /// EsUsers private methods
         /// </summary>
         #region EsUsers private methods
-        private static EsUsers TryGetUser(long userId)
+        private static EsUsers TryGetUser(int userId)
         {
             using (var db = GetDataContext())
             {
@@ -144,7 +143,7 @@ namespace ES.Business.Managers
                 }
             }
         }
-        private static List<EsUsers> TryGetUsers(long memberId)
+        private static List<EsUsers> TryGetUsers(int memberId)
         {
             using (var db = GetDataContext())
             {
@@ -252,7 +251,7 @@ namespace ES.Business.Managers
             }
 
         }
-        private static bool TryChangePassword(long userId, string password, string newPassword)
+        private static bool TryChangePassword(int userId, string password, string newPassword)
         {
             using (var db = GetDataContext())
             {
@@ -286,7 +285,7 @@ namespace ES.Business.Managers
             return BitConverter.ToString(encodedBytes);
         }
 
-        private static List<MembersRoles> TryGetMembersRoles(long userId, long memberId)
+        private static List<MembersRoles> TryGetMembersRoles(int userId, int memberId)
         {
             using (var db = GetDataContext())
             {
@@ -311,7 +310,7 @@ namespace ES.Business.Managers
                 return db.MembersRoles.ToList();
             }
         }
-        private static List<MembersRoles> TryGetUsersRoles(long userId, long memberId)
+        private static List<MembersRoles> TryGetUsersRoles(int userId, int memberId)
         {
             using (var db = GetDataContext())
             {
@@ -357,7 +356,7 @@ namespace ES.Business.Managers
                     user.Mobile = serverUser.Mobile;
                     user.LastActivityDate = serverUser.LastActivityDate;
                     user.IsActive = serverUser.IsActive;
-                    user.ClubSixteenId = serverUser.ClubSixteenId;
+                    user.EssClubId = serverUser.EssClubId;
                 }
                 else
                 {
@@ -370,7 +369,7 @@ namespace ES.Business.Managers
                         Mobile = serverUser.Mobile,
                         LastActivityDate = serverUser.LastActivityDate,
                         IsActive = serverUser.IsActive,
-                        ClubSixteenId = serverUser.ClubSixteenId
+                        EssClubId = serverUser.EssClubId
                     };
                     db.EsUsers.Add(user);
                 }
@@ -378,7 +377,7 @@ namespace ES.Business.Managers
             }
             return user;
         }
-        private static bool TryRemoveUser(long userId)
+        private static bool TryRemoveUser(int userId)
         {
             using (var db = GetDataContext())
             {
@@ -400,7 +399,7 @@ namespace ES.Business.Managers
             }
             return true;
         }
-        private static bool TryRemoveUserRole(long roleId, long userId, long memberId)
+        private static bool TryRemoveUserRole(int roleId, int userId, int memberId)
         {
             using (var db = GetDataContext())
             {
@@ -413,7 +412,7 @@ namespace ES.Business.Managers
             }
             return true;
         }
-        private static bool TryEditUser(EsUsers user, List<MemberUsersRoles> roles, long memberId)
+        private static bool TryEditUser(EsUsers user, List<MemberUsersRoles> roles, int memberId)
         {
             using (var db = GetDataContext())
             {

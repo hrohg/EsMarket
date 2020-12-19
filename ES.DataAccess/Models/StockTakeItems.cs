@@ -15,12 +15,11 @@ namespace ES.DataAccess.Models
     public partial class StockTakeItems
     {
         public System.Guid Id { get; set; }
-        public Nullable<int> Index { get; set; }
+        public Nullable<short> DisplayOrder { get; set; }
         public System.Guid StockTakeId { get; set; }
         public Nullable<System.Guid> ProductId { get; set; }
-        public string CodeOrBarcode { get; set; }
+        public string Code { get; set; }
         public string ProductDescription { get; set; }
-        public string Mu { get; set; }
         public Nullable<decimal> Price { get; set; }
         public string Description { get; set; }
         public decimal Quantity { get; set; }

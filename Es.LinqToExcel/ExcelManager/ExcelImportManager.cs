@@ -58,7 +58,7 @@ namespace ES.MsOffice.ExcelManager
                         Id = Guid.NewGuid(),
                         Code = xlWSh.Cells[nextRow, 1].Text,
                         Description = xlWSh.Cells[nextRow, 4].Text,
-                        Mu = xlWSh.Cells[nextRow, 5].Text,
+                        //Mu = xlWSh.Cells[nextRow, 5].Text,
                         Note = xlWSh.Cells[nextRow, 6].Text + xlWSh.Cells[nextRow, 2].Text + xlWSh.Cells[nextRow, 3].Text,
                         CostPrice = HgConvert.ToDecimal(xlWSh.Cells[nextRow, 7].Text),
                         DealerPrice = HgConvert.ToDecimal(xlWSh.Cells[nextRow, 8].Text),
@@ -66,7 +66,7 @@ namespace ES.MsOffice.ExcelManager
                         Price = HgConvert.ToDecimal(xlWSh.Cells[nextRow, 10].Text),
                         Discount = HgConvert.ToDecimal(xlWSh.Cells[nextRow, 11].Text)
                     };
-                    product.Brands = new Brands { BrandName = xlWSh.Cells[nextRow, 1].Text };
+                    product.Brands = new Brands { Name = xlWSh.Cells[nextRow, 1].Text };
                     var category = new EsCategories() { Name = xlWSh.Cells[nextRow, 2].Text };
                     //productCategories.Add(new ProductCategories { Products = product,  Categories = category });
                     products.Add(product);

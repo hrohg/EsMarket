@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using CashReg.Models;
-using ES.Data.Model;
 using ES.Data.Models;
 
 

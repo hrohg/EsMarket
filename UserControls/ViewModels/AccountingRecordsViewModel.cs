@@ -6,7 +6,6 @@ using System.Linq;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Business.Models;
-using ES.Common.Managers;
 using ES.DataAccess.Models;
 using UserControls.Commands;
 
@@ -54,8 +53,8 @@ namespace UserControls.ViewModels
         //private AccountingAccounts _debit;
         //private ObservableCollection<AccountingAccounts> _credits;
         //private AccountingAccounts _credit;
-        private int? _debitId;
-        private int? _creditId;
+        private short? _debitId;
+        private short? _creditId;
         private ObservableCollection<SubAccountingPlanModel> _subDebits;
         private ObservableCollection<SubAccountingPlanModel> _subCredits;
         private SubAccountingPlanModel _subDebit;
@@ -110,35 +109,35 @@ namespace UserControls.ViewModels
         {
             get
             {
-                return DebitId == null ? null : new AccountingAccounts { Id = (int)DebitId, Description = string.Format("{0} {1}", DebitId, AccountingRecordsManager.GetAccountingRecordsDescription((int)DebitId)) };
+                return DebitId == null ? null : new AccountingAccounts { Id = (short)DebitId, Description = string.Format("{0} {1}", DebitId, AccountingRecordsManager.GetAccountingRecordsDescription((int)DebitId)) };
             }
             set
             {
-                _debitId = value != null ? value.Id : (int?)null;
+                _debitId = value != null ? value.Id : (short?)null;
             }
         }
 
-        public int? DebitId
+        public short? DebitId
         {
             get { return _debitId; }
             set
             {
                 _debitId = value;
                 AccountingRecord.Debit = DebitId ?? 0;
-                SubDebits = DebitId != null ? new ObservableCollection<SubAccountingPlanModel>(SubAccountingPlanManager.GetSubAccountingPlanModels((int)DebitId, 0, ApplicationManager.Instance.GetMember.Id, true)) : new ObservableCollection<SubAccountingPlanModel>();
+                SubDebits = DebitId != null ? new ObservableCollection<SubAccountingPlanModel>(SubAccountingPlanManager.GetSubAccountingPlanModels((short)DebitId, 0, ApplicationManager.Instance.GetMember.Id, true)) : new ObservableCollection<SubAccountingPlanModel>();
                 OnPropertyChanged(DebitIdProperty);
                 if (CreditId == null) OnPropertyChanged(CreditsProperty);
                 OnPropertyChanged("CanSelectDebit");
             }
         }
-        public int? CreditId
+        public short? CreditId
         {
             get { return _creditId; }
             set
             {
                 _creditId = value;
                 AccountingRecord.Credit = CreditId ?? 0;
-                SubCredits = CreditId != null ? new ObservableCollection<SubAccountingPlanModel>(SubAccountingPlanManager.GetSubAccountingPlanModels(0, (int)CreditId, ApplicationManager.Instance.GetMember.Id, true)) : new ObservableCollection<SubAccountingPlanModel>();
+                SubCredits = CreditId != null ? new ObservableCollection<SubAccountingPlanModel>(SubAccountingPlanManager.GetSubAccountingPlanModels(0, (short)CreditId, ApplicationManager.Instance.GetMember.Id, true)) : new ObservableCollection<SubAccountingPlanModel>();
                 OnPropertyChanged(CreditIdProperty);
                 if (DebitId == null) OnPropertyChanged(DebitsProperty);
                 OnPropertyChanged("CanSelectCredit");
@@ -180,11 +179,11 @@ namespace UserControls.ViewModels
         {
             get
             {
-                return CreditId == null ? null : new AccountingAccounts { Id = (int)CreditId, Description = string.Format("{0} {1}", CreditId, AccountingRecordsManager.GetAccountingRecordsDescription((int)CreditId)) };
+                return CreditId == null ? null : new AccountingAccounts { Id = (short)CreditId, Description = string.Format("{0} {1}", CreditId, AccountingRecordsManager.GetAccountingRecordsDescription((int)CreditId)) };
             }
             set
             {
-                _creditId = value != null ? value.Id : (int?)null;
+                _creditId = value != null ? value.Id : (short?)null;
             }
         }
 
@@ -237,8 +236,8 @@ namespace UserControls.ViewModels
             if (accountingRecord != null)
             {
                 AccountingRecord = accountingRecord;
-                DebitId = (int?)accountingRecord.Debit;
-                CreditId = (int?)accountingRecord.Credit;
+                DebitId = accountingRecord.Debit;
+                CreditId = accountingRecord.Credit;
             }
             else { AccountingRecord = new AccountingRecordsModel(); }
             

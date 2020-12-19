@@ -148,10 +148,10 @@
                         </Style>
                     </DataGrid.RowStyle>
                 <DataGrid.Columns>
-                    <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding Index}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding DisplayOrder}"/>
                     <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
-                    <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                    <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" />
                     <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}" />
                     <DataGridTextColumn IsReadOnly="False" Header="Գին" Binding="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}" />
                     <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}"/>

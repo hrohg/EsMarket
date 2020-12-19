@@ -28,7 +28,7 @@
                 <TextBox Text="{Binding Service.Description, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Height="28"/></DockPanel>
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <Label Content="Չափման միավոր" Width="150" HorizontalContentAlignment="Right"/>
-                    <TextBox Text="{Binding Service.Mu}" Width="100" VerticalContentAlignment="Center" Height="28"/>
+                    <TextBox Text="{Binding Service.Mu, Mode=OneWay}" Width="100" VerticalContentAlignment="Center" Height="28"/>
                 </StackPanel>
             </Grid>
 

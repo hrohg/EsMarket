@@ -47,6 +47,14 @@ namespace ES.Common.ViewModels.Base
                 }
             }
         }
+
+        private string _tooltip;
+        public string Tooltip
+        {
+            get { return _tooltip; }
+            set { _tooltip = value; RaisePropertyChanged("Tooltip"); }
+        }
+
         #endregion
 
         #region IsFloating
@@ -176,7 +184,6 @@ namespace ES.Common.ViewModels.Base
         #region Visible
 
         private bool _isVisible;
-
         public bool IsVisible
         {
             get { return _isVisible; }

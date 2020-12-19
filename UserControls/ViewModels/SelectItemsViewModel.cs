@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
+using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using UserControls.Controls;
+using ExcelExportManager = ES.Business.ExcelManager.ExcelExportManager;
 using Timer = System.Threading.Timer;
 
 namespace UserControls.ViewModels
@@ -88,6 +91,15 @@ namespace UserControls.ViewModels
                 _timer = null;
             }
         }
+        protected virtual bool CanExport(object dg)
+        {
+            return false;
+        }
+        protected virtual void OnExport(object dg)
+        {
+            ExcelExportManager.ExportList(Items);
+        }
+
         #endregion Internal methods
 
         #region External methods
@@ -97,6 +109,11 @@ namespace UserControls.ViewModels
             return Items;
         }
         #endregion External methods
+
+        #region Commands
+        public ICommand ExportItemsCommand { get { return new RelayCommand(OnExport, CanExport); } }
+
+        #endregion Commands
     }
     public class SelectItemsViewModel : SelectItemsViewModelBase<ItemsToSelectByCheck>
     {
@@ -225,6 +242,7 @@ namespace UserControls.ViewModels
                 {
                     item.IsChecked = value != null && (bool)value;
                 }
+                RaisePropertyChanged("Items");
                 RaisePropertyChanged("IsChecked");
             }
         }
@@ -246,6 +264,10 @@ namespace UserControls.ViewModels
         {
 
         }
+        protected override bool CanExport(object dg)
+        {
+            return Items.Any();
+        }
         #endregion Internal methods
 
         #region External methods
@@ -255,5 +277,6 @@ namespace UserControls.ViewModels
             return Items.Where(s => s.IsChecked).ToList();
         }
         #endregion External methods
+
     }
 }

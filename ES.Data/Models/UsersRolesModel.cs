@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ES.Data.Model;
 
 namespace ES.Data.Models
 {
@@ -15,7 +11,7 @@ namespace ES.Data.Models
     }
     public class MemberRolesModel
     {
-        public long Id { get; set; }
+        public int Id { get; set; }
         public string RoleName { get; set; }
         public string Name { get { return string.IsNullOrEmpty(Description) ? RoleName : Description; } }
         public string Description { get; set; }

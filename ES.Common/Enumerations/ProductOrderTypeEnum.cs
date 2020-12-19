@@ -6,6 +6,7 @@
         BySale,
         ByProviders,
         ByBrands,
-        ViewPartners
+        ViewPartners,
+        Dynamic
     }
 }

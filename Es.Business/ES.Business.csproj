@@ -102,6 +102,7 @@
     <Compile Include="Managers\InvoicesManager.cs" />
     <Compile Include="Managers\PartnersManager.cs" />
     <Compile Include="Helpers\SelectItemsManager.cs" />
+    <Compile Include="Managers\ProductOrderManager.cs" />
     <Compile Include="Managers\ReportManager.cs" />
     <Compile Include="Managers\StockManager.cs" />
     <Compile Include="Managers\StockTakeManager.cs" />

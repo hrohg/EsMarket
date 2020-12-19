@@ -5,8 +5,8 @@ using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
-using ES.Data.Model;
 using ES.Common.Models;
+using ES.Data.Models;
 
 namespace ES.Login
 {

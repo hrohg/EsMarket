@@ -30,7 +30,7 @@ namespace UserControls.ViewModels.Invoices
                 ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBySingle = value;
             }
         }
-        
+
         #endregion External properties
 
         #region Contructors
@@ -49,7 +49,7 @@ namespace UserControls.ViewModels.Invoices
         protected override void OnInitialize()
         {
             base.OnInitialize();
-            FromStocks = StockManager.GetStocks(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSaleStocks.ToList()).ToList();
+            if (FromStocks == null) FromStocks = StockManager.GetStocks(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSaleStocks.ToList()).ToList();
             AddBySingle = ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBySingle;
         }
 
@@ -94,7 +94,10 @@ namespace UserControls.ViewModels.Invoices
 
             return InvoiceItem.Quantity != null && InvoiceItem.Quantity > 0;
         }
-
+        protected override bool CanApprove(object o)
+        {
+            return base.CanApprove(o) && FromStocks.Any();
+        }
         protected override void OnApproveAsync(bool closeOnExit)
         {
             lock (_sync)
@@ -208,7 +211,7 @@ namespace UserControls.ViewModels.Invoices
             }
         }
 
-        private bool CheckBeforeApprove()   
+        private bool CheckBeforeApprove()
         {
             if (InvoiceItems.Any(s => s.Quantity == 0))
             {

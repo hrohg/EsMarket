@@ -11,7 +11,7 @@ namespace ES.Business.Managers
     {
         #region Private methods
 
-        private static bool TryGetEsMemberWithData(long memberId)
+        private static bool TryGetEsMemberWithData(int memberId)
         {
             if(!TryUpdateMainProvisions()){return false;}
             using (var scope = new TransactionScope())
@@ -238,7 +238,7 @@ namespace ES.Business.Managers
         {
             using (var db = GetServerDataContext())
             {
-                return db.Brands.Where(s=>s.IsActive!=null && (bool)s.IsActive).OrderBy(s => s.BrandName).ToList();
+                return db.Brands.Where(s=>s.IsActive!=null && (bool)s.IsActive).OrderBy(s => s.Name).ToList();
             }
         }
         private static bool TryUpdateBrands()
@@ -260,16 +260,15 @@ namespace ES.Business.Managers
                         db.Brands.Add(new Brands
                         {
                             Id = serverBrand.Id, 
-                            BrandName = serverBrand.BrandName, 
-                            BrandDescription = serverBrand.BrandDescription, 
-                            LogoPath = serverBrand.LogoPath, 
+                            Name = serverBrand.Name, 
+                            Description = serverBrand.Description, 
                             IsActive = serverBrand.IsActive
                         });
                     }
                     else
                     {
-                        exBrand.BrandName = serverBrand.BrandName;
-                        exBrand.BrandDescription = serverBrand.BrandDescription;
+                        exBrand.Name = serverBrand.Name;
+                        exBrand.Description = serverBrand.Description;
                         exBrand.IsActive = serverBrand.IsActive;
                     }
                 }
@@ -305,7 +304,7 @@ namespace ES.Business.Managers
         {
             return TryGetEsUsers();
         }
-        public static bool GetMemberFromServerWithData(long memberId)
+        public static bool GetMemberFromServerWithData(int memberId)
         {
             return TryGetEsMemberWithData(memberId);
         }

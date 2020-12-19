@@ -15,8 +15,8 @@ namespace ES.DataAccess.Models
     public partial class MembersBrands
     {
         public System.Guid Id { get; set; }
-        public long MemberId { get; set; }
-        public long BrandId { get; set; }
+        public int MemberId { get; set; }
+        public int BrandId { get; set; }
     
         public virtual Brands Brands { get; set; }
         public virtual EsMembers EsMembers { get; set; }

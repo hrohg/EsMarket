@@ -132,7 +132,7 @@ namespace ES.Business.Helpers
         #endregion Internal properties
 
         #region External properties
-        public long MemberId { get; set; }
+        public int MemberId { get; set; }
 
         #region General
 
@@ -142,7 +142,7 @@ namespace ES.Business.Helpers
         public bool NotifyAboutIncomingInvoices { get; set; }
         public string ImportingFilePath { get; set; }
         public bool IsEcrActivated { get; set; }
-
+        public string ActiveCashDeskPrinter { get; set; }
         public string CashDeskPort
         {
             get { return _cashDeskPort; }
@@ -156,10 +156,10 @@ namespace ES.Business.Helpers
         #endregion General
 
         #region Sale
-        private List<long> _activeSaleStocks;
-        public List<long> ActiveSaleStocks
+        private List<short> _activeSaleStocks;
+        public List<short> ActiveSaleStocks
         {
-            get { return _activeSaleStocks ?? (_activeSaleStocks = new List<long>()); }
+            get { return _activeSaleStocks ?? (_activeSaleStocks = new List<short>()); }
             set
             {
                 _activeSaleStocks = value;
@@ -190,10 +190,10 @@ namespace ES.Business.Helpers
 
         #region Purchase
 
-        private List<long> _activePurchaseStocks;
-        public List<long> ActivePurchaseStocks
+        private List<short> _activePurchaseStocks;
+        public List<short> ActivePurchaseStocks
         {
-            get { return _activePurchaseStocks ?? (_activePurchaseStocks = new List<long>()); }
+            get { return _activePurchaseStocks ?? (_activePurchaseStocks = new List<short>()); }
             set
             {
                 _activePurchaseStocks = value;
@@ -250,6 +250,7 @@ namespace ES.Business.Helpers
 
         #region Branch settings
         public BranchModel BranchSettings { get; set; }
+
         #endregion Branch settings
 
         #endregion External properties
@@ -268,7 +269,7 @@ namespace ES.Business.Helpers
         {
 
         }
-        private bool Save(long memberId)
+        private bool Save(int memberId)
         {
             MemberId = memberId;
             string settingsFilePath = PathHelper.GetMemberSettingsFilePath(MemberId);
@@ -293,7 +294,7 @@ namespace ES.Business.Helpers
         #endregion Internal methods
 
         #region External methods
-        public static MemberSettings GetSettings(long memberId)
+        public static MemberSettings GetSettings(int memberId)
         {
             string settingsFilePath = PathHelper.GetMemberSettingsFilePath(memberId);
             if (File.Exists(settingsFilePath))
@@ -316,12 +317,12 @@ namespace ES.Business.Helpers
             return new MemberSettings();
         }
 
-        public static bool Save(MemberSettings memberSettings, long memberId)
+        public static bool Save(MemberSettings memberSettings, int memberId)
         {
             return memberSettings.Save(memberId);
         }
 
-        public static bool SaveEcrService(EcrConfig config, long memberId)
+        public static bool SaveEcrService(EcrConfig config, int memberId)
         {
             string settingsFilePath = PathHelper.GetMemberEcrServiceFilePath(memberId);
             if (string.IsNullOrEmpty(settingsFilePath)) return false;
@@ -504,7 +505,7 @@ namespace ES.Business.Helpers
         //    }
         //    return new SettingsContainer();
         //}
-        public static bool ConvertConfigFile(long memberId)
+        public static bool ConvertConfigFile(int memberId)
         {
             var title = "Config file";
             var filter = "Xml file | *.xml";

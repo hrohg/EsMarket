@@ -127,7 +127,7 @@ namespace ES.Market.Views.Reports.View
         //    if (dateIntermediate == null) return;
 
         //    var invoices = InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2)
-        //            .Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).ToList();
+        //            .Where(s => s.InvoiceTypeId == (short)InvoiceType.SaleInvoice).ToList();
 
         //    if (!invoices.Any())
         //    {

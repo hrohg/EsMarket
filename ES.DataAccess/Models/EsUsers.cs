@@ -18,42 +18,40 @@ namespace ES.DataAccess.Models
         {
             this.AccountingRecords = new HashSet<AccountingRecords>();
             this.AccountsReceivable = new HashSet<AccountsReceivable>();
+            this.EsStock = new HashSet<EsStock>();
             this.Invoices = new HashSet<Invoices>();
             this.Invoices1 = new HashSet<Invoices>();
             this.Invoices2 = new HashSet<Invoices>();
             this.MemberUsersRoles = new HashSet<MemberUsersRoles>();
             this.Partners = new HashSet<Partners>();
-            this.ProductItems = new HashSet<ProductItems>();
             this.ProductOrder = new HashSet<ProductOrder>();
             this.ProductOrder1 = new HashSet<ProductOrder>();
             this.ProductOrderItems = new HashSet<ProductOrderItems>();
             this.Products = new HashSet<Products>();
             this.SaleInCash = new HashSet<SaleInCash>();
-            this.EsStock = new HashSet<EsStock>();
         }
     
-        public long UserId { get; set; }
+        public int UserId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
         public string Mobile { get; set; }
         public bool IsActive { get; set; }
         public System.DateTime LastActivityDate { get; set; }
-        public string ClubSixteenId { get; set; }
+        public string EssClubId { get; set; }
     
         public virtual ICollection<AccountingRecords> AccountingRecords { get; set; }
         public virtual ICollection<AccountsReceivable> AccountsReceivable { get; set; }
+        public virtual ICollection<EsStock> EsStock { get; set; }
         public virtual ICollection<Invoices> Invoices { get; set; }
         public virtual ICollection<Invoices> Invoices1 { get; set; }
         public virtual ICollection<Invoices> Invoices2 { get; set; }
         public virtual ICollection<MemberUsersRoles> MemberUsersRoles { get; set; }
         public virtual ICollection<Partners> Partners { get; set; }
-        public virtual ICollection<ProductItems> ProductItems { get; set; }
         public virtual ICollection<ProductOrder> ProductOrder { get; set; }
         public virtual ICollection<ProductOrder> ProductOrder1 { get; set; }
         public virtual ICollection<ProductOrderItems> ProductOrderItems { get; set; }
         public virtual ICollection<Products> Products { get; set; }
         public virtual ICollection<SaleInCash> SaleInCash { get; set; }
-        public virtual ICollection<EsStock> EsStock { get; set; }
     }
 }

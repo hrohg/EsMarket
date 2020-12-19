@@ -7,6 +7,7 @@ using ES.Common.Helpers;
 using ES.Data.Models;
 using UserControls.Helpers;
 using UserControls.Models;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 
 namespace UserControls.ViewModels.Reports
 {

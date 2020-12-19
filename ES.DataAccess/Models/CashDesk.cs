@@ -20,11 +20,11 @@ namespace ES.DataAccess.Models
         }
     
         public System.Guid Id { get; set; }
-        public long MemberId { get; set; }
+        public int MemberId { get; set; }
         public decimal Total { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string Notes { get; set; }
+        public string Note { get; set; }
         public bool IsCash { get; set; }
         public bool IsActive { get; set; }
     

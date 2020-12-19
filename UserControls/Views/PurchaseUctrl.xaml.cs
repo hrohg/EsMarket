@@ -5,8 +5,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Common;
-using ES.Data.Model;
 using ES.Common;
+using ES.Data.Models;
 using UserControls.ViewModels.Invoices;
 
 namespace UserControls.Views

@@ -60,7 +60,7 @@ namespace ES.Data.Models.EsModels
         public string Logo { get; set; }
         public bool IsActive { get; set; }
         public DateTime LastModificationDate { get; set; }
-        public long LastModifierId { get; set; }
+        public int LastModifierId { get; set; }
         #endregion External properties
 
         #region Constructors

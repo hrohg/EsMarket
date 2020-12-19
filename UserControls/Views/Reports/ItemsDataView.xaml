@@ -3,7 +3,8 @@
                     xmlns:reports="clr-namespace:UserControls.ViewModels.Reports"
                     xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data"
                     xmlns:helpers="clr-namespace:Shared.Helpers;assembly=Shared"
-                    xmlns:reports1="clr-namespace:ES.Data.Models.Reports;assembly=ES.Data">
+                    xmlns:reports1="clr-namespace:ES.Data.Models.Reports;assembly=ES.Data"
+                    xmlns:products="clr-namespace:ES.Data.Models.Products;assembly=ES.Data">
 
     <DataTemplate DataType="{x:Type reports:FallowProductsViewModel}">
         <Grid>
@@ -16,49 +17,49 @@
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Կոդ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
                                 <TextBlock Text="{Binding Code}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
                                 <TextBlock Text="{Binding Description}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Չմ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
-                                <TextBlock Text="{Binding Mu}" FontSize="18"/>
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
+                                <TextBlock Text="{Binding Mu, Mode=OneWay}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn  Header="Առկա քանակ" Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:EsProductModel}">
+                            <DataTemplate DataType="{x:Type products:EsProductModel}">
                                 <TextBlock Text="{Binding Path=ExistingQuantity, StringFormat={}{0:#,#.##}}" Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn  Header="Գին" Width="Auto" CanUserSort="True" SortMemberPath="Price">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:EsProductModel}">
+                            <DataTemplate DataType="{x:Type products:EsProductModel}">
                                 <TextBlock Text="{Binding Path=Price, StringFormat={}{0:#,#.##}}" Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Մատակարար" CanUserSort="True" CanUserReorder="True" SortMemberPath="Provider.FullName">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
                                 <TextBlock Text="{Binding Provider.FullName}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Նշումներ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
                                 <TextBlock Text="{Binding Note}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -83,35 +84,35 @@
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Կոդ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Code">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
                                 <TextBlock Text="{Binding Code}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
                                 <TextBlock Text="{Binding Description}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Չմ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Mu">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
-                                <TextBlock Text="{Binding Mu}" FontSize="18"/>
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
+                                <TextBlock Text="{Binding Mu, Mode=OneWay}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn  Header="Առկա քանակ" Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:EsProductModel}">
+                            <DataTemplate DataType="{x:Type products:EsProductModel}">
                                 <TextBlock Text="{Binding Path=ExistingQuantity, StringFormat={}{0:#,#.##}}" Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Նշումներ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Note">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
                                 <TextBlock Text="{Binding Note}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -136,35 +137,35 @@
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Կոդ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Code">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
                                 <TextBlock Text="{Binding Code}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
                                 <TextBlock Text="{Binding Description}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Չմ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Mu">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
-                                <TextBlock Text="{Binding Mu}" FontSize="18"/>
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
+                                <TextBlock Text="{Binding Mu, Mode=OneWay}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn  Header="Առկա քանակ" Width="Auto" CanUserSort="True" SortMemberPath="ExistingQuantity">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:EsProductModel}">
+                            <DataTemplate DataType="{x:Type products:EsProductModel}">
                                 <TextBlock Text="{Binding Path=ExistingQuantity, StringFormat={}{0:#,#.##}}" Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Նշումներ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Note">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
                                 <TextBlock Text="{Binding Note}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -189,29 +190,29 @@
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Կոդ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Code">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
                                 <TextBlock Text="{Binding Code}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
                                 <TextBlock Text="{Binding Description}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Չմ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Mu">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
-                                <TextBlock Text="{Binding Mu}" FontSize="18"/>
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
+                                <TextBlock Text="{Binding Mu, Mode=OneWay}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     
                     <DataGridTemplateColumn  Header="Նախորդ գին" Width="Auto" CanUserSort="True" SortMemberPath="OldPrice">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:EsProductModel}">
+                            <DataTemplate DataType="{x:Type products:EsProductModel}">
                                 <TextBlock Text="{Binding Path=OldPrice, StringFormat={}{0:#,#.##}}" 
                                            Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
                             </DataTemplate>
@@ -219,28 +220,28 @@
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn  Header="Նոր գին" Width="Auto" CanUserSort="True" SortMemberPath="Price">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:EsProductModel}">
+                            <DataTemplate DataType="{x:Type products:EsProductModel}">
                                 <TextBlock Text="{Binding Path=Price, StringFormat={}{0:#,#.##}}" Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn  Header="Փոփոխվել է" Width="Auto" CanUserSort="True" SortMemberPath="LastModifiedDate">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:EsProductModel}">
+                            <DataTemplate DataType="{x:Type products:EsProductModel}">
                                 <TextBlock Text="{Binding Path=LastModifiedDate, StringFormat={}{0:dd.MM.yyyy}}" Foreground="{Binding ProductCountHighlighthing, Mode=OneWay}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Մատակարար" CanUserSort="True" CanUserReorder="True" SortMemberPath="Provider.FullName">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
                                 <TextBlock Text="{Binding Provider.FullName}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Նշումներ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Note">
                         <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type models:ProductModel}">
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
                                 <TextBlock Text="{Binding Note}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -280,7 +281,7 @@
                     <DataGridTemplateColumn Header="Չմ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Mu">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type reports1:InvoiceReport}">
-                                <TextBlock Text="{Binding Mu}" FontSize="18"/>
+                                <TextBlock Text="{Binding Mu, Mode=OneWay}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

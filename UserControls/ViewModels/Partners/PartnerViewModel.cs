@@ -201,7 +201,7 @@ namespace UserControls.ViewModels.Partners
         public ICommand GenerateLocalIdCommand { get { return _generateLocalIdCommand ?? (_generateLocalIdCommand = new RelayCommand(OnGenerateLocalId, CanGenerateLocalId)); } }
         private bool CanGenerateLocalId(object obj)
         {
-            return Partner != null && string.IsNullOrEmpty(Partner.ClubSixteenId);
+            return Partner != null && string.IsNullOrEmpty(Partner.CardNumber);
         }
         private void OnGenerateLocalId(object obj)
         {
@@ -215,7 +215,7 @@ namespace UserControls.ViewModels.Partners
             //Partner code
             var code4 = "3741";
             //var checkSum = BarCodeGenerator.CalculateChecksumDigit(string.Format("{0},{1},{2}", code1, code2, code3));
-            Partner.ClubSixteenId = string.Format("{0}{1}{2}{3}", code1, code2, code3, code4);
+            Partner.CardNumber = string.Format("{0}{1}{2}{3}", code1, code2, code3, code4);
         }
 
         private ICommand _synPartnerCommand;
@@ -223,12 +223,12 @@ namespace UserControls.ViewModels.Partners
 
         private bool CanSync(object obj)
         {
-            return Partner != null && !string.IsNullOrEmpty(Partner.ClubSixteenId);
+            return Partner != null && !string.IsNullOrEmpty(Partner.CardNumber);
         }
 
         private void OnSync(object obj)
         {
-            Partner.ClubSixteenId = null;
+            Partner.CardNumber = null;
         }
 
         private ICommand _importCommand;
@@ -252,7 +252,7 @@ namespace UserControls.ViewModels.Partners
                 partner.MaxDebit = 0;
 
                 var expartner = Partners.FirstOrDefault(s =>
-                        (!string.IsNullOrEmpty(partner.ClubSixteenId) && s.ClubSixteenId == partner.ClubSixteenId) ||
+                        (!string.IsNullOrEmpty(partner.CardNumber) && s.CardNumber == partner.CardNumber) ||
                         (!string.IsNullOrEmpty(partner.Email) && s.Email == partner.Email) ||
                         s.FullName == partner.FullName);
                 if (expartner == null)

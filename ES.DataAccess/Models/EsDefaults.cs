@@ -18,6 +18,6 @@ namespace ES.DataAccess.Models
         public string Control { get; set; }
         public Nullable<System.Guid> ValueInGuid { get; set; }
         public Nullable<long> ValueInLong { get; set; }
-        public long MemberId { get; set; }
+        public int MemberId { get; set; }
     }
 }

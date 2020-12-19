@@ -23,10 +23,10 @@ namespace ES.DataAccess.Models
         public System.DateTime RegisterDate { get; set; }
         public string Description { get; set; }
         public decimal Amount { get; set; }
-        public long Debit { get; set; }
-        public long Credit { get; set; }
-        public long MemberId { get; set; }
-        public long RegisterId { get; set; }
+        public short Debit { get; set; }
+        public short Credit { get; set; }
+        public int MemberId { get; set; }
+        public int RegisteredId { get; set; }
         public Nullable<System.Guid> DebitGuidId { get; set; }
         public Nullable<System.Guid> CreditGuidId { get; set; }
         public Nullable<long> DebitLongId { get; set; }

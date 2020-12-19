@@ -13,7 +13,7 @@ namespace ES.Business.Managers
         {
             return TryGetEsDefaults();
         }
-        public static long? GetDefaultValueLong(string control, long memberId)
+        public static long? GetDefaultValueLong(string control, int memberId)
         {
             var defaultControl = TryGetEsDefault(control);
             if (defaultControl == null) return null;
@@ -31,6 +31,7 @@ namespace ES.Business.Managers
             return TrySetDefault(control, valueInInt, valueInGuid);
         }
         #endregion
+
         #region private properties
         private static List<EsDefaults> TryGetEsDefaults()
         {

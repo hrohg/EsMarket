@@ -20,14 +20,14 @@ namespace ES.DataAccess.Models
         }
     
         public System.Guid Id { get; set; }
-        public long MemberId { get; set; }
-        public Nullable<long> StockId { get; set; }
+        public int MemberId { get; set; }
+        public Nullable<short> StockId { get; set; }
         public System.DateTime CreateDate { get; set; }
         public Nullable<System.DateTime> ClosedDate { get; set; }
-        public Nullable<long> StockTakeNumber { get; set; }
-        public long CreatorId { get; set; }
-        public Nullable<long> ModifierId { get; set; }
-        public Nullable<long> CloserId { get; set; }
+        public Nullable<int> StockTakeNumber { get; set; }
+        public int CreatorId { get; set; }
+        public Nullable<int> ModifierId { get; set; }
+        public Nullable<int> CloserId { get; set; }
         public string Description { get; set; }
     
         public virtual ICollection<StockTakeItems> StockTakeItems { get; set; }

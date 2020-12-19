@@ -239,8 +239,7 @@ namespace ES.Business.Managers
             exItem.Barcode = item.Barcode;
             exItem.HCDCS = item.HCDCS;
             exItem.Description = item.Description;
-            exItem.Mu = item.Mu;
-            exItem.IsWeight = item.IsWeight;
+            exItem.MeasureOfunitId = item.MeasureOfUnitsId;
             exItem.Note = item.Note;
             exItem.CostPrice = item.CostPrice;
             exItem.OldPrice = item.OldPrice;
@@ -250,7 +249,6 @@ namespace ES.Business.Managers
             exItem.DealerDiscount = item.DealerDiscount;
             exItem.MinQuantity = item.MinQuantity;
             exItem.ExpiryDays = item.ExpiryDays;
-            exItem.ImagePath = item.ImagePath;
             exItem.IsEnable = item.IsEnable;
             exItem.BrandId = item.BrandId;
             exItem.EsMemberId = item.EsMemberId;
@@ -258,7 +256,7 @@ namespace ES.Business.Managers
             return exItem;
         }
 
-        private static Products Convert(ESSharedProducts item, long userId, long memberId)
+        private static Products Convert(ESSharedProducts item, int userId, int memberId)
         {
             if (item == null) return null;
             var exItem = new Products();
@@ -267,8 +265,7 @@ namespace ES.Business.Managers
             exItem.Barcode = item.Barcode;
             exItem.HCDCS = item.HCDCS;
             exItem.Description = item.Description;
-            exItem.Mu = item.Mu;
-            exItem.IsWeight = item.IsWeight;
+            exItem.MeasureOfUnitsId = item.MeasureOfunitId;
             exItem.Note = item.Note;
             exItem.CostPrice = item.CostPrice;
             exItem.OldPrice = item.OldPrice;
@@ -278,7 +275,6 @@ namespace ES.Business.Managers
             exItem.DealerDiscount = item.DealerDiscount;
             exItem.MinQuantity = item.MinQuantity;
             exItem.ExpiryDays = item.ExpiryDays;
-            exItem.ImagePath = item.ImagePath;
             exItem.IsEnable = item.IsEnable ?? true;
             exItem.BrandId = item.BrandId;
             exItem.BrandId = item.BrandId;
@@ -290,7 +286,7 @@ namespace ES.Business.Managers
         #endregion
 
         #region Internal methods
-        private static bool TryDownloadMemberData(long memberId)
+        private static bool TryDownloadMemberData(int memberId)
         {
             var server = SelectItemsManager.SelectServer(DataServerSettings.GetDataServers());
             if (server == null) return false;
@@ -308,9 +304,8 @@ namespace ES.Business.Managers
                         exMember = new EsMembers { Id = memberId };
                         db.EsMembers.Add(exMember);
                     }
-                    exMember.FullName = memberOnServer.FullName;
-                    exMember.Email = memberOnServer.Email;
-                    exMember.ClubSixteenId = memberOnServer.ClubSixteenId;
+                    exMember.Name = memberOnServer.Name;
+                    exMember.ContractNumber = memberOnServer.ContractNumber;
 
                     db.SaveChanges();
                     #endregion
@@ -323,7 +318,7 @@ namespace ES.Business.Managers
                 return true;
             }
         }
-        private static bool TryDownloadUserData(long memberId)
+        private static bool TryDownloadUserData(int memberId)
         {
             var server = SelectItemsManager.SelectServer(DataServerSettings.GetDataServers());
             if (server == null) return false;
@@ -349,7 +344,7 @@ namespace ES.Business.Managers
                         exUser.Password = userOnServer.Password;
                         exUser.Mobile = userOnServer.Mobile;
                         exUser.Email = userOnServer.Email;
-                        exUser.ClubSixteenId = userOnServer.ClubSixteenId;
+                        exUser.EssClubId = userOnServer.EssClubId;
                         exUser.LastActivityDate = userOnServer.LastActivityDate;
                         exUser.IsActive = userOnServer.IsActive;
                     }
@@ -409,7 +404,7 @@ namespace ES.Business.Managers
                 return true;
             }
         }
-        private static bool TryDownloadMemberBaseData(long memberId)
+        private static bool TryDownloadMemberBaseData(int memberId)
         {
             using (var db = GetDataContext())
             {
@@ -451,12 +446,12 @@ namespace ES.Business.Managers
                                 Name = item.Name,
                                 Description = item.Description
                             };
-                            
-                            db.EsInvoiceTypes.Add(exItem); 
+
+                            db.EsInvoiceTypes.Add(exItem);
                             db.SaveChanges();
                         }
                     }
-                   
+
                     MessageManager.OnMessage("Ապրանքագրերի տեսակները բեռնվել են հաջողությամբ:");
                     #endregion Download Invoice types
 
@@ -504,6 +499,39 @@ namespace ES.Business.Managers
                     }
                     db.SaveChanges();
                     #endregion Download roles
+
+                    #region Update mesure of units of products
+                    var measureOfUnits = dbServer.EsmMeasureOfUnits;
+                    foreach (var item in measureOfUnits)
+                    {
+                        var exItem = db.EsmMeasureOfUnits.SingleOrDefault(s => s.Id == item.Id);
+                        if (exItem == null)
+                        {
+                            exItem = new EsmMeasureOfUnits
+                            {
+                                Id = item.Id,
+                                Code = item.Code,
+                                Name = item.Name,
+                                Ratio = item.Ratio,
+                                IsWeight = item.IsWeight,
+                                GroupId = item.GroupId,
+                                DisplayOrder = item.DisplayOrder
+                            };
+                            db.EsmMeasureOfUnits.Add(exItem);
+                        }
+                        else
+                        {
+                            exItem.Code = item.Code;
+                            exItem.Name = item.Name;
+                            exItem.Ratio = item.Ratio;
+                            exItem.IsWeight = item.IsWeight;
+                            exItem.GroupId = item.GroupId;
+                            exItem.DisplayOrder = item.DisplayOrder;
+                        }
+                    }
+                    db.SaveChanges();
+
+                    #endregion Update mesure of units of products
                 }
                 catch (Exception ex)
                 {
@@ -514,7 +542,7 @@ namespace ES.Business.Managers
                 return true;
             }
         }
-        private static bool TrySyncronizeMemberBaseData(long memberId)
+        private static bool TrySyncronizeMemberBaseData(int memberId)
         {
             using (var db = GetDataContext())
             {
@@ -543,7 +571,7 @@ namespace ES.Business.Managers
                             userOnServer.Email = user.Email;
                             userOnServer.Mobile = user.Mobile;
                             userOnServer.LastActivityDate = user.LastActivityDate;
-                            userOnServer.ClubSixteenId = user.ClubSixteenId;
+                            userOnServer.EssClubId = user.EssClubId;
                         }
                         else
                         {
@@ -553,7 +581,7 @@ namespace ES.Business.Managers
                             user.Mobile = userOnServer.Mobile;
                             user.IsActive = userOnServer.IsActive;
                             user.LastActivityDate = userOnServer.LastActivityDate;
-                            user.ClubSixteenId = userOnServer.ClubSixteenId;
+                            user.EssClubId = userOnServer.EssClubId;
                         }
                     }
                     dbServer.SaveChanges();
@@ -683,7 +711,7 @@ namespace ES.Business.Managers
                     //}
                     //db.SaveChanges();
                     #endregion
-                    
+
                     //Disabled
                     #region Syncronize Default data
                     //var defaults = dbServer.EsDefaults.Where(s => s.MemberId == memberId);
@@ -818,7 +846,7 @@ namespace ES.Business.Managers
                     return false;
             }
         }
-        
+
         public static void SyncronizeProducts()
         {
             MessageManager.OnMessage("Տվյալների համաժամանակեցումն սկսված է։", MessageTypeEnum.Success);

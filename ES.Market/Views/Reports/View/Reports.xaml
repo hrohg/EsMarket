@@ -69,13 +69,6 @@
                                 </MultiBinding>
                             </MenuItem.IsEnabled>
                         </MenuItem>
-                        <MenuItem Header="Պատվիրատուների (ըստ խմբերի)" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartnerType}">
-                            <MenuItem.IsEnabled>
-                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
-                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
-                                </MultiBinding>
-                            </MenuItem.IsEnabled>
-                        </MenuItem>
                         <MenuItem Header="Վաճառք 0 - ական" 
                               Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByZeroAmunt}">
                             <MenuItem.IsEnabled>
@@ -117,6 +110,14 @@
                     </MenuItem>
                     <MenuItem Header="Դիտում մանրամասն" Command="{Binding ViewPurchaseCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByDetiles}">
 
+                    </MenuItem>
+
+                    <MenuItem Header="Ըստ Մատակարարների" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByProvider}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                     </MenuItem>
                 </MenuItem>
 
@@ -175,6 +176,14 @@
                     <MenuItem Header="Բաժինների մնացորդի ստուգում"
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
                                   Command="{Binding CheckProductsRemainderForStockCommand}"/>
+                    <MenuItem Header="Խմբագրման պատմություն" Command="{Binding ViewProductsLogCommand}" Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Admin}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorManager}"/>
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
+                    </MenuItem>
                 </MenuItem>
 
                 <MenuItem Header="Գնորդ">

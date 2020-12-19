@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -11,6 +12,7 @@ using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Data.Models;
+using ES.Data.Models.Products;
 using Shared.Helpers;
 using UserControls.Helpers;
 
@@ -50,6 +52,9 @@ namespace UserControls.ViewModels.Reports.Orders
             base.UpdateAsync();
             List<ProductProvider> productProviders;
             List<ProductOrderModel> report;
+
+            Tuple<DateTime, DateTime> dateIntermediate = null;
+
             switch (_productOrderType)
             {
                 case ProductOrderTypeEnum.ByQuantity:
@@ -99,7 +104,7 @@ namespace UserControls.ViewModels.Reports.Orders
 
                     break;
                 case ProductOrderTypeEnum.BySale:
-                    Tuple<DateTime, DateTime> dateIntermediate = null;
+
                     DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () => { dateIntermediate = UIHelper.Managers.SelectManager.GetDateIntermediate(); });
 
                     if (dateIntermediate == null) { UpdateCompleted(false); return; }
@@ -172,6 +177,9 @@ namespace UserControls.ViewModels.Reports.Orders
                     //    _items[i].Index = i;
 
                     break;
+                case ProductOrderTypeEnum.Dynamic:
+                    report = null;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -204,6 +212,146 @@ namespace UserControls.ViewModels.Reports.Orders
             var productOrder = ((FrameworkElement)o).FindVisualChildren<Border>().FirstOrDefault();
             if (productOrder == null) return;
             PrintManager.PrintEx(productOrder);
+        }
+
+        #endregion
+    }
+
+
+
+    public class ProductOrderViewModel : TableViewModel<ProductOrderModelBase>
+    {
+        private ProductOrderTypeEnum _productOrderType;
+        public ProductOrderViewModel(ProductOrderTypeEnum productOrderType)
+        {
+
+            IsShowUpdateButton = true;
+            _productOrderType = productOrderType;
+        }
+
+        #region Internal methods
+
+        protected override void Initialize()
+        {
+            IsClosable = true;
+            Title = "Անհրաժեշտ ապրանքների ցուցակ";
+            base.Initialize();
+            var products = ApplicationManager.CashManager.GetProducts().Where(s => s.MinQuantity != null).ToList();
+            var partners = CashManager.Instance.GetPartners;
+            new Thread(() =>
+            {
+                IsLoading = true;
+                var items = new List<ProductOrderModelBase>();
+                foreach (var productModel in products)
+                {
+                    var providerId = ProductsManager.GetLastProvider(productModel.Id);
+                    items.Add(new ProductOrderModelBase
+                    {
+                        ProductId = productModel.Id,
+                        Product = productModel,
+                        Provider = partners.SingleOrDefault(s => s.Id == providerId)
+                    });
+                }
+
+                FillItems(items);
+                IsLoading = false;
+            }).Start();
+        }
+
+        private void FillItems(List<ProductOrderModelBase> items)
+        {
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
+            {
+                foreach (var item in items)
+                {
+                    Items.Add(item);
+                }
+            });
+        }
+        private List<ProductOrderModelBase> GetViewItems()
+        {
+            return View.View.OfType<ProductOrderModelBase>().ToList();
+        }
+        protected override void UpdateAsync()
+        {
+            base.UpdateAsync();
+            List<ProductProvider> productProviders;
+            List<ProductOrderModel> report;
+
+            Tuple<DateTime, DateTime> dateIntermediate = null;
+
+            switch (_productOrderType)
+            {
+                case ProductOrderTypeEnum.ByQuantity:
+                    break;
+                case ProductOrderTypeEnum.BySale:
+                    break;
+                case ProductOrderTypeEnum.ByProviders:
+                    break;
+                case ProductOrderTypeEnum.ByBrands:
+                    break;
+                case ProductOrderTypeEnum.ViewPartners:
+                    break;
+                case ProductOrderTypeEnum.Dynamic:
+                    List<ProductOrderModelBase> productOrders = null;
+                    DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+                    {
+                        dateIntermediate = UIHelper.Managers.SelectManager.GetDateIntermediate();
+                        if (dateIntermediate == null) { UpdateCompleted(false); return; }
+                        Title = Description = string.Format("Պատվեր (ինքնուրույն) {0} - {1}", dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
+                        productOrders = GetViewItems();
+                    });
+
+                    productOrders = ProductOrderManager.GetSaleQuantity(productOrders, dateIntermediate.Item1.Date, dateIntermediate.Item2.Date);
+                    //foreach (var productOrderModelBase in productOrders)
+                    //{
+                    //    if (productOrderModelBase == null) continue;
+                    //    var item = Items.Single(s => s.ProductId == productOrderModelBase.ProductId);
+                    //    productOrderModelBase.SaleQuantity = item.SaleQuantity;
+                    //}
+
+                    UpdateView();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            UpdateCompleted(true);
+        }
+
+        private void UpdateView()
+        {
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
+            {
+                RaisePropertyChanged("ViewList");
+                RaisePropertyChanged("TotalRows");
+                RaisePropertyChanged("TotalCount");
+                RaisePropertyChanged("Total");
+                RaisePropertyChanged("View");
+                View.View.Refresh();
+            });
+        }
+
+        protected override bool CanExport(ExportImportEnum o)
+        {
+            return GetViewItems().Any();
+        }
+
+        protected override void OnExport(ExportImportEnum o)
+        {
+            base.OnExport(o);
+            var list = GetViewItems();
+            ExcelExportManager.Export(list);
+        }
+
+        protected override bool CanPrint(object o)
+        {
+            return base.CanPrint(o) && GetViewItems().Any();
+        }
+
+        protected override void OnPrint(object o)
+        {
+            base.OnPrint(o);
+            PrintManager.Print(GetViewItems());
         }
 
         #endregion

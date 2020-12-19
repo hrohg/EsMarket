@@ -20,21 +20,21 @@ namespace ES.DataAccess.Models
         }
     
         public System.Guid Id { get; set; }
-        public long MemberId { get; set; }
-        public long InvoiceTypeId { get; set; }
+        public int MemberId { get; set; }
+        public short InvoiceTypeId { get; set; }
         public long InvoiceIndex { get; set; }
         public string CashReceiptId { get; set; }
         public string InvoiceNumber { get; set; }
-        public Nullable<long> FromStockId { get; set; }
-        public Nullable<long> ToStockId { get; set; }
-        public long CreatorId { get; set; }
+        public Nullable<short> FromStockId { get; set; }
+        public Nullable<short> ToStockId { get; set; }
+        public int CreatorId { get; set; }
         public string Creator { get; set; }
         public System.DateTime CreateDate { get; set; }
         public Nullable<System.DateTime> ApproveDate { get; set; }
-        public Nullable<long> ApproverId { get; set; }
+        public Nullable<int> ApproverId { get; set; }
         public string Approver { get; set; }
         public Nullable<System.DateTime> AcceptDate { get; set; }
-        public Nullable<long> AccepterId { get; set; }
+        public Nullable<int> AccepterId { get; set; }
         public string Accepter { get; set; }
         public Nullable<System.Guid> PartnerId { get; set; }
         public string ProviderName { get; set; }
@@ -53,13 +53,13 @@ namespace ES.DataAccess.Models
         public decimal Summ { get; set; }
         public string Notes { get; set; }
     
+        public virtual EsInvoiceTypes EsInvoiceTypes { get; set; }
         public virtual EsMembers EsMembers { get; set; }
+        public virtual EsStock EsStock { get; set; }
+        public virtual EsStock EsStock1 { get; set; }
         public virtual EsUsers EsUsers { get; set; }
         public virtual EsUsers EsUsers1 { get; set; }
         public virtual EsUsers EsUsers2 { get; set; }
         public virtual ICollection<InvoiceItems> InvoiceItems { get; set; }
-        public virtual EsInvoiceTypes EsInvoiceTypes { get; set; }
-        public virtual EsStock EsStock { get; set; }
-        public virtual EsStock EsStock1 { get; set; }
     }
 }

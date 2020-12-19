@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Xml.Serialization;
 using ES.Data.Enumerations;
-using ES.Data.Model;
 
 namespace ES.Data.Models
 {
@@ -11,11 +10,9 @@ namespace ES.Data.Models
     {
         #region EsUserModel properties
 
-        private const string IdProperty = "Id";
         private const string EsMemberIdProperty = "EsMemberId";
         private const string PartnersTypeIdProperty = "PartnerTypeId";
-        private const string EsUserIdProperty = "EsUserId";
-        private const string ClubSixteenIdProperty = "ClubSixteenId";
+        private const string CardNumberProperty = "CardNumber";
         private const string FullNameProperty = "FullName";
         private const string FirstnameProperty = "Firstname";
         private const string LastNameProperty = "LastName";
@@ -40,12 +37,12 @@ namespace ES.Data.Models
         /// 
         #region Private properties
         private Guid _id=Guid.NewGuid();
-        private long _esMemberId;
-        private long? _partnersTypeId;
+        private int _esMemberId;
+        private short? _partnersTypeId;
         private PartnerTypeModel _partnerType;
-        private long? _esUserId;
+        private int? _esUserId;
         private EsUserModel _esUser;
-        private string _clubSixteenId;
+        private string _cardNumber;
         private string _fullName;
         private string _firstName;
         private string _lastName;
@@ -76,10 +73,10 @@ namespace ES.Data.Models
             set { _id = value; }
         }
         [XmlIgnore]
-        public long EsMemberId {get { return _esMemberId; } set {_esMemberId= value; OnPropertyChanged(EsMemberIdProperty); }}
+        public int EsMemberId {get { return _esMemberId; } set {_esMemberId= value; OnPropertyChanged(EsMemberIdProperty); }}
         [XmlIgnore]
         public EsMemberModel EsMember { get; set; }
-        public long? PartnersTypeId
+        public short? PartnersTypeId
         {
             get { return _partnersTypeId; }
             set { _partnersTypeId = value; OnPropertyChanged(PartnersTypeIdProperty); }
@@ -92,12 +89,12 @@ namespace ES.Data.Models
         [XmlIgnore]
         public PartnerTypeModel PartnersType { get { return _partnerType; } set { _partnerType = value; } }
 
-        public long? EsUserId { get { return _esUserId; } set { _esUserId = value; } }
+        public int? EsUserId { get { return _esUserId; } set { _esUserId = value; } }
         [XmlIgnore]
         public EsUserModel EsUser { get { return _esUser; } set { _esUser = value; } }
-        public string ClubSixteenId { get { return _clubSixteenId; } set { _clubSixteenId = value; OnPropertyChanged(ClubSixteenIdProperty); OnPropertyChanged("IsRegistered"); } }
+        public string CardNumber { get { return _cardNumber; } set { _cardNumber = value; OnPropertyChanged(CardNumberProperty); OnPropertyChanged("IsRegistered"); } }
         [XmlIgnore]
-        public bool IsRegistered { get { return !string.IsNullOrEmpty(ClubSixteenId); } }
+        public bool IsRegistered { get { return !string.IsNullOrEmpty(CardNumber); } }
         public string FullName{get { return _fullName; }set { _fullName = value; OnPropertyChanged(FullNameProperty); }}
         public string PartnerFull { get {return ((FullName ?? string.Empty) + (FullName ?? string.Empty) + (LastName ?? string.Empty) + (Mobile ?? string.Empty));} }
         [XmlIgnore]
@@ -153,7 +150,7 @@ namespace ES.Data.Models
         {
             
         }
-        public PartnerModel(long memberId)
+        public PartnerModel(int memberId)
         {
             EsMemberId = memberId;
         }

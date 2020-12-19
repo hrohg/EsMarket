@@ -10,6 +10,7 @@ using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
 using Shared.Helpers;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Reports

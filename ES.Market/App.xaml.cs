@@ -11,7 +11,7 @@ using ES.Common;
 using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
-using ES.Data.Model;
+using ES.Data.Models;
 using ES.Login;
 using ES.Market.Config;
 using ES.Market.ViewModels;
@@ -197,7 +197,7 @@ namespace ES.Market
                 var members = MembersManager.GetMembersByUser(esuser.UserId);
                 if (members == null || members.Count == 0)
                 {
-                    MessageManager.ShowMessage("Դուք ոչ մի համակարգում ընդգրկված չեք։ Ընդգրկվելու համար խնդրում ենք դիմել տնօրինություն կամ ծրագրային համակարգի ադմինիստրացիա։");
+                    MessageBox.Show("Դուք ոչ մի համակարգում ընդգրկված չեք։ Ընդգրկվելու համար խնդրում ենք դիմել տնօրինություն կամ ծրագրային համակարգի ադմինիստրացիա։");
                     LoginWindow.ShowDialog();
                 }
                 else
@@ -206,7 +206,7 @@ namespace ES.Market
                     if (members.Any())
                     {
                         ApplicationManager.Instance.SetEsMember = members.Single();
-                        EsExceptionBox.Instance.Company = new Reporter() { Company = ApplicationManager.Instance.GetMember.FullName, User = String.Format("{0} (mobile:{1} mail:{2})", esuser.FullName, esuser.Mobile, esuser.Email) };
+                        EsExceptionBox.Instance.Company = new Reporter() { Company = ApplicationManager.Instance.GetMember.Name, User = String.Format("{0} (mobile:{1} mail:{2})", esuser.FullName, esuser.Mobile, esuser.Email) };
                         Market.ShowDialog();
                     }
                     else

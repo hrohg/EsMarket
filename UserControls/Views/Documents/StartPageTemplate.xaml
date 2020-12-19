@@ -237,6 +237,11 @@
                                                     <TextBlock Text="Հաշվիչ" Style="{StaticResource LinkStyle}"/>
                                                     </Hyperlink>
                                                 </TextBlock>
+                            <TextBlock Margin="0 4 0 0">
+                                <Hyperlink TextDecorations="None" Command="{Binding PriceTagCommand}">
+                                    <TextBlock Text="Գնապիտակ" Style="{StaticResource LinkStyle}"/>
+                                </Hyperlink>
+                            </TextBlock>
                         </StackPanel>
                     </Grid>
                 </Grid>

@@ -15,12 +15,12 @@ namespace ES.DataAccess.Models
     public partial class SubAccountingPlan
     {
         public System.Guid Id { get; set; }
-        public int AccountingPlanId { get; set; }
-        public Nullable<int> SubAccountingPlanId { get; set; }
+        public short AccountingPlanId { get; set; }
+        public Nullable<short> SubAccountingPlanId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Amount { get; set; }
-        public long MemberId { get; set; }
+        public int MemberId { get; set; }
         public bool IsActive { get; set; }
     }
 }

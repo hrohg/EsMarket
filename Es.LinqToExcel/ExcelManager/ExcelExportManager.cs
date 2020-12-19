@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using ES.DataAccess.Models;
+using ES.Data.Models.Products;
 
 
 namespace ES.MsOffice.ExcelManager
 {
     public static class ExcelExportManager
     {
-        public static bool ExportProducts(string filePath, List<Products> products)
+        public static bool ExportProducts(string filePath, List<ProductModel> products)
         {
             using (var xlApp = new ExcelDataContent(filePath))
             {

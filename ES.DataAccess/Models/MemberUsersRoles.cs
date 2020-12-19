@@ -15,9 +15,9 @@ namespace ES.DataAccess.Models
     public partial class MemberUsersRoles
     {
         public System.Guid Id { get; set; }
-        public long MemberRoleId { get; set; }
-        public long EsUserId { get; set; }
-        public long MemberId { get; set; }
+        public int MemberRoleId { get; set; }
+        public int EsUserId { get; set; }
+        public int MemberId { get; set; }
     
         public virtual EsMembers EsMembers { get; set; }
         public virtual EsUsers EsUsers { get; set; }

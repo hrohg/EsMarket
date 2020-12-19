@@ -5,7 +5,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Common;
-using ES.Data.Model;
 using ES.Common;
 using ES.Common.Managers;
 using ES.Data.Models;
@@ -40,7 +39,7 @@ namespace UserControls.Views
                 return;
             }
             
-            //if( viewModel==null || viewModel.Partner==null) _viewModel.Partner = MembersManager.GetDefaultParner(_member.Id, (long)MembersManager.PartnersTypes.Provider);
+            //if( viewModel==null || viewModel.Partner==null) _viewModel.Partner = MembersManager.GetDefaultParner(_member.Id, (short)MembersManager.PartnersTypes.Provider);
         }
 
         #region Methods
@@ -168,7 +167,7 @@ namespace UserControls.Views
             //if (stocks.Count == 1) { return _viewModel.FromStock = stocks.FirstOrDefault(); }
             //var selectItem = new ControlPanel.Controls.SelectItems(stocks.Select(s => new ControlPanel.Controls.ItemsToSelect { DisplayName = s.FullName, SelectedValue = s.Id }).ToList(), false);
             //if (selectItem.ShowDialog() != true || selectItem.SelectedItems.FirstOrDefault() == null) { return null; }
-            //return stocks.FirstOrDefault(s => (long)selectItem.SelectedItems.FirstOrDefault().SelectedValue == s.Id);
+            //return stocks.FirstOrDefault(s => (short)selectItem.SelectedItems.FirstOrDefault().SelectedValue == s.Id);
         //}
         #endregion
 

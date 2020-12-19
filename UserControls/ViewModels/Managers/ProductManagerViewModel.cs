@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 using CashReg.Helper;
@@ -17,13 +20,15 @@ using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.ViewModels.Base;
-using ES.Data.Models;
 using ES.Data.Models.EsModels;
+using ES.Data.Models.Products;
 using Shared.Helpers;
+using UserControls.ControlPanel.Controls.ExtendedControls;
 using UserControls.PriceTicketControl;
 using UserControls.Helpers;
 using UserControls.PriceTicketControl.Helper;
 using UserControls.PriceTicketControl.ViewModels;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Managers
@@ -37,92 +42,53 @@ namespace UserControls.ViewModels.Managers
 
         #region Product properties
         protected const string ProductProperty = "Product";
-        protected const string ProductsProperty = "Products";
         private const string ChangeProductActivityDescriptionProperty = "ChangeProductActivityDescription";
-        protected const string ProductGroupDescriptionProperty = "ProductGroupDescription";
+        protected const string ProductKeysDescriptionProperty = "ProductKeysDescription";
         #endregion
 
         #region Private properties
-        protected long MemberId { get { return ApplicationManager.Instance.GetMember.Id; } }
-        protected long UserId { get { return ApplicationManager.GetEsUser.UserId; } }
+        protected int MemberId { get { return ApplicationManager.Instance.GetMember.Id; } }
+        protected int UserId { get { return ApplicationManager.GetEsUser.UserId; } }
+        //todo
+        protected ObservableCollection<ProductModel> _productItems;
         private ProductModel _product;
-        Timer _timer;
+
         private ProductModel _productOnBufer;
         private ProductViewType _viewType;
+        Timer _timer;
         #endregion
 
         #region External properties
+        public List<EsmMeasureUnitModel> MeasureOfUnits { get; private set; }
+        public CollectionViewSource ProductsSource { get; private set; }
         public ProductModel Product
         {
             get { return _product ?? new ProductModel(ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId, true); }
             set
             {
                 if (value == _product) return;
-                _product = ProductsManager.CopyProduct(value);
+                if (value == null) { _product = null; }
+                else
+                {
+                    _product = value.Clone() as ProductModel;
+                }
                 RaisePropertyChanged(ProductProperty);
                 RaisePropertyChanged(ChangeProductActivityDescriptionProperty);
-                RaisePropertyChanged(ProductGroupDescriptionProperty);
+                RaisePropertyChanged(ProductKeysDescriptionProperty);
                 RaisePropertyChanged("EditProductStage");
             }
         }
-
         public IList SelectedProducts
         {
             get { return _selectedProducts; }
-            set { _selectedProducts = value; OnSelectedProductsChanged(); }
-        }
-
-        public SelectionMode SelectionMode { get { return SelectedProducts.Count > 1 ? SelectionMode.Multiple : SelectionMode.Single; } }
-        public bool IsSingleModeSelected { get { return SelectedProducts.Count <= 1; } }
-        private List<ProductModel> _products;
-        public List<ProductModel> Products
-        {
-            get
+            set
             {
-                //var sortDescriptions = _products != null ? CollectionViewSource.GetDefaultView(_products).SortDescriptions : SortDescriptionCollection.Empty;
-                _products = _viewType != ProductViewType.ByPasive ? CashManager.Instance.GetProducts() : ProductsManager.GetProducts(false);
-                if (!string.IsNullOrEmpty(FilterText))
-                {
-                    _products = _products.Where(s =>
-                            (s.Code + s.Barcode + s.Description + s.Price + s.CostPrice + s.Note).ToLower()
-                            .Contains(FilterText.ToLower())
-                            || s.ProductGroups.Any(t => t.Barcode.ToLower().Contains(FilterText.ToLower()))).ToList();
-                }
-
-                switch (_viewType)
-                {
-                    case ProductViewType.All:
-                        break;
-                    case ProductViewType.ByActive:
-                        _products = _products.Where(s => s.IsEnabled).ToList();
-                        break;
-                    case ProductViewType.ByPasive:
-                        _products = _products.Where(s => !s.IsEnabled).ToList();
-                        break;
-                    case ProductViewType.ByEmpty:
-                        _products = _products.Where(s => s.ExistingQuantity == 0).ToList();
-                        break;
-                    case ProductViewType.ByBrands:
-                        _products = _products.OrderBy(s => s.Brand.Name).ToList();
-                        break;
-                    case ProductViewType.ByActivity:
-                        break;
-                    case ProductViewType.WeigthsOnly:
-                        _products = _products.Where(s => s.IsWeight != null && (bool)s.IsWeight).ToList();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-                //if (sortDescriptions != null)
-                //    foreach (var sortDescription in sortDescriptions)
-                //    {
-                //        CollectionViewSource.GetDefaultView(_products).SortDescriptions.Add(sortDescription);
-                //    }
-
-                return _products;
+                _selectedProducts = value; OnSelectedProductsChanged();
             }
-
         }
+        public SelectionMode SelectionMode { get { return SelectedProducts != null && SelectedProducts.Count > 1 ? SelectionMode.Multiple : SelectionMode.Single; } }
+        public bool IsSingleModeSelected { get { return SelectedProducts != null && SelectedProducts.Count <= 1; } }
+
         #region Filter
         private string _filterText;
         private IList _selectedProducts = new List<object>();
@@ -142,20 +108,33 @@ namespace UserControls.ViewModels.Managers
             }
         }
         #endregion Filter
-        public string ProductGroupDescription
+        public string ProductKeysDescription
         {
             get
             {
-                return Product != null && Product.ProductGroups != null ? " " + Product.ProductGroups.Aggregate(string.Empty, (current, group) => current + (string.Format(" {0};", group.Barcode))).Trim() : string.Empty;
+                var productKeyDescription = "";
+                if (Product.ProductKeys != null)
+                    foreach (var productProductKey in Product.ProductKeys)
+                    {
+                        if (!string.IsNullOrEmpty(productKeyDescription)) productKeyDescription += "; ";
+                        productKeyDescription += productProductKey.ProductKey;
+                    }
+                return productKeyDescription;
             }
             set
             {
                 if (Product == null) { return; }
                 var separators = new[] { @" ", ",", ";" };
-                Product.ProductGroups = !string.IsNullOrEmpty(value)
-                    ? value.Split(separators, StringSplitOptions.RemoveEmptyEntries).Select(s =>
-                        new ProductGroupModel { ProductId = Product.Id, MemberId = (int)Product.EsMemberId, Barcode = s }).ToList()
-                    : null;
+                Product.ProductKeys = new List<ProductKeysModel>();
+                if (!string.IsNullOrEmpty(value))
+                {
+                    var keys = value.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var keyValue in keys)
+                    {
+                        if (Product.ProductKeys.Any(s => s.ProductKey == keyValue)) continue;
+                        Product.ProductKeys.Add(new ProductKeysModel { Id = Guid.NewGuid(), ProductId = Product.Id, ProductKey = keyValue.Trim(), MemberId = Product.EsMemberId });
+                    }
+                }
             }
         }
         public bool IsGetProductFromEsServer { get; set; }
@@ -163,7 +142,7 @@ namespace UserControls.ViewModels.Managers
         {
             get
             {
-                return (Product != null && CashManager.Instance.GetProducts().Any(s => s.Id == Product.Id)) || !IsSingleModeSelected ? "Խմբագրել" : "Ավելացնել";
+                return (Product != null && _productItems.Any(s => s.Id == Product.Id)) || !IsSingleModeSelected ? "Խմբագրել" : "Ավելացնել";
                 //return ProductsManager.GetProduct(Id) != null ? "Խմբագրել" : "Ավելացնել";
             }
         }
@@ -171,6 +150,7 @@ namespace UserControls.ViewModels.Managers
 
         #region Constructors
         public ProductManagerViewModelBase()
+            : base()
         {
             Initialize();
         }
@@ -180,11 +160,51 @@ namespace UserControls.ViewModels.Managers
 
         private void Initialize()
         {
+            MeasureOfUnits = ApplicationManager.CashManager.MeasureOfUnits;
+            _productItems = new ObservableCollection<ProductModel>();
+            _productItems.CollectionChanged += OnProductsChanged;
+            ProductsSource = new CollectionViewSource { Source = _productItems };
+            ProductsSource.View.Filter = ProductFilter;
             Title = "Ապրանքների խմբագրում";
             SetCommands();
             LoadProducts();
         }
 
+        private bool ProductFilter(object obj)
+        {
+            var product = obj as ProductModel;
+            if (product == null) return false;
+
+            bool isVisible = true;
+            switch (_viewType)
+            {
+                case ProductViewType.All:
+                    break;
+                case ProductViewType.ByActive:
+                    isVisible = product.IsEnabled;
+                    break;
+                case ProductViewType.ByPasive:
+                    isVisible = !product.IsEnabled;
+                    break;
+                case ProductViewType.ByEmpty:
+                    isVisible = product.ExistingQuantity == 0;
+                    break;
+                case ProductViewType.ByBrands:
+                    break;
+                case ProductViewType.ByActivity:
+                    break;
+                case ProductViewType.WeigthsOnly:
+                    isVisible = product.IsWeight;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            return isVisible && product.HasKey(FilterText);
+        }
+        private void OnProductsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+
+        }
         private void OnSelectedProductsChanged()
         {
             if (!IsSingleModeSelected)
@@ -192,16 +212,12 @@ namespace UserControls.ViewModels.Managers
                 var selectedProducts = SelectedProducts.Cast<ProductModel>().ToList();
                 Product = new ProductModel();
 
-
-
                 var hcdCs = selectedProducts.First().HcdCs;
                 Product.HcdCs = selectedProducts.All(s => s.HcdCs == hcdCs) ? hcdCs : null;
 
-                var mu = selectedProducts.First().Mu;
-                Product.Mu = selectedProducts.All(s => s.Mu == mu) ? mu : null;
-
-                var isWeight = selectedProducts.First().IsWeight;
-                Product.IsWeight = selectedProducts.All(s => s.IsWeight == isWeight) && isWeight;
+                var mu = selectedProducts.First().MeasureUnit;
+                mu = selectedProducts.All(s => s.MeasureUnit != null && mu != null && s.MeasureUnit.Id == mu.Id) ? mu : null;
+                Product.MeasureUnit = mu != null ? MeasureOfUnits.SingleOrDefault(s => s.Id == mu.Id) : null;
 
                 //Prices
                 var costPrice = selectedProducts.First().CostPrice;
@@ -217,9 +233,9 @@ namespace UserControls.ViewModels.Managers
                 var dealerProfitPercent = selectedProducts.First().DealerProfitPercent;
                 Product.DealerProfitPercent = selectedProducts.All(s => s.DealerProfitPercent == dealerProfitPercent) ? dealerProfitPercent : null;
                 var dealerPrice = selectedProducts.First().DealerPrice;
-                Product.Price = selectedProducts.All(s => s.DealerPrice == dealerPrice) ? dealerPrice : null;
+                Product.Price = selectedProducts.All(s => s.HasDealerPrice && s.DealerPrice == dealerPrice) ? dealerPrice : null;
                 var dealerDiscount = selectedProducts.First().DealerDiscount;
-                Product.DealerDiscount = selectedProducts.All(s => s.DealerDiscount == dealerDiscount) ? dealerDiscount : null;
+                Product.DealerDiscount = selectedProducts.All(s => s.HasDealerPrice && s.DealerDiscount == dealerDiscount) ? dealerDiscount : null;
 
                 var minQuantity = selectedProducts.First().MinQuantity;
                 Product.MinQuantity = selectedProducts.All(s => s.MinQuantity == minQuantity) ? minQuantity : null;
@@ -241,7 +257,6 @@ namespace UserControls.ViewModels.Managers
             RaisePropertyChanged("IsSingleModeSelected");
             RaisePropertyChanged("Product");
         }
-
         private void SetCommands()
         {
             EditCommand = new RelayCommand(OnEditProducts, CanEdit);
@@ -251,14 +266,16 @@ namespace UserControls.ViewModels.Managers
             ExportProductsCommand = new RelayCommand<ExportImportEnum>(OnExportProducts, CanExportProducts);
             ExportNewProductsCommand = new RelayCommand<ExportImportEnum>(OnExportNewProducts, CanExportProducts);
             GetProductsCommand = new RelayCommand(GetProductBy);
-            AddProductGroupCommand = new RelayCommand<string>(OnAddProductGroup, CanAddProductGroup);
+            AddProductKeysCommand = new RelayCommand<string>(OnAddProductKeys, CanAddProductKeys);
             //PrintBarcodeCommand = new RelayCommand<PrintPriceTicketEnum?>(PrintPreviewBarcode, CanPrintBarcode);
         }
-
         private void TimerElapsed(object obj)
         {
-            RaisePropertyChanged(ProductsProperty);
             DisposeTimer();
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, (() =>
+            {
+                ProductsSource.View.Refresh();
+            }));
         }
         private void DisposeTimer()
         {
@@ -272,7 +289,15 @@ namespace UserControls.ViewModels.Managers
         {
             new Thread(OnUpdate).Start();
         }
-
+        protected List<ProductModel> GetProducts()
+        {
+            ICollectionView view = null;
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+            {
+                view = ProductsSource.View;
+            });
+            return view.OfType<ProductModel>().ToList();
+        }
         public override void OnUpdate()
         {
             IsLoading = true;
@@ -281,11 +306,15 @@ namespace UserControls.ViewModels.Managers
             DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
             {
                 CompletedUpdate();
-                RaisePropertyChanged(ProductsProperty);
+                _productItems.Clear();
+                foreach (var productModel in CashManager.Instance.GetProducts())
+                {
+                    _productItems.Add(productModel);
+                }
+                ProductsSource.View.Refresh();
                 IsLoading = false;
             });
         }
-
         private void CompletedUpdate()
         {
             Product = _productOnBufer ?? new ProductModel(MemberId, UserId, true);
@@ -294,12 +323,11 @@ namespace UserControls.ViewModels.Managers
         }
         private bool IsProductExist()
         {
-            return (Products.SingleOrDefault(s => s.Id == Product.Id) != null);
+            return (_productItems.Any(s => s.Id == Product.Id));
         }
-
         protected bool IsProductSingle()
         {
-            return Products.Count(s => s.Id == Product.Id && s.Code == Product.Code) == 1;
+            return _productItems.Count(s => s.Id == Product.Id && s.Code == Product.Code) == 1;
         }
         private bool CanGetProduct(object o)
         {
@@ -310,9 +338,9 @@ namespace UserControls.ViewModels.Managers
             if (!CanGetProduct(o)) { return; }
 
             ProductModel product;
-            if (Products.Any(s => s.Code == (string)o))
+            if (_productItems.Any(s => s.Code == (string)o))
             {
-                product = Products.FirstOrDefault(s => s.Code == (string)o);
+                product = _productItems.FirstOrDefault(s => s.Code == (string)o);
             }
             else
             {
@@ -334,7 +362,7 @@ namespace UserControls.ViewModels.Managers
             var code = string.IsNullOrEmpty(Product.Code) ?
                 string.Format("{0}{1}", !ApplicationManager.Settings.SettingsContainer.MemberSettings.UseUnicCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextCode) :
                 Product.Code;
-            while (nextCode > 0 && CashManager.Instance.GetProducts().Any(s => s.Id != Product.Id && (s.Barcode == Product.Barcode || (string.IsNullOrEmpty(Product.Code) && s.Code == code))))
+            while (nextCode > 0 && _productItems.Any(s => s.Id != Product.Id && (s.Barcode == Product.Barcode || (string.IsNullOrEmpty(Product.Code) && s.Code == code))))
             {
                 nextCode--;
                 Product.Barcode = new BarCodeGenerator(nextCode).Barcode;
@@ -367,7 +395,7 @@ namespace UserControls.ViewModels.Managers
         }
         private void ExportProducts(ExportImportEnum exportToFile, int? days = null)
         {
-            var products = days == null ? Products : Products.Where(s => s.LastModifiedDate >= DateTime.Now.AddDays(-days.Value)).ToList();
+            var products = days == null ? GetProducts() : GetProducts().Where(s => s.LastModifiedDate >= DateTime.Now.AddDays(-days.Value)).ToList();
             bool result;
             switch (exportToFile)
             {
@@ -401,18 +429,13 @@ namespace UserControls.ViewModels.Managers
             if (product != null)
             {
                 CashManager.Instance.EditProduct(product);
-                MessageManager.OnMessage(
-                    string.Format("{0} {1} (խմբագրումը հաջողվել է)",
-                        product.Code, product.Description), MessageTypeEnum.Success);
-                product.LastModifiedDate = product.LastModifiedDate;
+                MessageManager.OnMessage(string.Format("{0} {1} (խմբագրումը հաջողվել է)", product.Code, product.Description), MessageTypeEnum.Success);
+                //product.LastModifiedDate = product.LastModifiedDate;
                 return true;
             }
             else
             {
-                MessageManager.OnMessage(
-                    string.Format("{0} {1} (խմբագրումը ձախողվել է)", Product.Code,
-                        Product.Description), MessageTypeEnum.Error);
-                IsLoading = false;
+                MessageManager.OnMessage(string.Format("{0} {1} (խմբագրումը ձախողվել է)", Product.Code, Product.Description), MessageTypeEnum.Error);
                 return false;
             }
         }
@@ -436,25 +459,7 @@ namespace UserControls.ViewModels.Managers
             {
                 return;
             }
-            _productOnBufer = new ProductModel(Product.EsMemberId, Product.LastModifierId, Product.IsEnabled)
-            {
-                Id = Guid.NewGuid(),
-                Code = Product.Code,
-                Barcode = Product.Barcode,
-                Description = Product.Description,
-                Mu = Product.Mu,
-                Note = Product.Note,
-                CostPrice = Product.CostPrice,
-                DealerProfitPercent = Product.DealerProfitPercent,
-                DealerPrice = Product.DealerPrice,
-                DealerDiscount = Product.DealerDiscount,
-                ProfitPercent = Product.ProfitPercent,
-                Price = Product.Price,
-                Discount = Product.Discount,
-                ExpiryDays = Product.ExpiryDays,
-                MinQuantity = Product.MinQuantity,
-                BrandId = Product.BrandId
-            };
+            _productOnBufer = Product.Clone() as ProductModel;
         }
 
         protected virtual void PastProduct(object o)
@@ -463,25 +468,8 @@ namespace UserControls.ViewModels.Managers
             {
                 return;
             }
+            Product = _productOnBufer;
             Product.Id = Guid.NewGuid();
-            Product.Code = _productOnBufer.Code;
-            Product.Barcode = _productOnBufer.Barcode;
-            Product.Description = _productOnBufer.Description;
-            Product.Mu = _productOnBufer.Mu;
-            Product.Note = _productOnBufer.Note;
-            Product.CostPrice = _productOnBufer.CostPrice;
-            Product.DealerProfitPercent = _productOnBufer.DealerProfitPercent;
-            Product.DealerPrice = _productOnBufer.DealerPrice;
-            Product.DealerDiscount = _productOnBufer.DealerDiscount;
-            Product.ProfitPercent = _productOnBufer.ProfitPercent;
-            Product.Price = _productOnBufer.Price;
-            Product.Discount = _productOnBufer.Discount;
-            Product.ExpiryDays = _productOnBufer.ExpiryDays;
-            Product.MinQuantity = _productOnBufer.MinQuantity;
-            Product.BrandId = _productOnBufer.BrandId;
-            Product.LastModifierId = _productOnBufer.LastModifierId;
-            Product.EsMemberId = _productOnBufer.EsMemberId;
-            Product.IsEnabled = _productOnBufer.IsEnabled;
         }
 
         protected virtual bool CanClean(object o)
@@ -504,15 +492,15 @@ namespace UserControls.ViewModels.Managers
                 {
 
 
-                    if (Product.Mu != null) productModel.Mu = Product.Mu;
+                    if (Product.MeasureUnit != null) productModel.MeasureUnit = Product.MeasureUnit;
                     if (Product.HcdCs != null) productModel.HcdCs = Product.HcdCs;
-                    productModel.IsWeight = Product.IsWeight;
+
 
                     //Prices
                     if (Product.CostPrice != null) productModel.CostPrice = Product.CostPrice;
                     if (Product.DealerDiscount != null) productModel.DealerDiscount = Product.DealerDiscount;
-                    if (Product.DealerProfitPercent != null) productModel.DealerProfitPercent = Product.DealerProfitPercent;
-                    if (Product.DealerPrice != null) productModel.DealerPrice = Product.DealerPrice;
+                    if (Product.HasDealerPrice) productModel.DealerProfitPercent = Product.DealerProfitPercent;
+                    if (Product.HasDealerPrice) productModel.DealerPrice = Product.DealerPrice;
                     if (Product.Discount != null) productModel.Discount = Product.Discount;
                     if (Product.ProfitPercent != null) productModel.ProfitPercent = Product.ProfitPercent;
                     if (Product.Price != null) productModel.Price = Product.Price;
@@ -523,26 +511,11 @@ namespace UserControls.ViewModels.Managers
                     if (Product.ExpiryDays != null) productModel.ExpiryDays = Product.ExpiryDays;
                     OnEditProduct(productModel);
                 }
-
-                return;
-            }
-            var product = ProductsManager.EditProduct(Product);
-            if (product != null)
-            {
-                CashManager.Instance.EditProduct(product);
-                MessageManager.OnMessage(
-                    string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումն իրականացել է հաջողությամբ։",
-                        product.Code, product.Description), MessageTypeEnum.Success);
             }
             else
             {
-                MessageManager.OnMessage(
-                    string.Format("Կոդ:{0} անվանում:{1} ապրանքի խմբագրումը ձախողվել է։", Product.Code,
-                        Product.Description), MessageTypeEnum.Error);
-                IsLoading = false;
-                return;
+                OnEditProduct(Product);
             }
-
             IsLoading = false;
         }
 
@@ -559,11 +532,11 @@ namespace UserControls.ViewModels.Managers
             {
                 return;
             }
-            if (ProductsManager.ChangeProductCode(Product.Id, productCode, MemberId))
-            {
-                LoadProducts();
-            }
+
+            ProductsManager.ChangeProductCode(Product.Id, productCode, MemberId);
+
         }
+
         protected virtual bool CanPrintBarcode(PrintPriceTicketEnum? printPriceTicketEnum)
         {
             return Product != null && !string.IsNullOrEmpty(Product.Barcode) && printPriceTicketEnum != null;
@@ -599,12 +572,12 @@ namespace UserControls.ViewModels.Managers
         protected virtual void GetProductBy(object o)
         {
             _viewType = o is ProductViewType ? (ProductViewType)o : (ProductViewType)ProductViewType.ByActive;
-            RaisePropertyChanged(ProductsProperty);
+            ProductsSource.View.Refresh();
         }
 
         protected virtual bool CanChangeProductEnabled(object o)
         {
-            return Product != null && CashManager.Instance.GetProducts().Any(s => s.Id == Product.Id);
+            return Product != null && _productItems.Any(s => s.Id == Product.Id);
         }
 
         protected virtual void ChangeProductEnabled(object o)
@@ -613,26 +586,26 @@ namespace UserControls.ViewModels.Managers
             {
                 Product.IsEnabled = !Product.IsEnabled;
                 RaisePropertyChanged(ProductProperty);
-                RaisePropertyChanged(ProductsProperty);
+                ProductsSource.View.Refresh();
             }
         }
 
-        protected virtual bool CanAddProductGroup(string text)
+        protected virtual bool CanAddProductKeys(string text)
         {
             return Product != null;
         }
 
-        protected virtual void OnAddProductGroup(string text)
+        protected virtual void OnAddProductKeys(string text)
         {
             if (!string.IsNullOrEmpty(text))
             {
-                ProductGroupDescription = text;
+                ProductKeysDescription = text;
             }
             else
             {
-                Product.ProductGroups = null;
+                Product.ProductKeys = null;
             }
-            RaisePropertyChanged(ProductGroupDescriptionProperty);
+            RaisePropertyChanged(ProductKeysDescriptionProperty);
         }
 
         public virtual void SetProduct(ProductModel product)
@@ -653,6 +626,30 @@ namespace UserControls.ViewModels.Managers
                 Product.HcdCs = category.HcDcs;
                 RaisePropertyChanged("Product");
             }
+        }
+        public void OnUpdatedProducts(List<ProductModel> products)
+        {
+            IsLoading = true;
+            lock (Sync)
+            {
+                foreach (var productModel in products)
+                {
+                    var exProduct = _productItems.SingleOrDefault(s => s.Id == productModel.Id);
+                    if (exProduct == null)
+                    {
+                        _productItems.Add(productModel);
+                    }
+                    else
+                    {
+                        ProductsManager.CopyProduct(exProduct, productModel);
+                    }
+
+                }
+            }
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => {ProductsSource.View.Refresh();});
+            
+            IsLoading = false;
+
         }
 
         #endregion
@@ -678,7 +675,7 @@ namespace UserControls.ViewModels.Managers
         public ICommand ExportProductsCommand { get; private set; }
         public ICommand ExportNewProductsCommand { get; private set; }
         public ICommand GetProductsCommand { get; private set; }
-        public ICommand AddProductGroupCommand { get; private set; }
+        public ICommand AddProductKeysCommand { get; private set; }
 
         #endregion
     }
@@ -703,6 +700,7 @@ namespace UserControls.ViewModels.Managers
 
         #region Constructors
         public ProductManagerViewModel()
+            : base()
         {
             Initialize();
         }
@@ -740,12 +738,12 @@ namespace UserControls.ViewModels.Managers
 
         private bool IsProductExist()
         {
-            return (CashManager.Instance.GetProducts().SingleOrDefault(s => s.Id == Product.Id) != null);
+            return (_productItems.SingleOrDefault(s => s.Id == Product.Id) != null);
         }
 
         private bool IsProductSingle()
         {
-            return CashManager.Instance.GetProducts().Count(s => s.Id == Product.Id && s.Code == Product.Code) == 1;
+            return _productItems.Count(s => s.Id == Product.Id && s.Code == Product.Code) == 1;
         }
 
         private bool CanImportProducts(ExportImportEnum o)
@@ -882,6 +880,7 @@ namespace UserControls.ViewModels.Managers
 
         #region Constructors
         public CorrectProductsViewModel()
+            : base()
         {
             Initialize();
         }
@@ -904,7 +903,7 @@ namespace UserControls.ViewModels.Managers
             {
                 if (product != null)
                 {
-                    if (CashManager.Instance.GetProducts().All(s => s.Code != product.Code))
+                    if (_productItems.All(s => s.Code != product.Code))
                     {
 
                         MessageManager.OnMessage("Ապրանքը գոյություն չունի: Ապրանքի խմբագրումն ընդհատվել է։",
@@ -939,5 +938,127 @@ namespace UserControls.ViewModels.Managers
         #region Product Commands
 
         #endregion
+    }
+
+    public class ReeditProductsViewModel : ProductManagerViewModelBase
+    {
+        #region External properties
+        public ObservableCollection<DataGridColumnMetedata> DataGridColumnMetadatas { get; private set; }
+        #endregion External properties
+
+        #region Constructors
+        public ReeditProductsViewModel()
+        {
+            Initialize();
+        }
+        #endregion Constructors
+
+        #region Internal methods
+
+        private void Initialize()
+        {
+            DataGridColumnMetadatas = new ObservableCollection<DataGridColumnMetedata>();
+            DataGridColumnMetadatas.Add(new DataGridColumnMetedata
+            {
+                Header = "Կոդ",
+                Property = "Code"
+            });
+            DataGridColumnMetadatas.Add(new DataGridColumnMetedata
+            {
+                Header = "Բարկոդ",
+                Property = "Barcode",
+                IsEditable = true
+            });
+            DataGridColumnMetadatas.Add(new DataGridColumnMetedata
+            {
+                Header = "ԱՏԳԴ",
+                Property = "HcdCs",
+                IsEditable = true
+            });
+            DataGridColumnMetadatas.Add(new DataGridColumnMetedata
+            {
+                Header = "Անվանում",
+                Property = "Description",
+                IsEditable = true
+            });
+            DataGridColumnMetadatas.Add(new DataGridColumnMetedata
+            {
+                Header = "Note",
+                Property = "Note",
+
+            });
+        }
+        protected override bool CanEdit(object o)
+        {
+            return GetProducts().Any();
+        }
+
+        protected override void OnEditProducts(object o)
+        {
+            var products = GetProducts();
+            foreach (var productModel in products)
+            {
+                OnEditProduct(productModel);
+            }
+        }
+
+        private bool CanMnageProducts(object obj)
+        {
+            return GetProducts().Any();
+        }
+
+        private void OnManageProducts(object obj)
+        {
+            var products = GetProducts();
+            var ProductKeyss = CashManager.GetEsCategories();
+            foreach (var productModel in products)
+            {
+                if (productModel.HcdCs != null) continue;
+                var keywords = productModel.Description.ToLower().Split(new[] { " ", ",", "/", "\\" }, StringSplitOptions.RemoveEmptyEntries);
+                var maxCount = 0;
+                EsCategoriesModel exCategoriesModel = null;
+                foreach (var esCategoriesModel in ProductKeyss)
+                {
+                    var category = GetCompareWordsCount(esCategoriesModel, keywords);
+                    var count = GetMaxCompareCount(category.Description, keywords);
+                    if (count > maxCount)
+                    {
+                        maxCount = count;
+                        exCategoriesModel = category;
+                    }
+                }
+                if (exCategoriesModel == null) continue;
+                productModel.HcdCs = exCategoriesModel.HcDcs;
+                productModel.Note = exCategoriesModel.HcDcs;
+            }
+            ProductsSource.View.Refresh();
+        }
+
+        private EsCategoriesModel GetCompareWordsCount(EsCategoriesModel category, string[] keyWords)
+        {
+            if (category.Parent == null) return category;
+            return (GetMaxCompareCount(category.Description, keyWords) > GetMaxCompareCount(GetCompareWordsCount(category.Parent, keyWords).Description, keyWords)) ? category : category.Parent;
+
+        }
+
+        private int GetMaxCompareCount(string description, string[] keyWords)
+        {
+            var count = 0;
+            foreach (var keyWord in keyWords)
+            {
+                if (description.ToLower().Contains(keyWord)) count++;
+            }
+            return count;
+        }
+
+        #endregion Internal methods
+
+        #region Commands
+        private ICommand _manageCommand;
+        public ICommand ManageCommand
+        {
+            get { return _manageCommand ?? (_manageCommand = new RelayCommand(OnManageProducts, CanMnageProducts)); }
+        #endregion Commands
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,7 @@ using ES.Common.Models;
 using ES.Data.Enumerations;
 using ES.Data.Models;
 using ES.Data.Models.Reports;
+using ES.DataAccess.Models;
 using Shared.Helpers;
 using UserControls.Helpers;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
@@ -272,11 +274,11 @@ namespace UserControls.ViewModels
             List<IInvoiceReport> reports = new List<IInvoiceReport>(_stocks.Select(s => new InvoiceReport
             {
                 Description = s.FullName,
-                Count = invoiceItems.Where(ii => ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice).Count(ii => ii.ProductItem.StockId == s.Id),
-                Quantity = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0)),
-                Cost = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.CostPrice ?? 0)),
-                Sale = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0)),
-                ReturnAmount = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.ReturnFrom)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0))
+                Count = invoiceItems.Where(ii => ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice).Count(ii => ii.StockId == s.Id),
+                Quantity = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0)),
+                Cost = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.CostPrice ?? 0)),
+                Sale = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0)),
+                ReturnAmount = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.ReturnFrom)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0))
             }).ToList());
             reports.Add(new InvoiceReport
             {
@@ -312,9 +314,10 @@ namespace UserControls.ViewModels
         protected override void OnExport(ExportImportEnum o)
         {
             //base.OnExport(o);
-            ExcelExportManager.ExportList(ViewList.Select(s => new { 
-                Բաժին = ((InvoiceReport)s).Description, 
-                Ապրանքագիր = ((InvoiceReport)s).Count, 
+            ExcelExportManager.ExportList(ViewList.Select(s => new
+            {
+                Բաժին = ((InvoiceReport)s).Description,
+                Ապրանքագիր = ((InvoiceReport)s).Count,
                 Քանակ = ((InvoiceReport)s).Quantity,
                 Հասույթ = ((InvoiceReport)s).Sale,
                 ԻՆքնարժեք = ((InvoiceReport)s).Cost,
@@ -404,6 +407,7 @@ namespace UserControls.ViewModels
                     DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList(); }));
                     reports = new List<IInvoiceReport>(UpdateByStock(stocks, DteIntermediate));
                     break;
+                case ViewInvoicesEnum.ByProvider:
                 case ViewInvoicesEnum.ByPartner:
                     DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, new Action(() =>
                     {
@@ -412,7 +416,7 @@ namespace UserControls.ViewModels
 
                     if (partners != null && partners.Count > 0)
                     {
-                        reports = new List<IInvoiceReport>(InvoicesManager.GetSaleInvoicesReportsByPartners(DteIntermediate.Item1, DteIntermediate.Item2, InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList(), ApplicationManager.Instance.GetMember.Id));
+                        reports = new List<IInvoiceReport>(InvoicesManager.GetSaleInvoicesReportsByPartners(DteIntermediate.Item1, DteIntermediate.Item2, _viewInvoicesEnum == ViewInvoicesEnum.ByProvider ? InvoiceType.PurchaseInvoice : InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList(), _viewInvoicesEnum));
                     }
                     break;
                 case ViewInvoicesEnum.ByPartnerType:
@@ -440,7 +444,7 @@ namespace UserControls.ViewModels
                 case ViewInvoicesEnum.ByStocksDetiles:
                     DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList(); }));
 
-                    var invoiceItems = InvoicesManager.GetInvoiceItemsByStocks(InvoicesManager.GetInvoices(DteIntermediate.Item1, DteIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).Select(s => s.Id).ToList(), stocks);
+                    var invoiceItems = InvoicesManager.GetInvoiceItemsByStocks(InvoicesManager.GetInvoices(DteIntermediate.Item1, DteIntermediate.Item2).Where(s => s.InvoiceTypeId == (short)InvoiceType.SaleInvoice).Select(s => s.Id).ToList(), stocks);
 
                     reports = new List<IInvoiceReport>(invoiceItems.Select(s =>
                         new SaleReportByPartnerDetiled
@@ -460,13 +464,15 @@ namespace UserControls.ViewModels
                     break;
                 case ViewInvoicesEnum.BySaleChart:
                     var invoices = InvoicesManager.GetInvoices(DteIntermediate.Item1, DteIntermediate.Item2)
-                            .Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice).ToList();
+                            .Where(s => s.InvoiceTypeId == (short)InvoiceType.SaleInvoice).ToList();
                     if (!invoices.Any())
                     {
                         MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։", MessageTypeEnum.Information));
                         break;
                     }
 
+                    break;
+                case ViewInvoicesEnum.ByZeroAmunt:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -508,15 +514,15 @@ namespace UserControls.ViewModels
 
         private List<InvoiceReport> UpdateByStock(List<StockModel> stocks, Tuple<DateTime, DateTime> dateIntermediate)
         {
-            var invoiceItems = InvoicesManager.GetInvoiceItemsByStocks(InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (long)InvoiceType.SaleInvoice || s.InvoiceTypeId == (long)InvoiceType.ReturnFrom).Select(s => s.Id).ToList(), stocks);
+            var invoiceItems = InvoicesManager.GetInvoiceItemsByStocks(InvoicesManager.GetInvoices(dateIntermediate.Item1, dateIntermediate.Item2).Where(s => s.InvoiceTypeId == (short)InvoiceType.SaleInvoice || s.InvoiceTypeId == (short)InvoiceType.ReturnFrom).Select(s => s.Id).ToList(), stocks);
             var list = stocks.Select(s => new InvoiceReport
             {
                 Description = s.FullName,
-                Count = invoiceItems.Where(ii => ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice).Count(ii => ii.ProductItem.StockId == s.Id),
-                Quantity = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0)),
-                Cost = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.CostPrice ?? 0)),
-                Sale = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0)),
-                ReturnAmount = invoiceItems.Where(ii => ii.ProductItem.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (int)InvoiceType.ReturnFrom)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0))
+                Count = invoiceItems.Where(ii => ii.Invoice.InvoiceTypeId == (short)InvoiceType.SaleInvoice).Count(ii => ii.StockId == s.Id),
+                Quantity = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (short)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0)),
+                Cost = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (short)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.CostPrice ?? 0)),
+                Sale = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (short)InvoiceType.SaleInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0)),
+                ReturnAmount = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (short)InvoiceType.ReturnFrom)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0))
             }).ToList();
             list.Add(new InvoiceReport
             {
@@ -775,6 +781,39 @@ namespace UserControls.ViewModels
             }
         }
         #endregion
+    }
+
+
+    public class ProductsLogViewModel : TableViewModel
+    {
+        private void OnItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged("Count");
+            RaisePropertyChanged("Quantity");
+            RaisePropertyChanged("CostPrice");
+            RaisePropertyChanged("Price");
+            RaisePropertyChanged("ItemsView");
+            RaisePropertyChanged("ViewList");
+            RaisePropertyChanged("TotalRows");
+            RaisePropertyChanged("TotalCount");
+            RaisePropertyChanged("Total");
+            RaisePropertyChanged("View");
+        }
+        protected override void Initialize()
+        {
+            base.Initialize();
+            Title = "Ապրանքների խմբագրման պատմություն";
+        }
+
+        
+        protected override void OnUpdate()
+        {
+            base.OnUpdate();
+            var productsLog = ProductsManager.GetProductsLog(StartEndDate);
+            Items.Clear();
+            Items.AddRange(productsLog);
+            OnItemsChanged(null, null);
+        }
     }
 
 }

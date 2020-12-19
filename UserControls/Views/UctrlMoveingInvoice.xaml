@@ -143,7 +143,7 @@
                 <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" />
                 <DataGridTextColumn IsReadOnly="True" Header="Բարկոդ" Binding="{Binding Barcode}" />
                 <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
-                <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu}" />
+                <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" />
                 <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" CellStyle="{StaticResource CellRightAlign}" />
                 <DataGridTextColumn IsReadOnly="False" Header="Գին" Binding="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, StringFormat=N3}" CellStyle="{StaticResource CellRightAlign}" />
                 <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat=N2}" CellStyle="{StaticResource CellRightAlign}"/>

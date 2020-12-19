@@ -19,7 +19,7 @@ namespace ES.DataAccess.Models
             this.Invoices = new HashSet<Invoices>();
         }
     
-        public long Id { get; set; }
+        public short Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
     

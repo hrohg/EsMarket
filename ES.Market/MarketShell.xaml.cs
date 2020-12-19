@@ -159,8 +159,8 @@ namespace ES.Market
         protected void MiTransferIntoCashDesk_Click(object sender, EventArgs e)
         {
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords.Debit = (long)AccountingPlanEnum.CashDesk;
-            accountingRecords.Credit = (long)AccountingPlanEnum.CashDesk;
+            accountingRecords.Debit = (short)AccountingPlanEnum.CashDesk;
+            accountingRecords.Credit = (short)AccountingPlanEnum.CashDesk;
             var fromCashDesk = SelectItemsManager.SelectCashDesks(null, false, "Ընտրել ելքագրվող դրամարկղը").FirstOrDefault();
             var toCashDesk = SelectItemsManager.SelectCashDesks(null, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
             if (fromCashDesk == null || toCashDesk == null)
@@ -204,8 +204,8 @@ namespace ES.Market
         protected void MiAddEquityBase_Click(object sender, EventArgs e)
         {
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords.Debit = (long)AccountingPlanEnum.CashDesk;
-            accountingRecords.Credit = (long)AccountingPlanEnum.EquityBase;
+            accountingRecords.Debit = (short)AccountingPlanEnum.CashDesk;
+            accountingRecords.Credit = (short)AccountingPlanEnum.EquityBase;
             var fromUser = SelectItemsManager.SelectUser(ApplicationManager.Instance.GetMember.Id, false, "Ընտրել ներդրող").FirstOrDefault();
             var toCashDesk = SelectItemsManager.SelectCashDesks(null, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
             if (fromUser == null || toCashDesk == null)
@@ -240,15 +240,15 @@ namespace ES.Market
         //712
         protected void MiCostOfSales_Click(object sender, EventArgs e)
         {
-            new CtrlSingleAccountingRecords((int)AccountingPlanEnum.CostOfSales, (int)AccountingPlanEnum.CashDesk).Show();
+            new CtrlSingleAccountingRecords((int)AccountingPlanEnum.SalesCosts, (int)AccountingPlanEnum.CashDesk).Show();
         }
 
         protected void MiCostOfSales_Salary_Click(object sender, EventArgs e)
         {
             var costOfSales = SelectItemsManager.SelectSubAccountingPlan(
-                SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingPlanEnum.DebitForSalary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել");
+                SubAccountingPlanManager.GetSubAccountingPlanModels((short)AccountingPlanEnum.DebitForSalary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել");
             var debitForSalary = SelectItemsManager.SelectSubAccountingPlan(
-                SubAccountingPlanManager.GetSubAccountingPlanModels((long)AccountingPlanEnum.DebitForSalary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել աշխատակից");
+                SubAccountingPlanManager.GetSubAccountingPlanModels((short)AccountingPlanEnum.DebitForSalary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել աշխատակից");
             var cashDesk = SelectItemsManager.SelectCashDesks(true, false);
 
             if (costOfSales.First() == null || debitForSalary.First() == null || cashDesk.First() == null)
@@ -257,21 +257,21 @@ namespace ES.Market
             }
 
             var accountingRecords1 = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords1.Debit = (long)AccountingPlanEnum.CostOfSales;
+            accountingRecords1.Debit = (short)AccountingPlanEnum.SalesCosts;
             accountingRecords1.DebitGuidId = costOfSales.First().Id;
-            accountingRecords1.Credit = (long)AccountingPlanEnum.DebitForSalary;
+            accountingRecords1.Credit = (short)AccountingPlanEnum.DebitForSalary;
             accountingRecords1.CreditGuidId = debitForSalary.First().Id;
 
             var accountingRecords2 = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords2.Debit = (long)AccountingPlanEnum.DebitForSalary;
+            accountingRecords2.Debit = (short)AccountingPlanEnum.DebitForSalary;
             accountingRecords2.DebitGuidId = debitForSalary.First().Id;
-            accountingRecords2.Credit = (long)AccountingPlanEnum.CashDesk;
+            accountingRecords2.Credit = (short)AccountingPlanEnum.CashDesk;
             accountingRecords2.CreditGuidId = cashDesk.First().Id;
 
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords.Debit = (long)AccountingPlanEnum.CostOfSales;
+            accountingRecords.Debit = (short)AccountingPlanEnum.SalesCosts;
             accountingRecords.DebitGuidId = debitForSalary.First().Id;
-            accountingRecords.Credit = (long)AccountingPlanEnum.CashDesk;
+            accountingRecords.Credit = (short)AccountingPlanEnum.CashDesk;
             accountingRecords.CreditGuidId = cashDesk.First().Id;
 
             var ctrlAccountingRecords = new CtrlAccountingRecords(new AccountingRecordsViewModel(accountingRecords, ""), false, false);
@@ -288,7 +288,7 @@ namespace ES.Market
 
         protected void MiSingleAccountingRecords_Click(object sender, EventArgs e)
         {
-            new CtrlSingleAccountingRecords((int)AccountingPlanEnum.CostOfSales, (int)AccountingPlanEnum.CashDesk).Show();
+            new CtrlSingleAccountingRecords((int)AccountingPlanEnum.SalesCosts, (int)AccountingPlanEnum.CashDesk).Show();
         }
         protected void MiMultipleAccountingRecords_Click(object sender, EventArgs e)
         {
@@ -325,19 +325,19 @@ namespace ES.Market
         /// <param name="e"></param>
         private void MiViewSaleInvoices_Click(object sender, RoutedEventArgs e)
         {
-            LoadPackingListTab((long)InvoiceType.SaleInvoice, true);
+            LoadPackingListTab((short)InvoiceType.SaleInvoice, true);
         }
         private void MiViewMoveInvoices_Click(object sender, RoutedEventArgs e)
         {
-            LoadPackingListTab((long)InvoiceType.MoveInvoice, true);
+            LoadPackingListTab((short)InvoiceType.MoveInvoice, true);
         }
         private void MiViewUnacceptedPurchaseInvoices_Click(object sender, RoutedEventArgs e)
         {
-            LoadPackingListTab((long)InvoiceType.PurchaseInvoice, false);
+            LoadPackingListTab((short)InvoiceType.PurchaseInvoice, false);
         }
         private void MiViewUnacceptedMoveInvoices_Click(object sender, RoutedEventArgs e)
         {
-            LoadPackingListTab((long)InvoiceType.MoveInvoice, false);
+            LoadPackingListTab((short)InvoiceType.MoveInvoice, false);
         }
         
         #endregion

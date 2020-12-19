@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using System.Threading;
+using System.Windows.Controls;
 using System.Windows.Threading;
 using CashReg.Managers;
 using ES.Business.Managers;
@@ -10,6 +11,7 @@ using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Data.Models;
+using UserControls.Helpers;
 using UserControls.Views.CustomControls;
 using MessageManager = ES.Common.Managers.MessageManager;
 
@@ -112,7 +114,16 @@ namespace UserControls.Managers
 
         public static void OpenCashDesk()
         {
-            if (string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort)) return;
+            if (string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort))
+            {
+                if (!string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveCashDeskPrinter))
+                {
+                    var ctrl = new UserControl { Width = 100, Height = 1 };
+                    ctrl.UpdateLayout();
+                    DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Normal, () => PrintManager.Print(ctrl, ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveCashDeskPrinter));
+                }
+                return;
+            }
             var cashDeskPort = new SerialPort(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort)
             {
                 BaudRate = 9600,

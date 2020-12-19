@@ -5,7 +5,7 @@ using ES.Business.Models;
 using ES.Common;
 using ES.Common.Managers;
 using Microsoft.Win32;
-using ProductModel = ES.Data.Models.ProductModel;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 
 namespace ES.Business.Managers
 {

@@ -27,14 +27,14 @@ namespace ES.Business.Managers
     public class AccountingRecordsManager : BaseManager
     {
         #region Internal fields
-        private static readonly long MemberId = ApplicationManager.Member.Id;
+        private static readonly int MemberId = ApplicationManager.Member.Id;
         #endregion Internal fields
 
         #region Converters
         private static AccountingRecordsModel Convert(AccountingRecords item)
         {
             if (item == null) return null;
-            return new AccountingRecordsModel(memberId: item.MemberId, registerId: item.RegisterId, date: item.RegisterDate)
+            return new AccountingRecordsModel(memberId: item.MemberId, registeredId: item.RegisteredId, date: item.RegisterDate)
             {
                 Id = item.Id,
                 Amount = item.Amount,
@@ -54,7 +54,7 @@ namespace ES.Business.Managers
             {
                 Id = item.Id,
                 MemberId = item.MemberId,
-                RegisterId = item.RegisterId,
+                RegisteredId = item.RegisteredId,
                 RegisterDate = item.RegisterDate,
                 Amount = item.Amount,
                 Description = item.Description,
@@ -80,42 +80,42 @@ namespace ES.Business.Managers
                 //1
 
                 //2 Ընթացիկ ակտիվներ
-                case (long)AccountingPlanEnum.Purchase:
+                case (short)AccountingPlanEnum.Purchase:
                     return "Ապրանքի ձեռքբերում";
                     break;
-                case (long)AccountingPlanEnum.AccountingReceivable:
+                case (short)AccountingPlanEnum.AccountingReceivable:
                     return "Դեբիտորական պարտքեր վաճառքի գծով";
                     break;
-                case (long)AccountingPlanEnum.Prepayments:
+                case (short)AccountingPlanEnum.Prepayments:
                     return "Տրված ընթացիկ կանխավճարներ";
                     break;
-                case (long)AccountingPlanEnum.CashDesk:
+                case (short)AccountingPlanEnum.CashDesk:
                     return "Դրամարկղ";
                     break;
-                case (long)AccountingPlanEnum.Accounts:
+                case (short)AccountingPlanEnum.Accounts:
                     return "Հաշվարկային հաշիվ";
                     break;
                 //3 Սեփական կապիտալ
-                case (long)AccountingPlanEnum.EquityBase:
+                case (short)AccountingPlanEnum.EquityBase:
                     return "Կանոնադրական կապիտալ";
                     break;
                 //5 Ընթացիկ պարտավորություններ
-                case (long)AccountingPlanEnum.PurchasePayables:
+                case (short)AccountingPlanEnum.PurchasePayables:
                     return "Կրեդիտորական պերտքեր գնումների գծով";
                     break;
-                case (long)AccountingPlanEnum.ReceivedInAdvance:
+                case (short)AccountingPlanEnum.ReceivedInAdvance:
                     return "Ստացված կանխավճարներ";
                     break;
-                case (long)AccountingPlanEnum.Proceeds:
+                case (short)AccountingPlanEnum.Proceeds:
                     return "Հասույթ";
                     break;
                 //7
                 //711
-                case (long)AccountingPlanEnum.CostPrice:
+                case (short)AccountingPlanEnum.CostPrice:
                     return "Իրացված արտադրանքի, ապրանքների, աշխատանքների, ծառայությունների ինքնարժեք";
                     break;
                 //712
-                case (long)AccountingPlanEnum.CostOfSales:
+                case (short)AccountingPlanEnum.SalesCosts:
                     return "Իրացման ծախսեր";
                     break;
                 //Unknown
@@ -124,51 +124,51 @@ namespace ES.Business.Managers
                     break;
             }
         }
-        public static string GetAccountingRecordsDescription(long key, Guid? guidId, long? longId)
+        public static string GetAccountingRecordsDescription(short key, Guid? guidId, long? longId)
         {
             switch (key)
             {
                 //1
 
                 //2 Ընթացիկ ակտիվներ
-                case (long)AccountingPlanEnum.Purchase:
+                case (short)AccountingPlanEnum.Purchase:
                     return "Ապրանքի ձեռքբերում";
                     break;
-                case (long)AccountingPlanEnum.AccountingReceivable:
+                case (short)AccountingPlanEnum.AccountingReceivable:
                     return "Դեբիտորական պարտքեր վաճառքի գծով";
                     break;
-                case (long)AccountingPlanEnum.Prepayments:
+                case (short)AccountingPlanEnum.Prepayments:
                     return "Տրված ընթացիկ կանխավճարներ";
                     break;
-                case (long)AccountingPlanEnum.CashDesk:
+                case (short)AccountingPlanEnum.CashDesk:
                     if (guidId == null) return "Անհայտ դրամարկղ";
                     var cashDesk = CashDeskManager.GetCashDesk(guidId.Value);
                     return cashDesk != null ? cashDesk.Name : "Անհայտ դրամարկղ";
                     break;
-                case (long)AccountingPlanEnum.Accounts:
+                case (short)AccountingPlanEnum.Accounts:
                     return "Հաշվարկային հաշիվ";
                     break;
                 //3 Սեփական կապիտալ
-                case (long)AccountingPlanEnum.EquityBase:
+                case (short)AccountingPlanEnum.EquityBase:
                     return "Կանոնադրական կապիտալ";
                     break;
                 //5 Ընթացիկ պարտավորություններ
-                case (long)AccountingPlanEnum.PurchasePayables:
+                case (short)AccountingPlanEnum.PurchasePayables:
                     return "Կրեդիտորական պերտքեր գնումների գծով";
                     break;
-                case (long)AccountingPlanEnum.ReceivedInAdvance:
+                case (short)AccountingPlanEnum.ReceivedInAdvance:
                     return "Ստացված կանխավճարներ";
                     break;
-                case (long)AccountingPlanEnum.Proceeds:
+                case (short)AccountingPlanEnum.Proceeds:
                     return "Հասույթ";
                     break;
                 //7
                 //711
-                case (long)AccountingPlanEnum.CostPrice:
+                case (short)AccountingPlanEnum.CostPrice:
                     return "Իրացված արտադրանքի, ապրանքների, աշխատանքների, ծառայությունների ինքնարժեք";
                     break;
                 //712
-                case (long)AccountingPlanEnum.CostOfSales:
+                case (short)AccountingPlanEnum.SalesCosts:
                     return "Իրացման ծախսեր";
                     break;
                 //Unknown
@@ -224,19 +224,19 @@ namespace ES.Business.Managers
         {
             return TryGetAccountingPlan();
         }
-        public static List<int> GetDebits()
+        public static List<short> GetDebits()
         {
             return TryGetDebits();
         }
-        public static List<int> GetDebits(int creditId)
+        public static List<short> GetDebits(short creditId)
         {
             return TryGetDebits(creditId);
         }
-        public static List<int> GetCredits()
+        public static List<short> GetCredits()
         {
             return TryGetCredits();
         }
-        public static List<int> GetCredits(int debitId)
+        public static List<short> GetCredits(short debitId)
         {
             return TryGetCredits(debitId);
         }
@@ -459,7 +459,7 @@ namespace ES.Business.Managers
                         Date = accountingRecord.RegisterDate,
                         Amount = accountingRecord.Amount,
                         Notes = accountingRecord.Description,
-                        CashierId = accountingRecord.RegisterId,
+                        CashierId = accountingRecord.RegisteredId,
                         MemberId = memberId,
                         PartnerId = exPartner.Id,
                         ExpairyDate = accountingRecord.RegisterDate.AddMonths(1),
@@ -562,7 +562,7 @@ namespace ES.Business.Managers
                 }
             }
         }
-        private static List<int> TryGetDebits()
+        private static List<short> TryGetDebits()
         {
             using (var db = GetDataContext())
             {
@@ -572,11 +572,11 @@ namespace ES.Business.Managers
                 }
                 catch (Exception)
                 {
-                    return new List<int>();
+                    return new List<short>();
                 }
             }
         }
-        private static List<int> TryGetDebits(int creditId)
+        private static List<short> TryGetDebits(short creditId)
         {
             using (var db = GetDataContext())
             {
@@ -586,11 +586,11 @@ namespace ES.Business.Managers
                 }
                 catch (Exception)
                 {
-                    return new List<int>();
+                    return new List<short>();
                 }
             }
         }
-        private static List<int> TryGetCredits()
+        private static List<short> TryGetCredits()
         {
             using (var db = GetDataContext())
             {
@@ -600,11 +600,11 @@ namespace ES.Business.Managers
                 }
                 catch (Exception)
                 {
-                    return new List<int>();
+                    return new List<short>();
                 }
             }
         }
-        private static List<int> TryGetCredits(int debitId)
+        private static List<short> TryGetCredits(short debitId)
         {
             using (var db = GetDataContext())
             {
@@ -614,7 +614,7 @@ namespace ES.Business.Managers
                 }
                 catch (Exception)
                 {
-                    return new List<int>();
+                    return new List<short>();
                 }
             }
         }
@@ -645,7 +645,7 @@ namespace ES.Business.Managers
 
     public class AccountingAccounts
     {
-        public int Id { get; set; }
+        public short Id { get; set; }
         public string Description { get; set; }
         public string Key { get; set; }
     }
@@ -734,11 +734,11 @@ namespace ES.Business.Managers
         {
             return GetSubAccountingPlans(memberId, isActive).Select(Convert).ToList();
         }
-        public static List<SubAccountingPlanModel> GetSubAccountingPlanModels(long debit, long credit, long memberId, bool? isActive = null)
+        public static List<SubAccountingPlanModel> GetSubAccountingPlanModels(short debit, short credit, int memberId, bool? isActive = null)
         {
             return GetSubAccountingPlans(debit, credit, memberId, isActive).Select(Convert).ToList();
         }
-        public static List<SubAccountingPlanModel> GetSubAccountingPlanModels(long plan, long memberId, bool? isActive = null)
+        public static List<SubAccountingPlanModel> GetSubAccountingPlanModels(long plan, int memberId, bool? isActive = null)
         {
             return GetSubAccountingPlans(plan, memberId, isActive).Select(Convert).ToList();
         }

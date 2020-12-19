@@ -1,4 +1,5 @@
 ﻿using ES.Data.Models;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 
 namespace UserControls.Views.View.Models
 {

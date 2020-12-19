@@ -7,7 +7,7 @@ using CashReg.Helper;
 using CashReg.Interfaces;
 using ES.Business.Managers;
 using ES.Common.Managers;
-using ES.Data.Model;
+using ES.Data.Models;
 using UserControls.ViewModels.Invoices;
 using MessageBox = System.Windows.MessageBox;
 
@@ -93,8 +93,8 @@ namespace UserControls.Helpers
                 //Print ECR Receipt
                 var pr = _ecrServer.PrintReceipt(model.InvoiceItems.Select(s =>(IEcrProduct) new EcrProduct(s.Code,s.Description, s.Mu )
                     {
-                        Qty = s.Quantity??0,
-                        Price = s.Price??0,
+                        qty = s.Quantity??0,
+                        price = s.Price??0,
                         //Dep = 1
                     }).ToList(), new EcrPaid { PaidAmount = (int)(Math.Round((model.Invoice.Total + 5) / 10) * 10) }, null);
                 if (_ecrServer.ActionCode == EcrException.ResponseCodes.Ok)
@@ -133,8 +133,8 @@ namespace UserControls.Helpers
                 //Print ECR Receipt
                 var pr = _ecrServer.PrintReceipt(model.InvoiceItems.Select(s =>(IEcrProduct) new EcrProduct(s.Code, s.Description, s.Mu)
                     {
-                        Qty = s.Quantity??0,
-                        Price = s.Price??0,
+                        qty = s.Quantity??0,
+                        price = s.Price??0,
                         //Dep = 1
                     }).ToList(), (IEcrPaid)new EcrPaid { PaidAmount = (int)(Math.Round((model.Invoice.Total + 5) / 10) * 10) }, null);
                 if (_ecrServer.ActionCode == EcrException.ResponseCodes.Ok)

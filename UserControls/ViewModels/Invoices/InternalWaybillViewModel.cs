@@ -13,6 +13,7 @@ using Shared.Helpers;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
 using UserControls.Views.ReceiptTickets.Views;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 
 namespace UserControls.ViewModels.Invoices
 {
@@ -176,7 +177,7 @@ namespace UserControls.ViewModels.Invoices
             stock = stocks.FirstOrDefault(s =>
             {
                 var firstOrDefault = selectItem.SelectedItems.FirstOrDefault();
-                return firstOrDefault != null && (long) firstOrDefault.SelectedValue == s.Id;
+                return firstOrDefault != null && (short) firstOrDefault.SelectedValue == s.Id;
             });
             switch (stockTypeEnum)
             {

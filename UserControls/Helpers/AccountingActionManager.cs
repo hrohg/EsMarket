@@ -17,8 +17,8 @@ namespace UserControls.Helpers
         private static void RepaymentOfReceivable()
         {
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Member.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords.Debit = (long)AccountingPlanEnum.CashDesk;
-            accountingRecords.Credit = (long)AccountingPlanEnum.AccountingReceivable;
+            accountingRecords.Debit = (int)AccountingPlanEnum.CashDesk;
+            accountingRecords.Credit = (int)AccountingPlanEnum.AccountingReceivable;
             var cashDesk = SelectItemsManager.SelectDefaultSaleCashDesks(null, false, "Ընտրել դրամարկղ").FirstOrDefault();
             if (cashDesk == null)
             {
@@ -45,12 +45,12 @@ namespace UserControls.Helpers
             if (!ctrlAccountingRecords.Result || repaymentAccountingRecord == null ||
                 repaymentAccountingRecord.Amount == 0) return;
             var depositAccountingRecords = new AccountingRecordsModel(date: repaymentAccountingRecord.RegisterDate,
-                memberId: repaymentAccountingRecord.MemberId, registerId: repaymentAccountingRecord.RegisterId)
+                memberId: repaymentAccountingRecord.MemberId, registeredId: repaymentAccountingRecord.RegisteredId)
             {
                 Amount = 0,
                 Description = repaymentAccountingRecord.Description,
-                Debit = (long)AccountingPlanEnum.CashDesk,
-                Credit = (long)AccountingPlanEnum.ReceivedInAdvance,
+                Debit = (int)AccountingPlanEnum.CashDesk,
+                Credit = (int)AccountingPlanEnum.ReceivedInAdvance,
                 DebitGuidId = repaymentAccountingRecord.DebitGuidId,
                 CreditGuidId = repaymentAccountingRecord.CreditGuidId,
             };
@@ -86,8 +86,8 @@ namespace UserControls.Helpers
         private static void RepaymentOfDebts()
         {
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords.Debit = (long)AccountingPlanEnum.PurchasePayables;
-            accountingRecords.Credit = (long)AccountingPlanEnum.CashDesk;
+            accountingRecords.Debit = (int)AccountingPlanEnum.PurchasePayables;
+            accountingRecords.Credit = (int)AccountingPlanEnum.CashDesk;
             var partner = SelectItemsManager.SelectPartners(false, "Ընտրել գործընկեր").FirstOrDefault();
             var fromCashDesk = SelectItemsManager.SelectDefaultSaleCashDesks(null, false, "Ընտրել ելքագրվող դրամարկղը").FirstOrDefault();
             if (partner == null || fromCashDesk == null)
@@ -134,8 +134,8 @@ namespace UserControls.Helpers
         private static void ReceivedInAdvance()
         {
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords.Debit = (long)AccountingPlanEnum.CashDesk;
-            accountingRecords.Credit = (long)AccountingPlanEnum.ReceivedInAdvance;
+            accountingRecords.Debit = (int)AccountingPlanEnum.CashDesk;
+            accountingRecords.Credit = (int)AccountingPlanEnum.ReceivedInAdvance;
             var cashDesk = SelectItemsManager.SelectDefaultSaleCashDesks(null, false, "Ընտրել դրամարկղ").FirstOrDefault();
             if (cashDesk == null)
             {
@@ -175,8 +175,8 @@ namespace UserControls.Helpers
         private static void OnPrepayments()
         {
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords.Debit = (long)AccountingPlanEnum.Prepayments;
-            accountingRecords.Credit = (long)AccountingPlanEnum.CashDesk;
+            accountingRecords.Debit = (int)AccountingPlanEnum.Prepayments;
+            accountingRecords.Credit = (int)AccountingPlanEnum.CashDesk;
 
             var partner = SelectItemsManager.SelectPartner();
             if (partner == null)
@@ -233,8 +233,8 @@ namespace UserControls.Helpers
             }
 
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
-            accountingRecords.Debit = (long)AccountingPlanEnum.PurchasePayables;
-            accountingRecords.Credit = (long)AccountingPlanEnum.AccountingReceivable;
+            accountingRecords.Debit = (int)AccountingPlanEnum.PurchasePayables;
+            accountingRecords.Credit = (int)AccountingPlanEnum.AccountingReceivable;
 
             accountingRecords.CreditGuidId = partner.Id;
             accountingRecords.DebitGuidId = partner.Id;
@@ -283,7 +283,7 @@ namespace UserControls.Helpers
                     break;
                 case AccountingPlanEnum.CostPrice:
                     break;
-                case AccountingPlanEnum.CostOfSales:
+                case AccountingPlanEnum.SalesCosts:
                     break;
                 case AccountingPlanEnum.OtherOperationalExpenses:
                     break;

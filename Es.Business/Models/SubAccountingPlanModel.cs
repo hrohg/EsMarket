@@ -18,24 +18,24 @@ namespace ES.Business.Models
         #endregion
 
         #region private properties
-        private int _accountingPlanId;
-        private int? _subAccountingPlanId;
+        private short _accountingPlanId;
+        private short? _subAccountingPlanId;
         private Guid _id = Guid.NewGuid();
         private string _name;
         private string _description;
         private decimal _amount;
-        private long _memberId;
+        private int _memberId;
         private bool _isActive;
         #endregion
 
         #region public properties
         public Guid Id { get { return _id; } set { _id = value; OnPropertyChanged(IdProperty);}}
-        public int AccountingPlanId { get { return _accountingPlanId; } set { _accountingPlanId = value; OnPropertyChanged(AccountingPlanIdProperty); } }
-        public int? SubAccountingPlanId { get { return _subAccountingPlanId; } set { _subAccountingPlanId = value; OnPropertyChanged(SubAccountingPlanIdProperty); } }
+        public short AccountingPlanId { get { return _accountingPlanId; } set { _accountingPlanId = value; OnPropertyChanged(AccountingPlanIdProperty); } }
+        public short? SubAccountingPlanId { get { return _subAccountingPlanId; } set { _subAccountingPlanId = value; OnPropertyChanged(SubAccountingPlanIdProperty); } }
         public string Name { get { return _name; } set { _name = value; OnPropertyChanged(NameProperty); } }
         public string Description { get { return _description; } set { _description = value; OnPropertyChanged(DescriptionProperty);} }
         public decimal Amount { get { return _amount; } set { _amount = value; OnPropertyChanged(AmountProperty); } }
-        public long MemberId { get { return _memberId; } set { _memberId = value; OnPropertyChanged(MemberidProperty);} }
+        public int MemberId { get { return _memberId; } set { _memberId = value; OnPropertyChanged(MemberidProperty);} }
         public bool IsActive { get { return _isActive; } set { _isActive = value; OnPropertyChanged(IsActiveProperty); } }
         #endregion
 

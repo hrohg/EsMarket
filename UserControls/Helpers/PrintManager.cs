@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Xps;
+using ES.Business.Managers;
 using ES.Common.Managers;
 using Shared.Helpers;
 using UserControls.Views.PrintPreview;
@@ -238,6 +240,17 @@ namespace UserControls.Helpers
                 pDialog.PageRangeSelection = PageRangeSelection.UserPages;
                 pDialog.PrintVisual(uctrl, "Barcode");
             }
+        }
+        public static void Print(List<ProductOrderModelBase> productOrders)
+        {
+            //var pDialog = new PrintDialog();
+            //pDialog.UserPageRangeEnabled = true;
+            //pDialog.UserPageRangeEnabled = true;
+            //if (pDialog.ShowDialog() == true)
+            //{
+            //    pDialog.PageRangeSelection = PageRangeSelection.UserPages;
+            //    pDialog.PrintVisual(uctrl, "Barcode");
+            //}
         }
 
         //public static void Print(FrameworkElement ctrl, bool showDialog = false)

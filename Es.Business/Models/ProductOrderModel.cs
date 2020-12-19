@@ -25,11 +25,11 @@ namespace ES.Business.Models
         #endregion
         #region private properties
         private Guid _id = Guid.NewGuid();
-        private long _esMemberId;
+        private int _esMemberId;
         private string _orderNumber;
-        private long _creatorId;
+        private int _creatorId;
         private DateTime _createDate;
-        private long? _responsibleId;
+        private int? _responsibleId;
         private string _notes;
         private bool? _accepted;
         private bool? _inProgress;
@@ -37,11 +37,11 @@ namespace ES.Business.Models
         #endregion
         #region public properties
         public Guid Id { get { return _id; } set { _id = value; OnPropertyChanged(IdProperty); } }
-        public long EsMemberId{get { return _esMemberId; }set{_esMemberId = value;OnPropertyChanged(EsMemberIdProperty);}}
+        public int EsMemberId{get { return _esMemberId; }set{_esMemberId = value;OnPropertyChanged(EsMemberIdProperty);}}
         public string OrderNumber { get { return _orderNumber; } set { _orderNumber = value;OnPropertyChanged(OrderNumberProperty); } }
-        public long CreatorId { get { return _creatorId; } set { _creatorId = value; OnPropertyChanged(CreatorIdProperty);} }
+        public int CreatorId { get { return _creatorId; } set { _creatorId = value; OnPropertyChanged(CreatorIdProperty);} }
         public DateTime CreateDate { get { return _createDate; } set { _createDate = value; OnPropertyChanged(CreateDateProperty); } }
-        public long? ResponsibleId { get { return _responsibleId; } set { _responsibleId = value;OnPropertyChanged(ResponsibleIdProperty); } }
+        public int? ResponsibleId { get { return _responsibleId; } set { _responsibleId = value;OnPropertyChanged(ResponsibleIdProperty); } }
         public string Notes { get { return _notes; } set { _notes = value; OnPropertyChanged(NotesProperty); } }
         public bool? Accepted {get { return _accepted; } set {_accepted = value;OnPropertyChanged(AcceptedProperty);}}
         public bool? InProgress { get { return _inProgress; } set { _inProgress = value;OnPropertyChanged(InProgressProperty); } }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
-using ES.Data.Model;
-using EsMarket.SharedData.Interfaces;
 
 namespace ES.Data.Models
 {
@@ -20,7 +18,7 @@ namespace ES.Data.Models
             _memberId = member.Id;
             CreateDate = DateTime.Now;
         }
-        public InvoiceModel(EsUserModel creator, EsMemberModel member, long invoiceTypeId)
+        public InvoiceModel(EsUserModel creator, EsMemberModel member, short invoiceTypeId)
             : this(creator, member)
         {
             _invoiceTypeId = invoiceTypeId;
@@ -39,11 +37,11 @@ namespace ES.Data.Models
 
         #region ImvoiceModel private properties
         private Guid _id = Guid.NewGuid();
-        private long _invoiceTypeId;
-        private long _creatorId;
+        private short _invoiceTypeId;
+        private int _creatorId;
         private string _creator;
         private DateTime _createDate = DateTime.Now;
-        private long _memberId;
+        private int _memberId;
         private Guid? _partnerId;
         private string _providerName;
         private string _recipientName;
@@ -57,9 +55,9 @@ namespace ES.Data.Models
 
         #region Invoice model public properties
         public Guid Id { get { return _id; } set { _id = value; } }
-        public long CreatorId { get { return _creatorId; } set { _creatorId = value; } }
+        public int CreatorId { get { return _creatorId; } set { _creatorId = value; } }
         public string Creator { get { return _creator; } set { _creator = value; } }
-        public long InvoiceTypeId { get { return _invoiceTypeId; } set { _invoiceTypeId = value; } }
+        public short InvoiceTypeId { get { return _invoiceTypeId; } set { _invoiceTypeId = value; } }
 
         public string InvoiceNumber
         {
@@ -118,14 +116,14 @@ namespace ES.Data.Models
         }
         public decimal? Paid { get { return _paid; } set { _paid = value; OnPropertyChanged(PaidProperty); OnPropertyChanged(OddMoneyProperty); } }
         public decimal OddMoney { get { return (Paid != null ? (decimal)Paid : 0) - Amount; } }
-        public long MemberId { get { return _memberId; } set { _memberId = value; } }
-        public long? FromStockId { get; set; }
-        public long? ToStockId { get; set; }
+        public int MemberId { get { return _memberId; } set { _memberId = value; } }
+        public short? FromStockId { get; set; }
+        public short? ToStockId { get; set; }
         public DateTime? ApproveDate { get { return _approveDate; } set { _approveDate = value; OnPropertyChanged(ApproveDateProperty); OnPropertyChanged("IsApproved"); } }
-        public long? ApproverId { get; set; }
+        public int? ApproverId { get; set; }
         public string Approver { get; set; }
         public DateTime? AcceptDate { get; set; }
-        public long? AccepterId { get; set; }
+        public int? AccepterId { get; set; }
         public string Accepter { get; set; }
         public string ProviderJuridicalAddress { get; set; }
         public string ProviderAddress { get; set; }
@@ -151,7 +149,7 @@ namespace ES.Data.Models
             get { return ApproveDate != null; }
         }
 
-        public void Reload(InvoiceModel invoice, long memberId)
+        public void Reload(InvoiceModel invoice, int memberId)
         {
             Id = invoice.Id;
             InvoiceTypeId = invoice.InvoiceTypeId;

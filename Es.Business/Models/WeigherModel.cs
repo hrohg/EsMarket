@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using ES.Data.Models;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 
 namespace ES.Business.Models
 {

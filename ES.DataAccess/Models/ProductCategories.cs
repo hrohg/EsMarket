@@ -16,7 +16,8 @@ namespace ES.DataAccess.Models
     {
         public System.Guid Id { get; set; }
         public System.Guid ProductId { get; set; }
-        public long CategoryId { get; set; }
+        public int CategoryId { get; set; }
+        public int MemberId { get; set; }
     
         public virtual Products Products { get; set; }
     }

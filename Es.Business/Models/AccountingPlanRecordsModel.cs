@@ -85,7 +85,7 @@ namespace ES.Business.Models
             Credits = new ObservableCollection<AccountingAccounts>(AccountingRecordsManager.GetDebits().Select(s =>
                 new AccountingAccounts { Id = s, Description = string.Format("{0} {1}", s, AccountingRecordsManager.GetAccountingRecordsDescription(s)) }).ToList());
         }
-        public AccountingPlanRecordsModel(int? debit, Guid? subDebit, int? credit, Guid? subcredit)
+        public AccountingPlanRecordsModel(short? debit, Guid? subDebit, short? credit, Guid? subcredit)
         {
             Debits = new ObservableCollection<AccountingAccounts>(AccountingRecordsManager.GetDebits().Select(s =>
                 new AccountingAccounts { Id = s, Description = string.Format("{0} {1}", s, AccountingRecordsManager.GetAccountingRecordsDescription(s)) }).ToList());

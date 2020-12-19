@@ -20,8 +20,8 @@ namespace ES.DataAccess.Models
         public System.DateTime Date { get; set; }
         public decimal Amount { get; set; }
         public string Notes { get; set; }
-        public long CashierId { get; set; }
-        public long MemberId { get; set; }
+        public int CashierId { get; set; }
+        public int MemberId { get; set; }
         public System.Guid PartnerId { get; set; }
         public Nullable<System.DateTime> ExpairyDate { get; set; }
         public Nullable<decimal> PaidAmount { get; set; }

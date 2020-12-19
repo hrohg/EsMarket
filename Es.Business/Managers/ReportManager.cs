@@ -23,7 +23,7 @@ namespace ES.Business.Managers
                             .Select(s => new InvoiceModel
                             {
                                 Id = s.Id,
-                                InvoiceTypeId = (int)s.InvoiceTypeId,
+                                InvoiceTypeId = (short)s.InvoiceTypeId,
                                 CreateDate = s.CreateDate,
                                 ApproveDate = s.ApproveDate.Value,
                                 InvoiceNumber = s.InvoiceNumber,

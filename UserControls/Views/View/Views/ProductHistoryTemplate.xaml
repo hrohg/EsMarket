@@ -242,7 +242,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Border>
-                                    <TextBlock Text="{Binding Path=Mu}" Style="{StaticResource TextBlockStyle}" HorizontalAlignment="Right"/>
+                                    <TextBlock Text="{Binding Path=Mu, Mode=OneWay}" Style="{StaticResource TextBlockStyle}" HorizontalAlignment="Right"/>
                                 </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

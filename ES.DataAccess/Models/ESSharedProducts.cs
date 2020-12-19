@@ -16,13 +16,12 @@ namespace ES.DataAccess.Models
     {
         public System.Guid Id { get; set; }
         public Nullable<System.Guid> OriginalId { get; set; }
-        public Nullable<long> BrandId { get; set; }
+        public Nullable<int> BrandId { get; set; }
         public string Code { get; set; }
         public string Barcode { get; set; }
         public string HCDCS { get; set; }
         public string Description { get; set; }
-        public string Mu { get; set; }
-        public Nullable<bool> IsWeight { get; set; }
+        public Nullable<short> MeasureOfunitId { get; set; }
         public string Note { get; set; }
         public Nullable<decimal> CostPrice { get; set; }
         public Nullable<decimal> OldPrice { get; set; }
@@ -31,10 +30,9 @@ namespace ES.DataAccess.Models
         public Nullable<decimal> DealerPrice { get; set; }
         public Nullable<decimal> DealerDiscount { get; set; }
         public Nullable<decimal> MinQuantity { get; set; }
-        public Nullable<int> ExpiryDays { get; set; }
-        public string ImagePath { get; set; }
-        public long EsMemberId { get; set; }
-        public Nullable<long> LastModifierId { get; set; }
+        public Nullable<short> ExpiryDays { get; set; }
+        public int EsMemberId { get; set; }
+        public Nullable<int> LastModifierId { get; set; }
         public Nullable<bool> IsEnable { get; set; }
         public Nullable<bool> IsChecked { get; set; }
     }

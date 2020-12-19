@@ -58,7 +58,6 @@ namespace UserControls.ViewModels
                         Id = s.First().ProductId,
                         Code = s.First().Product.Code,
                         Description = s.First().Product.Description,
-                        Mu = s.First().Product.Mu,
                         Price = s.First().Price,
                         Quantity = s.Sum(t => t.Quantity),
                         Note = s.First().Product.Note

@@ -24,10 +24,9 @@ namespace ES.DataAccess.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public string HCDCS { get; set; }
-        public string Logo { get; set; }
         public bool IsActive { get; set; }
         public System.DateTime LastModificationDate { get; set; }
-        public long LastModifierId { get; set; }
+        public int LastModifierId { get; set; }
     
         public virtual ICollection<EsCategories> EsCategories1 { get; set; }
         public virtual EsCategories EsCategories2 { get; set; }

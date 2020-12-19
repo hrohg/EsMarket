@@ -15,13 +15,13 @@ namespace Shared.Helpers
     {
         public static bool SendMessageToSupport(string sMailTo, string sSubject, string sBody)
         {
-            var host = "smtp.gmail.com";
-            var port = 587;
+            var host = "mail.ess.am";
+            var port = 26;
 
 
             MailMessage oMessage = new MailMessage();
 
-            oMessage.From = new MailAddress("easyshoplogistics@gmail.com", "ES market", Encoding.UTF8);
+            oMessage.From = new MailAddress("support@ess.am", "ES market", Encoding.UTF8);
             oMessage.HeadersEncoding = Encoding.UTF8;
             oMessage.BodyEncoding = Encoding.UTF8;
             oMessage.Subject = sSubject;
@@ -35,8 +35,9 @@ namespace Shared.Helpers
                 smtpClient.Host = host;
                 smtpClient.Port = port;
                 smtpClient.UseDefaultCredentials = false;
-                smtpClient.EnableSsl = true;
-                smtpClient.Credentials = new NetworkCredential("easyshoplogistics@gmail.com", "easyshop@)!$");
+                smtpClient.EnableSsl = false;
+                //smtpClient.Credentials = new NetworkCredential("easyshoplogistics@gmail.com", "easyshop@)!$");
+                smtpClient.Credentials = new NetworkCredential("support@ess.am", "Jz.DNpJhx[p&'88Q");
                 smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                 try
                 {

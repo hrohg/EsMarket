@@ -17,7 +17,7 @@ namespace ES.DataAccess.Models
         public System.Guid Id { get; set; }
         public System.Guid ProductOrderId { get; set; }
         public Nullable<System.Guid> ProductId { get; set; }
-        public long LastModifierId { get; set; }
+        public int LastModifierId { get; set; }
         public System.DateTime ModifyDate { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }

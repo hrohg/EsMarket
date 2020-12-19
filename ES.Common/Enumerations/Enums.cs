@@ -20,6 +20,7 @@
         ByStocksDetiles = ByDetiles | ByStock,
         BySaleChart = 16,
         ByZeroAmunt = 32,
+        ByProvider = 64,
     }
 
     public enum DebitEnum

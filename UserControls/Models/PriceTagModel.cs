@@ -1,4 +1,4 @@
-﻿using ES.Data.Models;
+﻿using ES.Data.Models.Products;
 
 namespace UserControls.Models
 {

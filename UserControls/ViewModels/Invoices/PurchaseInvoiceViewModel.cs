@@ -11,6 +11,7 @@ using Shared.Helpers;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
 using UserControls.Views.ReceiptTickets.Views;
+using ProductModel = ES.Data.Models.Products.ProductModel;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 
 namespace UserControls.ViewModels.Invoices
@@ -26,7 +27,7 @@ namespace UserControls.ViewModels.Invoices
         {
             get { return string.Format("{0}{1}", Title, Partner != null ? string.Format(" ({0})", Partner.FullName) : string.Empty); }
         }
-        
+
         protected override void OnPartnerChanged()
         {
             base.OnPartnerChanged();
@@ -102,11 +103,14 @@ namespace UserControls.ViewModels.Invoices
         }
         protected override bool CanApprove(object o)
         {
+            var paid = InvoicePaid.Paid ?? 0;
+            //var receivedPrepayment = InvoicePaid.ReceivedPrepayment ?? 0;
+            //var partnerMaxDebit = Partner != null ? Partner.MaxDebit ?? 0 : 0;
             return base.CanApprove(o)
                 && InvoicePaid.IsPaid
-                && InvoicePaid.Change <= (InvoicePaid.Paid ?? 0)
+                && InvoicePaid.Change <= paid
                 && Partner != null
-                && (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit
+                //&& (receivedPrepayment == 0 || receivedPrepayment <= partnerMaxDebit - Partner.Debit)
                 && ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
         }
         protected override void OnApprove(object o)
@@ -145,7 +149,7 @@ namespace UserControls.ViewModels.Invoices
             if (invoice == null)
             {
                 Invoice.AcceptDate = Invoice.ApproveDate = null;
-                MessageManager.OnMessage("Գործողությունը հնարավոր չէ իրականացնել:", MessageTypeEnum.Warning);
+                MessageManager.OnMessage("Գործողությունը ձախողվել է:", MessageTypeEnum.Warning);
                 return;
             }
             Invoice = invoice;
@@ -176,7 +180,7 @@ namespace UserControls.ViewModels.Invoices
                     StockManager.GetStock(Invoice.ToStockId), InvoicePaid));
             PrintManager.PrintPreview(ctrl, "Print purchase invoice", true);
         }
-        
+
         #endregion
     }
 }

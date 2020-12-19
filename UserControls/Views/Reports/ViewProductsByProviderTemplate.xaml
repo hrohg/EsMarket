@@ -32,7 +32,7 @@
                     <DataGridTemplateColumn Header="Չմ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type models1:ProductProviderReportModel}">
-                                <TextBlock Text="{Binding Mu}" FontSize="18"/>
+                                <TextBlock Text="{Binding Mu, Mode=OneWay}" FontSize="18"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

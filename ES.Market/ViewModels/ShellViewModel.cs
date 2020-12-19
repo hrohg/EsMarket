@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Hosting;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,7 +14,6 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using System.Xml.Serialization;
 using AccountingTools.Enums;
-using CashReg;
 using CashReg.Helper;
 using ES.Business.FileManager;
 using ES.Business.Helpers;
@@ -29,12 +27,13 @@ using ES.Common.Models;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
 using ES.Data.Models.EsModels;
+using ES.Data.Models.Products;
 using ES.Market.Commands;
 using ES.Market.Config;
+using ES.Market.Users;
 using ES.Market.Views.Reports.View;
 using ES.Market.Views.Reports.ViewModels;
 using ES.Shop.Controls;
-using ES.Shop.Users;
 using Shared.Helpers;
 using UserControls.ControlPanel.Controls;
 using UserControls.Enumerations;
@@ -47,7 +46,6 @@ using UserControls.ViewModels.Invoices;
 using UserControls.ViewModels.Logs;
 using UserControls.ViewModels.Managers;
 using UserControls.ViewModels.Partners;
-using UserControls.ViewModels.Products;
 using UserControls.ViewModels.Reports;
 using UserControls.ViewModels.Reports.Orders;
 using UserControls.ViewModels.Settings;
@@ -61,6 +59,8 @@ using ExportManager = ES.Business.Managers.ExportManager;
 using ItemsToSelect = UserControls.ControlPanel.Controls.ItemsToSelect;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
+using ProductModel = ES.Data.Models.Products.ProductModel;
+using ProductOrderViewModel = UserControls.ViewModels.Reports.Orders.ProductOrderViewModel;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
 using TabControl = System.Windows.Controls.TabControl;
 
@@ -174,7 +174,7 @@ namespace ES.Market.ViewModels
         public ObservableCollection<MessageModel> Messages { get { return new ObservableCollection<MessageModel>(_messages.OrderByDescending(s => s.Date)); } set { _messages = value; RaisePropertyChanged(MessagesProperty); RaisePropertyChanged(MessageProperty); } }
         public MessageModel Message { get { return Messages.LastOrDefault(); } }
         public string UserDescription { get { return ApplicationManager.GetEsUser.FullName; } }
-        public string ServerDescription { get { return ApplicationManager.IsEsServer ? string.Format("{0}: {1}", "Cloud", ApplicationManager.Member.FullName) : string.Format("{0}: {1}", "Local server", ApplicationManager.Member.FullName); } }
+        public string ServerDescription { get { return ApplicationManager.IsEsServer ? string.Format("{0}: {1}", "Cloud", ApplicationManager.Member.Name) : string.Format("{0}: {1}", "Local server", ApplicationManager.Member.Name); } }
         public string ServerPath
         {
             get
@@ -310,7 +310,7 @@ namespace ES.Market.ViewModels
                     }
                     invoiceVm.InvoiceItem.Quantity = quantity;
                     invoiceVm.InvoiceItem.Price = invoiceItemsModel.Price;
-                    invoiceVm.InvoiceItem.Index = invoiceVm.InvoiceItems.Count + 1;
+                    invoiceVm.InvoiceItem.DisplayOrder = (short)(invoiceVm.InvoiceItems.Count + 1);
                     invoiceVm.AddInvoiceItem();
                     invoiceVm.InvoiceItem = new InvoiceItemsModel();
                 }
@@ -619,6 +619,7 @@ namespace ES.Market.ViewModels
         private StockTakeModel GetOpeningStockTake(bool isClosed = false)
         {
             List<StockTakeModel> stockTakes;
+            var stocks = ApplicationManager.CashManager.GetStocks;
             if (isClosed)
             {
                 var dateIntermediate = UIHelper.Managers.SelectManager.GetDateIntermediate();
@@ -646,11 +647,20 @@ namespace ES.Market.ViewModels
                 MessageManager.OnMessage(new MessageModel("Բաց գույքագրում առկա չէ։", MessageTypeEnum.Warning));
                 return null;
             }
-            var selectItemId = SelectManager.GetSelectedItem(stockTakes.OrderByDescending(s => s.CreateDate).Select(s => new ItemsToSelect
+
+            var items = new List<ItemsToSelect>();
+            foreach (var item in stockTakes.OrderByDescending(s => s.CreateDate))
             {
-                DisplayName = s.StockTakeName + " " + s.CreateDate,
-                SelectedValue = s.Id
-            }).ToList(), false).Select(s => (Guid)s.SelectedValue).FirstOrDefault();
+                var stock = stocks.SingleOrDefault(t => t.Id == item.StockId);
+                if (stock == null) continue;
+                items.Add(new ItemsToSelect
+                {
+                    DisplayName = string.Format("{0} {1} ({2})", item.StockTakeName, item.CreateDate, stock.FullName),
+                    SelectedValue = item.Id
+                });
+            }
+
+            var selectItemId = SelectManager.GetSelectedItem(items, false).Select(s => (Guid)s.SelectedValue).FirstOrDefault();
             return stockTakes.FirstOrDefault(s => s.Id == selectItemId);
         }
 
@@ -998,7 +1008,7 @@ namespace ES.Market.ViewModels
                     Code = item.ID.ToString(),
                     Barcode = item.barcode,
                     Description = item.name,
-                    Mu = item.unit,
+                    //Mu = item.unit,
                     CostPrice = (decimal)item.last_price_in,
                     //Price = (decimal) item.price_ret,
                     Note = item.description1
@@ -1044,23 +1054,35 @@ namespace ES.Market.ViewModels
 
         private ProductModel Convert(EsProductModel item)
         {
-            return new ProductModel()
+            return new ProductModel
             {
                 Code = item.Code,
                 Barcode = item.Barcode,
                 HcdCs = item.HcdCs,
                 Description = item.Description,
-                Mu = item.Mu,
+                //MeasureUnit = CashManager.Instance.MeasureOfUnits.SingleOrDefault(s=>s.Id==item.),
                 CostPrice = item.CostPrice,
                 Price = item.Price,
                 ExpiryDays = item.ExpiryDays,
-                IsWeight = item.IsWeight,
                 EsMemberId = item.EsMemberId,
                 LastModifierId = item.LastModifierId,
                 IsEnabled = item.IsEnabled
             };
         }
 
+        private ICommand _sendMessageCommand;
+        public ICommand SendMessageCommand
+        {
+            get
+            {
+                return _sendMessageCommand ?? (_sendMessageCommand = new RelayCommand(() =>
+                {
+                    MailSender.SendMessageToSupport("support@ess.am", "Test",
+                        string.Format("Test message from administator {0}.",
+                            ApplicationManager.GetEsUser.FullName));
+                }));
+            }
+        }
         #endregion
 
         #region Users
@@ -1091,17 +1113,21 @@ namespace ES.Market.ViewModels
             switch (state)
             {
                 case InvoiceState.All:
-                    return InvoicesManager.GetInvoices(type, count);
+                    return InvoicesManager.GetInvoices(type, null, count);
                 case InvoiceState.New:
                     return null;
 
                 case InvoiceState.Accepted:
+                    return InvoicesManager.GetInvoices(type, false, count);
                     return InvoicesManager.GetInvoicesDescriptions(type, count);
 
                 case InvoiceState.Draft:
+                    return InvoicesManager.GetInvoices(type, true, count);
+
                     return InvoicesManager.GetUnacceptedInvoicesDescriptions(type);
 
                 case InvoiceState.Approved:
+                    return InvoicesManager.GetInvoices(type, false, count);
                     return InvoicesManager.GetInvoicesDescriptions(type);
             }
             return null;
@@ -1349,14 +1375,27 @@ namespace ES.Market.ViewModels
             return ApplicationManager.IsInRole(UserRoleEnum.Admin) ||
                 ApplicationManager.IsInRole(UserRoleEnum.Director) ||
                 ApplicationManager.IsInRole(UserRoleEnum.Manager) ||
-                ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
+                ApplicationManager.IsInRole(UserRoleEnum.SaleManager) ||
+                   ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
         }
 
         private void OnGetProductOrder(ProductOrderTypeEnum productOrderType)
         {
-            var vm = new ProductOrderBySaleViewModel(productOrderType);
-            AddDocument(vm);
-            vm.Update();
+            TableViewModel<ProductOrderModel> vm;
+            if (productOrderType == ProductOrderTypeEnum.Dynamic)
+            {
+                var vm1 = new ProductOrderViewModel(productOrderType);
+                AddDocument(vm1);
+            }
+            else
+            {
+                vm = new ProductOrderBySaleViewModel(productOrderType);
+                vm.Update();
+                AddDocument(vm);
+            }
+
+
+
         }
 
         private void OnGetSaleProducts(object o)
@@ -1373,7 +1412,7 @@ namespace ES.Market.ViewModels
             OnCreateWriteOffInvoice(existingProducts.Select(s => new InvoiceItemsModel { Code = s.Product.Code, Quantity = s.Quantity }).ToList(), stock.Id);
         }
 
-        private void OnCreateWriteOffInvoice(List<InvoiceItemsModel> items, long? stockId, string notes = null)
+        private void OnCreateWriteOffInvoice(List<InvoiceItemsModel> items, short? stockId, string notes = null)
         {
             if (items == null || !items.Any())
             {
@@ -1417,7 +1456,7 @@ namespace ES.Market.ViewModels
                     continue;
                 }
                 vm.InvoiceItem.Quantity = quantity;
-                vm.InvoiceItem.Index = vm.InvoiceItems.Count + 1;
+                vm.InvoiceItem.DisplayOrder = (short)(vm.InvoiceItems.Count + 1);
                 vm.InvoiceItems.Add(vm.InvoiceItem);
                 vm.InvoiceItem = new InvoiceItemsModel();
 
@@ -1432,7 +1471,7 @@ namespace ES.Market.ViewModels
             if (vm.InvoiceItems.Any()) AddInvoiceDocument(vm);
         }
 
-        private void OnCreateWriteInInvoice(List<InvoiceItemsModel> items, long? stockId, string notes)
+        private void OnCreateWriteInInvoice(List<InvoiceItemsModel> items, short? stockId, string notes)
         {
             if (!items.Any())
             {
@@ -1453,7 +1492,7 @@ namespace ES.Market.ViewModels
                 }
                 vm.InvoiceItem.Price = 0;
                 vm.InvoiceItem.Quantity = quantity;
-                vm.InvoiceItem.Index = vm.InvoiceItems.Count + 1;
+                vm.InvoiceItem.DisplayOrder = (short)(vm.InvoiceItems.Count + 1);
                 vm.InvoiceItems.Add(vm.InvoiceItem);
                 vm.InvoiceItem = new InvoiceItemsModel();
             }
@@ -1546,12 +1585,13 @@ namespace ES.Market.ViewModels
 
         private bool CanManageProducts(object o)
         {
-            return ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
+            return ApplicationManager.IsInRole(UserRoleEnum.Manager);
         }
 
         private void OnManageProducts(object o)
         {
             var vm = new ProductManagerViewModel();
+            ApplicationManager.Instance.CashProvider.ProductsChanged += vm.OnUpdatedProducts;
             ApplicationManager.Instance.CashProvider.ProductUpdated += vm.OnUpdate;
             AddDocument(vm);
         }
@@ -1834,7 +1874,7 @@ namespace ES.Market.ViewModels
         #endregion Documents
 
         #region CashDesk
-        
+
         #region View
         public ICommand GetChashDesksInfoCommand
         {
@@ -1890,7 +1930,7 @@ namespace ES.Market.ViewModels
             vm.UpdateAccountingRecords(accountingPlanEnum ?? AccountingActionsEnum.None);
         }
 
-        public ICommand ViewPartnersBalanceDetailedCommand{get{return new RelayCommand(OnViewPartnersBalanceDetailed);}}
+        public ICommand ViewPartnersBalanceDetailedCommand { get { return new RelayCommand(OnViewPartnersBalanceDetailed); } }
 
         private void OnViewPartnersBalanceDetailed(object obj)
         {
@@ -1942,7 +1982,7 @@ namespace ES.Market.ViewModels
                     break;
                 case AccountingPlanEnum.CostPrice:
                     break;
-                case AccountingPlanEnum.CostOfSales:
+                case AccountingPlanEnum.SalesCosts:
                     break;
                 case AccountingPlanEnum.OtherOperationalExpenses:
                     break;
@@ -1976,7 +2016,7 @@ namespace ES.Market.ViewModels
             if (!partners.Any()) return;
             var dates = UIHelper.Managers.SelectManager.GetDateIntermediate();
             if (dates == null) return;
-            var repayment = AccountingRecordsManager.GetAccountingRecords(dates.Item1, dates.Item2, (long)AccountingPlanEnum.CashDesk, (long)AccountingPlanEnum.AccountingReceivable);
+            var repayment = AccountingRecordsManager.GetAccountingRecords(dates.Item1, dates.Item2, (short)AccountingPlanEnum.CashDesk, (short)AccountingPlanEnum.AccountingReceivable);
             var ui = new UIListView(repayment.Where(s => (s.CreditGuidId != null && partners.Contains(s.CreditGuidId.Value))).Select(s => new { Ամսաթիվ = s.RegisterDate, Վճարված = s.Amount, Նշումներ = s.Description }).ToList()) { Title = "Դեբիտորական պարտքի մարում ըստ պատվիրատուների" };
             ui.Show();
         }
@@ -2093,7 +2133,7 @@ namespace ES.Market.ViewModels
             try
             {
                 var assembly = Assembly.GetEntryAssembly();
-                
+
                 if (assembly != null)
                 {
                     object[] attributes = assembly.GetCustomAttributes(false);
@@ -2111,7 +2151,7 @@ namespace ES.Market.ViewModels
                             _Product = (AssemblyProductAttribute)attribute;
                     }
 
-                    
+
 
                     _Version = assembly.GetName().Version;
                 }
@@ -2126,11 +2166,11 @@ namespace ES.Market.ViewModels
             {
             }
 
-            var info = string.Format("Application: {0}\n" + 
-                                     "Product: {1}\n" + 
-                                     "Company: {2}\n" + 
-                                     "Version: {3}\n" + 
-                                     "Date: {4}\n\n"+
+            var info = string.Format("Application: {0}\n" +
+                                     "Product: {1}\n" +
+                                     "Company: {2}\n" +
+                                     "Version: {3}\n" +
+                                     "Date: {4}\n\n" +
                                      "Copyright: {5}", Title, ProductName, CompanyName, Version, linkTimeLocal, Copyright);
             MessageManager.ShowMessage(info, "About Es Market");
         }
@@ -2169,7 +2209,8 @@ namespace ES.Market.ViewModels
 
         private bool CanOpenCashDesk(object obj)
         {
-            return ApplicationManager.IsInRole(UserRoleEnum.Cashier) && !string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort);
+            return ApplicationManager.IsInRole(UserRoleEnum.Cashier) && 
+                   (!string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort) || !string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveCashDeskPrinter));
         }
 
         private void OnOpenCashDesk(object obj)
@@ -2186,7 +2227,6 @@ namespace ES.Market.ViewModels
         {
             get { return _correctProductsCommand ?? (_correctProductsCommand = new RelayCommand(OnCorrectProducts, CanCorrectProducts)); }
         }
-
         private bool CanCorrectProducts(object obj)
         {
             return ApplicationManager.IsInRole(UserRoleEnum.SeniorSeller);
@@ -2195,6 +2235,22 @@ namespace ES.Market.ViewModels
         private void OnCorrectProducts(object obj)
         {
             var vm = new CorrectProductsViewModel();
+            AddDocument(vm);
+        }
+
+        private ICommand _rReEditProductsCommand;
+        public ICommand ReEditProductsCommand
+        {
+            get { return _rReEditProductsCommand ?? (_rReEditProductsCommand = new RelayCommand(OnReEditProducts, CanReeditProducts)); }
+        }
+        private bool CanReeditProducts(object obj)
+        {
+            return ApplicationManager.IsInRole(UserRoleEnum.SeniorSeller);
+        }
+
+        private void OnReEditProducts(object obj)
+        {
+            var vm = new ReeditProductsViewModel();
             AddDocument(vm);
         }
 
@@ -2368,16 +2424,15 @@ namespace ES.Market.ViewModels
                 case ProjectCreationEnum.New:
                     return ApplicationManager.IsInRole(UserRoleEnum.Director) || ApplicationManager.IsInRole(UserRoleEnum.SaleManager) || ApplicationManager.IsInRole(UserRoleEnum.StockKeeper);
                     break;
-                case ProjectCreationEnum.Edit:
-                    return ApplicationManager.IsInRole(UserRoleEnum.Director) || ApplicationManager.IsInRole(UserRoleEnum.SaleManager) || ApplicationManager.IsInRole(UserRoleEnum.StockKeeper);
-                    break;
                 case ProjectCreationEnum.EditLast:
+                case ProjectCreationEnum.Edit:
+                    return ApplicationManager.IsInRole(UserRoleEnum.Director) || ApplicationManager.IsInRole(UserRoleEnum.SaleManager) || ApplicationManager.IsInRole(UserRoleEnum.StockKeeper) || ApplicationManager.IsInRole(UserRoleEnum.SeniorSeller) || ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
                     break;
                 case ProjectCreationEnum.View:
-                    return ApplicationManager.IsInRole(UserRoleEnum.Director) || ApplicationManager.IsInRole(UserRoleEnum.SaleManager) || ApplicationManager.IsInRole(UserRoleEnum.StockKeeper);
+                    return ApplicationManager.IsInRole(UserRoleEnum.Director) || ApplicationManager.IsInRole(UserRoleEnum.SaleManager) || ApplicationManager.IsInRole(UserRoleEnum.StockKeeper) || ApplicationManager.IsInRole(UserRoleEnum.Manager);
                     break;
                 case ProjectCreationEnum.ViewLast:
-                    return ApplicationManager.IsInRole(UserRoleEnum.Director) || ApplicationManager.IsInRole(UserRoleEnum.SaleManager) || ApplicationManager.IsInRole(UserRoleEnum.StockKeeper);
+                    return ApplicationManager.IsInRole(UserRoleEnum.Director) || ApplicationManager.IsInRole(UserRoleEnum.SaleManager) || ApplicationManager.IsInRole(UserRoleEnum.StockKeeper) || ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

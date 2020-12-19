@@ -22,15 +22,15 @@ namespace ES.DataAccess.Models
             this.ProductItems = new HashSet<ProductItems>();
         }
     
-        public long Id { get; set; }
-        public Nullable<long> ParentStockId { get; set; }
-        public Nullable<long> StorekeeperId { get; set; }
+        public short Id { get; set; }
+        public Nullable<short> ParentStockId { get; set; }
+        public Nullable<int> StorekeeperId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Address { get; set; }
         public string SpecialCode { get; set; }
         public bool IsEnable { get; set; }
-        public long EsMemberId { get; set; }
+        public int EsMemberId { get; set; }
     
         public virtual EsMembers EsMembers { get; set; }
         public virtual ICollection<EsStock> EsStock1 { get; set; }

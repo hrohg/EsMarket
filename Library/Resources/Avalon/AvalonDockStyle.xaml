@@ -475,8 +475,14 @@
         <Grid>
             <Control Template="{DynamicResource LoadingControlSmall}" Visibility="{Binding DataContext.Content.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}"/>
             <StackPanel Orientation="Horizontal">
-                <TextBlock x:Name="DocumentText" Text="{Binding DataContext.Content.Title, RelativeSource={RelativeSource TemplatedParent}}" Foreground="{StaticResource TabItemForegroundBrush}" />
-                <TextBlock x:Name="ModificationFlag" Text="*" Foreground="Red" Visibility="Hidden"/>
+                <Grid ToolTip="{Binding DataContext.Content.Tooltip, RelativeSource={RelativeSource TemplatedParent}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" x:Name="DocumentText" Text="{Binding DataContext.Content.Title, RelativeSource={RelativeSource TemplatedParent}}" Foreground="{StaticResource TabItemForegroundBrush}" />
+                    <TextBlock Grid.Column="1" x:Name="ModificationFlag" Text="*" Foreground="Red" Visibility="Hidden"/>
+                </Grid>
                 <Button Style="{StaticResource CloseButtonStyle}" 
                         Command="{Binding DataContext.Content.CloseCommand, RelativeSource={RelativeSource TemplatedParent}}"
                         Visibility="{Binding Converter={StaticResource BoolToVisibilityConverter}, Path=DataContext.Content.IsClosable, RelativeSource={RelativeSource TemplatedParent}}"/>

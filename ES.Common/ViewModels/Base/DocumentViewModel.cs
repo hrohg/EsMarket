@@ -66,6 +66,7 @@ namespace ES.Common.ViewModels.Base
         public DocumentViewModel()
         {
             IsClosable = true;
+            CanFloat = true;
         }
         #endregion Constructors
 

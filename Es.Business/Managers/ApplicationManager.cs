@@ -10,7 +10,7 @@ using ES.Business.Helpers;
 using ES.Common.Enumerations;
 using ES.Common.Managers;
 using ES.Common.Models;
-using ES.Data.Model;
+using ES.Data.Models;
 using ES.DataAccess.Models;
 
 namespace ES.Business.Managers
@@ -421,7 +421,7 @@ namespace ES.Business.Managers
 
         #region Constructors
         private static ApplicationManager _insatance;
-        
+
         public static ApplicationManager Instance
         {
             get { return _insatance ?? (_insatance = new ApplicationManager()); }
@@ -491,7 +491,7 @@ namespace ES.Business.Managers
                     break;
 
                 case UserRoleEnum.Moderator:
-                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Moderator) || IsInRole(UserRoleEnum.Admin);;
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Moderator) || IsInRole(UserRoleEnum.Admin); ;
                     break;
 
                 case UserRoleEnum.Director:
