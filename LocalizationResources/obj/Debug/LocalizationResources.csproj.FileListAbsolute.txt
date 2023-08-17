@@ -1,0 +1,86 @@
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\obj\Debug\LocalizationResources.csprojAssemblyReference.cache
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\obj\Debug\LocalizationResources.csproj.CoreCompileInputs.cache
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\LocalizationResources.dll.config
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\LocalizationResources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\LocalizationResources.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\EntityFramework.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\EntityFramework.SqlServer.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\Shared.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\ES.Common.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\ES.Data.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\CashReg.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\Xceed.Wpf.AvalonDock.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\System.Windows.Interactivity.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\EsMarket.SharedData.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\Newtonsoft.Json.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\TaxServiceInvoices.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\Shared.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\Shared.dll.config
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\EntityFramework.xml
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\EntityFramework.SqlServer.xml
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\ES.Common.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\ES.Data.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\Xceed.Wpf.AvalonDock.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\System.Windows.Interactivity.xml
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\EsMarket.SharedData.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\cs-CZ\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\en-US\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\hy-AM\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\kk-KZ\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\ru-RU\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\de\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\es\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\fr\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\hu\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\it\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\pt-BR\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\ro\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\ru\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\sv\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\bin\Debug\zh-Hans\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\obj\Debug\LocalizationResources.csproj.CopyComplete
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\obj\Debug\LocalizationResources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\LocalizationResources\obj\Debug\LocalizationResources.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\LocalizationResources.dll.config
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\LocalizationResources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\LocalizationResources.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\EntityFramework.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\EntityFramework.SqlServer.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\Shared.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\ES.Common.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\ES.Data.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\CashReg.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\Xceed.Wpf.AvalonDock.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\System.Windows.Interactivity.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\EsMarket.SharedData.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\TaxServiceInvoices.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\Newtonsoft.Json.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\Shared.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\Shared.dll.config
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\EntityFramework.xml
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\EntityFramework.SqlServer.xml
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\ES.Common.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\ES.Data.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\Xceed.Wpf.AvalonDock.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\System.Windows.Interactivity.xml
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\EsMarket.SharedData.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\cs-CZ\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\en-US\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\hy-AM\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\kk-KZ\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\ru-RU\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\de\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\es\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\fr\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\hu\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\it\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\pt-BR\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\ro\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\ru\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\sv\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\bin\Debug\zh-Hans\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\obj\Debug\LocalizationResources.csproj.AssemblyReference.cache
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\obj\Debug\LocalizationResources.csproj.CoreCompileInputs.cache
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\obj\Debug\LocalizationResources.csproj.CopyComplete
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\obj\Debug\LocalizationResources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\LocalizationResources\obj\Debug\LocalizationResources.pdb

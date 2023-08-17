@@ -101,15 +101,28 @@ namespace ES.Data.Models.Products
                 DealerPrice = DealerPrice
             };
         }
-        public decimal GetProductDealerPrice()
+        private decimal GetProductDealerPrice()
         {
             return (DealerPrice ?? 0) * (1 - (DealerDiscount ?? 0) / 100);
         }
-        public decimal GetProductPrice()
+        private decimal GetProductPrice()
         {
             return (Price ?? 0) * (1 - (Discount ?? 0) / 100);
         }
-
+        public decimal ProductDealerPrice
+        {
+            get
+            {
+                return DealerPrice.HasValue ? GetProductDealerPrice() : GetProductPrice();
+            }
+        }
+        public decimal ProductPrice
+        {
+            get
+            {
+                return Math.Max(GetProductPrice(), HasDealerPrice ? GetProductDealerPrice() : 0);
+            }
+        }
         public object Clone()
         {
             return MemberwiseClone();
@@ -121,7 +134,7 @@ namespace ES.Data.Models.Products
             if (value == null) return -1;
             if (value.Id == Id) return 0;
             return StringComparer.OrdinalIgnoreCase.Compare(value.Code, Code);
-        }
+        }        
     }
 
     public class ProductProvider

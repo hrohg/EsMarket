@@ -32,7 +32,7 @@
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="Մեկնաբանություն" HorizontalAlignment="Right"/>
                 <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding SelectedItem.Description, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
                 <TextBlock Grid.Row="3" Grid.Column="1" Text="Նշումներ" HorizontalAlignment="Right"/>
-                <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding SelectedItem.Notes }" VerticalContentAlignment="Center"/>
+                <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding SelectedItem.Note }" VerticalContentAlignment="Center"/>
                 <TextBlock Grid.Row="5" Grid.Column="1" Text="Կանխիկ" HorizontalAlignment="Right"/>
                 <CheckBox Grid.Row="5" Grid.Column="2" IsChecked="{Binding SelectedItem.IsCash}" VerticalContentAlignment="Center"/>
                 <TextBlock Grid.Row="6" Grid.Column="1" Text="Ակտիվ" HorizontalAlignment="Right"/>

@@ -14,12 +14,18 @@
                     <DatePicker Name="DtpStartDate" SelectedDate="{Binding Path=StartDate}" Margin="3" ToolTip="{Binding StartDateTooltip}"
                                 FirstDayOfWeek="Monday" HorizontalAlignment="Right" />
 
-                    <TextBlock Text="{Binding EndDateTooltip}" Visibility="{Binding Path = IsEndDateEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    <DatePicker SelectedDate="{Binding Path=EndDate}" Margin="3" ToolTip="{Binding EndDateTooltip}"
+                    <TextBlock x:Name="EndDateTextBlock" Text="{Binding EndDateTooltip}" Visibility="{Binding Path = IsEndDateEnabled, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <DatePicker x:Name="EndDateDtp" SelectedDate="{Binding Path=EndDate}" Margin="3" ToolTip="{Binding EndDateTooltip}"
                                 FirstDayOfWeek="Monday" HorizontalAlignment="Right" />
                 </StackPanel>
 
             </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsEndDateEnabled}" Value="False">
+                    <Setter TargetName="EndDateTextBlock" Property="Visibility" Value="Collapsed"/>
+                    <Setter TargetName="EndDateDtp" Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </Window.Resources>
     <Grid>

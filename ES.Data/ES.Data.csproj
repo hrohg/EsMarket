@@ -48,6 +48,7 @@
     <Compile Include="Converters\EsMarketInvoiceConverter.cs" />
     <Compile Include="Enumerations\PartnerType.cs" />
     <Compile Include="Helper\SerializableInvoices.cs" />
+    <Compile Include="Models\Bases\DynamicModel.cs" />
     <Compile Include="Models\Bases\TreeViewItemBaseModel.cs" />
     <Compile Include="Models\BrandModel.cs" />
     <Compile Include="Models\BranchModel.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Models\PartnerTypeModel.cs" />
     <Compile Include="Models\ProductItemModel.cs" />
     <Compile Include="Models\Products\EsProductModel.cs" />
+    <Compile Include="Models\Products\LogForProductsModel.cs" />
     <Compile Include="Models\Products\ProductModel.cs" />
     <Compile Include="Models\ProductOrderModel.cs" />
     <Compile Include="Models\Products\ProductsAdditionalDataModel.cs" />

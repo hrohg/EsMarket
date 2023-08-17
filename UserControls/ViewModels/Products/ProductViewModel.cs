@@ -125,7 +125,7 @@ namespace UserControls.ViewModels.Products
                 var separators = new[] { @" ", ",", ";" };
                 Product.ProductKeys = !string.IsNullOrEmpty(value)
                     ? value.Split(separators, StringSplitOptions.RemoveEmptyEntries).Select(s =>
-                        new ProductKeysModel {Id = Guid.NewGuid(), ProductId = Product.Id, ProductKey = s }).ToList()
+                        new ProductKeysModel (s, Product.Id, Product.EsMemberId)).ToList()
                     : null;
             }
         }

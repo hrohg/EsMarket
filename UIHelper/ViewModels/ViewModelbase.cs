@@ -1,16 +1,9 @@
-﻿using System.ComponentModel;
+﻿using ES.Common.ViewModels.Base;
 
 namespace UIHelper.ViewModels
 {
-    public abstract class ViewModelBase : INotifyPropertyChanged
+    public abstract class ViewModelBase : NotifyPropertyChanged
     {
         protected object Sync = new object();
-        protected void RaisePropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-    }
+    }    
 }

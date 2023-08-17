@@ -11,7 +11,7 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="Bool2VisibilityConverter"/>
         <helpers:MutiplyConverter x:Key="MutiplyConverter"/>
-        
+
         <DataTemplate DataType="{x:Type receiptTickets:SaleInvoiceSmallTicketViewModel}">
             <Grid Margin="3">
                 <Grid.RowDefinitions>
@@ -73,6 +73,7 @@
                         </Style>
                     </DataGrid.Resources>
                     <DataGrid.Columns>
+                        <DataGridTextColumn Header="Հհ" Binding="{Binding DisplayOrder, Mode=OneWay}" Width="Auto"/>
                         <DataGridTextColumn Header="Կոդ" Binding="{Binding Code, Mode=OneWay}" Width="Auto"/>
                         <DataGridTextColumn Header="Անվանում" Binding="{Binding Description, Mode=OneWay}" Width="1*" />
                         <DataGridTextColumn Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" Width="Auto" />
@@ -149,7 +150,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Ամսաթիվ։ " />
-                        <TextBlock Text="{Binding Date}" />
+                        <TextBlock Text="{Binding Invoice.ApproveDate}" />
                     </StackPanel>
                     <TextBlock Text="{Binding MemberName}" />
                     <TextBlock Text="{Binding MemberAddress}" />
@@ -157,7 +158,10 @@
                         <TextBlock Text="Հաստատեց։ " />
                         <TextBlock Text="{Binding Invoice.Approver}" />
                     </StackPanel>
-                    <TextBlock Text="Բաժին։ " />
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Բաժին։ " />
+                        <TextBlock Text="{Binding Invoice.RecipientName}"/>
+                    </StackPanel>
                 </StackPanel>
                 <DataGrid Grid.Row="1" x:Name="PartDataGrid" ItemsSource="{Binding InvoiceItems}" SelectedItem="{Binding SelectedInvoiceItem}" 
                           VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" 
@@ -169,6 +173,7 @@
                         </Style>
                     </DataGrid.Resources>
                     <DataGrid.Columns>
+                        <DataGridTextColumn Header="Հհ" Binding="{Binding DisplayOrder, Mode=OneWay}" Width="Auto"/>
                         <DataGridTextColumn Header="Կոդ" Binding="{Binding Code, Mode=OneWay}" Width="Auto"/>
                         <DataGridTemplateColumn  Header="Անվանում" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
@@ -215,7 +220,7 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Column="0" Grid.Row="0" Text="Գումար։" HorizontalAlignment="Right" />
-                    <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Invoice.Total, StringFormat={}{0:#,0.##}}" HorizontalAlignment="Right"  />
+                    <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding TotalAmount, StringFormat={}{0:#,0.##}}" HorizontalAlignment="Right"  />
                 </Grid>
             </Grid>
         </DataTemplate>

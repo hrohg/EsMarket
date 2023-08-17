@@ -8,6 +8,7 @@ namespace ES.Data.Models.Reports
         #endregion
 
         #region External properties
+        public int? MuId;
         public string Invoice { get; set; }
         public DateTime? ApproveDate { get; set; }
         public string FromStock { get; set; }

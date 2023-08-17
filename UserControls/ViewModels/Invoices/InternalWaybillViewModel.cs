@@ -28,6 +28,24 @@ namespace UserControls.ViewModels.Invoices
         {
             get { return string.Format("{0}({1} - {2})", Title, FromStock != null ? FromStock.FullName : string.Empty, ToStock != null ? ToStock.FullName : string.Empty); }
         }
+        public override StockModel FromStock
+        {
+            get { return base.FromStock; }
+            set
+            {
+                base.FromStock = value;
+                Invoice.ProviderName = value != null ? value.FullName : string.Empty;
+            }
+        }
+        public override StockModel ToStock
+        {
+            get { return base.ToStock; }
+            set
+            {
+                base.ToStock = value;
+                Invoice.RecipientName = value != null ? value.FullName : string.Empty;
+            }
+        }
         public override bool CanAddInvoiceItem(object o)
         {
             return base.CanAddInvoiceItem(o) && FromStocks != null;

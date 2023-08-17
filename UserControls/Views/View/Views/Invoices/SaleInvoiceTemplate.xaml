@@ -9,7 +9,8 @@
                     xmlns:controls="clr-namespace:ES.Common.Controls;assembly=ES.Common"
                     xmlns:popup="clr-namespace:UserControls.Controls.Popup"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common">
+                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
+                    xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data">
 
     <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
     <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -29,10 +30,8 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>   
 
-    
-    
     <DataTemplate DataType="{x:Type invoices:ReturnToInvoiceViewModel}">
         <Grid>
             <Grid.InputBindings>
@@ -57,9 +56,8 @@
                         <MenuItem Header="Ապրանքագիր Xml"  Command="{Binding ImportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Xml}"/>
                         <MenuItem Header="Ապրանքագիր Excel"  Command="{Binding ImportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
                         <MenuItem Header="Ապրանքների բեռնում">
-                            <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
-                            <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceTypeEnum.MoveInvoice}" />
-                            <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceTypeEnum.PurchaseInvoice}"/>
+                            <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"/>
+                            <MenuItem Header="Ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"/>
                         </MenuItem>
                     </MenuItem>
                     <Separator/>
@@ -348,8 +346,24 @@
                         <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" />
-                        <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}" />
-                        <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}" />
+                        <DataGridTemplateColumn Header="Քանակ">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
+                                    <TextBox Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0.###}}" 
+                                             IsReadOnly="{Binding ElementName=DgInvoiceItems, Path=DataContext.DenyChangeQuantity, Mode=OneWay}"
+                                             HorizontalContentAlignment="Right"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Գին">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
+                                    <TextBox Text="{Binding Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0.##}}" 
+                                             HorizontalContentAlignment="Right" 
+                                             IsReadOnly="{Binding ElementName=DgInvoiceItems, Path=DataContext.DenyChangePrice, Mode=OneWay}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}"/>
                         <DataGridTextColumn IsReadOnly="True" Header="Զեղչ" Binding="{Binding Path=Discount, StringFormat={}{0:#,#.##}}" CellStyle="{StaticResource CellRightAlign}"/>
                         <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
@@ -373,7 +387,7 @@
                         </StackPanel>-->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                             <TextBlock Text="Ընդամենը" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12"  Foreground="Green"/>
-                            <TextBox Text="{Binding Path=Invoice.Total, StringFormat={}{0:#,#.##}}"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsReadOnly="True" Foreground="Blue"/>
+                            <TextBox Text="{Binding Path=Invoice.Total, Mode=OneWay, StringFormat={}{0:#,#.##}}"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsReadOnly="True" Foreground="Blue"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
@@ -476,6 +490,7 @@
                                 <ContextMenu>
                                     <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"  />
                                     <MenuItem Header="Հաստատել" Command="{Binding ApproveInvoiceCommand}"  />
+                                    <MenuItem Header="Հեռացնել" Command="{Binding RemoveInvoiceCommand}"  />
                                     <Separator/>
                                     <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
                                     <MenuItem Header="Տպել վաճառքի կտրոն Ctrl+Shift+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Small}"/>
@@ -487,9 +502,8 @@
                                         <MenuItem Header="Инвоисе Excel" Command="{Binding ExportInvoiceToExcelRusCommand}" Visibility="Collapsed"/>
                                         <MenuItem Header="Инвоисе Xml" Command="{Binding ExportInvoiceToXmlRusCommand}"  Visibility="Collapsed"/>
                                         <MenuItem Header="Ապրանքների բեռնում">
-                                            <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
-                                            <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceTypeEnum.MoveInvoice}" />
-                                            <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceTypeEnum.PurchaseInvoice}"/>
+                                            <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"/>
+                                            <MenuItem Header="Ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"/>
                                         </MenuItem>
                                     </MenuItem>
                                     <MenuItem Header="Արտահանել">
@@ -505,6 +519,6 @@
                 </Grid>
             </Grid>
         </Grid>
-    </DataTemplate>
+    </DataTemplate>    
     
 </ResourceDictionary>

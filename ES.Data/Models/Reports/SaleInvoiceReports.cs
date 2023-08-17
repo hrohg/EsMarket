@@ -13,7 +13,6 @@ namespace ES.Data.Models.Reports
         decimal Price { get; }
         decimal Amount { get; }
     }
-
     public class InvoiceReport : IInvoiceReport
     {
         private decimal _cost;

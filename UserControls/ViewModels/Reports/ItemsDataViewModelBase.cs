@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -22,7 +23,8 @@ namespace UserControls.ViewModels.Reports
             get { return _items; }
             set { _items = value; RaisePropertyChanged("Items"); }
         }
-
+        public override int TotalRows { get => Items.Count; }
+        public override double TotalCount { get => base.TotalCount; set => base.TotalCount = value; }
         protected ItemsDataViewModelBase()
         {
             Init();
@@ -54,7 +56,11 @@ namespace UserControls.ViewModels.Reports
 
         protected virtual void UpdateCompleted(bool isSuccess)
         {
-            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { IsLoading = false; });
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { 
+                IsLoading = false;
+                RaisePropertyChanged("TotalRows");
+                RaisePropertyChanged("TotalCount");
+            });
         }
 
         private ICommand _updateCommand;
@@ -82,9 +88,18 @@ namespace UserControls.ViewModels.Reports
 
         protected void AddNewItem(T item)
         {
-            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
             {
                 Items.Add(item);
+            });
+        }
+        protected void AddNewItems(List<T> items)
+        {
+            if (items == null) return;
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+            {
+                foreach (var item in items)
+                    Items.Add(item);
             });
         }
     }

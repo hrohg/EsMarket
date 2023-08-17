@@ -897,7 +897,7 @@ namespace ES.Business.Managers
             {
                 return;
             }
-
+            if (string.IsNullOrEmpty(backupFilePath) || string.IsNullOrEmpty(databaseName)) return;
             using (var connection = new SqlConnection(connectionString))
             {
                 var query = String.Format("BACKUP DATABASE [{0}] TO DISK='{1}'", databaseName, backupFilePath);

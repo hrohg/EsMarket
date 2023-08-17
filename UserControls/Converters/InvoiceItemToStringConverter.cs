@@ -11,7 +11,8 @@ namespace UserControls.Converters
         {
             var invoiceItem = value as InvoiceItemsModel;
             if (invoiceItem == null) return null;
-            return string.Format("{0} {1} {2} {3}x{4}={5}դր.",
+            return string.Format("{0}, {1} {2} {3} {4}x{5}={6}դր.",
+                invoiceItem.Product.HcdCs,
                 invoiceItem.Code,
                 invoiceItem.Description,
                 invoiceItem.Mu,

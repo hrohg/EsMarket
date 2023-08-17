@@ -366,7 +366,7 @@
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                     <Label Content="Ընդամենը" VerticalAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right" FontSize="12"  Foreground="Green"/>
-                    <TextBox Text="{Binding Invoice.Total, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsReadOnly="True" Foreground="Blue" Margin="0,27"/>
+                    <TextBox Text="{Binding Invoice.Total, Mode=OneWay, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsReadOnly="True" Foreground="Blue" Margin="0,27"/>
                 </StackPanel>
             </Grid>
         </Grid>

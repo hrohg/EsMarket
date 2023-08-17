@@ -7,6 +7,7 @@ using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Common.Models;
 using ES.Data.Models;
+using System.Collections.ObjectModel;
 
 namespace ES.Login
 {
@@ -19,6 +20,9 @@ namespace ES.Login
         public delegate void LoginDelegate(EsUserModel esUser, string login);
         public event LoginDelegate OnLogin;
 
+        public delegate void RemoveDelegate(string userName);
+        public event RemoveDelegate OnRemoveUser;
+
         public delegate void Closed(bool isTerminated);
         public event Closed OnClosed;
 
@@ -30,8 +34,8 @@ namespace ES.Login
 
         #region External properties
         #region Logins
-        private List<string> _logins;
-        public List<string> Logins
+        private ObservableCollection<string> _logins;
+        public ObservableCollection<string> Logins
         {
             get { return _logins; }
             set
@@ -59,6 +63,7 @@ namespace ES.Login
                 }
             }
         }
+        public string HighlightedItem { get; set; }
         #endregion Login
 
         #region Password
@@ -114,7 +119,7 @@ namespace ES.Login
         {
             Initialize();
             Login = login;
-            Logins = logins;
+            Logins =new ObservableCollection<string>(logins);
             _servers = servers;
         }
         #endregion Constructors
@@ -123,7 +128,7 @@ namespace ES.Login
 
         private void Initialize()
         {
-            
+
         }
 
         private void OnTryLogin()
@@ -133,7 +138,7 @@ namespace ES.Login
             LoginMessage = string.Empty;
 
             var servers = UserControls.Helpers.SelectItemsManager.SelectServers(_servers);
-            if(servers==null) return;
+            if (servers == null) return;
             while (!ApplicationManager.CreateConnectionString(servers.FirstOrDefault()))
             {
                 var handler = OnClosed;
@@ -157,7 +162,7 @@ namespace ES.Login
             }
             else
             {
-                loginedHandler(user, Login);
+                loginedHandler(user.UserId > 0 ? user : null, Login);
                 //TxtPassword.Focus();
             }
         }
@@ -165,6 +170,7 @@ namespace ES.Login
 
         #region Commands
         private ICommand _loginCommand;
+        private ICommand _removeCommand;
         public ICommand LoginCommnd
         {
             get
@@ -188,6 +194,17 @@ namespace ES.Login
             //    return;
             //}
             OnTryLogin();
+        }
+
+        public ICommand RemoveCommand { get { return _removeCommand ?? (_removeCommand = new RelayCommand(OnRemove)); } }
+
+        private void OnRemove(object obj)
+        {
+            if (_logins.All(s => s != HighlightedItem)) return;
+            _logins.Remove(HighlightedItem);
+            RaisePropertyChanged("Logins");
+            var handler = OnRemoveUser;
+            if (handler != null) handler(HighlightedItem);
         }
 
         private ICommand _closeCommand;

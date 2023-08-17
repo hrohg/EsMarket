@@ -124,7 +124,7 @@ namespace UserControls.ViewModels
 
         public override List<ItemsToSelectByCheck> Items
         {
-            get { return base.Items.Where(s => string.IsNullOrEmpty(s.Description) || string.IsNullOrEmpty(Filter) || s.Description.ToLower().Contains(Filter.ToLower())).ToList(); }
+            get { return base.Items.Where(s => !s.Keys.Any() || string.IsNullOrEmpty(Filter) || s.Keys.Any(key=>key!=null && key.ToLower().Contains(Filter.ToLower()))).ToList(); }
             set
             {
                 base.Items = value;

@@ -33,7 +33,7 @@
                                     <DataGridTextColumn IsReadOnly="True" Header="Գնորդ" Binding="{Binding Description}" />
                                     <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Path = Count, StringFormat={}{0:#,0}}" 
                                                 CellStyle="{StaticResource CellRightAlign}"/>
-                                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path = Total, StringFormat={}{0:#,0.##}}" 
+                                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path = Total, Mode=OneWay, StringFormat={}{0:#,0.##}}" 
                                                 CellStyle="{StaticResource CellRightAlign}"/>
                                 </DataGrid.Columns>
                             </DataGrid>
@@ -44,7 +44,7 @@
                                     <DataGridTextColumn IsReadOnly="True" Header="Վաճառող" Binding="{Binding Description}" />
                                     <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Path = Count, StringFormat={}{0:#,0}}" 
                                                 CellStyle="{StaticResource CellRightAlign}"/>
-                                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path = Total, StringFormat={}{0:#,0.##}}" 
+                                    <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path = Total, Mode=OneWay, StringFormat={}{0:#,0.##}}" 
                                                 CellStyle="{StaticResource CellRightAlign}"/>
                                 </DataGrid.Columns>
                             </DataGrid>
@@ -56,7 +56,7 @@
                                             <DataGridTextColumn IsReadOnly="True" Header="Ապրանքագիր" Binding="{Binding Description}" />
                                             <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Path = Count, StringFormat={}{0:#,0}}" 
                                                 CellStyle="{StaticResource CellRightAlign}"/>
-                                            <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path = Total, StringFormat={}{0:#,0.##}}" 
+                                            <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path = Total, Mode=OneWay, StringFormat={}{0:#,0.##}}" 
                                                 CellStyle="{StaticResource CellRightAlign}"/>
                                             <DataGridTextColumn IsReadOnly="True" Header="%" Binding="{Binding Path=Profit, StringFormat={}{0:#,0.##}%}" 
                                                 CellStyle="{StaticResource CellRightAlign}"/>
@@ -132,7 +132,7 @@
                                 <DataGridTextColumn IsReadOnly="True" Header="Գործընկեր" Binding="{Binding Partner.FullName}" />
                                 <DataGridTextColumn IsReadOnly="True" Header="Ապրանքագիր" Binding="{Binding InvoiceNumber}" />
                                 <DataGridTextColumn IsReadOnly="True" Header="Ստեղծման ամսաթիվ" Binding="{Binding CreateDate}" />
-                                <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Total, StringFormat={}{0:#,0.##}}" 
+                                <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Total, Mode=OneWay, StringFormat={}{0:#,0.##}}" 
                                             CellStyle="{StaticResource CellRightAlign}"/>
                                 <DataGridTextColumn IsReadOnly="True" Header="Հեղինակ" Binding="{Binding Creator}" />
                                 <DataGridTextColumn IsReadOnly="True" Header="Հասատման ամսաթիվ" Binding="{Binding Path=ApproveDate}" />
@@ -153,8 +153,8 @@
                                     <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}"/>
                                     <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description}" />
                                     <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" />
-                                    <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Quantity, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
                                     <DataGridTextColumn IsReadOnly="True" Header="Մնացորդ" Binding="{Binding ExistingQuantity, StringFormat={}{0:#,0.###}}" CellStyle="{StaticResource CellRightAlign}"/>
+                                    <DataGridTextColumn IsReadOnly="True" Header="Քանակ" Binding="{Binding Quantity, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
                                     <DataGridTextColumn IsReadOnly="True" Header="Գին" Binding="{Binding Price, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
                                     <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
                                     <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />

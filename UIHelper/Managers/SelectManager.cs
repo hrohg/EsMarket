@@ -34,8 +34,8 @@ namespace UIHelper.Managers
             return vm.StartDate;
         }
 
-        public static Tuple<DateTime, DateTime> GetDateIntermediate(DateTime startDate, DateTime endDate)
-        {
+        public static Tuple<DateTime, DateTime> GetDateIntermediate(DateTime? startDate, DateTime? endDate)
+        {            
             var vm = new SelectDataIntermediateViewModel(startDate, endDate);
             var window = new SelectWindow(vm);
             window.ShowDialog();

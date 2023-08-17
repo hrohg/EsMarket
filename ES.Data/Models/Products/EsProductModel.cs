@@ -94,9 +94,13 @@ namespace ES.Data.Models.Products
             {
                 if (_costPrice == value) { return; }
                 _costPrice = value;
-                Price = ProfitPercent != null && CostPrice != null ? CostPrice * (1 + ProfitPercent / 100) : null;
-                DealerPrice = DealerProfitPercent != null && CostPrice != null ? CostPrice * (1 + DealerProfitPercent / 100) : null;
-                OnPropertyChanged(CostPriceProperty); OnPropertyChanged(ProfitPercentProperty); OnPropertyChanged(DealerProfitPercentProperty);
+                OnPropertyChanged(CostPriceProperty);
+                if (CostPrice != null)
+                {
+                    Price = ProfitPercent != null && CostPrice != null ? CostPrice * (1 + ProfitPercent / 100) : null;
+                    DealerPrice = DealerProfitPercent != null && CostPrice != null ? CostPrice * (1 + DealerProfitPercent / 100) : null;
+                    OnPropertyChanged(ProfitPercentProperty); OnPropertyChanged(DealerProfitPercentProperty);
+                }
             }
         }
         public decimal? OldPrice { get { return _oldPrice; } set { _oldPrice = value; } }
@@ -106,7 +110,7 @@ namespace ES.Data.Models.Products
             set
             {
                 if (_price == value) { return; }
-                _price = value;
+                _price = value != null ? decimal.Round((decimal)value, 2) : (decimal?)null;
                 //ProfitPercent = _price!=null && CostPrice!=null && CostPrice != 0 ? _price * 100 / CostPrice - 100 :null;
                 OnPropertyChanged(PriceProperty);
                 OnPropertyChanged(ProfitPercentProperty);
@@ -127,10 +131,10 @@ namespace ES.Data.Models.Products
         [XmlIgnore]
         public decimal? ProfitPercent
         {
-            get { return _price != null && CostPrice != null && CostPrice != 0 ? _price * 100 / CostPrice - 100 : null; ; }
+            get { return _price > 0 && CostPrice > 0 ? (100 * _price / CostPrice - 100) : null; }
             set
             {
-                //    if (_profitPercent == value) { return;}
+                if (value == null) { return; }
                 //    _profitPercent = value;
                 Price = value != null && CostPrice != null ? CostPrice * (100 + value) / 100 : null;
                 //   OnPropertyChanged(ProfitPercentProperty);
@@ -138,7 +142,9 @@ namespace ES.Data.Models.Products
             }
         }
         [XmlIgnore]
-        public bool HasDealerPrice { get { return _dealerPrice != null; } }
+        public bool HasDiscount { get { return Discount != null; } }
+        [XmlIgnore]
+        public bool HasDealerPrice { get { return _dealerPrice.HasValue; } }
         public decimal? DealerPrice
         {
             get { return _dealerPrice ?? Price; }
@@ -148,30 +154,32 @@ namespace ES.Data.Models.Products
                 {
                     return;
                 }
-                _dealerPrice = value;
-                //DealerProfitPercent =_dealerPrice!=null && CostPrice != null && CostPrice != 0 && _dealerPrice!=null ? _dealerPrice * 100 / CostPrice - 100 : null;
+                _dealerPrice = value != null ? decimal.Round((decimal)value, 2) : (decimal?)null;
+                //DealerProfitPercent hasnt value setter
+                //DealerProfitPercent = CostPrice > 0 && _dealerPrice != null ? (_dealerPrice - CostPrice) * 100 / CostPrice : null;
                 OnPropertyChanged(DealerPriceProperty);
                 OnPropertyChanged(DealerProfitPercentProperty);
             }
         }
-
+        [XmlIgnore]
+        public bool HasDealerDiscount { get { return DealerDiscount != null; } }
         public decimal? DealerDiscount
         {
             get { return _dealerDiscount; }
             set
             {
-                if (_dealerDiscount == value) { return; } _dealerDiscount = value;
+                if (_dealerDiscount == value) { return; }
+                _dealerDiscount = value;
                 OnPropertyChanged(DealerDiscountProperty);
             }
         }
         [XmlIgnore]
         public decimal? DealerProfitPercent
         {
-            get { return _dealerPrice != null && CostPrice != null && CostPrice != 0 && _dealerPrice != null ? _dealerPrice * 100 / CostPrice - 100 : null; }
+            get { return _dealerPrice > 0 && CostPrice > 0 ? 100 * _dealerPrice / CostPrice - 100 : null; }
             set
             {
-
-                //if (_dealerProfitPercent == value) { return;}
+                if (value == null) { return; }
                 //_dealerProfitPercent = value;
                 DealerPrice = CostPrice != null && value != null ? _costPrice * (100 + value) / 100 : null;
                 OnPropertyChanged(DealerProfitPercentProperty);
@@ -200,6 +208,8 @@ namespace ES.Data.Models.Products
         public EsMemberModel EsMember { get { return _esMember; } set { _esMember = value; } }
         [XmlIgnore]
         public int LastModifierId { get { return _lastModifierId; } set { _lastModifierId = value; } }
+        [XmlIgnore]
+        public EsUserModel LastModifier { get; set; }
         //[XmlIgnore]
         public DateTime LastModifiedDate { get { return _lastModifiedDate; } set { _lastModifiedDate = value; } }
         [XmlIgnore]
@@ -225,9 +235,47 @@ namespace ES.Data.Models.Products
             Code = code;
         }
         //public ProductModel() { }
-        #endregion
+        #endregion        
 
         #region private methods
+        #endregion
+
+        #region External methods
+        public void SetCostPrice(decimal? value)
+        {
+            _costPrice = value;
+            OnPropertyChanged("CostPrice");
+        }
+        public void SetProfitPercent(decimal? value)
+        {
+            _profitPercent = value;
+            OnPropertyChanged("ProfitPercent");
+        }
+        public void SetPrice(decimal? value)
+        {
+            _price = value;
+            OnPropertyChanged("Price");
+        }
+        public void SetDiscount(decimal? value)
+        {
+            _discount = value;
+            OnPropertyChanged("Discount");
+        }
+        public void SetDealerProfitPercent(decimal? value)
+        {
+            _dealerProfitPercent = value;
+            OnPropertyChanged("DealerProfitPercent");
+        }
+        public void SetDealerPrice(decimal? value)
+        {
+            _dealerPrice = value;
+            OnPropertyChanged("DealerPrice");
+        }
+        public void SetDealerDiscount(decimal? value)
+        {
+            _dealerDiscount = value;
+            OnPropertyChanged("DealerDiscount");
+        }
         #endregion
 
         #region INotifyPropertyChanged
@@ -246,7 +294,7 @@ namespace ES.Data.Models.Products
         {
             if (string.IsNullOrEmpty(key)) return true;
             key = key.ToLower().Trim();
-            
+
             return Description.ToLower().Contains(key) ||
                    Code.ToLower().Contains(key) ||
                    Barcode != null && Barcode.ToLower().Contains(key) ||
@@ -260,6 +308,14 @@ namespace ES.Data.Models.Products
         public Guid ProductId { get; set; }
         public string ProductKey { get; set; }
         public int MemberId { get; set; }
+
+        public ProductKeysModel(string productKey, Guid productId, int memberId)
+        {
+            Id = Guid.NewGuid();
+            ProductId = productId;
+            ProductKey = productKey;
+            MemberId = memberId;
+        }
     }
 
     public class ProductCategoriesModel

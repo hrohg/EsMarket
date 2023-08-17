@@ -74,6 +74,7 @@ namespace ES.Business.Models
         private decimal _quantity;
         private decimal? _stockTakeQuantity;
         private DateTime _stockTakeDate;
+        private ProductModel _product;
         #endregion
 
         #region Public properties
@@ -100,7 +101,7 @@ namespace ES.Business.Models
         #endregion Index
         public Guid StockTakeId { get { return _stockTakeId; } set { _stockTakeId = value; } }
         public Guid? ProductId { get { return _productId; } set { _productId = value; } }
-        public ProductModel Product { get; set; }
+        public ProductModel Product { get { return _product; } set { _product = value; OnPropertyChanged("Product"); } }
         public string ProductDescription { get { return _productDescription; } set { _productDescription = value; OnPropertyChanged(ProductDescriptionProperty); } }
         public string Mu { get { return Product!=null? Product.Mu:null;} }
         public decimal? Price { get { return _price; } set { _price = value; OnPropertyChanged(PriceProperty); } }

@@ -18,6 +18,7 @@ using ES.DataAccess.Models;
 using DataTable = System.Data.DataTable;
 using MessageManager = ES.Common.Managers.MessageManager;
 using ProductModel = ES.Data.Models.Products.ProductModel;
+using ES.Data.Models.Bases;
 
 namespace ES.Business.Managers
 {
@@ -223,7 +224,8 @@ namespace ES.Business.Managers
                 //exItem.EsMember = item.EsMember;
                 exItem.LastModifierId = item.LastModifierId;
                 exItem.LastModifiedDate = item.LastModifiedDate;
-                exItem.ProductCategories = Convert(item.ProductCategories);
+                // todo
+                //exItem.ProductCategories = Convert(item.ProductCategories);
                 exItem.ProductKeys = Convert(item.ProductKeys.ToList());
                 //_products.Add(exItem.Id, exItem);
 
@@ -262,6 +264,7 @@ namespace ES.Business.Managers
             exItem.EsMemberId = item.EsMemberId;
             //exItem.EsMember = item.EsMember;
             exItem.LastModifierId = item.LastModifierId;
+            exItem.LastModifier = ApplicationManager.CashManager.GetUser(item.LastModifierId);
             exItem.LastModifiedDate = item.LastModifiedDate;
             //_products.Add(exItem.Id, exItem);
 
@@ -294,6 +297,98 @@ namespace ES.Business.Managers
 
             return newItem;
         }
+
+        public static List<ProductOrderModelBase> GetProductItemsByPartners(List<Guid> partnerIds)
+        {
+            //var reports = new List<IInvoiceReport>();
+
+            try
+            {
+                using (var db = GetDataContext())
+                {
+
+                    var productItems = db.ProductItems.Where(pi => pi.Quantity > 0 && pi.MemberId == MemberId)
+                               .Join(db.Invoices, pi => pi.CreatedInvoiceId, i => i.Id, (productItem, invoice) => new { productItem, invoice })
+                               .Where(i => i.invoice.PartnerId.HasValue && partnerIds.Contains((Guid)i.invoice.PartnerId)).ToList();
+                    return productItems.Select(pi => new ProductOrderModelBase()
+                    {
+                        ProductId = pi.productItem.ProductId,
+                        ProviderId = pi.invoice.PartnerId,
+                        SaleQuantity = (double)pi.productItem.Quantity,
+                        ProductItem = pi.productItem,
+                        CreateInvoice = pi.invoice
+                    }).ToList();
+                    ////var saleInvoiceItems =
+                    ////    db.InvoiceItems.Where(
+                    ////        s => s.Invoices.MemberId == ApplicationManager.Member.Id && s.Invoices.ApproveDate > _dateIntermediate.Item1 &&
+                    ////             (s.Invoices.InvoiceTypeId == (int)InvoiceType.SaleInvoice ||
+                    ////              s.Invoices.InvoiceTypeId == (int)InvoiceType.InventoryWriteOff ||
+                    ////              s.Invoices.InvoiceTypeId == (int)InvoiceType.ReturnTo)).ToList();
+                    ////var salePrice = saleInvoiceItems.Sum(s => (s.Price ?? 0) * (s.Quantity ?? 0) + (s.Discount ?? 0));
+                    ////var saleCostPrice = saleInvoiceItems.Sum(s => (s.CostPrice ?? 0) * (s.Quantity ?? 0));
+
+                    ////var purchaseInvoiceItems = db.InvoiceItems.Where(s => s.Invoices.MemberId == ApplicationManager.Member.Id && s.Invoices.ApproveDate > _dateIntermediate.Item1 &&
+                    ////    (s.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice ||
+                    ////    s.Invoices.InvoiceTypeId == (int)InvoiceType.ReturnFrom)).ToList();
+                    ////var purchasePrice = purchaseInvoiceItems.Sum(s => (s.Price ?? 0) * (s.Quantity ?? 0) + (s.Discount ?? 0));
+                    ////var purchaseCostPrice = purchaseInvoiceItems.Sum(s => (s.CostPrice ?? 0) * (s.Quantity ?? 0));
+
+                    //var stocks = ApplicationManager.CashManager.GetStocks;
+
+                    //var field = new DynamicModel<string, object>();
+                    //field.Fields.Add("Մատակարար", typeof(string));
+                    //field.Fields.Add("Ապրանքագիր", typeof(string));
+                    //field.Fields.Add("Ամսաթիվ", typeof(DateTime));
+                    //field.Fields.Add("Կոդ", typeof(string));
+                    //field.Fields.Add("Անվանում", typeof(string));
+                    //field.Fields.Add("Ինքնարժեք", typeof(double));
+                    //field.Fields.Add("Վաճառք", typeof(double));
+                    //field.Fields.Add("Քանակ", typeof(double));
+                    //foreach (var stock in stocks)
+                    //    field.Fields.Add(stock.FullName, typeof(double));
+
+
+                    //var items = new List<object>();
+
+                    //foreach (var item in productItems)
+                    //{
+
+                    //    var newItem = new field
+                    //    {
+                    //        Մատակարար = item.invoice.ProviderName,
+                    //        Ապրանքագիր = item.invoice.InvoiceNumber,
+                    //        Ամսաթիվ = item.invoice.CreateDate,
+
+                    //        Կոդ = item.productItem.Products.Code,
+                    //        Անվանում = item.productItem.Products.Description,
+                    //        Ինքնարժեք = item.productItem.CostPrice,
+                    //        Վաճառք = item.productItem.Products.Price,
+                    //        Քանակ = item.productItem.Quantity,
+                    //        stocks.Select(s=>new)
+                    //    };
+
+                    //    items.Add(newItem);
+                    //    //var productItems = pi.Where(s => s.StockId == stock.Id).ToList();
+                    //    //reports.Add(new InvoiceReport
+                    //    //{
+                    //    //    Description = string.Format("{0}", stock.FullName),
+                    //    //    Count = productItems.GroupBy(t => t.ProductId).Count(),
+                    //    //    Quantity = productItems.Sum(t => t.Quantity),
+                    //    //    Cost = productItems.Sum(t => t.Quantity * t.CostPrice) + saleCostPrice - purchaseCostPrice,
+                    //    //    Price = productItems.Sum(t => t.Quantity * (t.Products.Price ?? 0)) + salePrice - purchasePrice,
+                    //    //    Sale = productItems.Sum(t => t.Quantity * ((t.Products.Price ?? 0) - t.CostPrice)),
+                    //    //});
+                    //}
+                }
+            }
+            catch (Exception)
+            {
+                MessageManager.OnMessage("Գործողությունը ձախողվել է:");
+                return null;
+            }
+            //return reports;
+        }
+
         private static Products Convert(ProductModel item)
         {
             if (item == null) return null;
@@ -339,13 +434,13 @@ namespace ES.Business.Managers
         public static ICollection<ProductKeys> Convert(List<ProductKeysModel> items)
         {
             if (items == null || items.Count == 0) return new List<ProductKeys>();
-            return items.Select(s => new ProductKeys { Id = s.Id, ProductKey = s.ProductKey, ProductId = s.ProductId }).ToList();
+            return items.Select(s => new ProductKeys { Id = s.Id, ProductKey = s.ProductKey, ProductId = s.ProductId, MemberId = s.MemberId }).ToList();
 
         }
         public static List<ProductKeysModel> Convert(List<ProductKeys> items)
         {
             if (items == null || items.Count == 0) return new List<ProductKeysModel>();
-            return items.Select(s => new ProductKeysModel { Id = s.Id, ProductKey = s.ProductKey, ProductId = s.ProductId, MemberId = s.MemberId }).ToList();
+            return items.Select(s => new ProductKeysModel(s.ProductKey, s.ProductId, s.MemberId) { Id = s.Id }).ToList();
         }
         #endregion
         #region Product Public methods
@@ -405,12 +500,18 @@ namespace ES.Business.Managers
                 ExistingQuantity = 0,
                 Price = s.Price,
                 OldPrice = s.OldPrice,
-                CostPrice = s.CostPrice
+                CostPrice = s.CostPrice,
+                LastModifier = CashManager.Instance.GetUser(s.LastModifierId)
             }).OrderBy(s => s.Description).ToList();
         }
         public static List<ProductModel> GetChangedProducts(Tuple<DateTime, DateTime> dateIntermediate)
         {
             return TryGetChangedProducts(dateIntermediate).Select(ConvertLight).ToList();
+        }
+        public static List<LogForProductsModel> GetModifiedProducts(Tuple<DateTime, DateTime> dateIntermediate, bool showPriceChangedOnly)
+        {
+            var items = TryGetModifiedProducts(dateIntermediate, showPriceChangedOnly);
+            return items;
         }
         public List<ProductModel> GetProductsShortData(int memberId)
         {
@@ -527,8 +628,8 @@ namespace ES.Business.Managers
         }
         public static List<ProductItemModel> GetUnavailableProductItems(List<Guid> productItemIds, List<short> stockIds)
         {
-            //var products = GetProducts();
-            return TryGetUnavilableProductItems(productItemIds, stockIds).Select(s => Convert(s, null)).ToList();
+            var products = CashManager.Instance.GetProducts();
+            return TryGetUnavilableProductItems(productItemIds, stockIds).Select(s => Convert(s, products.SingleOrDefault(p => p.Id == s.ProductId))).ToList();
         }
         public static long GetProductCount(int memberId)
         {
@@ -540,9 +641,10 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    var productItems = db.ProductItems.Where(s => s.MemberId == memberId && s.Products.IsEnable && s.Products.MinQuantity != null).ToList();
+                    var productItems = db.ProductItems.Where(s => s.Products.IsEnable && s.Products.MinQuantity != null && s.MemberId == memberId).ToList();
                     var brandIds = brands.Select(t => t.Id).ToList();
-                    var products = db.Products.Where(s => s.EsMemberId == memberId && s.IsEnable && s.MinQuantity != null && s.BrandId != null && brandIds.Contains((int)s.BrandId)).ToList();
+                    var products = db.Products.Where(s => s.BrandId != null && brandIds.Contains((int)s.BrandId) && s.MinQuantity != null && s.IsEnable && s.EsMemberId == memberId).ToList();
+                    var partners = CashManager.Instance.GetPartners;
                     products = products.Where(s => s.MinQuantity > productItems.Where(t => t.ProductId == s.Id)
                         .Sum(t => t.Quantity)).OrderByDescending(s => s.InvoiceItems.First().Invoices.CreateDate).ToList();
                     var productOrderItems =
@@ -553,7 +655,7 @@ namespace ES.Business.Managers
                             Price = s.Price,
                             MinQuantity = s.MinQuantity,
                             ExistingQuantity = productItems.Where(t => t.ProductId == s.Id).Sum(t => t.Quantity),
-                            Provider = s.InvoiceItems.First().Invoices.ProviderName
+                            Provider = partners.SingleOrDefault(p => p.Id == s.InvoiceItems.First().Invoices.PartnerId)
 
                         }).ToList();
                     return productOrderItems;
@@ -585,66 +687,87 @@ namespace ES.Business.Managers
         public static List<ProductOrderModel> GetProductOrderByProduct()
         {
             var memberId = ApplicationManager.Member.Id;
-            using (var db = GetDataContext())
+
+            try
             {
-                try
+                List<ProductItems> productItems;
+                List<InvoiceItems> invoiceItems;
+                var products = CashManager.Instance.GetProducts().Where(s => s.IsEnabled && s.MinQuantity != null).ToList();
+                var productIds = products.Select(t => t.Id).ToList();
+                var dateFrom = DateTime.Today.AddYears(-1);
+                using (var db = GetDataContext())
                 {
-                    var products = db.Products.Where(s => s.EsMemberId == memberId && s.IsEnable && s.MinQuantity != null).ToList();
+                    //var products = db.Products.Where(s => s.IsEnable && s.MinQuantity != null && s.EsMemberId == memberId).ToList();
 
-                    var productIds = products.Select(t => t.Id).ToList();
-                    var productItems = db.ProductItems.Where(s => s.MemberId == memberId && s.Quantity > 0 && productIds.Contains(s.ProductId)).ToList();
-                    products = products.Where(s => productItems.All(t => t.ProductId != s.Id) || s.MinQuantity > productItems.Where(t => t.ProductId == s.Id).Sum(t => t.Quantity)).ToList();
-
-                    var productOrderItems = products
-                        .Select(p => new
-                        {
-                            p,
-                            ii = db.InvoiceItems
+                    productItems = db.ProductItems.Where(s => s.Quantity > 0 && productIds.Contains(s.ProductId) && s.MemberId == memberId).ToList();
+                    db.Database.CommandTimeout = 300;
+                    invoiceItems = db.InvoiceItems.Include(s => s.Invoices)
                                 .Where(ii =>
-                                    ii.Invoices.MemberId == memberId &&
                                     ii.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice &&
-                                    ii.Invoices.ApproveDate != null &&
-                                    ii.ProductId == p.Id)
-                                .OrderByDescending(ii => ii.Invoices.CreateDate).FirstOrDefault()
-                        }).ToList();
-                    return productOrderItems.Select(s => new ProductOrderModel
-                    {
-                        Index = 0,
-                        ProductId = s.p.Id,
-                        Code = s.p.Code,
-                        Description = s.p.Description,
-                        //Mu = s.p.Mu,
-                        CostPrice = s.p.CostPrice,
-                        Price = s.p.Price,
-                        MinQuantity = s.p.MinQuantity,
-                        ExistingQuantity = productItems.Where(t => t.ProductId == s.p.Id).Sum(t => t.Quantity),
-                        Provider = s.ii != null ? s.ii.Invoices.ProviderName : string.Empty
-                        //Notes = s.Note
-                    }).ToList();
-                    //return productOrderItems;
+                                    ii.Invoices.ApproveDate > dateFrom &&
+                                    ii.Invoices.MemberId == memberId
+                                    && productIds.Contains(ii.ProductId)).ToList();
 
-
-
-
-                    //var products = from pi in db.ProductItems where pi.Products.EsMemberId != memberId && pi.Products.MinQuantity != null select pi;
-
-                    //var newProductOrder = db.InvoiceItems.Where(s=>products.Contains(s.ProductId)).OrderByDescending(s=>s.Invoices.CreateDate).GroupBy(s=>s.ProductId)
-                    //    .Select(s=> new ProductOrderItemsModel
-                    //                      {
-                    //                          Code = s.FirstOrDefault().Products.Code,
-                    //                          Description = s.FirstOrDefault().Products.Description,
-                    //                          Price = s.FirstOrDefault().Products.Price,
-                    //                          Quantity = s.FirstOrDefault().Products.MinQuantity - db.ProductItems.Where(t=>t.ProductId==s.FirstOrDefault().ProductId).Sum(t=>t.Quantity),
-                    //                          ExistingQuantity = s.Sum(t => t.Quantity),
-                    //                          ProviderId = s.FirstOrDefault().Invoices.PartnerId
-                    //                      }).ToList();
-                    //return newProductOrder.ToList();
-
+                    db.Dispose();
                 }
-                catch (Exception)
+
+                invoiceItems = invoiceItems.OrderByDescending(ii => ii.Invoices.CreateDate).GroupBy(ii => ii.ProductId).Select(ii => ii.FirstOrDefault()).ToList();
+                products = products.Where(s => productItems.All(t => t.ProductId != s.Id) || s.MinQuantity > productItems.Where(t => t.ProductId == s.Id).Sum(t => t.Quantity)).ToList();
+
+                //var productOrderItems = products
+                //    .Select(p => new
+                //    {
+                //        p,
+                //        ii = invoiceItems.SingleOrDefault(i => i.ProductId == p.Id)
+                //        //ii = db.InvoiceItems
+                //        //    .Where(ii =>
+                //        //        ii.ProductId == p.Id && 
+                //        //        ii.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice &&
+                //        //        ii.Invoices.ApproveDate != null &&
+                //        //        ii.Invoices.MemberId == memberId)
+                //        //    .OrderByDescending(ii => ii.Invoices.CreateDate).FirstOrDefault()
+                //    }).ToList();
+                var partners = CashManager.Instance.GetPartners;
+                return products.Select(p => new ProductOrderModel
                 {
-                    return new List<ProductOrderModel>();
-                }
+                    Index = 0,
+                    ProductId = p.Id,
+                    Code = p.Code,
+                    Description = p.Description,
+                    //Mu = s.p.Mu,
+                    CostPrice = p.CostPrice,
+                    Price = p.Price,
+                    MinQuantity = p.MinQuantity,
+                    ExistingQuantity = productItems.Where(t => t.ProductId == p.Id).Sum(t => t.Quantity),
+                    Provider = CashManager.GetPartner(invoiceItems.Where(s => s.ProductId == p.Id).Select(ii => ii.Invoices.PartnerId).FirstOrDefault())
+                    //partners.SingleOrDefault(p => p.Id == s.ii.Invoices.PartnerId) : null
+                    //Notes = s.Note
+                }).ToList();
+
+                //return productO021rderItems;
+
+
+
+
+                //var products = from pi in db.ProductItems where pi.Products.EsMemberId != memberId && pi.Products.MinQuantity != null select pi;
+
+                //var newProductOrder = db.InvoiceItems.Where(s=>products.Contains(s.ProductId)).OrderByDescending(s=>s.Invoices.CreateDate).GroupBy(s=>s.ProductId)
+                //    .Select(s=> new ProductOrderItemsModel
+                //                      {
+                //                          Code = s.FirstOrDefault().Products.Code,
+                //                          Description = s.FirstOrDefault().Products.Description,
+                //                          Price = s.FirstOrDefault().Products.Price,
+                //                          Quantity = s.FirstOrDefault().Products.MinQuantity - db.ProductItems.Where(t=>t.ProductId==s.FirstOrDefault().ProductId).Sum(t=>t.Quantity),
+                //                          ExistingQuantity = s.Sum(t => t.Quantity),
+                //                          ProviderId = s.FirstOrDefault().Invoices.PartnerId
+                //                      }).ToList();
+                //return newProductOrder.ToList();
+
+            }
+            catch (Exception ex)
+            {
+                MessageManager.OnMessage(ex.Message);
+                return new List<ProductOrderModel>();
             }
         }
         public static PartnerModel GetProductsProvider(Guid productId)
@@ -702,14 +825,14 @@ namespace ES.Business.Managers
 
             return exItem;
         }
-        public static ProductItemModel Convert(ProductItems item)
+        public static ProductItemModel Convert(ProductItems item, ProductModel product = null)
         {
             if (item == null) return null;
             var exItem = new ProductItemModel();
             exItem.Id = item.Id;
             exItem.MemberId = item.MemberId;
             exItem.ProductId = item.ProductId;
-            exItem.Product = Convert(item.Products);
+            exItem.Product = product; // Convert(item.Products);
             exItem.CreateInvoiceId = item.CreatedInvoiceId;
             exItem.CreatedDate = item.CreatedDate;
             exItem.DeliveryInvoiceId = item.DeliveryInvoiceId;
@@ -806,7 +929,9 @@ namespace ES.Business.Managers
                 try
                 {
                     if (!fromStocks.Any()) return 0;
-                    return db.ProductItems.Where(s => s.MemberId == memberId && s.Quantity > 0 && s.StockId != null && fromStocks.Contains(s.StockId.Value) && s.ProductId == productId.Value).Sum(s => s.Quantity);
+                    var items = db.ProductItems.Where(s => s.MemberId == memberId && s.Quantity > 0 && s.StockId.HasValue && fromStocks.Contains(s.StockId.Value) && s.ProductId == productId.Value).ToList();
+                    var value = items.Sum(s => s.Quantity);
+                    return value;
                 }
                 catch (Exception)
                 {
@@ -931,11 +1056,62 @@ namespace ES.Business.Managers
                         .Include(s => s.ProductCategories)
                         .Include(s => s.ProductKeys)
                         .Include(s => s.ProductsAdditionalData)
-                        .Where(s => s.EsMemberId == memberId && s.IsEnable && s.LastModifiedDate >= dateIntermediate.Item1 && s.LastModifiedDate <= dateIntermediate.Item2).ToList();
+                        .Where(s => s.EsMemberId == memberId && s.IsEnable && s.LastModifiedDate >= dateIntermediate.Item1 && s.LastModifiedDate <= dateIntermediate.Item2)
+                        .ToList();
                 }
                 catch (Exception)
                 {
                     return new List<Products>();
+                }
+
+            }
+        }
+        private static List<LogForProductsModel> TryGetModifiedProducts(Tuple<DateTime, DateTime> dateIntermediate, bool showPriceChangedOnly)
+        {
+            if (dateIntermediate == null) return null;
+            var memberId = ApplicationManager.Member.Id;
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    var items = db.LogForProducts
+                        .Where(log => log.MemberId == memberId && log.Date >= dateIntermediate.Item1 && log.Date <= dateIntermediate.Item2)
+                        .Select(log => new LogForProductsModel
+                        {
+                            Id = log.Id,
+                            Action = (ModificationTypeEnum)log.Action,
+                            Date = log.Date,
+                            ProductId = log.ProductId,
+                            //Product = CashManager.Instance.GetProduct(i.log.ProductId),
+                            Code = log.Code,
+                            Description = log.Description,
+                            CostPrice = log.CostPrice,
+                            Price = log.Price,
+                            //OldPrice = db.LogForProducts.Where(s=>s.Id==i.log.Id && s.Date<i.log.Date).OrderBy(s=>s.Date).Select(s=>s.Price).LastOrDefault(),
+                            IsEmpty = log.IsEmpty,
+                            ModifierId = log.ModifierId,
+                            //Modifier = CashManager.Instance.GetUser(i.l.ModifierId),
+                            MemberId = log.MemberId
+                        }).OrderBy(s => s.Date).ToList();
+
+                    foreach (var item in items)
+                    {
+                        item.Product = CashManager.GetProduct(item.ProductId);
+                        item.Modifier = CashManager.Instance.GetUser(item.ModifierId);
+                        var oldPrice = db.LogForProducts.Where(log => log.MemberId == memberId && log.ProductId == item.ProductId && log.Date < item.Date).OrderByDescending(s => s.Date).FirstOrDefault();
+                        item.OldPrice = oldPrice != null ? oldPrice.Price : null;
+                        item.Log = items;
+                    }
+                    if (showPriceChangedOnly)
+                    {
+                        items = items.Where(s => s.Action != ModificationTypeEnum.Added && !s.IsEmpty).ToList();
+                    }
+                    items = items.Where(s => s.OldPrice != s.Price).ToList();
+                    return items;
+                }
+                catch (Exception)
+                {
+                    return new List<LogForProductsModel>();
                 }
 
             }
@@ -1108,8 +1284,7 @@ namespace ES.Business.Managers
 
                         if (exItem != null)
                         {
-                            exItem.LastModifiedDate =
-                                exItem.LastModifiedDate.AddMilliseconds(-exItem.LastModifiedDate.Millisecond);
+                            //exItem.LastModifiedDate = exItem.LastModifiedDate.AddMilliseconds(-exItem.LastModifiedDate.Millisecond);
                             if (exItem.LastModifiedDate > item.LastModifiedDate)
                             {
                                 MessageManager.OnMessage(
@@ -1199,6 +1374,8 @@ namespace ES.Business.Managers
             if (item == null) return null;
             try
             {
+
+                var productKeys = item.ProductKeys.ToList();
                 using (var db = GetDataContext())
                 {
                     if (db.Products.Count(s => (s.Code == item.Code || (!string.IsNullOrEmpty(item.Barcode) && s.Barcode == item.Barcode) || s.Id == item.Id) && s.EsMemberId == item.EsMemberId) > 1)
@@ -1283,17 +1460,17 @@ namespace ES.Business.Managers
                     var exProductKeys = db.ProductKeys.Where(s => s.ProductId == item.Id && MemberId == item.EsMemberId).ToList();
                     foreach (var value in exProductKeys)
                     {
-                        var exProductKey = item.ProductKeys.FirstOrDefault(s => s.ProductKey == value.ProductKey);
+                        var exProductKey = productKeys.FirstOrDefault(s => s.ProductKey == value.ProductKey);
                         if (exProductKey != null)
                         {
-                            item.ProductKeys.Remove(exProductKey);
+                            productKeys.Remove(exProductKey);
                         }
                         else
                         {
                             db.ProductKeys.Remove(value);
                         }
                     }
-                    foreach (var productItem in item.ProductKeys)
+                    foreach (var productItem in productKeys)
                     {
                         if (exProductKeys.Any(s => s.ProductKey == productItem.ProductKey)) continue;
                         productItem.ProductId = item.Id;
@@ -1331,7 +1508,7 @@ namespace ES.Business.Managers
                     Price = product.Price,
                     Date = product.LastModifiedDate,
                     IsEmpty = GetProductQuantity(product.Id) == 0,
-                    ModifierId = product.LastModifierId,
+                    ModifierId = ApplicationManager.GetEsUser.UserId,
                     MemberId = product.EsMemberId
                 };
                 AddProductChangedLog(log, db);
@@ -1427,7 +1604,7 @@ namespace ES.Business.Managers
             var db = GetDataContext();
             try
             {
-                var productIds = db.Products.Where(s => s.EsMemberId == ApplicationManager.Member.Id && (productKey == null || s.Code.Contains(productKey) || s.Description.Contains(productKey))).Select(s => s.Id);
+                var productIds = db.Products.Where(s => s.EsMemberId == ApplicationManager.Member.Id && (string.IsNullOrEmpty(productKey) || s.Code.Contains(productKey) || s.Description.Contains(productKey))).Select(s => s.Id);
                 var productItems = db.ProductItems.Where(s => s.MemberId == ApplicationManager.Member.Id &&
                                     s.StockId.HasValue && stockIds.Contains((short)s.StockId) && s.Quantity != 0 &&
                                    productIds.Contains(s.ProductId))
@@ -1455,13 +1632,12 @@ namespace ES.Business.Managers
         }
         private static List<ProductItems> TryGetProductItemsFromStocks(List<short> stockIds)
         {
-            var memberId = ApplicationManager.Member.Id;
             using (var db = GetDataContext())
             {
                 return db.ProductItems
                     .Include(p => p.Products)
-                    .Where(pi => pi.MemberId == memberId && pi.Quantity != 0 && pi.StockId != null && stockIds.Contains((short)pi.StockId))
-                    .Join(db.Invoices.Where(i => i.MemberId == memberId), pi => pi.DeliveryInvoiceId, ii => ii.Id, (pi, ii) => new { pi, ii })
+                    .Where(pi => pi.Quantity != 0 && pi.StockId != null && stockIds.Contains((short)pi.StockId) && pi.MemberId == MemberId)
+                    .Join(db.Invoices, pi => pi.DeliveryInvoiceId, ii => ii.Id, (pi, ii) => new { pi, ii })
                     .OrderBy(s => s.ii.CreateDate)
                     .Select(s => s.pi).ToList();
             }
@@ -1850,20 +2026,20 @@ namespace ES.Business.Managers
 
                         var productItems = pi.Where(s => s.StockId == stock.Id).ToList();
                         reports.Add(new InvoiceReport
-                            {
-                                Description = string.Format("{0}", stock.FullName),
-                                Count = productItems.GroupBy(t => t.ProductId).Count(),
-                                Quantity = productItems.Sum(t => t.Quantity),
-                                Cost = productItems.Sum(t => t.Quantity * t.CostPrice) + saleCostPrice - purchaseCostPrice,
-                                Price = productItems.Sum(t => t.Quantity * (t.Products.Price ?? 0)) + salePrice - purchasePrice,
-                                Sale = productItems.Sum(t => t.Quantity * ((t.Products.Price ?? 0) - t.CostPrice)),
-                            });
+                        {
+                            Description = string.Format("{0}", stock.FullName),
+                            Count = productItems.GroupBy(t => t.ProductId).Count(),
+                            Quantity = productItems.Sum(t => t.Quantity),
+                            Cost = productItems.Sum(t => t.Quantity * t.CostPrice) + saleCostPrice - purchaseCostPrice,
+                            Price = productItems.Sum(t => t.Quantity * (t.Products.Price ?? 0)) + salePrice - purchasePrice,
+                            Sale = productItems.Sum(t => t.Quantity * ((t.Products.Price ?? 0) - t.CostPrice)),
+                        });
                     }
                 }
             }
             catch (Exception)
             {
-                MessageManager.OnMessage("Գործողութւոնը ձախողվել է:");
+                MessageManager.OnMessage("Գործողությունը ձախողվել է:");
             }
             return reports;
         }
@@ -1875,30 +2051,29 @@ namespace ES.Business.Managers
                 var result = new List<IInvoiceReport>();
                 try
                 {
-
-                    var pI = db.ProductItems.Where(s => s.MemberId == ApplicationManager.Member.Id).Include(s => s.Products).
-                        Join(db.Invoices.Where(s => s.MemberId == ApplicationManager.Member.Id), pi => pi.DeliveryInvoiceId, i => i.Id, (pi, i) => new { pi, i }).
-                        Where(s => s.pi.Quantity > 0 || s.i.CreateDate > date).ToList();
+                    if (date == null || stocks == null) return null;
+                    var stockIds = stocks.Select(s => s.Id).ToList();
+                    var products = db.Products.Where(s => s.EsMemberId == MemberId).ToList();
+                    var pI = db.ProductItems.Where(s => s.MemberId == ApplicationManager.Member.Id && s.Quantity > 0 && s.StockId.HasValue && stockIds.Contains((short)s.StockId)).Include(s => s.Products)
+                        .ToList();
+                    //.Join(db.Invoices, pi => pi.DeliveryInvoiceId, i => i.Id, (pi, i) => new { pi, i }).
+                    //Where(s =>s.i.CreateDate > date).GroupBy(t => t.pi.ProductId).ToList();
 
                     var invoiceItems = db.InvoiceItems.Where(ii => ii.Invoices.ApproveDate > date).Include(ii => ii.Invoices).ToList();
 
-
-                    foreach (var productItem in pI.GroupBy(t => t.pi.ProductId).ToList())
+                    foreach (var product in products)
                     {
-                        var invoiceItemsCur = invoiceItems.Where(ii => productItem.Select(t => t.i.Id).Contains(ii.InvoiceId)).ToList();
-                        result.Add(new InvoiceReport
+                        var invoiceItemsCur = invoiceItems.Where(ii => ii.ProductId == product.Id).ToList();
+                        var item = new InvoiceReport
                         {
-                            Code = productItem.First().pi.Products.Code,
-                            Description = productItem.First().pi.Products.Description,
-                            Count = productItem.Count(),
-                            Quantity = productItem.Sum(t => t.pi.Quantity) +
-                        invoiceItemsCur.Where(t => t.Invoices.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice).Sum(t => t.Quantity ?? 0),
-                            //Cost = pI.Sum(t => t.pi.Quantity*t.pi.CostPrice),
-                            Price = productItem.Sum(t => t.pi.Quantity * (t.pi.Products.Price ?? 0)),
-                            Sale = productItem.Sum(t => t.pi.Quantity * ((t.pi.Products.Price ?? 0) - t.pi.CostPrice)),
-                        });
-                    }
+                            Code = product.Code,
+                            Description = product.Description,
+                            Price = product.Price ?? 0,
 
+                            Quantity = pI.Where(s => s.ProductId == product.Id).Sum(t => t.Quantity)// + invoiceItemsCur.Sum(t => GetInvoiceCoefficient(t.Invoices, t.StockId, stockIds) * (t.Quantity ?? 0))
+                        };
+                        if (item.Quantity != 0) result.Add(item);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1906,6 +2081,30 @@ namespace ES.Business.Managers
                 }
                 return result;
             }
+        }
+        private static short GetInvoiceCoefficient(Invoices invoice, short? stockId, List<short> stocks)
+        {
+            short coefficient = 0;
+            if (!stockId.HasValue) return coefficient;
+            switch ((InvoiceType)invoice.InvoiceTypeId)
+            {
+                case InvoiceType.PurchaseInvoice:
+                case InvoiceType.ReturnFrom:
+                    if (stocks.Any(s => s == stockId)) coefficient++;
+                    break;
+                case InvoiceType.SaleInvoice:
+                case InvoiceType.ReturnTo:
+                case InvoiceType.InventoryWriteOff:
+                    if (stocks.Any(s => s == stockId)) coefficient++;
+                    break;
+                case InvoiceType.MoveInvoice:
+                    if (stocks.Any(s => s == invoice.ToStockId)) coefficient--;
+                    if (stocks.Any(s => s == invoice.FromStockId)) coefficient++;
+                    break;
+                case InvoiceType.ProductOrder:
+                    break;
+            }
+            return coefficient;
         }
 
         public static decimal? GetProductQuantity(Guid id)
@@ -1987,7 +2186,7 @@ namespace ES.Business.Managers
                             CostPrice = exProduct.CostPrice,
                             Price = exProduct.Price,
                             IsEmpty = true,
-                            ModifierId = exProduct.LastModifierId,
+                            ModifierId = ApplicationManager.GetEsUser.UserId,
                             MemberId = exProduct.EsMemberId
                         };
                         AddProductChangedLog(log, db);
@@ -2027,8 +2226,8 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    var productsLog = db.LogForProducts.Where(s => s.MemberId == ApplicationManager.Member.Id && 
-                                                                   (!startEndDate.Item1.HasValue || s.Date >= startEndDate.Item1) && 
+                    var productsLog = db.LogForProducts.Where(s => s.MemberId == ApplicationManager.Member.Id &&
+                                                                   (!startEndDate.Item1.HasValue || s.Date >= startEndDate.Item1) &&
                                                                    (!startEndDate.Item2.HasValue || s.Date <= startEndDate.Item2))
                         .OrderBy(s => s.Date).ToList();
                     return productsLog;

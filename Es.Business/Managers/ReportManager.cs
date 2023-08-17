@@ -28,7 +28,7 @@ namespace ES.Business.Managers
                                 ApproveDate = s.ApproveDate.Value,
                                 InvoiceNumber = s.InvoiceNumber,
                                 //CostPrice = s.InvoiceItems.Sum(i => i.Quantity * i.CostPrice) ?? 0,
-                                Total = s.Summ,
+                                Total = s.Summ,                                
                                 Notes = s.Notes,
                                 PartnerId = s.PartnerId,
                                 ApproverId = s.ApproverId.Value,

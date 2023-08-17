@@ -21,10 +21,12 @@
                 <RowDefinition  Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+            
             <Menu Grid.Row ="0">
                 <MenuItem Header="Վաճառք">
                     <MenuItem.IsEnabled>
                         <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
                             <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
                             <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
                         </MultiBinding>
@@ -40,6 +42,7 @@
                               Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.BySaleChart}">
                         <MenuItem.IsEnabled>
                             <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
                                 <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
                                 <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
                             </MultiBinding>
@@ -77,7 +80,13 @@
                                 </MultiBinding>
                             </MenuItem.IsEnabled>
                         </MenuItem>
-
+                        <MenuItem Header="Մատակարարների" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByProvider}">
+                            <MenuItem.IsEnabled>
+                                <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                    <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                                </MultiBinding>
+                            </MenuItem.IsEnabled>
+                        </MenuItem>
                     </MenuItem>
                 </MenuItem>
 
@@ -85,6 +94,7 @@
                     <MenuItem.IsEnabled>
                         <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
                             <Binding Source="{x:Static enumerations1:UserRoleEnum.StockKeeper}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
                             <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
                             <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
                         </MultiBinding>
@@ -101,7 +111,14 @@
                 </MenuItem>
 
                 <MenuItem Header="Գնում">
-
+                    <MenuItem.IsEnabled>
+                        <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.Seller}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                        </MultiBinding>
+                    </MenuItem.IsEnabled>
                     <MenuItem Header="Դիտում" Command="{Binding ViewPurchaseCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.None}">
 
                     </MenuItem>
@@ -112,7 +129,7 @@
 
                     </MenuItem>
 
-                    <MenuItem Header="Ըստ Մատակարարների" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByProvider}">
+                    <MenuItem Header="Ըստ Մատակարարների" Command="{Binding ViewPurchaseCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByProvider}">
                         <MenuItem.IsEnabled>
                             <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
                                 <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
@@ -124,6 +141,7 @@
                 <MenuItem Header="Ապրանքներ">
                     <MenuItem.IsEnabled>
                         <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
                             <Binding Source="{x:Static enumerations1:UserRoleEnum.Seller}"/>
                             <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
                             <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
@@ -133,6 +151,14 @@
                     <MenuItem Header="Ապրանքների դիտում ըստ մատակարարների" 
                               Command="{Binding ViewProductsCommand}"
                               CommandParameter="{x:Static enumerations:ProductsViewEnum.ByProviders}"/>
+
+                    <MenuItem Header="Ապրանքաշրջանառություն ըստ մատակարարների" 
+                              Command="{Binding ViewCommodityTurnoverCommand}"
+                              CommandParameter="{x:Static enumerations:ProductsViewEnum.ByProviders}"/>
+                    <MenuItem Header="Մնացորդ ըստ մատակարարների"
+                              Command="{Binding ViewProductsBalanceCommand}"
+                              CommandParameter="{x:Static enumerations:ProductsViewEnum.ByProviders}"/>
+                    <Separator/>
                     <MenuItem Header="Մնացորդի արժեքի դիտում" 
                               Command="{Binding ViewProductsCommand}"
                               CommandParameter="{x:Static enumerations:ProductsViewEnum.ByPrice}">
@@ -141,7 +167,7 @@
                                 <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
                             </MultiBinding>
                         </MenuItem.IsEnabled>
-                    </MenuItem>
+                    </MenuItem>                    
                     <MenuItem Header="Մնացորդի դիտում" 
                               Command="{Binding ViewProductsCommand}"
                               CommandParameter="{x:Static enumerations:ProductsViewEnum.ByStocks}">
@@ -176,6 +202,8 @@
                     <MenuItem Header="Բաժինների մնացորդի ստուգում"
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}"
                                   Command="{Binding CheckProductsRemainderForStockCommand}"/>
+                    <Separator/>
+                    
                     <MenuItem Header="Խմբագրման պատմություն" Command="{Binding ViewProductsLogCommand}" Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                         <MenuItem.IsEnabled>
                             <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
@@ -189,7 +217,7 @@
                 <MenuItem Header="Գնորդ">
                     <MenuItem.IsEnabled>
                         <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
-                            <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
+                            <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
                             <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
                             <Binding Source="{x:Static enumerations1:UserRoleEnum.Seller}"/>
                         </MultiBinding>
@@ -204,6 +232,7 @@
                     <MenuItem Header="Գնումներ ըստ գնորդների" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartner}">
                         <MenuItem.IsEnabled>
                             <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
                                 <Binding Source="{x:Static enumerations1:UserRoleEnum.JuniorManager}"/>
                                 <Binding Source="{x:Static enumerations1:UserRoleEnum.SaleManager}"/>
                             </MultiBinding>
@@ -212,6 +241,7 @@
                     <MenuItem Header="Գնումներ մանրամասն" Command="{Binding ViewSaleCommand}" CommandParameter="{x:Static enumerations1:ViewInvoicesEnum.ByPartnersDetiles}"/>
                 </MenuItem>
             </Menu>
+            
             <TabControl Grid.Row="1" Margin="10" Width="Auto"  
                         Name="TabReport" 
                         ItemContainerStyle="{StaticResource TabItemBaseStyle}" 

@@ -7,10 +7,11 @@
                     xmlns:models="clr-namespace:ES.Common.Models;assembly=ES.Common"
                     xmlns:models1="clr-namespace:ES.Data.Models;assembly=ES.Data"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common">
+                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common" xmlns:helpers1="clr-namespace:UserControls.Helpers">
 
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-
+    <helpers1:IntToEnumConverter x:Key="IntToEnumConverter" />
+    
     <DataTemplate DataType="{x:Type viewModels:SettingsViewModel}">
         <Grid>
             <Grid.InputBindings>
@@ -110,7 +111,7 @@
                                         </Grid.RowDefinitions>
 
                                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Միացում" HorizontalAlignment="Left"/>
-                                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding CashDeskPorts}" SelectedItem="{Binding CashDeskPort}" Width="100" HorizontalAlignment="Left"/>
+                                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding ActiveSerialPorts}" SelectedItem="{Binding CashDeskPort}" Width="100" HorizontalAlignment="Left"/>
 
                                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Կցված տպիչ"  VerticalAlignment="Top"/>
                                         <Grid x:Name="Grid_CashDeskPrinter" Grid.Row="1" Grid.Column="1">
@@ -168,11 +169,14 @@
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Աշխանքային ռեժիմ"/>
-                                        <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding LocalMode}" Content="Լոկալ" Margin="5"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Սկաներ" HorizontalAlignment="Left"/>
+                                        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding ActiveSerialPorts}" SelectedItem="{Binding ScannerPort}" Width="100" HorizontalAlignment="Left"/>
 
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Ապրանքային կոդ"/>
-                                        <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding UseUnicCode}" Content="Հատուկ կոդ" Margin="5"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Աշխանքային ռեժիմ"/>
+                                        <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding LocalMode}" Content="Լոկալ" Margin="5"/>
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Ապրանքային կոդ"/>
+                                        <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding UseUnicCode}" Content="Հատուկ կոդ" Margin="5"/>
                                     </Grid>
                                 </GroupBox>
 
@@ -383,23 +387,24 @@
                                                     <RowDefinition/>
                                                     <RowDefinition/>
                                                     <RowDefinition/>
+                                                    <RowDefinition/>
                                                 </Grid.RowDefinitions>
                                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Սերվեր IP"/>
                                                 <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedEcrSettings.Ip, UpdateSourceTrigger=PropertyChanged}"/>
                                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Սերվեր Port"/>
                                                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedEcrSettings.Port, TargetNullValue=''}" Width="100" HorizontalContentAlignment="Right"/>
                                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="PublicKey"/>
-                                                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SelectedEcrSettings.Password}"/>
+                                                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SelectedEcrSettings.Password}" Width="100"/>
                                                 <TextBlock Grid.Row="3" Grid.Column="0" Text="Գրանցման համար"/>
-                                                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SelectedEcrSettings.Crn}"/>
+                                                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SelectedEcrSettings.Crn}" Width="100"/>
                                                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Օպերատոր"/>
                                                 <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
                                                     <TextBox  Text="{Binding SelectedEcrSettings.EcrCashier.Cashier, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}" Width="100" HorizontalContentAlignment="Right"/>
                                                     <Button Content="Բեռնել" Command="{Binding Path=ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.GetOperatorsList}" Margin="3" Padding="5 0"/>
                                                 </StackPanel>
                                                 <TextBlock Grid.Row="5" Grid.Column="0" Text="Գաղտնաբառ"/>
-                                                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SelectedEcrSettings.EcrCashier.Pin, UpdateSourceTrigger=PropertyChanged}"/>
-                                                <TextBlock Grid.Row="6" Grid.Column="0" Text="Հարկման տեսակը"/>
+                                                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding SelectedEcrSettings.EcrCashier.Pin, UpdateSourceTrigger=PropertyChanged}" Width="100"/>
+                                                <TextBlock Grid.Row="6" Grid.Column="0" Text="ՀԴՄ հարկման բաժին"/>
                                                 <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal">
                                                     <ComboBox
                                                     ItemsSource="{Binding SelectedEcrSettings.TypeOfOperatorDeps}"
@@ -413,17 +418,30 @@
                                                     VerticalAlignment="Center"/>
                                                     <Button Content="Բեռնել" Command="{Binding Path=ExecuteEcrActionCommand}" CommandParameter="{x:Static helper:EcrExecuiteActions.GetDepsList}" Margin="3" Padding="5 0"/>
                                                 </StackPanel>
-                                                <TextBlock Grid.Row="7" Grid.Column="0" Text="Տպել կտրոնն արտաքին տպիչով"/>
-                                                <CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding SelectedEcrSettings.UseExternalPrinter}" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Row="8" Grid.Column="0" Text="Օգտագործել արտաքին POS տերմինալ"/>
-                                                <CheckBox Grid.Row="8" Grid.Column="1" IsChecked="{Binding SelectedEcrSettings.UseExtPos}" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Row="9" Grid.Column="0" Text="Առևտրի ծրագիր IP" HorizontalAlignment="Right"/>
-                                                <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding SelectedEcrSettings.ApplicationIp}"/>
-                                                <TextBlock Grid.Row="10" Grid.Column="0" Text="Ակտիվություն"/>
-                                                <CheckBox Grid.Row="10" Grid.Column="1" IsChecked="{Binding SelectedEcrSettings.IsActive}" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Row="11" Grid.Column="0" Text="Հիմնական"/>
-                                                <CheckBox Grid.Row="11" Grid.Column="1" IsChecked="{Binding SelectedEcrSettings.IsDefault}" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
-                                                <StackPanel Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <TextBlock Grid.Row="7" Grid.Column="0" Text="Հարկման տեսակ"/>
+                                                <ComboBox Grid.Row="7" Grid.Column="1"
+                                                    ItemsSource="{Binding SelectedEcrSettings.TypesOfTaxes}" 
+                                                    DisplayMemberPath="Name" 
+                                                    SelectedValuePath="Id" 
+                                                    SelectedValue="{Binding SelectedEcrSettings.TypeOfTaxesId}"
+                                                    IsEditable="False"
+                                                    IsReadOnly="True"
+                                                    MinWidth="100" 
+                                                    HorizontalAlignment="Left" 
+                                                    Margin="1" 
+                                                    VerticalAlignment="Center"/>
+
+                                                <TextBlock Grid.Row="8" Grid.Column="0" Text="Տպել կտրոնն արտաքին տպիչով"/>
+                                                <CheckBox Grid.Row="8" Grid.Column="1" IsChecked="{Binding SelectedEcrSettings.UseExternalPrinter}" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Row="9" Grid.Column="0" Text="Օգտագործել արտաքին POS տերմինալ"/>
+                                                <CheckBox Grid.Row="9" Grid.Column="1" IsChecked="{Binding SelectedEcrSettings.UseExtPos}" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Row="10" Grid.Column="0" Text="Առևտրի ծրագիր IP" HorizontalAlignment="Right"/>
+                                                <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding SelectedEcrSettings.ApplicationIp}"/>
+                                                <TextBlock Grid.Row="11" Grid.Column="0" Text="Ակտիվություն"/>
+                                                <CheckBox Grid.Row="11" Grid.Column="1" IsChecked="{Binding SelectedEcrSettings.IsActive}" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Row="12" Grid.Column="0" Text="Հիմնական"/>
+                                                <CheckBox Grid.Row="12" Grid.Column="1" IsChecked="{Binding SelectedEcrSettings.IsDefault}" HorizontalAlignment="Left" Margin="1" VerticalAlignment="Center"/>
+                                                <StackPanel Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
                                                     <Button Content="Կապի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" MinWidth="100" Width="NaN" CommandParameter="{x:Static helper:EcrExecuiteActions.CheckConnection}"/>
                                                     <Button Content="ՀԴՄ կապի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" MinWidth="100" Width="NaN" CommandParameter="{x:Static helper:EcrExecuiteActions.CheckEcrConnection}"/>
                                                     <Button Content="Օպերատորի մուտքի ստուգում" Command="{Binding Path=ExecuteEcrActionCommand}" MinWidth="100" Width="NaN" CommandParameter="{x:Static helper:EcrExecuiteActions.OperatorLogin}"/>
@@ -503,7 +521,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <GroupBox Grid.Row="0" Grid.Column="1" Header="Մասնաճյուղ" Height="Auto">
+                            <GroupBox x:Name="Branch_GroupBox" Grid.Row="0" Grid.Column="1" Header="Մասնաճյուղ" Height="Auto">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
@@ -632,6 +650,11 @@
             </Grid>
             <controls:WaitingCover Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibility}}" />
         </Grid>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding SelectedBranch}" Value="{x:Null}">
+                <Setter TargetName="Branch_GroupBox" Property="IsEnabled" Value="False"/>
+            </DataTrigger>
+        </DataTemplate.Triggers>
     </DataTemplate>
 
 </ResourceDictionary>

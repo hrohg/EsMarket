@@ -45,7 +45,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" Text="{Binding Partner.CardNumber, Mode=OneWay}" IsReadOnly="True" Height="25" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"/>
+                    <TextBox Grid.Column="0" Text="{Binding Partner.CardNumber}" Height="25" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch"/>
                     <Button Grid.Column="1" Width="70" Content="Generate" ToolTip="Գեներացնել անհատական ID" Command="{Binding GenerateLocalIdCommand}" Margin="1" VerticalContentAlignment="Center"/>
                     <Button Grid.Column="2" Width="70" Content="Sync" ToolTip="Համաժամանակեցում" Command="{Binding SyncPartnerCommand}" Margin="1" VerticalContentAlignment="Center"/>
                 </Grid>
@@ -67,7 +67,7 @@
                 <TextBlock Grid.Row="8" Grid.Column="0" Text="Մաքս. դեբետ" ToolTip="Մաքսիմալ դեբիտորական պարտք" HorizontalAlignment="Right"/>
                 <TextBox Grid.Row="8" Grid.Column="1" Width="150" Text="{Binding Partner.MaxDebit}" TextAlignment="Right" Height="25" VerticalContentAlignment="Center" HorizontalAlignment="Left"/>
                 <TextBlock Grid.Row="9" Grid.Column="0" Text="Զեղչ" HorizontalAlignment="Right"/>
-                <TextBox Grid.Row="9" Grid.Column="1" Width="150" Text="{Binding Partner.Discount}" TextAlignment="Right" Height="25" VerticalContentAlignment="Center" HorizontalAlignment="Left" 
+                <TextBox Grid.Row="9" Grid.Column="1" Width="150" Text="{Binding Partner.Discount, TargetNullValue=''}" TextAlignment="Right" Height="25" VerticalContentAlignment="Center" HorizontalAlignment="Left" 
                          IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}"/>
                 <!--Right side-->
                 <TextBlock Grid.Row="0" Grid.Column="3"  HorizontalAlignment="Right" Text="ՀՎՀՀ"/>

@@ -10,7 +10,7 @@ namespace ES.Login
         public LoginWindow(LoginViewModel vm)
         {
             if(vm == null) Application.Current.Shutdown();
-            InitializeComponent();            
+            InitializeComponent();
             DataContext = vm;
         }
     }

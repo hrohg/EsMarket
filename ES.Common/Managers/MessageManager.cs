@@ -46,9 +46,10 @@ namespace ES.Common.Managers
                 }
             }
         }
-        public static void OnMessage(MessageModel message)
+        public static void OnMessage(MessageModel message, bool showModalMessage = false)
         {
             Manager.SendMessage(message);
+            if (showModalMessage) DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { MessageBox.Show(message.Message, message.Title, MessageBoxButton.OK, message.MessageBoxImage);});
         }
         #endregion External methods
 

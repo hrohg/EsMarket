@@ -1,11 +1,15 @@
-﻿using System;
+﻿using ES.Common.ViewModels.Base;
+using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace ES.Data.Models
 {
-    public class InvoiceItemsModel : INotifyPropertyChanged
+    public class InvoiceItemsModel : NotifyPropertyChanged
     {
+        public delegate void InvoiceItemChangedEvent(InvoiceItemsModel invoiceItem);
+        [XmlIgnore]
+        public InvoiceItemChangedEvent InvoiceItemChanged;
         public InvoiceItemsModel(InvoiceModel invoice)
         {
             Invoice = invoice;
@@ -18,29 +22,7 @@ namespace ES.Data.Models
         {
             if (product == null) return;
             Product = product;
-            ProductId = product.Id;
-            ExpiryDate = product.ExpiryDays != null ? DateTime.Today.AddDays((int)product.ExpiryDays) : (DateTime?)null;
-            Code = product.Code;
-            Description = product.Description;
-            Discount = product.Discount;
-            Note = product.Note;
         }
-
-        #region Invoice items model properties
-        private const string DisplayOrderProperty = "DisplayOrder";
-        private const string ProductProperty = "Product";
-        private const string CodeProperties = "Code";
-        private const string DescriptionProperties = "Description";
-        private const string MuProperties = "Mu";
-        private const string QuantityProperties = "Quantity";
-        private const string PriceProerties = "Price";
-        private const string CostPriceProperty = "CostPrice";
-        private const string PercentageProperty = "Percentage";
-        private const string DiscountProperties = "Discount";
-        private const string NoteProperties = "Note";
-        private const string AmountProperty = "Amount";
-        private const string ExpiryDateProperty = "ExpiryDate";
-        #endregion
 
         #region Invoice items model private properties
         private Guid _id = Guid.NewGuid();
@@ -67,7 +49,7 @@ namespace ES.Data.Models
             {
                 if (_displayOrder == value) { return; }
                 _displayOrder = value;
-                OnPropertyChanged(DisplayOrderProperty);
+                RaisePropertyChanged(() => DisplayOrder);
             }
         }
 
@@ -107,12 +89,16 @@ namespace ES.Data.Models
             {
                 _product = value;
                 if (_product == null) return;
-                _productId = _product.Id;
-                _code = _product != null ? _product.Code : null;
-                _description = _product != null ? _product.Description : null;
-                _note = _product != null ? _product.Note : null;
-                OnPropertyChanged(ProductProperty); 
-                OnPropertyChanged(Mu);
+
+                ProductId = _product.Id;
+                ExpiryDate = _product.ExpiryDays != null ? DateTime.Today.AddDays((int)_product.ExpiryDays) : (DateTime?)null;
+                Code = _product.Code;
+                Description = _product.Description;
+                Note = _product.Note;
+
+                RaisePropertyChanged(() => Product);
+                RaisePropertyChanged(() => Mu);
+                RaisePropertyChanged(() => ProductPrice);
             }
         }
         //[XmlIgnore]
@@ -136,8 +122,8 @@ namespace ES.Data.Models
         //}
         public Guid ProductId { get { return _productId; } set { _productId = value; } }
         public Guid? ProductItemId { get { return _productItemId; } set { _productItemId = value; } }
-        public string Code { get { return _code; } set { _code = value; OnPropertyChanged(CodeProperties); } }
-        public string Description { get { return _description; } set { _description = value; OnPropertyChanged(DescriptionProperties); } }
+        public string Code { get { return _code; } set { _code = value; RaisePropertyChanged(() => Code); } }
+        public string Description { get { return _description; } set { _description = value; RaisePropertyChanged(() => Description); } }
         public string Mu { get { return Product != null ? Product.Mu : null; } }
         public short? StockId { get; set; }
         public decimal? Quantity
@@ -146,39 +132,84 @@ namespace ES.Data.Models
             set
             {
                 _quantity = value;
-                OnPropertyChanged(QuantityProperties);
-                OnPropertyChanged(AmountProperty);
-                OnPropertyChanged("CostAmount");
+                RaisePropertyChanged(() => Quantity);
+                RaisePropertyChanged(() => Amount);
+                RaisePropertyChanged(() => CostAmount);
+                OnInvoiceItemChanged();
             }
         }
-        public decimal? Price { get { return _price; } set { _price = value; OnPropertyChanged(PriceProerties); OnPropertyChanged(AmountProperty); OnPropertyChanged(PercentageProperty); } }
+
+        public decimal? ProductPrice { get { return Product != null ? Product.Price : null; } }
         public decimal? CostPrice
         {
             get { return _costPrice; }
             set
             {
                 _costPrice = value;
-                OnPropertyChanged(CostPriceProperty);
-                OnPropertyChanged(PercentageProperty);
-                OnPropertyChanged("CostAmount");
+                RaisePropertyChanged(() => CostPrice);
+                RaisePropertyChanged(() => Percentage);
+                RaisePropertyChanged(() => CostAmount);
+                OnInvoiceItemChanged();
             }
         }
+        public decimal? Price
+        {
+            get { return _price; }
+            set
+            {
+                _price = value;
+                _discount = null;
+                RaisePropertyChanged(() => Price);
+                RaisePropertyChanged(() => Discount);
+                RaisePropertyChanged(() => Amount);
+                RaisePropertyChanged(() => Percentage);
+                OnInvoiceItemChanged();
+            }
+        }
+        public decimal CostAmount { get { return (CostPrice ?? 0) * (Quantity ?? 0); } }
+        public bool HasDiscount { get { return _discount.HasValue; } }
+        public decimal? Discount
+        {
+            get { return _discount ?? decimal.Round((decimal)(Price > 0 ? (100 * ProductPrice / Price - 100) : 0), 2); }
+            set
+            {
+                _discount = value;
+                if (_discount != null && ProductPrice != null) _price = decimal.Round((decimal)(ProductPrice * (1 - _discount / 100)), 2);
+
+                RaisePropertyChanged(() => Price);
+                RaisePropertyChanged(() => Discount);
+                RaisePropertyChanged(() => Amount);
+                OnInvoiceItemChanged();
+            }
+        }
+        public decimal Amount { get { return (Price ?? 0) * (Quantity ?? 0); } }
         public DateTime? ExpiryDate
         {
             get { return _expiryDate; }
             set
             {
                 if (value == _expiryDate) { return; }
-                _expiryDate = value; OnPropertyChanged(ExpiryDateProperty);
+                _expiryDate = value; RaisePropertyChanged(() => ExpiryDate);
             }
         }
-        public decimal Percentage { get { return Price.HasValue && Price != 0 ? Product != null ? ((Product.Price ?? 0) - (Price ?? 0)) * 100 / Price.Value : 0 : 100; } }
-        public decimal Amount { get { return (Quantity != null && Price != null) ? (decimal)Price * (decimal)Quantity : 0; } }
-        public decimal CostAmount { get { return (CostPrice ?? 0) * (Quantity ?? 0); } }
-        public decimal? Discount { get { return _discount; } set { _discount = value; OnPropertyChanged(DiscountProperties); OnPropertyChanged(AmountProperty); } }
-        public string Note { get { return _note; } set { _note = value; OnPropertyChanged(NoteProperties); } }
+        public string Note
+        {
+            get { return _note; }
+            set { _note = value; RaisePropertyChanged(() => Note); }
+        }
 
+
+        public decimal Percentage { get { return Price.HasValue && Price != 0 ? Product != null ? ((Product.Price ?? 0) - (Price ?? 0)) * 100 / Price.Value : 0 : 100; } }
         #endregion
+
+        #region Internal methods
+        private void OnInvoiceItemChanged()
+        {
+            OnPropertyChanged("InvoiceItemsModel");
+            var handler = InvoiceItemChanged;
+            if (handler != null) handler(this);
+        }
+        #endregion Internal methods
 
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;

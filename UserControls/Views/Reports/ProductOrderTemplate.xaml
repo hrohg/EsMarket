@@ -14,7 +14,8 @@
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     <converters:InvertVisibilityConverter x:Key="InvertVisibilityConverter"/>
     <converters:UserRoleToVisibilityConverter x:Key="UserRoleToVisibilityConverter"/>
-
+    <converters:UserRoleToVisibilityMultiValueConverter x:Key="UserRoleToVisibilityMultiValueConverter"/>
+    
     <DataTemplate DataType="{x:Type viewModels:TableViewModelBase}">
         <Grid>
             <Grid>
@@ -86,6 +87,11 @@
                                                         <TextBlock Text="{Binding Cost, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
+                                                <DataGridTemplateColumn.Visibility>
+                                                    <MultiBinding Converter="{StaticResource UserRoleToVisibilityMultiValueConverter}">
+                                                        <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                                                    </MultiBinding>
+                                                </DataGridTemplateColumn.Visibility>
                                             </DataGridTemplateColumn>
                                             <DataGridTemplateColumn Header="Եկամուտ">
                                                 <DataGridTemplateColumn.CellTemplate>
@@ -93,6 +99,11 @@
                                                         <TextBlock Text="{Binding Profit, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
+                                                <DataGridTemplateColumn.Visibility>
+                                                    <MultiBinding Converter="{StaticResource UserRoleToVisibilityMultiValueConverter}">
+                                                        <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                                                    </MultiBinding>
+                                                </DataGridTemplateColumn.Visibility>
                                             </DataGridTemplateColumn>
                                             <DataGridTemplateColumn Header="Եկամուտ %" CanUserSort="True">
                                                 <DataGridTemplateColumn.CellTemplate>
@@ -100,6 +111,11 @@
                                                         <TextBlock Text="{Binding Pers, StringFormat='{}{0:#,0.##}%', TargetNullValue=0}" FontStyle="Italic" HorizontalAlignment="Right"/>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
+                                                <DataGridTemplateColumn.Visibility>
+                                                    <MultiBinding Converter="{StaticResource UserRoleToVisibilityMultiValueConverter}">
+                                                        <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                                                    </MultiBinding>
+                                                </DataGridTemplateColumn.Visibility>
                                             </DataGridTemplateColumn>
                                         </DataGrid.Columns>
                                     </DataGrid>
@@ -114,7 +130,7 @@
                                             <DataGridTemplateColumn Header="Մատակարար" CanUserSort="True" SortMemberPath="Provider">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate DataType="{x:Type models:ProductOrderModel}">
-                                                        <TextBlock Text="{Binding Provider}" TextWrapping="Wrap"/>
+                                                        <TextBlock Text="{Binding Provider.FullName}" TextWrapping="Wrap"/>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn>
@@ -431,6 +447,11 @@
                                                         <TextBlock Text="{Binding Cost, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
+                                                <DataGridTemplateColumn.Visibility>
+                                                    <MultiBinding Converter="{StaticResource UserRoleToVisibilityMultiValueConverter}">
+                                                        <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                                                    </MultiBinding>
+                                                </DataGridTemplateColumn.Visibility>
                                             </DataGridTemplateColumn>
                                             <DataGridTemplateColumn Header="Եկամուտ">
                                                 <DataGridTemplateColumn.CellTemplate>
@@ -438,6 +459,11 @@
                                                         <TextBlock Text="{Binding Profit, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
+                                                <DataGridTemplateColumn.Visibility>
+                                                    <MultiBinding Converter="{StaticResource UserRoleToVisibilityMultiValueConverter}">
+                                                        <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                                                    </MultiBinding>
+                                                </DataGridTemplateColumn.Visibility>
                                             </DataGridTemplateColumn>
                                             <DataGridTemplateColumn Header="Եկամուտ %" CanUserSort="True">
                                                 <DataGridTemplateColumn.CellTemplate>
@@ -445,6 +471,11 @@
                                                         <TextBlock Text="{Binding Pers, StringFormat='{}{0:#,0.##}%', TargetNullValue=0}" FontStyle="Italic" HorizontalAlignment="Right"/>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
+                                                <DataGridTemplateColumn.Visibility>
+                                                    <MultiBinding Converter="{StaticResource UserRoleToVisibilityMultiValueConverter}">
+                                                        <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                                                    </MultiBinding>
+                                                </DataGridTemplateColumn.Visibility>
                                             </DataGridTemplateColumn>
 
                                         </DataGrid.Columns>
@@ -490,26 +521,41 @@
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn>
-                                            <DataGridTemplateColumn Header="Ինքնարժեք" SortMemberPath="Cost" Visibility="{Binding Converter={StaticResource UserRoleToVisibilityConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}">
+                                            <DataGridTemplateColumn Header="Ինքնարժեք" SortMemberPath="Cost">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate DataType="{x:Type reports:InvoiceReportByPartner}">
                                                         <TextBlock Text="{Binding Cost, StringFormat='# ##0.00', TargetNullValue=0}" HorizontalAlignment="Right"/>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
+                                                <DataGridTemplateColumn.Visibility>
+                                                    <MultiBinding Converter="{StaticResource UserRoleToVisibilityMultiValueConverter}">
+                                                        <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                                                    </MultiBinding>
+                                                </DataGridTemplateColumn.Visibility>
                                             </DataGridTemplateColumn>
-                                            <DataGridTemplateColumn Header="Եկամուտ" Visibility="{Binding Converter={StaticResource UserRoleToVisibilityConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}">
+                                            <DataGridTemplateColumn Header="Եկամուտ">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate DataType="{x:Type reports:InvoiceReportByPartner}">
                                                         <TextBlock Text="{Binding Profit, StringFormat='# ##0.00', TargetNullValue=0}" HorizontalAlignment="Right"/>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
+                                                <DataGridTemplateColumn.Visibility>
+                                                    <MultiBinding Converter="{StaticResource UserRoleToVisibilityMultiValueConverter}">
+                                                        <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                                                    </MultiBinding>
+                                                </DataGridTemplateColumn.Visibility>
                                             </DataGridTemplateColumn>
-                                            <DataGridTemplateColumn Header="Եկամուտ %" CanUserSort="True" Visibility="{Binding Converter={StaticResource UserRoleToVisibilityConverter}, ConverterParameter={x:Static enumerations1:UserRoleEnum.Manager}}">
+                                            <DataGridTemplateColumn Header="Եկամուտ %" CanUserSort="True">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate DataType="{x:Type reports:InvoiceReportByPartner}">
                                                         <TextBlock Text="{Binding Pers, StringFormat='#0.00', TargetNullValue=0}" FontStyle="Italic" HorizontalAlignment="Right"/>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
+                                                <DataGridTemplateColumn.Visibility>
+                                                    <MultiBinding Converter="{StaticResource UserRoleToVisibilityMultiValueConverter}">
+                                                        <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
+                                                    </MultiBinding>
+                                                </DataGridTemplateColumn.Visibility>
                                             </DataGridTemplateColumn>
                                             <DataGridTemplateColumn Header="Հաստատեց" CanUserSort="True" SortMemberPath="Approver">
                                                 <DataGridTemplateColumn.CellTemplate>

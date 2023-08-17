@@ -52,9 +52,11 @@ namespace ES.Market
                 loginVm.LoginEvent += OnLogining;
                 loginVm.OnLogin += OnLogin;
                 loginVm.OnClosed += OnClosed;
+                loginVm.OnRemoveUser += OnRemoveUser;
                 return _loginWindow = new LoginWindow(loginVm);
             }
         }
+        
         #endregion LoginWindow
 
         #region Mrket window
@@ -207,7 +209,12 @@ namespace ES.Market
                     {
                         ApplicationManager.Instance.SetEsMember = members.Single();
                         EsExceptionBox.Instance.Company = new Reporter() { Company = ApplicationManager.Instance.GetMember.Name, User = String.Format("{0} (mobile:{1} mail:{2})", esuser.FullName, esuser.Mobile, esuser.Email) };
-                        Market.ShowDialog();
+                        try
+                        { Market.ShowDialog(); }
+                        catch(Exception e)
+                        {
+                            if (Application.Current != null) DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { EsExceptionBox.Instance.OnException(e); });
+                        }
                     }
                     else
                     {
@@ -216,7 +223,14 @@ namespace ES.Market
                 }
             }
         }
-
+        private void OnRemoveUser(string userName)
+        {
+            var generalSettings = GeneralSettings.LoadGeneralSettings();
+            if (_logins.All(s => s != userName)) return;
+            _logins.Remove(userName);
+            generalSettings.LastLogins = _logins.ToList();
+            GeneralSettings.SaveGeneralSettings(generalSettings);
+        }
         private void OnMarketClosed(object sender, EventArgs e)
         {
             Market.Closed -= OnMarketClosed;

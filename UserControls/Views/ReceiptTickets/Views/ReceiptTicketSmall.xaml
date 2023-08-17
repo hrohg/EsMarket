@@ -324,7 +324,7 @@
                 <TextBlock Text="{Binding ResponseReceipt.Lottery}"  Style="{StaticResource TextBlockStyle}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter},Path=IsFiscal}">
-                <TextBlock Text="ՖԻՍԿԱԼ ՀԱՄԱՐ " />
+                <TextBlock Text="ՖԻՍԿԱԼ ՀԱՄԱՐ (Ֆ) " />
                 <TextBlock Text="{Binding ResponseReceipt.Fiscal}"  Style="{StaticResource TextBlockStyle}"/>
             </StackPanel>
             <TextBlock Text="{Binding PrizeDescription}" HorizontalAlignment="Center" />

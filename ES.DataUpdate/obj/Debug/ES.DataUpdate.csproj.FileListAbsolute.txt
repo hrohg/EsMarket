@@ -1,0 +1,36 @@
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\obj\Debug\ES.DataUpdate.csprojAssemblyReference.cache
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\obj\Debug\ES.DataUpdate.csproj.CoreCompileInputs.cache
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\bin\Debug\ESL.DataUpdate.dll.config
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\bin\Debug\ESL.DataUpdate.dll
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\bin\Debug\ESL.DataUpdate.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\bin\Debug\EntityFramework.dll
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\bin\Debug\EntityFramework.SqlServer.dll
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\bin\Debug\ES.DataAccess.dll
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\bin\Debug\Microsoft.SqlServer.ConnectionInfo.dll
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\bin\Debug\Microsoft.SqlServer.Smo.dll
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\bin\Debug\Microsoft.SqlServer.SmoExtended.dll
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\bin\Debug\ES.DataAccess.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\bin\Debug\ES.DataAccess.dll.config
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\bin\Debug\EntityFramework.xml
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\bin\Debug\EntityFramework.SqlServer.xml
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\obj\Debug\ES.DataUpdate.csproj.CopyComplete
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\obj\Debug\ESL.DataUpdate.dll
+D:\Users\Hrayr\VsProjects\EsMarket\ES.DataUpdate\obj\Debug\ESL.DataUpdate.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\bin\Debug\ESL.DataUpdate.dll.config
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\bin\Debug\ESL.DataUpdate.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\bin\Debug\ESL.DataUpdate.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\bin\Debug\EntityFramework.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\bin\Debug\EntityFramework.SqlServer.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\bin\Debug\ES.DataAccess.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\bin\Debug\Microsoft.SqlServer.ConnectionInfo.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\bin\Debug\Microsoft.SqlServer.Smo.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\bin\Debug\Microsoft.SqlServer.SmoExtended.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\bin\Debug\ES.DataAccess.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\bin\Debug\ES.DataAccess.dll.config
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\bin\Debug\EntityFramework.xml
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\bin\Debug\EntityFramework.SqlServer.xml
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\obj\Debug\ES.DataUpdate.csproj.AssemblyReference.cache
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\obj\Debug\ES.DataUpdate.csproj.CoreCompileInputs.cache
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\obj\Debug\ES.DataUpdate.csproj.CopyComplete
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\obj\Debug\ESL.DataUpdate.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\ES.DataUpdate\obj\Debug\ESL.DataUpdate.pdb

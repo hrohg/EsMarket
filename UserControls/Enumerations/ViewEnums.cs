@@ -8,6 +8,6 @@
         ByProductItems,
         ByCategories,
         ByPrice,
-        ByProviders
+        ByProviders,
     }
 }

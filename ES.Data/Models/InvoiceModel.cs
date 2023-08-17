@@ -1,10 +1,11 @@
-﻿using System;
+﻿using ES.Common.ViewModels.Base;
+using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace ES.Data.Models
 {
-    public class InvoiceModel :INotifyPropertyChanged
+    public class InvoiceModel : NotifyPropertyChanged
     {
         public InvoiceModel()
         {
@@ -25,15 +26,9 @@ namespace ES.Data.Models
         }
 
 
-        #region Invoice model properties
-        private const string CreateDateProperty = "CreateDate";
-        private const string DiscountProperty = "Discount";
-        private const string TotalProperty = "Total";
-        private const string AmountProperty = "Amount";
-        private const string PaidProperty = "Paid";
-        private const string OddMoneyProperty = "OddMoney";
-        private const string ApproveDateProperty = "ApproveDate";
-        #endregion
+        #region Invoice model fields
+
+        #endregion Invoice model fields
 
         #region ImvoiceModel private properties
         private Guid _id = Guid.NewGuid();
@@ -46,11 +41,11 @@ namespace ES.Data.Models
         private string _providerName;
         private string _recipientName;
         private decimal? _discount;
-        private decimal _summ;
+        private decimal _total;
         private decimal _amount;
         private decimal? _paid;
         private DateTime? _approveDate;
-
+        private bool _useDiscountBond;
         #endregion
 
         #region Invoice model public properties
@@ -62,7 +57,7 @@ namespace ES.Data.Models
         public string InvoiceNumber
         {
             get { return _invoiceNumber; }
-            set { _invoiceNumber = value; OnPropertyChanged("InvoiceNumber"); }
+            set { _invoiceNumber = value; RaisePropertyChanged(() => InvoiceNumber); }
         }
 
         public string About
@@ -73,14 +68,22 @@ namespace ES.Data.Models
                     ApproveDate != null ? "=>" : "", RecipientName);
             }
         }
-        public DateTime CreateDate { get { return _createDate; } set { _createDate = value; OnPropertyChanged(CreateDateProperty); } }
+        public DateTime CreateDate { get { return _createDate; } set { _createDate = value; RaisePropertyChanged(() => CreateDate); } }
         public string RecipientName { get { return _recipientName; } set { _recipientName = value; } }
         public string ProviderName { get { return _providerName; } set { _providerName = value; } }
         public Guid? PartnerId { get { return _partnerId; } set { _partnerId = value; } }
         [XmlIgnore]
         public PartnerModel Partner { get; set; }
-        public decimal? Discount { get { return _discount; } set { _discount = value; } }
-
+        public decimal? Discount
+        {
+            get { return _discount; }
+            set
+            {
+                _discount = value;
+                RaisePropertyChanged(() => Discount);
+            }
+        }
+        
         #region Cost price
         private decimal _costPrice;
         public decimal CostPrice
@@ -90,18 +93,21 @@ namespace ES.Data.Models
             {
                 if (value == _costPrice) return;
                 _costPrice = value;
-                OnPropertyChanged("CostPrice");
+                RaisePropertyChanged(() => CostPrice);
             }
         }
         #endregion Cost price
 
         public decimal Total
         {
-            get { return _summ; }
+            get { return _total; }
             set
             {
-                _summ = value;
-                _discount = Amount != 0 ? (Amount - Total) * 100 / Amount : 0; OnPropertyChanged(TotalProperty); OnPropertyChanged(DiscountProperty);
+                _total = value;
+                RaisePropertyChanged(() => Total);
+                RaisePropertyChanged(() => TotalDiscount);
+                RaisePropertyChanged(() => DiscountBond);
+                RaisePropertyChanged(() => DiscountAmount);
             }
         }
         public decimal Amount
@@ -110,16 +116,33 @@ namespace ES.Data.Models
             set
             {
                 _amount = value;
-                _discount = Amount != 0 ? (Amount - Total) * 100 / Amount : 0; OnPropertyChanged(DiscountProperty);
-                OnPropertyChanged(AmountProperty); OnPropertyChanged(OddMoneyProperty);
+                RaisePropertyChanged(() => Amount);
+                RaisePropertyChanged(() => TotalDiscount);
+                RaisePropertyChanged(() => DiscountBond);
+                RaisePropertyChanged(() => DiscountAmount);
             }
         }
-        public decimal? Paid { get { return _paid; } set { _paid = value; OnPropertyChanged(PaidProperty); OnPropertyChanged(OddMoneyProperty); } }
-        public decimal OddMoney { get { return (Paid != null ? (decimal)Paid : 0) - Amount; } }
+        public decimal DiscountAmount { get { return !UseDiscountBond ? Amount - Total: 0; } }
+        public decimal? TotalDiscount { get { return Amount > 0 ? (Amount - Total) * 100 / Amount : 0; } }
+        [XmlIgnore]
+        public decimal? DiscountBond { get { return UseDiscountBond ? Amount > Total ? Amount - Total : 0 : 0; } }
+        //public decimal? Paid
+        //{
+        //    get { return _paid; }
+        //    set
+        //    {
+        //        _paid = value;
+        //        OnPropertyChanged(PaidProperty);
+        //        OnPropertyChanged(OddMoneyProperty);
+        //    }
+        //}
+
+        //public decimal OddMoney { get { return (Paid != null ? (decimal)Paid : 0) - Amount; } }
+
         public int MemberId { get { return _memberId; } set { _memberId = value; } }
         public short? FromStockId { get; set; }
         public short? ToStockId { get; set; }
-        public DateTime? ApproveDate { get { return _approveDate; } set { _approveDate = value; OnPropertyChanged(ApproveDateProperty); OnPropertyChanged("IsApproved"); } }
+        public DateTime? ApproveDate { get { return _approveDate; } set { _approveDate = value; RaisePropertyChanged(() => ApproveDate); RaisePropertyChanged(() => IsApproved); } }
         public int? ApproverId { get; set; }
         public string Approver { get; set; }
         public DateTime? AcceptDate { get; set; }
@@ -137,17 +160,30 @@ namespace ES.Data.Models
         public string RecipientTaxRegistration { get; set; }
         private string _note;
         private string _invoiceNumber;
-        
+
         public string Notes
         {
             get { return _note; }
-            set { _note = value; OnPropertyChanged("Notes"); }
+            set { _note = value; RaisePropertyChanged(() => Notes); }
         }
 
         public bool IsApproved
         {
             get { return ApproveDate != null; }
         }
+        public bool UseDiscountBond
+        {
+            get { return _useDiscountBond; }
+            set
+            {
+                _useDiscountBond = value;
+                RaisePropertyChanged(() => DiscountBond);
+                RaisePropertyChanged(() => TotalDiscount);
+                RaisePropertyChanged(() => DiscountAmount);
+            }
+        }
+
+        public long InvoiceIndex { get; set; }
 
         public void Reload(InvoiceModel invoice, int memberId)
         {
@@ -160,19 +196,12 @@ namespace ES.Data.Models
             MemberId = memberId;
             Notes = invoice.Notes;
         }
+        //public void SetDiscountBond(decimal? value)
+        //{
+        //    DiscountBond = value > 0 ? value : 0;
+        //    OnPropertyChanged("DiscountBond");
+        //    OnPropertyChanged("TotalDiscount");
+        //}
         #endregion
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-        #endregion
-        
     }
 }

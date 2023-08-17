@@ -73,7 +73,7 @@ namespace UserControls.ViewModels
         public bool LocalMode { get { return _settings.MemberSettings.IsOfflineMode; } set { _settings.MemberSettings.IsOfflineMode = value; RaisePropertyChanged("OfflineMode"); } }
         #endregion Is work in offline mode
 
-        #region CashDesk port
+        #region Serial ports
 
         private List<ItemsForChoose> _cashDeskPrinters;
         public List<ItemsForChoose> CashDeskPrinters
@@ -85,26 +85,34 @@ namespace UserControls.ViewModels
             set { _cashDeskPrinters = value; }
         }
 
-        public List<string> CashDeskPorts
+        public List<string> ActiveSerialPorts
         {
             get
             {
-                var comPorts = new List<string>() { "" };
-                comPorts.AddRange(SerialPort.GetPortNames().ToList());
-                return comPorts;
+                var serialPorts = new List<string>() { "" };
+                serialPorts.AddRange(SerialPort.GetPortNames().ToList());
+                return serialPorts;
             }
         }
-
+        public string ScannerPort
+        {
+            get { return _settings.MemberSettings.ScannerPort; }
+            set
+            {
+                _settings.MemberSettings.ScannerPort = value;
+                RaisePropertyChanged(() => ScannerPort);
+            }
+        }
         public string CashDeskPort
         {
             get { return _settings.MemberSettings.CashDeskPort; }
             set
             {
                 _settings.MemberSettings.CashDeskPort = value;
-                RaisePropertyChanged("CashDeskPort");
+                RaisePropertyChanged(() => CashDeskPort);
             }
         }
-        #endregion Cashdesk port
+        #endregion Serial ports
 
         public EcrServiceSettings EcrServiceSettings { get { return _settings.MemberSettings.EcrServiceSettings; } }
 
@@ -376,38 +384,43 @@ namespace UserControls.ViewModels
             //EcrModel = ApplicationManager.Settings.MemberSettings.EcrModel; //ecrConfig ?? new EcrConfig();
             //EcrSettings.IsActive = ecrConfig != null && ecrConfig.IsActive ApplicationManager.Settings.MemberSettings.IsEcrActivated;
             //Printers
-            var printerQuery = new ManagementObjectSearcher("SELECT * from Win32_Printer");
 
             LablePrinters = new List<ItemsForChoose>();
             SalePrinters = new List<ItemsForChoose>();
             CashDeskPrinters = new List<ItemsForChoose>();
-
-            foreach (var printer in printerQuery.Get())
+            try
             {
-                var name = printer.GetPropertyValue("Name");
-                var status = printer.GetPropertyValue("Status");
-                var isDefault = printer.GetPropertyValue("Default");
-                //var isNetworkPrinter = printer.GetPropertyValue("Network");
-                SalePrinters.Add(new ItemsForChoose
+                var printerQuery = new ManagementObjectSearcher("SELECT * from Win32_Printer");
+                foreach (var printer in printerQuery.Get())
                 {
-                    Data = string.Format("{0} Status:{1}{2}", name, status, isDefault is bool && (bool)isDefault ? " (Default)" : ""),
-                    Value = name,
-                    IsChecked = string.Equals(name, Settings.MemberSettings.ActiveSalePrinter)
-                });
-                CashDeskPrinters.Add(new ItemsForChoose
-                {
-                    Data = string.Format("{0} Status:{1}{2}", name, status, isDefault is bool && (bool)isDefault ? " (Default)" : ""),
-                    Value = name,
-                    IsChecked = string.Equals(name, Settings.MemberSettings.ActiveCashDeskPrinter)
-                });
-                LablePrinters.Add(new ItemsForChoose
-                {
-                    Data = string.Format("{0} Status:{1}{2}", name, status, isDefault is bool && (bool)isDefault ? " (Default)" : ""),
-                    Value = name,
-                    IsChecked = string.Equals(name, Settings.MemberSettings.ActiveLablePrinter)
-                });
+                    var name = printer.GetPropertyValue("Name");
+                    var status = printer.GetPropertyValue("Status");
+                    var isDefault = printer.GetPropertyValue("Default");
+                    //var isNetworkPrinter = printer.GetPropertyValue("Network");
+                    SalePrinters.Add(new ItemsForChoose
+                    {
+                        Data = string.Format("{0} Status:{1}{2}", name, status, isDefault is bool && (bool)isDefault ? " (Default)" : ""),
+                        Value = name,
+                        IsChecked = string.Equals(name, Settings.MemberSettings.ActiveSalePrinter)
+                    });
+                    CashDeskPrinters.Add(new ItemsForChoose
+                    {
+                        Data = string.Format("{0} Status:{1}{2}", name, status, isDefault is bool && (bool)isDefault ? " (Default)" : ""),
+                        Value = name,
+                        IsChecked = string.Equals(name, Settings.MemberSettings.ActiveCashDeskPrinter)
+                    });
+                    LablePrinters.Add(new ItemsForChoose
+                    {
+                        Data = string.Format("{0} Status:{1}{2}", name, status, isDefault is bool && (bool)isDefault ? " (Default)" : ""),
+                        Value = name,
+                        IsChecked = string.Equals(name, Settings.MemberSettings.ActiveLablePrinter)
+                    });
+                }
             }
-
+            catch (Exception ex)
+            {
+                ApplicationManager.Instance.AddMessageToLog(new MessageModel(ex.Message, MessageTypeEnum.Warning));
+            }
             SelectedBranch = BranchSettings;
         }
 
@@ -443,6 +456,10 @@ namespace UserControls.ViewModels
 
             //Ecr
 
+
+            //Branch
+            _settings.MemberSettings.BranchSettings = SelectedBranch;
+
             if (Settings.Save())
             {
                 Settings.LoadMemberSettings();
@@ -455,6 +472,7 @@ namespace UserControls.ViewModels
             {
                 MessageManager.OnMessage("Կարգավորումների գրանցումը ձախողվել է:", MessageTypeEnum.Warning);
             }
+
         }
         #endregion Save command
 

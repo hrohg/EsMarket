@@ -132,12 +132,16 @@ namespace UserControls.Managers
                 StopBits = StopBits.One,
                 Handshake = Handshake.None
             };
-            cashDeskPort.Open();
-            if (cashDeskPort.IsOpen)
+            try
             {
-                cashDeskPort.WriteLine("80000");
-                cashDeskPort.Close();
+                cashDeskPort.Open();
+                if (cashDeskPort.IsOpen)
+                {
+                    cashDeskPort.WriteLine("80000");
+                    cashDeskPort.Close();
+                }
             }
+            catch(Exception ex) { MessageManager.OnMessage(ex.Message); }
         }
     }
 }

@@ -168,6 +168,7 @@ namespace ES.Business.Managers
                     var exItem = db.EsStock.SingleOrDefault(s => s.Id == item.Id && s.EsMemberId == item.EsMemberId);
                     if (exItem == null)
                     {
+                        if (db.EsStock.Any(s => s.Id == item.Id)) item.Id = (short)(db.EsStock.Select(s => s.Id).Max() + 1);
                         db.EsStock.Add(item);
                     }
                     else

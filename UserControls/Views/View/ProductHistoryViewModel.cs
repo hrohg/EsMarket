@@ -1,10 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using ES.Business.Managers;
-using ES.Common.Managers;
+using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
-using UserControls.ControlPanel.Controls;
 
 namespace UserControls.Views.View
 {
@@ -33,7 +34,7 @@ namespace UserControls.Views.View
         {
             get
             {
-                return InvoiceItems.Where(s => s.Invoice.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice || s.Invoice.InvoiceTypeId==(int)InvoiceType.ReturnFrom).Sum(s => s.Quantity ?? 0);
+                return InvoiceItems.Where(s => s.Invoice.InvoiceTypeId == (int)InvoiceType.PurchaseInvoice || s.Invoice.InvoiceTypeId == (int)InvoiceType.ReturnFrom).Sum(s => s.Quantity ?? 0);
             }
         }
         public decimal Move
@@ -62,9 +63,15 @@ namespace UserControls.Views.View
         {
             Initialize();
             var date = UIHelper.Managers.SelectManager.GetDateIntermediate();
-            if(date==null) return;
+            if (date == null) return;
             var products = Helpers.SelectItemsManager.SelectProductByCheck(true);
-            InvoiceItems = new ObservableCollection<InvoiceItemsModel>(InvoicesManager.GetProductHistory(products.Select(s => s.Id).ToList(), date.Item1, date.Item2, ApplicationManager.Instance.GetMember.Id));
+            new Thread(() =>
+            {
+                var items = InvoicesManager.GetProductHistory(products.Select(s => s.Id).ToList(), date.Item1, date.Item2, ApplicationManager.Instance.GetMember.Id);
+                DispatcherWrapper.Instance.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () => InvoiceItems = new ObservableCollection<InvoiceItemsModel>(items));
+            }).Start();
+
+
         }
         #endregion Constructors
 
@@ -73,6 +80,7 @@ namespace UserControls.Views.View
         private void Initialize()
         {
             Title = "Ապրանքաշրջանառություն";
+            InvoiceItems = new ObservableCollection<InvoiceItemsModel>();
         }
         #endregion
     }

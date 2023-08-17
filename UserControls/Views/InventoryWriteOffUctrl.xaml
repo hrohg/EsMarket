@@ -187,9 +187,8 @@
                             <MenuItem Header="Քանակի ստուգում" Command="{Binding CheckForExistingQuantityCommand}"/>
                         </MenuItem>
                         <MenuItem Header="Ապրանքների բեռնում">
-                            <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
-                            <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"  CommandParameter="{x:Static managers:InvoiceTypeEnum.MoveInvoice}"/>
-                            <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"  CommandParameter="{x:Static managers:InvoiceTypeEnum.PurchaseInvoice}"/>
+                            <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"/>
+                            <MenuItem Header="Ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"/>
                         </MenuItem>
                     </Menu>
                     <Button Content="Հիշել" Width="80"

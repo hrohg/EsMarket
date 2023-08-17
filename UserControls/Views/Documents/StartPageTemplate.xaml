@@ -93,8 +93,13 @@
                             <TextBlock Text="Վաճառքի ապրանքագիր F2" Style="{StaticResource LinkStyle}"/>
                             </Hyperlink>
                     </TextBlock>
-                            <TextBlock Margin="0 4 0 0" 
-                                       IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.JuniorManager}}">
+                            <TextBlock Margin="0 4 0 0">
+                                <TextBlock.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                        <Binding Source="{x:Static enumerations:UserRoleEnum.Manager}"/>
+                                        <Binding Source="{x:Static enumerations:UserRoleEnum.JuniorManager}"/>
+                                    </MultiBinding>
+                                </TextBlock.IsEnabled>
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
@@ -106,7 +111,13 @@
                             <TextBlock Text="Գնման ապրանքագիր F3" Style="{StaticResource LinkStyle}"/>
                             </Hyperlink>
                     </TextBlock>
-                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.JuniorManager}}">
+                            <TextBlock Margin="0 4 0 0">
+                                <TextBlock.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                        <Binding Source="{x:Static enumerations:UserRoleEnum.Manager}"/>
+                                        <Binding Source="{x:Static enumerations:UserRoleEnum.JuniorManager}"/>
+                                    </MultiBinding>
+                                </TextBlock.IsEnabled>
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
@@ -142,7 +153,13 @@
                             <TextBlock Text="Ետ վերադարձ" Style="{StaticResource LinkStyle}"/>
                             </Hyperlink>
                     </TextBlock>
-                            <TextBlock Margin="0 4 0 0" IsEnabled="{Binding Converter={StaticResource UserRoleToBoolConverter}, ConverterParameter={x:Static enumerations:UserRoleEnum.JuniorSeller}}">
+                            <TextBlock Margin="0 4 0 0">
+                                <TextBlock.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                        <Binding Source="{x:Static enumerations:UserRoleEnum.Manager}"/>
+                                        <Binding Source="{x:Static enumerations:UserRoleEnum.JuniorManager}"/>
+                                    </MultiBinding>
+                                </TextBlock.IsEnabled>
                         <Hyperlink TextDecorations="None" Command="{Binding OpenInvocieCommand}">
                                 <Hyperlink.CommandParameter>
                                     <MultiBinding Converter="{StaticResource GetInvocieParameterConverter}">
@@ -208,6 +225,11 @@
                                                         <TextBlock Text="Համառոտ վերլուծություններ" Style="{StaticResource LinkStyle}"/>
                                                         </Hyperlink>
                                                 </TextBlock>
+                            <TextBlock Margin="0 4 0 0">
+                                                    <Hyperlink TextDecorations="None" Command="{Binding ManageProductsCommand}">
+                                                        <TextBlock Text="Ապրանքների կառավարում" Style="{StaticResource LinkStyle}"/>
+                                                        </Hyperlink>
+                                                </TextBlock>
                         </StackPanel>
                     </Grid>
 
@@ -248,4 +270,5 @@
             </Grid>
         </ScrollViewer>
     </DataTemplate>
+    
 </ResourceDictionary>

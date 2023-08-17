@@ -19,10 +19,11 @@ namespace UserControls.ViewModels.Invoices
 {
     [Serializable]
     [SettingsSerializeAs(SettingsSerializeAs.Xml)]
-    public abstract class InvoiceViewModelBase : DocumentViewModel, IInvoiceViewModel
+    public abstract class InvoiceViewModelBase
+        : DocumentViewModel, IInvoiceViewModel
     {
         #region Internal fields
-
+        private ObservableCollection<InvoiceItemsModel> _invoiceItems = new ObservableCollection<InvoiceItemsModel>();
         #endregion Internal fields
 
         #region Internal properties
@@ -61,8 +62,6 @@ namespace UserControls.ViewModels.Invoices
                 RaisePropertyChanged(InvoiceProperty);
             }
         }
-
-        private ObservableCollection<InvoiceItemsModel> _invoiceItems = new ObservableCollection<InvoiceItemsModel>();
 
         public ObservableCollection<InvoiceItemsModel> InvoiceItems
         {
@@ -106,14 +105,14 @@ namespace UserControls.ViewModels.Invoices
         protected List<StockModel> FromStocks { get; set; }
         private StockModel _fromStock;
 
-        public StockModel FromStock
+        public virtual StockModel FromStock
         {
             get { return _fromStock; }
             set
             {
                 _fromStock = value;
                 Invoice.FromStockId = value != null ? value.Id : (short?)null;
-                Invoice.ProviderName = value != null ? value.FullName : string.Empty;
+                //Invoice.ProviderName = value != null ? value.FullName : string.Empty;
                 if (value != null) FromStocks = new List<StockModel> { value };
                 RaisePropertyChanged(FromStockProperty);
                 RaisePropertyChanged("Description");
@@ -124,14 +123,14 @@ namespace UserControls.ViewModels.Invoices
         private const string ToStockProperty = "ToStock";
         private StockModel _toStock;
 
-        public StockModel ToStock
+        public virtual StockModel ToStock
         {
             get { return _toStock; }
             set
             {
                 _toStock = value;
                 Invoice.ToStockId = value != null ? value.Id : (short?)null;
-                Invoice.RecipientName = value != null ? value.FullName : string.Empty;
+                //Invoice.RecipientName = value != null ? value.FullName : string.Empty;
                 RaisePropertyChanged(ToStockProperty);
                 RaisePropertyChanged("Description");
                 IsModified = true;
@@ -142,7 +141,6 @@ namespace UserControls.ViewModels.Invoices
 
         #region Partner
 
-        protected const string PartnerProperty = "Partner";
         private PartnerModel _partner;
 
         public PartnerModel Partner
@@ -150,16 +148,93 @@ namespace UserControls.ViewModels.Invoices
             get { return _partner; }
             set
             {
-                _partner = value;
-                RaisePropertyChanged(PartnerProperty);
+                _partner = value;                
                 OnPartnerChanged();
             }
         }
-
+        public bool HasPartnerPrepayment
+        {
+            get
+            {
+                if (Partner == null || Invoice == null) return false;
+                switch ((InvoiceType)Invoice.InvoiceTypeId)
+                {
+                    case InvoiceType.PurchaseInvoice:
+                        break;
+                    case InvoiceType.SaleInvoice:
+                        return Partner.Credit > 0;
+                        break;
+                    case InvoiceType.ProductOrder:
+                        break;
+                    case InvoiceType.MoveInvoice:
+                        break;
+                    case InvoiceType.InventoryWriteOff:
+                        break;
+                    case InvoiceType.ReturnFrom:
+                        break;
+                    case InvoiceType.ReturnTo:
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        }
+        public bool AllowAccountsReceivable
+        {
+            get
+            {
+                if (Partner == null || Invoice == null) return false;
+                switch ((InvoiceType)Invoice.InvoiceTypeId)
+                {
+                    case InvoiceType.PurchaseInvoice:
+                        break;
+                    case InvoiceType.SaleInvoice:
+                        return Partner.MaxDebit > Partner.Debit;
+                        break;
+                    case InvoiceType.ProductOrder:
+                        break;
+                    case InvoiceType.MoveInvoice:
+                        break;
+                    case InvoiceType.InventoryWriteOff:
+                        break;
+                    case InvoiceType.ReturnFrom:
+                        break;
+                    case InvoiceType.ReturnTo:
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        }
+        public virtual bool AllowCashReceivable
+        {
+            get
+            {                
+                return true;
+            }
+        }
+        public virtual bool AllowByCheckReceivable
+        {
+            get
+            {                
+                return true;
+            }
+        }
         protected virtual void OnPartnerChanged()
         {
-            Invoice.PartnerId = Partner != null ? Partner.Id : (Guid?)null;
-            IsModified = true;
+            var partnerId = Partner != null ? Partner.Id : (Guid?)null;
+            if (partnerId != Invoice.PartnerId)
+            {
+                Invoice.PartnerId = partnerId;
+                if (InvoiceItems.Any()) IsModified = true;
+            }
+
+            RaisePropertyChanged(() => Partner);
+            RaisePropertyChanged(() => HasPartnerPrepayment);
+            RaisePropertyChanged(() => AllowCashReceivable);
+            RaisePropertyChanged(() => AllowAccountsReceivable);
         }
         #endregion Partner
 
@@ -169,7 +244,7 @@ namespace UserControls.ViewModels.Invoices
         {
             get
             {
-                return string.Format("Տեղափոխություն ({0} -> {1})", FromStock != null ? FromStock.Name : string.Empty,
+                return string.Format("Տեղափոխման ապրանքագիր ({0} -> {1})", FromStock != null ? FromStock.Name : string.Empty,
                     ToStock != null ? ToStock.Name : string.Empty);
             }
         }
@@ -207,7 +282,6 @@ namespace UserControls.ViewModels.Invoices
             PrintInvoiceCommand = new RelayCommand<PrintModeEnum>(OnPrintInvoice, CanPrintInvoice);
             PrintPriceTagCommand = new RelayCommand<PrintModeEnum>(OnPrintPriceTag, CanPrintPriceTag);
             ExportInvoiceCommand = new RelayCommand<ExportImportEnum>(OnExportInvoice, CanExportInvoice);
-
         }
 
         protected virtual void OnInvoiceItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -237,7 +311,6 @@ namespace UserControls.ViewModels.Invoices
 
         protected virtual void OnInvoiceItemsPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            Invoice.Amount = InvoiceItems.Sum(s => (s.Product.Price ?? 0) * (s.Quantity ?? 0));
             IsModified = true;
             RaisePropertyChanged(FilteredInvoiceItemsProperty);
         }
@@ -250,13 +323,16 @@ namespace UserControls.ViewModels.Invoices
 
             InvoiceItems.Clear();
             var invoiceItems = InvoicesManager.GetInvoiceItems(Invoice.Id).OrderBy(s => s.DisplayOrder);
-            foreach (var invoiceItemsModel in invoiceItems)
+            foreach (var invoiceItem in invoiceItems)
             {
-                InvoiceItems.Add(invoiceItemsModel);
+                LoadInvoiceItem(invoiceItem);
             }
             IsModified = false;
         }
-
+        protected virtual void LoadInvoiceItem(InvoiceItemsModel invoiceItem)
+        {
+            InvoiceItems.Add(invoiceItem);
+        }
         #endregion Internal methods
 
         #region External methods
@@ -289,7 +365,7 @@ namespace UserControls.ViewModels.Invoices
 
         protected virtual void OnPrintPriceTag(PrintModeEnum obj)
         {
-           
+
         }
         #endregion
 

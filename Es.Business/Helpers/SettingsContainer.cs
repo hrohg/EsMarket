@@ -61,7 +61,7 @@ namespace ES.Business.Helpers
         }
         public bool SetDataServer(DataServer dataServer)
         {
-            var exServer = DataServers.SingleOrDefault(s => s.Name == dataServer.Name && s.Description == dataServer.Description);
+            var exServer = DataServers.SingleOrDefault(s => s.Description == dataServer.Description);
             if (exServer != null)
             {
                 exServer.Instance = dataServer.Instance;
@@ -128,6 +128,7 @@ namespace ES.Business.Helpers
     public class MemberSettings
     {
         #region Internal properties
+        private string _scannerPort;
         private string _cashDeskPort;
         #endregion Internal properties
 
@@ -143,6 +144,11 @@ namespace ES.Business.Helpers
         public string ImportingFilePath { get; set; }
         public bool IsEcrActivated { get; set; }
         public string ActiveCashDeskPrinter { get; set; }
+        public string ScannerPort
+        {
+            get { return _scannerPort; }
+            set { _scannerPort = value; }
+        }
         public string CashDeskPort
         {
             get { return _cashDeskPort; }
@@ -296,25 +302,33 @@ namespace ES.Business.Helpers
         #region External methods
         public static MemberSettings GetSettings(int memberId)
         {
-            string settingsFilePath = PathHelper.GetMemberSettingsFilePath(memberId);
-            if (File.Exists(settingsFilePath))
+            try
             {
-                FileStream fileStream = new FileStream(settingsFilePath, FileMode.Open);
-                try
+                string settingsFilePath = PathHelper.GetMemberSettingsFilePath(memberId);
+                if (File.Exists(settingsFilePath))
                 {
-                    BinaryFormatter serializer = new BinaryFormatter();
-                    return (MemberSettings)serializer.Deserialize(fileStream);
+                    FileStream fileStream = new FileStream(settingsFilePath, FileMode.Open);
+                    try
+                    {
+                        BinaryFormatter serializer = new BinaryFormatter();
+                        return (MemberSettings)serializer.Deserialize(fileStream);
+                    }
+                    catch (Exception)
+                    {
+                        return new MemberSettings();
+                    }
+                    finally
+                    {
+                        fileStream.Close();
+                    }
                 }
-                catch (Exception)
-                {
-                    return new MemberSettings();
-                }
-                finally
-                {
-                    fileStream.Close();
-                }
+                return new MemberSettings();
             }
-            return new MemberSettings();
+            catch(Exception ex)
+            {
+                ApplicationManager.Instance.AddMessageToLog(new MessageModel(ex.Message, MessageTypeEnum.Warning));
+                return new MemberSettings();
+            }
         }
 
         public static bool Save(MemberSettings memberSettings, int memberId)

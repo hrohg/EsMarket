@@ -15,4 +15,13 @@
 
         }
     }
+    public class ExternalTextImputEventArgs
+    {
+        public bool Handled { get; set; }
+        public string Text { get; private set; }
+        public ExternalTextImputEventArgs(string text)
+        {
+            Text = text;
+        }
+    }
 }

@@ -7,7 +7,8 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         Title="Մուտք ES համակարգ" Height="280" Width="600" 
         ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
-        Icon="pack://application:,,,/Shared;component/Images/Cart.png">
+        Icon="pack://application:,,,/Shared;component/Images/Cart.png"
+        xmlns:commonBehaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common">
     <Window.Resources>
         <system:Boolean x:Key="True">True</system:Boolean>
         <system:Boolean x:Key="False">False</system:Boolean>
@@ -15,7 +16,7 @@
     <i:Interaction.Behaviors>
         <behaviors:EventToCommandBehavior Command="{Binding CloseCommand}" Event="Closing"/>
         <behaviors1:FocusNextElementBehaviors />
-    </i:Interaction.Behaviors>
+    </i:Interaction.Behaviors>    
     <Grid>
         <Grid.Background>
             <ImageBrush Stretch="Uniform" Opacity="0.8"  ImageSource="pack://application:,,,/Shared;component/Images/GoToShop.png" AlignmentX="Left" />
@@ -31,15 +32,34 @@
         <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom" Margin="0,0,10,20">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,5">
                 <Label Content="Մուտքանուն"/>
-                <ComboBox x:Name="TxtLogin" ItemsSource="{Binding Logins}" SelectedItem="{Binding Login}" Text="{Binding Login}" 
+                <ComboBox x:Name="cmbLogin" ItemsSource="{Binding Logins}" SelectedItem="{Binding Login}" Text="{Binding Login}" 
                           IsEditable="True" Width="200" Height="25" 
                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TabIndex="0">
                     <i:Interaction.Behaviors>
                         <behaviors1:FocusNextElementBehaviors />
                     </i:Interaction.Behaviors>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="">
+                            <i:InvokeCommandAction Command="{Binding DataContext.GetSemiQERCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                     <ComboBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding LoginCommnd}"/>
+                        <KeyBinding Key="Delete" Command="{Binding RemoveCommand}"/>
                     </ComboBox.InputBindings>
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ComboBoxItem}">
+                            <Setter Property="commonBehaviors:ComboBoxItemHighlightBehavior.Enabled" Value="True" />
+                            <Setter Property="commonBehaviors:ComboBoxItemHighlightBehavior.HighlightedItem"
+                                    Value="{Binding DataContext.HighlightedItem, Mode=OneWayToSource, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}}" />
+
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
                 </ComboBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,5">

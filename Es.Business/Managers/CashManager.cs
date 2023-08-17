@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
@@ -149,7 +150,10 @@ namespace ES.Business.Managers
                 return _products;
             }
         }
-
+        public static ProductModel GetProduct(Guid? productId)
+        {
+            return Instance.GetProducts().SingleOrDefault(s => s.Id == productId);
+        }
         #endregion Products
 
         #region Users
@@ -319,7 +323,11 @@ namespace ES.Business.Managers
             OnProductsUpdated();
 
         }
-
+        public static PartnerModel GetPartner(Guid? id)
+        {
+            return id == null ? null : Instance.GetPartners.SingleOrDefault(p => p.Id == id);
+        }
+        
         private void OnProdutsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             OnProductsUpdated();

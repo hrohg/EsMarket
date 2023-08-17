@@ -487,8 +487,7 @@ namespace UserControls.ViewModels.StockTakeings
                 StockTakeItem.ProductDescription = product.Description;
                 StockTakeItem.Product = product;
                 StockTakeItem.Price = product.Price;
-                StockTakeItem.Quantity = ProductsManager.GetProductItemCountFromStock(product.Id,
-                    new List<short> { StockTake.StockId ?? 0 }, _memberId);
+                StockTakeItem.Quantity = ProductsManager.GetProductItemCountFromStock(product.Id, new List<short> { StockTake.StockId ?? 0 }, _memberId);
             }
             else
             {
@@ -708,14 +707,16 @@ namespace UserControls.ViewModels.StockTakeings
 
         public bool CanGetUnavailableProductItems(object obj)
         {
-            return StockTake.ClosedDate == null;
+            return !StockTake.IsClosed;
         }
 
         private void GetUnavailableProductItems(object obj)
         {
+            if (!CanGetUnavailableProductItems(obj)) return;
+            var items = StockTakeManager.GetStockTakeItems(StockTake.Id);
             var unavailableProductItems = ProductsManager.GetUnavailableProductItems(
-                StockTakeItems.Where(s => s.ProductId != null).Where(s => s.ProductId != null)
-                    .Select(s => (Guid)s.ProductId).ToList(), new List<short> { Stock.Id });
+
+                items.Where(s => s.ProductId != null).Select(s => (Guid)s.ProductId).ToList(), new List<short> { Stock.Id });
             var productItemIds = unavailableProductItems.GroupBy(s => s.ProductId)
                 .Select(s => s.Select(t => t.ProductId).First()).OrderBy(s => s).ToList();
             foreach (var productId in productItemIds)
@@ -724,7 +725,7 @@ namespace UserControls.ViewModels.StockTakeings
                 var product = unavailableProductItems.Where(s => s.ProductId == productId).Select(s => s.Product)
                     .FirstOrDefault();
                 if (product == null) continue;
-                if (StockTakeItems.Any(s => s.ProductId == product.Id))
+                if (items.Any(s => s.ProductId == product.Id))
                 {
                     MessageManager.ShowMessage(
                         product.Description + " (" + product.Code + ") ապրանքից արդեն հաշվառվել է։ \n", "Հաշվառում");
@@ -784,6 +785,7 @@ namespace UserControls.ViewModels.StockTakeings
 
                 var selectedItems = SelectItemsManager.SelectProductItems(productIds.Select(s => new ProductItemsByCheck
                 {
+                    
                     Id = s.ProductId,
                     Code = s.Product.Code,
                     Description = s.Product.Description,

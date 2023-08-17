@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:helper="clr-namespace:CashReg.Helper;assembly=CashReg"
-             xmlns:views="clr-namespace:UserControls.Views;assembly=UserControls"
-             xmlns:controls="clr-namespace:UserControls.Controls;assembly=UserControls"
+             xmlns:controls="clr-namespace:UserControls.Controls;assembly=UserControls" xmlns:viewmodels="clr-namespace:UserControls.ViewModels;assembly=UserControls" d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="500">
     <UserControl.Resources>
@@ -107,6 +106,7 @@
                         </Grid>
                     </ScrollViewer>
                 </TabItem>
+                
                 <TabItem Header="Տպիչներ">
                     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <Grid>
@@ -152,6 +152,7 @@
                         </Grid>
                     </ScrollViewer>
                 </TabItem>
+                
                 <TabItem Header="ՀԴՄ կարգաբերում">
                     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                         <Grid>

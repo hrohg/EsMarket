@@ -56,6 +56,7 @@ namespace ES.Business.Managers
             return new StockTakeItemsModel(item.StockTakeId)
             {
                 Id = item.Id,
+                Product = CashManager.GetProduct(item.ProductId),
                 DisplayOrder = item.DisplayOrder ?? 0,
                 StockTakeId = item.StockTakeId,
                 ProductId = item.ProductId,

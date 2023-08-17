@@ -24,11 +24,13 @@ namespace ES.Data.Models
         private Guid? _cashDeskId;
         private Guid? _cashDeskForTicketId;
         private Guid? _partnerId;
-        private decimal? _discountBond;
 
         #endregion
 
         #region Public properties
+        /// <summary>
+        /// Total needed yo pay.
+        /// </summary>
         public decimal? Total { get { return _total; } set { _total = value; OnPropertyChanged(ChangeProperty); } }
 
         public decimal? Paid
@@ -91,21 +93,21 @@ namespace ES.Data.Models
                 _accountsReceivable = value; OnPropertyChanged(AccountsReceivableProperty); OnPropertyChanged(ChangeProperty);
             }
         }
-        public decimal? Change { get { return IsPaid ? ((Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - Prepayment - (Total ?? 0) - (DiscountBond ?? 0)) : 0; } }
+        public decimal? Change { get { return IsPaid ? ((Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - Prepayment - (Total ?? 0)) : 0; } }
         public decimal Prepayment { get { return _prepaiment; } set { _prepaiment = value; OnPropertyChanged(PrepaymentProperty); OnPropertyChanged(ChangeProperty); } }
 
-        public decimal? DiscountBond
-        {
-            get { return _discountBond; }
-            set { _discountBond = value; OnPropertyChanged("DiscountBond"); }
-        }
+        //public decimal? DiscountBond
+        //{
+        //    get { return _discountBond; }
+        //    set { _discountBond = value; OnPropertyChanged("DiscountBond"); }
+        //}
 
-        public bool UseDiscountBond { get { return DiscountBond > 0; } }
+        //public bool UseDiscountBond { get { return DiscountBond > 0; } }
 
         #endregion
 
         #region Public methods
-        public bool IsPaid { get { return ((Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - Prepayment - (Total ?? 0) - (DiscountBond ?? 0)) >= 0; } }
+        public bool IsPaid { get { return ((Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - Prepayment - (Total ?? 0)) >= 0; } }
         public Guid? CashDeskId { get { return _cashDeskId; } set { _cashDeskId = value; } }
         public Guid? CashDeskForTicketId { get { return _cashDeskForTicketId; } set { _cashDeskForTicketId = value; } }
         public Guid? PartnerId { get { return _partnerId; } set { _partnerId = value; } }

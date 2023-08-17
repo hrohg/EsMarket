@@ -10,6 +10,7 @@ using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
+using ES.Data.Models;
 using ES.Data.Models.Reports;
 using Shared.Helpers;
 using UserControls.Enumerations;
@@ -176,7 +177,7 @@ namespace ES.Market.Views.Reports.ViewModels
                     viewModel = new SaleInvoiceReportByStocksViewModel(type);
                     break;
                 case ViewInvoicesEnum.ByProvider:
-                    viewModel = new PurchaseInvoiceReportViewModel(type);
+                    viewModel = new SaleInvoiceReportViewModel(type);
                     break;
                 case ViewInvoicesEnum.ByPartnerType:
                 case ViewInvoicesEnum.ByPartner:
@@ -214,11 +215,14 @@ namespace ES.Market.Views.Reports.ViewModels
 
                     break;
                 case ViewInvoicesEnum.ByStock:
-                    viewModel = new SaleInvoiceReportByStocksViewModel(type);
+                    viewModel = new PurchaseInvoiceReportByStocksViewModel(type);
                     break;
                 case ViewInvoicesEnum.ByPartnerType:
                 case ViewInvoicesEnum.ByPartner:
                     viewModel = new SaleInvoiceReportByPartnerViewModel(type);
+                    break;
+                case ViewInvoicesEnum.ByProvider:
+                    viewModel = new PurchaseInvoiceReportViewModel(type);
                     break;
                 case ViewInvoicesEnum.ByPartnersDetiles:
                     viewModel = new SaleInvoiceReportByPartnersDetiledViewModel(type);
@@ -300,11 +304,50 @@ namespace ES.Market.Views.Reports.ViewModels
             var tabControl = new UctrlViewTable { DataContext = vm };
             AddTab(tabControl, vm);
         }
+
+        private void OnViewProductsBalanceCommand(ProductsViewEnum viewEnum)
+        {
+            TableViewModel<IInvoiceReport> vm = null;
+            DocumentViewModel vmDoc;
+            switch (viewEnum)
+            {
+                case ProductsViewEnum.ByDetile:
+                    vm = new ViewProductsBalanceByInvoiceViewModel(viewEnum);
+                    break;
+                case ProductsViewEnum.ByPrice:
+                    vm = new ViewProductsBalanceByInvoiceViewModel(viewEnum);
+                    break;
+                case ProductsViewEnum.ByStocks:
+                    vm = new ViewProductsResidualViewModel();
+                    break;
+                case ProductsViewEnum.ByProducts:
+                    vmDoc = new ViewProductsBalanceByInvoiceViewModel(viewEnum);
+                    AddDocument(vmDoc);
+                    break;
+                case ProductsViewEnum.ByProductItems:
+                    break;
+                case ProductsViewEnum.ByCategories:
+                    break;
+                case ProductsViewEnum.ByProviders:
+                    vmDoc = new ViewProductsBalanceByPartnerViewModel();
+                    AddDocument(vmDoc);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("viewEnum", viewEnum, null);
+            }
+
+            if (vm != null)
+            {
+                AddTab(vm);
+                vm.Update();
+            }
+        }
         #endregion
 
         #region External methods
 
         #endregion
+
         #region Commands
 
         public ICommand ViewInternalWayBillCommands { get; private set; }
@@ -317,8 +360,47 @@ namespace ES.Market.Views.Reports.ViewModels
         private ICommand _viewProdutsLogCommand;
         public ICommand ViewProductsLogCommand { get { return _viewProdutsLogCommand??(_viewProdutsLogCommand = new RelayCommand(OnViewProductsLog));} }
         
-        #region Products commands
+        private ICommand _viewCommodityTurnoverCommand;
+        public ICommand ViewCommodityTurnoverCommand { get { return _viewCommodityTurnoverCommand ?? (_viewCommodityTurnoverCommand = new RelayCommand<ProductsViewEnum>(OnViewCommodityTurnover)); } }
+        private void OnViewCommodityTurnover(ProductsViewEnum viewType)
+        {
+            TableViewModel<IInvoiceReport> vm = null;
+            DocumentViewModel vmDoc;
+            switch (viewType)
+            {
+                case ProductsViewEnum.ByDetile:
+                    
+                    break;
+                case ProductsViewEnum.ByPrice:
+                    
+                    break;
+                case ProductsViewEnum.ByStocks:
+                    
+                    break;
+                case ProductsViewEnum.ByProducts:
+                    
+                    break;
+                case ProductsViewEnum.ByProductItems:
+                    break;
+                case ProductsViewEnum.ByCategories:
+                    break;
+                case ProductsViewEnum.ByProviders:
+                    vmDoc = new CommodityTurnoverViewModel(viewType);
+                    AddDocument(vmDoc);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("viewEnum", viewType, null);
+            }
+
+            if (vm != null)
+            {
+                AddTab(vm);
+                vm.Update();
+            }
+        }
         
+        #region Products commands
+
         private void OnViewProductsCommand(ProductsViewEnum viewEnum)
         {
             TableViewModel<IInvoiceReport> vm = null;
@@ -326,16 +408,16 @@ namespace ES.Market.Views.Reports.ViewModels
             switch (viewEnum)
             {
                 case ProductsViewEnum.ByDetile:
-                    vm = new ViewProductsBalanceViewModel(viewEnum);
+                    vm = new ViewProductsBalanceByInvoiceViewModel(viewEnum);
                     break;
                 case ProductsViewEnum.ByPrice:
-                    vm = new ViewProductsBalanceViewModel(viewEnum);
+                    vm = new ViewProductsBalanceByInvoiceViewModel(viewEnum);
                     break;
                 case ProductsViewEnum.ByStocks:
                     vm = new ViewProductsResidualViewModel();
                     break;
                 case ProductsViewEnum.ByProducts:
-                    vmDoc = new ViewProductsBalanceViewModel(viewEnum);
+                    vmDoc = new ViewProductsBalanceByInvoiceViewModel(viewEnum);
                     AddDocument(vmDoc);
                     break;
                 case ProductsViewEnum.ByProductItems:
@@ -390,6 +472,9 @@ namespace ES.Market.Views.Reports.ViewModels
         }
         private ICommand _viewProductsCommand;
         public ICommand ViewProductsCommand { get { return _viewProductsCommand ?? (_viewProductsCommand = new RelayCommand<ProductsViewEnum>(OnViewProductsCommand)); } }
+
+        private ICommand _viewProductsBalanceCommand;
+        public ICommand ViewProductsBalanceCommand { get { return _viewProductsBalanceCommand ?? (_viewProductsBalanceCommand = new RelayCommand<ProductsViewEnum>(OnViewProductsBalanceCommand)); } }
         #endregion Products commands
 
         #endregion

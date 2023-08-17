@@ -38,13 +38,18 @@ namespace UserControls.ViewModels.Documents
             Title = "Գլխավոր";
             CanFloat = false;
             IsClosable = false;
-            OpenInvocieCommand = new RelayCommand<Tuple<InvoiceTypeEnum, InvoiceState, MaxInvocieCount>>(OnOpenInvoice);
+
+            OpenInvocieCommand = new RelayCommand<Tuple<InvoiceTypeEnum, InvoiceState, MaxInvocieCount>>(OnOpenInvoice, CanOpenInvoice);
             GetReportCommand = new RelayCommand<ReportTypes>(OnGetReport, CanGetReport);
             OpenCarculatorCommand = new RelayCommand(_parent.OnOpenCalc);
             ToolsCommand = new RelayCommand<ToolsEnum>(_parent.OnTools, _parent.CanOpenTools);
             PriceTagCommand = new RelayCommand(() => { PriceTicketManager.PrintPriceTicket(PrintPriceTicketEnum.PriceTag);});
         }
 
+        public bool CanOpenInvoice(Tuple<InvoiceTypeEnum, InvoiceState, MaxInvocieCount> tuple)
+        {
+            return _parent.CanGetInvoices(tuple);
+        }
         private void OnOpenInvoice(Tuple<InvoiceTypeEnum, InvoiceState, MaxInvocieCount> o)
         {
             _parent.OnGetInvoices(o);
@@ -55,10 +60,10 @@ namespace UserControls.ViewModels.Documents
             switch (reportTypesEnum)
             {
                 case ReportTypes.ShortReport:
-                    return ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
+                    return ApplicationManager.IsInRole(UserRoleEnum.Manager) || ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
                     
                 case ReportTypes.Report:
-                    return ApplicationManager.IsInRole(UserRoleEnum.JuniorManager) || ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
+                    return ApplicationManager.IsInRole(UserRoleEnum.Manager) || ApplicationManager.IsInRole(UserRoleEnum.JuniorManager) || ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
                    
                 default:
                     throw new ArgumentOutOfRangeException("reportTypesEnum", reportTypesEnum, null);
@@ -69,7 +74,15 @@ namespace UserControls.ViewModels.Documents
         {
             _parent.OnGetReport(type);
         }
+        private bool CanExecuteAccountingAction(AccountingPlanEnum accountingPlan)
+        {
+            return _parent.CanExecuteAccountingAction(accountingPlan);
+        }
 
+        private void OnAccountingAction(AccountingPlanEnum accountingPlan)
+        {
+            _parent.OnAccountingAction(accountingPlan);
+        }
         #endregion Internal methods
 
         #region External methods
@@ -91,17 +104,7 @@ namespace UserControls.ViewModels.Documents
         public ICommand AccountingActionCommand
         {
             get { return _accountingActionCommand ?? (_accountingActionCommand = new RelayCommand<AccountingPlanEnum>(OnAccountingAction, CanExecuteAccountingAction)); }
-        }
-
-        private bool CanExecuteAccountingAction(AccountingPlanEnum accountingPlan)
-        {
-            return _parent.CanExecuteAccountingAction(accountingPlan);
-        }
-
-        private void OnAccountingAction(AccountingPlanEnum accountingPlan)
-        {
-            _parent.OnAccountingAction(accountingPlan);
-        }
+        }        
 
         #endregion CashDesk
 
@@ -115,6 +118,10 @@ namespace UserControls.ViewModels.Documents
         public ICommand ToolsCommand { get; private set; }
         public bool IsPopupOpened { get; set; }
         public ICommand PriceTagCommand { get; private set; }
+        public ICommand ManageProductsCommand
+        {
+            get { return _parent.ManageProductsCommand; }
+        }
         #endregion Commands
     }
 }

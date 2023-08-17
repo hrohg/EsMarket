@@ -179,11 +179,11 @@ namespace UserControls.Helpers
             if (items == null || items.Count == 0) return new List<Brands>();
             if (items.Count == 1) { return items; }
             var vm = new SelectItemsViewModel(items.Select(s => new ItemsToSelectByCheck
-                            {
-                                IsChecked = selectedItems.Select(t => t.Id).Contains(s.Id),
-                                Description = s.Name,
-                                Value = s.Id
-                            }).ToList(), title);
+            {
+                IsChecked = selectedItems.Select(t => t.Id).Contains(s.Id),
+                Description = s.Name,
+                Value = s.Id
+            }).ToList(), title);
             var selectItem = new SelectItemsByCheck
             {
                 DataContext = vm
@@ -216,11 +216,13 @@ namespace UserControls.Helpers
         {
             var products = ApplicationManager.Instance.CashProvider.GetProducts();
             if (products.Count < 2) return products;
-            var vm = new SelectItemsViewModel(products.Select(s => new ItemsToSelectByCheck
-            {
-                Description = string.Format("{0} ({1} {2} {3})", s.Description, s.Code, s.Barcode, s.Price),
-                Value = s.Id
-            }).ToList(), "Ընտրել արտահանվող ապրանքները");
+            var vm = new SelectItemsViewModel(products.Select(s => new { Desc = string.Format("{0} ({1} {2} {3})", s.Description, s.Code, s.Barcode, s.Price), Item = s }).Select(i =>
+                          new ItemsToSelectByCheck
+                          {
+                              Description = i.Desc,
+                              Value = i.Item.Id,
+                              Keys = new List<string>(i.Item.ProductKeys.Select(p => p.ProductKey).ToList()) { i.Item.Code, i.Item.Barcode, i.Item.Description, i.Desc }
+                          }).ToList(), "Ընտրել արտահանվող ապրանքները");
             var selectedItems = new SelectItemsByCheck
             {
                 DataContext = vm
@@ -232,9 +234,13 @@ namespace UserControls.Helpers
                 : new List<ProductModel>();
 
         }
-        public static List<InvoiceModel> SelectInvoice(long invoiceTypeId, bool? isApproved = null, bool selectMultiple = false)
+        public static List<InvoiceModel> SelectInvoice(InvoiceType invoiceType, DateTime startsFrom, bool? isApproved = null, bool selectMultiple = false)
         {
-            var items = InvoicesManager.GetInvoices((InvoiceType)invoiceTypeId);
+            return SelectInvoice(new List<InvoiceType> { invoiceType }, startsFrom, isApproved, selectMultiple);
+        }
+        public static List<InvoiceModel> SelectInvoice(List<InvoiceType> invoiceTypes, DateTime startsFrom, bool? isApproved = null, bool selectMultiple = false)
+        {
+            var items = InvoicesManager.GetInvoices(invoiceTypes, startsFrom);
             if (items == null) return new List<InvoiceModel>();
             if (isApproved != null)
             {
@@ -309,6 +315,7 @@ namespace UserControls.Helpers
         }
         public static List<InvoiceModel> SelectInvoice(InvoiceTypeEnum type, Tuple<DateTime, DateTime> dataIntermidiate, OrderInvoiceBy orderBy, bool selectMultiple)
         {
+            if (dataIntermidiate == null) return null;
             var invoices = InvoicesManager.GetInvoices(dataIntermidiate.Item1, dataIntermidiate.Item2);
             invoices = invoices.Where(s => InvoicesManager.GetInvoiceTypes(type).Contains((s.InvoiceTypeId))).ToList();
             return SelectInvoice(invoices, orderBy, selectMultiple);

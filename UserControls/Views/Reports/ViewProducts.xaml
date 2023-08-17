@@ -1,0 +1,68 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:reports="clr-namespace:UserControls.ViewModels.Reports"
+                    xmlns:products="clr-namespace:ES.Data.Models.Products;assembly=ES.Data">
+
+    <DataTemplate DataType="{x:Type reports:ViewProductDetilesViewModel}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Կոդ" FontSize="18"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Product.Code}" IsReadOnly="True" FontSize="22"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Բարկոդ" FontSize="18"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Product.Barcode}" IsReadOnly="True" FontSize="22"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Անվանում" FontSize="18"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Product.Description}" IsReadOnly="True" FontSize="22"/>
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Նախորդ գին" FontSize="18"/>
+                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Product.OldPrice}" IsReadOnly="True" FontSize="22"/>
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Գին" FontSize="18"/>
+                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Product.Price}" IsReadOnly="True" FontSize="22"/>
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Նշումներ" FontSize="18"/>
+                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Product.Note}" IsReadOnly="True" FontSize="22" Height="50"/>
+            </Grid>
+            <DataGrid Grid.Row="2" ItemsSource="{Binding Items}" AutoGenerateColumns="False" IsReadOnly="True" Margin="0 3">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Կոդ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
+                                <TextBlock Text="{Binding Code}" FontSize="18"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
+                                <TextBlock Text="{Binding Description}" FontSize="18"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Չմ" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type products:ProductModel}">
+                                <TextBlock Text="{Binding Mu, Mode=OneWay}" FontSize="18"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </DataTemplate>
+
+</ResourceDictionary>

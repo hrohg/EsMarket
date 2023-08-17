@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Collections.Generic;
+using System.Windows.Input;
 using ES.Common.Helpers;
 using ES.Common.Interfaces;
 
@@ -12,6 +13,11 @@ namespace ES.Common.ViewModels.Base
         {
             
         }
+        
         public ICommand UpdateCommand { get { return _updateCommand ?? (_updateCommand = new RelayCommand(OnUpdate)); } }
+    }
+    public class UpdatableDocumentViewModel<T>: UpdatableDocumentViewModel
+    {
+        public virtual void OnUpdate(List<T> items) { }
     }
 }

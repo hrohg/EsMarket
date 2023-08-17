@@ -33,7 +33,23 @@ namespace UserControls.ViewModels.Invoices
             base.OnPartnerChanged();
             Invoice.ProviderName = Partner != null ? Partner.FullName : null;
         }
-
+        public override StockModel FromStock
+        {
+            get { return base.FromStock; }
+            set
+            {
+                base.FromStock = value;                
+            }
+        }
+        public override StockModel ToStock
+        {
+            get { return base.ToStock; }
+            set
+            {
+                base.ToStock = value;
+                Invoice.RecipientName = value != null ? value.FullName : string.Empty;
+            }
+        }
         public override bool AddBySingle
         {
             get { return base.AddBySingle; }
@@ -83,7 +99,7 @@ namespace UserControls.ViewModels.Invoices
         protected override void OnInvoiceItemsPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnInvoiceItemsPropertyChanged(sender, e);
-            InvoicePaid.Paid = InvoiceItems.Sum(s => (s.Price ?? 0) * (s.Quantity ?? 0));
+            InvoicePaid.Paid = Invoice.Total = InvoiceItems.Sum(s => (s.Price ?? 0) * (s.Quantity ?? 0));
         }
         #endregion
 
@@ -98,7 +114,7 @@ namespace UserControls.ViewModels.Invoices
         protected override void OnAddInvoiceItem()
         {
             base.OnAddInvoiceItem();
-            InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
+            //InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
             RaisePropertyChanged("InvoicePaid");
         }
         protected override bool CanApprove(object o)
@@ -149,6 +165,9 @@ namespace UserControls.ViewModels.Invoices
             if (invoice == null)
             {
                 Invoice.AcceptDate = Invoice.ApproveDate = null;
+                ToStock = null;
+                Invoice.ToStockId = null;
+                Invoice.RecipientName = null;
                 MessageManager.OnMessage("Գործողությունը ձախողվել է:", MessageTypeEnum.Warning);
                 return;
             }

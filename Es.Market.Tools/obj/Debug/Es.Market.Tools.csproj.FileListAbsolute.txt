@@ -1,0 +1,126 @@
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.csprojAssemblyReference.cache
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\obj\Debug\Controls\LabelPrinter.baml
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\obj\Debug\Controls\LabelPrinter.g.cs
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools_MarkupCompile.cache
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools_MarkupCompile.lref
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\Es.Market.Tools.dll.config
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\Es.Market.Tools.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\Es.Market.Tools.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\ES.Business.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\ES.Common.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\ES.Data.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\Zen.Barcode.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\ES.DataAccess.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\AccountingTools.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\EntityFramework.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\EsMarket.SharedData.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\CashReg.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\TaxService.Converter.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\HG.Tools.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\Xceed.Wpf.AvalonDock.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\System.Windows.Interactivity.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\EntityFramework.SqlServer.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\Microsoft.SqlServer.ConnectionInfo.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\Microsoft.SqlServer.Smo.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\Microsoft.SqlServer.SmoExtended.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\Newtonsoft.Json.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\TaxServiceInvoices.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\ES.Business.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\ES.Business.dll.config
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\ES.Common.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\ES.Data.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\Zen.Barcode.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\ES.DataAccess.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\ES.DataAccess.dll.config
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\AccountingTools.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\EntityFramework.xml
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\EsMarket.SharedData.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\HG.Tools.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\Xceed.Wpf.AvalonDock.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\System.Windows.Interactivity.xml
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\EntityFramework.SqlServer.xml
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\cs-CZ\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\en-US\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\hy-AM\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\kk-KZ\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\ru-RU\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\de\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\es\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\fr\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\hu\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\it\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\pt-BR\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\ro\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\ru\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\sv\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\bin\Debug\zh-Hans\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\obj\Debug\Views\Generic.baml
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.g.resources
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.csproj.CoreCompileInputs.cache
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.csproj.CopyComplete
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.dll
+D:\Users\Hrayr\VsProjects\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Es.Market.Tools.dll.config
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Es.Market.Tools.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Es.Market.Tools.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ES.Business.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ES.Common.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ES.Data.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Zen.Barcode.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ES.DataAccess.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\AccountingTools.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\EntityFramework.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\EsMarket.SharedData.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\CashReg.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\TaxService.Converter.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\HG.Tools.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Xceed.Wpf.AvalonDock.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\System.Windows.Interactivity.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\EntityFramework.SqlServer.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Microsoft.SqlServer.ConnectionInfo.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Microsoft.SqlServer.Smo.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Microsoft.SqlServer.SmoExtended.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\TaxServiceInvoices.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Newtonsoft.Json.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ES.Business.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ES.Business.dll.config
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ES.Common.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ES.Data.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Zen.Barcode.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ES.DataAccess.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ES.DataAccess.dll.config
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\AccountingTools.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\EntityFramework.xml
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\EsMarket.SharedData.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\HG.Tools.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Xceed.Wpf.AvalonDock.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\System.Windows.Interactivity.xml
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\EntityFramework.SqlServer.xml
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\cs-CZ\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\en-US\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\hy-AM\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\kk-KZ\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ru-RU\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\de\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\es\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\fr\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\hu\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\it\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\pt-BR\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ro\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ru\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\sv\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\zh-Hans\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.csproj.AssemblyReference.cache
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Controls\LabelPrinter.baml
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Controls\LabelPrinter.g.cs
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools_MarkupCompile.cache
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools_MarkupCompile.lref
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Views\Generic.baml
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.g.resources
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.csproj.CoreCompileInputs.cache
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.csproj.CopyComplete
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.pdb

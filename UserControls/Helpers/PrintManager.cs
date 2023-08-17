@@ -226,6 +226,7 @@ namespace UserControls.Helpers
 
         public static void PrintPreview(UserControl uctrl, string title, bool isShowPrintDialog)
         {
+            if (uctrl == null) return;
             var pp = new UiPrintPreview(uctrl);
             pp.DataContext = new PrintPreviewViewModel(pp, title, isShowPrintDialog);
             pp.Show();

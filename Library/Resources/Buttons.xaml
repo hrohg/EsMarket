@@ -201,7 +201,7 @@
     </Style>
 
     <Style x:Key="EcrToggleButtinStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static res:ResourceKeys.NoChromeToggleButtonKey}}">
-        <Setter Property="ToolTip" Value="{Binding EcrButtonTooltip}"/>
+        <Setter Property="ToolTip" Value="{Binding ApplicationSettings.EcrButtonTooltip}"/>
         <Setter Property="ContentTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -328,6 +328,23 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
+    <Style x:Key="BondToggleButtinStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Static res:ResourceKeys.NoChromeToggleButtonKey}}">
+        <Setter Property="ToolTip" Value="{Binding ApplicationSettings.EcrButtonTooltip}"/>
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <StackPanel SnapsToDevicePixels="True" Orientation="Horizontal">
+                        <Image x:Name="Image" Source="pack://application:,,,/ResourceLibrary;component/Resources/Images/Discount/Discount_24x24.png" Height="24"/>
+                    </StackPanel>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="false">
+                            <Setter TargetName="Image" Property="Opacity" Value=".3"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     
 </ResourceDictionary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows;
 using ES.Common.Enumerations;
 
 namespace ES.Common.Models
@@ -22,10 +23,29 @@ namespace ES.Common.Models
             get { return _date; }
             set
             {
-               _date = value;
+                _date = value;
             }
         }
+        public string Title { get; set; }
         public string Message { get; set; }
+        public MessageBoxImage MessageBoxImage
+        {
+            get
+            {
+                switch (MessageType)
+                {
+                    case MessageTypeEnum.Information:
+                        return MessageBoxImage.Information;
+                    case MessageTypeEnum.Success:
+                        return MessageBoxImage.Information;
+                    case MessageTypeEnum.Error:                        
+                        return MessageBoxImage.Error;
+                    case MessageTypeEnum.Warning:
+                        return MessageBoxImage.Warning;
+                }
+                return MessageBoxImage.None;
+            }
+        }
 
         public MessageTypeEnum MessageType { get; set; }
 
@@ -54,7 +74,13 @@ namespace ES.Common.Models
         }
 
         #endregion
-        
+        public MessageModel(string message, string title, MessageTypeEnum type)
+        {
+            Date = DateTime.Now;
+            Message = message;
+            Title = title;
+            MessageType = type;
+        }
         public MessageModel(DateTime date, string message, MessageTypeEnum type)
         {
             Date = date;

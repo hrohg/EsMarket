@@ -25,7 +25,6 @@ using UserControls.PriceTicketControl.ViewModels;
 using UserControls.ViewModels;
 using UserControls.Views.CustomControls;
 using ExportManager = ES.Business.Managers.ExportManager;
-using MessageBox = System.Windows.MessageBox;
 using UserControlSession = UserControls.Session;
 using ItemsToSelect = UserControls.ControlPanel.Controls.ItemsToSelect;
 using SelectItems = UserControls.ControlPanel.Controls.SelectItems;
@@ -39,9 +38,9 @@ namespace ES.Market
     public partial class MarketShell : Window
     {
         #region Private methods
-        private void LoadPackingListTab(long invoiceTypeId, bool? isAccepted = null)
+        private void LoadPackingListTab(short invoiceTypeId, bool? isAccepted = null)
         {
-            var invoice = SelectItemsManager.SelectInvoice(invoiceTypeId, isAccepted, false).FirstOrDefault();
+            var invoice = SelectItemsManager.SelectInvoice((InvoiceType)invoiceTypeId, DateTime.Today.AddYears(-1), isAccepted, false).FirstOrDefault();
             if (invoice == null)
             {
                 MessageManager.ShowMessage("Ապրանքագիր չի հայտնաբերվել։");
@@ -69,7 +68,7 @@ namespace ES.Market
 
         public MarketShell()
         {
-            if(DataContext==null)
+            if (DataContext == null)
                 MessageManager.ShowMessage("Ոչ արտոնագրված գործողություն։ Ծրագիրը կփակվի։ Խնդրում ենք արտոնագրել ծրագրային ապահովումը։",
                  "Արտոնագրային սխալ", MessageBoxImage.Information);
             Close();
@@ -111,7 +110,7 @@ namespace ES.Market
                 foreach (TabItem item in items)
                 {
                     var tab = item.DataContext as ITabItem;
-                    if(tab==null) continue;
+                    if (tab == null) continue;
                     if (tab.IsModified &&
                         MessageManager.ShowMessage("Դուք իսկապե՞ս ցանկանում եք փակել ծրագիրը:\n" +
                                         "Եթե չհիշած ապրանքագրեր կան տվյալները չեն պահպանվի։ Խնդրում ենք համոզվել որ բոլոր տվյալները պահպանված են։",
@@ -127,17 +126,17 @@ namespace ES.Market
         }
 
         #region Menu items
-        
+
         #region Admin
         private void MiExecute_Click(object sender, EventArgs e)
         {
             ExecuteManager.ExecuteTest();
         }
-       
+
         #endregion
-        
+
         #region Cash desk
-        
+
         //todo
         private PartnerModel SelectPartner(PartnerType partnerTypeId = 0)
         {
@@ -154,20 +153,24 @@ namespace ES.Market
         #endregion
 
         #region AccountingRecords
-        
+
         //251
-        protected void MiTransferIntoCashDesk_Click(object sender, EventArgs e)
+        protected void MiTransferIntoCashDesk_Click(object sender, RoutedEventArgs e)
         {
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (short)AccountingPlanEnum.CashDesk;
             accountingRecords.Credit = (short)AccountingPlanEnum.CashDesk;
             var fromCashDesk = SelectItemsManager.SelectCashDesks(null, false, "Ընտրել ելքագրվող դրամարկղը").FirstOrDefault();
-            var toCashDesk = SelectItemsManager.SelectCashDesks(null, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
-            if (fromCashDesk == null || toCashDesk == null)
+            if (fromCashDesk == null)
             {
-                MessageManager.ShowMessage("Դրամարկղ հայտնաբերված չէ։", "Թերի տվյալներ");
                 return;
             }
+            var toCashDesk = SelectItemsManager.SelectCashDesks(null, false, "Ընտրել մուտքագրվող դրամարկղը").FirstOrDefault();
+            if (toCashDesk == null)
+            {
+                return;
+            }
+
             if (fromCashDesk.Id == toCashDesk.Id)
             {
                 MessageManager.ShowMessage("Հնարավոր չէ տեղափոխել նույն դրամարկղում։", "Սխալ տվյալներ");
@@ -190,7 +193,7 @@ namespace ES.Market
             }
             accountingRecords.DebitGuidId = toCashDesk.Id;
             accountingRecords.CreditGuidId = fromCashDesk.Id;
-            
+
             if (AccountingRecordsManager.SetCashTransfer(accountingRecords, ApplicationManager.Instance.GetMember.Id))
             {
                 MessageManager.ShowMessage("Վճարումն իրականացվել է հաջողությամբ։");
@@ -234,8 +237,8 @@ namespace ES.Market
                 MessageManager.ShowMessage("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։");
             }
         }
-        
-        
+
+
 
         //712
         protected void MiCostOfSales_Click(object sender, EventArgs e)
@@ -310,9 +313,9 @@ namespace ES.Market
                 Ամսաթիվ = s.Date.ToString("dd.MM.yyyy"),
                 Պարտք = s.Amount,
                 Վճարված = s.PaidAmount,
-                Վերջնաժամկետ = s.ExpairyDate != null ? ((DateTime) s.ExpairyDate).ToString("dd.MM.yyyy") : string.Empty
+                Վերջնաժամկետ = s.ExpairyDate != null ? ((DateTime)s.ExpairyDate).ToString("dd.MM.yyyy") : string.Empty
             }).ToList();
-            var ui = new UIListView(list, partner.FullName, (double)list.Sum(s=>s.Պարտք));
+            var ui = new UIListView(list, partner.FullName, (double)list.Sum(s => s.Պարտք));
             ui.Show();
         }
         #endregion
@@ -339,7 +342,7 @@ namespace ES.Market
         {
             LoadPackingListTab((short)InvoiceType.MoveInvoice, false);
         }
-        
+
         #endregion
 
         #region Edit
@@ -360,7 +363,12 @@ namespace ES.Market
 
         protected void MiBackupData_Click(object sender, EventArgs e)
         {
-            DatabaseManager.BackupDatabase(ApplicationManager.DataSource, ApplicationManager.DbName);
+            try
+            { DatabaseManager.BackupDatabase(ApplicationManager.DataSource, ApplicationManager.DbName); }
+            catch (Exception ex)
+            {
+                MessageManager.OnMessage(new MessageModel(ex.Message, MessageTypeEnum.Error));
+            }
             //new DatabaseManagement.MainWindow().ShowDialog();
         }
         protected void MiManageBrands_Click(object sender, EventArgs e)
@@ -423,6 +431,7 @@ namespace ES.Market
         #endregion
 
         #endregion
+
     }
 
 

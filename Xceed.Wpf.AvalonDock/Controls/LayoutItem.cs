@@ -15,14 +15,11 @@
   **********************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using Xceed.Wpf.AvalonDock.Layout;
 using System.Windows.Input;
 using Xceed.Wpf.AvalonDock.Commands;
-using System.ComponentModel;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Controls;

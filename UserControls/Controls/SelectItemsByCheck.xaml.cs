@@ -132,6 +132,7 @@ namespace UserControls.Controls
     {
         public string Description { get; set; }
         public object Value;
+        public List<string> Keys;
         public bool IsChecked { get; set; }
     }
 

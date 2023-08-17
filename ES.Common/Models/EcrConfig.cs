@@ -84,7 +84,7 @@ namespace ES.Common.Models
         private bool _useExtPos;
         private bool _isActive;
         private bool _isDefault;
-
+        private int _typeOfTaxesId;
         #endregion Internal properties
 
         #region External properties
@@ -153,7 +153,11 @@ namespace ES.Common.Models
                 RaisePropertyChanged("CashierDepartment");
             }
         }
-
+        [XmlIgnore]
+        public List<IEcrDepartment> TypesOfTaxes { get; private set; }
+        public int TypeOfTaxesId { get { return _typeOfTaxesId; } set { _typeOfTaxesId = value; RaisePropertyChanged("TypeOfTaxesId"); } }
+        [XmlIgnore]
+        public IEcrDepartment TypeOfTaxes { get { return TypesOfTaxes.SingleOrDefault(s=>s.Id==TypeOfTaxesId); } }
         public bool UseExternalPrinter
         {
             get { return _useExternalPrinter; }
@@ -170,7 +174,7 @@ namespace ES.Common.Models
             set
             {
                 _applicationIp = value;
-                RaisePropertyChanged("ApplicationIp"); 
+                RaisePropertyChanged("ApplicationIp");
             }
         }
 
@@ -192,9 +196,11 @@ namespace ES.Common.Models
         public bool IsDefault
         {
             get { return _isDefault; }
-            set { _isDefault = value;
-                RaisePropertyChanged("IsDefault"); 
-                RaisePropertyChanged("DefaultStageDescription"); 
+            set
+            {
+                _isDefault = value;
+                RaisePropertyChanged("IsDefault");
+                RaisePropertyChanged("DefaultStageDescription");
             }
         }
 
@@ -207,8 +213,7 @@ namespace ES.Common.Models
             get { return _useExtPos; }
             set { _useExtPos = value; }
         }
-        [XmlIgnore]
-        public string TypeOfTaxes { get { return CashReg.Helper.Enumerations.GetEcrDepartments().Where(s => s.Id == SelectedDepartmentId).Select(s => s.Name).SingleOrDefault(); } }
+
         #endregion External properties
 
         #region Constructors
@@ -223,6 +228,8 @@ namespace ES.Common.Models
         private void Initialize()
         {
             EcrServiceSettings = new EcrServiceSettings();
+            TypesOfTaxes = CashReg.Helper.Enumerations.GetEcrDepartments();
+            TypesOfTaxes.Insert(0, new Department { Id = -1, Name = "Ընտրել հարկման տեսակը", Type = -1 });
         }
         #endregion Internal methods
 

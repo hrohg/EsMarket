@@ -340,9 +340,10 @@
                     </DataGrid.RowStyle>
                     <DataGrid.Columns>
                         <DataGridTextColumn IsReadOnly="True" Header="ՀՀ" Binding="{Binding DisplayOrder, Mode=OneWay}"/>
-                        <DataGridTextColumn IsReadOnly="True" Header="Բրենդ" Binding="{Binding Product.Brand.BrandName, Mode=OneWay}"/>
+                        <DataGridTextColumn IsReadOnly="True" Header="Բրենդ" Binding="{Binding Product.Brand.Name, Mode=OneWay}"/>
                         <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code, Mode=OneWay}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Բարկոդ" Binding="{Binding Product.Barcode, Mode=OneWay}" />
+                        <DataGridTextColumn IsReadOnly="True" Header="ԱՏԳՏ" Binding="{Binding Product.HcdCs, Mode=OneWay}" />
                         <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
@@ -383,7 +384,7 @@
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Label Content="Ընդամենը" VerticalAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right" FontSize="12"  Foreground="Green"/>
-                        <TextBox Text="{Binding Invoice.Total, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsReadOnly="True" Foreground="Blue" Margin="0,27"/>
+                        <TextBox Text="{Binding Invoice.Total, Mode=OneWay, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsReadOnly="True" Foreground="Blue" Margin="0,27"/>
                     </StackPanel>
                 </Grid>
             </Grid>
@@ -590,29 +591,24 @@
                 </StackPanel>
                 <GroupBox Grid.Column="1" IsEnabled="{Binding CanChangePartner}">
                     <GroupBox.Header>
-                        <TextBlock Text="Պատվիրատու"/>
+                        <TextBlock Text="Գնորդ/Պատվիրատու"/>
                     </GroupBox.Header>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Partner.Description}" Foreground="Blue" VerticalAlignment="Center"/>
-                        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <controls:DropDownMenuButton Style="{DynamicResource DropDownMenuSmallButtonStyle}">
-                                <controls:DropDownMenuButton.DropDownContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="Ընտրել պատվիրատու" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Customer}"/>
-                                        <MenuItem Header="Ընտրել գործընկեր" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.None}"/>
-                                        <MenuItem Header="Ընտրել դիլլեր" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Dealer}"/>
-                                        <MenuItem Header="Ընտրել Մասնաճյուղ" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Branch}"/>
-                                    </ContextMenu>
-                                </controls:DropDownMenuButton.DropDownContextMenu>
-                            </controls:DropDownMenuButton>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Գնորդ:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Buyer.Description}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Մատակարար:" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Partner.Description}" Foreground="Blue" VerticalAlignment="Center"/>
+                        <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
                             <popup:DraggablePopup IsOpen="{Binding ElementName=ParentToggleButton, Path=IsChecked}" StaysOpen="False" AllowsTransparency="True">
                                 <Border Background="LightBlue" MinWidth="200" MinHeight="100" CornerRadius="2 2 0 0" BorderThickness="1" BorderBrush="#FFFF9901">
                                     <StackPanel Margin="5">
@@ -645,11 +641,11 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Պարտք մատակարարին" FontSize="10" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Կանխավճար" FontSize="10" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Partner.Credit, StringFormat={}{0:#,0.##}}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Կանխավճար" FontSize="10" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Պարտք" FontSize="10" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Partner.Debit, StringFormat={}{0:#,0.##}}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
-                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Մաքսիմալ կանխավճար" FontSize="10" HorizontalAlignment="Right"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Մաքսիմալ պարտք" FontSize="10" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Partner.MaxDebit, StringFormat={}{0:#,0.##}, TargetNullValue='0'}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="3" Grid.Column="0" Text="Զեղչ" FontSize="10" HorizontalAlignment="Right"/>
                                             <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Partner.Discount, StringFormat={}{0:#,0.##}%}" Foreground="Blue" Margin ="1" HorizontalAlignment="Right"/>
@@ -659,7 +655,7 @@
                             </popup:DraggablePopup>
                             <ToggleButton x:Name="ParentToggleButton" Style="{DynamicResource InformationToggleButtinStyle}" Margin="1 0"/>
                         </StackPanel>
-                        <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="PartnerFilterTextBox" Text="{Binding PartnerFilter}" MinWidth="250" HorizontalAlignment="Stretch">
+                        <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="PartnerFilterTextBox" Text="{Binding PartnerFilter}" MinWidth="250" HorizontalAlignment="Stretch">
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Enter" Command="{Binding FindPartnerCommand}" CommandParameter="{Binding ElementName=PartnerFilterTextBox, Path=Text}"/>
                             </TextBox.InputBindings>
@@ -673,7 +669,23 @@
                                 </ContextMenu>
                             </TextBox.ContextMenu>
                         </TextBox>
-                        <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Style="{DynamicResource FindTextBoxButtonStyle}" Command="{Binding FindPartnerCommand}" CommandParameter="{Binding ElementName=PartnerFilterTextBox, Path=Text}" Margin="1 0"/>
+                        <Button Grid.Row="2" Grid.Column="1" 
+                                HorizontalAlignment="Right" 
+                                Style="{DynamicResource FindTextBoxButtonStyle}" 
+                                Command="{Binding FindPartnerCommand}" 
+                                CommandParameter="{Binding ElementName=PartnerFilterTextBox, Path=Text}" 
+                                Margin="1 0"/>
+                        <controls:DropDownMenuButton Grid.Row="2" Grid.Column="2" Style="{DynamicResource DropDownMenuSmallButtonStyle}">
+                            <controls:DropDownMenuButton.DropDownContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Ընտրել պատվիրատու" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Customer}"/>
+                                    <MenuItem Header="Ընտրել գործընկեր" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.None}"/>
+                                    <MenuItem Header="Ընտրել դիլլեր" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Dealer}"/>
+                                    <MenuItem Header="Ընտրել Մասնաճյուղ" Command="{Binding GetPartnerCommand}" CommandParameter="{x:Static enumerations:PartnerType.Branch}"/>
+                                    <MenuItem Header="Ընտրել գնորդ" Command="{Binding GetBuyerCommand}" CommandParameter="{x:Static enumerations:PartnerType.None}"/>
+                                </ContextMenu>
+                            </controls:DropDownMenuButton.DropDownContextMenu>
+                        </controls:DropDownMenuButton>
                     </Grid>
                 </GroupBox>
                 <GroupBox Grid.Column="2">
@@ -858,13 +870,36 @@
                     </DataGrid.RowStyle>
                     <DataGrid.Columns>
                         <DataGridTextColumn IsReadOnly="True" Header="ՀՀ" Binding="{Binding DisplayOrder, Mode=OneWay}"/>
-                        <DataGridTextColumn IsReadOnly="True" Header="Բրենդ" Binding="{Binding Product.Brand.BrandName, Mode=OneWay}"/>
+                        <DataGridTextColumn IsReadOnly="True" Header="Բրենդ" Binding="{Binding Product.Brand.Name, Mode=OneWay}"/>
                         <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code, Mode=OneWay}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Բարկոդ" Binding="{Binding Product.Barcode, Mode=OneWay}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Անվանում" Binding="{Binding Description, Mode=OneWay}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" />
-                        <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged, TargetNullValue='', StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}" />
-                        <DataGridTextColumn IsReadOnly="False" Header="Գին" Binding="{Binding Path=Price, UpdateSourceTrigger=PropertyChanged, TargetNullValue='', StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}" />
+                        <DataGridTemplateColumn Header="Քանակ">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
+                                    <TextBox Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0.###}}" IsReadOnly="{Binding ElementName=DgInvoiceItems, Path=DataContext.DenyChangeQuantity, Mode=OneWay}"
+                                             HorizontalContentAlignment="Right"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Գին">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
+                                    <TextBox Text="{Binding Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0.##}}" 
+                                             HorizontalContentAlignment="Right" IsReadOnly="{Binding ElementName=DgInvoiceItems, Path=DataContext.DenyChangePrice, Mode=OneWay}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Զեղչ">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
+                                    <TextBox Text="{Binding Discount, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0.##}, TargetNullValue=''}" 
+                                             HorizontalContentAlignment="Right" 
+                                             IsReadOnly="{Binding ElementName=DgInvoiceItems, Path=DataContext.DenyChangePrice, Mode=OneWay}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTextColumn IsReadOnly="True" Header="Գումար" Binding="{Binding Path=Amount, Mode=OneWay, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}"/>
                         <DataGridTextColumn IsReadOnly="True" Header="Պիտանի է մինչև" Binding="{Binding Path=ExpiryDate, Mode=OneWay, StringFormat=dd.MM.yyyy}" />
                         <DataGridTextColumn IsReadOnly="True" Header="Նշումներ" Binding="{Binding Path=Note}" />
@@ -890,7 +925,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Ընդամենը" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12"  Foreground="Green"/>
-                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Invoice.Total, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsReadOnly="True" Foreground="Blue" />
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Invoice.Total, Mode=OneWay, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsReadOnly="True" Foreground="Blue" />
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Զեղչ" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Width="50"  Foreground="Green"/>
                         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=Invoice.Discount, StringFormat={}{0:#,0.##}}" IsEnabled="False"  VerticalAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right" Width="50" FontSize="15" Foreground="Blue"/>
@@ -934,13 +969,13 @@
 
                                 <StackPanel VerticalAlignment="Bottom" >
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <Label Content="Կանխավճար" VerticalAlignment="Center" />
+                                        <TextBlock Text="Կանխավճար" VerticalAlignment="Center" ToolTip="Ավելացնել որպես կանխավճար" />
                                         <TextBox Text="{Binding InvoicePaid.AccountsReceivable, StringFormat={}{0:#,#.##}, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
   BorderThickness="1" BorderBrush="Black" Margin="1"
   VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" Height="25" Foreground="Blue" TabIndex="8"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment =" Right">
-                                        <TextBlock Text="Պարտք մատակարարին" VerticalAlignment="Center" Width="100" TextWrapping="Wrap" TextAlignment="Right" />
+                                        <TextBlock Text="Պարտք" VerticalAlignment="Center" Width="100" TextWrapping="Wrap" TextAlignment="Right" ToolTip="Պարտքի մարում" />
 
                                         <TextBox Text="{Binding InvoicePaid.ReceivedPrepayment, StringFormat={}{0:#,#.##}, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
   BorderThickness="1" BorderBrush="Black" Margin="1"
@@ -979,17 +1014,14 @@
                                 <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"/>
                                 <MenuItem Header="Հաստատել" Command="{Binding ApproveInvoiceCommand}"/>
                                 <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
+                                <MenuItem Header="Հեռացնել" Command="{Binding RemoveInvoiceCommand}"  />
                                 <Separator/>
                                 <MenuItem Header="Մասնակի վերադարձ ՀԴՄ -ից" Command="{Binding PrintEcrTicketCommand}"/>
                                 <Separator/>
                                 <MenuItem Header="Բեռնել">
                                     <MenuItem Header="Ապրանքագիր Xml"  Command="{Binding ImportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Xml}"/>
                                     <MenuItem Header="Ապրանքագիր Excel"  Command="{Binding ImportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
-                                    <MenuItem Header="Ապրանքների բեռնում" IsEnabled="False">
-                                        <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
-                                        <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceTypeEnum.MoveInvoice}" />
-                                        <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}" CommandParameter="{x:Static managers:InvoiceTypeEnum.PurchaseInvoice}"/>
-                                    </MenuItem>
+                                    <MenuItem Header="Ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"/>
                                 </MenuItem>
                                 <MenuItem Header="Արտահանել" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>
                                 <Separator/>

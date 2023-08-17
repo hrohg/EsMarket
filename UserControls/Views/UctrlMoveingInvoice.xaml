@@ -164,15 +164,14 @@
                     <Label Content="Քանակ" VerticalAlignment="Center" Foreground="Green"/>
                     <Label Content="{Binding Path=ProductItems.Count}" Foreground="Blue"></Label>
                     <Label Content="Ընդամենը" VerticalAlignment="Center" HorizontalContentAlignment="Right" HorizontalAlignment="Right" FontSize="12"  Foreground="Green"/>
-                    <TextBox Text="{Binding Invoice.Total, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsReadOnly="True" Foreground="Blue" Margin="0,27"/>
+                    <TextBox Text="{Binding Invoice.Total, Mode=OneWay, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" IsReadOnly="True" Foreground="Blue" Margin="0,27"/>
                 </StackPanel>
             </Grid>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                 <Menu Margin="3 0">
                     <MenuItem Header="Ապրանքների բեռնում">
-                        <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"  />
-                        <MenuItem Header="Տեղափոխման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"  CommandParameter="{x:Static managers:InvoiceTypeEnum.MoveInvoice}"/>
-                        <MenuItem Header="Գնման ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"  CommandParameter="{x:Static managers:InvoiceTypeEnum.PurchaseInvoice}"/>
+                        <MenuItem Header="Պահեստ" Command="{Binding AddItemsFromStocksCommand}"/>
+                        <MenuItem Header="Ապրանքագիր" Command="{Binding AddItemsFromInvoiceCommand}"/>
                     </MenuItem>
                     <MenuItem Header="...">
                         <MenuItem.Icon>

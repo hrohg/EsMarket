@@ -1,0 +1,12 @@
+D:\Users\Hrayr\VsProjects\EsMarket\AccountingTools\bin\Debug\AccountingTools.dll
+D:\Users\Hrayr\VsProjects\EsMarket\AccountingTools\bin\Debug\AccountingTools.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\AccountingTools\obj\Debug\AccountingTools.csprojAssemblyReference.cache
+D:\Users\Hrayr\VsProjects\EsMarket\AccountingTools\obj\Debug\AccountingTools.csproj.CoreCompileInputs.cache
+D:\Users\Hrayr\VsProjects\EsMarket\AccountingTools\obj\Debug\AccountingTools.dll
+D:\Users\Hrayr\VsProjects\EsMarket\AccountingTools\obj\Debug\AccountingTools.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\AccountingTools\bin\Debug\AccountingTools.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\AccountingTools\bin\Debug\AccountingTools.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\AccountingTools\obj\Debug\AccountingTools.csproj.AssemblyReference.cache
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\AccountingTools\obj\Debug\AccountingTools.csproj.CoreCompileInputs.cache
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\AccountingTools\obj\Debug\AccountingTools.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\AccountingTools\obj\Debug\AccountingTools.pdb

@@ -19,7 +19,7 @@ namespace UserControls.ViewModels.Settings
         #endregion //Internal properties
 
         #region External properties
-        
+
         #region User mail or phone
         private string _userMailOrPhone;
         public string UserEmailOrPhone { get { return _userMailOrPhone; } set { _userMailOrPhone = value; RaisePropertyChanged("UserEmailOrPhone"); } }
@@ -60,9 +60,12 @@ namespace UserControls.ViewModels.Settings
             set
             {
                 _selectedEsUser = value;
-                foreach (var role in Roles)
+                if (value != null)
                 {
-                    role.IsSelected = UsersRoles.Any(s =>s.EsUser.UserId==SelectedEsUser.UserId && s.Role.Id == role.Role.Id);
+                    foreach (var role in Roles)
+                    {
+                        role.IsSelected = UsersRoles.Any(s => s.EsUser.UserId == SelectedEsUser.UserId && s.Role.Id == role.Role.Id);
+                    }
                 }
                 RaisePropertyChanged("SelectedEsUser");
                 RaisePropertyChanged("IsEnabledEditMode");
@@ -71,7 +74,7 @@ namespace UserControls.ViewModels.Settings
         }
         #endregion Selected user
 
-        #region Users roles
+            #region Users roles
         private List<UsersRolesModel> _usersRoleses;
         private List<UsersRolesModel> UsersRoles { get { return _usersRoleses; } set { _usersRoleses = value; RaisePropertyChanged("UsersRoles"); } }
         #endregion Users roles
@@ -168,7 +171,7 @@ namespace UserControls.ViewModels.Settings
 
     }
 
-    public class UserRole:ViewModelBase
+    public class UserRole : ViewModelBase
     {
         #region External properties
         public string Alias { get { return Role != null ? Role.Name : string.Empty; } }

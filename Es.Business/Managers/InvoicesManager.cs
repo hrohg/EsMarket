@@ -20,7 +20,8 @@ using ES.DataAccess.Models;
 using Microsoft.Win32;
 using BankAccount = EsMarket.SharedData.Models.BankAccount;
 using ProductModel = ES.Data.Models.Products.ProductModel;
-
+using ES.Business.Models.Views;
+using ES.Common.Models;
 
 namespace ES.Business.Managers
 {
@@ -47,6 +48,7 @@ namespace ES.Business.Managers
         ReturnTo = 64,
         Statements = InventoryWriteOff | ReturnFrom | ReturnTo
     }
+
     public enum InvoiceState
     {
         All,
@@ -66,8 +68,9 @@ namespace ES.Business.Managers
     {
         None = 0,
         SmallCount = 100,
-        BigCount = 1000,
-        All = 10000
+        MiddleCount = 1000,
+        BigCount = 10000,
+        All = 100000
     }
 
     public class InvoicesManager : BaseManager
@@ -96,6 +99,20 @@ namespace ES.Business.Managers
                 types.Add((short)InvoiceType.ReturnFrom);
             if ((type & InvoiceTypeEnum.ReturnTo) == InvoiceTypeEnum.ReturnTo) types.Add((short)InvoiceType.ReturnTo);
             return types;
+        }
+
+        public static InvoiceItems GetLastSellPrice(Guid productId, Guid partnerId)
+        {
+            try
+            {
+                using (var db = GetDataContext())
+                {
+                    var date = DateTime.Today.AddMonths(-1);
+                    var items = db.InvoiceItems.Where(ii => ii.Invoices.ApproveDate >= date && ii.Invoices.PartnerId == partnerId && ii.Invoices.InvoiceTypeId == (short)InvoiceType.SaleInvoice && ii.ProductId == productId).ToList();
+                    return items.OrderBy(ii => ii.Invoices.ApproveDate).LastOrDefault();
+                }
+            }
+            catch { return null; }
         }
 
         #endregion
@@ -140,10 +157,10 @@ namespace ES.Business.Managers
             };
         }
 
-        private static InvoiceModel ConvertInvoice(Invoices invoice, PartnerModel partner)
+        public static InvoiceModel ConvertInvoice(Invoices invoice, PartnerModel partner = null)
         {
             if (invoice == null) return null;
-
+            if (partner == null) partner = CashManager.Instance.GetPartners.FirstOrDefault(p => p.Id == invoice.PartnerId);
             return new InvoiceModel
             {
                 Id = invoice.Id,
@@ -196,9 +213,9 @@ namespace ES.Business.Managers
                 Code = item.Code,
                 Description = item.Description,
                 Quantity = item.Quantity,
+                Discount = item.Discount,
                 Price = item.Price,
                 CostPrice = item.CostPrice,
-                Discount = item.Discount,
                 Note = item.Note
             };
         }
@@ -213,15 +230,15 @@ namespace ES.Business.Managers
                 InvoiceId = item.InvoiceId,
                 Invoice = ConvertInvoice(item.Invoices, new PartnerModel()),
                 ProductId = item.ProductId,
-                Product = ProductsManager.Convert(item.Products),
+                Product = CashManager.GetProduct(item.ProductId),
                 ProductItemId = item.ProductItemId,
                 StockId = item.StockId,
                 Code = item.Code,
                 Description = item.Description,
                 Quantity = item.Quantity,
+                Discount = item.Discount,
                 Price = item.Price,
                 CostPrice = item.CostPrice,
-                Discount = item.Discount,
                 Note = item.Note
             };
         }
@@ -243,9 +260,9 @@ namespace ES.Business.Managers
                 Code = item.Code,
                 Description = item.Description,
                 Quantity = item.Quantity,
+                Discount = item.Discount,
                 Price = item.Price,
                 CostPrice = item.CostPrice,
-                Discount = item.Discount,
                 Note = item.Note
             };
         }
@@ -266,12 +283,13 @@ namespace ES.Business.Managers
                 Quantity = item.Quantity,
                 Price = item.Price,
                 CostPrice = item.CostPrice,
-                Discount = item.Discount,
+                Discount = item.HasDiscount ? item.Discount : null,
                 Note = item.Note
             };
         }
 
         #endregion
+
 
         #region Invoices Internal methods
 
@@ -280,13 +298,13 @@ namespace ES.Business.Managers
             try
             {
                 var memberId = MemberId;
-                var invoices = db.Invoices.Where(s => s.MemberId == memberId && s.InvoiceTypeId == invoiceTypeId && s.CreateDate.Year == DateTime.Today.Year);
+                var invoices = db.Invoices.Where(s => s.CreateDate.Year == DateTime.Today.Year && s.InvoiceTypeId == invoiceTypeId && s.MemberId == memberId);
                 invoices = invoices.Where(s => (isDraft && s.ApproveDate == null) || (!isDraft && s.ApproveDate != null));
-                var index = invoices.Max(s => s.InvoiceIndex) + 1;
+                //var inv = invoices.ToList();
+                var index = (invoices.Any() ? invoices.Max(s => s.InvoiceIndex) : 0) + 1;
                 return index;
-                //return db.Invoices.Where(s => s.MemberId == memberId && s.InvoiceTypeId == invoiceTypeId && (isDraft && s.ApproveDate!=null || (!isDraft && s.ApproveDate==null))).Max(s => s.InvoiceIndex) + 1;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return 1;
             }
@@ -360,15 +378,13 @@ namespace ES.Business.Managers
             }
         }
 
-        private static List<Invoices> TryGetInvoices(InvoiceType invoiceType)
+        private static List<Invoices> TryGetInvoices(List<InvoiceType> invoiceTypeIds, DateTime startsFrom)
         {
-            var memberId = ApplicationManager.Member.Id;
             try
             {
                 using (var db = GetDataContext())
                 {
-                    return
-                        db.Invoices.Where(s => s.InvoiceTypeId == (short)invoiceType && s.MemberId == memberId).ToList();
+                    return db.Invoices.Where(s => invoiceTypeIds.Contains((InvoiceType)s.InvoiceTypeId) && s.CreateDate >= startsFrom && s.MemberId == MemberId).ToList();
                 }
             }
             catch (Exception)
@@ -420,7 +436,41 @@ namespace ES.Business.Managers
                 return new List<Invoices>();
             }
         }
-
+        private static List<Invoices> TryGetDraftInvoices(InvoiceTypeEnum invoiceType)
+        {
+            try
+            {
+                var types = GetInvoiceTypes(invoiceType);
+                using (var db = GetDataContext())
+                {
+                    var items = db.Invoices.Where(s => types.Contains(s.InvoiceTypeId) && s.MemberId == ApplicationManager.Member.Id);
+                    items = items.Where(s => s.ApproveDate == null).OrderByDescending(s => s.CreateDate); ;
+                    return items.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageManager.OnMessage(ex.Message);
+                return new List<Invoices>();
+            }
+        }
+        private static List<Invoices> TryGetApprovedInvoices(InvoiceTypeEnum invoiceType, Tuple<DateTime, DateTime> dates)
+        {
+            try
+            {
+                var types = GetInvoiceTypes(invoiceType);
+                using (var db = GetDataContext())
+                {
+                    var items = db.Invoices.Where(s => types.Contains(s.InvoiceTypeId) && s.MemberId == ApplicationManager.Member.Id && s.ApproveDate >= dates.Item1 && s.ApproveDate <= dates.Item2);
+                    items = items.OrderByDescending(s => s.CreateDate).ThenBy(s => s.ApproveDate);
+                    return items.ToList();
+                }
+            }
+            catch (Exception)
+            {
+                return new List<Invoices>();
+            }
+        }
         private static List<Invoices> TryGetApprovedInvoices(InvoiceTypeEnum invoiceType, int? maxCount)
         {
             try
@@ -457,13 +507,12 @@ namespace ES.Business.Managers
                         s.MemberId == memberId)
                         .OrderByDescending(s => s.InvoiceIndex).ToList();
                     return list;
-                    return db.Invoices.Where(s =>
-                            s.ApproveDate.HasValue &&
-                            s.ApproveDate >= startDate &&
-                            s.ApproveDate < endDate &&
-                            s.MemberId == memberId).Include(s => s.InvoiceItems)
-                        .OrderByDescending(s => s.InvoiceIndex).ToList();
-
+                    //return db.Invoices.Where(s =>
+                    //        s.ApproveDate.HasValue &&
+                    //        s.ApproveDate >= startDate &&
+                    //        s.ApproveDate < endDate &&
+                    //        s.MemberId == memberId).Include(s => s.InvoiceItems)
+                    //    .OrderByDescending(s => s.InvoiceIndex).ToList();
                 }
             }
             catch (Exception ex)
@@ -545,6 +594,16 @@ namespace ES.Business.Managers
         /// <param name="invoiceIndex"></param>
         /// <param name="invoiceTypeId"></param>
         /// <returns></returns>
+        private static string GetInvocieNumber(InvoiceModel invoice, EsStockDBEntities db, bool isDraft)
+        {
+            invoice.InvoiceIndex = GetNextInvoiceIndex(invoice.InvoiceTypeId, db, false);
+            return GetInvocieNumber(invoice.InvoiceIndex, invoice.InvoiceTypeId, isDraft);
+        }
+        private static string GetInvoiceNumber(Invoices invoice, EsStockDBEntities db, bool isDraft)
+        {
+            invoice.InvoiceIndex = GetNextInvoiceIndex(invoice.InvoiceTypeId, db, false);
+            return GetInvocieNumber(invoice.InvoiceIndex, invoice.InvoiceTypeId, isDraft);
+        }
         private static string GetInvocieNumber(long invoiceIndex, short invoiceTypeId, bool isDraft)
         {
             switch ((InvoiceType)invoiceTypeId)
@@ -573,13 +632,6 @@ namespace ES.Business.Managers
                 default:
                     throw new ArgumentOutOfRangeException("invoiceTypeId", invoiceTypeId, null);
             }
-            return null;
-        }
-
-        private static string GetInvoiceNumber(short invoiceTypeId, EsStockDBEntities db, bool isDraft)
-        {
-            var invoiceIndex = GetNextInvoiceIndex(invoiceTypeId, db, isDraft);
-            return GetInvocieNumber(invoiceIndex, invoiceTypeId, isDraft);
         }
 
         /// <summary>
@@ -594,85 +646,86 @@ namespace ES.Business.Managers
             {
                 using (var db = GetDataContext())
                 {
-                    #region Edit invoice
+                    try
+                    {
+                        #region Edit invoice
 
-                    var exInvoice =
+                        var exInvoice =
                         db.Invoices.SingleOrDefault(s => s.Id == invoice.Id && s.MemberId == invoice.MemberId);
-                    if (exInvoice == null)
-                    {
-                        invoice.InvoiceIndex = GetNextInvoiceIndex(invoice.InvoiceTypeId, db, true);
-                        invoice.InvoiceNumber = GetInvocieNumber(invoice.InvoiceIndex, invoice.InvoiceTypeId, true);
-                        db.Invoices.Add(invoice);
-                    }
-                    else
-                    {
-                        if (exInvoice.ApproveDate != null)
+                        if (exInvoice == null)
                         {
-                            MessageManager.OnMessage(
-                                string.Format("Հաստատված ապրանքագիր ({0})", exInvoice.InvoiceNumber),
-                                MessageTypeEnum.Information);
-                            return false;
-                        }
-
-                        exInvoice.InvoiceTypeId = invoice.InvoiceTypeId;
-                        exInvoice.FromStockId = invoice.FromStockId;
-                        exInvoice.ToStockId = invoice.ToStockId;
-                        exInvoice.Creator = invoice.Creator;
-                        exInvoice.CreateDate = invoice.CreateDate;
-                        exInvoice.AcceptDate = invoice.AcceptDate;
-                        exInvoice.AccepterId = invoice.AccepterId;
-                        exInvoice.PartnerId = invoice.PartnerId;
-                        exInvoice.ProviderName = invoice.ProviderName;
-                        exInvoice.ProviderJuridicalAddress = invoice.ProviderJuridicalAddress;
-                        exInvoice.ProviderAddress = invoice.ProviderAddress;
-                        exInvoice.ProviderBank = invoice.ProviderBank;
-                        exInvoice.ProviderBankAccount = invoice.ProviderBankAccount;
-                        exInvoice.ProviderTaxRegistration = invoice.ProviderTaxRegistration;
-                        exInvoice.RecipientName = invoice.RecipientName;
-                        exInvoice.RecipientJuridicalAddress = invoice.RecipientJuridicalAddress;
-                        exInvoice.RecipientAddress = invoice.RecipientAddress;
-                        exInvoice.RecipientBank = invoice.RecipientBank;
-                        exInvoice.RecipientBankAccount = invoice.RecipientBankAccount;
-                        exInvoice.RecipientTaxRegistration = invoice.RecipientTaxRegistration;
-                        exInvoice.Discount = invoice.Discount;
-                        exInvoice.Summ = invoice.Summ;
-                        exInvoice.Notes = invoice.Notes;
-                    }
-
-                    #endregion Edit Invoice
-
-                    #region Edit InvoiceItems
-
-                    var exInvoiceItems = db.InvoiceItems.Where(s => s.InvoiceId == invoice.Id).ToList();
-                    foreach (var exInvoiceItem in exInvoiceItems)
-                    {
-                        var exItem = invoiceItems.FirstOrDefault(s => s.Id == exInvoiceItem.Id);
-
-                        if (exItem != null)
-                        {
-                            exItem.InvoiceId = invoice.Id;
-                            invoiceItems.RemoveAt(invoiceItems.IndexOf(exItem));
-
-                            exInvoiceItem.Quantity = exItem.Quantity;
-                            exInvoiceItem.CostPrice = exItem.CostPrice;
-                            exInvoiceItem.Price = exItem.Price;
+                            invoice.InvoiceNumber = GetInvoiceNumber(invoice, db, true);
+                            db.Invoices.Add(invoice);
                         }
                         else
                         {
-                            db.InvoiceItems.Remove(exInvoiceItem);
+                            if (exInvoice.ApproveDate != null)
+                            {
+                                MessageManager.OnMessage(
+                                    string.Format("Հաստատված ապրանքագիր ({0})", exInvoice.InvoiceNumber),
+                                    MessageTypeEnum.Information);
+                                return false;
+                            }
+
+                            exInvoice.InvoiceTypeId = invoice.InvoiceTypeId;
+                            exInvoice.FromStockId = invoice.FromStockId;
+                            exInvoice.ToStockId = invoice.ToStockId;
+                            exInvoice.Creator = invoice.Creator;
+                            exInvoice.CreateDate = invoice.CreateDate;
+                            exInvoice.AcceptDate = invoice.AcceptDate;
+                            exInvoice.AccepterId = invoice.AccepterId;
+                            exInvoice.PartnerId = invoice.PartnerId;
+                            exInvoice.ProviderName = invoice.ProviderName;
+                            exInvoice.ProviderJuridicalAddress = invoice.ProviderJuridicalAddress;
+                            exInvoice.ProviderAddress = invoice.ProviderAddress;
+                            exInvoice.ProviderBank = invoice.ProviderBank;
+                            exInvoice.ProviderBankAccount = invoice.ProviderBankAccount;
+                            exInvoice.ProviderTaxRegistration = invoice.ProviderTaxRegistration;
+                            exInvoice.RecipientName = invoice.RecipientName;
+                            exInvoice.RecipientJuridicalAddress = invoice.RecipientJuridicalAddress;
+                            exInvoice.RecipientAddress = invoice.RecipientAddress;
+                            exInvoice.RecipientBank = invoice.RecipientBank;
+                            exInvoice.RecipientBankAccount = invoice.RecipientBankAccount;
+                            exInvoice.RecipientTaxRegistration = invoice.RecipientTaxRegistration;
+                            exInvoice.Discount = invoice.Discount;
+                            exInvoice.Summ = invoice.Summ;
+                            exInvoice.Notes = invoice.Notes;
                         }
-                    }
-                    foreach (var invoiceItem in invoiceItems)
-                    {
-                        //todo check posibility if exItem.InvoiceId != invoice.Id
-                        invoiceItem.InvoiceId = invoice.Id;
-                        db.InvoiceItems.Add(invoiceItem);
-                    }
 
-                    #endregion Edit InvoiceItems
+                        #endregion Edit Invoice
 
-                    try
-                    {
+                        #region Edit InvoiceItems
+
+                        var exInvoiceItems = db.InvoiceItems.Where(s => s.InvoiceId == invoice.Id).ToList();
+                        foreach (var exInvoiceItem in exInvoiceItems)
+                        {
+                            var exItem = invoiceItems.FirstOrDefault(s => s.Id == exInvoiceItem.Id);
+
+                            if (exItem != null)
+                            {
+                                exItem.InvoiceId = invoice.Id;
+                                invoiceItems.RemoveAt(invoiceItems.IndexOf(exItem));
+
+                                exInvoiceItem.Quantity = exItem.Quantity;
+                                exInvoiceItem.CostPrice = exItem.CostPrice;
+                                exInvoiceItem.Price = exItem.Price;
+                                exInvoiceItem.Discount = exItem.Discount;
+                            }
+                            else
+                            {
+                                db.InvoiceItems.Remove(exInvoiceItem);
+                            }
+                        }
+                        foreach (var invoiceItem in invoiceItems)
+                        {
+                            //todo check posibility if exItem.InvoiceId != invoice.Id
+                            invoiceItem.InvoiceId = invoice.Id;
+                            db.InvoiceItems.Add(invoiceItem);
+                        }
+
+                        #endregion Edit InvoiceItems
+
+
                         db.SaveChanges();
                         transaction.Complete();
                         return true;
@@ -682,6 +735,7 @@ namespace ES.Business.Managers
                         MessageManager.OnMessage(ex.ToString());
                         return false;
                     }
+                    MessageManager.OnMessage("Ապրանքագիրը պահպանվել է հաջողությամբ:");
                 }
             }
         }
@@ -696,16 +750,13 @@ namespace ES.Business.Managers
         /// <returns></returns>
         private static Invoices TryApprovePurchaseInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, short stockId, InvoicePaid invoicePaid)
         {
-            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 5, 0)))
+            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 15, 0)))
             {
                 using (var db = GetDataContext())
                 {
-                    invoice.ApproveDate = DateTime.Now;
-
                     #region Update purchase invoice
 
-                    invoice.InvoiceIndex = GetNextInvoiceIndex(invoice.InvoiceTypeId, db, false);
-                    invoice.InvoiceNumber = GetInvoiceNumber(invoice.InvoiceTypeId, db, false);
+                    invoice.InvoiceNumber = GetInvoiceNumber(invoice, db, false);
                     invoice.ApproveDate = DateTime.Now;
 
                     var exInvoice = db.Invoices.SingleOrDefault(s => s.Id == invoice.Id && s.MemberId == invoice.MemberId);
@@ -800,8 +851,8 @@ namespace ES.Business.Managers
                     #endregion
 
                     var exPartner = db.Partners.Single(s => s.Id == invoice.PartnerId);
-                    if (exPartner.Debit == null) exPartner.Debit = 0;
-                    if (exPartner.Credit == null) exPartner.Credit = 0;
+                    //if (exPartner.Debit == null) exPartner.Debit = 0;
+                    //if (exPartner.Credit == null) exPartner.Credit = 0;
 
                     #region Add Purchase 216 - 521
 
@@ -828,14 +879,17 @@ namespace ES.Business.Managers
                     #region Paid 521 - 251
 
                     decimal amount = invoicePaid.ByCash;
-                    var exCashDesk =
+                    var exCashDesk = invoicePaid.CashDeskId != null ?
                         db.CashDesk.SingleOrDefault(
-                            s => s.Id == invoicePaid.CashDeskId && s.MemberId == invoice.MemberId);
+                            s => s.Id == invoicePaid.CashDeskId && s.MemberId == invoice.MemberId) : null;
 
                     if (amount > 0)
                     {
-                        if (exCashDesk == null) return null;
-                        if (invoicePaid.CashDeskId == null) return null;
+                        if (exCashDesk == null)
+                        {
+                            MessageManager.OnMessage("Դրամարկղ ընտրված չէ:");
+                            return null;
+                        }
 
                         // 521 - 251 Register in AccountingRecoords
                         var cpAccountingRecords = new AccountingRecords
@@ -979,15 +1033,14 @@ namespace ES.Business.Managers
         /// <returns></returns>
         private static Invoices TryApproveReturnFromInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, short stockId, InvoicePaid invoicePaid)
         {
-            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 3, 0)))
+            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 5, 0)))
             {
                 using (var db = GetDataContext())
                 {
 
                     #region Update purchase invoice
 
-                    invoice.InvoiceIndex = GetNextInvoiceIndex(invoice.InvoiceTypeId, db, false);
-                    invoice.InvoiceNumber = GetInvoiceNumber(invoice.InvoiceTypeId, db, false);
+                    invoice.InvoiceNumber = GetInvoiceNumber(invoice, db, false);
                     invoice.ApproveDate = DateTime.Now;
 
                     var exInvoice = db.Invoices.SingleOrDefault(s => s.Id == invoice.Id && s.MemberId == invoice.MemberId);
@@ -1252,14 +1305,13 @@ namespace ES.Business.Managers
         private static Invoices TryApproveReturnToInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, List<short> fromStockIds, InvoicePaid invoicePaid)
         {
             if (!invoiceItems.Any() || !fromStockIds.Any() || invoicePaid == null) return null;
-            using (var transaction = new TransactionScope())
+            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 15, 0)))
             {
                 using (var db = GetDataContext())
                 {
                     #region Edit Invoices
 
-                    invoice.InvoiceIndex = GetNextInvoiceIndex(invoice.InvoiceTypeId, db, false);
-                    invoice.InvoiceNumber = GetInvoiceNumber(invoice.InvoiceTypeId, db, false);
+                    invoice.InvoiceNumber = GetInvoiceNumber(invoice, db, false);
                     invoice.ApproveDate = DateTime.Now;
 
                     var exInvoice = db.Invoices.SingleOrDefault(s => s.Id == invoice.Id && s.MemberId == invoice.MemberId);
@@ -1598,17 +1650,22 @@ namespace ES.Business.Managers
         /// <param name="fromStockIds"></param>
         /// <param name="invoicePaid"></param>
         /// <returns></returns>
-        private static Invoices TryApproveSaleInvoice(Invoices invoice, List<InvoiceItems> invoiceItems, List<short> fromStockIds, InvoicePaid invoicePaid)
+        private static Invoices TryApproveSaleInvoice(InvoiceModel invoiceModel, List<InvoiceItems> invoiceItems, List<short> fromStockIds, InvoicePaid invoicePaid)
         {
-            if (!invoiceItems.Any() || !fromStockIds.Any() || invoicePaid == null) return null;
-            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 5, 0)))
+            if (!invoiceItems.Any() || !fromStockIds.Any() || invoicePaid == null)
+            {
+                MessageManager.OnMessage("Թերի տվյալներ");
+                return null;
+            }
+
+            var invoice = ConvertInvoice(invoiceModel);
+            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 15, 0)))
             {
                 using (var db = GetDataContext())
                 {
                     #region Edit Invoices
 
-                    invoice.InvoiceIndex = GetNextInvoiceIndex(invoice.InvoiceTypeId, db, false);
-                    invoice.InvoiceNumber = GetInvoiceNumber(invoice.InvoiceTypeId, db, false);
+                    invoice.InvoiceNumber = GetInvoiceNumber(invoice, db, false);
                     invoice.ApproveDate = DateTime.Now;
 
                     var exInvoice = db.Invoices.SingleOrDefault(s => s.Id == invoice.Id && s.MemberId == invoice.MemberId);
@@ -1623,6 +1680,7 @@ namespace ES.Business.Managers
                         {
                             invoice.InvoiceNumber = exInvoice.InvoiceNumber;
                             invoice.ApproveDate = exInvoice.ApproveDate;
+                            MessageManager.OnMessage("Ապրանքագիրն արդեն հաստատված է:");
                             return null;
                         }
 
@@ -1687,7 +1745,7 @@ namespace ES.Business.Managers
                                 var productItemFifo = productItemsFifo.FirstOrDefault(s => s.StockId != null && fromStockIds.Contains((short)s.StockId) && s.ProductId == exInvoiceItem.ProductId && s.Quantity > 0);
                                 if (productItemFifo == null)
                                 {
-                                    MessageManager.ShowMessage("Անբավարար միջոցներ " + exInvoiceItem.Code + " " + exInvoiceItem.Description + " " + exItem.Quantity, "Գործողության ընդհատոմ");
+                                    MessageManager.OnMessage(new MessageModel("Անբավարար միջոցներ " + exInvoiceItem.Code + " " + exInvoiceItem.Description + " " + exItem.Quantity, "Անբավարար միջոցներ", MessageTypeEnum.Warning), true);
                                     return null;
                                 }
                                 var newInvoiceItem = GetExistingInvoiceItem(quantity, exInvoiceItem, productItemFifo);
@@ -1719,7 +1777,7 @@ namespace ES.Business.Managers
                             var productItemFifo = productItemsFifo.FirstOrDefault(s => s.StockId != null && fromStockIds.Contains((short)s.StockId) && s.ProductId == invoiceItem.ProductId && s.Quantity > 0);
                             if (productItemFifo == null)
                             {
-                                MessageManager.ShowMessage("Անբավարար միջոցներ " + invoiceItem.Code + " " + invoiceItem.Description + " " + invoiceItem.Quantity, "Գործողության ընդհատոմ", MessageBoxImage.Warning);
+                                MessageManager.OnMessage("Անբավարար միջոցներ " + invoiceItem.Code + " " + invoiceItem.Description + " " + invoiceItem.Quantity);
                                 return null;
                             }
 
@@ -1737,7 +1795,7 @@ namespace ES.Business.Managers
                     #endregion
 
                     #region Cost of Purchase 711 - 216
-
+                    //Իրացված արտադրանքի, ապրանքների, աշխատանքների, ծառայությունների ինքնարժեք
                     // 711 - 216 Register cost price in AccountingRecoords
 
                     var pcAccountingRecords = new AccountingRecords
@@ -1763,12 +1821,12 @@ namespace ES.Business.Managers
                         MessageManager.OnMessage("Պատվիրատու ընտրված չէ։ Ընտրեք պատվիրատու և փորձեք կրկին։", MessageTypeEnum.Warning);
                         return null;
                     }
-                    //Remove this
-                    if (exPartner.Credit == null) exPartner.Credit = 0;
-                    if (exPartner.Debit == null) exPartner.Debit = 0;
+                    //todo Remove this
+                    //if (exPartner.Credit == null) exPartner.Credit = 0;
+                    //if (exPartner.Debit == null) exPartner.Debit = 0;
 
                     #region Accounting Receivable
-
+                    //«Դեբիտորական պարտքեր վաճառքների գծով» - «Արտադրանքի, ապրանքների, աշխատանքների, ծառայությունների իրացումից հասույթ»
                     // 221 - 611 Register in AccountingRecoords Accounting Receivable
                     var apAccountingRecords = new AccountingRecords
                     {
@@ -1798,6 +1856,7 @@ namespace ES.Business.Managers
                             MessageManager.OnMessage("Դրամարկղ ընտրված չէ։ Ընտրեք դրամարկղ և փորձեք կրկին։", MessageTypeEnum.Warning);
                             return null;
                         }
+                        //  «Դրամարկղ» - «Դեբիտորական պարտքեր վաճառքների գծով»
                         // 251 - 221 Register in AccountingRecoords
                         var cpAccountingRecords = new AccountingRecords
                         {
@@ -1843,6 +1902,7 @@ namespace ES.Business.Managers
                             MessageManager.OnMessage("Անկանխիկ դրամարկղ ընտրված չէ։", MessageTypeEnum.Warning);
                             return null;
                         }
+                        //  «Դրամարկղ» - «Դեբիտորական պարտքեր վաճառքների գծով»
                         // 251 - 221 Register in AccountingRecoords
                         var accountingRecords = new AccountingRecords
                         {
@@ -1876,19 +1936,20 @@ namespace ES.Business.Managers
 
                     #endregion
 
+                    // «Ստացված կանխավճարներ» - «Դեբիտորական պարտքեր վաճառքների գծով»
                     #region Add ReceivedPrepayment 221 - 523
 
                     if ((invoicePaid.ReceivedPrepayment ?? 0) > 0)
                     {
-                        // 221 - 523 Register in AccountingRecoords
+                        // 523 - 221 Register in AccountingRecoords
                         var accountingRecords = new AccountingRecords
                         {
                             Id = Guid.NewGuid(),
                             RegisterDate = (DateTime)invoice.ApproveDate,
                             Amount = invoicePaid.ReceivedPrepayment ?? 0,
-                            Debit = (int)AccountingPlanEnum.AccountingReceivable,
+                            Debit = (int)AccountingPlanEnum.ReceivedInAdvance,
                             DebitGuidId = exPartner.Id,
-                            Credit = (int)AccountingPlanEnum.ReceivedInAdvance,
+                            Credit = (int)AccountingPlanEnum.AccountingReceivable,
                             CreditGuidId = exPartner.Id,
                             Description = invoice.InvoiceNumber,
                             MemberId = invoice.MemberId,
@@ -1922,14 +1983,15 @@ namespace ES.Business.Managers
                         db.AccountsReceivable.Add(newAccountsReceivable);
                         if (exPartner.Debit > exPartner.MaxDebit)
                         {
-                            MessageManager.ShowMessage("Դեբիտորական պարտքը սահմանվածից ավել է։", "Անբավարար միջոցներ");
+                            MessageManager.OnMessage("Անբավարար միջոցներ: Դեբիտորական պարտքը սահմանվածից ավել է։");
                             return null;
                         }
                     }
 
                     #endregion
 
-                    #region Prepayment 521 - 224
+                    //«Դրամարկղ» - «Ստացված կանխավճարներ»
+                    #region Prepayment 251 - 523
 
                     var prepayment = invoicePaid.Prepayment;
                     if (prepayment > 0)
@@ -1939,15 +2001,15 @@ namespace ES.Business.Managers
                             MessageManager.OnMessage("Դրամարկղ ընտրված չէ։ Ընտրեք դրամարկղ և փորձեք կրկին։", MessageTypeEnum.Warning);
                             return null;
                         }
-                        // 521 - 224 Register in AccountingRecoords
+                        // 251 - 523 Register in AccountingRecoords
                         var accountingRecords = new AccountingRecords
                         {
                             Id = Guid.NewGuid(),
                             RegisterDate = (DateTime)invoice.ApproveDate,
                             Amount = prepayment,
-                            Debit = (int)AccountingPlanEnum.PurchasePayables,
+                            Debit = (int)AccountingPlanEnum.CashDesk,
                             DebitGuidId = exCashDesk.Id,
-                            Credit = (int)AccountingPlanEnum.Prepayments,
+                            Credit = (int)AccountingPlanEnum.ReceivedInAdvance,
                             CreditGuidId = exPartner.Id,
                             Description = invoice.InvoiceNumber,
                             MemberId = invoice.MemberId,
@@ -1961,9 +2023,10 @@ namespace ES.Business.Managers
                     #endregion
 
                     #region Set Discount Bond
-
-                    // 712 - 224 Register in AccountingRecoords
-                    var discountBond = (invoicePaid.DiscountBond ?? 0);
+                    //Բոնուսի գրանցում  
+                    // 712 - 251 «Իրացման ծախսեր» - «Դրամարկղ»
+                    // 251 - 523 «Դրամարկղ» - «Ստացված կանխավճարներ»
+                    var discountBond = (invoiceModel.DiscountBond ?? 0);
                     if (discountBond > 0)
                     {
                         var accountingRecords = new AccountingRecords
@@ -1972,16 +2035,15 @@ namespace ES.Business.Managers
                             RegisterDate = (DateTime)invoice.ApproveDate,
                             Amount = discountBond,
                             Debit = (int)AccountingPlanEnum.SalesCosts,
-                            //DebitGuidId = exCashDesk.Id,
-                            Credit = (int)AccountingPlanEnum.Prepayments,
+                            DebitGuidId = invoice.Id,
+                            Credit = (int)AccountingPlanEnum.ReceivedInAdvance,
                             CreditGuidId = exPartner.Id,
                             Description = invoice.InvoiceNumber,
                             MemberId = invoice.MemberId,
                             RegisteredId = (int)invoice.ApproverId,
                         };
                         db.AccountingRecords.Add(accountingRecords);
-                        exPartner.Debit += discountBond;
-                        return null;
+                        exPartner.Credit += discountBond;
                     }
 
                     #endregion Set Discount Bond
@@ -2071,8 +2133,7 @@ namespace ES.Business.Managers
                         #endregion
 
                         #region Edit Invoices
-                        invoice.InvoiceIndex = GetNextInvoiceIndex(invoice.InvoiceTypeId, db, false);
-                        invoice.InvoiceNumber = GetInvoiceNumber(invoice.InvoiceTypeId, db, false);
+                        invoice.InvoiceNumber = GetInvoiceNumber(invoice, db, false);
                         invoice.ApproveDate = DateTime.Now;
 
                         var exInvoice = db.Invoices.SingleOrDefault(s => s.Id == invoice.Id && s.MemberId == invoice.MemberId);
@@ -2209,7 +2270,7 @@ namespace ES.Business.Managers
 
         private static Invoices TryApproveMoveingInvoice(Invoices invoice, List<InvoiceItems> invoiceItems)
         {
-            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 5, 0)))
+            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 15, 0)))
             {
                 using (var db = GetDataContext())
                 {
@@ -2227,8 +2288,8 @@ namespace ES.Business.Managers
 
                     #region Edit Invoices
 
-                    invoice.InvoiceIndex = GetNextInvoiceIndex(invoice.InvoiceTypeId, db, false);
-                    invoice.InvoiceNumber = GetInvoiceNumber(invoice.InvoiceTypeId, db, false);
+
+                    invoice.InvoiceNumber = GetInvoiceNumber(invoice, db, false);
                     invoice.ApproveDate = DateTime.Now;
 
                     var exInvoice = db.Invoices.SingleOrDefault(s => s.Id == invoice.Id && s.MemberId == invoice.MemberId);
@@ -2467,10 +2528,20 @@ namespace ES.Business.Managers
             {
                 using (var db = GetDataContext())
                 {
-                    var invoiceIds = db.Invoices.Where(s => s.MemberId == memberId && s.CreateDate >= fromDate && s.CreateDate < toDate && s.ApproveDate != null).Select(s => s.Id);
-                    return db.InvoiceItems.Include(s => s.Invoices).Include(s => s.Products).Include(s => s.Products.ProductCategories).Include(s => s.Products.ProductKeys)
-                        .Include(s => s.Products.ProductsAdditionalData)
-                        .Where(s => invoiceIds.Contains(s.InvoiceId) && productIds.Contains(s.ProductId)).OrderBy(s => s.Invoices.ApproveDate).ThenBy(s => s.Code).ToList();
+                    //var invoiceIds = db.Invoices.Where(s => s.CreateDate >= fromDate && s.CreateDate < toDate && s.ApproveDate != null && s.MemberId == memberId).Select(s => s.Id).ToList();
+                    var invoiceItemsIds = db.InvoiceItems
+                        //.Include(s => s.Products).Include(s => s.Invoices)
+                        .Where(ii =>
+                        ii.Invoices.CreateDate >= fromDate && ii.Invoices.CreateDate < toDate && ii.Invoices.ApproveDate != null && ii.Invoices.MemberId == memberId &&
+                        //invoiceIds.Contains(ii.InvoiceId) &&
+                        productIds.Contains(ii.ProductId))
+                        .Select(ii => ii.Id)
+                        .ToList();
+
+                    //.Include(s => s.Products.ProductCategories).Include(s => s.Products.ProductKeys)
+                    //.Include(s => s.Products.ProductsAdditionalData)
+                    //.Where(s => invoiceIds.Contains(s.InvoiceId) && productIds.Contains(s.ProductId));
+                    return db.InvoiceItems.Where(ii => invoiceItemsIds.Contains(ii.Id)).Include(s => s.Products).Include(s => s.Invoices).OrderBy(s => s.Invoices.ApproveDate).ThenBy(s => s.Code).ToList();
                 }
             }
             catch (Exception)
@@ -2499,7 +2570,8 @@ namespace ES.Business.Managers
                         InvoiceTypeId = i.InvoiceTypeId,
                         ProviderName = i.ProviderName,
                         RecipientName = i.RecipientName,
-                        Total = i.Summ
+                        Total = i.Summ,
+
                     });
                     return maxCount != null ? items.Take((int)maxCount).ToList() : items.ToList();
                 }
@@ -2528,7 +2600,8 @@ namespace ES.Business.Managers
                         InvoiceTypeId = i.InvoiceTypeId,
                         ProviderName = i.ProviderName,
                         RecipientName = i.RecipientName,
-                        Total = i.Summ
+                        Total = i.Summ,
+
                     }).ToList();
                 }
             }
@@ -2556,7 +2629,8 @@ namespace ES.Business.Managers
                         InvoiceTypeId = i.InvoiceTypeId,
                         ProviderName = i.ProviderName,
                         RecipientName = i.RecipientName,
-                        Total = i.Summ
+                        Total = i.Summ,
+
                     }).ToList();
                 }
             }
@@ -2568,11 +2642,32 @@ namespace ES.Business.Managers
 
         private static IInvoiceReport TryGetInvoicesReport(DateTime startDate, DateTime endDate, InvoiceType invoiceType)
         {
+            List<InvoiceItems> items;
+            try
+            {
+                using (var db = GetDataContext())
+                {
+                    items = db.InvoiceItems.Include(s => s.Products).Where(s => s.Invoices.ApproveDate >= startDate && s.Invoices.ApproveDate <= endDate && invoiceType == (InvoiceType)s.Invoices.InvoiceTypeId && s.Invoices.ApproveDate != null && s.Invoices.MemberId == ApplicationManager.Member.Id).ToList();
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
             var invocieName = "";
+            InvoiceReport report = null;
             switch (invoiceType)
             {
                 case InvoiceType.PurchaseInvoice:
                     invocieName = "Գնում";
+                    report = new InvoiceReport
+                    {
+                        Description = invocieName,
+                        Count = items.GroupBy(s => s.InvoiceId).Count(),
+                        Quantity = items.Sum(ii => ii.Quantity ?? 0),
+                        Cost = items.Sum(ii => ii.Quantity * ii.Price ?? 0),
+                        Sale = items.Sum(ii => ii.Quantity * ii.Products.Price ?? 0)
+                    };
                     break;
                 case InvoiceType.SaleInvoice:
                     invocieName = "Վաճառք";
@@ -2594,27 +2689,20 @@ namespace ES.Business.Managers
                 default:
                     throw new ArgumentOutOfRangeException("invoiceType", invoiceType, null);
             }
-
-            try
+            if (report == null)
             {
-                using (var db = GetDataContext())
+                report = new InvoiceReport
                 {
-                    var items = db.InvoiceItems.Where(s => s.Invoices.ApproveDate >= startDate && s.Invoices.ApproveDate <= endDate && invoiceType == (InvoiceType)s.Invoices.InvoiceTypeId && s.Invoices.ApproveDate != null && s.Invoices.MemberId == ApplicationManager.Member.Id).ToList();
-                    var report = new InvoiceReport
-                    {
-                        Description = invocieName,
-                        Count = items.GroupBy(s => s.InvoiceId).Count(),
-                        Quantity = items.Sum(ii => ii.Quantity ?? 0),
-                        Cost = items.Sum(ii => ii.Quantity * ii.CostPrice ?? 0),
-                        Sale = items.Sum(ii => ii.Quantity * ii.Price ?? 0)
-                    };
-                    return report;
-                }
+                    Description = invocieName,
+                    Count = items.GroupBy(s => s.InvoiceId).Count(),
+                    Quantity = items.Sum(ii => ii.Quantity ?? 0),
+                    Cost = items.Sum(ii => ii.Quantity * ii.CostPrice ?? 0),
+                    Sale = items.Sum(ii => ii.Quantity * ii.Price ?? 0)
+                };
             }
-            catch (Exception)
-            {
-                return null;
-            }
+            return report;
+
+
         }
 
         private static List<IInvoiceReport> TryGetInvoiceReports(DateTime startDate, DateTime endDate, List<InvoiceType> invoiceTypes)
@@ -2688,17 +2776,17 @@ namespace ES.Business.Managers
                         .Where(s => s.Invoices.ApproveDate >= startDate && s.Invoices.ApproveDate <= endDate && (InvoiceType)s.Invoices.InvoiceTypeId == invoiceType && s.Invoices.ApproveDate != null && s.Invoices.MemberId == memberId && s.Invoices.PartnerId != null && partnerIds.Contains((Guid)s.Invoices.PartnerId)).ToList();
                     var report = invoiceItems.Join(db.Partners, ii => ii.Invoices.PartnerId, p => p.Id, (ii, p) => new { ii, p })
                         .GroupBy(s => s.ii.InvoiceId).Where(s => s.FirstOrDefault() != null).Select(s => new InvoiceReportByPartner
-                    {
-                        Invoice = s.First().ii.Invoices.InvoiceNumber,
-                        Date = s.First().ii.Invoices.ApproveDate ?? DateTime.MinValue,
-                        Partner = s.First().p.FullName,
-                        Count = s.Count(),
-                        Quantity = s.Sum(t => t.ii.Quantity ?? 0),
-                        Cost = s.Select(t => t.ii.CostPrice ?? 0).FirstOrDefault(),
-                        Price = s.Select(t => t.ii.Price ?? 0).FirstOrDefault(),
-                        Sale = s.Sum(t => (t.ii.Quantity ?? 0) * (t.ii.Price ?? 0)),
-                        Approver = s.First().ii.Invoices.Approver
-                    }).ToList();
+                        {
+                            Invoice = s.First().ii.Invoices.InvoiceNumber,
+                            Date = s.First().ii.Invoices.ApproveDate ?? DateTime.MinValue,
+                            Partner = s.First().p.FullName,
+                            Count = s.Count(),
+                            Quantity = s.Sum(t => t.ii.Quantity ?? 0),
+                            Cost = s.Select(t => t.ii.CostPrice ?? 0).FirstOrDefault(),
+                            Price = s.Select(t => t.ii.Price ?? 0).FirstOrDefault(),
+                            Sale = s.Sum(t => (t.ii.Quantity ?? 0) * (t.ii.Price ?? 0)),
+                            Approver = s.First().ii.Invoices.Approver
+                        }).ToList();
                     return report;
                 }
             }
@@ -2868,7 +2956,33 @@ namespace ES.Business.Managers
                 return new List<InvoiceItems>();
             }
         }
-
+        private static List<InvoiceReport> TryGetSaleByProviders(DateTime startDate, DateTime endDate, List<Guid> providerIds)
+        {
+            var memberId = ApplicationManager.Member.Id;
+            try
+            {
+                using (var db = GetDataContext())
+                {
+                    var report = db.InvoiceItems.Where(s => s.Invoices.ApproveDate >= startDate && s.Invoices.ApproveDate <= endDate && s.Invoices.InvoiceTypeId == (short)InvoiceType.SaleInvoice && s.Invoices.MemberId == memberId)
+                        .Join(db.ProductItems, ii => ii.ProductItemId, pi => pi.Id, (ii, pi) => new { ii, pi })
+                        .Join(db.Invoices, r => r.pi.CreatedInvoiceId, i => i.Id, (r, i) => new { r.ii, i }).Where(t => t.i.PartnerId != null && providerIds.Contains((Guid)t.i.PartnerId))
+                        .GroupBy(t => t.ii.ProductId).Select(t => new InvoiceReport
+                        {
+                            Code = t.FirstOrDefault().ii.Code,
+                            Description = t.FirstOrDefault().ii.Description,
+                            Count = t.Count(),
+                            Quantity = t.Sum(s => s.ii.Quantity ?? 0),
+                            Cost = t.Sum(s => (s.ii.Quantity ?? 0) * (s.ii.CostPrice ?? 0)),
+                            //Sale = s.Sum(t => t.ii.Summ),
+                        }).ToList();
+                    return report;
+                }
+            }
+            catch (Exception)
+            {
+                return new List<InvoiceReport>();
+            }
+        }
         #endregion
 
         #region Invoices report
@@ -2903,28 +3017,28 @@ namespace ES.Business.Managers
                         Note = xp.x.Note,
                         InvoiceId = xp.x.InvoiceId,
                         Invoice = new InvoiceModel
+                        {
+                            Id = xp.x.InvoiceId,
+                            InvoiceTypeId = xp.x.Invoices.InvoiceTypeId,
+                            InvoiceNumber = xp.x.Invoices.InvoiceNumber,
+                            CreateDate = xp.x.Invoices.CreateDate,
+                            Creator = xp.x.Invoices.Creator,
+                            ApproveDate = xp.x.Invoices.ApproveDate,
+                            ApproverId = xp.x.Invoices.ApproverId,
+                            Approver = xp.x.Invoices.Approver,
+                            MemberId = xp.x.Invoices.MemberId,
+                            PartnerId = xp.x.Invoices.PartnerId,
+                            Partner = new PartnerModel
                             {
-                                Id = xp.x.InvoiceId,
-                                InvoiceTypeId = xp.x.Invoices.InvoiceTypeId,
-                                InvoiceNumber = xp.x.Invoices.InvoiceNumber,
-                                CreateDate = xp.x.Invoices.CreateDate,
-                                Creator = xp.x.Invoices.Creator,
-                                ApproveDate = xp.x.Invoices.ApproveDate,
-                                ApproverId = xp.x.Invoices.ApproverId,
-                                Approver = xp.x.Invoices.Approver,
-                                MemberId = xp.x.Invoices.MemberId,
-                                PartnerId = xp.x.Invoices.PartnerId,
-                                Partner = new PartnerModel
-                                    {
-                                        FirstName = xp.p.FirstName,
-                                        LastName = xp.p.LastName,
-                                        Address = xp.p.Address,
-                                        Mobile = xp.p.Mobile,
-                                        FullName = xp.p.FullName
-                                    },
-                                Total = xp.x.Invoices.Summ,
-                                Notes = xp.x.Invoices.Notes
-                            }
+                                FirstName = xp.p.FirstName,
+                                LastName = xp.p.LastName,
+                                Address = xp.p.Address,
+                                Mobile = xp.p.Mobile,
+                                FullName = xp.p.FullName
+                            },
+                            Total = xp.x.Invoices.Summ,
+                            Notes = xp.x.Invoices.Notes
+                        }
                     }).ToList();
                     return new FinanceReportModel() { InvocieItems = items, ProductResidues = productResidue };
                 }
@@ -2961,21 +3075,29 @@ namespace ES.Business.Managers
         {
             using (var db = GetDataContext())
             {
-                var items = db.InvoiceItems.Where(s => s.Invoices.MemberId == memberId && s.Invoices.ApproveDate >= fromDate && s.Invoices.ApproveDate <= toDate).Join(db.EsStock, ii => ii.Invoices.FromStockId, s1 => s1.Id, (ii, s1) => new { ii, s1 }).Join(db.EsStock, x => x.ii.Invoices.ToStockId, s2 => s2.Id, (x, s2) => new InternalWayBillDetilesModel()
+                var items = db.InvoiceItems.Where(s => s.Invoices.MemberId == memberId && s.Invoices.InvoiceTypeId == (int)InvoiceTypeEnum.MoveInvoice && s.Invoices.ApproveDate >= fromDate && s.Invoices.ApproveDate <= toDate).Join(db.EsStock, ii => ii.Invoices.FromStockId, s1 => s1.Id, (ii, s1) => new { ii, s1 }).Join(db.EsStock, x => x.ii.Invoices.ToStockId, s2 => s2.Id,
+                    (x, s2) => new InternalWayBillDetilesModel()
+                    {
+                        Invoice = x.ii.Invoices.InvoiceNumber,
+                        ApproveDate = x.ii.Invoices.ApproveDate,
+                        Code = x.ii.Code,
+                        Description = x.ii.Description,
+                        MuId = x.ii.Products.MeasureOfUnitsId,
+                        //Mu = x.ii.Products != null && x.ii.Products.MeasureOfUnitsId != null && CashManager.Instance.MeasureOfUnits.Any(m=>m.Id == x.ii.Products.MeasureOfUnitsId) ? CashManager.Instance.GetMeasureOfUnit(x.ii.Products.MeasureOfUnitsId).Name : null,
+                        CostPrice = x.ii.CostPrice ?? 0,
+                        Price = x.ii.Price,
+                        Quantity = x.ii.Quantity,
+                        Notes = x.ii.Note,
+                        FromStock = x.s1.Name,
+                        ToStock = s2.Name
+                    }).OrderBy(s => s.ApproveDate);
+                var list = items.ToList();
+
+                foreach (var item in list)
                 {
-                    Invoice = x.ii.Invoices.InvoiceNumber,
-                    ApproveDate = x.ii.Invoices.ApproveDate,
-                    Code = x.ii.Code,
-                    Description = x.ii.Description,
-                    Mu = x.ii.Products != null && CashManager.Instance.GetMeasureOfUnit(x.ii.Products.MeasureOfUnitsId) != null ? CashManager.Instance.GetMeasureOfUnit(x.ii.Products.MeasureOfUnitsId).Name : null,
-                    CostPrice = x.ii.CostPrice ?? 0,
-                    Price = x.ii.Price,
-                    Quantity = x.ii.Quantity,
-                    Notes = x.ii.Note,
-                    FromStock = x.s1.Name,
-                    ToStock = s2.Name
-                }).OrderBy(s => s.ApproveDate);
-                return items.ToList();
+                    item.Mu = item.MuId != null && CashManager.Instance.MeasureOfUnits.Any(m => m.Id == item.MuId) ? CashManager.Instance.GetMeasureOfUnit(item.MuId).Name : null;
+                }
+                return list;
             }
         }
 
@@ -3012,10 +3134,24 @@ namespace ES.Business.Managers
         #endregion
 
         #region Invoice External methods
+        public static List<InvoiceType> Convert(InvoiceTypeEnum? type)
+        {
+            List<InvoiceType> result = new List<InvoiceType>();
+            if (!type.HasValue) return result;
+            if ((type & InvoiceTypeEnum.PurchaseInvoice) == InvoiceTypeEnum.PurchaseInvoice) result.Add(InvoiceType.PurchaseInvoice);
+            if ((type & InvoiceTypeEnum.SaleInvoice) == InvoiceTypeEnum.SaleInvoice) result.Add(InvoiceType.SaleInvoice);
+            if ((type & InvoiceTypeEnum.ProductOrder) == InvoiceTypeEnum.ProductOrder) result.Add(InvoiceType.ProductOrder);
+            if ((type & InvoiceTypeEnum.MoveInvoice) == InvoiceTypeEnum.MoveInvoice) result.Add(InvoiceType.MoveInvoice);
+            if ((type & InvoiceTypeEnum.InventoryWriteOff) == InvoiceTypeEnum.InventoryWriteOff) result.Add(InvoiceType.InventoryWriteOff);
+            if ((type & InvoiceTypeEnum.ReturnFrom) == InvoiceTypeEnum.ReturnFrom) result.Add(InvoiceType.ReturnFrom);
+            if ((type & InvoiceTypeEnum.ReturnTo) == InvoiceTypeEnum.ReturnTo) result.Add(InvoiceType.ReturnTo);
 
+            return result;
+        }
         public static InvoiceModel GetInvoice(Guid? id)
         {
             var invoice = TryGetInvoice(id);
+            if (invoice == null) return null;
             return ConvertInvoice(invoice, PartnersManager.GetPartner(invoice.PartnerId));
         }
 
@@ -3030,12 +3166,31 @@ namespace ES.Business.Managers
             return TryGetInvoices(ids).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).OrderByDescending(s => s.CreateDate).ToList();
         }
 
-        public static List<InvoiceModel> GetInvoices(InvoiceType invoiceType)
+        public static List<InvoiceModel> GetInvoices(List<InvoiceType> invoiceTypeIds, DateTime startsFrom)
         {
             var partners = PartnersManager.GetPartner();
-            return TryGetInvoices(invoiceType).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).OrderByDescending(s => s.CreateDate).ToList();
+            return TryGetInvoices(invoiceTypeIds, startsFrom).Select(s => ConvertInvoice(s, partners.SingleOrDefault(p => p.Id == s.PartnerId))).OrderByDescending(s => s.CreateDate).ToList();
         }
+        public static List<InvoiceModel> GetDraftInvoices(InvoiceTypeEnum invoiceType)
+        {
+            var partners = ApplicationManager.CashManager.GetPartners;
+            var invoices = TryGetDraftInvoices(invoiceType);
+            return invoices.Select(s =>
+                new InvoiceModel
+                {
+                    Id = s.Id,
+                    InvoiceTypeId = s.InvoiceTypeId,
+                    InvoiceNumber = s.InvoiceNumber,
+                    CreateDate = s.CreateDate,
+                    ApproveDate = s.ApproveDate,
+                    Partner = partners.SingleOrDefault(p => p.Id == s.PartnerId),
+                    ProviderName = s.ProviderName,
+                    RecipientName = s.RecipientName,
+                    Approver = s.Approver,
+                    Total = s.Summ,
 
+                }).ToList();
+        }
         public static List<InvoiceModel> GetInvoices(InvoiceTypeEnum invoiceType, bool? isDraft, int? maxInvoiceCount)
         {
             var partners = ApplicationManager.CashManager.GetPartners;
@@ -3055,7 +3210,25 @@ namespace ES.Business.Managers
                     Total = s.Summ
                 }).ToList();
         }
-
+        public static List<InvoiceModel> GetApprovedInvoices(InvoiceTypeEnum invoiceType, Tuple<DateTime, DateTime> dates)
+        {
+            var partners = ApplicationManager.CashManager.GetPartners;
+            var invoices = TryGetApprovedInvoices(invoiceType, dates);
+            return invoices.Select(s =>
+                new InvoiceModel
+                {
+                    Id = s.Id,
+                    InvoiceTypeId = s.InvoiceTypeId,
+                    InvoiceNumber = s.InvoiceNumber,
+                    CreateDate = s.CreateDate,
+                    ApproveDate = s.ApproveDate,
+                    Partner = partners.SingleOrDefault(p => p.Id == s.PartnerId),
+                    ProviderName = s.ProviderName,
+                    RecipientName = s.RecipientName,
+                    Approver = s.Approver,
+                    Total = s.Summ
+                }).ToList();
+        }
         public static List<InvoiceModel> GetApprovedInvoices(InvoiceTypeEnum invoiceType, int? maxInvoiceCount)
         {
             var partners = PartnersManager.GetPartner();
@@ -3103,16 +3276,24 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    return db.InvoiceItems.Where(s => s.Invoices.MemberId == ApplicationManager.Member.Id && s.StockId != null && stocks.Contains((short)s.StockId) && s.Invoices.ApproveDate >= startDate && s.Invoices.ApproveDate <= endDateTime && (s.Invoices.InvoiceTypeId == (int)InvoiceType.SaleInvoice || s.Invoices.InvoiceTypeId == (int)InvoiceType.InventoryWriteOff || s.Invoices.InvoiceTypeId == (int)InvoiceType.ReturnTo || s.Invoices.InvoiceTypeId == (int)InvoiceType.ReturnFrom)).Select(s => new InvoiceItemsModel
-                    {
-                        Id = s.Id,
-                        ProductId = s.ProductId,
-                        StockId = s.StockId,
-                        Invoice = new InvoiceModel { InvoiceTypeId = s.Invoices.InvoiceTypeId },
-                        CostPrice = s.CostPrice,
-                        Price = s.Price,
-                        Quantity = s.Quantity,
-                    }).ToList();
+                    return db.InvoiceItems.Where(s => s.Invoices.MemberId == ApplicationManager.Member.Id &&
+                                                      s.StockId != null && stocks.Contains((short)s.StockId) &&
+                                                      s.Invoices.ApproveDate >= startDate &&
+                                                      s.Invoices.ApproveDate <= endDateTime &&
+                                                      (s.Invoices.InvoiceTypeId == (short)InvoiceType.SaleInvoice ||
+                                                      s.Invoices.InvoiceTypeId == (short)InvoiceType.InventoryWriteOff ||
+                                                      s.Invoices.InvoiceTypeId == (short)InvoiceType.ReturnTo ||
+                                                      s.Invoices.InvoiceTypeId == (short)InvoiceType.ReturnFrom))
+                        .Select(s => new InvoiceItemsModel
+                        {
+                            Id = s.Id,
+                            ProductId = s.ProductId,
+                            StockId = s.StockId,
+                            Invoice = new InvoiceModel { InvoiceTypeId = s.Invoices.InvoiceTypeId },
+                            CostPrice = s.CostPrice,
+                            Price = s.Price,
+                            Quantity = s.Quantity,
+                        }).ToList();
                 }
                 catch (Exception)
                 {
@@ -3120,7 +3301,35 @@ namespace ES.Business.Managers
                 }
             }
         }
-
+        public static List<InvoiceItemsModel> GetPurchaseInvoiceItemsByStocksForReport(DateTime startDate, DateTime endDateTime, List<short> stocks)
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    return db.InvoiceItems.Include(s => s.Products).Where(s => s.Invoices.MemberId == ApplicationManager.Member.Id &&
+                                                        s.StockId != null && stocks.Contains((short)s.StockId) &&
+                                                        s.Invoices.ApproveDate >= startDate &&
+                                                        s.Invoices.ApproveDate <= endDateTime &&
+                                                        (s.Invoices.InvoiceTypeId == (short)InvoiceType.PurchaseInvoice || s.Invoices.InvoiceTypeId == (short)InvoiceTypeEnum.ReturnTo))
+                                                      .Select(s => new InvoiceItemsModel
+                                                      {
+                                                          Id = s.Id,
+                                                          ProductId = s.ProductId,
+                                                          StockId = s.StockId,
+                                                          Invoice = new InvoiceModel { InvoiceTypeId = s.Invoices.InvoiceTypeId },
+                                                          CostPrice = s.CostPrice,
+                                                          Price = s.Price,
+                                                          Quantity = s.Quantity,
+                                                          Product = new ProductModel { Id = s.ProductId, Price = s.Products.Price }
+                                                      }).ToList();
+                }
+                catch (Exception)
+                {
+                    return new List<InvoiceItemsModel>();
+                }
+            }
+        }
         public static bool SaveInvoice(InvoiceModel invoiceModel, List<InvoiceItemsModel> invoiceItems)
         {
             var invoice = ConvertInvoice(invoiceModel);
@@ -3141,7 +3350,7 @@ namespace ES.Business.Managers
         public static InvoiceModel ApproveSaleInvoice(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems, List<short> stockIds, InvoicePaid invoicePaid)
         {
             //invoice.ApproveDate = DateTime.Now;
-            return ConvertInvoice(TryApproveSaleInvoice(ConvertInvoice(invoice), invoiceItems.Select(Convert).ToList(), stockIds, invoicePaid), ApplicationManager.Instance.CashProvider.GetPartners.SingleOrDefault(p => p.Id == invoice.PartnerId));
+            return ConvertInvoice(TryApproveSaleInvoice(invoice, invoiceItems.Select(Convert).ToList(), stockIds, invoicePaid), ApplicationManager.Instance.CashProvider.GetPartners.SingleOrDefault(p => p.Id == invoice.PartnerId));
         }
 
         public static InvoiceModel RegisterInventoryWriteOffInvoice(InvoiceModel invoice, List<InvoiceItemsModel> invoiceItems, List<short> stockIds)
@@ -3432,6 +3641,10 @@ namespace ES.Business.Managers
         {
             return TryGetInvoicesReportsByPartners(startDate, endDate, invoiceType, partnerIds, memberId);
         }
+        public static List<InvoiceReport> GetSaleInvoicesReportsByProviders(DateTime startDate, DateTime endDate, InvoiceType invoiceType, List<Guid> partnerIds, int memberId)
+        {
+            return TryGetSaleByProviders(startDate, endDate, partnerIds);
+        }
         public static List<InvoiceReportByPartner> GetSaleInvoicesReportsByPartners(DateTime startDate, DateTime endDate, InvoiceType invoiceType, List<Guid> partnerIds, ViewInvoicesEnum viewType)
         {
             return TryGetInvoicesReportsByPartners(startDate, endDate, invoiceType, partnerIds);
@@ -3609,10 +3822,10 @@ namespace ES.Business.Managers
                     Address = invoice.Partner.Address,
                     Tin = invoice.Partner.TIN,
                     BankAccount = new BankAccount
-                        {
-                            BankName = invoice.Partner.Bank,
-                            BankAccountNumber = invoice.Partner.BankAccount
-                        }
+                    {
+                        BankName = invoice.Partner.Bank,
+                        BankAccountNumber = invoice.Partner.BankAccount
+                    }
                 },
                 SupplierInfo = new EsMarketPartner
                 {
@@ -3687,8 +3900,8 @@ namespace ES.Business.Managers
         {
             using (var db = GetDataContext())
             {
-                var exInvoice = db.Invoices.SingleOrDefault(s => s.MemberId == ApplicationManager.Member.Id && s.Id == invoiceId);
-                if (exInvoice == null) return false;
+                var exInvoice = db.Invoices.SingleOrDefault(s => s.Id == invoiceId && s.MemberId == ApplicationManager.Member.Id);
+                if (exInvoice == null || exInvoice.ApproveDate != null) return false;
                 var exInvoiceItems = db.InvoiceItems.Where(s => s.InvoiceId == invoiceId);
                 foreach (var invoiceItem in exInvoiceItems)
                 {
@@ -3704,6 +3917,46 @@ namespace ES.Business.Managers
                 {
                     MessageManager.OnMessage(ex.Message);
                     return false;
+                }
+            }
+        }
+
+        public static List<CommodityTurnover> GetCommodityTurnover(List<Guid> partners, Tuple<DateTime, DateTime> dateItm)
+        {
+            if (partners == null || !partners.Any() || dateItm == null) return null;
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    var exInvoice = db.InvoiceItems.Include(ii => ii.Invoices)
+                        //    .Where(ii => ii.Invoices.ApproveDate >= dateItm.Item1 && ii.Invoices.ApproveDate <= dateItm.Item2 && ii.Invoices.MemberId == ApplicationManager.Member.Id)
+                        //    .Join(db.ProductItems, ii => ii.ProductItemId, pi => pi.Id, (ii, pi) => new { InvoiceItems = ii, ProductItems = pi })
+                        //    .Join(db.Invoices, s => s.ProductItems.CreatedInvoiceId, i => i.Id, (s, i) => new { InvoiceItem = s.InvoiceItems, PartnerId = i.PartnerId })
+                        //    .Where(s => s.PartnerId.HasValue && partners.Contains((Guid)s.PartnerId))
+                        .Select(s => new CommodityTurnover
+                        {
+                            //        InvoiceType = (InvoiceType)s.InvoiceItem.Invoices.InvoiceTypeId,
+                            //        Code = s.InvoiceItem.Code,
+                            //        Description = s.InvoiceItem.Description,
+                            //        Quantity = s.InvoiceItem.Quantity ?? 0
+                        })
+                        .ToList();
+                    return exInvoice;
+                    //var products = db.Products.Where(s => s.EsMemberId == MemberId)
+                    //    .Join(db.InvoiceItems, p => p.Id, i => i.ProductId, (p, i) => new { Product = p, Invoice = i }).Where(s => s.Invoice.InvoiceTypeId == (short)InvoiceType.PurchaseInvoice && s.Invoice.PartnerId.HasValue && partners.Contains((Guid)s.Invoice.PartnerId))
+                    //    .Select(s => new { Invoices = s.Invoice, Product = s.Product, PartnerId = s.Invoice.PartnerId, ProductId = s.Product.Id });
+                    //var products = db.ProductItems
+                    //    .Join(db.Invoices, pi => pi.CreatedInvoiceId, i => i.Id, (pi, i) => new { ProductItems = pi, Invoices = i }).Where(s => s.Invoices.InvoiceTypeId == (short)InvoiceType.PurchaseInvoice && s.Invoices.PartnerId.HasValue && partners.Contains((Guid)s.Invoices.PartnerId) && s.Invoices.MemberId==MemberId)
+                    //    .Select(s => new{Invoices = s.Invoices,productId=s.ProductItems.ProductId, PartnerId = s.Invoices.PartnerId, ProductId = s.ProductItems.ProductId}) ;
+
+                    //var exInvoice = db.InvoiceItems.Include(ii => ii.Invoices)
+                    //    .Where(s => s.Invoices.ApproveDate >= dateItm.Item1 && s.Invoices.ApproveDate <= dateItm.Item2 && products.Any(p => p.productId == s.ProductId)).ToList();
+                    //return exInvoice.Select(s => new CommodityTurnover { Description = s.Description, Quantity = s.Quantity ?? 0 }).ToList();
+                }
+                catch (Exception ex)
+                {
+                    MessageManager.OnMessage(ex.Message);
+                    return null;
                 }
             }
         }

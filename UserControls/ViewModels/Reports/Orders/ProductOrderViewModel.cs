@@ -136,7 +136,7 @@ namespace UserControls.ViewModels.Reports.Orders
                         if (productProvider == null) continue;
                         var provider = providers.FirstOrDefault(s => s.Id == productProvider.ProviderId);
                         if (provider == null) continue;
-                        item.Provider = provider.FullName;
+                        item.Provider = provider;
                     }
                     report = productOrder.OrderBy(s => s.Notes).ThenBy(s => s.Description).ThenBy(s => s.Code).ToList();
                     break;
@@ -159,7 +159,7 @@ namespace UserControls.ViewModels.Reports.Orders
                         //ExistingQuantity = productItems.Where(t => t.ProductId == s.First().ProductId).Sum(t => t.Quantity),
                         //SaleQuantity = invoiceItems.Where(t => t.ProductId == s.First().ProductId).Sum(t => t.Quantity ?? 0),
                         Notes = products.Single(p => p.Id == s.ProductId).Note,
-                        Provider = partners.Single(p => p.Id == s.ProviderId).FullName
+                        Provider = partners.Single(p => p.Id == s.ProviderId)
                     }).ToList();
 
 
@@ -199,7 +199,16 @@ namespace UserControls.ViewModels.Reports.Orders
         protected override void OnExport(ExportImportEnum o)
         {
             base.OnExport(o);
-            ExcelExportManager.ExportList(ViewList.Select(s => new { Կոդ = s.Code, Անվանում = s.Description, Մնացորդ = s.ExistingQuantity, Քանակ = s.DemandQuantity, ԻՆքնարժեք = s.CostPrice, Գին = s.Price, Մատակարար = s.Provider, }));
+            ExcelExportManager.ExportList(ViewList.Select(s => new
+            {
+                Կոդ = s.Code,
+                Անվանում = s.Description,
+                Մնացորդ = s.ExistingQuantity,
+                Քանակ = s.DemandQuantity,
+                ԻՆքնարժեք = s.CostPrice,
+                Գին = s.Price,
+                Մատակարար = s.Provider != null ? s.Provider.FullName : string.Empty,
+            }));
         }
 
         protected override void OnPrint(object o)

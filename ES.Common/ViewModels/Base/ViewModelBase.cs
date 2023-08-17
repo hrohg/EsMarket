@@ -1,17 +1,7 @@
-﻿using System.ComponentModel;
-
-namespace ES.Common.ViewModels.Base
+﻿namespace ES.Common.ViewModels.Base
 {
-    public class ViewModelBase : INotifyPropertyChanged
+    public class ViewModelBase : NotifyPropertyChanged
     {
-        protected object Sync = new object();
-        protected virtual void RaisePropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-    }
+        protected object Sync = new object();        
+    }    
 }

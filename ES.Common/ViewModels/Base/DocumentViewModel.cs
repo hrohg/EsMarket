@@ -1,4 +1,7 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Windows;
+using System.Windows.Input;
+using System.Xml.Serialization;
 using ES.Common.Helpers;
 
 namespace ES.Common.ViewModels.Base
@@ -6,7 +9,7 @@ namespace ES.Common.ViewModels.Base
     public class DocumentViewModel : PaneViewModel
     {
         #region Internal properties
-
+        private bool _isPrintPreviewMode;
         #endregion Internal properties
 
         #region External properties
@@ -35,7 +38,8 @@ namespace ES.Common.ViewModels.Base
         [XmlIgnore]
         public override bool IsActive
         {
-           set
+            get { return base.IsActive; }
+            set
             {
                 if (IsActive != value)
                 {
@@ -46,9 +50,9 @@ namespace ES.Common.ViewModels.Base
         }
 
         #endregion
-        //[XmlIgnore]
+        [XmlIgnore]
 
-        //public virtual int TotalRows { get; private set; }
+        public virtual int TotalRows { get; private set; }
         [XmlIgnore]
 
         public virtual double TotalCount { get; set; }
@@ -59,6 +63,8 @@ namespace ES.Common.ViewModels.Base
 
         public virtual double TotalAmount { get; set; }
 
+        [XmlIgnore]
+        public bool IsPrintPreviewMode { get { return _isPrintPreviewMode; } set { _isPrintPreviewMode = value; RaisePropertyChanged("IsPrintPreviewMode"); } }
         #endregion External properties
 
         #region Constructors
@@ -80,11 +86,28 @@ namespace ES.Common.ViewModels.Base
         {
             if (ActiveTabChangedEvent != null) ActiveTabChangedEvent(document, new ActivityChangedEventArgs(IsActive));
         }
+
+        public virtual void SetExternalText(ExternalTextImputEventArgs e)
+        {
+            if (!e.Handled) SendTextToFocusedElement(e.Text);
+        }
         #endregion Active tab changing
 
         #endregion Events
 
         #region Internal methods
+        private static void SendTextToFocusedElement(string text)
+        {
+            var target = Keyboard.FocusedElement;
+            var routedEvent = TextCompositionManager.TextInputEvent;
+
+            target.RaiseEvent(
+              new TextCompositionEventArgs(
+                InputManager.Current.PrimaryKeyboardDevice,
+                new TextComposition(InputManager.Current, target, text))
+              { RoutedEvent = routedEvent }
+            );
+        }
         #endregion Internal methods
 
     }

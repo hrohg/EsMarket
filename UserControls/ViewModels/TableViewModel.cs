@@ -14,7 +14,9 @@ using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Common.ViewModels.Base;
+using ES.Data.Models.Reports;
 using Shared.Helpers;
+using UserControls.Controls;
 using UserControls.Interfaces;
 using Timer = System.Threading.Timer;
 
@@ -139,7 +141,7 @@ namespace UserControls.ViewModels
         #endregion
 
         #region External Properties
-
+        public ObservableCollection<ProductDataGridColumnHeaderMetadata> ColumnHeaderMetadatas { get; protected set; }
         public int TotalRows
         {
             get { return ViewList.Count; }
@@ -198,6 +200,7 @@ namespace UserControls.ViewModels
         public TableViewModel()
         {
             Reports = new ObservableCollection<T>();
+            ColumnHeaderMetadatas = new ObservableCollection<ProductDataGridColumnHeaderMetadata>();
             ViewList.CollectionChanged += OnViewListCollectionChanged;
         }
 
@@ -287,7 +290,8 @@ namespace UserControls.ViewModels
                 ViewList.Clear();
             });
         }
-
+        protected virtual List<IInvoiceReport> GetReports()
+        { return (List<IInvoiceReport>)null; }
         protected virtual void UpdateCompleted(bool isSuccess = true)
         {
             RaisePropertyChanged("ViewList");

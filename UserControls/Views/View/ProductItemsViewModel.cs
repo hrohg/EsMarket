@@ -55,7 +55,8 @@ namespace UserControls.Views.View
 
         public CollectionViewSource ItemsView { get; set; }
         private ObservableCollection<ProductOrderModel> Items { get; set; }
-        public ObservableCollection<StockModel> Stocks { get { return new ObservableCollection<StockModel>(_stocks ?? new List<StockModel>()); } }
+        public List<StockModel> Stocks { get { return _stocks ?? new List<StockModel>(); } }
+        public ObservableCollection<Controls.ProductDataGridColumnHeaderMetadata> ColumnHeaderMetadatas { get; protected set; }
         #endregion
 
         #region Constructors
@@ -79,6 +80,8 @@ namespace UserControls.Views.View
             Items = new ObservableCollection<ProductOrderModel>();
             Items.CollectionChanged += OnItemsChanged;
             ItemsView = new CollectionViewSource { Source = Items };
+            ColumnHeaderMetadatas = new ObservableCollection<Controls.ProductDataGridColumnHeaderMetadata>();
+            
             ItemsView.View.Filter = Filter;
             Title = "Ապրանքների դիտում ըստ պահեստների";
             var tooltip = string.Empty;
@@ -133,6 +136,19 @@ namespace UserControls.Views.View
             if (_stocks == null || !_stocks.Any() || IsLoading) return;
             IsLoading = true;
             string productKey = null;
+
+            ColumnHeaderMetadatas.Add(new Controls.ProductDataGridColumnHeaderMetadata { Header = "Կոդ", BindingText = "Code", CanSort = true, SortKey = "Կոդ" });
+            ColumnHeaderMetadatas.Add(new Controls.ProductDataGridColumnHeaderMetadata { Header = "Անվանում", BindingText = "Description", CanSort = true, SortKey = "Անվանում" });
+            ColumnHeaderMetadatas.Add(new Controls.ProductDataGridColumnHeaderMetadata { Header = "Չմ", BindingText = "Mu", CanSort = true, SortKey = "Չմ" });
+            ColumnHeaderMetadatas.Add(new Controls.ProductDataGridColumnHeaderMetadata { Header = "Գին", BindingText = "Price", CanSort = true, SortKey = "Գին" });
+            ColumnHeaderMetadatas.Add(new Controls.ProductDataGridColumnHeaderMetadata { Header = "Առկա", BindingText = "ExistingQuantity", CanSort = true, SortKey = "Առկա" });
+
+            foreach (var stock in Stocks)
+            {
+                ColumnHeaderMetadatas.Add(new Controls.ProductDataGridColumnHeaderMetadata { Header = stock.Name, BindingText = "StockProducts", CanSort = true, SortKey = stock.Name, ConverterParameter = stock.Name, Converter = new Controls.StockProductsConverter() });
+            }
+
+
             DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
             {
                 Items.Clear();
@@ -146,20 +162,22 @@ namespace UserControls.Views.View
             _productItems = ProductsManager.GetProductItemsByStocks(_stocks.Select(s => s.Id).ToList(), productKey);
             //_productItems = _productItems.Where(pi => pi.StockId != null && _stocks.Select(s => s.Id).ToList().Contains((short)pi.StockId)).ToList();
             var items = (from item in _productItems
-                         group item by item.ProductId
+                         group item by new { item.ProductId, item.CostPrice }
                              into product
-                             where product != null
-                             select product);
+                         where product != null
+                         select product).ToList();
 
             foreach (var productItem in items)
             {
-                if (productItem.First() == null) continue;
+                var firstItem = productItem.First();
+                if (firstItem == null || firstItem.Product == null) continue;
                 var productOrderModel = new ProductOrderModel
                 {
                     Product = productItem.First().Product,
                     Code = productItem.First().Product.Code,
                     Description = productItem.First().Product.Description,
                     Mu = productItem.First().Product.Mu,
+                    CostPrice = productItem.First().CostPrice,
                     Price = productItem.First().Product.Price,
                     ExistingQuantity = productItem.Sum(s => s.Quantity)
                 };
@@ -367,27 +385,35 @@ namespace UserControls.Views.View
             var items = (from item in _productItems
                          group item by item.ProductId
                              into product
-                             where product != null
-                             select product);
+                         where product != null
+                         select product);
 
-            foreach (var product in items)
+            foreach (var item in items)
             {
-                var productOrderModel = new ProductOrderModel
+                var product = item.First().Product;
+                var productOrderModel = product != null ? new ProductOrderModel
                 {
-                    Product = product.First().Product,
-                    Code = product.First().Product.Code,
-                    Description = product.First().Product.Description,
-                    Mu = product.First().Product.Mu,
-                    ExistingQuantity = product.Sum(s => s.Quantity)
-                };
+                    Product = product,
+                    Code = product.Code,
+                    Description = product.Description,
+                    Mu = product.Mu,
+                    ExistingQuantity = item.Sum(s => s.Quantity)
+                } :
+                    new ProductOrderModel
+                    {
+                        Product = product,
+                        Code = item.First().ProductId.ToString(),
+                        ExistingQuantity = item.Sum(s => s.Quantity)
+                    };
+
                 foreach (var stockModel in _stocks)
                 {
                     productOrderModel.StockProducts.Add(
                         new StockProducts
                         {
-                            Product = product.First(),
+                            Product = item.First(),
                             Stock = stockModel,
-                            Quantity = product.Where(s => s.StockId == stockModel.Id).Sum(s => s.Quantity)
+                            Quantity = item.Where(s => s.StockId == stockModel.Id).Sum(s => s.Quantity)
                         });
                 }
                 DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { Items.Add(productOrderModel); });

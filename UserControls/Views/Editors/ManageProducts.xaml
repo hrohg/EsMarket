@@ -38,15 +38,16 @@
                                         <RowDefinition/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
-                                    <Border Grid.Row="0" Margin="0 1" BorderThickness=".5" BorderBrush="LightSkyBlue" Padding="2">
+                                    <Expander Grid.Row="0" Header="{Binding ProductDescription}" Margin="0 1" BorderThickness=".5" BorderBrush="LightSkyBlue" Padding="2" IsExpanded="True">
                                         <Grid Margin="0 1">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="70"/>
+                                                <ColumnDefinition Width="Auto" SharedSizeGroup="Lable1"/>
                                                 <ColumnDefinition Width="150"/>
                                                 <ColumnDefinition Width="Auto"/>
+
                                                 <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*" MinWidth="200"/>
                                                 <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition/>
@@ -57,39 +58,44 @@
                                                 <RowDefinition/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
-                                            <TextBlock Text="Կոդ" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right"/>
-                                            <TextBox Grid.Column="1" Grid.Row="0" x:Name="TextBoxCode" Text="{Binding Path=Product.Code, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="auto"  TabIndex="1" IsEnabled="{Binding IsSingleModeSelected}">
+                                            <TextBlock Grid.Column="0" Grid.Row="0" Text="Կոդ" HorizontalAlignment="Right"/>
+                                            <TextBox Grid.Column="1" Grid.Row="0" x:Name="TextBoxCode" Text="{Binding Path=Product.Code, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TabIndex="1" IsEnabled="{Binding IsSingleModeSelected}" Margin="3 1">
                                                 <TextBox.InputBindings>
                                                     <KeyBinding Key="Enter" Command="{Binding GetProductCommand}" CommandParameter="{Binding ElementName=TextBoxCode, Path=Text}"/>
                                                 </TextBox.InputBindings>
                                             </TextBox>
-                                            <TextBlock Text="Անվանում" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Right" Margin="0 1 1 1"/>
-                                            <TextBox Grid.Column="3" Grid.Row="0" Text="{Binding Product.Description, UpdateSourceTrigger=PropertyChanged}" Width="Auto" MinWidth="300" TabIndex="2" IsEnabled="{Binding IsSingleModeSelected}"/>
 
                                             <TextBlock Grid.Column="0" Grid.Row="1" Text="Բարկոդ"  HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 1"/>
                                             <TextBox Grid.Column="1" Grid.Row="1" x:Name="TextBoxBarcode" 
-                           Text="{Binding Product.Barcode, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsSingleModeSelected}"
-                           Width="Auto" VerticalAlignment="Top" Height="26" 
-                           TabIndex="4" Margin="0 1"
-     HorizontalContentAlignment="Center" 
+                                                Text="{Binding Product.Barcode, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsSingleModeSelected}"
+                                                VerticalAlignment="Top" Height="26" 
+                                                TabIndex="4" Margin="3 1"
+                                                HorizontalContentAlignment="Center" 
                                              VerticalContentAlignment="Center">
                                                 <TextBox.InputBindings>
                                                     <KeyBinding Key="Enter" Command="{Binding GenerateBarcodeCommand}" CommandParameter="{Binding ElementName=TextBoxBarcode, Path=Text}"/>
                                                     <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding GenerateBarcodeCommand}" CommandParameter="{Binding ElementName=TextBoxBarcode, Path=Text}"/>
                                                 </TextBox.InputBindings>
                                             </TextBox>
-                                            <TextBlock Grid.Column="2" Grid.Row="1" Text="ԱՏԳ կոդ" ToolTip="Արտաքին տնտեսական գործունեության կոդ"  HorizontalAlignment="Right" Margin="0 1 1 1"/>
-                                            <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Horizontal">
-                                                <TextBox Grid.Column="3" Grid.Row="1" Text="{Binding Product.HcdCs, UpdateSourceTrigger=PropertyChanged}" Width="100" HorizontalAlignment="Left" Margin="0 1"/>
-                                                <TextBlock Grid.Column="4" Grid.Row="0"  Text="Չափման միավոր" HorizontalAlignment="Right" Margin="0 1"/>
-                                                <ComboBox Grid.Column="5" Grid.Row="0" ItemsSource="{Binding MeasureOfUnits}" SelectedItem="{Binding Product.MeasureUnit}" DisplayMemberPath="Name" Width="250"/>
-                                            </StackPanel>
+
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="ԱՏԳ կոդ" ToolTip="Արտաքին տնտեսական գործունեության կոդ"  HorizontalAlignment="Right"/>
+                                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Product.HcdCs, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" Margin="3 1"/>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="3" Text="Անվանում" HorizontalAlignment="Right" />
+                                            <TextBox Grid.Row="0" Grid.Column="4"  Text="{Binding Product.Description, UpdateSourceTrigger=PropertyChanged}" Width="Auto" TabIndex="2" IsEnabled="{Binding IsSingleModeSelected}"/>
+
+                                            <TextBlock Grid.Row="1" Grid.Column="3" Text="Նկարագրություն" HorizontalAlignment="Right" />
+                                            <TextBox Grid.Row="1" Grid.Column="4" Grid.RowSpan="2" Text="{Binding Product.Note, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Top" TextWrapping="Wrap" AcceptsReturn="True" IsEnabled="{Binding IsSingleModeSelected}"/>
                                         </Grid>
-                                    </Border>
-                                    <Border Grid.Row="1" Margin="0 1" BorderThickness=".5" BorderBrush="LightSkyBlue" Padding="2">
+                                    </Expander>
+                                    <Expander Grid.Row="1" Header="Այլ տվյալներ" Margin="0 1" BorderThickness=".5" BorderBrush="LightSkyBlue" Padding="2" IsExpanded="True">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="220"/>
+                                                <ColumnDefinition Width="Auto" SharedSizeGroup="Lable1"/>
+                                                <ColumnDefinition Width="150"/>
+                                                <ColumnDefinition Width="Auto"/>
+
+                                                <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
@@ -98,33 +104,61 @@
                                                 <RowDefinition />
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>
-                                            <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal" Margin="0 1" HorizontalAlignment="Right">
-                                                <TextBlock Text="Ինքնարժեք" />
-                                                <TextBox Name="TxtCostPrice" Text="{Binding Product.CostPrice, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}, TargetNullValue=''}" Width="100" TabIndex="6" HorizontalContentAlignment="Right"/>
-                                            </StackPanel>
-                                            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0 1" HorizontalAlignment="Right">
-                                                <TextBlock   Text="Մինիմալ քանակ" HorizontalAlignment="Right"/>
-                                                <TextBox Text="{Binding Product.MinQuantity, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" Width="100" TabIndex="6" HorizontalContentAlignment="Right"/>
-                                            </StackPanel>
-                                            <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="0 1">
-                                                <Label Content="Վաճառքի տոկոս" HorizontalContentAlignment="Right" Width="120"/>
-                                                <TextBox Text="{Binding Product.ProfitPercent, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}, TargetNullValue=''}" Width="50" TabIndex="7" HorizontalContentAlignment="Right"/>
-                                                <Label Content="Վաճառքի գին" HorizontalContentAlignment="Right" Width="120"/>
-                                                <TextBox Name="TxtPrice" Text="{Binding Path = Product.Price, UpdateSourceTrigger=PropertyChanged,StringFormat={}{0:#,#.##}, TargetNullValue='', Mode=TwoWay}" Width="100" TabIndex="7" HorizontalContentAlignment="Right"/>
-                                                <Label Content="Զեղչ %" HorizontalContentAlignment="Right" Width="70"/>
-                                                <TextBox Name="TxtDiscount" Text="{Binding Product.Discount, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}, TargetNullValue=''}" Width="50" TabIndex="8" HorizontalContentAlignment="Right" />
-                                            </StackPanel>
-                                            <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0 1">
-                                                <Label Content="Մեծածախ տոկոս" HorizontalContentAlignment="Right" Width="120"/>
-                                                <TextBox Text="{Binding Product.DealerProfitPercent, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat={}{0:#,#.##}}" Width="50" TabIndex="8" HorizontalContentAlignment="Right"/>
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Չ/մ" HorizontalAlignment="Right" Margin="0 1"/>
+                                            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding MeasureOfUnits}" SelectedItem="{Binding Product.MeasureUnit}" DisplayMemberPath="Name" Margin="3 1"/>
 
-                                                <Label Content="Մեծածախ գին" HorizontalContentAlignment="Right" Width="120"/>
-                                                <TextBox Name="TxtDealerPrice" Text="{Binding Product.DealerPrice, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat={}{0:#,#.##}}" Width="100" TabIndex="9" HorizontalContentAlignment="Right" />
-                                                <Label Content="Զեղչ %" HorizontalContentAlignment="Right" Width="70"/>
-                                                <TextBox Name="TxtDealerDiscount" Text="{Binding Product.DealerDiscount, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat={}{0:#,#.##}}" Width="50" TabIndex="10" HorizontalContentAlignment="Right" />
-                                            </StackPanel>
+                                            <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Text="Ինքնարժեք" />
+                                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Product.CostPrice, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}, TargetNullValue=''}" Margin="3 1" TabIndex="6" HorizontalContentAlignment="Right"/>
+
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Մինիմալ քանակ" HorizontalAlignment="Right"/>
+                                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Product.MinQuantity, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}" Margin="3 1" TabIndex="6" HorizontalContentAlignment="Right"/>
+
+                                            <GroupBox Grid.Row="0" Grid.Column="4" Grid.RowSpan="3" Header="Մանրածախ" ToolTip="Մնրածախ գին:\Եկամտաբերության տոկոս\nԳին\nԱպրանքի վրա կիրառվող զեղչ">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="100"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition/>
+                                                        <RowDefinition/>
+                                                        <RowDefinition/>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="%" HorizontalAlignment="Right"/>
+                                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Product.ProfitPercent, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0.##}, TargetNullValue=''}" TabIndex="7" HorizontalContentAlignment="Right"/>
+
+                                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Գին" HorizontalAlignment="Right" />
+                                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path = Product.Price, UpdateSourceTrigger=PropertyChanged,StringFormat={}{0:#,0.##}, TargetNullValue='', Mode=TwoWay}" TabIndex="7" HorizontalContentAlignment="Right"/>
+
+                                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Զեղչ (%)" HorizontalAlignment="Right"/>
+                                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Product.Discount, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0.##}, TargetNullValue=''}" TabIndex="8" HorizontalContentAlignment="Right" />
+                                                </Grid>
+                                            </GroupBox>
+                                            <GroupBox Grid.Row="0" Grid.Column="3" Grid.RowSpan="3" Margin="0 1" Header="Մեծածախ" ToolTip="Մեծածախ գին:\Եկամտաբերության տոկոս\nՄեծածախ գին\nՄեծածախ գնի վրա կիրառվող զեղչ:">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="100"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition/>
+                                                        <RowDefinition/>
+                                                        <RowDefinition/>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="%" HorizontalAlignment="Right"/>
+                                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Product.DealerProfitPercent, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat={}{0:#,#.##}}" TabIndex="8" HorizontalContentAlignment="Right"/>
+
+                                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Գին" HorizontalAlignment="Right" />
+                                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Product.DealerPrice, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat={}{0:#,#.##}}" TabIndex="9" HorizontalContentAlignment="Right" />
+
+                                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Զեղչ (%)" HorizontalAlignment="Right"/>
+                                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Product.DealerDiscount, UpdateSourceTrigger=PropertyChanged,TargetNullValue='', StringFormat={}{0:#,#.##}}" TabIndex="10" HorizontalContentAlignment="Right" />
+                                                </Grid>
+                                            </GroupBox>
                                         </Grid>
-                                    </Border>
+                                    </Expander>
                                 </Grid>
                             </TabItem>
                             <TabItem Header="Ապրանքատեսակ" IsEnabled="False">
@@ -160,7 +194,7 @@
                                         </Grid.RowDefinitions>
                                         <TextBox x:Name="Part_TextBox" Text="{Binding ProductKeysDescription}" Height="Auto" VerticalContentAlignment="Top" TextWrapping="Wrap">
                                             <TextBox.InputBindings>
-                                                <KeyBinding Key="Enter" Command="{Binding AddProductKeysCommand}" CommandParameter="{Binding Path = Text, ElementName=Part_TextBox}"/>
+                                                <KeyBinding Key="Enter" Command="{Binding AddProductKeysCommand}" CommandParameter="{Binding ElementName=Part_TextBox}"/>
                                             </TextBox.InputBindings>
                                         </TextBox>
                                     </Grid>
@@ -281,7 +315,8 @@
                                                        Margin="10" 
                                                        ItemsSource="{Binding Path=ProductsSource.View}" 
                                                        AutoGenerateColumns="False"
-                                                       SelectedItem="{Binding Path = Product}" 
+                                                       SelectedItem="{Binding Path = SelectedProduct}"
+                                                       
                                                        behaviors:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding SelectedProducts, Mode=OneWayToSource}"
                                                        behaviors:MultiSelectorBehaviours.IsSynchronizeSelectedItems="True"
                                                        SelectionMode="Extended"
@@ -338,8 +373,8 @@
                             <DataGridTextColumn Binding="{Binding Path=DealerDiscount, StringFormat={}{0:#,#.##}}" Header="Մեծածախ զեղչ" Width="Auto" IsReadOnly="True"/>
                             <DataGridTextColumn Binding="{Binding Path=ProfitPercent, StringFormat={}{0:#,#.##}}" Header="Մանրածախ տոկոս" Width="Auto" IsReadOnly="True"/>
                             <DataGridTextColumn Binding="{Binding Path=Price, StringFormat={}{0:#,#.##}}" Header="Մանրածախ գին" Width="Auto" IsReadOnly="True"/>
-                            <DataGridTextColumn Binding="{Binding Path=Discount, StringFormat={}{0:#,#.##}}" Header="Զեղչ" Width="Auto" IsReadOnly="True" SortMemberPath="Discount"/>
-                            <DataGridTextColumn Binding="{Binding Path=Note}" Header="Նշումներ" Width="Auto" IsReadOnly="True"/>
+                            <DataGridTextColumn Binding="{Binding Path=Discount, StringFormat={}{0:#,0.##}}" Header="Զեղչ" Width="Auto" IsReadOnly="True" SortMemberPath="Discount"/>
+                            <DataGridTextColumn Binding="{Binding Path=LastModifiedDate}" Header="Խմբագրվել է" Width="Auto" IsReadOnly="True" SortMemberPath="LastModifiedDate" />
                             <DataGridTemplateColumn Header="Edit" Visibility="Collapsed">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -574,7 +609,7 @@
                             <DataGridTextColumn Binding="{Binding Path=DealerDiscount, StringFormat={}{0:#,#.##}}" Header="Մեծածախ զեղչ" Width="Auto" IsReadOnly="True"/>
                             <DataGridTextColumn Binding="{Binding Path=Price, StringFormat={}{0:#,#.##}}" Header="Մանրածախ գին" Width="Auto" IsReadOnly="True"/>
                             <DataGridTextColumn Binding="{Binding Path=Discount, StringFormat={}{0:#,#.##}}" Header="Զեղչ" Width="Auto" IsReadOnly="True"/>
-                            <DataGridTextColumn Binding="{Binding Path=Note}" Header="Նշումներ" Width="Auto" IsReadOnly="True"/>
+                            <DataGridTextColumn Binding="{Binding Path=LastModifiedDate}" Header="Խմբագրվել է" Width="Auto" IsReadOnly="True" SortMemberPath="LastModifiedDate" />
                         </DataGrid.Columns>
                     </extendedControls:ExtendedDataGrid>
                 </Grid>

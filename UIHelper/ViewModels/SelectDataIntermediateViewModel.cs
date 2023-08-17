@@ -41,14 +41,14 @@ namespace UIHelper.ViewModels
         public SelectDataIntermediateViewModel(DateTime? startDate)
             : this()
         {
-            StartDate = startDate?? DateTime.Today;
+            StartDate = startDate ?? DateTime.Now;
             IsEndDateEnabled = false;
         }
 
-        public SelectDataIntermediateViewModel(DateTime startDate, DateTime endDate)
+        public SelectDataIntermediateViewModel(DateTime? startDate, DateTime? endDate)
             : this(startDate)
         {
-            EndDate = endDate;
+            EndDate = endDate ?? DateTime.Now;
             IsEndDateEnabled = true;
         }
         #endregion Constructors

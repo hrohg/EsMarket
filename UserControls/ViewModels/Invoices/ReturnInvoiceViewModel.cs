@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
@@ -20,9 +19,9 @@ using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
+using ES.Data.Enumerations;
 using ES.Data.Models;
 using Shared.Helpers;
-using UserControls.ControlPanel.Controls;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
 using UserControls.Views.ReceiptTickets.Views;
@@ -38,10 +37,12 @@ namespace UserControls.ViewModels.Invoices
     public class ReturnFromInvoiceViewModel : PurchaseInvoiceViewModel
     {
         #region Internal properties
+        private PartnerModel _buyer;
         #endregion Internal properties
 
         #region External properties
         public bool CanChangePartner { get { return !InvoiceItems.Any(); } }
+        public PartnerModel Buyer { get { return _buyer ?? Partner; } set { _buyer = value; RaisePropertyChanged(() => Buyer); } }
         #endregion External properties
 
         #region Constructors
@@ -64,6 +65,7 @@ namespace UserControls.ViewModels.Invoices
             base.OnInitialize();
             Title = "Ետ վերադարձ";
             AddBySingle = ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBySingle;
+            Buyer = Partner;
         }
         protected override void OnInvoiceItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -72,11 +74,69 @@ namespace UserControls.ViewModels.Invoices
         }
         protected override decimal GetProductPrice(ProductModel product)
         {
-            return (product != null) ? (product.Price ?? 0) * (product.Discount != null && product.Discount > 0 ?
-                1 - (product.Discount ?? 0) / 100 : 1 - (Partner != null && Partner.Discount != null ? Partner.Discount ?? 0 : 0) / 100) : 0;
+            return product != null ? product.Price ?? 0 : 0;
 
+            //var price = (product != null) ? (product.Price ?? 0) * (product.Discount != null && product.Discount > 0 ?
+            //1 - (product.Discount ?? 0) / 100 : 1 - (Partner != null && Partner.Discount != null ? Partner.Discount ?? 0 : 0) / 100) : 0;
+            //price = Math.Max(price, product.DealerPrice ?? 0);
+            //switch (Partner.PartnersTypeId)
+            //{
+            //    case (short)PartnerType.Dealer:
+            //        return (product.HasDealerPrice ? product.DealerPrice : product.Price) ?? 0;
+            //    default:
+            //        return product.Price ?? 0;
+            //}
         }
+        protected override void OnPartnerChanged()
+        {
+            base.OnPartnerChanged();
+            Invoice.RecipientName = Partner != null ? Partner.FullName : null;
+            Invoice.Discount = Partner != null ? Partner.Discount : null;
+            OnInvoiceItemsPropertyChanged(null, null);
+            RaisePropertyChanged(() => Buyer);
+        }
+        protected override void OnInvoiceItemsPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnInvoiceItemsPropertyChanged(sender, e);
 
+            decimal total = 0;
+            foreach (InvoiceItemsModel invoiceItem in InvoiceItems)
+            {
+                decimal discount = 0;
+                if (Partner != null && (Partner.PartnersTypeId != (short)PartnerType.Dealer || !invoiceItem.Product.HasDealerPrice))
+                    discount = Invoice.Discount == 0 ? 0 : invoiceItem.Discount ?? Invoice.Discount ?? 0;
+
+                var price = (invoiceItem.Price ?? 0) * (1 - discount / 100);
+                total += price * (invoiceItem.Quantity ?? 0);
+            }
+            if (Partner != null) InvoicePaid.Paid = InvoicePaid.Total = Invoice.Total = total;
+        }
+        protected override void OnAddItemsFromInvoice(object o)
+        {
+            var items = InvoicesManager.GetInvoices(InvoicesManager.Convert(InvoiceTypeEnum.SaleInvoice), DateTime.Today.AddMonths(-1));
+            if (items == null) return;
+            items = items.Where(s => s.ApproveDate != null && Partner != null && s.PartnerId == Partner.Id).ToList();
+
+            var invoice = Helpers.SelectItemsManager.SelectInvoice(items, OrderInvoiceBy.ApprovedDate, false).FirstOrDefault();
+            AddItemsFromInvoice(invoice);
+        }
+        public override void SetInvoiceItem(string code)
+        {
+            base.SetInvoiceItem(code);
+            if (Buyer == null || InvoiceItem == null) return;
+            var lastSellProductItem = InvoicesManager.GetLastSellPrice(InvoiceItem.ProductId, Buyer.Id);
+            if (lastSellProductItem != null)
+            {
+                InvoiceItem.Price = lastSellProductItem.Price;
+                //InvoiceItem.Discount = lastSellProductItem.Discount;
+            }
+            else
+            {
+                if (InvoiceItem.Product != null) InvoiceItem.Price = InvoiceItem.Product.CostPrice;
+                InvoiceItem.Discount = 0;
+                MessageBox.Show(string.Format("Տվյալ ապրանքը ({0}) վերջին մեկ ամսվա վաճառքների մեջ չի հայտնաբերվել:", InvoiceItem.Description), "Սխալ ապրանք", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
         protected override bool CanApprove(object o)
         {
             return base.CanApprove(o)
@@ -219,13 +279,13 @@ namespace UserControls.ViewModels.Invoices
         {
             var ecrManager = EcrManager.EcrServer;
             var invoicePaid = new EcrPaid
-                {
-                    PaidAmount = InvoicePaid.Paid != null ? (double)InvoicePaid.Paid : 0,
-                    PaidAmountCard = InvoicePaid.ByCheck != null ? (double)InvoicePaid.ByCheck : 0,
-                    PartialAmount = 0,
-                    PrePaymentAmount = (double)(InvoicePaid.ReceivedPrepayment ?? 0),
-                    UseExtPos = false
-                };
+            {
+                PaidAmount = InvoicePaid.Paid != null ? (double)InvoicePaid.Paid : 0,
+                PaidAmountCard = InvoicePaid.ByCheck != null ? (double)InvoicePaid.ByCheck : 0,
+                PartialAmount = 0,
+                PrePaymentAmount = (double)(InvoicePaid.ReceivedPrepayment ?? 0),
+                UseExtPos = false
+            };
             ResponseReceiptModel responceReceiptViewModel = null;
             if (InvoiceItems.All(s => s.Quantity > 0))
             {
@@ -274,7 +334,17 @@ namespace UserControls.ViewModels.Invoices
                 invoiceItemsModel.Quantity = 0;
             }
         }
-
+        private ICommand _getBuyerCommand;
+        public ICommand GetBuyerCommand { get { return _getBuyerCommand ?? (_getBuyerCommand = new RelayCommand<PartnerType>(OnGetBuyer, CanGetBuyer)); } }
+        private bool CanGetBuyer(PartnerType partnertype)
+        {
+            return !InvoiceItems.Any();
+        }
+        private void OnGetBuyer(PartnerType partnerType)
+        {
+            var buyers = PartnersManager.GetPartner(partnerType);
+            Buyer = SelectItemsManager.SelectPartners(buyers, false, "Ընտրել գնորդ").FirstOrDefault();
+        }
         #endregion Commands
     }
 
@@ -390,11 +460,20 @@ namespace UserControls.ViewModels.Invoices
             base.OnInvoiceItemsPropertyChanged(sender, e);
             InvoicePaid.Paid = InvoiceItems.Sum(s => (s.Price ?? 0) * (s.Quantity ?? 0));
         }
+        protected override bool IsPaidValid()
+        {
+            return InvoicePaid.IsPaid &&
+       InvoicePaid.Change <= (InvoicePaid.Paid ?? 0) &&
+       Partner != null
+       //&&(InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit 
+       //&&(InvoicePaid.ReceivedPrepayment ?? 0) <= Partner.Credit
+       ;
+        }
         protected override bool CanApprove(object o)
         {
             return base.CanApprove(o) && ApplicationManager.IsInRole(UserRoleEnum.Manager);
         }
-        
+
         protected override void OnApproveAsync(bool closeOnExit)
         {
             try

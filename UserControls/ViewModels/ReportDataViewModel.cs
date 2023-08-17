@@ -17,7 +17,6 @@ using ES.Common.Models;
 using ES.Data.Enumerations;
 using ES.Data.Models;
 using ES.Data.Models.Reports;
-using ES.DataAccess.Models;
 using Shared.Helpers;
 using UserControls.Helpers;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
@@ -314,19 +313,34 @@ namespace UserControls.ViewModels
         protected override void OnExport(ExportImportEnum o)
         {
             //base.OnExport(o);
-            ExcelExportManager.ExportList(ViewList.Select(s => new
-            {
-                Բաժին = ((InvoiceReport)s).Description,
-                Ապրանքագիր = ((InvoiceReport)s).Count,
-                Քանակ = ((InvoiceReport)s).Quantity,
-                Հասույթ = ((InvoiceReport)s).Sale,
-                ԻՆքնարժեք = ((InvoiceReport)s).Cost,
-                Եկամուտ = ((InvoiceReport)s).Profit,
-                Եկամտի_Տոկոս = ((InvoiceReport)s).Pers,
-                Ետվերադարձ = ((InvoiceReport)s).ReturnAmount,
-                Ընդամենը = ((InvoiceReport)s).Total
-            }));
 
+            if (ApplicationManager.IsInRole(UserRoleEnum.Manager))
+            {
+                ExcelExportManager.ExportList(ViewList.Select(s => new
+                {
+                    Բաժին = ((InvoiceReport)s).Description,
+                    Ապրանքագիր = ((InvoiceReport)s).Count,
+                    Քանակ = ((InvoiceReport)s).Quantity,
+                    Հասույթ = ((InvoiceReport)s).Sale,
+                    ԻՆքնարժեք = ((InvoiceReport)s).Cost,
+                    Եկամուտ = ((InvoiceReport)s).Profit,
+                    Եկամտի_Տոկոս = ((InvoiceReport)s).Pers,
+                    Ետվերադարձ = ((InvoiceReport)s).ReturnAmount,
+                    Ընդամենը = ((InvoiceReport)s).Total
+                }));
+            }
+            else
+            {
+                ExcelExportManager.ExportList(ViewList.Select(s => new
+                {
+                    Բաժին = ((InvoiceReport)s).Description,
+                    Ապրանքագիր = ((InvoiceReport)s).Count,
+                    Քանակ = ((InvoiceReport)s).Quantity,
+                    Հասույթ = ((InvoiceReport)s).Sale,
+                    Ետվերադարձ = ((InvoiceReport)s).ReturnAmount,
+                    Ընդամենը = ((InvoiceReport)s).Total
+                }));
+            }
         }
 
         protected override void OnPrint(object o)
@@ -339,7 +353,7 @@ namespace UserControls.ViewModels
     public class SaleInvoiceReportByPartnerViewModel : TableViewModel<IInvoiceReport>
     {
         #region Internal properties
-        private ViewInvoicesEnum _viewInvoicesEnum;
+        protected ViewInvoicesEnum ViewInvoicesEnum;
         protected Tuple<DateTime, DateTime> DteIntermediate;
         #endregion
 
@@ -350,7 +364,7 @@ namespace UserControls.ViewModels
         #region Constructors
         public SaleInvoiceReportByPartnerViewModel(ViewInvoicesEnum viewInvoicesEnum)
         {
-            _viewInvoicesEnum = viewInvoicesEnum;
+            ViewInvoicesEnum = viewInvoicesEnum;
             IsShowUpdateButton = true;
         }
         #endregion
@@ -383,7 +397,7 @@ namespace UserControls.ViewModels
         protected override void UpdateAsync()
         {
             base.UpdateAsync();
-            if (_viewInvoicesEnum == ViewInvoicesEnum.None) { UpdateStopped(); return; }
+            if (ViewInvoicesEnum == ViewInvoicesEnum.None) { UpdateStopped(); return; }
 
             DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
                 {
@@ -396,7 +410,7 @@ namespace UserControls.ViewModels
             List<PartnerModel> partners = null;
             List<PartnerType> partnerTypes = null;
             List<StockModel> stocks = null;
-            switch (_viewInvoicesEnum)
+            switch (ViewInvoicesEnum)
             {
                 case ViewInvoicesEnum.None:
                     break;
@@ -416,7 +430,7 @@ namespace UserControls.ViewModels
 
                     if (partners != null && partners.Count > 0)
                     {
-                        reports = new List<IInvoiceReport>(InvoicesManager.GetSaleInvoicesReportsByPartners(DteIntermediate.Item1, DteIntermediate.Item2, _viewInvoicesEnum == ViewInvoicesEnum.ByProvider ? InvoiceType.PurchaseInvoice : InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList(), _viewInvoicesEnum));
+                        reports = new List<IInvoiceReport>(InvoicesManager.GetSaleInvoicesReportsByPartners(DteIntermediate.Item1, DteIntermediate.Item2, ViewInvoicesEnum == ViewInvoicesEnum.ByProvider ? InvoiceType.PurchaseInvoice : InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList(), ViewInvoicesEnum));
                     }
                     break;
                 case ViewInvoicesEnum.ByPartnerType:
@@ -660,11 +674,11 @@ namespace UserControls.ViewModels
             Title = Description = "Վաճառքի վերլուծություն";
             Invoices = new List<InvoiceModel>();
             ChartDatas = new ObservableCollection<KeyValuePair<object, decimal>>();
-            ReportChartTypes = new List<ItemProperty> { 
-                new ItemProperty { Value = "Ժամվա", Key = 0 }, 
-                new ItemProperty { Value = "Օրվա", Key = 1 }, 
-                new ItemProperty { Value = "Շաբաթվա", Key = 2 }, 
-                new ItemProperty { Value = "Ամսվա", Key = 3 }, 
+            ReportChartTypes = new List<ItemProperty> {
+                new ItemProperty { Value = "Ժամվա", Key = 0 },
+                new ItemProperty { Value = "Օրվա", Key = 1 },
+                new ItemProperty { Value = "Շաբաթվա", Key = 2 },
+                new ItemProperty { Value = "Ամսվա", Key = 3 },
                 new ItemProperty { Value = "Տարվա", Key = 4 } };
             ReportChartType = ReportChartTypes.First();
         }
@@ -783,7 +797,97 @@ namespace UserControls.ViewModels
         #endregion
     }
 
+    public class PurchaseInvoiceReportByStocksViewModel : SaleInvoiceReportByPartnerViewModel
+    {
+        private List<StockModel> _stocks;
 
+        public PurchaseInvoiceReportByStocksViewModel(ViewInvoicesEnum viewInvoicesEnum)
+            : base(viewInvoicesEnum)
+        {
+
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+            Title = Description = "Գնում ըստ բաժինների";
+        }
+
+        protected override void UpdateAsync()
+        {
+            base.UpdateAsync();
+            if (DteIntermediate == null) { IsLoading = false; return; }
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
+            {
+                _stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList();
+            });
+
+            if (!_stocks.Any()) { IsLoading = false; return; }
+
+            var invoiceItems = InvoicesManager.GetPurchaseInvoiceItemsByStocksForReport(DteIntermediate.Item1, DteIntermediate.Item2, _stocks.Select(s => s.Id).ToList());
+            List<IInvoiceReport> reports = new List<IInvoiceReport>(_stocks.Select(s => new InvoiceReport
+            {
+                Description = s.FullName,
+                Count = invoiceItems.Where(ii => ii.Invoice.InvoiceTypeId == (short)InvoiceType.PurchaseInvoice).Count(ii => ii.StockId == s.Id),
+                Quantity = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (short)InvoiceType.PurchaseInvoice)).Sum(ii => (ii.Quantity ?? 0)),
+                Cost = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (short)InvoiceType.PurchaseInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.Price ?? 0)),
+                Sale = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (short)InvoiceType.PurchaseInvoice)).Sum(ii => (ii.Quantity ?? 0) * (ii.ProductPrice ?? 0)),
+                ReturnAmount = invoiceItems.Where(ii => ii.StockId == s.Id && (ii.Invoice.InvoiceTypeId == (short)InvoiceType.ReturnTo)).Sum(ii => (ii.Quantity ?? 0) * (ii.ProductPrice ?? 0)),
+            }).ToList());
+            reports.Add(new InvoiceReport
+            {
+                Description = "Ընդամենը",
+                Count = reports.Sum(s => ((InvoiceReport)s).Count),
+                Quantity = reports.Sum(s => s.Quantity),
+                Cost = reports.Sum(s => s.Cost),
+                ReturnAmount = reports.Sum(s => ((InvoiceReport)s).ReturnAmount),
+                Sale = reports.Sum(s => s.Sale)
+            });
+
+
+            if (!reports.Any())
+            {
+                MessageManager.OnMessage(new MessageModel(DateTime.Now, "Ոչինչ չի հայտնաբերվել։",
+                    MessageTypeEnum.Information));
+            }
+            else
+            {
+                SetResult(reports);
+            }
+
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { UpdateCompleted(); });
+        }
+
+        protected override void UpdateCompleted(bool isSuccess = true)
+        {
+            base.UpdateCompleted(isSuccess);
+            TotalCount = (double)ViewList.Sum(s => s.Quantity);
+            Total = (double)ViewList.Sum(i => i.Sale ?? 0);
+        }
+
+        protected override void OnExport(ExportImportEnum o)
+        {
+            //base.OnExport(o);
+            ExcelExportManager.ExportList(ViewList.Select(s => new
+            {
+                Բաժին = ((InvoiceReport)s).Description,
+                Ապրանքագիր = ((InvoiceReport)s).Count,
+                Քանակ = ((InvoiceReport)s).Quantity,
+                Հասույթ = ((InvoiceReport)s).Sale,
+                ԻՆքնարժեք = ((InvoiceReport)s).Cost,
+                Եկամուտ = ((InvoiceReport)s).Profit,
+                Եկամտի_Տոկոս = ((InvoiceReport)s).Pers,
+                Ետվերադարձ = ((InvoiceReport)s).ReturnAmount,
+                Ընդամենը = ((InvoiceReport)s).Total
+            }));
+
+        }
+
+        protected override void OnPrint(object o)
+        {
+            base.OnPrint(o);
+        }
+    }
     public class ProductsLogViewModel : TableViewModel
     {
         private void OnItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -805,7 +909,7 @@ namespace UserControls.ViewModels
             Title = "Ապրանքների խմբագրման պատմություն";
         }
 
-        
+
         protected override void OnUpdate()
         {
             base.OnUpdate();

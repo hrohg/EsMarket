@@ -3,7 +3,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using ES.Business.Managers;
 using ES.Common.Helpers;
-using ES.Common.Managers;
 using UserControls.Interfaces;
 
 namespace UserControls.ViewModels

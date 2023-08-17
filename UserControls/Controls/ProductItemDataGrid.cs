@@ -14,35 +14,37 @@ namespace UserControls.Controls
 {
     public class ProductItemDataGrid : DataGrid
     {
-        public ObservableCollection<StockModel> ColumnHeaders
+        public ObservableCollection<ProductDataGridColumnHeaderMetadata> ColumnHeaders
         {
-            get { return GetValue(ColumnHeadersProperty) as ObservableCollection<StockModel>; }
+            get { return GetValue(ColumnHeadersProperty) as ObservableCollection<ProductDataGridColumnHeaderMetadata>; }
             set { SetValue(ColumnHeadersProperty, value); }
         }
 
-        public static readonly DependencyProperty ColumnHeadersProperty = DependencyProperty.Register("ColumnHeaders", typeof(ObservableCollection<StockModel>), typeof(ProductItemDataGrid), new PropertyMetadata(OnColumnsChanged));
+        public static readonly DependencyProperty ColumnHeadersProperty = DependencyProperty.Register("ColumnHeaders", typeof(ObservableCollection<ProductDataGridColumnHeaderMetadata>), typeof(ProductItemDataGrid), new PropertyMetadata(OnColumnsChanged));
 
         static void OnColumnsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var dataGrid = d as ProductItemDataGrid;
             if (dataGrid == null) return;
-            dataGrid.Columns.Clear();
+            //dataGrid.Columns.Clear();
             //Add Product Columns
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Կոդ", Binding = new Binding("Product.Code") });
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Անվանում", Binding = new Binding("Product.Description") });
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Չմ", Binding = new Binding("Product.Mu") });
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Գին", Binding = new Binding("Product.Price") });
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Առկա է", Binding = new Binding("ExistingQuantity") });
-            //Add Stocks Columns data
+            //dataGrid.Columns.Add(new DataGridTextColumn { Header = "Կոդ", Binding = new Binding("Product.Code") });
+            //dataGrid.Columns.Add(new DataGridTextColumn { Header = "Անվանում", Binding = new Binding("Product.Description") });
+            //dataGrid.Columns.Add(new DataGridTextColumn { Header = "Չմ", Binding = new Binding("Product.Mu") });
+            //dataGrid.Columns.Add(new DataGridTextColumn { Header = "Գին", Binding = new Binding("Product.Price") });
+            //dataGrid.Columns.Add(new DataGridTextColumn { Header = "Առկա է", Binding = new Binding("ExistingQuantity") });
+            //Add Stocks Columns data   
             if (dataGrid.ColumnHeaders != null)
                 foreach (var value in dataGrid.ColumnHeaders)
                 {
                     var column = new SortableDataGridTextColumn()
                     {
-                        Header = value.Name,
-                        Binding = new Binding("StockProducts") { ConverterParameter = value.Name, Converter = new StockProductsConverter() },
-                        CustomSort = new StockProductsCustomSort() { Key = value.Name },
-                        CanUserSort = true
+                        Header = value.Header,
+                        //Binding = new Binding("StockProducts") { ConverterParameter = value.Name, Converter = new StockProductsConverter() },
+                        Binding = new Binding(value.BindingText) { ConverterParameter = value.ConverterParameter, Converter = value.Converter, Mode = BindingMode.OneWay },
+                        CustomSort = new StockProductsCustomSort() { Key = value.SortKey },
+                        CanUserSort = value.CanSort,
+                        IsReadOnly = true
                     };
                     dataGrid.Columns.Add(column);
                 }
@@ -71,7 +73,16 @@ namespace UserControls.Controls
 
 
     }
+    public class ProductDataGridColumnHeaderMetadata
+    {
+        public string Header { get; set; }
+        public string BindingText { get; set; }
+        public bool CanSort { get; set; }
+        public string SortKey { get; set; }
 
+        public IValueConverter Converter { get; set; }
+        public object ConverterParameter { get; set; }
+    }
     public class SortableDataGridTextColumn : DataGridTextColumn
     {
         public static readonly DependencyProperty CustomSortProperty = DependencyProperty.Register("CustomSort", typeof(CustomSort), typeof(SortableDataGridTextColumn));

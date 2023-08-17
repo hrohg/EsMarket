@@ -175,7 +175,7 @@ namespace ES.Business.Managers
                 catch (EntityException ex)
                 {
                     MessageBox.Show("Սերվերն անհասանելի է:");
-                    return new EsUsers();
+                    return new EsUsers { UserId = -1 };
                 }
                 catch (Exception ex)
                 {
@@ -389,7 +389,7 @@ namespace ES.Business.Managers
                 else
                 {
                     //exUser.IsActive = false;
-                    var roles = db.MemberUsersRoles.Where(s => s.EsUserId == exUser.UserId && s.MemberId==ApplicationManager.Member.Id);
+                    var roles = db.MemberUsersRoles.Where(s => s.EsUserId == exUser.UserId && s.MemberId == ApplicationManager.Member.Id);
                     foreach (var memberUsersRolese in roles)
                     {
                         db.MemberUsersRoles.Remove(memberUsersRolese);
@@ -431,7 +431,7 @@ namespace ES.Business.Managers
                 foreach (var role in exRolesInDb)
                 {
                     var roleInDb = role;
-                    var exRoles = roles.Where(s => s.MemberRoleId == roleInDb.MemberRoleId && s.MemberId==roleInDb.MemberId && s.EsUserId == roleInDb.EsUserId).ToList();
+                    var exRoles = roles.Where(s => s.MemberRoleId == roleInDb.MemberRoleId && s.MemberId == roleInDb.MemberId && s.EsUserId == roleInDb.EsUserId).ToList();
                     if (exRoles.Any())
                     {
                         foreach (var item in exRoles)

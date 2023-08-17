@@ -14,9 +14,10 @@ namespace UserControls.Views.ReceiptTickets.Views
             DataContext = vm;
         }
 
-        public InvoicePreview(PackingListForSallerViewModel vm)
+        public InvoicePreview(InvoiceViewModelBase vm)
         {
             InitializeComponent();
+            vm.IsPrintPreviewMode = true;
             DataContext = vm;
         }
     }

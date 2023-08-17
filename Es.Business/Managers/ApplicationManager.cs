@@ -87,6 +87,7 @@ namespace ES.Business.Managers
         public static string DbName { get { return _server != null ? _server.Database : string.Empty; } }
         public static string DataSource { get; private set; }
         public EsMemberModel GetMember { get { return _member; } }
+        public EsUserModel GetUser { get { return _esUser; } }
 
         public EsMembersAccountsModel GetEsMembersAccounts
         {
@@ -524,7 +525,7 @@ namespace ES.Business.Managers
                     isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Cashier) || IsInRole(UserRoleEnum.SeniorCashier);
                     break;
                 case UserRoleEnum.JuniorCashier:
-                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.JuniorCashier) || IsInRole(UserRoleEnum.Cashier);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.JuniorCashier);
                     break;
 
                 //Managers
@@ -535,7 +536,7 @@ namespace ES.Business.Managers
                     isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.Manager) || IsInRole(UserRoleEnum.SeniorManager);
                     break;
                 case UserRoleEnum.JuniorManager:
-                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.JuniorManager) || IsInRole(UserRoleEnum.Manager);
+                    isInRole = Instance.UserRoles.Any(r => (UserRoleEnum)r.Id == UserRoleEnum.JuniorManager);
                     break;
 
                 case null:

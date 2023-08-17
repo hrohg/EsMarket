@@ -31,8 +31,8 @@ namespace ES.Business.Managers
             partner.Email = item.Email;
             partner.Address = item.Address;
             partner.Discount = item.Discount;
-            partner.Debit = item.Debit ?? 0;
-            partner.Credit = item.Credit ?? 0;
+            partner.Debit = item.Debit??0;
+            partner.Credit = item.Credit??0;
             partner.MaxDebit = item.MaxDebit;
             partner.TIN = item.TIN;
             partner.PasportData = item.PasportData;
@@ -90,7 +90,37 @@ namespace ES.Business.Managers
         #endregion
 
         #region Partners public methods
-
+                    
+        public static string GenerateCardNumber()
+        {
+            //Country code
+            var code1 = "0";
+            //Application code
+            var code2 = "12014";
+            //Member code
+            //var code3 = "0005";
+            //Partner code
+            //var code4 = "3741";
+            //var checkSum = BarCodeGenerator.CalculateChecksumDigit(string.Format("{0},{1},{2}", code1, code2, code3));
+            using(var db = GetDataContext())
+            {
+                try
+                {
+                    var index = db.Partners.Count();
+                    var number = string.Format("{0}{1}{2}{3}", code1, code2, ApplicationManager.Member.Id * 100000 + index, PartnerModel.GenerageCheckSum(ApplicationManager.Member.Id * 100000 + index));
+                    while (db.Partners.Where(s => s.EsMemberId == ApplicationManager.Member.Id).Any(s => s.CardNumber == number))
+                    {
+                        index++;
+                        number = string.Format("{0}{1}{2}{3}", code1, code2, ApplicationManager.Member.Id * 100000 + index, PartnerModel.GenerageCheckSum(ApplicationManager.Member.Id * 100000 + index));
+                    }
+                    return number;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
         public static List<EsPartnersTypes> GetPartnersTypes()
         {
             return TryGetPartnersTypes();
@@ -250,7 +280,7 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    return db.Partners.Where(s => s.EsMemberId == ApplicationManager.Member.Id).Sum(s => isDebit ? (s.Debit ?? 0) : (s.Credit ?? 0));
+                    return db.Partners.Where(s => s.EsMemberId == ApplicationManager.Member.Id).Sum(s => isDebit ? s.Debit??0  : s.Credit??0);
                 }
                 catch (Exception)
                 {

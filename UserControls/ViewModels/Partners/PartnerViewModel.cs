@@ -201,21 +201,11 @@ namespace UserControls.ViewModels.Partners
         public ICommand GenerateLocalIdCommand { get { return _generateLocalIdCommand ?? (_generateLocalIdCommand = new RelayCommand(OnGenerateLocalId, CanGenerateLocalId)); } }
         private bool CanGenerateLocalId(object obj)
         {
-            return Partner != null && string.IsNullOrEmpty(Partner.CardNumber);
+            return Partner != null && string.IsNullOrEmpty(Partner.CardNumber) && false;
         }
         private void OnGenerateLocalId(object obj)
         {
-            if (!CanGenerateLocalId(obj)) return;
-            //Country code
-            var code1 = "3741";
-            //Application code
-            var code2 = "0000";
-            //Member code
-            var code3 = "0005";
-            //Partner code
-            var code4 = "3741";
-            //var checkSum = BarCodeGenerator.CalculateChecksumDigit(string.Format("{0},{1},{2}", code1, code2, code3));
-            Partner.CardNumber = string.Format("{0}{1}{2}{3}", code1, code2, code3, code4);
+            Partner.CardNumber = PartnersManager.GenerateCardNumber();
         }
 
         private ICommand _synPartnerCommand;
@@ -228,7 +218,7 @@ namespace UserControls.ViewModels.Partners
 
         private void OnSync(object obj)
         {
-            Partner.CardNumber = null;
+            //Partner.CardNumber = null;
         }
 
         private ICommand _importCommand;

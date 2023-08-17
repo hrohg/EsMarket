@@ -10,7 +10,9 @@
         <ResourceDictionary Source="Reports/ShortReportTemplate.xaml"/>
         <ResourceDictionary Source="Reports/ProductOrderTemplate.xaml"/>
         <ResourceDictionary Source="Reports/ViewProductsByProviderTemplate.xaml"/>
-        
+        <ResourceDictionary Source="Reports/ViewProducts.xaml"/>
+        <ResourceDictionary Source="Reports/CommodityTurnoverView.xaml"/>
+
         <ResourceDictionary Source="View/Views/PackingListForSaler.xaml"/>
         <ResourceDictionary Source="Editors/ManageProducts.xaml"/>
         <ResourceDictionary Source="Editors/ManagePartners.xaml"/>

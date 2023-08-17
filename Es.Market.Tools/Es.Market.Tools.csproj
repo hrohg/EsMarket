@@ -64,7 +64,9 @@
       <DependentUpon>LabelPrinter.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Es.Business\ES.Business.csproj">
       <Project>{43CED733-9E89-4270-B5AB-893846F9826D}</Project>

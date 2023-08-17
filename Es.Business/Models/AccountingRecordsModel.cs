@@ -216,6 +216,10 @@ namespace ES.Business.Models
             switch (code)
             {
                 case 224:
+                    //521-224
+                    partner = ApplicationManager.Instance.CashProvider.GetPartners.SingleOrDefault(s => s.Id == guidId);
+                    detile = partner != null ? partner.FullName : "Unknown (partner)";
+                    break;
                 case 523:
                     var cashDesk = ApplicationManager.Instance.CashProvider.GetCashDesks().SingleOrDefault(s => s.Id == guidId);
                     detile = cashDesk != null ? cashDesk.Name : "Unknown (cashdesk)";

@@ -21,7 +21,7 @@
                     <ContentControl.Resources>
                         <DataTemplate DataType="{x:Type view:ProductItemsViewModel}">
 
-                            <controls:ProductItemDataGrid ColumnHeaders="{Binding Stocks}" ItemsSource="{Binding ItemsView.View}" IsSynchronizedWithCurrentItem="True" 
+                            <controls:ProductItemDataGrid ColumnHeaders="{Binding ColumnHeaderMetadatas}" ItemsSource="{Binding ItemsView.View}" IsSynchronizedWithCurrentItem="True" 
                                                           AutoGenerateColumns="False" CanUserAddRows="False" 
                                                           CanUserSortColumns="True"
                                                           CanUserDeleteRows="False">

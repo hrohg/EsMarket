@@ -228,20 +228,20 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls
             base.SetDefaultLayout();
             MessageBox.Show("The layout will be reset after restart of the application.", "Switch to default layout", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        //protected override void OnActiveContentChanged(DependencyPropertyChangedEventArgs e)
-        //{
-        //    var oldLayoutDocument = e.OldValue as ILayoutDocumentTabItem;
-        //    if (oldLayoutDocument != null)
-        //        oldLayoutDocument.ToolsPanelChanged -= OnToolsPanelChanged;
-        //    if (!IsLoaded)
-        //    {
-        //        base.OnActiveContentChanged(e);
-        //        return;
-        //    }
-        //    var currentActive = e.NewValue as ContentControl;
+        protected override void OnActiveContentChanged(DependencyPropertyChangedEventArgs e)
+        {
+            //var oldLayoutDocument = e.OldValue as ILayoutDocumentTabItem;
+            //if (oldLayoutDocument != null)
+            //    oldLayoutDocument.ToolsPanelChanged -= OnToolsPanelChanged;
+            if (!IsLoaded)
+            {
+                base.OnActiveContentChanged(e);
+                return;
+            }
+            var currentActive = e.NewValue as ContentControl;
         //    var newLayoutDocument = e.NewValue as ILayoutDocumentTabItem;
         //    if (newLayoutDocument != null)
-        //        newLayoutDocument.ToolsPanelChanged += OnToolsPanelChanged;
+        //       newLayoutDocument.ToolsPanelChanged += OnToolsPanelChanged;
 
         //    if (currentActive != null && (e.OldValue is TabBase) && !currentActive.IsVisible)
         //    {
@@ -262,7 +262,7 @@ namespace Xceed.Wpf.AvalonDock.ExtendedAvalonDock.Controls
         //                PaneControlSelectionItemBehavior.SelectFirsVisibleChildren(anchorablePane);
         //        }
         //    }
-        //}
+        }
         //private void OnToolsPanelChanged(object sender, IToolsPanelViewModel e)
         //{
         //    UpdateCustomToolsPanelLayoutAnchorable(sender as ILayoutDocumentTabItem);

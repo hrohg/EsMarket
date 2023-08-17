@@ -6,7 +6,7 @@ using ES.Data.Enumerations;
 namespace ES.Data.Models
 {
     [Serializable]
-    public class PartnerModel:INotifyPropertyChanged
+    public class PartnerModel : INotifyPropertyChanged
     {
         #region EsUserModel properties
 
@@ -36,7 +36,7 @@ namespace ES.Data.Models
         /// </summary>
         /// 
         #region Private properties
-        private Guid _id=Guid.NewGuid();
+        private Guid _id = Guid.NewGuid();
         private int _esMemberId;
         private short? _partnersTypeId;
         private PartnerTypeModel _partnerType;
@@ -73,7 +73,7 @@ namespace ES.Data.Models
             set { _id = value; }
         }
         [XmlIgnore]
-        public int EsMemberId {get { return _esMemberId; } set {_esMemberId= value; OnPropertyChanged(EsMemberIdProperty); }}
+        public int EsMemberId { get { return _esMemberId; } set { _esMemberId = value; OnPropertyChanged(EsMemberIdProperty); } }
         [XmlIgnore]
         public EsMemberModel EsMember { get; set; }
         public short? PartnersTypeId
@@ -84,7 +84,7 @@ namespace ES.Data.Models
         [XmlIgnore]
         public PartnerType PartnerTypeEnum
         {
-            get { return PartnersTypeId!=null? (PartnerType) PartnersTypeId: PartnerType.None; }
+            get { return PartnersTypeId != null ? (PartnerType)PartnersTypeId : PartnerType.None; }
         }
         [XmlIgnore]
         public PartnerTypeModel PartnersType { get { return _partnerType; } set { _partnerType = value; } }
@@ -92,37 +92,55 @@ namespace ES.Data.Models
         public int? EsUserId { get { return _esUserId; } set { _esUserId = value; } }
         [XmlIgnore]
         public EsUserModel EsUser { get { return _esUser; } set { _esUser = value; } }
-        public string CardNumber { get { return _cardNumber; } set { _cardNumber = value; OnPropertyChanged(CardNumberProperty); OnPropertyChanged("IsRegistered"); } }
+        public string CardNumber
+        {
+            get { return _cardNumber; }
+            set
+            {
+                if (!IsValidCardNumber(value)) return;
+                _cardNumber = value; OnPropertyChanged(CardNumberProperty); OnPropertyChanged("IsRegistered");
+            }
+        }
         [XmlIgnore]
         public bool IsRegistered { get { return !string.IsNullOrEmpty(CardNumber); } }
-        public string FullName{get { return _fullName; }set { _fullName = value; OnPropertyChanged(FullNameProperty); }}
-        public string PartnerFull { get {return ((FullName ?? string.Empty) + (FullName ?? string.Empty) + (LastName ?? string.Empty) + (Mobile ?? string.Empty));} }
+        public string FullName { get { return _fullName; } set { _fullName = value; OnPropertyChanged(FullNameProperty); } }
+        public string PartnerFull { get { return ((FullName ?? string.Empty) + (FullName ?? string.Empty) + (LastName ?? string.Empty) + (Mobile ?? string.Empty)); } }
         [XmlIgnore]
-        public string Description { get { return string.Format("{0} {1}", FullName, MobileByFormating);} }
+        public string Description { get { return string.Format("{0} {1}", FullName, MobileByFormating); } }
         public string FirstName { get { return _firstName; } set { _firstName = value; OnPropertyChanged(FirstnameProperty); } }
-        public string LastName {get { return _lastName; } set { _lastName = value; OnPropertyChanged(LastNameProperty); }}
-        public string Mobile { get { return _mobile; } set
+        public string LastName { get { return _lastName; } set { _lastName = value; OnPropertyChanged(LastNameProperty); } }
+        public string Mobile
         {
-            if(value!=null)
-            {value = value.Replace(" ", string.Empty);
-            value = value.Replace("-", string.Empty);}
-            _mobile = value; OnPropertyChanged(MobileProperty); } }
+            get { return _mobile; }
+            set
+            {
+                if (value != null)
+                {
+                    value = value.Replace(" ", string.Empty);
+                    value = value.Replace("-", string.Empty);
+                }
+                _mobile = value; OnPropertyChanged(MobileProperty);
+            }
+        }
         [XmlIgnore]
-        public string MobileByFormating { get
+        public string MobileByFormating
         {
-            return Mobile==null || Mobile.Length != 12? Mobile: string.Format("({0} {1}) {2} {3} {4}", 
-                Mobile.Substring(0, 4), 
-                Mobile.Substring(4, 2),
-                Mobile.Substring(6, 2), 
-                Mobile.Substring(8, 2), 
-                Mobile.Substring(10, 2));
-        } }
-        public string Email{get { return _email; }set { _email = value; OnPropertyChanged(EmailProperty); }}
-        public string Address{get { return _address; }set { _address= value; OnPropertyChanged(AddressProperty);}}
+            get
+            {
+                return Mobile == null || Mobile.Length != 12 ? Mobile : string.Format("({0} {1}) {2} {3} {4}",
+                    Mobile.Substring(0, 4),
+                    Mobile.Substring(4, 2),
+                    Mobile.Substring(6, 2),
+                    Mobile.Substring(8, 2),
+                    Mobile.Substring(10, 2));
+            }
+        }
+        public string Email { get { return _email; } set { _email = value; OnPropertyChanged(EmailProperty); } }
+        public string Address { get { return _address; } set { _address = value; OnPropertyChanged(AddressProperty); } }
         [XmlIgnore]
-        public decimal? Discount{get { return _discount; }set { _discount = value; OnPropertyChanged(DiscountProperty); }}
+        public decimal? Discount { get { return _discount; } set { _discount = value; OnPropertyChanged(DiscountProperty); } }
         [XmlIgnore]
-        public decimal Debit {get { return _debit; }set { _debit= value; OnPropertyChanged(DebitProperty); }}
+        public decimal Debit { get { return _debit; } set { _debit = value; OnPropertyChanged(DebitProperty); } }
         [XmlIgnore]
         public decimal Credit
         {
@@ -142,13 +160,13 @@ namespace ES.Data.Models
         public string PasportData { get { return _pasportData; } set { _pasportData = value; OnPropertyChanged(PasportDataProperty); } }
         public string JuridicalAddress { get { return _juridicalAddress; } set { _juridicalAddress = value; OnPropertyChanged(JuridicalAddressProperty); } }
         public string Bank { get { return _bank; } set { _bank = value; OnPropertyChanged(BankProperty); } }
-        public string BankAccount {get { return _bankAccount; } set { _bankAccount = value; OnPropertyChanged(BankAccountProperty); }}
+        public string BankAccount { get { return _bankAccount; } set { _bankAccount = value; OnPropertyChanged(BankAccountProperty); } }
         public string Notes { get { return _notes; } set { _notes = value; OnPropertyChanged(NotesProperty); } }
         #endregion
 
         public PartnerModel()
         {
-            
+
         }
         public PartnerModel(int memberId)
         {
@@ -159,7 +177,36 @@ namespace ES.Data.Models
         /// </summary>
 
         #region private methods
+        private bool IsValidCardNumber(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value) || value.Length < 16) return false;
+
+            int.TryParse(value.Substring(15, 1), out int checksum);
+            int.TryParse(value.Substring(6, 9), out int number);
+            return GenerageCheckSum(number) == checksum;
+        }
         #endregion
+
+        public static int GenerageCheckSum(int cardindex)
+        {
+            int sum = 0, d;
+            int a = 0;
+
+            while (cardindex > 0)
+            {
+                d = cardindex % 10;
+                if (a % 2 == 0)
+                    d = d * 2;
+                if (d > 9)
+                    d -= 9;
+                sum += d;
+                a++;
+                cardindex = cardindex / 10;
+            }
+
+            return 9 - (sum % 10);
+        }
+
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)

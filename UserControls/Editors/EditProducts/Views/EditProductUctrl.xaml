@@ -299,7 +299,7 @@
                     <DataGridTextColumn Binding="{Binding Path=ProfitPercent, StringFormat={}{0:#,#.##}}" Header="Մանրածախ տոկոս" Width="Auto" IsReadOnly="True"/>
                     <DataGridTextColumn Binding="{Binding Path=Price, StringFormat={}{0:#,#.##}}" Header="Մանրածախ գին" Width="Auto" IsReadOnly="True"/>
                     <DataGridTextColumn Binding="{Binding Path=Discount, StringFormat={}{0:#,#.##}}" Header="Զեղչ" Width="Auto" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Path=Note}" Header="Նշումներ" Width="Auto" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Path=LastModifiedDate}" Header="Խմբագրվել է" Width="Auto" IsReadOnly="True" SortMemberPath="LastModifiedDate" />
                     <DataGridTemplateColumn Header="Edit" Visibility="Collapsed">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

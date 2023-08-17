@@ -137,16 +137,16 @@ namespace ES.Business.Helpers
                 : new List<ProductModel>();
 
         }
-        public static List<InvoiceModel> SelectInvoice(short invoiceTypeId, bool? isApproved = null, bool selectMultiple = false)
-        {
-            var items = InvoicesManager.GetInvoices((InvoiceType)invoiceTypeId);
-            if (items == null) return new List<InvoiceModel>();
-            if (isApproved != null)
-            {
-                items = items.Where(s => (s.ApproveDate != null && (bool)isApproved) || (s.ApproveDate == null && (bool)!isApproved)).ToList();
-            }
-            return SelectInvoice(items, selectMultiple);
-        }
+        //public static List<InvoiceModel> SelectInvoice(InvoiceType invoiceType, DateTime startsFrom, bool? isApproved = null, bool selectMultiple = false)
+        //{
+        //    var items = InvoicesManager.GetInvoices(new List<InvoiceType> { invoiceType }, startsFrom);
+        //    if (items == null) return new List<InvoiceModel>();
+        //    if (isApproved != null)
+        //    {
+        //        items = items.Where(s => (s.ApproveDate != null && (bool)isApproved) || (s.ApproveDate == null && (bool)!isApproved)).ToList();
+        //    }
+        //    return SelectInvoice(items, selectMultiple);
+        //}
 
         public static List<InvoiceModel> SelectInvoice(List<InvoiceModel> invoices, bool selectMultiple)
         {

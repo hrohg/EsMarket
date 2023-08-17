@@ -30,7 +30,31 @@ namespace UserControls.ViewModels.Invoices
                 ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBySingle = value;
             }
         }
-
+        public override bool DenyChangeQuantity
+        {
+            get { return ApplicationManager.IsInRole(UserRoleEnum.JuniorSeller) || base.DenyChangeQuantity; }
+        }
+        public override bool DenyChangePrice
+        {
+            get { return !ApplicationManager.IsInRole(UserRoleEnum.SaleManager) && !ApplicationManager.IsInRole(UserRoleEnum.Manager) || ApplicationManager.IsInRole(UserRoleEnum.JuniorSeller) || base.DenyChangePrice; }
+        }
+        public override StockModel FromStock
+        {
+            get { return base.FromStock; }
+            set
+            {
+                base.FromStock = value;
+                Invoice.ProviderName = value != null ? value.FullName : string.Empty;
+            }
+        }
+        public override StockModel ToStock
+        {
+            get { return base.ToStock; }
+            set
+            {
+                base.ToStock = value;                
+            }
+        }
         #endregion External properties
 
         #region Contructors
@@ -52,20 +76,21 @@ namespace UserControls.ViewModels.Invoices
             if (FromStocks == null) FromStocks = StockManager.GetStocks(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSaleStocks.ToList()).ToList();
             AddBySingle = ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBySingle;
         }
-
+        protected override void LoadInvoiceItem(InvoiceItemsModel invoiceItem)
+        {
+            var productPrice = GetProductPrice(invoiceItem.Product);
+            if (invoiceItem.Price != productPrice)
+            {
+                if (MessageBox.Show(string.Format("{0} գինը {1} փոփոխվել է: Ցանկանու՞մ եք կիրառել նոր գինը {2}:", invoiceItem.Description, invoiceItem.Price, productPrice), "Գնի փոփոխություն", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    invoiceItem.Price = productPrice;
+                }
+            }
+            base.LoadInvoiceItem(invoiceItem);
+        }
         protected override void OnPartnerChanged()
         {
             base.OnPartnerChanged();
-            foreach (var item in InvoiceItems)
-            {
-                item.Price = GetProductPrice(item.Product);
-            }
-            RaisePropertyChanged("InvoiceItems");
-            if (InvoiceItem != null && InvoiceItem.Product != null)
-            {
-                InvoiceItem.Price = InvoiceItem.Product.GetProductPrice();
-            }
-            RaisePropertyChanged("InvoiceItem");
         }
         protected override bool SetQuantity(bool addSingle)
         {

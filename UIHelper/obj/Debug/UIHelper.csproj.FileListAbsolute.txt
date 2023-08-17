@@ -1,0 +1,49 @@
+D:\Users\Hrayr\VsProjects\EsMarket\UIHelper\bin\Debug\UIHelper.dll
+D:\Users\Hrayr\VsProjects\EsMarket\UIHelper\bin\Debug\UIHelper.pdb
+D:\Users\Hrayr\VsProjects\EsMarket\UIHelper\obj\Debug\UIHelper.csprojAssemblyReference.cache
+D:\Users\Hrayr\VsProjects\EsMarket\UIHelper\obj\Debug\Windows\SelectWindow.g.cs
+D:\Users\Hrayr\VsProjects\EsMarket\UIHelper\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\Users\Hrayr\VsProjects\EsMarket\UIHelper\obj\Debug\UIHelper_MarkupCompile.cache
+D:\Users\Hrayr\VsProjects\EsMarket\UIHelper\obj\Debug\UIHelper_MarkupCompile.lref
+D:\Users\Hrayr\VsProjects\EsMarket\UIHelper\obj\Debug\Windows\SelectWindow.baml
+D:\Users\Hrayr\VsProjects\EsMarket\UIHelper\obj\Debug\UIHelper.g.resources
+D:\Users\Hrayr\VsProjects\EsMarket\UIHelper\obj\Debug\UIHelper.csproj.CoreCompileInputs.cache
+D:\Users\Hrayr\VsProjects\EsMarket\UIHelper\obj\Debug\UIHelper.dll
+D:\Users\Hrayr\VsProjects\EsMarket\UIHelper\obj\Debug\UIHelper.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\UIHelper.csproj.AssemblyReference.cache
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\Windows\SelectWindow.g.cs
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\UIHelper_MarkupCompile.cache
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\UIHelper_MarkupCompile.lref
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\UIHelper.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\UIHelper.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\ES.Common.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\CashReg.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\Xceed.Wpf.AvalonDock.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\System.Windows.Interactivity.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\TaxServiceInvoices.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\Newtonsoft.Json.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\ES.Common.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\Xceed.Wpf.AvalonDock.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\System.Windows.Interactivity.xml
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\cs-CZ\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\en-US\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\hy-AM\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\kk-KZ\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\ru-RU\ES.Common.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\de\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\es\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\fr\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\hu\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\it\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\pt-BR\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\ro\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\ru\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\sv\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\zh-Hans\Xceed.Wpf.AvalonDock.resources.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\Windows\SelectWindow.baml
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\UIHelper.g.resources
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\UIHelper.csproj.CoreCompileInputs.cache
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\UIHelper.csproj.CopyComplete
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\UIHelper.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\UIHelper.pdb

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -13,12 +14,13 @@ using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Data.Enumerations;
+using ES.Data.Models;
+using ES.Data.Models.Products;
 using Shared.Helpers;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
 using UserControls.Views.ReceiptTickets.Views;
 using CashDeskManager = UserControls.Managers.CashDeskManager;
-using ProductModel = ES.Data.Models.Products.ProductModel;
 
 namespace UserControls.ViewModels.Invoices
 {
@@ -27,6 +29,7 @@ namespace UserControls.ViewModels.Invoices
     {
         #region Internal properties
         private bool _useExtPos;
+        private bool _useDiscountBond;
         #endregion
 
         #region External properties
@@ -54,7 +57,7 @@ namespace UserControls.ViewModels.Invoices
             }
         }
         public string EcrButtonTooltip { get { return IsEcrActivated ? "ՀԴՄ ակտիվ է" : "ՀԴՄ պասիվ է"; } }
-
+        public string BondButtonTooltip { get { return UseDiscountBond ? "Կիրառել բոնուս" : "Բոնուս չի կիրառվում"; } }
         #endregion IsEcrActivated
 
         #region IsPrintTicket
@@ -81,6 +84,7 @@ namespace UserControls.ViewModels.Invoices
                 ApplicationManager.Settings.IsPrintSaleTicket = value;
             }
         }
+
         public string SalePrinterButtonTooltip { get { return IsPrintTicket ? "Վաճառքի տպիչն ակտիվ է:" : "Վաճառքի տպիչը պասիվ է:"; } }
 
         #endregion IsPrintTicket
@@ -102,21 +106,55 @@ namespace UserControls.ViewModels.Invoices
                 return UseExtPos ? "Օգտագործել արտաքին POS տերմինալ" : "Օգտագործել ՀԴՄ ներքին POS տերմինալ";
             }
         }
+        public bool UseDiscountBond
+        {
+            get { return _useDiscountBond && HasDiscountBond; }
+            set
+            {
+                _useDiscountBond = value;
+                Invoice.UseDiscountBond = value;
+                RaisePropertyChanged(() => UseDiscountBond); RaisePropertyChanged(() => BondButtonTooltip);
+                SetDiscountBond();
+            }
+        }
+        public bool HasDiscountBond
+        {
+            get
+            {
+                return ApplicationManager.Settings.Branch != null && ApplicationManager.Settings.Branch.IsActive && ApplicationManager.Settings.Branch.UseDiscountBond && ApplicationManager.Settings.Branch.DefaultDiscount >= 0;
+            }
+        }
+
+
+        public override bool AllowCashReceivable
+        {
+            get
+            {
+                return base.AllowCashReceivable && ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleCashDesks.Any() && string.IsNullOrEmpty(Partner.TIN);
+            }
+        }
+        public override bool AllowByCheckReceivable
+        {
+            get
+            {
+                return base.AllowByCheckReceivable && ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBankAccounts.Any();
+            }
+        }
         #endregion
 
         #region Constructors
         public SaleInvoiceViewModel()
             : base(InvoiceType.SaleInvoice)
         {
-
+            UseDiscountBond = HasDiscountBond;
         }
         public SaleInvoiceViewModel(InvoiceType type)
-            : base(type)
+                    : base(type)
         {
 
         }
         public SaleInvoiceViewModel(Guid id)
-            : base(id)
+                    : base(id)
         {
 
         }
@@ -139,20 +177,107 @@ namespace UserControls.ViewModels.Invoices
         }
         protected override void OnPartnerChanged()
         {
+            if (Invoice.IsApproved) return;
+            if (Partner != null)
+            {
+                Invoice.RecipientName = Partner.FullName;
+
+                switch (Partner.PartnersTypeId)
+                {
+                    case (short)PartnerType.Dealer:
+                        Invoice.Discount = Partner.Discount;
+                        break;
+                    default:
+                        Invoice.Discount = Partner.Discount.HasValue ? Partner.Discount : UseDiscountBond ? (decimal)ApplicationManager.Settings.Branch.DefaultDiscount : (decimal?)null;
+                        break;
+                }
+            }
+            else
+            {
+                Invoice.RecipientName = null;
+                Invoice.Discount = 0;
+            }
+            if (InvoiceItem != null && InvoiceItem.Product != null)
+            {
+                InvoiceItem.Price = GetProductPrice(InvoiceItem.Product);
+                //InvoiceItem.Discount = GetProductDiscount(InvoiceItem.Product);
+            }
+            foreach (var invoiceItem in InvoiceItems)
+            {
+                if (invoiceItem.HasDiscount) continue;
+                invoiceItem.Price = GetProductPrice(invoiceItem.Product);
+                //if (invoiceItem.Discount.HasValue) invoiceItem.Price = Math.Max((invoiceItem.ProductPrice ?? 0) * (1 - invoiceItem.Discount.Value / 100), invoiceItem.Product.ProductDealerPrice);
+                //Do not set a discount, because the price is indicated.
+                //invoiceItem.Discount = GetProductDiscount(invoiceItem.Product);
+            }
+            OnInvoiceItemsPropertyChanged(null, null);
+            //SetDiscountBond();
             base.OnPartnerChanged();
-            Invoice.RecipientName = Partner != null ? Partner.FullName : null;
-            SetDiscountBond();
         }
         protected override void OnInvoiceItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             base.OnInvoiceItemsChanged(sender, e);
+            if (!Invoice.IsApproved) SetDiscountBond();
+        }
+        protected override void OnInvoiceItemsPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnInvoiceItemsPropertyChanged(sender, e);
             SetDiscountBond();
         }
-
+        protected override decimal GetProductPrice(ProductModel product)
+        {
+            decimal price = 0;
+            if (product == null) return price;
+            if (Partner == null) return product.ProductPrice;
+            var productDealerPrice = product.ProductDealerPrice;
+            switch (Partner.PartnersTypeId)
+            {
+                case (short)PartnerType.Dealer:
+                    return productDealerPrice;
+                default:
+                    if (Invoice.Discount != 0)
+                    {
+                        price = Math.Min((product.Price ?? 0) * (1 - (Invoice.Discount ?? 0) / 100), product.ProductPrice);
+                        //
+                        if (product.HasDealerPrice) price = Math.Max(productDealerPrice, price);
+                    }
+                    else
+                    {
+                        price = product.Price ?? 0;
+                    }
+                    return price;
+            }
+        }
+        protected override void OnInvoiceItemChanged(InvoiceItemsModel invoiceItem)
+        {
+            base.OnInvoiceItemChanged(invoiceItem);
+            //SetDiscountBond();
+        }
         private void SetDiscountBond()
         {
-            var bond = ApplicationManager.Settings.Branch != null && ApplicationManager.Settings.Branch.IsActive && ApplicationManager.Settings.Branch.UseDiscountBond ? Invoice.Amount - Invoice.Total : 0;
-            InvoicePaid.DiscountBond = bond;
+            if (UseDiscountBond && Partner != null && Invoice.Discount == null)
+            {
+                //Invoice.Discount = (decimal)ApplicationManager.Settings.Branch.DefaultDiscount;
+                RaisePropertyChanged("ActualPercentage");
+                RaisePropertyChanged("InvoiceProfit");
+            }
+            //foreach (InvoiceItemsModel invoiceItem in InvoiceItems)
+            //    //{
+            //    //    decimal discount = 0;
+            //    //    if (Partner != null && (Partner.PartnersTypeId != (short)PartnerType.Dealer || !invoiceItem.Product.HasDealerPrice))
+            //    //        discount = Invoice.Discount == 0 ? 0 : invoiceItem.Discount ?? Invoice.Discount ?? 0;
+
+            //    //    //var price = (invoiceItem.Price ?? 0) * (1 - (discount) / 100);
+            //    //    ////if(invoiceItem.Product.HasDealerPrice) price = Math.Max(invoiceItem.Product.GetProductDealerPrice(), price);
+            //    //    //total += price * (invoiceItem.Quantity ?? 0);
+            //    //}
+            //    total = InvoiceItems.Sum(s => s.Price ?? 0 * s.Quantity ?? 0);
+
+            var amount = InvoiceItems.Sum(s => (s.ProductPrice ?? 0) * (s.Quantity ?? 0));
+            var total = Invoice.Total = InvoiceItems.Sum(s => (s.Price ?? 0) * (s.Quantity ?? 0));
+
+            Invoice.Amount = amount;
+            InvoicePaid.Total = Invoice.Total = total;
         }
 
         private void PrintInvoiceTicket(ResponseReceiptModel ecrResponseReceiptModel)
@@ -170,20 +295,13 @@ namespace UserControls.ViewModels.Invoices
             PrintManager.Print(ticket, ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSalePrinter);
         }
 
-
         protected override bool CanRemoveInvoiceItem(object o)
         {
-            return base.CanRemoveInvoiceItem(o) && ApplicationManager.IsInRole(UserRoleEnum.Seller);
+            return base.CanRemoveInvoiceItem(o) && ApplicationManager.IsInRole(UserRoleEnum.Seller) && !ApplicationManager.IsInRole(UserRoleEnum.JuniorSeller);
         }
-        protected bool UseDiscountBond { get { return ApplicationManager.Settings.Branch != null && ApplicationManager.Settings.Branch.IsActive && ApplicationManager.Settings.Branch.UseDiscountBond; } }
         protected override void OnPaidInvoice(object obj)
         {
             CashDeskManager.OpenCashDesk();
-            if (UseDiscountBond)
-            {
-                InvoicePaid.Paid = Invoice.Amount;
-                return;
-            }
             base.OnPaidInvoice(obj);
         }
 
@@ -201,10 +319,20 @@ namespace UserControls.ViewModels.Invoices
                 price = ii.Product.Price ?? 0,
                 qty = ii.Quantity ?? 0,
                 discount = ii.Discount,
-                discountType = ii.Discount != null && ii.Discount > 0 ? 1 : (int?)null,
-                dep = ii.Product.TypeOfTaxes == default(TypeOfTaxes) || ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.All(s => s.IsActive && s.CashierDepartment.Type != (int)ii.Product.TypeOfTaxes) ? ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.CashierDepartment.Id : ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.Single(s => s.IsActive && s.CashierDepartment.Type == (int)ii.Product.TypeOfTaxes).CashierDepartment.Id,
+                discountType = ii.Discount != null && ii.Discount > 0 ? 8 : (int?)null,
+                dep =
+                ii.Product.TypeOfTaxes != default(TypeOfTaxes) && ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.Any(s => s.IsActive && s.TypeOfTaxesId == (int)ii.Product.TypeOfTaxes) ?
+                                                                        ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.First(s => s.IsActive && s.TypeOfTaxesId == (int)ii.Product.TypeOfTaxes).SelectedDepartmentId :
+                                                                        ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.CashierDepartment.Id,
                 adgCode = ii.Product.HcdCs
             }).ToList();
+
+            //MessageManager.OnMessage(
+            //    string.Format(" {0} {1} {2}", InvoiceItems.First().Product.TypeOfTaxes, 
+            //    ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.Where(s => s.IsActive).Select(s => s.SelectedDepartmentId).ToList().Aggregate<int, string>("", (text, next) => text += next + " "),
+            //    ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.Where(s => s.IsActive).Select(s => s.TypeOfTaxesId).ToList().Aggregate<int, string>("", (text, next) => text += next + " "))
+            //    );
+            //return;
             var invoicePaid = new EcrPaid
             {
                 PaidAmount = InvoicePaid.Paid != null ? (double)InvoicePaid.Paid : 0,
@@ -244,28 +372,6 @@ namespace UserControls.ViewModels.Invoices
             }
         }
 
-        protected override decimal GetProductPrice(ProductModel product)
-        {
-
-            if (Partner == null || product == null)
-            {
-                return 0;
-            }
-
-            var price = base.GetProductPrice(product);
-            var discount = Partner.Discount ?? (ApplicationManager.Settings.Branch != null && ApplicationManager.Settings.Branch.UseDiscountBond && ApplicationManager.Settings.Branch.DefaultDiscount != null ? (decimal)ApplicationManager.Settings.Branch.DefaultDiscount : 0);
-            switch (Partner.PartnersTypeId)
-            {
-                case (short)PartnerType.Dealer:
-                    break;
-                default:
-                    //if (!ApplicationManager.Settings.Branch.UseDiscountBond) 
-                    price -= (price * (Partner != null ? discount / 100 : 0));
-                    break;
-            }
-            return product.HasDealerPrice ? Math.Max(price, product.GetProductDealerPrice()) : price;
-        }
-
         //private decimal GetPartnerDiscountBond(ProductModel product)
         //{
         //    var price = GetProductPrice(product);
@@ -274,22 +380,18 @@ namespace UserControls.ViewModels.Invoices
         //    return (product.Price ?? 0) - (product.HasDealerPrice ? Math.Max(price, product.GetProductDealerPrice()) : price);
         //}
 
-        private bool IsPaidValid
+        protected virtual bool IsPaidValid()
         {
-            get
-            {
-                return InvoicePaid.IsPaid &&
-                       InvoicePaid.Change <= (InvoicePaid.Paid ?? 0) &&
-                       Partner != null &&
-                       (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit &&
-                       (InvoicePaid.ReceivedPrepayment ?? 0) <= Partner.Credit;
-            }
+            return InvoicePaid.IsPaid &&
+        InvoicePaid.Change <= (InvoicePaid.Paid ?? 0) &&
+        Partner != null &&
+        (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit &&
+        (InvoicePaid.ReceivedPrepayment ?? 0) <= Partner.Credit;
         }
         protected override bool CanApprove(object o)
         {
-            return base.CanApprove(o) && IsPaidValid;
+            return base.CanApprove(o) && IsPaidValid();
         }
-
 
         #endregion
 
@@ -327,6 +429,7 @@ namespace UserControls.ViewModels.Invoices
                     IsLoading = false;
                     return;
                 }
+                else { Invoice = invoice; }
 
                 //Open Cash desk
                 if (!string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort) || !string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveCashDeskPrinter) && InvoicePaid.ByCash > 0)
@@ -373,16 +476,18 @@ namespace UserControls.ViewModels.Invoices
                         price = ii.Product.Price ?? 0,
                         qty = ii.Quantity ?? 0,
                         discount = ii.Discount,
-                        discountType = ii.Discount != null ? 1 : (int?)null,
-                        dep = ii.Product.TypeOfTaxes == default(TypeOfTaxes) || ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.All(s => s.IsActive && s.CashierDepartment.Type != (int)ii.Product.TypeOfTaxes) ? ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.CashierDepartment.Id : ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.Single(s => s.IsActive && s.CashierDepartment.Type == (int)ii.Product.TypeOfTaxes).CashierDepartment.Id,
+                        discountType = ii.Discount > 0 ? 1 : (int?)null,
+                        dep = ii.Product.TypeOfTaxes == default(TypeOfTaxes) || ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.All(s => s.IsActive && s.CashierDepartment.Type != (int)ii.Product.TypeOfTaxes) ?
+                        ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.CashierDepartment.Id :
+                        ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.First(s => s.IsActive && s.CashierDepartment.Type == (int)ii.Product.TypeOfTaxes).CashierDepartment.Id,
                         adgCode = ii.Product.HcdCs
                     }).ToList();
                     var paid = new EcrPaid
                     {
-                        PaidAmount = (double)(InvoicePaid.Paid ?? 0) + (double)(InvoicePaid.AccountsReceivable ?? 0),
-                        PaidAmountCard = InvoicePaid.ByCheck != null ? (double)InvoicePaid.ByCheck : 0,
+                        PaidAmount = (double)(InvoicePaid.Paid ?? 0),
+                        PaidAmountCard = InvoicePaid.ByCheck.HasValue ? (double)InvoicePaid.ByCheck : 0,
                         PartialAmount = 0,
-                        PrePaymentAmount = (double)(InvoicePaid.ReceivedPrepayment ?? 0),
+                        PrePaymentAmount = (double)(InvoicePaid.ReceivedPrepayment ?? 0) + (double)(InvoicePaid.AccountsReceivable ?? 0),
                         UseExtPos = UseExtPos
                     };
                     //paid.PaidAmount = (double)items.Sum(s => s.DiscountType == null ? 
@@ -412,11 +517,6 @@ namespace UserControls.ViewModels.Invoices
                 return null;
             }
             return responceReceiptModel;
-        }
-
-        public override bool DenyChangePrice
-        {
-            get { return !ApplicationManager.IsInRole(UserRoleEnum.SaleManager) && base.DenyChangePrice; }
         }
 
         public override bool Close()
