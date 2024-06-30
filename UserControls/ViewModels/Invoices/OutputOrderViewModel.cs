@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -20,6 +21,7 @@ namespace UserControls.ViewModels.Invoices
 {
     public class OutputOrderViewModel : InvoiceViewModel
     {
+        
         #region External properties
         public override bool AddBySingle
         {
@@ -52,7 +54,7 @@ namespace UserControls.ViewModels.Invoices
             get { return base.ToStock; }
             set
             {
-                base.ToStock = value;                
+                base.ToStock = value;
             }
         }
         #endregion External properties
@@ -70,11 +72,44 @@ namespace UserControls.ViewModels.Invoices
         #endregion Constructors
 
         #region Internal methods
+        private void OnInputEmark(InvoiceItemsModel invoiceModel)
+        {
+            var isAxciseItem = invoiceModel != null && invoiceModel.Product != null && Ecr.Manager.Helpers.MarkHelper.GetEmarkExciseList().Contains(invoiceModel.Product.HcdCs);
+            if (isAxciseItem)
+            {
+                string eMark;
+                while (invoiceModel.Quantity < invoiceModel.AdditionalData.EMarks.Count)
+                {
+                    WaitingEmark = true;
+                    eMark = Ecr.Manager.Helpers.MarkHelper.ReadEmark(string.Format("Մուտքագրել հեռացվող ապրանքի նույնականացման կոդը ({0}):", Description));
+                    WaitingEmark = false;
+                    if (eMark == null) break;
+                    invoiceModel.AdditionalData.EMarks.Remove(eMark);
+                }
+                while (invoiceModel.Quantity > invoiceModel.AdditionalData.EMarks.Count)
+                {
+                    eMark = GetInvoiceItemEMark(string.Format("Մուտքագրել ապրանքի նույնականացման կոդը ({0}):", Description));
+                    if (eMark == null) break;
+                    if (!string.IsNullOrWhiteSpace(eMark)) invoiceModel.AdditionalData.EMarks.Add(eMark);
+                }
+            }
+        }
+        protected string[] GetEmarks()
+        {
+            var eMarks = new List<string>();
+            foreach (var invoiceItem in InvoiceItems)
+            {
+                var emarks = invoiceItem.AdditionalData.EMarks.ToList();
+                eMarks.AddRange(emarks);
+            }
+            return eMarks.ToArray();
+        }
         protected override void OnInitialize()
         {
             base.OnInitialize();
             if (FromStocks == null) FromStocks = StockManager.GetStocks(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSaleStocks.ToList()).ToList();
             AddBySingle = ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBySingle;
+            InputEmarkCommand = new RelayCommand<InvoiceItemsModel>(OnInputEmark);
         }
         protected override void LoadInvoiceItem(InvoiceItemsModel invoiceItem)
         {
@@ -87,6 +122,11 @@ namespace UserControls.ViewModels.Invoices
                 }
             }
             base.LoadInvoiceItem(invoiceItem);
+        }
+        public override void SetExternalText(ExternalTextImputEventArgs e)
+        {
+            if (!WaitingEmark) base.SetExternalText(e);
+            else { SendTextToFocusedElement(e.Text); }
         }
         protected override void OnPartnerChanged()
         {
@@ -105,7 +145,7 @@ namespace UserControls.ViewModels.Invoices
                 return false;
             }
 
-            if ((InvoiceItem.Quantity == null || InvoiceItem.Quantity == 0))
+            if (InvoiceItem.Quantity == null || InvoiceItem.Quantity == 0)
             {
                 if (addSingle && exCount >= 1)
                 {
@@ -161,13 +201,23 @@ namespace UserControls.ViewModels.Invoices
 
             InvoicePaid.CashDeskForTicketId = bankAccount != null ? bankAccount.Id : (Guid?)null;
         }
+        /// <summary>
+        /// Set quantity and add invoice item
+        /// </summary>
+        /// <param name="o"></param>
         protected override void PreviewAddInvoiceItem(object o)
         {
-            if (!SetQuantity(AddBySingle))
-            {
-                //return;
-            }
+            SetQuantity(AddBySingle);
             base.PreviewAddInvoiceItem(o);
+        }
+        /// <summary>
+        /// Add invoice item and check for emarks
+        /// </summary>
+        /// <param name="invoiceItem"></param>
+        protected override void OnAddInvoiceItem(InvoiceItemsModel invoiceItem)
+        {
+            OnInputEmark(invoiceItem);
+            base.OnAddInvoiceItem(invoiceItem);
         }
 
         protected override InvoiceItemsModel GetInvoiceItem(string code)
@@ -264,7 +314,7 @@ namespace UserControls.ViewModels.Invoices
         #endregion External methods
 
         #region Commands
-
+        public ICommand InputEmarkCommand { get; private set; }
         private ICommand _checkExistingCommand;
         public ICommand CheckExistingCommand
         {

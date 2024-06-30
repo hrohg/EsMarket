@@ -1,0 +1,10 @@
+﻿<Application x:Class="ES.Market.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             DispatcherUnhandledException="Application_DispatcherUnhandledException"
+             Startup="Application_Startup"
+             ShutdownMode="OnMainWindowClose">
+   <Application.Resources>
+        <ResourceDictionary Source="pack://application:,,,/ResourceLibrary;component/Resources/Resources.xaml"/>
+    </Application.Resources>
+</Application>

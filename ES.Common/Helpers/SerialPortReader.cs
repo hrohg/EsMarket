@@ -10,77 +10,98 @@ namespace ES.Common.Helpers
     public class SerialPortReader : IDisposable
     {
         private bool listenSerialPort;
-        private SerialPort serialPort;
-        private Action<string> _serialPort_DataReceived;
+        private string _portName;
+        protected SerialPort SerialPort;
+        private Action<string> _dataReceivedCallback;
 
         private SerialPortReader(string portName)
         {
-            if (string.IsNullOrEmpty(portName)) return;
+            _portName = portName;
+        }
+
+        public SerialPortReader(string serialPort, Action<string> dataReceivedCallback) : this(serialPort)
+        {
+            _dataReceivedCallback = dataReceivedCallback;
+        }
+        public void Start()
+        {
+            if (listenSerialPort) return;
+            new Thread(() => { ReadSerialPort(); }).Start();
+        }
+        public void Dispose()
+        {
+            listenSerialPort = false;
+            if (SerialPort != null && SerialPort.IsOpen) SerialPort.Close();
+            if (SerialPort != null)
+            {
+                SerialPort.Dispose();
+            }
+            SerialPort = null;
+        }
+        private void ReadSerialPort()
+        {
+            if (string.IsNullOrEmpty(_portName)) return;
             try
             {
-                serialPort = new SerialPort()
+                listenSerialPort = true;
+                SerialPort = new SerialPort()
                 {
-                    PortName = portName,
+                    PortName = _portName,
                     BaudRate = 9600,
                     Parity = Parity.None,
                     StopBits = StopBits.One,
                     DataBits = 8,
                     Handshake = Handshake.None
                 };
-                if (serialPort.IsOpen) serialPort.Close();
-                serialPort.DtrEnable = true;
-                serialPort.Open();
-                serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
-                //serialPort.Close();
+                if (SerialPort.IsOpen) SerialPort.Close();
+                SerialPort.DtrEnable = true;
+                SerialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+                SerialPort.Open();
 
                 //var listenSerialPortsThread = new Thread(ListenSerialPorts);
                 //listenSerialPortsThread.Start();
             }
-            catch (Exception ex) { MessageManager.OnMessage(ex.ToString()); listenSerialPort = false; serialPort.Close(); }
+            catch (Exception ex) { MessageManager.OnMessage(ex.ToString()); listenSerialPort = false; SerialPort.Close(); }
         }
-
-        public SerialPortReader(string serialPort, Action<string> serialPort_DataReceived) : this(serialPort)
+        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
-            _serialPort_DataReceived = serialPort_DataReceived;
+            SerialPort sp = sender as SerialPort;
+            if (sender != null)
+            {
+                try
+                {
+                    string indata = sp.ReadExisting().Trim();
+                    _dataReceivedCallback(indata);
+                }
+                catch(Exception ex)
+                {
+                    MessageManager.OnMessage(ex.ToString());
+                }
+            }
         }
 
-        void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
-        {
-            SerialPort sp = (SerialPort)sender;
-            string indata = sp.ReadExisting().Trim();
-            //MessageManager.OnMessage(string.Format("Data Received:{0} length:{1} ", indata, indata.Length));
-            _serialPort_DataReceived(indata);
-        }
-
+        /// <summary>
+        /// Not in use right now.
+        /// </summary>
         private void ListenSerialPorts()
         {
             listenSerialPort = true;
-            serialPort.DtrEnable = true;
+            SerialPort.DtrEnable = true;
             try
             {
-                serialPort.Open();
+                SerialPort.Open();
                 while (listenSerialPort)
                 {
-
                     MessageManager.OnMessage("serial port listening open.");
-                    string message = serialPort.ReadLine();
+                    string message = SerialPort.ReadLine();
                     MessageManager.OnMessage(new Models.MessageModel(message, MessageTypeEnum.Information));
                 }
-                serialPort.Close();
+                SerialPort.Close();
             }
             catch (TimeoutException) { }
             catch (Exception ex) { MessageManager.OnMessage(new Models.MessageModel(ex.Message, MessageTypeEnum.Warning)); listenSerialPort = false; }
 
 
-        }
-        public void Dispose()
-        {
-            listenSerialPort = false;
-            if (serialPort != null)
-            {
-                serialPort.Dispose();
-            }
-            if (serialPort != null && serialPort.IsOpen) serialPort.Close();
         }
     }
 }

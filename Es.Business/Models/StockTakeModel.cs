@@ -102,7 +102,7 @@ namespace ES.Business.Models
         public Guid StockTakeId { get { return _stockTakeId; } set { _stockTakeId = value; } }
         public Guid? ProductId { get { return _productId; } set { _productId = value; } }
         public ProductModel Product { get { return _product; } set { _product = value; OnPropertyChanged("Product"); } }
-        public string ProductDescription { get { return _productDescription; } set { _productDescription = value; OnPropertyChanged(ProductDescriptionProperty); } }
+        public string ProductDescription { get { return _productDescription; } set {_productDescription = !string.IsNullOrEmpty(value) && value.Length > 150 ? value.Substring(0, 150) : value; ; OnPropertyChanged(ProductDescriptionProperty); } }
         public string Mu { get { return Product!=null? Product.Mu:null;} }
         public decimal? Price { get { return _price; } set { _price = value; OnPropertyChanged(PriceProperty); } }
         public string Code { get { return _code; } set { _code = value; OnPropertyChanged(CodeProperty); } }

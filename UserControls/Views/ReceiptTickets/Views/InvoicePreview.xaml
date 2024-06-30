@@ -119,7 +119,7 @@
                         <TextBlock Grid.Column="0" Grid.Row="6" Text="Մանր։" HorizontalAlignment="Right"/>
                         <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding InvoicePaid.Change, StringFormat='# ###'}" HorizontalAlignment="Right"/>
                         <TextBlock Grid.Column="0" Grid.Row="7" Text="Կուտակում։" HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsPrepayment}"/>
-                        <TextBlock Grid.Column="1" Grid.Row="7" Text="{Binding InvoicePaid.Prepayment, StringFormat='# ###'}" HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsPrepayment}"/>
+                        <TextBlock Grid.Column="1" Grid.Row="7" Text="{Binding InvoicePaid.ReceivedPrepayment, StringFormat='# ###'}" HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsPrepayment}"/>
                     </Grid>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter},Path=IsLottery}">
                         <TextBlock Text="Վիճակահանության համար: " />
@@ -187,7 +187,7 @@
                                         Binding="{Binding Path=Quantity, StringFormat={}{0:#,0.##}, Mode=OneWay}" 
                                         CellStyle="{StaticResource CellRightAlign}"
                                         Width="Auto"/>
-                        <DataGridTextColumn Header="Գին" Binding="{Binding Path=Product.Price, Mode=OneWay, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}" Width="Auto"/>
+                        <DataGridTextColumn Header="Գին" Binding="{Binding Path=ProductPrice, Mode=OneWay, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}" Width="Auto"/>
                         <DataGridTemplateColumn  Header="Գումար">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

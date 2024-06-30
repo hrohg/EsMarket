@@ -48,7 +48,7 @@ namespace ES.Data.Models
                 OnPropertyChanged(ChangeProperty);
             }
         }
-        public decimal ByCash { get { return (Paid ?? 0) - (Change ?? 0) - Prepayment; } }
+        public decimal ByCash { get { return (Paid ?? 0) - (Change ?? 0) - (ReceivedPrepayment ?? 0); } }
         public decimal? ByCheck
         {
             get
@@ -93,8 +93,8 @@ namespace ES.Data.Models
                 _accountsReceivable = value; OnPropertyChanged(AccountsReceivableProperty); OnPropertyChanged(ChangeProperty);
             }
         }
-        public decimal? Change { get { return IsPaid ? ((Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - Prepayment - (Total ?? 0)) : 0; } }
-        public decimal Prepayment { get { return _prepaiment; } set { _prepaiment = value; OnPropertyChanged(PrepaymentProperty); OnPropertyChanged(ChangeProperty); } }
+        public decimal? Change { get { return IsPaid ? ((Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - ReceivedPrepayment - (Total ?? 0)) : 0; } }
+        //public decimal Prepayment { get { return _prepaiment; } set { _prepaiment = value; OnPropertyChanged(PrepaymentProperty); OnPropertyChanged(ChangeProperty); } }
 
         //public decimal? DiscountBond
         //{
@@ -107,7 +107,7 @@ namespace ES.Data.Models
         #endregion
 
         #region Public methods
-        public bool IsPaid { get { return ((Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - Prepayment - (Total ?? 0)) >= 0; } }
+        public bool IsPaid { get { return ((Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - (ReceivedPrepayment ?? 0) - (Total ?? 0)) >= 0; } }
         public Guid? CashDeskId { get { return _cashDeskId; } set { _cashDeskId = value; } }
         public Guid? CashDeskForTicketId { get { return _cashDeskForTicketId; } set { _cashDeskForTicketId = value; } }
         public Guid? PartnerId { get { return _partnerId; } set { _partnerId = value; } }

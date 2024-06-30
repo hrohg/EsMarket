@@ -1,6 +1,11 @@
-﻿using ES.Common.ViewModels.Base;
+﻿using ES.Common.Helpers;
+using ES.Common.ViewModels.Base;
+using ES.Data.Enumerations;
+using ES.Data.Models.Invoices;
 using System;
 using System.ComponentModel;
+using System.Linq;
+using System.Windows.Input;
 using System.Xml.Serialization;
 
 namespace ES.Data.Models
@@ -10,19 +15,6 @@ namespace ES.Data.Models
         public delegate void InvoiceItemChangedEvent(InvoiceItemsModel invoiceItem);
         [XmlIgnore]
         public InvoiceItemChangedEvent InvoiceItemChanged;
-        public InvoiceItemsModel(InvoiceModel invoice)
-        {
-            Invoice = invoice;
-        }
-        public InvoiceItemsModel()
-        {
-        }
-        public InvoiceItemsModel(InvoiceModel invoice, Products.ProductModel product)
-            : this(invoice)
-        {
-            if (product == null) return;
-            Product = product;
-        }
 
         #region Invoice items model private properties
         private Guid _id = Guid.NewGuid();
@@ -38,6 +30,9 @@ namespace ES.Data.Models
         private decimal? _costPrice;
         private DateTime? _expiryDate;
         private decimal? _discount;
+
+        private ResultState _state;
+        private string _stateDescription;
         #endregion
 
         #region Invoice items public properties
@@ -99,6 +94,19 @@ namespace ES.Data.Models
                 RaisePropertyChanged(() => Product);
                 RaisePropertyChanged(() => Mu);
                 RaisePropertyChanged(() => ProductPrice);
+                if (Ecr.Manager.Helpers.MarkHelper.GetEmarkExciseList().Contains(Product.HcdCs) || AdditionalData.EMarks.Count != Quantity)
+                {
+                    State = ResultState.Warning;
+                    StateDescription = "Նույնականացման կոդը բացակայում է:";
+                }
+                else
+                {
+                    State = ResultState.Normal;
+                    StateDescription = string.Empty;
+                }
+
+                State = ResultState.Warning;
+                StateDescription = "Նույնականացման կոդը բացակայում է:";
             }
         }
         //[XmlIgnore]
@@ -131,10 +139,13 @@ namespace ES.Data.Models
             get { return _quantity; }
             set
             {
+                if (_quantity == value) return;
+                                
                 _quantity = value;
                 RaisePropertyChanged(() => Quantity);
                 RaisePropertyChanged(() => Amount);
                 RaisePropertyChanged(() => CostAmount);
+                RaisePropertyChanged(() => IsValid);
                 OnInvoiceItemChanged();
             }
         }
@@ -198,9 +209,41 @@ namespace ES.Data.Models
             set { _note = value; RaisePropertyChanged(() => Note); }
         }
 
-
         public decimal Percentage { get { return Price.HasValue && Price != 0 ? Product != null ? ((Product.Price ?? 0) - (Price ?? 0)) * 100 / Price.Value : 0 : 100; } }
+
+        public InvoiceItemAdditionalData AdditionalData { get; set; }
+        [XmlIgnore]
+        public bool IsValid
+        {
+            get
+            {
+                var isValid = Product != null && (Ecr.Manager.Helpers.MarkHelper.GetEmarkExciseList().All(s => !string.Equals(s, Product.HcdCs)) || AdditionalData.EMarks.Count == Quantity);
+                return isValid;
+                //return AdditionalData.EMarks.Count == Quantity;
+            }
+        }
+        [XmlIgnore]
+        public ResultState State { get { return _state; } set { _state = value; RaisePropertyChanged(() => State); } }
+        [XmlIgnore]
+        public string StateDescription { get { return _stateDescription; } set { _stateDescription = value; RaisePropertyChanged(() => StateDescription); } }
         #endregion
+
+        public InvoiceItemsModel(InvoiceModel invoice) : this()
+        {
+            Invoice = invoice;
+        }
+        public InvoiceItemsModel()
+        {
+            AdditionalData = new InvoiceItemAdditionalData();
+            AdditionalData.DataChanged += OnAdditionalDataChanged;
+        }
+
+        public InvoiceItemsModel(InvoiceModel invoice, Products.ProductModel product)
+            : this(invoice)
+        {
+            if (product == null) return;
+            Product = product;
+        }
 
         #region Internal methods
         private void OnInvoiceItemChanged()
@@ -208,6 +251,13 @@ namespace ES.Data.Models
             OnPropertyChanged("InvoiceItemsModel");
             var handler = InvoiceItemChanged;
             if (handler != null) handler(this);
+        }
+        private void OnAdditionalDataChanged()
+        {
+            RaisePropertyChanged(() => AdditionalData);
+            RaisePropertyChanged(() => IsValid);
+            RaisePropertyChanged(() => State);
+            RaisePropertyChanged(() => StateDescription);
         }
         #endregion Internal methods
 
@@ -221,6 +271,8 @@ namespace ES.Data.Models
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
         #endregion
+
     }
 }

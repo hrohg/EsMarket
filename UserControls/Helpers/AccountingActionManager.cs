@@ -74,7 +74,7 @@ namespace UserControls.Helpers
                 MessageManager.ShowMessage("Վճարումն իրականացվել է հաջողությամբ։");
                 if (ApplicationManager.Settings.IsEcrActivated && depositAccountingRecords.Amount > 0)
                 {
-                    EcrManager.RepaymentOfDebts(depositAccountingRecords.Amount, partner.FullName);
+                    EcrManager.RepaymentOfDebts((double)depositAccountingRecords.Amount, partner.FullName);
                 }
             }
             else
@@ -122,7 +122,7 @@ namespace UserControls.Helpers
                 MessageManager.ShowMessage("Վճարումն իրականացվել է հաջողությամբ։");
                 if (ApplicationManager.Settings.IsEcrActivated)
                 {
-                    EcrManager.RepaymentOfDebts(accountingRecords.Amount, partner.FullName);
+                    EcrManager.RepaymentOfDebts((double)accountingRecords.Amount, partner.FullName);
                 }
             }
             else
@@ -166,7 +166,7 @@ namespace UserControls.Helpers
                 CashManager.Instance.UpdatePartnersAsync();
                 if (ApplicationManager.Settings.IsEcrActivated)
                 {
-                    EcrManager.EcrServer.SetCashReceipt(receivedInAdvance.Amount, partner.FullName);
+                    EcrManager.EcrServer.SetCashReceipt((double)receivedInAdvance.Amount, partner.FullName);
                 }
             }
             else { MessageManager.ShowMessage("Վճարումն ընդհատվել է։ Խնդրում ենք փորձել ևս մեկ անգամ։"); }

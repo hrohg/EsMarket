@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ES.Market</RootNamespace>
     <AssemblyName>ES.Market</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -63,12 +63,15 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
-    <Reference Include="CashReg, Version=0.0.0.4, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CashReg, Version=1.0.0.6, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Bin\CashReg.dll</HintPath>
     </Reference>
     <Reference Include="DotNetProjects.DataVisualization.Toolkit">
       <HintPath>..\packages\DotNetProjects.Wpf.Toolkit.5.0.26\lib\net40\DotNetProjects.DataVisualization.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Ecr.Manager">
+      <HintPath>..\Bin\Ecr.Manager.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net40\EntityFramework.dll</HintPath>

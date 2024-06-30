@@ -1,7 +1,6 @@
-﻿<implementations:EsWindow x:Class="UserControls.Views.PrintPreview.Views.UiPrintPreview"
+﻿<Window x:Class="UserControls.Views.PrintPreview.Views.UiPrintPreview"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:implementations="clr-namespace:Shared.Implementations;assembly=Shared"
         Title="PrintPreview" MinHeight="50" MinWidth="100" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" HorizontalContentAlignment="Center">
     <Grid>
         <Grid>
@@ -21,4 +20,4 @@
         </Grid>
 
     </Grid>
-</implementations:EsWindow>
+</Window>

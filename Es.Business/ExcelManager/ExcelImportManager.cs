@@ -6,6 +6,7 @@ using System.Windows;
 using ES.Business.Managers;
 using ES.Common.Managers;
 using ES.Data.Models;
+using ES.Data.Models.EsModels;
 using HG.Tools.Helper;
 using ProductModel = ES.Data.Models.Products.ProductModel;
 
@@ -74,7 +75,7 @@ namespace ES.Business.ExcelManager
                         //Description
                         Description = xlWSh.Cells[nextRow, 4].Text,
                         //Mu
-                        //Mu = xlWSh.Cells[nextRow, 5].Text,
+                        MeasureUnit = ProductsManager.GetMeasureOfUnits().FirstOrDefault(s=>s.Name==xlWSh.Cells[nextRow, 5].Text),
                         //Note
                         Note = xlWSh.Cells[nextRow, 6].Text,
                         //Cost price

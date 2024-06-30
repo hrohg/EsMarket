@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -785,7 +786,7 @@ namespace UserControls.ViewModels.StockTakeings
 
                 var selectedItems = SelectItemsManager.SelectProductItems(productIds.Select(s => new ProductItemsByCheck
                 {
-                    
+
                     Id = s.ProductId,
                     Code = s.Product.Code,
                     Description = s.Product.Description,

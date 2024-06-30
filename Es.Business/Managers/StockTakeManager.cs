@@ -311,6 +311,7 @@ namespace ES.Business.Managers
             }
             catch (Exception es)
             {
+                ApplicationManager.Instance.AddMessageToLog(new Common.Models.MessageModel(es.Message, Common.Enumerations.MessageTypeEnum.Error));
                 return false;
             }
         }

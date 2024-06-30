@@ -9,10 +9,11 @@
          xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
          xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
          xmlns:converters="clr-namespace:UserControls.Converters"
-             xmlns:popup="clr-namespace:UserControls.Controls.Popup"
+         xmlns:popup="clr-namespace:UserControls.Controls.Popup"
          xmlns:controls="clr-namespace:ES.Common.Controls;assembly=ES.Common"
-             xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data"
-             MinHeight="450"
+         xmlns:models="clr-namespace:ES.Data.Models;assembly=ES.Data"
+         xmlns:stateEnum="clr-namespace:ES.Data.Enumerations;assembly=ES.Data"
+         MinHeight="450"
          MinWidth="700"
          Width="Auto"
          mc:Ignorable="d"
@@ -51,8 +52,8 @@
                 <KeyBinding Gesture="Ctrl+Shift+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Small}"/>
                 <KeyBinding Gesture="F9" Command="{Binding CloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
                 <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveInvoiceCommand}"/>
-                <KeyBinding Gesture="F6" Command="{Binding ApproveInvoiceCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
-                <KeyBinding Gesture="F5" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
+                <KeyBinding Gesture="F6" Command="{Binding ApproveInvoiceCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabItem}}"/>
+                <KeyBinding Gesture="F5" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabItem}}"/>
             </Grid.InputBindings>
             <Grid.ContextMenu>
                 <ContextMenu>
@@ -283,7 +284,20 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Border Background="LightBlue" CornerRadius="3">
+                <Border x:Name="Boder">
+                    <Border.Style>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="Background" Value="LightBlue"/>
+                            <Setter Property="BorderThickness" Value="3"/>
+                            <Setter Property="CornerRadius" Value="3"/>
+                            <Setter Property="BorderBrush" Value="Green"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding State}" Value="{x:Static stateEnum:ResultState.Warning}">
+                                    <Setter Property="BorderBrush" Value="YellowGreen"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
                     <Grid Grid.Row="0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="20"/>
@@ -359,12 +373,34 @@
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="ContextMenu" Value="{StaticResource RowMenu}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding State}" Value="{x:Static stateEnum:ResultState.Warning}">
+                                    <Setter Property="Background" Value="LightYellow"/>
+                                </DataTrigger>
+                            </Style.Triggers>
                         </Style>
                     </DataGrid.RowStyle>
                     <DataGrid.InputBindings>
                         <KeyBinding Key="Delete" Command="{Binding RemoveInvoiceItemCommand}" CommandParameter="{Binding DataContext.Id, RelativeSource={RelativeSource Self}}"/>
                     </DataGrid.InputBindings>
                     <DataGrid.Columns>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
+                                    <Image x:Name="Image" Visibility="Collapsed" Width="16" Height="16" ToolTip="{Binding StateDescription}">
+                                        <Image.InputBindings>
+                                            <MouseBinding Gesture="LeftDoubleClick" Command="{Binding DataContext.InputEmarkCommand,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding}"/>
+                                        </Image.InputBindings>
+                                    </Image>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsValid}" Value="False">
+                                            <Setter TargetName="Image" Property="Source" Value="pack://application:,,,/ResourceLibrary;component/Resources/Images/Information/Information.png"/>
+                                            <Setter TargetName="Image" Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding DisplayOrder, Mode=OneWay}"/>
                         <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" />
                         <DataGridTemplateColumn Header="Անվանում" CanUserSort="True" CanUserReorder="True" SortMemberPath="Description">
@@ -390,7 +426,7 @@
                         <DataGridTemplateColumn Header="Քանակ">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
-                                    <TextBox Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0.###}}" IsReadOnly="{Binding ElementName=DgInvoiceItems, Path=DataContext.DenyChangeQuantity, Mode=OneWay}"
+                                    <TextBox Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, StringFormat={}{0:#,0.###}}" IsReadOnly="{Binding ElementName=DgInvoiceItems, Path=DataContext.DenyChangeQuantity, Mode=OneWay}"
                                              HorizontalContentAlignment="Right"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -548,7 +584,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal ">
                                     <TextBlock Text="Կուտակում" VerticalAlignment="Center" Foreground="Green"/>
-                                    <TextBox Text="{Binding Path=InvoicePaid.Prepayment, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}"  
+                                    <TextBox Text="{Binding Path=InvoicePaid.ReceivedPrepayment, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}"  
                                              VerticalAlignment="Center" HorizontalContentAlignment="Right"
                                              Width="100" FontSize="15" Height="25" Margin="1" Foreground="Green"/>
                                 </StackPanel>

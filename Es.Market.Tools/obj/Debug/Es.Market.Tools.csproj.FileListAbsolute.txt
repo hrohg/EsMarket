@@ -81,8 +81,8 @@ D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Entity
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Microsoft.SqlServer.ConnectionInfo.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Microsoft.SqlServer.Smo.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Microsoft.SqlServer.SmoExtended.dll
-D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\TaxServiceInvoices.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Newtonsoft.Json.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\TaxServiceInvoices.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ES.Business.pdb
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ES.Business.dll.config
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\ES.Common.pdb
@@ -124,3 +124,4 @@ D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Mar
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.csproj.CopyComplete
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Ecr.Manager.dll

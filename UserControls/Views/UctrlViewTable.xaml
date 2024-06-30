@@ -360,7 +360,7 @@
                                 <DataGridTemplateColumn Header="Ընդամենը" >
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate DataType="{x:Type reports:InvoiceReport}">
-                                            <TextBlock Text="{Binding Total, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" HorizontalAlignment="Right"/>
+                                            <TextBox Text="{Binding Total, StringFormat='{}{0:#,0.##}', TargetNullValue=0, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" HorizontalContentAlignment="Right" Style="{x:Null}"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using System.Xml.Serialization;
 using ES.Common.Helpers;
 
@@ -96,7 +97,7 @@ namespace ES.Common.ViewModels.Base
         #endregion Events
 
         #region Internal methods
-        private static void SendTextToFocusedElement(string text)
+        protected void SendTextToFocusedElement(string text, bool useReturnKey = true)
         {
             var target = Keyboard.FocusedElement;
             var routedEvent = TextCompositionManager.TextInputEvent;
@@ -107,6 +108,16 @@ namespace ES.Common.ViewModels.Base
                 new TextComposition(InputManager.Current, target, text))
               { RoutedEvent = routedEvent }
             );
+            if (useReturnKey)
+            {
+                KeyEventArgs ke = new KeyEventArgs(Keyboard.PrimaryDevice, Keyboard.PrimaryDevice.ActiveSource, 0, Key.Enter)
+                {
+                    RoutedEvent = UIElement.KeyDownEvent
+                };
+
+                InputManager.Current.ProcessInput(ke);
+            }
+
         }
         #endregion Internal methods
 

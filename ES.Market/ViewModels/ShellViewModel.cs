@@ -240,16 +240,18 @@ namespace ES.Market.ViewModels
             AddDocument(new StartPageViewModel(this) { IsActive = false }); ;
 
             LoadAutosavedInvoices();
-            serialPortReader = new SerialPortReader(ApplicationSettings.SettingsContainer.MemberSettings.ScannerPort, SerialPort_DataReceived);
-
-            //_listenSerialPortsThread = new Thread(ListenSerialPorts);
-            //_listenSerialPortsThread.Start();
+            serialPortReader = new SerialPortReader(ApplicationSettings.SettingsContainer.MemberSettings.ScannerPort, SerialPortDataReceivedCallBack);
+            serialPortReader.Start();
         }
-        private void SerialPort_DataReceived(string data)
+        private void SerialPortDataReceivedCallBack(string data)
         {
-            //var vm = Documents.SingleOrDefault(s => s.IsActive);
-            var vm = Documents.SingleOrDefault(s => s.IsSelected);
-            if (vm != null) DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { vm.SetExternalText(new ExternalTextImputEventArgs(data)); });
+            var vm = ActiveTab; // Documents.SingleOrDefault(s => s.IsActive);
+            //MessageManager.OnMessage(string.Format("Send message '{0}' to {1}", data, vm.Title));
+            if (vm != null)
+                DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
+                {
+                    vm.SetExternalText(new ExternalTextImputEventArgs(data));
+                });
         }
         private void CashUpdated()
         {
@@ -280,6 +282,9 @@ namespace ES.Market.ViewModels
             #region Help
             PrintPriceTicketCommand = new RelayCommand<PrintPriceTicketEnum?>(OnPrintPriceTicket, CanPrintPriceTicket);
             #endregion Help
+
+            //Tools
+            RedeemVaucherCommand = new RelayCommand(OnRedeemVaucher, CanRedeemVaucher);
 
             #region Settings
 
@@ -432,13 +437,13 @@ namespace ES.Market.ViewModels
             {
                 doc.IsSelected = false;
                 doc.IsActive = false;
-            }
-            vm.IsActive = true;
-            vm.IsSelected = true;
+            }            
             lock (_sync)
             {
                 Documents.Add(vm);
             }
+            vm.IsActive = true;
+            vm.IsSelected = true;
         }
 
         private void OnRemoveDocument(PaneViewModel vm)
@@ -580,7 +585,7 @@ namespace ES.Market.ViewModels
             if (e.Key == Key.Enter)
             {
                 string barcode = new string(_barcode.ToArray());
-                var vm = Documents.SingleOrDefault(s => s.IsActive);
+                var vm = ActiveTab; // Documents.SingleOrDefault(s => s.IsActive);
                 if (vm != null) vm.SetExternalText(new ExternalTextImputEventArgs(barcode));
                 _barcode.Clear();
                 _barcodeText.Clear();
@@ -644,7 +649,7 @@ namespace ES.Market.ViewModels
         private void AddInvoiceDocument(object vm)
         {
             if (vm is DocumentViewModel)
-            {
+            {              
                 AddDocument((DocumentViewModel)vm);
                 ((PaneViewModel)vm).IsActive = true;
                 if (vm is InvoiceViewModel)
@@ -839,7 +844,9 @@ namespace ES.Market.ViewModels
                 {
                     case InvoiceType.PurchaseInvoice:
                         vm = new PackingListForSallerViewModel(invoiceModel.Id);
-                        vm.TotalAmount = (double)vm.InvoiceItems.Sum(s => (s.ProductPrice ?? 0) * (s.Quantity ?? 0));
+                        var total = (double)vm.InvoiceItems.Sum(s => (s.ProductPrice ?? 0) * (s.Quantity ?? 0));
+                        vm.TotalAmount = total;
+                        vm.Invoice.Amount = (decimal)total;
                         break;
                     case InvoiceType.SaleInvoice:
                         vm = new PackingListForSallerViewModel(invoiceModel.Id);
@@ -1192,26 +1199,23 @@ namespace ES.Market.ViewModels
 
         #region Documents
 
-        private List<InvoiceModel> GetInvoices(InvoiceState state, InvoiceTypeEnum type, int count)
+        private List<InvoiceModel> GetInvoices(InvoiceState state, InvoiceTypeEnum type, Tuple<DateTime, DateTime> dates)
         {
             switch (state)
             {
                 case InvoiceState.All:
-                    return InvoicesManager.GetInvoices(type, null, count);
+                    return InvoicesManager.GetInvoices(type, null, dates);
                 case InvoiceState.New:
                     return null;
-
                 case InvoiceState.Accepted:
-                    return InvoicesManager.GetInvoices(type, false, count);
-                    return InvoicesManager.GetInvoicesDescriptions(type, count);
+                    return InvoicesManager.GetInvoices(type, false, dates);
+                //return InvoicesManager.GetInvoicesDescriptions(type, count);
 
                 case InvoiceState.Draft:
-                    return InvoicesManager.GetInvoices(type, true, count);
-
-                    return InvoicesManager.GetUnacceptedInvoicesDescriptions(type);
-
+                    return InvoicesManager.GetInvoices(type, true, dates);
+                //return InvoicesManager.GetUnacceptedInvoicesDescriptions(type);
                 case InvoiceState.Approved:
-                    return InvoicesManager.GetInvoices(type, false, count);
+                    return InvoicesManager.GetInvoices(type, false, dates);
                     //return InvoicesManager.GetInvoicesDescriptions(type);
             }
             return null;
@@ -1253,12 +1257,19 @@ namespace ES.Market.ViewModels
                 case EcrExecuiteActions.CashWithdrawal:
                 case EcrExecuiteActions.CashIn:
                     return true;
-                    break;
                 case EcrExecuiteActions.PrintCash:
                     break;
-
+                case EcrExecuiteActions.SyncEcr:
+                    return true;
+                case EcrExecuiteActions.GetOperatorsList:
                     break;
-                case null:
+                case EcrExecuiteActions.GetDepsList:
+                    break;
+                case EcrExecuiteActions.GetEcrDateTime:
+                    break;
+                case EcrExecuiteActions.PrintBlankTicket:
+                    break;
+                case EcrExecuiteActions.GetPaymentSystems:
                     break;
                 default:
                     break;
@@ -1277,39 +1288,42 @@ namespace ES.Market.ViewModels
                 switch (actionMode)
                 {
                     case EcrExecuiteActions.CheckConnection:
-                        message = ecServer.TryConnection() ? new MessageModel("ՀԴՄ կապի ստուգումն իրականացել է հաջողությամբ: " + ecServer.ActionDescription, MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageTypeEnum.Warning);
+                        message = ecServer.TryConnection() ? new MessageModel("ՀԴՄ կապի ստուգումն իրականացել է հաջողությամբ: " + ecServer.Result.Description, MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageTypeEnum.Warning);
                         IsLoading = false;
                         break;
                     case EcrExecuiteActions.OperatorLogin:
-                        message = ecServer.TryOperatorLogin() ? new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Warning);
+                        message = ecServer.TryOperatorLogin() ? new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.Result.Description, ecServer.Result.Code), MessageTypeEnum.Warning);
                         IsLoading = false;
                         break;
                     case EcrExecuiteActions.PrintReturnTicket:
-                        var resoult = MessageManager.ShowMessage("Դուք ցանկանու՞մ եք վերադարձնել ՀԴՄ կտրոնն ամբողջությամբ:", "ՀԴՄ կտրոնի վերադարձ", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                        if (resoult == MessageBoxResult.Yes)
-                        {
-                            message = ecServer.PrintReceiptReturnTicket(true) ? new MessageModel("ՀԴՄ կտրոնի վերադարձն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Error);
-                        }
-                        else if (resoult == MessageBoxResult.No)
-                        {
-                            message = ecServer.PrintReceiptReturnTicket(false) ? new MessageModel("ՀԴՄ կտրոնի մասնակի վերադարձն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի մասնակի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Error);
-                        }
-                        else
-                        {
-                            message = new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումն ընդհատվել է:", MessageTypeEnum.Warning);
-                        }
                         IsLoading = false;
+                        ecServer.PrintReceiptReturnTicket(new Action<string>((s) => MessageManager.OnMessage(s)));
+
+                        //var resoult = MessageManager.ShowMessage("Դուք ցանկանու՞մ եք վերադարձնել ՀԴՄ կտրոնն ամբողջությամբ:", "ՀԴՄ կտրոնի վերադարձ", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        //if (resoult == MessageBoxResult.Yes)
+                        //{
+                        //    message = ecServer.PrintReceiptReturnTicket(true) ? new MessageModel("ՀԴՄ կտրոնի վերադարձն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.Result.Description, ecServer.Result.Code), MessageTypeEnum.Error);
+                        //}
+                        //else if (resoult == MessageBoxResult.No)
+                        //{
+                        //    message = ecServer.PrintReceiptReturnTicket(false) ? new MessageModel("ՀԴՄ կտրոնի մասնակի վերադարձն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի մասնակի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Error);
+                        //}
+                        //else
+                        //{
+                        //    message = new MessageModel("ՀԴՄ վերադարձի կտրոնի տպումն ընդհատվել է:", MessageTypeEnum.Warning);
+                        //}
+
                         break;
                     case EcrExecuiteActions.PrintLatestTicket:
-                        message = ecServer.PrintReceiptLatestCopy() ? new MessageModel("ՀԴՄ վերջին կտրոնի տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ վերջին կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Warning);
+                        message = ecServer.PrintReceiptLatestCopy() ? new MessageModel("ՀԴՄ վերջին կտրոնի տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ վերջին կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.Result.Description, ecServer.Result.Code), MessageTypeEnum.Warning);
                         IsLoading = false;
                         break;
                     case EcrExecuiteActions.PrintReportX:
-                        message = ecServer.GetReport(ReportType.X) ? new MessageModel("ՀԴՄ X հաշվետվության տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ X հաշվետվության տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Warning);
+                        message = ecServer.GetReport(ReportType.X) ? new MessageModel("ՀԴՄ X հաշվետվության տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ X հաշվետվության տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.Result.Description, ecServer.Result.Code), MessageTypeEnum.Warning);
                         IsLoading = false;
                         break;
                     case EcrExecuiteActions.PrintReportZ:
-                        message = ecServer.GetReport(ReportType.Z) ? new MessageModel("ՀԴՄ Z հաշվետվության տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ Z հաշվետվության տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Warning);
+                        message = ecServer.GetReport(ReportType.Z) ? new MessageModel("ՀԴՄ Z հաշվետվության տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ Z հաշվետվության տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.Result.Description, ecServer.Result.Code), MessageTypeEnum.Warning);
                         IsLoading = false;
                         break;
                     case EcrExecuiteActions.CheckEcrConnection:
@@ -1337,7 +1351,7 @@ namespace ES.Market.ViewModels
                             else
                             {
                                 IsLoading = false;
-                                MessageManager.OnMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումն ընդհատվել է: {1} ({0})", ecServer.ActionCode, ecServer.ActionDescription), MessageTypeEnum.Warning));
+                                MessageManager.OnMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումն ընդհատվել է: {1} ({0})", ecServer.Result.Code, ecServer.Result.Description), MessageTypeEnum.Warning));
                             }
                         }
                         catch (Exception ex)
@@ -1359,26 +1373,42 @@ namespace ES.Market.ViewModels
                     case EcrExecuiteActions.CashWithdrawal:
                         var partner = SelectItemsManager.SelectPartner();
                         if (partner == null) break;
-                        var amountForm = new InputForm("Վերադարձվող գումար");
+                        var amountForm = new Ecr.Manager.WinForm.Controls.InputForm("Վերադարձվող գումար");
                         if (amountForm.ShowDialog() != DialogResult.OK) break;
-                        if (ecServer.SetCashWithdrawal(HgConvert.ToDecimal(amountForm.TicketValue), partner.FullName))
+                        if (ecServer.SetCashWithdrawal(HgConvert.ToDouble(amountForm.TicketValue), partner.FullName))
                             MessageManager.OnMessage("Կանխավճարի վերադարձն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
                         else
-                            MessageManager.OnMessage("Կանխավճարի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Warning);
+                            MessageManager.OnMessage("Կանխավճարի վերադարձը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.Result.Description, ecServer.Result.Code), MessageTypeEnum.Warning);
                         break;
                     case EcrExecuiteActions.PrintCash:
                         break;
                     case EcrExecuiteActions.CashIn:
                         var cashInPartner = SelectItemsManager.SelectPartner();
                         if (cashInPartner == null) break;
-                        var cashInAmountForm = new InputForm("Կանխավճար");
+                        var cashInAmountForm = new Ecr.Manager.WinForm.Controls.InputForm("Կանխավճար");
                         if (cashInAmountForm.ShowDialog() != DialogResult.OK) break;
-                        if (ecServer.SetCashWithdrawal(HgConvert.ToDecimal(cashInAmountForm.TicketValue), cashInPartner.FullName))
+                        if (ecServer.SetCashWithdrawal(HgConvert.ToDouble(cashInAmountForm.TicketValue), cashInPartner.FullName))
                             MessageManager.OnMessage("Կանխավճարի կտրոնի տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
                         else
-                            MessageManager.OnMessage("Կանխավճարի կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.ActionDescription, ecServer.ActionCode), MessageTypeEnum.Warning);
+                            MessageManager.OnMessage("Կանխավճարի կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.Result.Description, ecServer.Result.Code), MessageTypeEnum.Warning);
                         break;
                     case null:
+                        break;
+                    case EcrExecuiteActions.GetOperatorsList:
+                        break;
+                    case EcrExecuiteActions.GetDepsList:
+                        break;
+                    case EcrExecuiteActions.GetEcrDateTime:
+                        break;
+                    case EcrExecuiteActions.PrintBlankTicket:
+                        break;
+                    case EcrExecuiteActions.SyncEcr:
+                        if (ecServer.EcrSyncronization())
+                            MessageManager.OnMessage("ՀԴՄ համաժամանակեցումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success);
+                        else
+                            MessageManager.OnMessage("ՀԴՄ համաժամանակեցումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.Result.Description, ecServer.Result.Code), MessageTypeEnum.Warning);
+                        break;
+                    case EcrExecuiteActions.GetPaymentSystems:
                         break;
                     default:
                         message = null;
@@ -1650,19 +1680,20 @@ namespace ES.Market.ViewModels
             var count = (int)tuple.Item3;
             var orderBy = tuple.Item4;
             List<InvoiceModel> invoices;
+            var dates = UIHelper.Managers.SelectManager.GetDateIntermediate();
+            if (dates == null) return;
+
             if (tuple.Item3 == MaxInvocieCount.All)
             {
                 if (state == InvoiceState.Approved)
                 {
-                    var dates = UIHelper.Managers.SelectManager.GetDateIntermediate();
-                    if (dates == null) return;
                     invoices = InvoicesManager.GetApprovedInvoices(type, dates);
                 }
                 else { invoices = InvoicesManager.GetDraftInvoices(type); }
             }
             else
             {
-                invoices = GetInvoices(state, type, count);
+                invoices = GetInvoices(state, type, dates);
             }
             if (invoices == null)
             {
@@ -1679,6 +1710,20 @@ namespace ES.Market.ViewModels
         #region Help
 
         #endregion
+
+        #region Tools
+
+        #region Redeem vaucher
+        private bool CanRedeemVaucher()
+        {
+            return EsMarketManager.Instance.GetLicensePlan(ApplicationManager.License).CanRedeemVaucher;
+        }
+        private void OnRedeemVaucher()
+        {
+            //new RedeemVaucherDialog().ShowDialog(true);
+        }
+        #endregion Redim vaucher
+        #endregion Tools
 
         #region Manager
 
@@ -1928,7 +1973,15 @@ namespace ES.Market.ViewModels
                     case InvoiceState.All:
                     case InvoiceState.Accepted:
                     case InvoiceState.Approved:
-                        invoices = GetInvoices(state, type, count);
+                        if (count > 0)
+                        {
+                            invoices = InvoicesManager.GetInvoices(type, state == InvoiceState.All ? (bool?)null : state == InvoiceState.Draft ? true : false, count);
+                        }
+                        else
+                        {
+                            var dates = UIHelper.Managers.SelectManager.GetDateIntermediate();
+                            invoices = GetInvoices(state, type, dates);
+                        }
                         break;
                     default:
                         break;
@@ -2339,8 +2392,10 @@ namespace ES.Market.ViewModels
 
         #region Toolbar buttons
 
-        private ICommand _openCashdeskCommand;
 
+        public ICommand RedeemVaucherCommand { get; private set; }
+
+        private ICommand _openCashdeskCommand;
         public ICommand OpenCashdeskCommand
         {
             get { return _openCashdeskCommand ?? (_openCashdeskCommand = new RelayCommand(OnOpenCashDesk, CanOpenCashDesk)); }

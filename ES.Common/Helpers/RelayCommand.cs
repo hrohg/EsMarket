@@ -3,61 +3,65 @@ using System.Windows.Input;
 
 namespace ES.Common.Helpers
 {
-	public class RelayCommand : ICommand
-	{
-		#region Fields
+    public class RelayCommand : ICommand
+    {
+        #region Fields
 
-		readonly Action<object> _execute;
-		readonly Predicate<object> _canExecute;
+        readonly Action<object> _execute;
+        readonly Predicate<object> _canExecute;
 
-		#endregion // Fields
+        #endregion // Fields
 
-		#region Constructors
+        #region Constructors
+        public RelayCommand(Action execute, Func<bool> canExecute)
+        {
+            _execute = new Action<object>((o) => { execute(); });
+            _canExecute = new Predicate<object>((o) => { return canExecute(); });
+        }
+        public RelayCommand(Action<object> execute)
+            : this(execute, null)
+        {
+        }
 
-		public RelayCommand(Action<object> execute)
-			: this(execute, null)
-		{
-		}
+        public RelayCommand(Action execute) : this(o => { execute(); })
+        {
 
-	    public RelayCommand(Action execute):this(o => { execute(); })
-	    {
-            
-	    }
+        }
 
-	    public RelayCommand(Action<object> execute, Predicate<object> canExecute)
-		{
-			if (execute == null)
-				throw new ArgumentNullException("execute");
+        public RelayCommand(Action<object> execute, Predicate<object> canExecute)
+        {
+            if (execute == null)
+                throw new ArgumentNullException("execute");
 
-			_execute = execute;
-			_canExecute = canExecute;
-		}
-        
-		#endregion // Constructors
+            _execute = execute;
+            _canExecute = canExecute;
+        }
 
-		#region ICommand Members
+        #endregion // Constructors
+
+        #region ICommand Members
         public bool CanExecute()
         {
             return _canExecute == null || _canExecute(null);
         }
-		public bool CanExecute(object parameter)
-		{
-			return _canExecute == null || _canExecute(parameter);
-		}
+        public bool CanExecute(object parameter)
+        {
+            return _canExecute == null || _canExecute(parameter);
+        }
 
-		public event EventHandler CanExecuteChanged
-		{
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
-		}
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
 
-		public void Execute(object parameter)
-		{
-			_execute(parameter);
-		}
+        public void Execute(object parameter)
+        {
+            _execute(parameter);
+        }
 
-		#endregion // ICommand Members
-	}
+        #endregion // ICommand Members
+    }
     public class RelayCommand<T> : ICommand
     {
         #region Fields
@@ -89,7 +93,7 @@ namespace ES.Common.Helpers
         public bool CanExecute(object parameter)
         {
             return _canExecute == null ? true : parameter is T && _canExecute((T)parameter);
-            
+
         }
 
         public event EventHandler CanExecuteChanged

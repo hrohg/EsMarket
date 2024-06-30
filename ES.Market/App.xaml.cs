@@ -108,7 +108,7 @@ namespace ES.Market
         #region Constructos
         public App()
         {
-
+            System.Windows.FrameworkCompatibilityPreferences.KeepTextBoxDisplaySynchronizedWithTextProperty = false;
         }
         #endregion Constructors
 

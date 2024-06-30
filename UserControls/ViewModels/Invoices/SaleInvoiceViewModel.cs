@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -51,8 +52,9 @@ namespace UserControls.ViewModels.Invoices
             {
                 if (value == _isEcrActivated) return;
                 _isEcrActivated = value;
-                RaisePropertyChanged("IsEcrActivated");
-                RaisePropertyChanged("EcrButtonTooltip");
+                RaisePropertyChanged(() => IsEcrActivated);
+                RaisePropertyChanged(() => EcrButtonTooltip);
+                RaisePropertyChanged(() => AllowCashReceivable);
                 ApplicationManager.Settings.IsEcrActivated = value;
             }
         }
@@ -130,7 +132,7 @@ namespace UserControls.ViewModels.Invoices
         {
             get
             {
-                return base.AllowCashReceivable && ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleCashDesks.Any() && string.IsNullOrEmpty(Partner.TIN);
+                return base.AllowCashReceivable && ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleCashDesks.Any() && (string.IsNullOrEmpty(Partner.TIN) || !IsEcrActivated);
             }
         }
         public override bool AllowByCheckReceivable
@@ -169,11 +171,19 @@ namespace UserControls.ViewModels.Invoices
                 Invoice.InvoiceTypeId == (int)ES.Business.Managers.InvoiceTypeEnum.SaleInvoice)
                 SetDefaultPartner(PartnersManager.GetDefaultParnerByInvoiceType((InvoiceType)Invoice.InvoiceTypeId) ??
                                   PartnersManager.GetDefaultPartner(PartnerType.None));
+
             PrintEcrTicketCommand = new RelayCommand(OnPrintEcrTicket, CanPrintEcrTicket);
+
             IsPrintTicket = ApplicationManager.Settings.IsPrintSaleTicket;
             IsEcrActivated = ApplicationManager.Settings.IsEcrActivated;
             UseExtPos = ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.UseExtPos;
             IsModified = false;
+
+            //new System.Threading.Thread(() =>
+            //{
+            //    System.Threading.Thread.Sleep(5000);
+            //    DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, new Action(() => { SetExternalText(new ExternalTextImputEventArgs("740740")); }));
+            //}).Start();
         }
         protected override void OnPartnerChanged()
         {
@@ -251,7 +261,12 @@ namespace UserControls.ViewModels.Invoices
         protected override void OnInvoiceItemChanged(InvoiceItemsModel invoiceItem)
         {
             base.OnInvoiceItemChanged(invoiceItem);
+
             //SetDiscountBond();
+        }
+        protected override bool SetQuantity(bool addSingle)
+        {
+            return base.SetQuantity(addSingle);
         }
         private void SetDiscountBond()
         {
@@ -277,7 +292,8 @@ namespace UserControls.ViewModels.Invoices
             var total = Invoice.Total = InvoiceItems.Sum(s => (s.Price ?? 0) * (s.Quantity ?? 0));
 
             Invoice.Amount = amount;
-            InvoicePaid.Total = Invoice.Total = total;
+            InvoicePaid.Total = Invoice.Total = UseDiscountBond ? amount : total;
+            Invoice.DiscountBond = UseDiscountBond ? amount - total : 0;
         }
 
         private void PrintInvoiceTicket(ResponseReceiptModel ecrResponseReceiptModel)
@@ -318,8 +334,8 @@ namespace UserControls.ViewModels.Invoices
             {
                 price = ii.Product.Price ?? 0,
                 qty = ii.Quantity ?? 0,
-                discount = ii.Discount,
-                discountType = ii.Discount != null && ii.Discount > 0 ? 8 : (int?)null,
+                discount = !UseDiscountBond ? ii.Discount : 0,
+                discountType = !UseDiscountBond && ii.Discount != null && ii.Discount > 0 ? 1 : (int?)null,
                 dep =
                 ii.Product.TypeOfTaxes != default(TypeOfTaxes) && ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.Any(s => s.IsActive && s.TypeOfTaxesId == (int)ii.Product.TypeOfTaxes) ?
                                                                         ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.First(s => s.IsActive && s.TypeOfTaxesId == (int)ii.Product.TypeOfTaxes).SelectedDepartmentId :
@@ -341,8 +357,8 @@ namespace UserControls.ViewModels.Invoices
                 PrePaymentAmount = (double)(InvoicePaid.ReceivedPrepayment ?? 0),
                 UseExtPos = UseExtPos
             };
-            var responceReceiptViewModel = ecrManager.PrintReceipt(products, invoicePaid, Partner.TIN);
-            var message = responceReceiptViewModel != null ? new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:" + responceReceiptViewModel.Fiscal, MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrManager.ActionDescription, ecrManager.ActionCode), MessageTypeEnum.Warning);
+            var responceReceiptViewModel = ecrManager.PrintReceiptTicket(products, invoicePaid, new EcrTickedAdditionalData { PartnerTin = Partner.TIN, EMarks = GetEmarks() });
+            var message = responceReceiptViewModel != null ? new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:" + responceReceiptViewModel.Fiscal, MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrManager.Result.Description, ecrManager.Result.Code), MessageTypeEnum.Warning);
             MessageManager.OnMessage(message);
         }
 
@@ -475,8 +491,8 @@ namespace UserControls.ViewModels.Invoices
                     {
                         price = ii.Product.Price ?? 0,
                         qty = ii.Quantity ?? 0,
-                        discount = ii.Discount,
-                        discountType = ii.Discount > 0 ? 1 : (int?)null,
+                        discount = !UseDiscountBond ? ii.Discount : 0,
+                        discountType = !UseDiscountBond && ii.Discount > 0 ? 1 : (int?)null,
                         dep = ii.Product.TypeOfTaxes == default(TypeOfTaxes) || ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.All(s => s.IsActive && s.CashierDepartment.Type != (int)ii.Product.TypeOfTaxes) ?
                         ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.CashierDepartment.Id :
                         ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.First(s => s.IsActive && s.CashierDepartment.Type == (int)ii.Product.TypeOfTaxes).CashierDepartment.Id,
@@ -496,7 +512,8 @@ namespace UserControls.ViewModels.Invoices
                     //    s.Price * s.Qty - (s.Discount ?? 0))
                     //    - paid.PaidAmountCard - paid.PartialAmount - paid.PrePaymentAmount;
                     var ecrManager = EcrManager.EcrServer;
-                    responceReceiptModel = ecrManager.PrintReceipt(items, paid, Partner.TIN);
+
+                    responceReceiptModel = ecrManager.PrintReceiptTicket(items, paid, new EcrTickedAdditionalData { PartnerTin = Partner.TIN, EMarks = GetEmarks() });
 
                     if (responceReceiptModel != null)
                     {
@@ -505,7 +522,7 @@ namespace UserControls.ViewModels.Invoices
                     }
                     else
                     {
-                        MessageManager.OnMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումը ձախողվել է:  {0}", string.Format("{0} ({1})", ecrManager.ActionDescription, ecrManager.ActionCode)), MessageTypeEnum.Warning));
+                        MessageManager.OnMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումը ձախողվել է:  {0}", string.Format("{0} ({1})", ecrManager.Result.Description, ecrManager.Result.Code)), MessageTypeEnum.Warning));
                         return null;
                     }
                 }

@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Easy Shop LTD")]
 [assembly: AssemblyProduct("ES.Login")]
-[assembly: AssemblyCopyright("Copyright ©  2014 -20017")]
+[assembly: AssemblyCopyright("Copyright ©  2014 -2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

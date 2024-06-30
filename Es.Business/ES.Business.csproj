@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ES.Business</RootNamespace>
     <AssemblyName>ES.Business</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -38,7 +38,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CashReg">
+    <Reference Include="CashReg, Version=1.0.0.7, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Bin\CashReg.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -105,6 +106,7 @@
     <Compile Include="Managers\DatabaseManager.cs" />
     <Compile Include="Managers\DefaultsManager.cs" />
     <Compile Include="Managers\EslUpdateManager.cs" />
+    <Compile Include="Managers\EssManager.cs" />
     <Compile Include="Managers\ExecuteManager.cs" />
     <Compile Include="Managers\ExportManager.cs" />
     <Compile Include="Managers\InvoicesManager.cs" />

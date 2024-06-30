@@ -127,7 +127,7 @@
                                           EnableRowVirtualization="True">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn IsReadOnly="True" Header=".." Binding="{Binding DisplayOrder, Mode=OneWay}"/>
-                                            <DataGridTemplateColumn Header="Մատակարար" CanUserSort="True" SortMemberPath="Provider">
+                                            <DataGridTemplateColumn Header="Մատակարար" CanUserSort="True" SortMemberPath="Provider.FullName">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate DataType="{x:Type models:ProductOrderModel}">
                                                         <TextBlock Text="{Binding Provider.FullName}" TextWrapping="Wrap"/>
@@ -155,7 +155,7 @@
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn>
-                                            <DataGridTemplateColumn Header="Պատվեր" CanUserSort="True">
+                                            <DataGridTemplateColumn Header="Պատվեր" CanUserSort="True" SortMemberPath="DemandQuantity">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate DataType="{x:Type models:ProductOrderModel}">
                                                         <TextBlock Text="{Binding DemandQuantity, StringFormat='# ###.##'}" FontWeight="Bold" HorizontalAlignment="Right"/>

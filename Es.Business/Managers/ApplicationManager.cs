@@ -4,8 +4,6 @@ using System.Data.Entity.Core.EntityClient;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Controls;
-using CashReg;
-using CashReg.Classes;
 using ES.Business.Helpers;
 using ES.Common.Enumerations;
 using ES.Common.Managers;
@@ -105,6 +103,7 @@ namespace ES.Business.Managers
         {
             get { return Instance.GetMember; }
         }
+        public static int MemberId { get { return Member != null ? Member.Id : -1; } }
         public EsMemberModel SetEsMember
         {
             set
@@ -128,6 +127,7 @@ namespace ES.Business.Managers
         }
         public static EsUserModel GetEsUser { get { return _esUser; } }
         public static EsUserModel SetEsUser { set { _esUser = value; } }
+        public static LicensePlansEnum License { get { return CashManager.Instance.License; } }
         public static string DefaultConnectionString
         {
             get
@@ -208,6 +208,7 @@ namespace ES.Business.Managers
                 return entityBuilder.ConnectionString;
             }
         }
+
         //public static string GitunikConnectionString
         //{
         //    get

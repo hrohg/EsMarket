@@ -38,6 +38,7 @@ namespace ES.Business.Managers
         private bool _isUpdateing;
 
         private List<ProductModel> _products;
+        private LicensePlansEnum? _license;
         #endregion
 
         #region Public properties
@@ -187,7 +188,14 @@ namespace ES.Business.Managers
         {
             return EsDefaults.FirstOrDefault(s => s.Control == control);
         }
-
+        public LicensePlansEnum License
+        {
+            get
+            {
+                if (!_license.HasValue) _license = EsMarketManager.GetLicense(ApplicationManager.MemberId);
+                return (LicensePlansEnum)_license;
+            }
+        }
 
         public static CashManager Instance { get { return _instance ?? (_instance = new CashManager()); } }
         #endregion
@@ -327,7 +335,7 @@ namespace ES.Business.Managers
         {
             return id == null ? null : Instance.GetPartners.SingleOrDefault(p => p.Id == id);
         }
-        
+
         private void OnProdutsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             OnProductsUpdated();

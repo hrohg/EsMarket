@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using CashReg;
 using CashReg.Helper;
 using CashReg.Interfaces;
 using ES.Business.Managers;
@@ -10,13 +9,16 @@ using ES.Common.Managers;
 using ES.Data.Models;
 using UserControls.ViewModels.Invoices;
 using MessageBox = System.Windows.MessageBox;
+using EcrServer = Ecr.Manager.Managers.EcrManager;
+using Ecr.Manager.Interfaces;
+using ES.Common.Models;
 
 namespace UserControls.Helpers
 {
     public class EcrManager
     {
         #region Private properties
-        private static EcrServer _ecrServer;
+        private static IEcrManager _ecrServer;
         //private string _ecrServerIp = "217.113.7.68";
         //private int _ecrServerPort = 9999;
         //private string _ecrPass = "HS0FBZZZ";
@@ -26,7 +28,7 @@ namespace UserControls.Helpers
         
         #endregion
 
-        public static EcrServer EcrServer
+        public static IEcrManager EcrServer
         {
             get
             {
@@ -38,8 +40,13 @@ namespace UserControls.Helpers
                 return _ecrServer;
             }
         }
+
         
         #region Public Methods
+        public static IEcrManager GetEcrServer(EcrConfig config)
+        {
+            return new EcrServer(config);
+        }
         public bool ConnectionCheck()
         {
             
@@ -91,13 +98,13 @@ namespace UserControls.Helpers
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 //Print ECR Receipt
-                var pr = _ecrServer.PrintReceipt(model.InvoiceItems.Select(s =>(IEcrProduct) new EcrProduct(s.Code,s.Description, s.Mu )
+                var pr = _ecrServer.PrintReceiptTicket(model.InvoiceItems.Select(s =>(IEcrProduct) new EcrProduct(s.Code,s.Description, s.Mu )
                     {
                         qty = s.Quantity??0,
                         price = s.Price??0,
                         //Dep = 1
                     }).ToList(), new EcrPaid { PaidAmount = (int)(Math.Round((model.Invoice.Total + 5) / 10) * 10) }, null);
-                if (_ecrServer.ActionCode == EcrException.ResponseCodes.Ok)
+                if (_ecrServer.Result.Code == EcrResponse.ResponseCodes.Ok)
                 {
                     MessageManager.ShowMessage("Հսկիչ դրամարկղային կտրոնի տպումն իրականացվել է հաջողությամբ։ \n Խնդրում ենք վերցնել հսկիչ դրամարկղային կտրոնը։", "Տեղեկացում",
                         MessageBoxButton.OK, MessageBoxImage.Information);
@@ -131,13 +138,13 @@ namespace UserControls.Helpers
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 //Print ECR Receipt
-                var pr = _ecrServer.PrintReceipt(model.InvoiceItems.Select(s =>(IEcrProduct) new EcrProduct(s.Code, s.Description, s.Mu)
+                var pr = _ecrServer.PrintReceiptTicket(model.InvoiceItems.Select(s =>(IEcrProduct) new EcrProduct(s.Code, s.Description, s.Mu)
                     {
                         qty = s.Quantity??0,
                         price = s.Price??0,
                         //Dep = 1
                     }).ToList(), (IEcrPaid)new EcrPaid { PaidAmount = (int)(Math.Round((model.Invoice.Total + 5) / 10) * 10) }, null);
-                if (_ecrServer.ActionCode == EcrException.ResponseCodes.Ok)
+                if (_ecrServer.Result.Code == EcrResponse.ResponseCodes.Ok)
                 {
                     MessageManager.ShowMessage("Հսկիչ դրամարկղային կտրոնի տպումն իրականացվել է հաջողությամբ։ \n Խնդրում ենք վերցնել հսկիչ դրամարկղային կտրոնը։", "Տեղեկացում",
                         MessageBoxButton.OK, MessageBoxImage.Information);
@@ -212,20 +219,23 @@ namespace UserControls.Helpers
 
         }
         #endregion
-
-
         public void PrintReceipt()
         {
             
         }
-        public void ReceivedInAdvance(decimal amount, string fullName)
+        public void ReceivedInAdvance(double amount, string fullName)
         {
             new Thread(() => EcrServer.SetCashReceipt(amount, fullName)).Start();
         }
 
-        public static void RepaymentOfDebts(decimal amount, string fullName)
+        public static void RepaymentOfDebts(double amount, string fullName)
         {
             new Thread(() => EcrServer.SetCashWithdrawal(amount, fullName)).Start();
+        }
+
+        internal static string GetBarcode(string text)
+        {
+            return Ecr.Manager.Helpers.MarkHelper.GetBarcode(text);
         }
     }
 }

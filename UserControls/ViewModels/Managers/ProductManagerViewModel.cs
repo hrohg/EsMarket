@@ -205,7 +205,7 @@ namespace UserControls.ViewModels.Managers
         private void OnSelectedProductsChanged()
         {
             var selectedProducts = SelectedProducts != null ? SelectedProducts.Cast<ProductModel>().ToList() : new List<ProductModel>();
-            
+
             if (!IsSingleModeSelected)
             {
                 Product = new ProductModel();
@@ -325,7 +325,7 @@ namespace UserControls.ViewModels.Managers
                     {
                         _productItems.Add(productModel);
                     }
-                    
+
                     ProductsSource.View.Refresh();
                     if (!isLoading) IsLoading = false;
                 }
@@ -511,7 +511,7 @@ namespace UserControls.ViewModels.Managers
             if (currentProduct == null) return;
             if (!IsSingleModeSelected)
             {
-                
+
                 var products = SelectedProducts.Cast<ProductModel>().ToList();
                 foreach (var productModel in products)
                 {
@@ -859,11 +859,14 @@ namespace UserControls.ViewModels.Managers
             }
             else
             {
-                //MessageManager.OnMessage(string.Format("Բեռնվել է {0} անվանում ապրանք", products.Count));
                 foreach (var productModel in products)
                 {
                     productModel.Id = Guid.Empty;
                     if (string.IsNullOrEmpty(productModel.Code)) productModel.Code = GetNextProductCode();
+                    if (_productItems.Any(s => s.Code == productModel.Code))
+                    {
+                        productModel.ProductKeys = _productItems.Where(p => p.Code == productModel.Code).Select(s => s.ProductKeys).FirstOrDefault();
+                    }
                     productModel.LastModifiedDate = DateTime.Now;
                     OnEditProduct(productModel);
                 }

@@ -454,7 +454,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal ">
                                     <Label Content="Կանխավճար" VerticalAlignment="Center" Foreground="Green"/>
-                                    <TextBox Text="{Binding Path=InvoicePaid.Prepayment, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right"
+                                    <TextBox Text="{Binding Path=InvoicePaid.ReceivedPrepayment, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right"
                  Width="100" FontSize="15" Height="25" Margin="1" Foreground="Green" IsReadOnly="True"/>
                                 </StackPanel>
                             </StackPanel>
@@ -949,9 +949,9 @@
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                         <TextBlock Text="Կանխիկ" VerticalAlignment="Center" />
                                         <TextBox Name="TxtPaid" Text="{Binding Path=InvoicePaid.Paid, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}"
-               BorderThickness="1" BorderBrush="Black" Margin="1"
-   VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100"
-   FontSize="15" Height="25" Foreground="Blue" TabIndex="8">
+                                                 BorderThickness="1" BorderBrush="Black" Margin="1"
+                                                 VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100"
+                                                 FontSize="15" Height="25" Foreground="Blue" TabIndex="8">
                                             <i:Interaction.Behaviors>
                                                 <behaviors:TextBoxBehavior IsSelectTextOnFocus="True" />
                                             </i:Interaction.Behaviors>
@@ -961,25 +961,25 @@
                                         <Label Content="Անկանխիկ" VerticalAlignment="Center" HorizontalContentAlignment="Right"/>
 
                                         <TextBox Text="{Binding Path=InvoicePaid.ByCheck, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}"
-               BorderThickness="1" BorderBrush="Black" Margin="1"
-   VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100"
-   FontSize="15" Height="25" Foreground="Blue" TabIndex="8"/>
+                                                 BorderThickness="1" BorderBrush="Black" Margin="1"
+                                                 VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100"
+                                                 FontSize="15" Height="25" Foreground="Blue" TabIndex="8"/>
                                     </StackPanel>
                                 </StackPanel>
 
                                 <StackPanel VerticalAlignment="Bottom" >
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                         <TextBlock Text="Կանխավճար" VerticalAlignment="Center" ToolTip="Ավելացնել որպես կանխավճար" />
-                                        <TextBox Text="{Binding InvoicePaid.AccountsReceivable, StringFormat={}{0:#,#.##}, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
-  BorderThickness="1" BorderBrush="Black" Margin="1"
-  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" Height="25" Foreground="Blue" TabIndex="8"/>
+                                        <TextBox Text="{Binding InvoicePaid.ReceivedPrepayment, StringFormat={}{0:#,#.##}, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
+                                                 BorderThickness="1" BorderBrush="Black" Margin="1"
+                                                 VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" Height="25" Foreground="Blue" TabIndex="8"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment =" Right">
-                                        <TextBlock Text="Պարտք" VerticalAlignment="Center" Width="100" TextWrapping="Wrap" TextAlignment="Right" ToolTip="Պարտքի մարում" />
+                                        <TextBlock Text="Պարտքի մարում" VerticalAlignment="Center" Width="100" TextWrapping="Wrap" TextAlignment="Right" ToolTip="Պատվիրատուի պարտքի մարում" />
 
-                                        <TextBox Text="{Binding InvoicePaid.ReceivedPrepayment, StringFormat={}{0:#,#.##}, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
-  BorderThickness="1" BorderBrush="Black" Margin="1"
-  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" Height="25" Foreground="Blue" TabIndex="8"/>
+                                        <TextBox Text="{Binding InvoicePaid.AccountsReceivable, StringFormat={}{0:#,#.##}, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
+                                                 BorderThickness="1" BorderBrush="Black" Margin="1"
+                                                 VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" Height="25" Foreground="Blue" TabIndex="8"/>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>

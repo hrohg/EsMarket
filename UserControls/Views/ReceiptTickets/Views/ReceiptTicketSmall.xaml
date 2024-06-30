@@ -170,14 +170,16 @@
                 <TextBlock Text="Գնորդ։ " Style="{StaticResource HeaderTextBlockStyle}"/>
                 <TextBlock Text="{Binding Invoice.Partner.FullName}" Style="{StaticResource TextBlockStyle}"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Visibility="Collapsed">
                 <TextBlock Text="ՀՎՀՀ։ " Style="{StaticResource HeaderTextBlockStyle}"/>
                 <TextBlock Text="{Binding Invoice.Partner.Tin}"  Style="{StaticResource TextBlockStyle}"/>
             </StackPanel>
-            <TextBlock Text="ՎԱՃԱՌՔ" HorizontalAlignment="Center" FontSize="10"/>
+            <Separator/>
         </StackPanel>
 
-        <!--<DataGrid Grid.Row="3" 
+        <StackPanel Grid.Row="3">
+            <TextBlock Text="ՎԱՃԱՌՔ" HorizontalAlignment="Center" FontSize="10"/>
+            <!--<DataGrid Grid.Row="3" 
                   x:Name="PartDataGrid" 
                   Background="Transparent"
                   ItemsSource="{Binding InvoiceItems}" 
@@ -264,24 +266,30 @@
             </DataGrid.Columns>
         </DataGrid>-->
 
-        <ItemsControl Grid.Row="3" ItemsSource="{Binding InvoiceItems}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
+            <ItemsControl  ItemsSource="{Binding InvoiceItems}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:InvoiceItemsModel}">
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" Text="{Binding DisplayOrder}" Style="{StaticResource TextBlockStyle}"/>
-                        <TextBlock Grid.Column="1" Text="{Binding Converter={StaticResource InvoiceItemToStringConverter}}" 
+                            <TextBlock Grid.Column="0" Text="{Binding DisplayOrder}" Style="{StaticResource TextBlockStyle}"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Converter={StaticResource InvoiceItemToStringConverter}}" 
                                    Style="{StaticResource TextBlockStyle}" TextWrapping="Wrap" AllowDrop="True"/>
-                    </Grid>
+                        </Grid>
 
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <StackPanel Orientation="Horizontal" Visibility="{Binding HasEmark, Converter={StaticResource Bool2VisibilityConverter}}">
+                <TextBlock Text="Հսկիչ նշանի քանակ: " Style="{StaticResource HeaderTextBlockStyle}"/>
+                <TextBlock Text="{Binding EmarkCount}" Style="{StaticResource TextBlockStyle}"/>
+            </StackPanel>
+            <TextBlock Text="(Ֆ)" />
+        </StackPanel>
 
         <StackPanel Grid.Row="4">
             <Separator Margin="0 5 0 0"/>
@@ -316,7 +324,7 @@
                 <TextBlock Grid.Column="0" Grid.Row="6" Text="Մանր։" HorizontalAlignment="Right"  Style="{StaticResource HeaderTextBlockStyle}"/>
                 <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding InvoicePaid.Change, StringFormat={}{0:#,0}}" HorizontalAlignment="Right" Style="{StaticResource TextBlockStyle}"/>
                 <TextBlock Grid.Column="0" Grid.Row="7" Text="Կուտակում։" HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsPrepayment}" Style="{StaticResource HeaderTextBlockStyle}"/>
-                <TextBlock Grid.Column="1" Grid.Row="7" Text="{Binding InvoicePaid.Prepayment, StringFormat={}{0:#,0}}" HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsPrepayment}"  Style="{StaticResource TextBlockStyle}"/>
+                <TextBlock Grid.Column="1" Grid.Row="7" Text="{Binding InvoicePaid.ReceivedPrepayment, StringFormat={}{0:#,0}}" HorizontalAlignment="Right" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter}, Path=IsPrepayment}"  Style="{StaticResource TextBlockStyle}"/>
             </Grid>
             <Separator/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Visibility="{Binding Converter={StaticResource Bool2VisibilityConverter},Path=IsLottery}">

@@ -65,7 +65,6 @@ namespace UserControls.ViewModels.Invoices
             base.OnInitialize();
             Title = "Ետ վերադարձ";
             AddBySingle = ApplicationManager.Settings.SettingsContainer.MemberSettings.SaleBySingle;
-            Buyer = Partner;
         }
         protected override void OnInvoiceItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -93,7 +92,8 @@ namespace UserControls.ViewModels.Invoices
             Invoice.RecipientName = Partner != null ? Partner.FullName : null;
             Invoice.Discount = Partner != null ? Partner.Discount : null;
             OnInvoiceItemsPropertyChanged(null, null);
-            RaisePropertyChanged(() => Buyer);
+            if (_buyer != null) Buyer = Partner;
+            else RaisePropertyChanged(() => Buyer);
         }
         protected override void OnInvoiceItemsPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -106,7 +106,7 @@ namespace UserControls.ViewModels.Invoices
                 if (Partner != null && (Partner.PartnersTypeId != (short)PartnerType.Dealer || !invoiceItem.Product.HasDealerPrice))
                     discount = Invoice.Discount == 0 ? 0 : invoiceItem.Discount ?? Invoice.Discount ?? 0;
 
-                var price = (invoiceItem.Price ?? 0) * (1 - discount / 100);
+                var price = invoiceItem.Price ?? 0; //(invoiceItem.Price ?? 0) * (1 - discount / 100);
                 total += price * (invoiceItem.Quantity ?? 0);
             }
             if (Partner != null) InvoicePaid.Paid = InvoicePaid.Total = Invoice.Total = total;
@@ -255,7 +255,7 @@ namespace UserControls.ViewModels.Invoices
                 if (InvoiceItem.Discount == 0) InvoiceItem.Discount = null;
                 InvoiceItem.Price = exProduct != null && exProduct.Price != null && exProduct.Price > 0 ? exProduct.Price * (100 - (InvoiceItem.Discount ?? 0)) / 100 : item.Price;
                 InvoiceItem.Quantity = item.Quantity;
-                OnAddInvoiceItem();
+                OnAddInvoiceItem(InvoiceItem);
             }
         }
         #endregion Internal methods
@@ -287,6 +287,16 @@ namespace UserControls.ViewModels.Invoices
                 UseExtPos = false
             };
             ResponseReceiptModel responceReceiptViewModel = null;
+            List<IEcrReturnItem> itemsToReturn = new List<IEcrReturnItem>();
+            int ticketId = 0;
+            var ticketForReturn = ecrManager.GetReceiptReturnTicket(ticketId.ToString());
+            foreach (var invoiceItem in InvoiceItems)
+            {
+                var exItem = ticketForReturn.totals.SingleOrDefault(t => t.gc == invoiceItem.Code);
+                if (exItem != null)
+                    itemsToReturn.Add(new ReturnItem(int.Parse(exItem.rpid), (double)Math.Round(invoiceItem.Quantity ?? 0, 3)));
+            }
+
             if (InvoiceItems.All(s => s.Quantity > 0))
             {
                 var products = InvoiceItems.Select(s => new TotalModel
@@ -296,7 +306,7 @@ namespace UserControls.ViewModels.Invoices
                     gc = s.Code,
                     gn = s.Description,
                     mu = s.Mu,
-                    qty = (s.Quantity != null ? s.Quantity.ToString() : "0"),
+                    qty = s.Quantity != null ? s.Quantity.ToString() : "0",
                     p = s.Product != null && s.Product.Price != null ? s.Product.Price.ToString() : "0",
                     tt = ((s.Quantity ?? 0) * (s.Price ?? 0)).ToString(CultureInfo.InvariantCulture),
 
@@ -306,16 +316,18 @@ namespace UserControls.ViewModels.Invoices
                 }).ToList();
 
 
-                responceReceiptViewModel = ecrManager.PrintReceiptReturnTicket(products, null);
+
+                //var = ticketForReturn.totals.Join(InvoiceItems, t => new { Code = t.gc, Price = t.p }, ii => new { Code = ii.Code, Price = ii.Price }, (t, ii) => new { t, ii });
+                ecrManager.PrintReceiptReturnTicket(ticketId, itemsToReturn.ToArray(), invoicePaid);
             }
-            else
-            {
-                var returnItems = InvoiceItems.Where(s => s.Quantity > 0).Select(s => (IEcrReturnItem)(new ReturnItem(InvoiceItems.IndexOf(s), (double)(s.Quantity ?? 0)))).ToArray();
-                ecrManager.PrintReceiptReturnTicket(returnItems, null);
-            }
+            //else
+            //{
+            //    var returnItems = InvoiceItems.Where(s => s.Quantity > 0).Select(s => (IEcrReturnItem)(new ReturnItem(InvoiceItems.IndexOf(s), (double)(s.Quantity ?? 0)))).ToArray();
+            //    ecrManager.PrintReceiptReturnTicket(returnItems, null);
+            //}
             var message = responceReceiptViewModel != null ?
                 new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:" + responceReceiptViewModel.Fiscal, MessageTypeEnum.Success)
-                : new MessageModel("ՀԴՄ կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrManager.ActionDescription, ecrManager.ActionCode), MessageTypeEnum.Warning);
+                : new MessageModel("ՀԴՄ կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecrManager.Result.Description, ecrManager.Result.Code), MessageTypeEnum.Warning);
             MessageManager.OnMessage(message);
         }
 
@@ -463,7 +475,7 @@ namespace UserControls.ViewModels.Invoices
         protected override bool IsPaidValid()
         {
             return InvoicePaid.IsPaid &&
-       InvoicePaid.Change <= (InvoicePaid.Paid ?? 0) &&
+       (InvoicePaid.Change??0) <= (InvoicePaid.Paid ?? 0) &&
        Partner != null
        //&&(InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit 
        //&&(InvoicePaid.ReceivedPrepayment ?? 0) <= Partner.Credit
@@ -561,7 +573,7 @@ namespace UserControls.ViewModels.Invoices
                 };
                 if (InvoiceItem.Discount == 0) InvoiceItem.Discount = null;
                 InvoiceItem.Price = exProduct != null && exProduct.Price != null && exProduct.Price > 0 ? exProduct.Price * (100 - (InvoiceItem.Discount ?? 0)) / 100 : item.Price;
-                OnAddInvoiceItem();
+                OnAddInvoiceItem(InvoiceItem);
                 InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
                 RaisePropertyChanged("InvoicePaid");
             }

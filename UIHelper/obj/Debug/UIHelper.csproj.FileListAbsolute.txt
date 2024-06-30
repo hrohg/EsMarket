@@ -21,8 +21,8 @@ D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\ES.Common.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\CashReg.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\Xceed.Wpf.AvalonDock.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\System.Windows.Interactivity.dll
-D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\TaxServiceInvoices.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\Newtonsoft.Json.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\TaxServiceInvoices.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\ES.Common.pdb
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\Xceed.Wpf.AvalonDock.pdb
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\System.Windows.Interactivity.xml
@@ -47,3 +47,11 @@ D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\UIHelper.cspr
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\UIHelper.csproj.CopyComplete
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\UIHelper.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\obj\Debug\UIHelper.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\Shared.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\ES.Data.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\EsMarket.SharedData.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\Shared.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\Shared.dll.config
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\ES.Data.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\EsMarket.SharedData.pdb
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\UIHelper\bin\Debug\Ecr.Manager.dll

@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 
 namespace UserControls.ControlPanel.Controls
 {
@@ -13,16 +14,31 @@ namespace UserControls.ControlPanel.Controls
         {
             InitializeComponent();
         }
-        public InputBox(string description)
+        public InputBox(string description):this()
         {
-            InitializeComponent();
             txtDescription.Text = description;
+            TxtImput.Focus();
         }
-        public InputBox(string description, string inputValue)
-        {
-            InitializeComponent();
-            txtDescription.Text = description;
+        public InputBox(string description, string inputValue):this(description)
+        {            
             TxtImput.Text = inputValue;
+        }
+
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            base.OnPreviewKeyDown(e);
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    e.Handled = true;
+                    Button_Click(null, null);
+                    break;
+                case Key.Escape:
+                    e.Handled = true;
+                    DialogResult = false;
+                    Close();
+                    break;
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

@@ -38,7 +38,7 @@ namespace UserControls.ViewModels.Invoices
             get { return base.FromStock; }
             set
             {
-                base.FromStock = value;                
+                base.FromStock = value;
             }
         }
         public override StockModel ToStock
@@ -111,20 +111,21 @@ namespace UserControls.ViewModels.Invoices
             base.PreviewAddInvoiceItem(o);
         }
 
-        protected override void OnAddInvoiceItem()
+        protected override void OnAddInvoiceItem(InvoiceItemsModel invoiceItem)
         {
-            base.OnAddInvoiceItem();
+            base.OnAddInvoiceItem(invoiceItem);
             //InvoicePaid.Paid = InvoiceItems.Sum(s => s.Amount);
             RaisePropertyChanged("InvoicePaid");
         }
         protected override bool CanApprove(object o)
         {
+            if (!base.CanApprove(o)) return false;
             var paid = InvoicePaid.Paid ?? 0;
             //var receivedPrepayment = InvoicePaid.ReceivedPrepayment ?? 0;
             //var partnerMaxDebit = Partner != null ? Partner.MaxDebit ?? 0 : 0;
-            return base.CanApprove(o)
-                && InvoicePaid.IsPaid
-                && InvoicePaid.Change <= paid
+
+            return InvoicePaid.IsPaid
+                && (InvoicePaid.Change ?? 0) <= paid
                 && Partner != null
                 //&& (receivedPrepayment == 0 || receivedPrepayment <= partnerMaxDebit - Partner.Debit)
                 && ApplicationManager.IsInRole(UserRoleEnum.SaleManager);

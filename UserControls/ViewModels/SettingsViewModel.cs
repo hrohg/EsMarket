@@ -7,7 +7,6 @@ using System.Management;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using CashReg;
 using CashReg.Helper;
 using CashReg.Interfaces;
 using ES.Business.Helpers;
@@ -19,6 +18,7 @@ using ES.Common.Models;
 using ES.Common.ViewModels.Base;
 using ES.Data.Models;
 using Shared.Helpers;
+using UserControls.Helpers;
 
 namespace UserControls.ViewModels
 {
@@ -534,7 +534,7 @@ namespace UserControls.ViewModels
         private void ExecuteEcrAction(EcrExecuiteActions actionMode)
         {
             IsInProgress = true;
-            var ecrserver = new EcrServer(SelectedEcrSettings);
+            var ecrserver = EcrManager.GetEcrServer(SelectedEcrSettings);
             MessageModel message = null;
             UsersAndDepartments operatorDeps;
             switch (actionMode)
@@ -554,7 +554,7 @@ namespace UserControls.ViewModels
                     operatorDeps = ecrserver.GetUsersDepsList();
                     if (operatorDeps == null)
                     {
-                        message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
+                        message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.Result.Description, ecrserver.Result.Code), MessageTypeEnum.Warning);
                     }
                     else
                     {
@@ -576,7 +576,7 @@ namespace UserControls.ViewModels
                     operatorDeps = ecrserver.GetUsersDepsList();
                     if (operatorDeps == null)
                     {
-                        message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
+                        message = new MessageModel("ՀԴՄ օպերատորի բաժինների ստացումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.Result.Description, ecrserver.Result.Code), MessageTypeEnum.Warning);
                     }
                     else
                     {
@@ -587,7 +587,7 @@ namespace UserControls.ViewModels
                     }
                     break;
                 case EcrExecuiteActions.OperatorLogin:
-                    message = ecrserver.TryOperatorLogin() ? new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.ActionDescription, ecrserver.ActionCode), MessageTypeEnum.Warning);
+                    message = ecrserver.TryOperatorLogin() ? new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումը ձախողվել է:" + string.Format(" {0} ({1})", ecrserver.Result.Description, ecrserver.Result.Code), MessageTypeEnum.Warning);
                     break;
                 case EcrExecuiteActions.LogoutOperator:
                     break;

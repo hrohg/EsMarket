@@ -148,7 +148,7 @@ namespace UserControls.ViewModels.Invoices
             get { return _partner; }
             set
             {
-                _partner = value;                
+                _partner = value;
                 OnPartnerChanged();
             }
         }

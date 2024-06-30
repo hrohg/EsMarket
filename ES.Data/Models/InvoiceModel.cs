@@ -42,6 +42,7 @@ namespace ES.Data.Models
         private string _recipientName;
         private decimal? _discount;
         private decimal _total;
+        private decimal? _discountBond;
         private decimal _amount;
         private decimal? _paid;
         private DateTime? _approveDate;
@@ -122,10 +123,11 @@ namespace ES.Data.Models
                 RaisePropertyChanged(() => DiscountAmount);
             }
         }
-        public decimal DiscountAmount { get { return !UseDiscountBond ? Amount - Total: 0; } }
+        public decimal DiscountAmount { get { return Amount - Total; } }
         public decimal? TotalDiscount { get { return Amount > 0 ? (Amount - Total) * 100 / Amount : 0; } }
         [XmlIgnore]
-        public decimal? DiscountBond { get { return UseDiscountBond ? Amount > Total ? Amount - Total : 0 : 0; } }
+        public decimal? DiscountBond { get { return _discountBond; } set { _discountBond = value; RaisePropertyChanged(() => DiscountBond); } }
+
         //public decimal? Paid
         //{
         //    get { return _paid; }

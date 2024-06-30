@@ -1,6 +1,10 @@
 ﻿using Shared.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -32,19 +36,19 @@ namespace UserControls.Views.CustomControls
             // process barcode
             if (e.Key == Key.Enter)
             {
-                string barcode = new string(_barcode.ToArray());
-                if (_vm == null) return;
-                if (_barcode.Count == 16)
-                {
-                    _vm.SetPartnerCardNumber(barcode);
-                }
-                else if (_barcode.Count > 5)
-                {
-                    _vm.SetInvoiceItem(barcode);
-                }
-                _barcode.Clear();
-                _barcodeText.Clear();
-                return;
+                //string barcode = new string(_barcode.ToArray());
+                //if (_vm == null) return;
+                //if (_barcode.Count == 16)
+                //{
+                //    _vm.SetPartnerCardNumber(barcode);
+                //}
+                //else if (_barcode.Count > 5)
+                //{
+                //    _vm.SetInvoiceItem(barcode);
+                //}
+                //_barcode.Clear();
+                //_barcodeText.Clear();
+                //return;
             }
 
             // check timing (keystrokes within 100 ms)
@@ -57,7 +61,7 @@ namespace UserControls.Views.CustomControls
 
             // record keystroke & timestamp
             var key = KeyboardHelper.KeyToChar(e.Key == Key.System ? e.SystemKey : e.Key);
-            if(e.Key == Key.System)
+            if (e.Key == Key.System)
             {
                 if (Keyboard.IsKeyDown(Key.NumPad0)) key = '0';
                 if (Keyboard.IsKeyDown(Key.NumPad1)) key = '1';
@@ -70,7 +74,7 @@ namespace UserControls.Views.CustomControls
                 if (Keyboard.IsKeyDown(Key.NumPad8)) key = '8';
                 if (Keyboard.IsKeyDown(Key.NumPad9)) key = '9';
             }
-            
+
 
             if (key == '\x00')
             {
@@ -97,6 +101,23 @@ namespace UserControls.Views.CustomControls
                         TxtPaid.SelectAll();
                         break;
                     case Key.F:
+                    case Key.D:
+                        //new Thread(() =>
+                        //{
+                        //    Thread.Sleep(5000);
+                        //    //Keys key;
+                        //    //Enum.TryParse("Enter", out key);
+
+                        //    //var str = "012345678910111213141516171819202122bla - bla";
+                        //    //var hex = str.Select(c => ((int)c).ToString("X")).Aggregate(String.Empty, (x, y) => x + y);
+                        //    Dispatcher.Invoke(() => {
+                        //        //    //foreach (var key in text)uint.Parse(key, System.Globalization.NumberStyles.HexNumber)
+                        //        //    { PostMessage(Process.GetCurrentProcess().Handle, hex, 0, 0); }
+                        //        _vm.SetExternalText(new ES.Common.Helpers.ExternalTextImputEventArgs("012345678910111213141516171819202122bla-bla"));
+                        //    });
+                        //    //keybd_event(Convert.ToUInt32("012345678910111213141516171819202122bla-bla"), 0, 0, 0);
+                           
+                        //}).Start();
                         break;
                     case Key.N:
                         break;
@@ -113,6 +134,11 @@ namespace UserControls.Views.CustomControls
                 }
             }
         }
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern void keybd_event(uint bVk, uint bScan, uint dwFlags, uint dwExtraInfo);
+
+        [DllImport("user32.dll")]
+        static extern bool PostMessage(IntPtr hWnd, UInt32 Msg, int wParam, int lParam);
 
         private DateTime _lastKeystroke = new DateTime(0);
         private List<char> _barcode = new List<char>(10);

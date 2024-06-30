@@ -4,7 +4,7 @@
              DispatcherUnhandledException="Application_DispatcherUnhandledException"
              Startup="Application_Startup"
              ShutdownMode="OnMainWindowClose">
-   <Application.Resources>
+   <Application.Resources>        
         <ResourceDictionary Source="pack://application:,,,/ResourceLibrary;component/Resources/Resources.xaml"/>
     </Application.Resources>
 </Application>

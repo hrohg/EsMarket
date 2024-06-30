@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -11,7 +11,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UserControls</RootNamespace>
     <AssemblyName>UserControls</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -49,6 +49,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -58,14 +59,18 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CashReg, Version=0.0.0.4, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CashReg, Version=1.0.0.6, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Bin\CashReg.dll</HintPath>
     </Reference>
     <Reference Include="DotNetProjects.DataVisualization.Toolkit">
       <HintPath>..\packages\DotNetProjects.Wpf.Toolkit.5.0.26\lib\net40\DotNetProjects.DataVisualization.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Ecr.Manager">
+      <HintPath>..\Bin\Ecr.Manager.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net40\EntityFramework.dll</HintPath>
@@ -115,6 +120,7 @@
     <Compile Include="Enumerations\ViewEnums.cs" />
     <Compile Include="Helpers\AccountingActionManager.cs" />
     <Compile Include="Helpers\Converters.cs" />
+    <Compile Include="Helpers\InvoicesHelpers.cs" />
     <Compile Include="Helpers\PriceTicketManager.cs" />
     <Compile Include="Interfaces\IShellViewModel.cs" />
     <Compile Include="Interfaces\ITableViewModel.cs" />
