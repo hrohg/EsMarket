@@ -24,7 +24,7 @@ namespace ES.Business.Managers
         private void Initialize()
         {
             _licensePlans.Add(LicensePlansEnum.Starter, new LicensePlanModel { });
-            _licensePlans.Add(LicensePlansEnum.Advanced, new LicensePlanModel { CanRedeemVaucher = true }); ;
+            _licensePlans.Add(LicensePlansEnum.Advanced, new LicensePlanModel { CanRedeemVaucher = true });
         }
         public LicensePlanModel GetLicensePlan(LicensePlansEnum license)
         {
