@@ -11,19 +11,25 @@ namespace UserControls.ControlPanel.Controls
     public partial class CtrlAccountingRecords : Window
     {
         public bool Result = false;
-        public AccountingRecordsModel AccountingRecord { get { return ((AccountingRecordsViewModel) this.DataContext).AccountingRecord; } }
-        public CtrlAccountingRecords(AccountingRecordsViewModel accountingRecords, bool debitIsEnable=false, bool creditIdEnable=false )
+        public AccountingRecordsModel AccountingRecord { get { return ((AccountingRecordsViewModel)this.DataContext).AccountingRecord; } }
+
+        #region Constructors
+        public CtrlAccountingRecords(AccountingRecordsViewModel accountingRecords, bool debitIsEnable = false, bool creditIdEnable = false)
         {
             InitializeComponent();
             DataContext = accountingRecords;
-            CmbDebit.IsEnabled = debitIsEnable;
-            CmbCredit.IsEnabled = creditIdEnable;
-        }
-        public CtrlAccountingRecords(long memberId, long registerId)
+            
+            //Create bindable properties
+            //CmbDebit.IsEnabled = debitIsEnable;
+            //CmbCredit.IsEnabled = creditIdEnable;
+        }        
+        public CtrlAccountingRecords()
         {
             InitializeComponent();
-            DataContext = new AccountingRecordsViewModel();
+            DataContext = new AccountingRecordsViewModelBase();
         }
+        #endregion Constructors
+
         private void BtnCancel_Click(object sender, EventArgs e)
         {
             Result = false;

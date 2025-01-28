@@ -8,14 +8,8 @@ using ES.DataAccess.Models;
 
 namespace ES.Business.Models
 {
-    public class AccountingRecordsModel : ViewModelBase
+    public class AccountingRecordsModelBase : ViewModelBase
     {
-        #region Properties
-
-        private readonly string AmountProperty = "Amount";
-        private readonly string DescriptionProperty = "Description";
-        #endregion
-
         #region Private properties
         private Guid _id = Guid.NewGuid();
         private DateTime _registerDate = DateTime.Now;
@@ -34,11 +28,11 @@ namespace ES.Business.Models
         #region public properties
         public Guid Id { get { return _id; } set { _id = value; } }
         public DateTime RegisterDate { get { return _registerDate; } set { _registerDate = value; } }
-        public string Description { get { return _description; } set { _description = value; RaisePropertyChanged(DescriptionProperty); } }
+        public string Description { get { return _description; } set { _description = value; RaisePropertyChanged(() => Description); } }
         public decimal Amount
         {
             get { return _amount; }
-            set { _amount = value; RaisePropertyChanged(AmountProperty); }
+            set { _amount = value; RaisePropertyChanged(() => Amount); }
         }
         public short Debit
         {
@@ -53,41 +47,48 @@ namespace ES.Business.Models
         public long? DebitLongId { get { return _debitLongId; } set { _debitLongId = value; } }
         public long? CreditLongId { get { return _creditLongId; } set { _creditLongId = value; } }
 
-        public string DebitDescription { get { return string.Format("{0} ({1})", AccountanttDescriptions.Description(Debit), Debit); } }
+        public string DebitDescription { get { return string.Format("{0} ({1})", AccountantDescriptions.Description(Debit), Debit); } }
         public string DebitDetile
         {
             get
             {
-                return AccountanttDescriptions.DebitDetile(Debit, DebitLongId, DebitGuidId);
+                return AccountantDescriptions.DebitDetile(Debit, DebitLongId, DebitGuidId);
             }
         }
-        public string CreditDescription { get { return string.Format("{0} ({1})", AccountanttDescriptions.Description(Credit), Credit); } }
+        public string CreditDescription { get { return string.Format("{0} ({1})", AccountantDescriptions.Description(Credit), Credit); } }
         public string CreditDetile
         {
             get
             {
-                return AccountanttDescriptions.CreditDetile(Credit, CreditLongId, CreditGuidId);
+                return AccountantDescriptions.CreditDetile(Credit, CreditLongId, CreditGuidId);
             }
         }
 
         public EsUserModel Cashier { get { return ApplicationManager.Instance.CashProvider.GetUser(RegisteredId); } }
         #endregion
 
-        public AccountingRecordsModel(DateTime date, int memberId, int registeredId)
+        public AccountingRecordsModelBase(DateTime date, int memberId, int registeredId)
         {
             RegisterDate = date;
             MemberId = memberId;
             RegisteredId = registeredId;
         }
-        public AccountingRecordsModel()
+    }
+    public class AccountingRecordsModel : AccountingRecordsModelBase
+    {
+
+
+        public AccountingRecordsModel(DateTime date, int memberId, int registeredId) : base(date, memberId, registeredId)
         {
-            RegisterDate = DateTime.Now;
-            MemberId = ApplicationManager.Instance.GetMember.Id;
-            RegisteredId = ApplicationManager.GetEsUser.UserId;
+
+        }
+        public AccountingRecordsModel() : base(DateTime.Now, ApplicationManager.MemberId, ApplicationManager.ActiveUserId)
+        {
+
         }
     }
 
-    public class AccountanttDescriptions
+    public class AccountantDescriptions
     {
         #region Internal properties
         private string[] _descriptions = new string[911];
@@ -104,10 +105,10 @@ namespace ES.Business.Models
 
         #region Constructors
 
-        private static AccountanttDescriptions _instance;
-        public static AccountanttDescriptions Instance { get { return _instance ?? (_instance = new AccountanttDescriptions()); } }
+        private static AccountantDescriptions _instance;
+        public static AccountantDescriptions Instance { get { return _instance ?? (_instance = new AccountantDescriptions()); } }
 
-        public AccountanttDescriptions()
+        public AccountantDescriptions()
         {
             Initilize();
         }

@@ -18,6 +18,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -60,11 +61,22 @@
                             <TextBlock Text="{Binding ResponseReceipt.Rseq}" />
                         </StackPanel>
                     </StackPanel>
-                    <TextBlock Text="Բաժին։ " />
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Գնորդ։ " />
-                        <TextBlock Text="{Binding Invoice.Accepter}" />
-                    </StackPanel>
+
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Բաժին։ " />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Գնորդ։ " />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Invoice.Accepter}" />
+                        <Image Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Source="{Binding QrImage}" Width="100" Height="100" HorizontalAlignment="Center" Visibility="Collapsed"/>
+                    </Grid>
                 </StackPanel>
                 <DataGrid Grid.Row="1" x:Name="PartDataGrid" ItemsSource="{Binding InvoiceItems}" SelectedItem="{Binding SelectedInvoiceItem}" VerticalContentAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False"  FontSize="10" >
                     <DataGrid.Resources>
@@ -86,7 +98,6 @@
                         <DataGridTextColumn Header="Գումար" Binding="{Binding Path=Amount, Mode=OneWay}" CellStyle="{StaticResource CellRightAlign}" Width="Auto"/>
                     </DataGrid.Columns>
                 </DataGrid>
-
                 <StackPanel Grid.Row="2">
                     <TextBlock Text="ՎՃԱՐՈՒՄ" HorizontalAlignment="Center"/>
                     <Grid>

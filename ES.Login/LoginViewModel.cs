@@ -139,7 +139,9 @@ namespace ES.Login
 
             var servers = UserControls.Helpers.SelectItemsManager.SelectServers(_servers);
             if (servers == null) return;
-            while (!ApplicationManager.CreateConnectionString(servers.FirstOrDefault()))
+            DataServer dataServer = servers.FirstOrDefault();
+            if (dataServer == null) return;
+            while (!ApplicationManager.Instance.CreateConnectionString(dataServer))
             {
                 var handler = OnClosed;
                 if (handler != null) handler(true);
@@ -147,7 +149,7 @@ namespace ES.Login
             }
             var password = Password;
             IsClearPassword = true;
-            var user = ApplicationManager.SetEsUser = UsersManager.VerifyLogin(Login, password);
+            var user = ApplicationManager.Instance.SetEsUser = UsersManager.VerifyLogin(Login, password);
             IsClearPassword = false;
             var loginedHandler = OnLogin;
             if (loginedHandler == null)
@@ -160,7 +162,7 @@ namespace ES.Login
                 LoginMessage = "Սխալ մուտքային տվյալներ:";
                 loginedHandler(null, null);
             }
-            else
+            else if(logiHandler != null && user.UserId > 0)
             {
                 loginedHandler(user.UserId > 0 ? user : null, Login);
                 //TxtPassword.Focus();

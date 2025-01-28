@@ -373,9 +373,10 @@ namespace UserControls.ViewModels.StockTakeings
                         .Select(s => new InvoiceItemsModel
                         {
                             ProductId = s.ProductId ?? Guid.Empty,
-                            Code = !string.IsNullOrEmpty(products.First(p => p.Id == s.ProductId).Barcode)
-                                ? products.First(p => p.Id == s.ProductId).Barcode
-                                : products.First(p => p.Id == s.ProductId).Code,
+                            Code = 
+                            //!string.IsNullOrEmpty(products.First(p => p.Id == s.ProductId).Barcode)? 
+                            //products.First(p => p.Id == s.ProductId).Barcode: 
+                            products.First(p => p.Id == s.ProductId).Code,
                             Quantity = s.Balance ?? 0
                         }).ToList(), StockTake.StockId,
                     string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", StockTake.StockTakeName, StockTake.CreateDate));
@@ -394,9 +395,10 @@ namespace UserControls.ViewModels.StockTakeings
                         .Select(s => new InvoiceItemsModel
                         {
                             ProductId = s.ProductId ?? Guid.Empty,
-                            Code = !string.IsNullOrEmpty(products.First(p => p.Id == s.ProductId).Barcode)
-                                ? products.First(p => p.Id == s.ProductId).Barcode
-                                : products.First(p => p.Id == s.ProductId).Code,
+                            Code = 
+                            //!string.IsNullOrEmpty(products.First(p => p.Id == s.ProductId).Barcode)?
+                            //products.First(p => p.Id == s.ProductId).Barcode:
+                            products.First(p => p.Id == s.ProductId).Code,
                             Quantity = -s.Balance ?? 0
                         }).ToList(), StockTake.StockId,
                     string.Format("Գույքագրման համար {0}, ամսաթիվ {1}", StockTake.StockTakeName, StockTake.CreateDate));
@@ -845,8 +847,6 @@ namespace UserControls.ViewModels.StockTakeings
         {
             return !StockTake.IsClosed;
         }
-
-
         private void OnWriteInStockTaking(object o)
         {
             OnCreateWriteInInvoice();

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+
 using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
 namespace ES.Common.Managers
@@ -864,10 +866,41 @@ namespace ES.Common.Managers
             var fileDialog = new SaveFileDialog { Filter = "xml | *.xml" };
             if (fileDialog.ShowDialog() == true)
             {
-                return Save(model, fileDialog.FileName);
+                XmlWriterSettings xmlSettings = new XmlWriterSettings
+                {                    
+                    Encoding = new UTF8Encoding(false),
+                    OmitXmlDeclaration = true,
+                    Indent = true,
+                    
+                };
+
+                using (XmlWriter xmlWriter = XmlWriter.Create(fileDialog.FileName, xmlSettings))
+                {
+                    // Create an XmlAttributes to override the default root element.
+                    XmlAttributes attrs = new XmlAttributes();
+
+                    // Create an XmlRootAttribute and set its element name and namespace.
+                    XmlRootAttribute xRoot = new XmlRootAttribute();
+                    xRoot.ElementName = "AccountingDocument";
+                    xRoot.Namespace = "http://www.microsoft.com";
+
+                    // Set the XmlRoot property to the XmlRoot object.
+                    attrs.XmlRoot = xRoot;
+                    XmlAttributeOverrides xOver = new XmlAttributeOverrides();
+
+                    /* Add the XmlAttributes object to the
+                    XmlAttributeOverrides object. */
+                    xOver.Add(typeof(T), attrs);
+
+
+                    XmlSerializer writer = new XmlSerializer(typeof(T), xOver) { };
+                    writer.Serialize(xmlWriter, model);
+                    return true;
+                }                
             }
             return false;
         }
+       
         public static bool Save<T>(T model, string filePath)
         {
             FileStream file = null;
@@ -1087,5 +1120,38 @@ namespace ES.Common.Managers
             }
         }
     }
+
+    public static class SerializationHelper
+    {
+        public static T DeserializeXml<T>(this string toDeserialize)
+        {
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+            using (StringReader textReader = new StringReader(toDeserialize))
+            {
+                return (T)xmlSerializer.Deserialize(textReader);
+            }
+        }
+
+        public static string SerializeXml<T>(this T toSerialize)
+        {
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+            using (StringWriter textWriter = new StringWriter())
+            {
+                xmlSerializer.Serialize(textWriter, toSerialize);
+                return textWriter.ToString();
+            }
+        }
+
+        //public static T DeserializeJson<T>(this string toDeserialize)
+        //{
+        //    return JsonConvert.DeserializeObject<T>(toDeserialize);
+        //}
+
+        //public static string SerializeJson<T>(this T toSerialize)
+        //{
+        //    return JsonConvert.SerializeObject(toSerialize);
+        //}
+    }
+
 
 }

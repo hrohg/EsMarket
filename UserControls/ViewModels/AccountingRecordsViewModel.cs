@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
+using Ecr.Manager.ViewModels;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.DataAccess.Models;
@@ -11,44 +12,35 @@ using UserControls.Commands;
 
 namespace UserControls.ViewModels
 {
-    public class AccountingRecordsViewModel : INotifyPropertyChanged
+    public class AccountingRecordsViewModelBase : ViewModelBase
     {
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName)
+        #region Internal properties
+        private AccountingRecordsModel _accountingRecord;
+
+        #endregion Internal propeties
+
+        #region External properties
+        public AccountingRecordsModel AccountingRecord
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
+            get => _accountingRecord;
+            set
             {
-                handler(this, new PropertyChangedEventArgs(propertyName));
+                _accountingRecord = value;
+                RaisePropertyChanged(() => AccountingRecord);
             }
         }
-        #endregion
-        #region Properties
+        #endregion external properties
 
-        private const string DescriptionProperty = "Description";
-        private const string DebitDescriptionProperty = "DebitDescription";
-        private const string CreditDescriptionProperty = "CreditDescription";
-        private const string AccountingRecordsProperty = "AccountingRecords";
-        private const string DebitsProperty = "Debits";
-        private const string CreditsProperty = "Credits";
-        private const string DebitProperty = "Debit";
-        private const string DebitIdProperty = "DebitId";
-        private const string CreditProperty = "Credit";
-        private const string CreditIdProperty = "CreditId";
-        private const string SubDebitsProperty = "SubDebits";
-        private const string SubCreditsProperty = "SubCredits";
-        private const string SubDebitProperty = "SubDebit";
-        private const string SubCreditProperty = "SubCredit";
-        private const string CanRenewProperty = "CanRenew";
-        #endregion
+    }
+    public class AccountingRecordsViewModel : AccountingRecordsViewModelBase
+    {
+
         #region Private properties
 
         private List<AccountingPlan> _accountingPlan;
         private string _description;
         private string _debitDescription;
         private string _creditDescription;
-        private AccountingRecordsModel _accountingRecord;
         //private ObservableCollection<AccountingAccounts> _debits;
         //private AccountingAccounts _debit;
         //private ObservableCollection<AccountingAccounts> _credits;
@@ -61,20 +53,10 @@ namespace UserControls.ViewModels
         private SubAccountingPlanModel _subCredit;
         private ObservableCollection<AccountingPlanRecordsModel> _accountingRecords = new ObservableCollection<AccountingPlanRecordsModel>() { new AccountingPlanRecordsModel() };
         #endregion
+
         #region Public properties
 
-        public AccountingRecordsModel AccountingRecord
-        {
-            get
-            {
-                return _accountingRecord;
-            }
-            set
-            {
-                _accountingRecord = value;
-                OnPropertyChanged(AccountingRecordsProperty);
-            }
-        }
+
         public ObservableCollection<AccountingPlanRecordsModel> AccountingRecords
         {
             get { return _accountingRecords; }
@@ -83,9 +65,9 @@ namespace UserControls.ViewModels
                 _accountingRecords = value;
             }
         }
-        public string Description { get { return _description; } set { _description = value; OnPropertyChanged(DescriptionProperty); } }
-        public string DebitDescription { get { return _debitDescription; } set { _debitDescription = value; OnPropertyChanged(DebitDescriptionProperty); } }
-        public string CreditDescription { get { return _creditDescription; } set { _creditDescription = value; OnPropertyChanged(CreditDescriptionProperty); } }
+        public string Description { get { return _description; } set { _description = value; RaisePropertyChanged(() => Description); } }
+        public string DebitDescription { get { return _debitDescription; } set { _debitDescription = value; RaisePropertyChanged(() => DebitDescription); } }
+        public string CreditDescription { get { return _creditDescription; } set { _creditDescription = value; RaisePropertyChanged(() => CreditDescription); } }
         public ObservableCollection<AccountingAccounts> Debits
         {
             get
@@ -125,9 +107,9 @@ namespace UserControls.ViewModels
                 _debitId = value;
                 AccountingRecord.Debit = DebitId ?? 0;
                 SubDebits = DebitId != null ? new ObservableCollection<SubAccountingPlanModel>(SubAccountingPlanManager.GetSubAccountingPlanModels((short)DebitId, 0, ApplicationManager.Instance.GetMember.Id, true)) : new ObservableCollection<SubAccountingPlanModel>();
-                OnPropertyChanged(DebitIdProperty);
-                if (CreditId == null) OnPropertyChanged(CreditsProperty);
-                OnPropertyChanged("CanSelectDebit");
+                RaisePropertyChanged(() => DebitId);
+                if (CreditId == null) RaisePropertyChanged(() => Credits);
+                RaisePropertyChanged(() => CanSelectDebit);
             }
         }
         public short? CreditId
@@ -138,9 +120,9 @@ namespace UserControls.ViewModels
                 _creditId = value;
                 AccountingRecord.Credit = CreditId ?? 0;
                 SubCredits = CreditId != null ? new ObservableCollection<SubAccountingPlanModel>(SubAccountingPlanManager.GetSubAccountingPlanModels(0, (short)CreditId, ApplicationManager.Instance.GetMember.Id, true)) : new ObservableCollection<SubAccountingPlanModel>();
-                OnPropertyChanged(CreditIdProperty);
-                if (DebitId == null) OnPropertyChanged(DebitsProperty);
-                OnPropertyChanged("CanSelectCredit");
+                RaisePropertyChanged(() => CreditId);
+                if (DebitId == null) RaisePropertyChanged(() => Debits);
+                RaisePropertyChanged(() => CanSelectCredit);
             }
         }
 
@@ -149,7 +131,7 @@ namespace UserControls.ViewModels
             get { return _subDebits; }
             set
             {
-                _subDebits = value; OnPropertyChanged(SubDebitsProperty);
+                _subDebits = value; RaisePropertyChanged(() => SubDebits);
                 SubDebit = SubDebits != null ? SubDebits.FirstOrDefault() : null;
             }
         }
@@ -197,7 +179,7 @@ namespace UserControls.ViewModels
             {
                 _subCredits = value;
                 SubCredit = SubCredits != null ? SubCredits.FirstOrDefault() : null;
-                OnPropertyChanged(SubCreditsProperty);
+                RaisePropertyChanged(() => SubCredits);
 
             }
         }
@@ -207,10 +189,10 @@ namespace UserControls.ViewModels
             get { return _subDebit; }
             set
             {
-                if (value == _subDebit) { return;}
+                if (value == _subDebit) { return; }
                 _subDebit = value;
                 AccountingRecord.DebitGuidId = SubDebit != null ? SubDebit.Id : (Guid?)null;
-                OnPropertyChanged(SubDebitProperty);
+                RaisePropertyChanged(() => SubDebit);
             }
         }
         public SubAccountingPlanModel SubCredit
@@ -218,10 +200,10 @@ namespace UserControls.ViewModels
             get { return _subCredit; }
             set
             {
-                if(value==_subCredit){return;}
+                if (value == _subCredit) { return; }
                 _subCredit = value;
                 AccountingRecord.CreditGuidId = SubCredit != null ? SubCredit.Id : (Guid?)null;
-                OnPropertyChanged(SubCreditProperty);
+                RaisePropertyChanged(() => SubCredit);
             }
         }
         public bool CanSelectDebit { get { return DebitId == null; } }
@@ -230,8 +212,8 @@ namespace UserControls.ViewModels
         public AccountingRecordsViewModel(AccountingRecordsModel accountingRecord, string description)
         {
             _accountingPlan = AccountingRecordsManager.GetAccountingPlan();
-            OnPropertyChanged(DebitsProperty);
-            OnPropertyChanged(CreditsProperty);
+            RaisePropertyChanged(() => Debits);
+            RaisePropertyChanged(() => Credits);
             Description = description;
             if (accountingRecord != null)
             {
@@ -240,7 +222,7 @@ namespace UserControls.ViewModels
                 CreditId = accountingRecord.Credit;
             }
             else { AccountingRecord = new AccountingRecordsModel(); }
-            
+
             DebitDescription = AccountingRecord.Debit + AccountingRecordsManager.GetAccountingRecordsDescription(AccountingRecord.Debit);
             CreditDescription = AccountingRecord.Credit + AccountingRecordsManager.GetAccountingRecordsDescription(AccountingRecord.Credit);
             SetCommands();
@@ -249,16 +231,16 @@ namespace UserControls.ViewModels
         {
             _accountingPlan = AccountingRecordsManager.GetAccountingPlan();
             AccountingRecord = new AccountingRecordsModel();
-            OnPropertyChanged(DebitsProperty);
-            OnPropertyChanged(CreditsProperty);
+            RaisePropertyChanged(() => Debits);
+            RaisePropertyChanged(() => Credits);
             SetCommands();
         }
         public AccountingRecordsViewModel(int? debit, int? credit)
         {
             _accountingPlan = AccountingRecordsManager.GetAccountingPlan();
             AccountingRecord = new AccountingRecordsModel();
-            OnPropertyChanged(DebitsProperty);
-            OnPropertyChanged(CreditsProperty);
+            RaisePropertyChanged(() => Debits);
+            RaisePropertyChanged(() => Credits);
             DebitId = Debits.Where(s => s.Id == debit).Select(s => s.Id).FirstOrDefault();
             CreditId = Credits.Where(s => s.Id == credit).Select(s => s.Id).FirstOrDefault();
             SetCommands();
@@ -289,8 +271,8 @@ namespace UserControls.ViewModels
         public void RecordRenew()
         {
             DebitId = CreditId = null;
-            OnPropertyChanged(DebitsProperty);
-            OnPropertyChanged(CreditsProperty);
+            RaisePropertyChanged(() => Debits);
+            RaisePropertyChanged(() => Credits);
         }
 
         #endregion

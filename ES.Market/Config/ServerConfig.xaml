@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
-        xmlns:behaviors1="clr-namespace:ES.Login.Behaviors;assembly=ES.Login" Width="Auto" Height="Auto"
+        xmlns:behaviors1="clr-namespace:ES.Login.Behaviors;assembly=ES.Login" 
+        Width="Auto" Height="Auto"
         Title="Սերվերի կարգաբերում" WindowStyle="SingleBorderWindow" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight">
     <Window.Resources>
 
@@ -35,7 +36,7 @@
     <Grid>
         <StackPanel>
             <Grid Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}">
-                <TextBlock Text="Տվյալների բազայի կարգավորում: Խնդրում ենք լրացնել բոլոր անհրաժեշտ դաշտերը:" TextWrapping="Wrap" Margin="5" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"/>
+                <TextBlock Text="Տվյալների բազայի կարգավորում: Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը:" TextWrapping="Wrap" Margin="5" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"/>
             </Grid>
             <Grid Margin="20 10 10 5">
                 <Grid.ColumnDefinitions>

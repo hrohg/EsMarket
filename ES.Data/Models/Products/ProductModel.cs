@@ -134,12 +134,18 @@ namespace ES.Data.Models.Products
             if (value == null) return -1;
             if (value.Id == Id) return 0;
             return StringComparer.OrdinalIgnoreCase.Compare(value.Code, Code);
-        }        
+        }
     }
 
     public class ProductProvider
     {
         public Guid ProviderId { get; set; }
         public Guid ProductId { get; set; }
+    }
+    public class ProductsByStockModel
+    {
+        public Guid ProductId { get; set; }
+        public int? StockId { get; set; }
+        public decimal Quantity { get; set; }
     }
 }

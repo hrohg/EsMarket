@@ -9,6 +9,7 @@ using UserControls.Enumerations;
 using UserControls.Helpers;
 using UserControls.Interfaces;
 using UserControls.PriceTicketControl.Helper;
+using UserControls.Views.Analyze.View;
 
 namespace UserControls.ViewModels.Documents
 {
@@ -43,8 +44,9 @@ namespace UserControls.ViewModels.Documents
             GetReportCommand = new RelayCommand<ReportTypes>(OnGetReport, CanGetReport);
             OpenCarculatorCommand = new RelayCommand(_parent.OnOpenCalc);
             ToolsCommand = new RelayCommand<ToolsEnum>(_parent.OnTools, _parent.CanOpenTools);
-            PriceTagCommand = new RelayCommand(() => { PriceTicketManager.PrintPriceTicket(PrintPriceTicketEnum.PriceTag);});
-        }
+            PriceTagCommand = new RelayCommand(() => { PriceTicketManager.PrintPriceTicket(PrintPriceTicketEnum.PriceTag); });
+            ManageProductsProcessingCommand = new RelayCommand(OnManageProductsProcessing, CanManageProductProcessing);
+        }       
 
         public bool CanOpenInvoice(Tuple<InvoiceTypeEnum, InvoiceState, MaxInvocieCount> tuple)
         {
@@ -61,10 +63,10 @@ namespace UserControls.ViewModels.Documents
             {
                 case ReportTypes.ShortReport:
                     return ApplicationManager.IsInRole(UserRoleEnum.Manager) || ApplicationManager.IsInRole(UserRoleEnum.JuniorManager);
-                    
+
                 case ReportTypes.Report:
                     return ApplicationManager.IsInRole(UserRoleEnum.Manager) || ApplicationManager.IsInRole(UserRoleEnum.JuniorManager) || ApplicationManager.IsInRole(UserRoleEnum.SaleManager);
-                   
+
                 default:
                     throw new ArgumentOutOfRangeException("reportTypesEnum", reportTypesEnum, null);
             }
@@ -82,6 +84,15 @@ namespace UserControls.ViewModels.Documents
         private void OnAccountingAction(AccountingPlanEnum accountingPlan)
         {
             _parent.OnAccountingAction(accountingPlan);
+        }
+
+        private bool CanManageProductProcessing()
+        {
+            return ApplicationManager.IsInRole(UserRoleEnum.Admin);
+        }
+        private void OnManageProductsProcessing()
+        {
+            new AnalyzeProducts().Show();
         }
         #endregion Internal methods
 
@@ -104,7 +115,7 @@ namespace UserControls.ViewModels.Documents
         public ICommand AccountingActionCommand
         {
             get { return _accountingActionCommand ?? (_accountingActionCommand = new RelayCommand<AccountingPlanEnum>(OnAccountingAction, CanExecuteAccountingAction)); }
-        }        
+        }
 
         #endregion CashDesk
 
@@ -122,6 +133,8 @@ namespace UserControls.ViewModels.Documents
         {
             get { return _parent.ManageProductsCommand; }
         }
+        public ICommand ManageProductsProcessingCommand { get; private set; }
+
         #endregion Commands
     }
 }

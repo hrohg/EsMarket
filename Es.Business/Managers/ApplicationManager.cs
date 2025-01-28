@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Controls;
 using ES.Business.Helpers;
 using ES.Common.Enumerations;
+using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Data.Models;
@@ -16,20 +17,53 @@ namespace ES.Business.Managers
     public class ApplicationManager
     {
         public delegate void OnReceivedLog(MessageModel log);
+        public delegate void OnProgressChanged();
+
         public event OnReceivedLog ReveiveLogEvent;
+        public event OnProgressChanged ProgressChangedEvent;
 
         #region Internal fields
-        private static DataServer _server;
+        private DataServer _server;
         private readonly MessageManager _messageManager;
+        private string _connectionString;
         #endregion Internal fields
 
         #region Internal properties
+        private readonly object _lockProgress = new object();
         private static EsMemberModel _member = new EsMemberModel();
         private static EsMembersAccountsModel _membersAccounts;
-        private static EsUserModel _esUser = new EsUserModel();
+        private EsUserModel _esUser = new EsUserModel(0);
         private static List<MembersRoles> _userRoles;
         private static CashManager _cashProvider;
-
+        private readonly Dictionary<string, int> ProgressValues = new Dictionary<string, int>();
+        public bool IsProcessing { get { lock (_lockProgress) return ProgressValues.Any(); } }
+        public int ProgressValue { get { lock (_lockProgress) return ProgressValues.Any() ? ProgressValues.Sum(s => s.Value) / ProgressValues.Count : -1; } }
+        public void SetProgressValue(string key, int value = 0)
+        {
+            lock (_lockProgress)
+            {
+                if (!ProgressValues.ContainsKey(key)) ProgressValues.Add(key, value);
+                else { ProgressValues[key] = value; }
+                if (ProgressValues[key] >= 100) RemoveProgressValue(key);
+            }
+            DispatcherWrapper.Instance.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
+            {
+                var handler = ProgressChangedEvent;
+                if (handler != null) handler();
+            });
+        }
+        public void RemoveProgressValue(string key)
+        {
+            lock (_lockProgress)
+            {
+                ProgressValues.Remove(key);
+            }
+            DispatcherWrapper.Instance.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send, () =>
+            {
+                var handler = ProgressChangedEvent;
+                if (handler != null) handler();
+            });
+        }
         #endregion
 
         //private string CreateConnectionString(string server, string databaseName, string userName, string password)
@@ -82,7 +116,10 @@ namespace ES.Business.Managers
         }
         #endregion Settings
 
-        public static string DbName { get { return _server != null ? _server.Database : string.Empty; } }
+        public string GetDbName()
+        {
+            return _server != null ? _server.Database : string.Empty;
+        }
         public static string DataSource { get; private set; }
         public EsMemberModel GetMember { get { return _member; } }
         public EsUserModel GetUser { get { return _esUser; } }
@@ -125,88 +162,83 @@ namespace ES.Business.Managers
                 _userRoles = value;
             }
         }
-        public static EsUserModel GetEsUser { get { return _esUser; } }
-        public static EsUserModel SetEsUser { set { _esUser = value; } }
+        public static EsUserModel GetEsUser { get { return Instance.GetUser; } }
+        public static int ActiveUserId { get { return Instance.GetUser.UserId; } }
+        public EsUserModel SetEsUser { set { _esUser = value; } }
         public static LicensePlansEnum License { get { return CashManager.Instance.License; } }
-        public static string DefaultConnectionString
+        public string GetDefaultConnectionString()
         {
-            get
-            {
-                string providerName = "System.Data.SqlClient";
-                string serverName = "ESServer";
-                string databaseName = "EsStockDb";
+            string providerName = "System.Data.SqlClient";
+            string serverName = "ESServer";
+            string databaseName = "EsStockDb";
 
-                // Initialize the connection string builder for the
-                // underlying provider.
-                SqlConnectionStringBuilder sqlBuilder =
-                    new SqlConnectionStringBuilder();
+            // Initialize the connection string builder for the
+            // underlying provider.
+            SqlConnectionStringBuilder sqlBuilder =
+                new SqlConnectionStringBuilder();
 
-                // Set the properties for the data source.
-                sqlBuilder.DataSource = serverName;
-                sqlBuilder.InitialCatalog = databaseName;
-                sqlBuilder.IntegratedSecurity = false;
-                sqlBuilder.PersistSecurityInfo = true;
-                sqlBuilder.MultipleActiveResultSets = true;
-                sqlBuilder.UserID = "sa";
-                sqlBuilder.Password = "eslsqlserver@)!$";
+            // Set the properties for the data source.
+            sqlBuilder.DataSource = serverName;
+            sqlBuilder.InitialCatalog = databaseName;
+            sqlBuilder.IntegratedSecurity = false;
+            sqlBuilder.PersistSecurityInfo = true;
+            sqlBuilder.MultipleActiveResultSets = true;
+            sqlBuilder.UserID = "sa";
+            sqlBuilder.Password = "eslsqlserver@)!$";
 
-                // Build the SqlConnection connection string.
-                string providerString = sqlBuilder.ToString();
+            // Build the SqlConnection connection string.
+            string providerString = sqlBuilder.ToString();
 
-                // Initialize the EntityConnectionStringBuilder.
-                EntityConnectionStringBuilder entityBuilder =
-                    new EntityConnectionStringBuilder();
+            // Initialize the EntityConnectionStringBuilder.
+            EntityConnectionStringBuilder entityBuilder =
+                new EntityConnectionStringBuilder();
 
-                //Set the provider name.
-                entityBuilder.Provider = providerName;
+            //Set the provider name.
+            entityBuilder.Provider = providerName;
 
-                // Set the provider-specific connection string.
-                entityBuilder.ProviderConnectionString = providerString;
+            // Set the provider-specific connection string.
+            entityBuilder.ProviderConnectionString = providerString;
 
-                // Set the Metadata location.
-                entityBuilder.Metadata = @"res://*/Models.EsStockDbModel.csdl|res://*/Models.EsStockDbModel.ssdl|res://*/Models.EsStockDbModel.msl";
-                return entityBuilder.ConnectionString;
-            }
+            // Set the Metadata location.
+            entityBuilder.Metadata = @"res://*/Models.EsStockDbModel.csdl|res://*/Models.EsStockDbModel.ssdl|res://*/Models.EsStockDbModel.msl";
+            return entityBuilder.ConnectionString;
         }
-        public static string ServerConnectionString
+        public string GetServerConnectionString()
         {
-            get
-            {
-                string providerName = "System.Data.SqlClient";
-                string serverName = "bamboo.arvixe.com"; // "93.187.163.33,14033";
-                string databaseName = "EsStockDb";
+            string providerName = "System.Data.SqlClient";
+            string serverName = "bamboo.arvixe.com"; // "93.187.163.33,14033";
+            string databaseName = "EsStockDb";
 
-                // Initialize the connection string builder for the
-                // underlying provider.
-                SqlConnectionStringBuilder sqlBuilder =
-                    new SqlConnectionStringBuilder();
+            // Initialize the connection string builder for the
+            // underlying provider.
+            SqlConnectionStringBuilder sqlBuilder =
+                new SqlConnectionStringBuilder();
 
-                // Set the properties for the data source.
-                sqlBuilder.DataSource = serverName;
-                sqlBuilder.InitialCatalog = databaseName;
-                sqlBuilder.IntegratedSecurity = false;
-                sqlBuilder.PersistSecurityInfo = true;
-                sqlBuilder.MultipleActiveResultSets = true;
-                sqlBuilder.UserID = "esstockdb_user"; // "sa";
-                sqlBuilder.Password = "esstockdb@)!$"; //"academypbx569280";
+            // Set the properties for the data source.
+            sqlBuilder.DataSource = serverName;
+            sqlBuilder.InitialCatalog = databaseName;
+            sqlBuilder.IntegratedSecurity = false;
+            sqlBuilder.PersistSecurityInfo = true;
+            sqlBuilder.MultipleActiveResultSets = true;
+            sqlBuilder.UserID = "esstockdb_user"; // "sa";
+            sqlBuilder.Password = "esstockdb@)!$"; //"academypbx569280";
 
-                // Build the SqlConnection connection string.
-                string providerString = sqlBuilder.ToString();
+            // Build the SqlConnection connection string.
+            string providerString = sqlBuilder.ToString();
 
-                // Initialize the EntityConnectionStringBuilder.
-                EntityConnectionStringBuilder entityBuilder =
-                    new EntityConnectionStringBuilder();
+            // Initialize the EntityConnectionStringBuilder.
+            EntityConnectionStringBuilder entityBuilder =
+                new EntityConnectionStringBuilder();
 
-                //Set the provider name.
-                entityBuilder.Provider = providerName;
+            //Set the provider name.
+            entityBuilder.Provider = providerName;
 
-                // Set the provider-specific connection string.
-                entityBuilder.ProviderConnectionString = providerString;
+            // Set the provider-specific connection string.
+            entityBuilder.ProviderConnectionString = providerString;
 
-                // Set the Metadata location.
-                entityBuilder.Metadata = @"res://*/Models.EsStockDbModel.csdl|res://*/Models.EsStockDbModel.ssdl|res://*/Models.EsStockDbModel.msl";
-                return entityBuilder.ConnectionString;
-            }
+            // Set the Metadata location.
+            entityBuilder.Metadata = @"res://*/Models.EsStockDbModel.csdl|res://*/Models.EsStockDbModel.ssdl|res://*/Models.EsStockDbModel.msl";
+            return entityBuilder.ConnectionString;
         }
 
         //public static string GitunikConnectionString
@@ -333,7 +365,7 @@ namespace ES.Business.Managers
                 //return entityBuilder.ConnectionString;
             }
         }
-        public static bool CreateConnectionString(DataServer server)
+        public bool CreateConnectionString(DataServer server)
         {
             _server = server;
             if (server != null)
@@ -341,15 +373,15 @@ namespace ES.Business.Managers
                 switch (server.Description.ToLower())
                 {
                     case "esserver":
-                        ConnectionString = ServerConnectionString;
+                        _connectionString = GetServerConnectionString();
                         IsEsServer = true;
                         break;
                     case "default":
-                        ConnectionString = DefaultConnectionString;
+                        _connectionString = GetDefaultConnectionString();
                         IsEsServer = false;
                         break;
                     case "local":
-                        ConnectionString = LocalhostConnectionString;
+                        _connectionString = LocalhostConnectionString;
                         DataSource =
                             "Data Source=localhost;Initial Catalog=EsStockDb;Integrated Security=True;Persist Security Info=True;User ID=;Password=;MultipleActiveResultSets=True";
                         IsEsServer = false;
@@ -357,38 +389,15 @@ namespace ES.Business.Managers
                     default:
                         _server = server;
                         IsEsServer = false;
-                        if (string.IsNullOrEmpty(server.Name) || string.IsNullOrEmpty(server.Database)) { return false; }
-                        var sqlBuilder = new SqlConnectionStringBuilder();
-                        // Set the properties for the data source.
-                        sqlBuilder.DataSource = server.DataSource;
-                        sqlBuilder.InitialCatalog = server.Database;
-                        sqlBuilder.IntegratedSecurity = server.IntegratedSecurity;
-                        sqlBuilder.PersistSecurityInfo = server.PersistSecurityInfo;
-                        sqlBuilder.MultipleActiveResultSets = server.MultipleActiveResultSets;
-                        sqlBuilder.UserID = server.Login ?? string.Empty;
-                        sqlBuilder.Password = server.Password ?? string.Empty;
-
-                        // Build the SqlConnection connection string.
-                        string providerString = sqlBuilder.ToString();
-                        DataSource = sqlBuilder.ToString();
-                        // Initialize the EntityConnectionStringBuilder.
-                        EntityConnectionStringBuilder entityBuilder = new EntityConnectionStringBuilder();
-
-                        //Set the provider name.
-                        entityBuilder.Provider = server.ProviderName;
-
-                        // Set the provider-specific connection string.
-                        entityBuilder.ProviderConnectionString = providerString;
-
-                        // Set the Metadata location.
-                        entityBuilder.Metadata = server.ConnectionMetadata;
-                        ConnectionString = entityBuilder.ConnectionString;
+                        _connectionString = _server.GenerateConnectionString();
+                        if (string.IsNullOrEmpty(_connectionString)) return false;
+                        DataSource = _connectionString;
                         break;
                 }
             }
             else
             {
-                ConnectionString = ServerConnectionString;
+                _connectionString = GetServerConnectionString();
                 IsEsServer = true;
             }
             return true;
@@ -402,7 +411,7 @@ namespace ES.Business.Managers
             // Initialize the connection string builder for the
             // underlying provider.
         }
-        public static string ConnectionString { get; set; }
+        public string GetConnectionString() { return _connectionString; }
         public CashManager CashProvider
         {
             get { return CashManager.Instance; }

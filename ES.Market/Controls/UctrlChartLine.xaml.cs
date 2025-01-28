@@ -1,9 +1,9 @@
-﻿using System;
+﻿using ES.Business.Helpers;
+using ES.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using ES.Business.Helpers;
-using ES.Data.Models;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace ES.Shop.Controls

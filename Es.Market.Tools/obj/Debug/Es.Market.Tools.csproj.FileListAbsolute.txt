@@ -77,6 +77,7 @@ D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\TaxSer
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\HG.Tools.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Xceed.Wpf.AvalonDock.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\System.Windows.Interactivity.dll
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Ecr.Manager.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\EntityFramework.SqlServer.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Microsoft.SqlServer.ConnectionInfo.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Microsoft.SqlServer.Smo.dll
@@ -121,7 +122,6 @@ D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Mar
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Views\Generic.baml
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.g.resources
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.csproj.CoreCompileInputs.cache
-D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.csproj.CopyComplete
+D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Marke.89781128.Up2Date
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.dll
 D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\obj\Debug\Es.Market.Tools.pdb
-D:\Users\Hrayr\VsProjects\Es solutions\EsMarket\Es.Market.Tools\bin\Debug\Ecr.Manager.dll

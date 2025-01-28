@@ -39,17 +39,17 @@ namespace ES.Business.Helpers
         #region Methods
         protected static EsStockDbServerEntities GetServerDataContext()
         {
-            return new EsStockDbServerEntities(ApplicationManager.ServerConnectionString);
+            return new EsStockDbServerEntities(ApplicationManager.Instance.GetServerConnectionString());
         }
         protected static EsStockDBEntities GetDataContext()
         {
-            return new EsStockDBEntities(ApplicationManager.ConnectionString??ApplicationManager.DefaultConnectionString);
+            return new EsStockDBEntities(ApplicationManager.Instance.GetConnectionString() ?? ApplicationManager.Instance.GetDefaultConnectionString());
         }
         protected static EsStockDBEntities GetDataContext(string connectionString)
         {
-            return new EsStockDBEntities(connectionString??ApplicationManager.DefaultConnectionString);
+            return new EsStockDBEntities(connectionString ?? ApplicationManager.Instance.GetDefaultConnectionString());
         }
-        
+
         protected void Execute(Action exec, bool transaction)
         {
             ValidateConnection();

@@ -3,9 +3,9 @@ using System.ComponentModel;
 
 namespace ES.Data.Models
 {
-    public class EsUserModel:INotifyPropertyChanged
+    public class EsUserModel : INotifyPropertyChanged
     {
-        
+
         #region EsUserModel properties
         private const string UserNameProperty = "UserName";
         private const string EmailProperty = "Email";
@@ -43,7 +43,7 @@ namespace ES.Data.Models
         public int UserId
         {
             get { return _userId; }
-            set { _userId = value; }
+            private set { _userId = value; }
         }
         public string UserName
         {
@@ -62,8 +62,8 @@ namespace ES.Data.Models
         }
         public string FullName
         {
-            get 
-            { 
+            get
+            {
                 return UserName; //FirstName + " " + LastName;
             }
         }
@@ -117,16 +117,16 @@ namespace ES.Data.Models
         /// EsUserModel Constructors
         /// </summary>
         #region EsUserModel Constructors
-        public EsUserModel()
+        public EsUserModel(int userId)
         {
-            
+            UserId = userId;
         }
         #endregion
         /// <summary>
         /// EsUserModel methods
         /// </summary>
         #region private methods
-        
+
         #endregion
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;

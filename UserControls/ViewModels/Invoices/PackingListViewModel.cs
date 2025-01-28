@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ES.Business.Managers;
 using ES.Data.Models;
 using Shared.Helpers;
@@ -47,6 +48,25 @@ namespace UserControls.ViewModels.Invoices
             Initialize();
         }
         #endregion
+
+        #region External methods
+        protected override void OnExportInvoice(ExportImportEnum exportTo)
+        {
+            switch (exportTo)
+            {
+                case ExportImportEnum.AccDocXml:
+                    break;
+                case ExportImportEnum.Xml:
+                    InvoicesManager.ExportShippingProductsInvoiceToXml(Invoice, InvoiceItems.ToList());
+                    break;
+                case ExportImportEnum.Excel:
+                    base.OnExportInvoice(exportTo);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("exportTo", exportTo, null);
+            }
+        }
+        #endregion External methods
 
         #region Internal methods
         private void Initialize()

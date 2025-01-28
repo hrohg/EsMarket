@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
+using CashReg.Managers;
 using ES.Data.Annotations;
+using ES.Data.Models.Products;
 
 namespace ES.Data.Models.Reports
 {
@@ -87,9 +89,20 @@ namespace ES.Data.Models.Reports
 
     public class SaleReportByPartnerDetiled : InvoiceReportByPartner
     {
+        private PartnerModel _partner;
+        private ProductModel _product;
+        private short? _muId;
         public string Code { get; set; }
         public string Mu { get; set; }
         public string Description { get; set; }
         public string Note { get; set; }
+
+        public SaleReportByPartnerDetiled() { }
+        public SaleReportByPartnerDetiled(PartnerModel partner, ProductModel product)
+        {
+            _partner = partner;
+            _product = product;
+            if (product != null) Mu = product.Mu;
+        }
     }
 }

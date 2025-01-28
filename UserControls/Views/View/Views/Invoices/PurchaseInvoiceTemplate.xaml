@@ -425,22 +425,29 @@
 
                                 <StackPanel VerticalAlignment="Bottom" >
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <Label Content="Կանխավճար" VerticalAlignment="Center" />
+                                        <TextBlock Text="Կանխավճար" VerticalAlignment="Center" />
                                         <TextBox Text="{Binding InvoicePaid.AccountsReceivable, StringFormat={}{0:#,#.##}, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
-  BorderThickness="1" BorderBrush="Black" Margin="1"
-  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" Height="25" Foreground="Blue" TabIndex="8"/>
+                                                 BorderThickness="1" 
+                                                 BorderBrush="Black" 
+                                                 Margin="1"
+                                                 VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" Height="25" Foreground="Blue" TabIndex="8"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment =" Right">
-                                        <TextBlock Text="Պարտք մատակարարին" VerticalAlignment="Center" Width="100" TextWrapping="Wrap" TextAlignment="Right" />
+                                        <TextBlock Text="Պարտք մատակարարին" 
+                                                   VerticalAlignment="Center" Width="100" TextWrapping="Wrap" TextAlignment="Right" />
 
                                         <TextBox Text="{Binding InvoicePaid.ReceivedPrepayment, StringFormat={}{0:#,#.##}, TargetNullValue='', UpdateSourceTrigger=PropertyChanged}"
-  BorderThickness="1" BorderBrush="Black" Margin="1"
-  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100" FontSize="15" Height="25" Foreground="Blue" TabIndex="8"/>
+                                                 BorderThickness="1" BorderBrush="Black" Margin="1"
+                                                 VerticalAlignment="Center" 
+                                                 HorizontalContentAlignment="Right" 
+                                                 Width="100" FontSize="15" Height="25" 
+                                                 Foreground="Blue" TabIndex="8"/>
                                     </StackPanel>
                                 </StackPanel>
                             </StackPanel>
 
                         </GroupBox>
+                        
                         <GroupBox>
                             <GroupBox.Header>
                                 <Label Content="Մանր" FontSize="10"/>
@@ -449,13 +456,13 @@
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                     <Label Content="Կանխիկ" VerticalAlignment="Center" Foreground="Green"/>
                                     <TextBox Text="{Binding Path=InvoicePaid.Change, Mode=OneWay, StringFormat=N}" IsReadOnly="True"
-                 BorderThickness="1"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100"
-                 FontSize="15" Height="25" Margin="1" Foreground="Green"/>
+                                             BorderThickness="1"  VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="100"
+                                             FontSize="15" Height="25" Margin="1" Foreground="Green"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal ">
                                     <Label Content="Կանխավճար" VerticalAlignment="Center" Foreground="Green"/>
-                                    <TextBox Text="{Binding Path=InvoicePaid.ReceivedPrepayment, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right"
-                 Width="100" FontSize="15" Height="25" Margin="1" Foreground="Green" IsReadOnly="True"/>
+                                    <TextBox Text="{Binding Path=InvoicePaid.Prepayment, StringFormat=N}"  VerticalAlignment="Center" HorizontalContentAlignment="Right"
+                                             Width="100" FontSize="15" Height="25" Margin="1" Foreground="Green" IsReadOnly="True"/>
                                 </StackPanel>
                             </StackPanel>
                         </GroupBox>

@@ -333,7 +333,8 @@ namespace UserControls.ViewModels.Managers
         }
         private void CompletedUpdate()
         {
-            Product = _productOnBufer ?? new ProductModel(MemberId, UserId, true);
+            ProductModel product = Product != null ? _productItems.FirstOrDefault(s => s.Id == Product.Id) : _productOnBufer;
+            Product = product ?? new ProductModel(MemberId, UserId, true);
             RaisePropertyChanged("Product");
             RaisePropertyChanged("Products");
         }
@@ -451,6 +452,7 @@ namespace UserControls.ViewModels.Managers
                 RaisePropertyChanged(() => EditProductStage);
                 //var exProduct = IsSingleModeSelected || SelectedProducts == null ? Product : SelectedProducts.Cast<ProductModel>().Where(s => s.Id == product.Id).SingleOrDefault();
                 //exProduct.LastModifiedDate = product.LastModifiedDate;
+
                 var handler = ProductEditedEvent;
                 if (handler != null) handler(product);
                 return true;
@@ -644,7 +646,6 @@ namespace UserControls.ViewModels.Managers
             if (!string.IsNullOrEmpty(textBox.Text))
             {
                 ProductKeysDescription = textBox.Text.Trim();
-
             }
             else
             {
@@ -679,7 +680,6 @@ namespace UserControls.ViewModels.Managers
         }
         public void OnUpdatedProducts(List<ProductModel> products)
         {
-
             DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
             {
                 lock (Sync)

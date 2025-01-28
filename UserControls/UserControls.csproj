@@ -78,6 +78,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net40\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="QRCoder, Version=1.6.0.0, Culture=neutral, PublicKeyToken=c4ed5b9ae8358a28, processorArchitecture=MSIL">
+      <HintPath>..\packages\QRCoder.1.6.0\lib\net40\QRCoder.dll</HintPath>
+    </Reference>
     <Reference Include="ReachFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -90,8 +93,10 @@
     <Reference Include="System.Printing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Windows.Presentation" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
@@ -115,10 +120,12 @@
     <Compile Include="Controls\ProductItemDataGrid.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\InvoiceItemToStringConverter.cs" />
+    <Compile Include="Converters\RowIndexValueConverter.cs" />
     <Compile Include="Converters\StringToBoolConverter.cs" />
     <Compile Include="Enumerations\ToolsEnum.cs" />
     <Compile Include="Enumerations\ViewEnums.cs" />
     <Compile Include="Helpers\AccountingActionManager.cs" />
+    <Compile Include="Helpers\BrowseFolderDialog.cs" />
     <Compile Include="Helpers\Converters.cs" />
     <Compile Include="Helpers\InvoicesHelpers.cs" />
     <Compile Include="Helpers\PriceTicketManager.cs" />
@@ -217,6 +224,12 @@
     <Compile Include="ViewModels\Logs\LogViewModel.cs" />
     <Compile Include="ViewModels\Managers\ProductManagerViewModel.cs" />
     <Compile Include="Views\Accountant\ViewPartnersBalanceViewModel.cs" />
+    <Compile Include="Views\Analyze\ViewModel\ActiveProductsViewModel.cs" />
+    <Compile Include="Views\Analyze\ViewModel\AnalysisProductsViewModel.cs" />
+    <Compile Include="Views\Analyze\ViewModel\AnalyzeProductsViewModel.cs" />
+    <Compile Include="Views\Analyze\View\AnalyzeProducts.xaml.cs">
+      <DependentUpon>AnalyzeProducts.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Products\ProductItemsViewModel.cs" />
     <Compile Include="Views\View\Models\ProductItemsModel.cs" />
     <Compile Include="Views\View\ProductItemsViewModel.cs" />
@@ -321,6 +334,9 @@
       <DependentUpon>WaitingCover.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Views\Windows\SaleInvoiceUserWindow.xaml.cs">
+      <DependentUpon>SaleInvoiceUserWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="Controls\PriceTagViewControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -398,6 +414,18 @@
     <Page Include="Views\Accountant\View\ViewPartnersBalanceTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Analyze\View\ActiveProductsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Analyze\View\AnalysisProductsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Analyze\View\AnalyzeProducts.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Documents\StockTakingTemplate.xaml">
       <SubType>Designer</SubType>
@@ -588,6 +616,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\View\Views\ViewProductsTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Windows\SaleInvoiceUserWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

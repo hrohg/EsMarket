@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
+using System.Windows.Input;
 using System.Windows.Threading;
 using ES.Business.Models;
 using ES.Common.Helpers;
@@ -35,17 +36,12 @@ namespace ES.Business.Managers
         private bool _isStocksUpdating;
 
         private static CashManager _instance;
-        private bool _isUpdateing;
-
         private List<ProductModel> _products;
         private LicensePlansEnum? _license;
         #endregion
 
         #region Public properties
-        public bool IsUpdateing
-        {
-            get { return _isUpdateing; }
-        }
+        public bool IsUpdateing { get; private set; }
         #region Partners
         private List<EsPartnersTypes> _partnersTypes;
 
@@ -220,7 +216,8 @@ namespace ES.Business.Managers
             _isProductsUpdating = false;
             var updatedHandler = ProductUpdated;
             if (updatedHandler != null) updatedHandler();
-            OnUpdateCompleted();
+            ApplicationManager.Instance.SetProgressValue("products", 100);
+            OnUpdateCompleted("products");
         }
         private void UpdatePartners()
         {
@@ -230,8 +227,8 @@ namespace ES.Business.Managers
                 _partners = PartnersManager.GetPartners();
                 _isPartnersUpdating = false;
             }
-
-            OnUpdateCompleted();
+            ApplicationManager.Instance.SetProgressValue("partners", 100);
+            OnUpdateCompleted("partners");
         }
 
         private void SetStocks()
@@ -242,7 +239,8 @@ namespace ES.Business.Managers
                 _stocks = StockManager.GetStocks();
             }
             _isStocksUpdating = false;
-            OnUpdateCompleted();
+            ApplicationManager.Instance.SetProgressValue("stocks", 100);
+            OnUpdateCompleted("stocks");
         }
 
         private void UpdateProductItems()
@@ -253,37 +251,33 @@ namespace ES.Business.Managers
                 _productItems = ProductsManager.GetProductItems();
             }
             _isProductItemsUpdating = false;
-            OnUpdateCompleted();
-        }
-        private void UpdateProducts()
-        {
-            _isProductsUpdating = true;
-            var updateingHandler = ProductsUpdateing;
-            if (updateingHandler != null) updateingHandler();
-            UpdateProducts(ProductsManager.GetProducts());
-            OnProductsUpdated();
+            ApplicationManager.Instance.SetProgressValue("productItems", 100);
+            OnUpdateCompleted("productItems");
         }
 
         private void OnBeginCashUpdateing()
         {
-            _isUpdateing = true;
-            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, delegate
+            IsUpdateing = true;
+            var handler = BeginCashUpdateing;
+            if (handler != null)
             {
-                var handler = BeginCashUpdateing;
-                if (handler != null) handler();
-            });
+                handler("products");
+                handler("partners");
+                handler("stocks");
+            }
         }
-        private void OnUpdateCompleted()
+        private void OnUpdateCompleted(string key)
         {
             if (!_isPartnersUpdating && !_isProductItemsUpdating && !_isProductsUpdating && !_isStocksUpdating)
             {
-                _isUpdateing = false;
-                DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, delegate
-                {
-                    var handler = CashUpdated;
-                    if (handler != null) handler();
-                });
+                IsUpdateing = false;
             }
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, delegate
+            {
+                var handler = CashUpdated;
+                if (handler != null) handler(key);
+            });
+
         }
         private void OnProductsChanged(List<ProductModel> products)
         {
@@ -293,47 +287,74 @@ namespace ES.Business.Managers
         #endregion
 
         #region External methods
-
+        public static PartnerModel GetPartner(Guid? id)
+        {
+            return id == null ? null : Instance.GetPartners.SingleOrDefault(p => p.Id == id);
+        }
         public void UpdateCashAsync()
         {
-            if (_isUpdateing) return;
+            if (IsUpdateing) return;
             OnBeginCashUpdateing();
             UpdateStocksAsync();
             UpdatePartnersAsync();
             UpdateProductsAsync();
             //UpdateProductItemsAsync();
-            OnUpdateCompleted();
         }
         public void UpdateProductsAsync()
         {
             new Thread(UpdateProducts).Start();
         }
+        private void UpdateProducts()
+        {
+            ApplicationManager.Instance.SetProgressValue("products");
+            _isProductsUpdating = true;
+            var updateingHandler = ProductsUpdateing;
+            if (updateingHandler != null) updateingHandler();
+            List<Products> products = ProductsManager.GetActiveProducts();
+            List<ProductModel> productModels = new List<ProductModel>();
+            int productsCount = products.Count;
+            for (int i = 0; i < productsCount; i++)
+            {
+                ApplicationManager.Instance.SetProgressValue("products", 100 * i / productsCount);
+                ProductModel product = ProductsManager.Convert(products[i]);
+                productModels.Add(product);
+            }
+            UpdateProducts(productModels);
+            ApplicationManager.Instance.RemoveProgressValue("products");
+        }
+        public void UpdateProducts(ProductModel product)
+        {
+            var exProduct = _products.SingleOrDefault(s => s.Id == product.Id);
+            if (exProduct != null) _products.Remove(exProduct);
+            _products.Add(product);
+            OnProdutsCollectionChanged(null, null);
+        }
+
         public void UpdateProducts(List<ProductModel> products)
         {
             lock (_syncProducts)
             {
+                // TODO: rmove clear from update method 
                 _products.Clear();
                 _products.AddRange(products);
                 products = _products;
             }
-
+            ApplicationManager.Instance.SetProgressValue("productExistingCount");
             new Thread(() =>
             {
                 var productResidue = ProductResidues;
-                foreach (var item in products)
+                int productsCount = products.Count;
+                for (int i = 0; i < productsCount; i++)
                 {
-                    var product = item;
-                    item.ExistingQuantity = productResidue.Any(pr => pr.ProductId == product.Id)
+                    ApplicationManager.Instance.SetProgressValue("productExistingCount", 100 * i / productsCount);
+                    ProductModel product = products[i];
+                    product.ExistingQuantity = productResidue.Any(pr => pr.ProductId == product.Id)
                         ? productResidue.Where(pr => pr.ProductId == product.Id).Select(pr => pr.Quantity).First()
                         : 0;
                 }
+                ApplicationManager.Instance.RemoveProgressValue("productExistingCount");
             }).Start();
-            OnProductsUpdated();
-
-        }
-        public static PartnerModel GetPartner(Guid? id)
-        {
-            return id == null ? null : Instance.GetPartners.SingleOrDefault(p => p.Id == id);
+            OnProdutsCollectionChanged(null, null);
         }
 
         private void OnProdutsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -352,7 +373,11 @@ namespace ES.Business.Managers
         public void UpdatePartnersAsync(bool isAsync = true)
         {
             if (_isPartnersUpdating) return;
-            if (!isAsync) UpdatePartners();
+            ApplicationManager.Instance.SetProgressValue("partners", 0);
+            if (!isAsync)
+            {
+                UpdatePartners();
+            }
             else
             {
                 new Thread(UpdatePartners).Start();
@@ -360,10 +385,8 @@ namespace ES.Business.Managers
         }
         public void UpdateStocksAsync()
         {
-            lock (_syncStocks)
-            {
-                new Thread(SetStocks).Start();
-            }
+            ApplicationManager.Instance.SetProgressValue("stocks", 0);
+            new Thread(SetStocks).Start();
         }
         public void UpdateDefaults()
         {
@@ -403,10 +426,10 @@ namespace ES.Business.Managers
 
         #region Events
 
-        public delegate void BeginCashUpdateingDelegate();
+        public delegate void BeginCashUpdateingDelegate(string key);
         public event BeginCashUpdateingDelegate BeginCashUpdateing;
 
-        public delegate void CashUpdatedDelegate();
+        public delegate void CashUpdatedDelegate(string key);
         public event CashUpdatedDelegate CashUpdated;
         #endregion Events
 

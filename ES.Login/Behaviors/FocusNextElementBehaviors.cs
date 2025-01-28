@@ -8,7 +8,7 @@ using System.Windows.Interactivity;
 
 namespace ES.Login.Behaviors
 {
-    class FocusNextElementBehaviors:Behavior<UIElement>    
+    public class FocusNextElementBehaviors:Behavior<UIElement>    
     {
         protected override void OnAttached()
         {

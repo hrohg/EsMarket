@@ -1,0 +1,90 @@
+﻿<Window x:Class="UserControls.Views.Analyze.View.AnalyzeProducts"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UserControls.Views.Analyze.View" 
+        xmlns:controls="clr-namespace:UserControls.Controls" 
+        xmlns:converters="clr-namespace:UserControls.Converters"
+        xmlns:vm="clr-namespace:UserControls.Views.Analyze.ViewModel" 
+        xmlns:vmDoc="clr-namespace:ES.Common.ViewModels.Base;assembly=ES.Common"
+        xmlns:enums="clr-namespace:ES.Common.Enumerations;assembly=ES.Common"
+        
+        mc:Ignorable="d"
+        WindowState="Maximized"
+        Title="AnalyzeProducts" Height="450" Width="800">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ActiveProductsView.xaml" />
+                <ResourceDictionary Source="AnalysisProductsView.xaml" />
+                <!--<ResourceDictionary Source="pack://Application:,,,UserControls;component/Views/Analize/View/ActiveProductsView.xaml"/>-->
+                <!--<ResourceDictionary Source="/UserControls;component/Views/Generic.xaml" />-->
+                <!--<ResourceDictionary Source="/ResourceLibrary;component/Resources/Generic.xaml" />
+                <ResourceDictionary Source="/ResourceLibrary;component/Resources/Tabs.xaml" />-->
+            </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+            <converters:UserRoleToBoolMultiValueConverter x:Key="UserRoleToBoolMultiValueConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="Վերծանում">
+                <MenuItem Header="Ակտիվ ապրանքներ" Command="{Binding ViewActiveProductsDataCommand}"/>
+                <MenuItem Header="Շրջանառություն" Command="{Binding ViewAnalysisProductsDataCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Մշակել">
+                <MenuItem Header="Ապրանքներ" Command="{Binding ProcessingActiveProductsDataCommand}"/>
+                <MenuItem Header="Մատակարար" Command="{Binding ProcessingProductsProvidersCommand}"/>
+                <MenuItem Header="Շրջանառություն" Command="{Binding ProcessingProductsDataCommand}"/>
+                <MenuItem Header="Ըստ ապրանքի" Command="{Binding ProcessingProductsDataPerProductCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Արտահանել">
+                <MenuItem Header="Պատվեր" Command="{Binding ExportProcessingProductDataCommand}"/>
+                <MenuItem Header="Ըստ մատակարարի" Command="{Binding ExportProcessingProductDataCommand}" CommandParameter="{x:Static enums:ViewInvoicesEnum.ByPartner}"/>
+            </MenuItem>
+        </Menu>
+        <TabControl Grid.Row="1"
+                    Background="{StaticResource TabBackground}" 
+                    ItemsSource="{Binding Documents}"
+                    Width="Auto">
+            <!--ItemContainerStyle="{StaticResource TabItemBaseStyle}" 
+                    ContentTemplate="{StaticResource TabContentTemplate}"-->
+            <!--Margin="10"-->
+            <TabControl.ItemTemplate>
+                <!-- this is the header template-->
+                <DataTemplate>
+                    <Border x:Name="Bd" Margin="1 1 0 0" CornerRadius="2 2 0 0" Height="16" Background="{StaticResource TabItemSelectedStandardBackground}" VerticalAlignment="Bottom">
+                        <Grid>
+                            <Control Template="{DynamicResource LoadingControlSmall}">
+                            </Control>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding Title}" ToolTip="{Binding Description}" VerticalAlignment="Center" Margin="8 0 0 0"/>
+                                <Button Grid.Column="1" Style="{StaticResource DefaultCloseButtonStyle}"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <!-- this is the body of the TabItem template-->
+                <DataTemplate>
+                    <ContentPresenter Content="{Binding}"/>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+        <Grid Grid.Row="2">
+            <controls:WaitingCover Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibility}}" HorizontalAlignment="Right"/>
+        </Grid>
+    </Grid>
+</Window>

@@ -153,7 +153,7 @@ namespace ES.Market
             try
             {
                 _splash = new SplashScreen("Application.png");
-                ApplicationManager.CreateConnectionString(null);
+                ApplicationManager.Instance.CreateConnectionString(null);
                 OnTryLogin();
                 if (Application.Current != null) Application.Current.Shutdown();
 

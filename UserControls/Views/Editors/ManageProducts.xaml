@@ -441,7 +441,7 @@
                            Text="{Binding Product.Barcode, UpdateSourceTrigger=PropertyChanged}" 
                            Width="Auto" VerticalAlignment="Top" Height="26" 
                            TabIndex="4" Margin="0 1"
-     HorizontalContentAlignment="Center" 
+                           HorizontalContentAlignment="Center" 
                                              VerticalContentAlignment="Center">
                                                 <TextBox.InputBindings>
                                                     <KeyBinding Key="Enter" Command="{Binding GenerateBarcodeCommand}" CommandParameter="{Binding ElementName=TextBoxBarcode, Path=Text}"/>
@@ -491,7 +491,7 @@
                                         </Grid.RowDefinitions>
                                         <TextBox x:Name="Part_TextBox" Text="{Binding ProductKeysDescription}" Height="Auto" VerticalContentAlignment="Top" TextWrapping="Wrap">
                                             <TextBox.InputBindings>
-                                                <KeyBinding Key="Enter" Command="{Binding AddProductKeysCommand}" CommandParameter="{Binding Path = Text, ElementName=Part_TextBox}"/>
+                                                <KeyBinding Key="Enter" Command="{Binding AddProductKeysCommand}" CommandParameter="{Binding ElementName=Part_TextBox}"/>
                                             </TextBox.InputBindings>
                                         </TextBox>
                                     </Grid>
@@ -520,7 +520,7 @@
                                 </Border>
                             </TabItem>
                         </TabControl>
-                        <Button Style="{DynamicResource SaveButtonStyle}" Command="{Binding EditCommand}" HorizontalAlignment="Right"/>
+                        <Button Style="{DynamicResource SaveButtonStyle}" Command="{Binding EditCommand}" HorizontalAlignment="Right" Focusable="True"/>
                     </StackPanel>
                 </Expander>
                 <Grid Grid.Row="1">

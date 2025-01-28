@@ -1,27 +1,32 @@
-﻿using System;
+﻿using ES.Business.Managers;
+using ES.Common.Enumerations;
+using ES.Common.Helpers;
+using ES.Common.Managers;
+using ES.Common.Models;
+using ES.Common.Utilits;
+using ES.Data.Models;
+using ES.DataAccess.Models;
+using Shared.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using ES.Business.Managers;
-using ES.Common.Enumerations;
-using ES.Common.Helpers;
-using ES.Common.Managers;
-using ES.Common.Models;
-using ES.Data.Models;
-using ES.DataAccess.Models;
-using Shared.Helpers;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
 using UserControls.Views.ReceiptTickets.Views;
+using UserControls.Views.Windows;
 
 namespace UserControls.ViewModels.Invoices
 {
     public class OutputOrderViewModel : InvoiceViewModel
     {
-        
+        #region Intrnal properties
+        private SaleInvoiceUserWindow _saleInvoiceUserWindow;
+        #endregion Internal propertirs
+
         #region External properties
         public override bool AddBySingle
         {
@@ -57,12 +62,43 @@ namespace UserControls.ViewModels.Invoices
                 base.ToStock = value;
             }
         }
+        public override bool IsActive
+        {
+            get => base.IsActive;
+            set
+            {
+                base.IsActive = value;
+            }
+        }
+        public override bool IsSelected
+        {
+            get => base.IsSelected;
+            set
+            {
+                base.IsSelected = value;
+                MonitorInfo screen = ScreenUtilits.GetSecondaryScreens().SingleOrDefault(s => s.DisplayName == ApplicationManager.Settings.SettingsContainer.MemberSettings.SecondaryScreenName);
+
+                if (IsSelected && screen != null)
+                {
+                    if (_saleInvoiceUserWindow == null)
+                    {
+                        _saleInvoiceUserWindow = new SaleInvoiceUserWindow(this, screen);
+                    }
+                    _saleInvoiceUserWindow.Show();
+                }
+                else
+                {
+                    if (_saleInvoiceUserWindow != null) _saleInvoiceUserWindow.Hide();
+                }
+            }
+        }
         #endregion External properties
 
         #region Contructors
         protected OutputOrderViewModel(InvoiceType type)
             : base(type)
         {
+
         }
 
         protected OutputOrderViewModel(Guid id)
@@ -310,6 +346,12 @@ namespace UserControls.ViewModels.Invoices
         {
             //Approve Invoice
             if (CheckBeforeApprove()) new Thread(() => OnApproveAsync(true)).Start();
+        }
+        public override bool Close()
+        {
+            if (_saleInvoiceUserWindow != null) _saleInvoiceUserWindow.Close();
+            _saleInvoiceUserWindow = null;
+            return base.Close();
         }
         #endregion External methods
 

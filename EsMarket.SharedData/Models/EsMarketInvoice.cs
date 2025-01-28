@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using EsMarket.SharedData.Interfaces;
+using static EsMarket.SharedData.Models.Taxpayer;
 
 namespace EsMarket.SharedData.Models
 {
@@ -51,5 +52,64 @@ namespace EsMarket.SharedData.Models
             get { return _goodsInfo ?? new List<EsGoodInfo>(); }
             set { _goodsInfo = value; }
         }
+    }
+
+    [XmlInclude(typeof(AccountingDocument))]
+    [Serializable]
+    public class AccountingDocument
+    {
+        public int Type { get; set; }
+        public bool Traceable { get; set; }
+        public GeneralInfo GeneralInfo { get; set; }
+        public SupplierInfo SupplierInfo { get; set; }
+        public BuyerInfo BuyerInfo { get; set; }
+        public List<Good> GoodsInfo { get; set; }
+    }
+
+    public class GeneralInfo
+    {
+        public string DeliveryDate { get; set; }
+        public int Procedure { get; set; }
+        public GeneralInfo()
+        {
+            DeliveryDate = DateTime.Now.ToString("yyyy-MM-ddK");
+        }
+    }
+
+    [XmlInclude(typeof(BankAccount))]
+    [Serializable]
+    public class BankAccount
+    {
+        public string BankName { get; set; }
+        public string BankAccountNumber { get; set; }
+    }
+    public class Taxpayer
+    {
+        public string TIN { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public BankAccount BankAccount { get; set; }
+    }
+    public class SupplierInfo
+    {
+        public Taxpayer Taxpayer { get; set; }
+        public string SupplyLocation { get; set; }
+    }
+    public class BuyerInfo
+    {
+        public Taxpayer Taxpayer { get; set; }
+        public string DeliveryMethod { get; set; }
+        public string DeliveryLocation { get; set; }
+
+    }
+
+    public class Good
+    {
+        public string Description { get; set; }
+        public string Unit { get; set; }
+        public string Amount { get; set; }
+        public string PricePerUnit { get; set; }
+        public string Price { get; set; }
+        public string TotalPrice { get; set; }
     }
 }

@@ -830,7 +830,7 @@ namespace UserControls.ViewModels.Invoices
             if (string.IsNullOrEmpty(emark))
             {
                 WaitingEmark = true;
-                new Thread(() => { Thread.Sleep(2000); DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, ()=>{ SetExternalText(new ExternalTextImputEventArgs("123")); }); }).Start();
+                //new Thread(() => { Thread.Sleep(2000); DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, ()=>{ SetExternalText(new ExternalTextImputEventArgs(string.Empty)); }); }).Start();
                 emark = Ecr.Manager.Helpers.MarkHelper.ReadEmark(productDescription, emark);
                 WaitingEmark = false;
             }

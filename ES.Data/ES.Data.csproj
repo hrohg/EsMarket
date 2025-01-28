@@ -41,6 +41,7 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -54,6 +55,7 @@
     <Compile Include="Enumerations\PartnerType.cs" />
     <Compile Include="Enumerations\ResultState.cs" />
     <Compile Include="Helper\SerializableInvoices.cs" />
+    <Compile Include="Models\Analysis\AnalysisProductDataModel.cs" />
     <Compile Include="Models\Bases\DynamicModel.cs" />
     <Compile Include="Models\Bases\TreeViewItemBaseModel.cs" />
     <Compile Include="Models\BrandModel.cs" />

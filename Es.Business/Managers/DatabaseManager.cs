@@ -23,10 +23,8 @@ namespace ES.Business.Managers
     public class DatabaseManager : BaseManager
     {
         #region Connection Strings
-        private static string ServerConnectionString
+        private static string GetServerConnectionString()
         {
-            get
-            {
                 string providerName = "System.Data.SqlClient";
                 string serverName = "bamboo.arvixe.com"; // "93.187.163.33,14033";
                 string databaseName = "EsStockDb";
@@ -61,7 +59,6 @@ namespace ES.Business.Managers
                 // Set the Metadata location.
                 entityBuilder.Metadata = @"res://*/Models.EsStockDbModel.csdl|res://*/Models.EsStockDbModel.ssdl|res://*/Models.EsStockDbModel.msl";
                 return entityBuilder.ConnectionString;
-            }
         }
         private static string LocalhostConnectionString
         {
@@ -177,10 +174,11 @@ namespace ES.Business.Managers
         {
             if (server != null)
             {
+                var serverCnnectionString = GetServerConnectionString();
                 switch (server.Description.ToLower())
                 {
                     case "esserver":
-                        return ServerConnectionString;
+                        return serverCnnectionString;
                         break;
                     case "default":
                         return DefaultConnectionString;
@@ -189,41 +187,15 @@ namespace ES.Business.Managers
                         return LocalhostConnectionString;
                         break;
                     default:
-                        if (string.IsNullOrEmpty(server.Name) || string.IsNullOrEmpty(server.Database)) { return ServerConnectionString; }
-                        var sqlBuilder = new SqlConnectionStringBuilder();
-                        // Set the properties for the data source.
-                        sqlBuilder.DataSource = string.Format("{0}{1}{2}",
-                            server.Name,
-                            !string.IsNullOrEmpty(server.Instance) ? string.Format(@"\{0}", server.Instance) : string.Empty,
-                            server.Port != null && server.Port != 0 ? string.Format(",{0}", server.Port) : string.Empty);
-                        sqlBuilder.InitialCatalog = server.Database;
-                        sqlBuilder.IntegratedSecurity = server.IntegratedSecurity;
-                        sqlBuilder.PersistSecurityInfo = server.PersistSecurityInfo;
-                        sqlBuilder.MultipleActiveResultSets = server.MultipleActiveResultSets;
-                        sqlBuilder.UserID = server.Login ?? string.Empty;
-                        sqlBuilder.Password = server.Password ?? string.Empty;
-
-                        // Build the SqlConnection connection string.
-                        string providerString = sqlBuilder.ToString();
-
-                        // Initialize the EntityConnectionStringBuilder.
-                        EntityConnectionStringBuilder entityBuilder = new EntityConnectionStringBuilder();
-
-                        //Set the provider name.
-                        entityBuilder.Provider = server.ProviderName;
-
-                        // Set the provider-specific connection string.
-                        entityBuilder.ProviderConnectionString = providerString;
-
-                        // Set the Metadata location.
-                        entityBuilder.Metadata = server.ConnectionMetadata;
-                        return entityBuilder.ConnectionString;
+                        if (server==null) { return serverCnnectionString; }
+                        string connectionString = server.GenerateConnectionString();
+                        return !string.IsNullOrEmpty(connectionString)? connectionString: serverCnnectionString;
                         break;
                 }
             }
             else
             {
-                return ServerConnectionString;
+                return GetServerConnectionString();
             }
         }
         #endregion

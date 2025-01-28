@@ -1,4 +1,6 @@
-﻿namespace ES.Business.Helpers
+﻿using System.Drawing;
+
+namespace ES.Business.Helpers
 {
     public class BaseClasses
     {
@@ -7,13 +9,11 @@
     #region Items for choose
     public class ItemsForChoose
     {
-        #region External properties
-
         private bool _isChecked;
-        #endregion
+        private OnChecked _onCheckedCallback;
+        public delegate void OnChecked(ItemsForChoose e);
         public object Value { get; set; }
         public object Data { get; set; }
-
         public bool IsChecked
         {
             get
@@ -30,16 +30,26 @@
                 {
                     _isChecked = value;
                 }
+
+                if (_onCheckedCallback != null) _onCheckedCallback(this);
             }
         }
+
+        public ItemsForChoose() { }
+        public ItemsForChoose(OnChecked onCheckedCallback)
+        {
+            _onCheckedCallback = onCheckedCallback;
+        }
     }
+
     #endregion
-#region ItemProperties
+
+    #region ItemProperties
 
     public class ItemProperty
     {
         public object Key { get; set; }
         public object Value { get; set; }
     }
-#endregion
+    #endregion    
 }

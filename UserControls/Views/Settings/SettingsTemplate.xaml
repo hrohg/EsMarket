@@ -7,11 +7,14 @@
                     xmlns:models="clr-namespace:ES.Common.Models;assembly=ES.Common"
                     xmlns:models1="clr-namespace:ES.Data.Models;assembly=ES.Data"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common" xmlns:helpers1="clr-namespace:UserControls.Helpers">
+                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common" xmlns:helpers1="clr-namespace:UserControls.Helpers"
+                    xmlns:enumerations1="clr-namespace:ES.Common.Enumerations;assembly=ES.Common"
+                    xmlns:converters="clr-namespace:UserControls.Converters">
 
-    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <helpers1:IntToEnumConverter x:Key="IntToEnumConverter" />
-    
+    <converters:UserRoleToBoolMultiValueConverter x:Key="UserRoleToBoolMultiValueConverter" />
+
     <DataTemplate DataType="{x:Type viewModels:SettingsViewModel}">
         <Grid>
             <Grid.InputBindings>
@@ -23,6 +26,64 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TabControl Grid.Row="0">
+                    <TabItem Header="Server" x:Name="ServerTabItem"
+                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TabItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Admin}"/>
+                            </MultiBinding>
+                        </TabItem.IsEnabled>
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Description"/>
+                                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Server.Description}" IsReadOnly="True"/>
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Server"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Server.Name}" IsReadOnly="True"/>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Port"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Server.Port}" HorizontalAlignment="Left" MinWidth="50" IsReadOnly="True"/>
+
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Instance"/>
+                                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Server.Instance}" IsReadOnly="True"/>
+
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Database"/>
+                                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Server.Database}" IsReadOnly="True"/>
+
+                                <TextBlock Grid.Row="5" Grid.Column="0" Text="User"/>
+                                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Server.Login}" IsReadOnly="True"/>
+
+                                <Separator Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2"/>
+
+                                <TextBlock Grid.Row="8" Grid.Column="0" Text="Backup"/>
+                                <Grid Grid.Row="8" Grid.Column="1" IsEnabled="{Binding Server.IsLocal}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" Text="{Binding Server.BackupDir}"/>
+                                    <Button Grid.Column="1" Content="Browse" Command="{Binding BrowseBackupPathCommand}"/>
+                                </Grid>
+                            </Grid>
+                        </ScrollViewer>
+                    </TabItem>
                     <TabItem Header="Հիմնական">
                         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                             <Grid>
@@ -192,6 +253,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <GroupBox Grid.Row="0" Header="Վաճառակետ">
@@ -226,7 +288,7 @@
                                         </ItemsControl>
                                     </Grid>
                                 </GroupBox>
-                                <GroupBox Grid.Row="2" Header="Անկանխիկ դրամարկղ" Visibility="{Binding HasBankAccounts, Converter={StaticResource BoolToVisibility}}">
+                                <GroupBox Grid.Row="2" Header="Անկանխիկ դրամարկղ" Visibility="{Binding HasBankAccounts, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <Grid x:Name="Grid_SaleBankAccounts">
                                         <ItemsControl  ItemsSource="{Binding Path = SaleBankAccounts}">
                                             <ItemsControl.ItemTemplate>
@@ -258,10 +320,27 @@
                                         </ItemsControl>
                                     </Grid>
                                 </GroupBox>
-                                <GroupBox Grid.Row="4" Header="Լռելայն կարգաբերումներ">
+                                <GroupBox Grid.Row="4" Header="Լրացուցիչ էկրան" IsEnabled="{Binding HasSecondaryScreen}" Visibility="{Binding HasSecondaryScreen, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Grid x:Name="Grid_SecondaryScreen">
+                                        <ItemsControl  ItemsSource="{Binding Path = SecondaryScreens}">
+                                            <ItemsControl.ItemTemplate >
+                                                <DataTemplate DataType="{x:Type helpers:ItemsForChoose}">
+                                                    <RadioButton Content="{Binding Path=Value}" IsChecked="{Binding Path=IsChecked}"  GroupName="SecondaryScreen" Margin ="5"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal" Width="{Binding ElementName=Grid_SecondaryScreen, Path=ActualWidth}"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </Grid>
+                                </GroupBox>
+                                <GroupBox Grid.Row="5" Header="Լռելայն կարգաբերումներ">
                                     <StackPanel>
                                         <CheckBox IsChecked="{Binding SaleBySingle}" Content="Վաճառել մեկական" Margin="5"/>
                                         <CheckBox IsChecked="{Binding IsPrintSaleTicket}" Content="Տպել վաճառքի ապրանքագիր" Margin="5"/>
+                                        <CheckBox IsChecked="{Binding IsDoublicateMonitor}" Content="Կրկնօրինակել էկրանը" Margin="5"/>
                                     </StackPanel>
                                 </GroupBox>
                             </Grid>
@@ -309,7 +388,7 @@
                                         </ItemsControl>
                                     </Grid>
                                 </GroupBox>
-                                <GroupBox Grid.Row="2" Header="Անկանխիկ դրամարկղ" Visibility="{Binding HasBankAccounts, Converter={StaticResource BoolToVisibility}}">
+                                <GroupBox Grid.Row="2" Header="Անկանխիկ դրամարկղ" Visibility="{Binding HasBankAccounts, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <Grid x:Name="Grid_PurchaseBankAccounts">
                                         <ItemsControl  ItemsSource="{Binding Path = PurchaseBankAccounts}">
                                             <ItemsControl.ItemTemplate>
@@ -532,15 +611,23 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Անվանում"/>
                                     <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedBranch.Name}"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Հասցե"/>
+                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedBranch.Address}"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="ՀՎՀՀ"/>
+                                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SelectedBranch.Tin}" Width="150"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Գործ. հասցե"/>
+                                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SelectedBranch.SupplyAddress}" />
 
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Զեղչ կուտակային (%)"/>
-                                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedBranch.DefaultDiscount, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" Width="80" HorizontalContentAlignment="Right"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Զեղչ կուտակային (%)"/>
+                                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding SelectedBranch.DefaultDiscount, StringFormat='{}{0:#,0.##}', TargetNullValue=0}" Width="80" HorizontalContentAlignment="Right"/>
 
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Ակտիվ"/>
-                                    <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding SelectedBranch.IsActive}" VerticalAlignment="Center" Margin="3"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Ակտիվ"/>
+                                    <CheckBox Grid.Row="5" Grid.Column="1" IsChecked="{Binding SelectedBranch.IsActive}" VerticalAlignment="Center" Margin="3"/>
 
                                 </Grid>
                             </GroupBox>
@@ -596,7 +683,7 @@
                             <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right">
                                 <ToggleButton Content="{Binding SetAsLocalBranchButtonText}" IsChecked="{Binding IsLocalBranch, Mode=OneWay}" Command="{Binding SetLocalBranchCommand}" MinWidth="80"/>
                                 <Button Content="Նոր" Command="{Binding Path=CreateNewBranchCommand}" MinWidth="80" CommandParameter="{x:Static helper:EcrExecuiteActions.OperatorLogin}"/>
-                                <Button Content="{Binding ManageButtonContent}" Command="{Binding Path=EditBranchCommand}" MinWidth="80" IsEnabled="False"/>
+                                <Button Content="{Binding ManageButtonContent}" Command="{Binding Path=EditBranchCommand}" IsEnabled="False" MinWidth="80"/>
                             </StackPanel>
                             <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4">
                                 <DataGrid ItemsSource="{Binding Branches, Mode=OneWay}" SelectedItem="{Binding SelectedBranch}" 
@@ -648,12 +735,13 @@
                     <Button Content="Հիշել" Width="80" Command="{Binding SaveCommand}"/>
                 </StackPanel>
             </Grid>
-            <controls:WaitingCover Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibility}}" />
+            <controls:WaitingCover Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibilityConverter}}" />
         </Grid>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding SelectedBranch}" Value="{x:Null}">
                 <Setter TargetName="Branch_GroupBox" Property="IsEnabled" Value="False"/>
             </DataTrigger>
+
         </DataTemplate.Triggers>
     </DataTemplate>
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -135,6 +136,10 @@ namespace ES.Business.Helpers
         #region External properties
         public int MemberId { get; set; }
 
+        #region Admin
+        public string BackupDir { get; set; }
+        #endregion Admin
+
         #region General
 
         public string LastSelectedLanguage { get; set; }
@@ -192,6 +197,7 @@ namespace ES.Business.Helpers
         public string ActiveSalePrinter { get; set; }
         public bool SaleBySingle { get; set; }
         public bool IsPrintSaleTicket { get; set; }
+        public string SecondaryScreenName { get; set; }
         #endregion Sale
 
         #region Purchase
@@ -265,16 +271,11 @@ namespace ES.Business.Helpers
 
         public MemberSettings()
         {
-            Initialize();
         }
 
         #endregion Constructors
 
-        #region Internal methods
-        private void Initialize()
-        {
-
-        }
+        #region Internal methods        
         private bool Save(int memberId)
         {
             MemberId = memberId;
@@ -324,7 +325,7 @@ namespace ES.Business.Helpers
                 }
                 return new MemberSettings();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ApplicationManager.Instance.AddMessageToLog(new MessageModel(ex.Message, MessageTypeEnum.Warning));
                 return new MemberSettings();
@@ -357,6 +358,29 @@ namespace ES.Business.Helpers
             }
 
         }
+
+        //public List<ItemsForChoose> GetSecondaryScreens()
+        //{
+        //    if (_secondaryScreens == null || _secondaryScreens.Count == 0)
+        //    {
+        //        _secondaryScreens = new List<ItemsForChoose>();
+        //        Screen[] secondaryScreens = Screen.AllScreens.Where(s => !s.Primary).ToArray();
+        //        _secondaryScreens = new List<ItemsForChoose>();
+        //        foreach (var screen in secondaryScreens)
+        //        {
+        //            _secondaryScreens.Add(new ItemsForChoose((e) =>
+        //            {
+        //                SecondaryScreenName = _secondaryScreens.Where(s => s.IsChecked).Select(s => (string)s.Value).SingleOrDefault();
+        //            })
+        //            {
+        //                Data = screen,
+        //                Value = screen.DeviceName,
+        //                IsChecked = screen.DeviceName == SecondaryScreenName
+        //            });
+        //        }
+        //    }
+        //    return _secondaryScreens;
+        //}
         #endregion External methods
     }
 

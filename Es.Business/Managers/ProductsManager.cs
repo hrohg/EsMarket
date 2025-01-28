@@ -18,6 +18,7 @@ using ES.DataAccess.Models;
 using DataTable = System.Data.DataTable;
 using MessageManager = ES.Common.Managers.MessageManager;
 using ProductModel = ES.Data.Models.Products.ProductModel;
+using System.Security.Cryptography;
 
 namespace ES.Business.Managers
 {
@@ -533,6 +534,10 @@ namespace ES.Business.Managers
         {
             return TryGetProducts(isActive).Select(Convert).ToList();
         }
+        public static List<Products> GetActiveProducts()
+        {
+            return TryGetProducts(true);
+        }
         public static List<ProductModel> GetProductsForView()
         {
             return TryGetProducts(true).Select(s => new ProductModel
@@ -601,6 +606,10 @@ namespace ES.Business.Managers
         public static decimal GetProductItemCount(Guid? productId, int memberId)
         {
             return TryGetProductItemCount(productId, memberId);
+        }
+        public static List<ProductsByStockModel> GetProductsQuantity()
+        {
+            return TryGetProductsQuantity();
         }
         public static decimal GetProductItemCountFromStock(Guid? productId, List<short> stockIds, int memeberId)
         {
@@ -989,6 +998,24 @@ namespace ES.Business.Managers
                 {
                     MessageManager.OnMessage(ex.Message, MessageTypeEnum.Error);
                     return 0;
+                }
+            }
+        }
+        private static List<ProductsByStockModel> TryGetProductsQuantity()
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    var items = db.ProductItems.Where(s => s.MemberId == ApplicationManager.Member.Id && s.Quantity > 0)
+                        .GroupBy(s => new { s.StockId, s.ProductId })
+                        .Select(pi => new ProductsByStockModel { ProductId = pi.Select(t => t.ProductId).FirstOrDefault(), StockId = pi.Select(t => t.StockId).FirstOrDefault(), Quantity = pi.Sum(s => s.Quantity) }).ToList();
+                    return items;
+                }
+                catch (Exception ex)
+                {
+                    MessageManager.OnMessage(ex.Message, MessageTypeEnum.Error);
+                    return null;
                 }
             }
         }
@@ -1546,14 +1573,21 @@ namespace ES.Business.Managers
         {
             if (existingProduct == null || existingProduct.Price != product.Price)
             {
+                ModificationTypeEnum action = ModificationTypeEnum.Modified;
                 if (existingProduct != null)
                 {
                     existingProduct.OldPrice = existingProduct.Price;
+                    if (existingProduct.Code != product.Code || existingProduct.Barcode != product.Barcode) { action = ModificationTypeEnum.ReCreated; }
                 }
+                else
+                {
+                    action = ModificationTypeEnum.Added;
+                }
+
 
                 var log = new LogForProducts
                 {
-                    Action = (short)ModificationTypeEnum.Modified,
+                    Action = (short)action,
                     ProductId = product.Id,
                     Code = product.Code,
                     Description = product.Description,
@@ -1798,18 +1832,20 @@ namespace ES.Business.Managers
             {
                 try
                 {
-                    var items = db.Products.Where(s => s.EsMemberId == memberId).Select(s => s.Code).ToList();
-                    nextcode += items.Count;
-                    var code = string.Format("{0}{1}", !ApplicationManager.Settings.SettingsContainer.MemberSettings.UseUnicCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextcode);
-                    while (items.Any(s => s == code))
-                    {
-                        nextcode--;
-                        code = string.Format("{0}{1}", !ApplicationManager.Settings.SettingsContainer.MemberSettings.UseUnicCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextcode);
-                    }
+                    nextcode += db.Products.Where(s => s.EsMemberId == memberId).Count();
+                    //var items = db.Products.Where(s => s.EsMemberId == memberId).Select(s => s.Code).ToList();
+                    //nextcode += items.Count;
+                    //var code = string.Format("{0}{1}", !ApplicationManager.Settings.SettingsContainer.MemberSettings.UseUnicCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextcode);
+                    //while (items.Any(s => s == code))
+                    //{
+                    //    nextcode--;
+                    //    code = string.Format("{0}{1}", !ApplicationManager.Settings.SettingsContainer.MemberSettings.UseUnicCode ? "" : ApplicationManager.Member.Id.ToString("D2"), nextcode);
+                    //}
                 }
                 catch (Exception e)
                 {
-                    MessageManager.OnMessage(e.ToString());
+                    nextcode += 1;
+                    //MessageManager.OnMessage(e.ToString());
                 }
                 return nextcode;
             }
@@ -2239,7 +2275,7 @@ namespace ES.Business.Managers
                             CostPrice = exProduct.CostPrice,
                             Price = exProduct.Price,
                             IsEmpty = true,
-                            ModifierId = ApplicationManager.GetEsUser.UserId,
+                            ModifierId = ApplicationManager.ActiveUserId,
                             MemberId = exProduct.EsMemberId
                         };
                         AddProductChangedLog(log, db);
@@ -2284,6 +2320,45 @@ namespace ES.Business.Managers
                                                                    (!startEndDate.Item2.HasValue || s.Date <= startEndDate.Item2))
                         .OrderBy(s => s.Date).ToList();
                     return productsLog;
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+        }
+        public static DateTime? GetProductsCreationDate(Guid pId, DateTime? startDate)
+        {
+            using (var db = GetDataContext())
+            {
+                try
+                {
+                    var productsLogs = db.LogForProducts
+                                         .Where(s => s.MemberId == ApplicationManager.Member.Id
+                                                   && (!startDate.HasValue || startDate <= s.Date)
+                                                   && s.IsEmpty && s.ProductId == pId)
+                                         .OrderByDescending(s => s.Date).ToList();
+
+                    if (!productsLogs.Any())
+                    {
+                        return db.InvoiceItems.Where(s => s.ProductId == pId).Select(s => s.Invoices.CreateDate).OrderBy(s => s).FirstOrDefault();
+                    }
+                    else if (productsLogs.Any(s => s.Action == (short)ModificationTypeEnum.Added || s.Action == (short)ModificationTypeEnum.ReCreated))
+                    {
+                        return productsLogs.Last(s => s.Action == (short)ModificationTypeEnum.Added || s.Action == (short)ModificationTypeEnum.ReCreated).Date;
+                    }
+                    else
+                    {
+                        DateTime dateTime = productsLogs[0].Date;
+                        for (int i = 0; i < productsLogs.Count - 1; i++)
+                        {
+                            if (productsLogs[i].Code != productsLogs[i + 1].Code)
+                                return productsLogs[i].Date;
+                            else if (productsLogs[i].Description != productsLogs[i + 1].Description && productsLogs[i].Price != productsLogs[i + 1].Price)
+                                return productsLogs[i].Date;
+                        }
+                        return productsLogs.Last().Date;
+                    }
                 }
                 catch (Exception e)
                 {

@@ -1,17 +1,17 @@
-﻿using System;
+﻿using ES.Common.ViewModels.Base;
+using System;
 using System.ComponentModel;
+using System.Security.Cryptography;
 
 namespace ES.Data.Models
 {
-    public class InvoicePaid : INotifyPropertyChanged
+    public class InvoicePaid : NotifyPropertyChanged
     {
         #region Properties
         private const string PaidProperty = "Paid";
         private const string ByCheckProperty = "ByCheck";
         private const string ReceivedPrepaymentProperty = "ReceivedPrepayment";
         private const string AccountsReceivableProperty = "AccountsReceivable";
-        private const string ChangeProperty = "Change";
-        private const string PrepaymentProperty = "Prepayment";
         #endregion
 
         #region Private properties
@@ -20,7 +20,7 @@ namespace ES.Data.Models
         private decimal? _byCheck;
         private decimal? _receivedPrepayment;
         private decimal? _accountsReceivable;
-        private decimal _prepaiment;
+        private decimal? _prepaiment;
         private Guid? _cashDeskId;
         private Guid? _cashDeskForTicketId;
         private Guid? _partnerId;
@@ -31,7 +31,7 @@ namespace ES.Data.Models
         /// <summary>
         /// Total needed yo pay.
         /// </summary>
-        public decimal? Total { get { return _total; } set { _total = value; OnPropertyChanged(ChangeProperty); } }
+        public decimal? Total { get { return _total; } set { _total = value; RaisePropertyChanged(() => Change); } }
 
         public decimal? Paid
         {
@@ -44,11 +44,11 @@ namespace ES.Data.Models
                 if (value < 0) value = null;
                 if (_paid == value) { return; }
                 _paid = value;
-                OnPropertyChanged(PaidProperty);
-                OnPropertyChanged(ChangeProperty);
+                RaisePropertyChanged(() => Paid);
+                RaisePropertyChanged(() => Change);
             }
         }
-        public decimal ByCash { get { return (Paid ?? 0) - (Change ?? 0) - (ReceivedPrepayment ?? 0); } }
+        public decimal ByCash { get { return (Paid ?? 0) - (Change ?? 0); } }
         public decimal? ByCheck
         {
             get
@@ -64,11 +64,11 @@ namespace ES.Data.Models
                 if (_byCheck == value) { return; }
                 _byCheck = value;
                 OnPropertyChanged(ByCheckProperty);
-                OnPropertyChanged(ChangeProperty);
+                RaisePropertyChanged(() => Change);
             }
         }
         /// <summary>
-        /// Կանխավճար
+        /// Կանխավճար, պատվիրատուից ստացված կանխավճար
         /// </summary>
         public decimal? ReceivedPrepayment
         {
@@ -77,11 +77,13 @@ namespace ES.Data.Models
             {
                 if (value < 0) { value = null; }
                 if (_receivedPrepayment == value) { return; }
-                _receivedPrepayment = value; OnPropertyChanged(ReceivedPrepaymentProperty); OnPropertyChanged(ChangeProperty);
+                _receivedPrepayment = value;
+                RaisePropertyChanged(() => ReceivedPrepayment);
+                RaisePropertyChanged(() => Change);
             }
         }
         /// <summary>
-        /// Դեբետ
+        /// Դեբիտորական պարտք, մատակարարին տրված կանխավճար
         /// </summary>
         public decimal? AccountsReceivable
         {
@@ -90,11 +92,46 @@ namespace ES.Data.Models
             {
                 if (value < 0) value = null;
                 if (_accountsReceivable == value) { return; }
-                _accountsReceivable = value; OnPropertyChanged(AccountsReceivableProperty); OnPropertyChanged(ChangeProperty);
+                _accountsReceivable = value;
+                RaisePropertyChanged(() => AccountsReceivable);
+                RaisePropertyChanged(() => Change);
             }
         }
-        public decimal? Change { get { return IsPaid ? ((Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - ReceivedPrepayment - (Total ?? 0)) : 0; } }
-        //public decimal Prepayment { get { return _prepaiment; } set { _prepaiment = value; OnPropertyChanged(PrepaymentProperty); OnPropertyChanged(ChangeProperty); } }
+
+        /// <summary>
+        /// Վերադարձվող մանր
+        /// </summary>
+        public decimal? Change
+        {
+            get
+            {
+                if (!Paid.HasValue) return null;
+                var paid = Paid ?? 0;
+                var paidCashless = (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0);
+                var total = Total ?? 0;
+                var prepayment = Prepayment ?? 0;
+                bool isPaidValid = paidCashless - prepayment <= total && (prepayment == 0 || ReceivedPrepayment == 0) && (paid + paidCashless >= prepayment + total);
+                return isPaidValid ? paid + paidCashless - prepayment - total : 0;
+            }
+        }
+
+        /// <summary>
+        /// Կանխավճար, մանրը թողնել որպես կանխավճար
+        /// </summary>
+        public decimal? Prepayment
+        {
+            get { return _prepaiment; }
+            set
+            {
+                if (value < 0)
+                {
+                    value = null;
+                }
+                _prepaiment = value;
+                RaisePropertyChanged(() => Prepayment);
+                RaisePropertyChanged(() => Change);
+            }
+        }
 
         //public decimal? DiscountBond
         //{
@@ -107,7 +144,14 @@ namespace ES.Data.Models
         #endregion
 
         #region Public methods
-        public bool IsPaid { get { return ((Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - (ReceivedPrepayment ?? 0) - (Total ?? 0)) >= 0; } }
+        public bool IsPaid
+        {
+            get
+            {
+                return (Paid ?? 0) + (ByCheck ?? 0) + (ReceivedPrepayment ?? 0) + (AccountsReceivable ?? 0) - (Change ?? 0) - (Prepayment ?? 0) == (Total ?? 0);
+            }
+        }
+
         public Guid? CashDeskId { get { return _cashDeskId; } set { _cashDeskId = value; } }
         public Guid? CashDeskForTicketId { get { return _cashDeskForTicketId; } set { _cashDeskForTicketId = value; } }
         public Guid? PartnerId { get { return _partnerId; } set { _partnerId = value; } }

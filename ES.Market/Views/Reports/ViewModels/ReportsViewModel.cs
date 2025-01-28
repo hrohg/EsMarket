@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,7 +9,6 @@ using ES.Business.Managers;
 using ES.Common.Enumerations;
 using ES.Common.Helpers;
 using ES.Common.ViewModels.Base;
-using ES.Data.Models;
 using ES.Data.Models.Reports;
 using Shared.Helpers;
 using UserControls.Enumerations;
@@ -21,12 +19,8 @@ using UserControls.Views;
 
 namespace ES.Market.Views.Reports.ViewModels
 {
-    public class ReportsViewModel : INotifyPropertyChanged
+    public class ReportsViewModel : ViewModelBase
     {
-        #region Constants
-        private const string IsInProgressProperty = "IsInProgress";
-        #endregion
-
         #region Internal properties
         private readonly object _sync = new object();
         private DocumentViewModel _activeTab;
@@ -42,7 +36,7 @@ namespace ES.Market.Views.Reports.ViewModels
             {
                 if (_isInProgress == value) return;
                 _isInProgress = value;
-                OnPropertyChanged(IsInProgressProperty);
+                RaisePropertyChanged(() => IsInProgress);
             }
         }
 
@@ -55,7 +49,7 @@ namespace ES.Market.Views.Reports.ViewModels
             set
             {
                 _activeTab = value;
-                OnPropertyChanged("AddSingleVisibility");
+                //RaisePropertyChanged(()=>AddSingleVisibility);
             }
         }
         #endregion Avalon dock
@@ -358,8 +352,8 @@ namespace ES.Market.Views.Reports.ViewModels
         public ICommand SallByCustomersCommand { get; private set; }
 
         private ICommand _viewProdutsLogCommand;
-        public ICommand ViewProductsLogCommand { get { return _viewProdutsLogCommand??(_viewProdutsLogCommand = new RelayCommand(OnViewProductsLog));} }
-        
+        public ICommand ViewProductsLogCommand { get { return _viewProdutsLogCommand ?? (_viewProdutsLogCommand = new RelayCommand(OnViewProductsLog)); } }
+
         private ICommand _viewCommodityTurnoverCommand;
         public ICommand ViewCommodityTurnoverCommand { get { return _viewCommodityTurnoverCommand ?? (_viewCommodityTurnoverCommand = new RelayCommand<ProductsViewEnum>(OnViewCommodityTurnover)); } }
         private void OnViewCommodityTurnover(ProductsViewEnum viewType)
@@ -369,16 +363,16 @@ namespace ES.Market.Views.Reports.ViewModels
             switch (viewType)
             {
                 case ProductsViewEnum.ByDetile:
-                    
+
                     break;
                 case ProductsViewEnum.ByPrice:
-                    
+
                     break;
                 case ProductsViewEnum.ByStocks:
-                    
+
                     break;
                 case ProductsViewEnum.ByProducts:
-                    
+
                     break;
                 case ProductsViewEnum.ByProductItems:
                     break;
@@ -398,7 +392,7 @@ namespace ES.Market.Views.Reports.ViewModels
                 vm.Update();
             }
         }
-        
+
         #region Products commands
 
         private void OnViewProductsCommand(ProductsViewEnum viewEnum)
@@ -476,21 +470,6 @@ namespace ES.Market.Views.Reports.ViewModels
         private ICommand _viewProductsBalanceCommand;
         public ICommand ViewProductsBalanceCommand { get { return _viewProductsBalanceCommand ?? (_viewProductsBalanceCommand = new RelayCommand<ProductsViewEnum>(OnViewProductsBalanceCommand)); } }
         #endregion Products commands
-
-        #endregion
-
-        #region INotifyPropertyChanged
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
 
         #endregion
     }

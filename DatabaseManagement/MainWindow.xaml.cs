@@ -69,9 +69,9 @@ namespace DatabaseManagement
             }
 
             //if (!Session.Inst.BEManager.CreateDatabaseBackup(backupFilePath, DatabaseManager.GetConnectionString(), ref errorMessage))
-            var connectionString = !(ApplicationManager.IsEsServer) ? ApplicationManager.ConnectionString : string.Empty;
+            var connectionString = !(ApplicationManager.IsEsServer) ? ApplicationManager.Instance.GetConnectionString() : string.Empty;
             //if (!Session.Inst.BEManager.CreateDatabaseBackup(backupFilePath, connectionString, ref errorMessage))
-            if (DatabaseManager.CreateDatabaseBackup(backupFilePath, ApplicationManager.DbName, ref errorMessage))
+            if (DatabaseManager.CreateDatabaseBackup(backupFilePath, ApplicationManager.Instance.GetDbName(), ref errorMessage))
             {
                 Cursor = null;
                 //MessageManager.ShowMessage(CultureResources.Inst["ArchiveIsNotCompletedTryLater"], CultureResources.Inst["ArchiveError"], MessageBoxButton.OK, MessageBoxImage.Error);

@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Threading;
-using CashReg.Helper;
+﻿using CashReg.Helper;
 using CashReg.Interfaces;
 using CashReg.Models;
 using ES.Business.Managers;
@@ -18,6 +10,13 @@ using ES.Data.Enumerations;
 using ES.Data.Models;
 using ES.Data.Models.Products;
 using Shared.Helpers;
+using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Threading;
 using UserControls.Helpers;
 using UserControls.Views.ReceiptTickets;
 using UserControls.Views.ReceiptTickets.Views;
@@ -148,7 +147,7 @@ namespace UserControls.ViewModels.Invoices
         public SaleInvoiceViewModel()
             : base(InvoiceType.SaleInvoice)
         {
-            UseDiscountBond = HasDiscountBond;
+            UseDiscountBond = HasDiscountBond;            
         }
         public SaleInvoiceViewModel(InvoiceType type)
                     : base(type)
@@ -302,10 +301,12 @@ namespace UserControls.ViewModels.Invoices
             {
                 Invoice = Invoice,
                 InvoiceItems = InvoiceItems.ToList(),
-                InvoicePaid = InvoicePaid
+                InvoicePaid = InvoicePaid,
+                Department = $"{ApplicationManager.Settings.SettingsContainer.MemberSettings.BranchSettings.Name}"
             });
+
             //PrintPreview
-            //new UiPrintPreview(ticket).ShowDialog();
+            //new UiPrintPreview(ticket).ShowDialog(); return;
 
             //Print
             PrintManager.Print(ticket, ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveSalePrinter);
@@ -399,7 +400,7 @@ namespace UserControls.ViewModels.Invoices
         protected virtual bool IsPaidValid()
         {
             return InvoicePaid.IsPaid &&
-        InvoicePaid.Change <= (InvoicePaid.Paid ?? 0) &&
+        (InvoicePaid.Change ?? 0) <= (InvoicePaid.Paid ?? 0) &&
         Partner != null &&
         (InvoicePaid.AccountsReceivable ?? 0) <= (Partner.MaxDebit ?? 0) - Partner.Debit &&
         (InvoicePaid.ReceivedPrepayment ?? 0) <= Partner.Credit;
@@ -445,7 +446,11 @@ namespace UserControls.ViewModels.Invoices
                     IsLoading = false;
                     return;
                 }
-                else { Invoice = invoice; }
+                else
+                {
+                    invoice.Amount = Invoice.Amount;
+                    Invoice = invoice;
+                }
 
                 //Open Cash desk
                 if (!string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.CashDeskPort) || !string.IsNullOrEmpty(ApplicationManager.Settings.SettingsContainer.MemberSettings.ActiveCashDeskPrinter) && InvoicePaid.ByCash > 0)
@@ -493,9 +498,13 @@ namespace UserControls.ViewModels.Invoices
                         qty = ii.Quantity ?? 0,
                         discount = !UseDiscountBond ? ii.Discount : 0,
                         discountType = !UseDiscountBond && ii.Discount > 0 ? 1 : (int?)null,
-                        dep = ii.Product.TypeOfTaxes == default(TypeOfTaxes) || ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.All(s => s.IsActive && s.CashierDepartment.Type != (int)ii.Product.TypeOfTaxes) ?
-                        ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.CashierDepartment.Id :
-                        ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.First(s => s.IsActive && s.CashierDepartment.Type == (int)ii.Product.TypeOfTaxes).CashierDepartment.Id,
+                        dep =
+                        //ii.Product.TypeOfTaxes == default(TypeOfTaxes) || ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.All(s => s.IsActive && s.TypeOfTaxesId != (int)ii.Product.TypeOfTaxes) ?
+                        //ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.CashierDepartment.Id :
+                        //ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.First(s => s.IsActive && s.TypeOfTaxesId == (int)ii.Product.TypeOfTaxes).CashierDepartment.Id,
+                        ii.Product.TypeOfTaxes != default(TypeOfTaxes) && ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.Any(s => s.IsActive && s.TypeOfTaxesId == (int)ii.Product.TypeOfTaxes) ?
+                                                                        ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfigs.First(s => s.IsActive && s.TypeOfTaxesId == (int)ii.Product.TypeOfTaxes).SelectedDepartmentId :
+                                                                        ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.CashierDepartment.Id,
                         adgCode = ii.Product.HcdCs
                     }).ToList();
                     var paid = new EcrPaid

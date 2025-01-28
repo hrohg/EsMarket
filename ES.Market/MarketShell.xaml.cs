@@ -254,7 +254,7 @@ namespace ES.Market
                 SubAccountingPlanManager.GetSubAccountingPlanModels((short)AccountingPlanEnum.DebitForSalary, ApplicationManager.Instance.GetMember.Id, true), false, "Ընտրել աշխատակից");
             var cashDesk = SelectItemsManager.SelectCashDesks(true, false);
 
-            if (costOfSales.First() == null || debitForSalary.First() == null || cashDesk.First() == null)
+            if (!costOfSales.Any() || !debitForSalary.Any() || !cashDesk.Any())
             {
                 return;
             }
@@ -364,7 +364,7 @@ namespace ES.Market
         protected void MiBackupData_Click(object sender, EventArgs e)
         {
             try
-            { DatabaseManager.BackupDatabase(ApplicationManager.DataSource, ApplicationManager.DbName); }
+            { DatabaseManager.BackupDatabase(ApplicationManager.DataSource, ApplicationManager.Instance.GetDbName()); }
             catch (Exception ex)
             {
                 MessageManager.OnMessage(new MessageModel(ex.Message, MessageTypeEnum.Error));
@@ -432,6 +432,20 @@ namespace ES.Market
 
         #endregion
 
+        private void MiSingleAccountingRecords_Click(object sender, RoutedEventArgs e)
+        {
+
+        }       
+
+        private void MiCostOfSales_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MiBackupData_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
 

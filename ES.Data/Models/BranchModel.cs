@@ -15,6 +15,8 @@ namespace ES.Data.Models
 
         public string Name { get; set; }
         public string Address { get; set; }
+        public string Tin { get; set; }
+        public string SupplyAddress { get; set; }
         public List<EssMailSettings> MailSettings { get; set; }
         [XmlIgnore]
         public EssMailSettings NoReplayMailSettings { get { return MailSettings.FirstOrDefault(); } }
@@ -31,7 +33,7 @@ namespace ES.Data.Models
         {
             Id = Guid.NewGuid();
             MemberId = memberId;
-            MailSettings = new List<EssMailSettings>(){new EssMailSettings(memberId)};
+            MailSettings = new List<EssMailSettings>() { new EssMailSettings(memberId) };
         }
     }
     [Serializable]
@@ -75,5 +77,5 @@ namespace ES.Data.Models
 
     }
 
-    public enum EmailType{NoReplay}
+    public enum EmailType { NoReplay }
 }

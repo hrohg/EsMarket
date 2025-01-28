@@ -1,20 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.IO.Ports;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Threading;
-using System.Xml.Serialization;
-using AccountingTools.Enums;
+﻿using AccountingTools.Enums;
 using CashReg.Helper;
 using ES.Business.FileManager;
 using ES.Business.Helpers;
@@ -35,6 +19,21 @@ using ES.Market.Users;
 using ES.Market.Views.Reports.View;
 using ES.Market.Views.Reports.ViewModels;
 using Shared.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Ports;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
+using System.Windows.Input;
+using System.Windows.Threading;
+using System.Xml.Serialization;
 using UserControls.ControlPanel.Controls;
 using UserControls.Enumerations;
 using UserControls.Helpers;
@@ -66,7 +65,7 @@ using TabControl = System.Windows.Controls.TabControl;
 
 namespace ES.Market.ViewModels
 {
-    public class ShellViewModel : IShellViewModel, IDisposable
+    public class ShellViewModel : ViewModelBase, IShellViewModel, IDisposable
     {
         #region Events
         public delegate void LogOutDelegate();
@@ -96,8 +95,7 @@ namespace ES.Market.ViewModels
 
         private ObservableCollection<MessageModel> _messages = new ObservableCollection<MessageModel>();
         //private UctrlLibraryBrowser _libraryBrowser;
-        private bool _isLoading;
-        private bool _isCashUpdateing;
+
         private DocumentViewModel _activeTab;
 
         public DocumentViewModel ActiveTab
@@ -159,27 +157,11 @@ namespace ES.Market.ViewModels
 
         public ApplicationSettingsViewModel ApplicationSettings { get { return ApplicationManager.Settings; } }
         public string ProcessDescription { get; set; }
-        public bool IsCashUpdateing
-        {
-            get { return _isCashUpdateing; }
-            set
-            {
-                _isCashUpdateing = value;
-                RaisePropertyChanged("IsCashUpdateing");
-            }
-        }
-        public bool IsLoading
-        {
-            get
-            {
-                return _isLoading;
-            }
-            set
-            {
-                _isLoading = value;
-                RaisePropertyChanged("IsLoading");
-            }
-        }
+        public bool IsCashUpdateing => CashManager.Instance.IsUpdateing;
+
+        public int ProcessingProgressValue { get => ApplicationManager.Instance.ProgressValue; }
+        public bool IsProcessing { get => ApplicationManager.Instance.IsProcessing; }
+
         public bool IsLocalMode { get { return _isLocalMode; } set { _isLocalMode = value; RaisePropertyChanged(IsLocalModeProperty); } }
         public ObservableCollection<InvoiceViewModel> Invoices = new ObservableCollection<InvoiceViewModel>();
         public ObservableCollection<MessageModel> Messages { get { return new ObservableCollection<MessageModel>(_messages.OrderByDescending(s => s.Date)); } set { _messages = value; RaisePropertyChanged(MessagesProperty); RaisePropertyChanged(MessageProperty); } }
@@ -230,7 +212,12 @@ namespace ES.Market.ViewModels
 
             ApplicationManager.CashManager.BeginCashUpdateing += BeginCashUpdateing;
             ApplicationManager.CashManager.CashUpdated += CashUpdated;
-            IsLoading = ApplicationManager.CashManager.IsUpdateing;
+            ApplicationManager.Instance.ProgressChangedEvent += OnProgressValueChanged;
+
+            RaisePropertyChanged(() => ProcessingProgressValue);
+            RaisePropertyChanged(() => IsProcessing);
+            RaisePropertyChanged(() => IsCashUpdateing);
+            //ApplicationManager.Instance.SetProgressValue("updateing", ApplicationManager.CashManager.IsUpdateing ? 1 : -1);
             Documents = new ObservableCollection<DocumentViewModel>();
             Tools = new ObservableCollection<ToolsViewModel>();
             ApplicationManager.MessageManager.MessageReceived += OnNewMessage;
@@ -253,16 +240,14 @@ namespace ES.Market.ViewModels
                     vm.SetExternalText(new ExternalTextImputEventArgs(data));
                 });
         }
-        private void CashUpdated()
+        private void BeginCashUpdateing(string key)
         {
-            IsLoading = IsCashUpdateing = false;
+            RaisePropertyChanged(() => IsCashUpdateing);
         }
-
-        private void BeginCashUpdateing()
+        private void CashUpdated(string key)
         {
-            IsLoading = IsCashUpdateing = true;
+            RaisePropertyChanged(() => IsCashUpdateing);
         }
-
         private void InitializeCommands()
         {
             RefreshCashCommand = new RelayCommand(UpdateCash, CanUpdateCash);
@@ -406,10 +391,10 @@ namespace ES.Market.ViewModels
             {
                 if (doc != document && document.IsActive) doc.IsActive = false;
             }
-            if (ActiveTab is InvoiceViewModel || ActiveTab is ProductManagerViewModel)
-            {
-                ProductItemsToolsViewModel.IsActive = true;
-            }
+            //if (ActiveTab is InvoiceViewModel || ActiveTab is ProductManagerViewModel)
+            //{
+            //    ProductItemsToolsViewModel.IsActive = true;
+            //}
         }
 
         private void AddInvoiceDocument(InvoiceViewModel vm)
@@ -437,7 +422,7 @@ namespace ES.Market.ViewModels
             {
                 doc.IsSelected = false;
                 doc.IsActive = false;
-            }            
+            }
             lock (_sync)
             {
                 Documents.Add(vm);
@@ -516,6 +501,7 @@ namespace ES.Market.ViewModels
 
         private void OnKeyPressed(KeyEventArgs e)
         {
+            if (e.Handled) return;
             if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || e.KeyboardDevice.IsKeyDown(Key.RightCtrl))
             {
                 switch (e.Key)
@@ -580,51 +566,52 @@ namespace ES.Market.ViewModels
                     break;
             }
 
+            if (!(e.OriginalSource is System.Windows.Controls.Primitives.TextBoxBase))
+            { // process barcode
+                if (e.Key == Key.Enter)
+                {
+                    string barcode = new string(_barcode.ToArray());
+                    var vm = ActiveTab; // Documents.SingleOrDefault(s => s.IsActive);
+                    if (vm != null) vm.SetExternalText(new ExternalTextImputEventArgs(barcode));
+                    _barcode.Clear();
+                    _barcodeText.Clear();
+                    return;
+                }
 
-            // process barcode
-            if (e.Key == Key.Enter)
-            {
-                string barcode = new string(_barcode.ToArray());
-                var vm = ActiveTab; // Documents.SingleOrDefault(s => s.IsActive);
-                if (vm != null) vm.SetExternalText(new ExternalTextImputEventArgs(barcode));
-                _barcode.Clear();
-                _barcodeText.Clear();
-                return;
+                // check timing (keystrokes within 100 ms)
+                TimeSpan elapsed = (DateTime.Now - _lastKeystroke);
+                if (elapsed.TotalMilliseconds > 200)
+                {
+                    _barcode.Clear();
+                    _barcodeText.Clear();
+                }
+
+                // record keystroke & timestamp
+                var key = KeyboardHelper.KeyToChar(e.Key == Key.System ? e.SystemKey : e.Key);
+                if (e.Key == Key.System)
+                {
+                    if (Keyboard.IsKeyDown(Key.NumPad0)) key = '0';
+                    if (Keyboard.IsKeyDown(Key.NumPad1)) key = '1';
+                    if (Keyboard.IsKeyDown(Key.NumPad2)) key = '2';
+                    if (Keyboard.IsKeyDown(Key.NumPad3)) key = '3';
+                    if (Keyboard.IsKeyDown(Key.NumPad4)) key = '4';
+                    if (Keyboard.IsKeyDown(Key.NumPad5)) key = '5';
+                    if (Keyboard.IsKeyDown(Key.NumPad6)) key = '6';
+                    if (Keyboard.IsKeyDown(Key.NumPad7)) key = '7';
+                    if (Keyboard.IsKeyDown(Key.NumPad8)) key = '8';
+                    if (Keyboard.IsKeyDown(Key.NumPad9)) key = '9';
+                }
+
+
+                if (key == '\x00')
+                {
+                    //if (Keyboard.IsKeyDown(Key.NumPad1)) { MessageManager.OnMessage("1" + " " + (int)e.Key); } else { MessageManager.OnMessage((int)e.SystemKey + " " + (int)e.Key); }
+                    return;
+                }
+                _barcode.Add(key);
+                _barcodeText.Append(key);
+                _lastKeystroke = DateTime.Now;
             }
-
-            // check timing (keystrokes within 100 ms)
-            TimeSpan elapsed = (DateTime.Now - _lastKeystroke);
-            if (elapsed.TotalMilliseconds > 200)
-            {
-                _barcode.Clear();
-                _barcodeText.Clear();
-            }
-
-            // record keystroke & timestamp
-            var key = KeyboardHelper.KeyToChar(e.Key == Key.System ? e.SystemKey : e.Key);
-            if (e.Key == Key.System)
-            {
-                if (Keyboard.IsKeyDown(Key.NumPad0)) key = '0';
-                if (Keyboard.IsKeyDown(Key.NumPad1)) key = '1';
-                if (Keyboard.IsKeyDown(Key.NumPad2)) key = '2';
-                if (Keyboard.IsKeyDown(Key.NumPad3)) key = '3';
-                if (Keyboard.IsKeyDown(Key.NumPad4)) key = '4';
-                if (Keyboard.IsKeyDown(Key.NumPad5)) key = '5';
-                if (Keyboard.IsKeyDown(Key.NumPad6)) key = '6';
-                if (Keyboard.IsKeyDown(Key.NumPad7)) key = '7';
-                if (Keyboard.IsKeyDown(Key.NumPad8)) key = '8';
-                if (Keyboard.IsKeyDown(Key.NumPad9)) key = '9';
-            }
-
-
-            if (key == '\x00')
-            {
-                //if (Keyboard.IsKeyDown(Key.NumPad1)) { MessageManager.OnMessage("1" + " " + (int)e.Key); } else { MessageManager.OnMessage((int)e.SystemKey + " " + (int)e.Key); }
-                return;
-            }
-            _barcode.Add(key);
-            _barcodeText.Append(key);
-            _lastKeystroke = DateTime.Now;
         }
 
         #endregion Base
@@ -649,7 +636,7 @@ namespace ES.Market.ViewModels
         private void AddInvoiceDocument(object vm)
         {
             if (vm is DocumentViewModel)
-            {              
+            {
                 AddDocument((DocumentViewModel)vm);
                 ((PaneViewModel)vm).IsActive = true;
                 if (vm is InvoiceViewModel)
@@ -870,7 +857,14 @@ namespace ES.Market.ViewModels
                 AddDocument(vm);
             }
         }
-
+        private void OnProgressValueChanged()
+        {
+            DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () =>
+            {
+                RaisePropertyChanged(() => ProcessingProgressValue);
+                RaisePropertyChanged(() => IsProcessing);
+            });
+        }
         #endregion
 
         #region External methods
@@ -942,7 +936,7 @@ namespace ES.Market.ViewModels
 
         private bool CanUpdateCash(object o)
         {
-            return !IsCashUpdateing; // && IsLocalMode
+            return !IsCashUpdateing;
         }
 
         private void UpdateCash(object o)
@@ -1283,20 +1277,20 @@ namespace ES.Market.ViewModels
             {
                 var actionMode = o as EcrExecuiteActions?;
                 var ecServer = EcrManager.EcrServer;
-                IsLoading = true;
+                ApplicationManager.Instance.SetProgressValue("updateing", 0);
                 MessageModel message = null;
                 switch (actionMode)
                 {
                     case EcrExecuiteActions.CheckConnection:
                         message = ecServer.TryConnection() ? new MessageModel("ՀԴՄ կապի ստուգումն իրականացել է հաջողությամբ: " + ecServer.Result.Description, MessageTypeEnum.Success) : new MessageModel("ՀԴՄ կապի ստուգումը ձախողվել է:", MessageTypeEnum.Warning);
-                        IsLoading = false;
+                        ApplicationManager.Instance.SetProgressValue("updateing", 100);
                         break;
                     case EcrExecuiteActions.OperatorLogin:
                         message = ecServer.TryOperatorLogin() ? new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ օպերատորի մուտքի ստուգումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.Result.Description, ecServer.Result.Code), MessageTypeEnum.Warning);
-                        IsLoading = false;
+                        ApplicationManager.Instance.SetProgressValue("updateing", 100);
                         break;
                     case EcrExecuiteActions.PrintReturnTicket:
-                        IsLoading = false;
+                        ApplicationManager.Instance.SetProgressValue("updateing", 100);
                         ecServer.PrintReceiptReturnTicket(new Action<string>((s) => MessageManager.OnMessage(s)));
 
                         //var resoult = MessageManager.ShowMessage("Դուք ցանկանու՞մ եք վերադարձնել ՀԴՄ կտրոնն ամբողջությամբ:", "ՀԴՄ կտրոնի վերադարձ", MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -1316,15 +1310,15 @@ namespace ES.Market.ViewModels
                         break;
                     case EcrExecuiteActions.PrintLatestTicket:
                         message = ecServer.PrintReceiptLatestCopy() ? new MessageModel("ՀԴՄ վերջին կտրոնի տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ վերջին կտրոնի տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.Result.Description, ecServer.Result.Code), MessageTypeEnum.Warning);
-                        IsLoading = false;
+                        ApplicationManager.Instance.SetProgressValue("updateing", 100);
                         break;
                     case EcrExecuiteActions.PrintReportX:
                         message = ecServer.GetReport(ReportType.X) ? new MessageModel("ՀԴՄ X հաշվետվության տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ X հաշվետվության տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.Result.Description, ecServer.Result.Code), MessageTypeEnum.Warning);
-                        IsLoading = false;
+                        ApplicationManager.Instance.SetProgressValue("updateing", 100);
                         break;
                     case EcrExecuiteActions.PrintReportZ:
                         message = ecServer.GetReport(ReportType.Z) ? new MessageModel("ՀԴՄ Z հաշվետվության տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success) : new MessageModel("ՀԴՄ Z հաշվետվության տպումը ձախողվել է:" + string.Format(" {0} ({1})", ecServer.Result.Description, ecServer.Result.Code), MessageTypeEnum.Warning);
-                        IsLoading = false;
+                        ApplicationManager.Instance.SetProgressValue("updateing", 100);
                         break;
                     case EcrExecuiteActions.CheckEcrConnection:
                         break;
@@ -1338,19 +1332,19 @@ namespace ES.Market.ViewModels
                         var filePath = FileManager.OpenExcelFile("Excel files(*.xls *.xlsx *․xlsm)|*.xls;*.xlsm;*․xlsx|Excel with macros|*.xlsm|Excel 97-2003 file|*.xls", "Excel ֆայլի բեռնում", ApplicationManager.Settings.SettingsContainer.MemberSettings.EcrConfig.ExcelFilePath);
                         if (string.IsNullOrEmpty(filePath))
                         {
-                            IsLoading = false;
+                            ApplicationManager.Instance.SetProgressValue("updateing", 100);
                             return;
                         }
                         try
                         {
                             if (ecServer.PrintReceiptFromExcelFile(filePath))
                             {
-                                IsLoading = false;
+                                ApplicationManager.Instance.SetProgressValue("updateing", 100);
                                 MessageManager.OnMessage(new MessageModel("ՀԴՄ կտրոնի տպումն իրականացել է հաջողությամբ:", MessageTypeEnum.Success));
                             }
                             else
                             {
-                                IsLoading = false;
+                                ApplicationManager.Instance.SetProgressValue("updateing", 100);
                                 MessageManager.OnMessage(new MessageModel(string.Format("ՀԴՄ կտրոնի տպումն ընդհատվել է: {1} ({0})", ecServer.Result.Code, ecServer.Result.Description), MessageTypeEnum.Warning));
                             }
                         }
@@ -1418,7 +1412,7 @@ namespace ES.Market.ViewModels
                 {
                     MessageManager.OnMessage(message);
                 }
-                IsLoading = false;
+                ApplicationManager.Instance.SetProgressValue("updateing", 100);
             }
             catch (Exception ex)
             {
@@ -1743,6 +1737,8 @@ namespace ES.Market.ViewModels
 
         private void OnProductChanged(ProductModel product)
         {
+            CashManager.Instance.UpdateProducts(product);
+
             foreach (InvoiceViewModel vm in Documents.Where(d => d is InvoiceViewModel))
             {
                 vm.OnProductChanged(product);
@@ -2113,6 +2109,8 @@ namespace ES.Market.ViewModels
         {
             switch (accountingPlan)
             {
+                case AccountingPlanEnum.AllPlans:
+                    return ApplicationManager.IsInRole(UserRoleEnum.Admin) || ApplicationManager.IsInRole(UserRoleEnum.SeniorCashier);
                 case AccountingPlanEnum.Purchase:
                     break;
 
@@ -2297,6 +2295,10 @@ namespace ES.Market.ViewModels
         #region Stock Take
 
         #endregion Stock Take
+
+        #region Product order        
+
+        #endregion Product order
 
         #endregion
 
@@ -2733,7 +2735,6 @@ namespace ES.Market.ViewModels
         private ICommand _editUsersCommand;
         private Tuple<DateTime, DateTime> _dataIntermidiate;
 
-
         public ICommand EditUsersCommand
         {
             get { return _editUsersCommand ?? (_editUsersCommand = new RelayCommand(OnEditUsers, CanEditUserCommand)); }
@@ -2746,20 +2747,5 @@ namespace ES.Market.ViewModels
         #endregion Settings
 
         #endregion Commands
-
-        #region INotifyPropertyChanged
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void RaisePropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        #endregion
     }
 }

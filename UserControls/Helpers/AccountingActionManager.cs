@@ -6,6 +6,7 @@ using AccountingTools.Enums;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common.Managers;
+using ES.DataAccess.Models;
 using UserControls.ControlPanel.Controls;
 using UserControls.ViewModels;
 
@@ -224,13 +225,13 @@ namespace UserControls.Helpers
         //
         private static void BalnceDebetCredit()
         {
-            var partner = SelectItemsManager.SelectPartner();
+            var partner = SelectItemsManager.SelectPartner(PartnersManager.GetPartners().Where(s => s.Credit != 0 && s.Debit != 0));
             if (partner == null) return;
-            if (partner.Credit <= 0 || partner.Debit <= 0)
-            {
-                MessageBox.Show(string.Format("Պատվիրատու: {0}\nԿանխավճար: {1}\nՊարտք: {2}\n Գործողությունը հնարավոր չէ շարունակել:", partner.FullName, partner.Credit, partner.Debit), "Դեբիտորական և կրեդիտորական պարտքերի մարում", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+            //if (partner.Credit == 0 || partner.Debit == 0)
+            //{
+            //    MessageBox.Show(string.Format("Պատվիրատու: {0}\nԿանխավճար: {1}\nՊարտք: {2}\n Գործողությունը հնարավոր չէ շարունակել:", partner.FullName, partner.Credit, partner.Debit), "Դեբիտորական և կրեդիտորական պարտքերի մարում", MessageBoxButton.OK, MessageBoxImage.Warning);
+            //    return;
+            //}
 
             var accountingRecords = new AccountingRecordsModel(DateTime.Now, ApplicationManager.Instance.GetMember.Id, ApplicationManager.GetEsUser.UserId);
             accountingRecords.Debit = (int)AccountingPlanEnum.PurchasePayables;
@@ -238,7 +239,7 @@ namespace UserControls.Helpers
 
             accountingRecords.CreditGuidId = partner.Id;
             accountingRecords.DebitGuidId = partner.Id;
-            accountingRecords.Amount = partner.Credit < partner.Debit ? partner.Credit : partner.Debit;
+            accountingRecords.Amount = Math.Min(partner.Credit, partner.Debit);
 
             if (AccountingRecordsManager.BalanceDebetCredit(accountingRecords))
             {
@@ -255,6 +256,10 @@ namespace UserControls.Helpers
         {
             switch (accountingPlan)
             {
+                case AccountingPlanEnum.AllPlans:
+                    var ctrlAccountingRecords = new CtrlAccountingRecords();
+                    ctrlAccountingRecords.ShowDialog();
+                    break;
                 case AccountingPlanEnum.None:
                     break;
                 case AccountingPlanEnum.Purchase:

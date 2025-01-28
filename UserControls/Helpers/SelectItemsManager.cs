@@ -436,7 +436,11 @@ namespace UserControls.Helpers
         public static PartnerModel SelectPartner(PartnerType partnerTypeId = 0)
         {
             var partners = partnerTypeId != 0 ? PartnersManager.GetPartner(partnerTypeId) : PartnersManager.GetPartners();
-            if (partners.Count == 0) return null;
+            return SelectPartner(partners);
+        }
+        public static PartnerModel SelectPartner(IEnumerable<PartnerModel> partners)
+        {            
+            if (partners==null || !partners.Any()) return null;
             var selectedItems = new SelectItems(partners.Select(s => new ItemsToSelect { DisplayName = s.FullName + " " + s.Mobile, SelectedValue = s.Id }).ToList(), false);
             selectedItems.ShowDialog();
             if (selectedItems.DialogResult == null || selectedItems.DialogResult != true || selectedItems.SelectedItems == null)

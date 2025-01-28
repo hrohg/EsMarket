@@ -53,9 +53,8 @@ namespace ES.Business.Managers
         public static EsUserModel ConvertEsUser(EsUsers item)
         {
             if (item == null) return null;
-            return new EsUserModel
+            return new EsUserModel(item.UserId)
             {
-                UserId = item.UserId,
                 UserName = item.UserName,
                 Password = item.Password,
                 Email = item.Email,
@@ -166,8 +165,8 @@ namespace ES.Business.Managers
                 {
                     var encodePassword = EncodePassword(password);
                     var user = db.EsUsers.FirstOrDefault(s =>
-                        (s.UserName.ToLower() == userName.ToLower() ||
-                         s.Email.ToLower() == userName.ToLower()) &&
+                        (s.UserName.Equals(userName, StringComparison.CurrentCultureIgnoreCase) ||
+                         s.Email.Equals(userName, StringComparison.CurrentCultureIgnoreCase)) &&
                         s.IsActive &&
                         s.Password == encodePassword);
                     return user;

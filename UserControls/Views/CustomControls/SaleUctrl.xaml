@@ -467,14 +467,14 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </extendedControls:ExtendedDataGrid>
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="2" Margin="0 3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
                         <TextBlock Text="Նշումներ" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="12"/>
-                        <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" Height="50" VerticalContentAlignment="Top" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                        <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" MinHeight="70" VerticalContentAlignment="Top" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch"/>
                     </StackPanel>
                     <Grid Grid.Row="0" Grid.Column="1">
                         <Grid.ColumnDefinitions>
@@ -486,15 +486,18 @@
                             <RowDefinition/>
                             <RowDefinition/>
                             <RowDefinition/>
+                            <RowDefinition/>
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Գումար" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Foreground="Green" Margin="0 0 5 0"/>
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Path=Invoice.Amount, StringFormat={}{0:#,0.##}}" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="Blue"/>
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Զեղչ" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Foreground="Green" Margin="0 0 5 0"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=Invoice.DiscountAmount, Mode=OneWay, StringFormat={}{0:#,0.##}}" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="Blue"/>
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Բոնուս" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Foreground="Green" Margin="0 0 5 0"/>
-                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Path=Invoice.DiscountBond, StringFormat={}{0:#,0.##}}" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="Blue"/>
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Ընդամենը" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12"  Foreground="Green" Margin="0 0 5 0"/>
-                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Path=Invoice.Total, Mode=OneWay, StringFormat={}{0:#,0.##}}"  VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="Blue"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Զեղչ%" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Foreground="Green" Margin="0 0 5 0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=Invoice.TotalDiscount, Mode=OneWay, StringFormat={}{0:#,0.##}%}" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="Blue"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Զեղչ" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Foreground="Green" Margin="0 0 5 0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Path=Invoice.DiscountAmount, Mode=OneWay, StringFormat={}{0:#,0.##}}" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="Blue"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Բոնուս" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Foreground="Green" Margin="0 0 5 0"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Path=Invoice.DiscountBond, StringFormat={}{0:#,0.##}}" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="Blue"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Ընդամենը" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12"  Foreground="Green" Margin="0 0 5 0"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Path=Invoice.Total, Mode=OneWay, StringFormat={}{0:#,0.##}}"  VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Foreground="Blue"/>
                     </Grid>
                     <!--<StackPanel Grid.Column="1" VerticalAlignment="Bottom">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -571,6 +574,7 @@
                                 </StackPanel>
                             </StackPanel>
                         </GroupBox>
+                        
                         <GroupBox>
                             <GroupBox.Header>
                                 <Label Content="Մանր" FontSize="10"/>
@@ -584,7 +588,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal ">
                                     <TextBlock Text="Կուտակում" VerticalAlignment="Center" Foreground="Green"/>
-                                    <TextBox Text="{Binding Path=InvoicePaid.ReceivedPrepayment, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}"  
+                                    <TextBox Text="{Binding Path=InvoicePaid.Prepayment, TargetNullValue='', UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,#.##}}"  
                                              VerticalAlignment="Center" HorizontalContentAlignment="Right"
                                              Width="100" FontSize="15" Height="25" Margin="1" Foreground="Green"/>
                                 </StackPanel>

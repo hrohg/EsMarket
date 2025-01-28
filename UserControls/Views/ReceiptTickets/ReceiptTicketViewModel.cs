@@ -1,9 +1,17 @@
-﻿using System;
+﻿using CashReg.Models;
+using ES.Data.Models;
+using QRCoder;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
-using CashReg.Models;
-using ES.Data.Models;
+using System.Reflection.Emit;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 
 namespace UserControls.Views.ReceiptTickets
@@ -27,6 +35,7 @@ namespace UserControls.Views.ReceiptTickets
         public EsUserModel User { get; set; }
         public InvoiceModel Invoice { get { return _invoice; } set { _invoice = value; OnPropertyChanged("Invoice"); } }
         public List<InvoiceItemsModel> InvoiceItems { get { return _invoiceItems; } set { _invoiceItems = value; OnPropertyChanged("InvoiceItems"); OnPropertyChanged("EmarkCount"); OnPropertyChanged("HasEmark"); } }
+        public PartnerModel Partner => Invoice.Partner;
         public InvoicePaid InvoicePaid
         {
             get { return _invoicePaid; }
@@ -36,6 +45,7 @@ namespace UserControls.Views.ReceiptTickets
         public string Footer { get { return _footer; } set { _footer = value; OnPropertyChanged(FooterProperty); } }
         public string Prize { get { return ResponseReceipt != null && ResponseReceipt.Prize == (int)CashReg.Helper.Prize.Prize ? Shared.Helpers.Enumerations.GetEnumDescription(CashReg.Helper.Prize.Prize) : Shared.Helpers.Enumerations.GetEnumDescription(CashReg.Helper.Prize.NoPrize); } }
         public DateTime? Date { get { return Invoice != null ? Invoice.ApproveDate ?? Invoice.CreateDate : (DateTime?)null; } }
+        public string Department { get; set; }
         public bool IsCheck { get { return InvoicePaid != null && InvoicePaid.ByCheck > 0; } }
         public bool IsAccountsReceivable { get { return InvoicePaid != null && InvoicePaid.AccountsReceivable > 0; } }
         public bool IsReceivedPrepayment { get { return InvoicePaid != null && InvoicePaid.ReceivedPrepayment > 0; } }
@@ -47,13 +57,55 @@ namespace UserControls.Views.ReceiptTickets
         public bool IsReceiptExists { get { return ResponseReceipt != null; } }
         public int EmarkCount { get { return InvoiceItems.Sum(s => s.AdditionalData.EMarks.Count); } }
         public bool HasEmark { get { return EmarkCount > 0; } }
+        public bool HasPartnerTin { get => !string.IsNullOrWhiteSpace(Invoice.Partner.TIN); }
 
+        public ImageSource QrImage { get; set; }
         #endregion
         public SaleInvoiceSmallTicketViewModel(ResponseReceiptModel responceReceiptModel) : base(responceReceiptModel)
         {
+            //QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            //QRCodeData qrCodeData = qrGenerator.CreateQrCode("string", QRCodeGenerator.ECCLevel.Q);
+            //PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+            if (ResponseReceipt != null && !string.IsNullOrEmpty(ResponseReceipt.Qr)) QrImage = GenerateQRCodeToBitmapImage(ResponseReceipt.Qr);
+        }
+        public static BitmapImage GenerateQRCodeToBitmapImage(string qrText)
+        {
+            // Step 1: Generate QRCodeData using QRCoder
+            using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+            {
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q);
 
+                // Step 2: Render QRCode to a Bitmap
+                using (QRCode qrCode = new QRCode(qrCodeData))
+                {
+                    using (Bitmap qrBitmap = qrCode.GetGraphic(20)) // Scale factor: 20
+                    {
+                        // Step 3: Convert Bitmap to BitmapImage
+                        return ConvertBitmapToBitmapImage(qrBitmap);
+                    }
+                }
+            }
         }
 
+        private static BitmapImage ConvertBitmapToBitmapImage(Bitmap bitmap)
+        {
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                // Save Bitmap to MemoryStream
+                bitmap.Save(memoryStream, ImageFormat.Png);
+                memoryStream.Position = 0;
+
+                // Load MemoryStream into BitmapImage
+                BitmapImage bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memoryStream;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+                bitmapImage.Freeze(); // Make it cross-thread accessible
+
+                return bitmapImage;
+            }
+        }
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)

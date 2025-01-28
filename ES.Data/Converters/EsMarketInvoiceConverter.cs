@@ -1,5 +1,4 @@
-﻿using EsMarket.SharedData.Interfaces;
-using EsMarket.SharedData.Models;
+﻿using EsMarket.SharedData.Models;
 using ES.Data.Models;
 
 namespace ES.Data.Converters

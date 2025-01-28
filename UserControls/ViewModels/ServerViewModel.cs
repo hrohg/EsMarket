@@ -22,6 +22,7 @@ namespace UserControls.ViewModels
         #region Internal properties
 
         #endregion
+
         #region External properties
         public DataServer DataServer { get; set; }
         public bool IsShowPassword { get

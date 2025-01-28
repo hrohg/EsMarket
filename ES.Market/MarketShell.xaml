@@ -21,15 +21,15 @@
     <Window.Resources>
 
         <ResourceDictionary>
-            <converters:GetInvoiceParameterConverter x:Key="GetInvoiceParameterConverter"/>
-            <converters:GetInvocieByConverter x:Key="GetInvocieByConverter"/>
-            <converters:UserRoleToBoolConverter x:Key="UserRoleToBoolConverter"/>
-            <converters:UserRoleToBoolMultiValueConverter x:Key="UserRoleToBoolMultiValueConverter"/>
+            <converters:GetInvoiceParameterConverter x:Key="GetInvoiceParameterConverter" />
+            <converters:GetInvocieByConverter x:Key="GetInvocieByConverter" />
+            <converters:UserRoleToBoolConverter x:Key="UserRoleToBoolConverter" />
+            <converters:UserRoleToBoolMultiValueConverter x:Key="UserRoleToBoolMultiValueConverter" />
 
             <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-            <SolidColorBrush x:Key="DefaultBackground" Color="#19C8FA"/>
-            <SolidColorBrush x:Key="TabBackground" Color="#F5F5F5"/>
-            <SolidColorBrush x:Key="StatusBarBackground" Color="#DC6E0A"/>           
+            <SolidColorBrush x:Key="DefaultBackground" Color="#19C8FA" />
+            <SolidColorBrush x:Key="TabBackground" Color="#F5F5F5" />
+            <SolidColorBrush x:Key="StatusBarBackground" Color="#DC6E0A" />           
         </ResourceDictionary>
 
     </Window.Resources>
@@ -439,7 +439,7 @@
                                 <Image Height="15" Width="15" Source="pack://application:,,,/Shared;component/Images/Edit.ico"/>
                             </MenuItem.Icon>
                             <MenuItem Header="Ֆիքսված գործարք" Margin="3" Click="MiSingleAccountingRecords_Click" />
-                            <MenuItem Header="Բազմակի գործարքներ" Margin="3" Click="MiMultipleAccountingRecords_Click" />
+                            <MenuItem Header="Բազմակի գործարքներ" Margin="3" Command="{Binding AccountingActionCommand}" CommandParameter="{x:Static enums:AccountingPlanEnum.AllPlans}"/>
                             <Separator />
                             <MenuItem Header="Իրացման ծախսեր" Margin="3" Click="MiCostOfSales_Click" />
 
@@ -655,7 +655,7 @@
                         </MenuItem>
                         <MenuItem Header="Պատվեր ըստ վաճառքի և մնացորդի (մանրամասն)" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.BySale}"/>
                         <MenuItem Header="Պատվեր (ինքնուրույն)" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.Dynamic}"/>
-                        <MenuItem Header="Պատվիրատուների դիտում" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.ViewPartners}"/>
+                        <MenuItem Header="Պատվիրատուների դիտում" Command="{Binding ProductOrderCommand}" CommandParameter="{x:Static enumerations1:ProductOrderTypeEnum.ViewPartners}"/>                        
                     </MenuItem>
 
                     <MenuItem Header="Գույքագրում" 
@@ -968,7 +968,7 @@
                                 <Binding Source="{x:Static enumerations1:UserRoleEnum.Moderator}"/>
                             </MultiBinding>
                         </MenuItem.IsEnabled>
-                        <MenuItem Header="Տվյալների բազայի արխիվացում" Click="MiBackupData_Click"                          
+                        <MenuItem Header="Տվյալների կրկնօրինակում" Click="MiBackupData_Click"                          
                                   Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                             <MenuItem.IsEnabled>
                                 <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
@@ -986,8 +986,9 @@
                                 <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorCashier}"/>
                             </MultiBinding>
                         </MenuItem.IsEnabled>
-                        <MenuItem Header="Հաշվային պլանի խմբագրում" Click="MiManageSubAccountingPlans_Click"
-          Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <MenuItem Header="Հաշվային պլանի խմբագրում" 
+                                  Click="MiManageSubAccountingPlans_Click" 
+                                  Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
                             <MenuItem.IsEnabled>
                                 <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
                                     <Binding Source="{x:Static enumerations1:UserRoleEnum.SeniorManager}"/>
@@ -1115,8 +1116,13 @@
 
 
             </Grid.Resources>
-            <TabControl Grid.Column="1" Grid.Row="0"  Width="Auto"  Name="TabShop" ItemContainerStyle="{StaticResource TabItemBaseStyle}" Visibility="Collapsed"
-                        Background="{StaticResource TabBackground}" ContentTemplate="{StaticResource TabContentTemplate}"/>
+            <TabControl Grid.Column="1" Grid.Row="0"                          
+                        Name="TabShop" 
+                        ItemContainerStyle="{StaticResource TabItemBaseStyle}"
+                        ContentTemplate="{StaticResource TabContentTemplate}" 
+                        Visibility="Collapsed"
+                        Width="Auto"  
+                        Background="{StaticResource TabBackground}" />
 
             <controls:ExtendedDockingManager Grid.Column="1" Grid.Row="0" x:Name="ExtendedDockingManager"
                                              Width="Auto" 
@@ -1224,8 +1230,8 @@
                 <Grid Grid.Column="1">
                     <TextBlock Text="{Binding LogViewModel.CurrentLog.Message}" Foreground="Blue" Margin="10 0 0 0"/>
                 </Grid>
-                <ProgressBar Grid.Column="2" IsIndeterminate="True" Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}" ToolTip="{Binding ProcessDescription}" Background="#F5F5F5" Margin="3"/>
-
+                <ProgressBar Grid.Column="2" IsIndeterminate="True" Value="{Binding ProcessingProgressValue, Mode=OneWay}" Visibility="{Binding IsProcessing, Converter={StaticResource BoolToVisibilityConverter}}" ToolTip="{Binding ProcessDescription}" Background="#F5F5F5" Margin="3"/>
+                <TextBlock  Grid.Column="2" Text="{Binding ProcessingProgressValue, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Visibility="{Binding IsProcessing, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="5 0">
 
                     <Button Style="{DynamicResource OpenCashdeskButtonStyle}" Command="{Binding OpenCashdeskCommand}" 

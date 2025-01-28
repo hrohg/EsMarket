@@ -23,7 +23,7 @@
         <converters:InvertVisibilityConverter x:Key="InvertVisibilityConverter"/>
         <converters:UserRoleToVisibilityMultiValueConverter x:Key="UserRoleToVisibilityMultiValueConverter"/>
         <converters:UserRoleToVisibilityConverter x:Key="UserRoleToVisibilityConverter"/>
-        
+
     </UserControl.Resources>
     <Grid>
         <Grid>
@@ -334,7 +334,7 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                     <DataGridTemplateColumn.Visibility>
                                         <MultiBinding Converter="{StaticResource UserRoleToVisibilityMultiValueConverter}">
-                                            <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>                                            
+                                            <Binding Source="{x:Static enumerations1:UserRoleEnum.Manager}"/>
                                         </MultiBinding>
                                     </DataGridTemplateColumn.Visibility>
                                 </DataGridTemplateColumn>
@@ -1100,13 +1100,31 @@
                 <TextBlock Text="{Binding Total, StringFormat='{}{0:#,0.##}'}" Foreground="Blue"/>
 
                 <CheckBox Margin="3" Content="Ցուցադրել 0 ները" IsChecked="{Binding IsShowNulls}" Visibility="{Binding IsShowUpdateButton, Converter={StaticResource BoolToVisibility}}"/>
-                <Button Content="Թարմացնել" Margin="1" Visibility="{Binding IsShowUpdateButton, Converter={StaticResource BoolToVisibility}}" Command="{Binding UpdateCommand}"/>
+                <Menu>
+                    <MenuItem Header="Թարմացնել" 
+                              Command="{Binding UpdateCommand}"                 
+                              Visibility="{Binding IsShowUpdateButton, Converter={StaticResource BoolToVisibility}}"/>
+                    <MenuItem Header="Արտահանել">
+                        <MenuItem Header="Ապրանքագիր Xml" 
+                                  Command="{Binding ExportCommand}" 
+                                  CommandParameter="{x:Static helpers:ExportImportEnum.Xml}"/>
+                        <MenuItem Header="Ապրանքագիր Excel" 
+                                  Command="{Binding ExportCommand}" 
+                                  CommandParameter="{x:Static helpers:ExportImportEnum.Excel}"/>
+                    </MenuItem>
+                    <MenuItem Header="Տպել" 
+                              Command="{Binding PrintCommand}" 
+                              CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}}"
+                              Visibility="{Binding IsShowUpdateButton, Converter={StaticResource BoolToVisibility}}"/>
+                    <MenuItem Header="Փակել" Click="BtnClose_Click" Margin="1" Visibility="{Binding IsShowCloseButton, Converter={StaticResource BoolToVisibility}}"/>
+                </Menu>
+                <!--<Button Content="Թարմացնել" Margin="1" Visibility="{Binding IsShowUpdateButton, Converter={StaticResource BoolToVisibility}}" Command="{Binding UpdateCommand}"/>
                 <Button Content="Արտահանել" Margin="1" Visibility="{Binding IsShowUpdateButton, Converter={StaticResource BoolToVisibility}}" 
                         Command="{Binding ExportCommand}"
                         CommandParameter="{x:Static helpers:ExportImportEnum.Excel}"/>
                 <Button Content="Տպել" Margin="1" Visibility="{Binding IsShowUpdateButton, Converter={StaticResource BoolToVisibility}}" Command="{Binding PrintCommand}" 
                         CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}}"/>
-                <Button Content="Փակել" Click="BtnClose_Click" Margin="1" Visibility="{Binding IsShowCloseButton, Converter={StaticResource BoolToVisibility}}"/>
+                <Button Content="Փակել" Click="BtnClose_Click" Margin="1" Visibility="{Binding IsShowCloseButton, Converter={StaticResource BoolToVisibility}}"/>-->
             </StackPanel>
         </Grid>
         <controls:WaitingCover Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}" />

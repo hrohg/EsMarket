@@ -1,4 +1,16 @@
-﻿using System;
+﻿using CashReg.Helper;
+using CashReg.Interfaces;
+using ES.Business.Helpers;
+using ES.Business.Managers;
+using ES.Common.Enumerations;
+using ES.Common.Helpers;
+using ES.Common.Managers;
+using ES.Common.Models;
+using ES.Common.Utilits;
+using ES.Common.ViewModels.Base;
+using ES.Data.Models;
+using Shared.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
@@ -7,18 +19,9 @@ using System.Management;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using CashReg.Helper;
-using CashReg.Interfaces;
-using ES.Business.Helpers;
-using ES.Business.Managers;
-using ES.Common.Enumerations;
-using ES.Common.Helpers;
-using ES.Common.Managers;
-using ES.Common.Models;
-using ES.Common.ViewModels.Base;
-using ES.Data.Models;
-using Shared.Helpers;
+using System.Xml.Serialization;
 using UserControls.Helpers;
+using static ES.Business.Helpers.ItemsForChoose;
 
 namespace UserControls.ViewModels
 {
@@ -39,6 +42,7 @@ namespace UserControls.ViewModels
         #endregion Settings
 
         #endregion Internal properties
+        private List<ItemsForChoose> _secondaryScreens;
 
         #region External properties
 
@@ -54,6 +58,10 @@ namespace UserControls.ViewModels
         public bool HasBankAccounts { get { return ApplicationManager.CashManager.GetBankAccounts.Any(); } }
 
         #region Member settings
+
+        #region Admin tab
+        public DataServer Server { get; set; }
+        #endregion Admin tab
 
         #region General
 
@@ -187,6 +195,34 @@ namespace UserControls.ViewModels
 
         public bool SaleBySingle { get { return Settings.MemberSettings.SaleBySingle; } set { Settings.MemberSettings.SaleBySingle = value; RaisePropertyChanged("SaleBySingle"); } }
         public bool IsPrintSaleTicket { get { return Settings.MemberSettings.IsPrintSaleTicket; } set { Settings.MemberSettings.IsPrintSaleTicket = value; RaisePropertyChanged("IsPrintSaleTicket"); } }
+
+        public List<ItemsForChoose> SecondaryScreens
+        {
+            get
+            {
+                if (_secondaryScreens == null || _secondaryScreens.Count == 0)
+                {
+                    OnChecked onCheckedCallback = (e) =>
+                    {
+                        if (_secondaryScreens != null)
+                            Settings.MemberSettings.SecondaryScreenName = _secondaryScreens.Where(ss => ss.IsChecked).Select(ss => (string)ss.Value).SingleOrDefault();
+                    };
+
+                    List<MonitorInfo> secondaryMonitors = ScreenUtilits.GetSecondaryScreens();
+                    _secondaryScreens = secondaryMonitors.Select(s =>
+                                                                    new ItemsForChoose(onCheckedCallback)
+                                                                    {
+                                                                        Data = s,
+                                                                        IsChecked = s.DisplayName == Settings.MemberSettings.SecondaryScreenName,
+                                                                        Value = s.DisplayName
+                                                                    }).ToList();
+                }
+                return _secondaryScreens;
+            }
+        }
+        public bool HasSecondaryScreen => SecondaryScreens.Count > 0;
+
+        [XmlIgnore]
         public bool IsEcrActivated { get { return Settings.MemberSettings.IsEcrActivated; } set { Settings.MemberSettings.IsEcrActivated = value; RaisePropertyChanged("IsEcrActivated"); } }
 
         #endregion Sale
@@ -370,12 +406,20 @@ namespace UserControls.ViewModels
             Title = "Կարգաբերումներ";
             EcrDepartments = CashReg.Helper.Enumerations.GetEcrDepartments();
             LoadProperties();
+
+            BrowseBackupPathCommand = new RelayCommand(OnBrowseBackupPath);
         }
         #region Settings
         #endregion
         private void LoadProperties()
         {
             Settings.MemberSettings = MemberSettings.GetSettings(ApplicationManager.Member.Id);
+
+            Server = new DataServer
+            {
+                IsLocal = true, //ApplicationManager.IsLocalServer,
+                BackupDir = _settings.MemberSettings.BackupDir
+            };
             Branches = new ObservableCollection<BranchModel>(BranchManager.GetBranches());
             //Branches.SingleOrDefault(s=>s.Id == Settings.MemberSettings.BranchId);
 
@@ -383,11 +427,12 @@ namespace UserControls.ViewModels
             //var ecrConfig = ConfigSettings.GetEcrConfig();
             //EcrModel = ApplicationManager.Settings.MemberSettings.EcrModel; //ecrConfig ?? new EcrConfig();
             //EcrSettings.IsActive = ecrConfig != null && ecrConfig.IsActive ApplicationManager.Settings.MemberSettings.IsEcrActivated;
-            //Printers
+            //Printers                       
 
             LablePrinters = new List<ItemsForChoose>();
             SalePrinters = new List<ItemsForChoose>();
             CashDeskPrinters = new List<ItemsForChoose>();
+
             try
             {
                 var printerQuery = new ManagementObjectSearcher("SELECT * from Win32_Printer");
@@ -421,7 +466,21 @@ namespace UserControls.ViewModels
             {
                 ApplicationManager.Instance.AddMessageToLog(new MessageModel(ex.Message, MessageTypeEnum.Warning));
             }
+
             SelectedBranch = BranchSettings;
+        }
+
+        private void OnBrowseBackupPath()
+        {
+            string dir = string.Empty;
+            BrowseFolderDialog folderBrowserDialog = new BrowseFolderDialog();
+            if (folderBrowserDialog.Show())
+            {
+                dir = folderBrowserDialog.SelectedPath;
+            }
+
+            Server.BackupDir = dir;
+            RaisePropertyChanged(() => Server);
         }
 
         #endregion Internal methods
@@ -432,12 +491,18 @@ namespace UserControls.ViewModels
 
         #region Commands
 
+        #region Admin
+        public ICommand BrowseBackupPathCommand { get; private set; }
+        #endregion Admin
+
         #region Save command
         private ICommand _saveCommand;
         private EcrConfig _selectedEcrSettings;
         public ICommand SaveCommand { get { return _saveCommand ?? (_saveCommand = new RelayCommand(OnSave)); } }
         private void OnSave(object obj)
         {
+            //Admin
+            _settings.MemberSettings.BackupDir = Server.BackupDir;
             //General
             _settings.MemberSettings.ActiveLablePrinter = LablePrinters.Where(s => s.IsChecked).Select(s => (string)s.Value).SingleOrDefault();
             _settings.MemberSettings.ActiveCashDeskPrinter = CashDeskPrinters.Where(s => s.IsChecked).Select(s => (string)s.Value).SingleOrDefault();
@@ -446,7 +511,6 @@ namespace UserControls.ViewModels
             _settings.MemberSettings.SaleCashDesks = SaleCashDesks.Where(s => s.IsChecked).Select(s => (Guid)s.Value).ToList();
             _settings.MemberSettings.SaleBankAccounts = SaleBankAccounts.Where(s => s.IsChecked).Select(s => (Guid)s.Value).ToList();
             _settings.MemberSettings.ActiveSalePrinter = SalePrinters.Where(s => s.IsChecked).Select(s => (string)s.Value).SingleOrDefault();
-
             //Purchase
             _settings.MemberSettings.ActivePurchaseStocks = PurchaseStocks.Where(s => s.IsChecked).Select(s => (short)s.Value).ToList();
             _settings.MemberSettings.PurchaseCashDesks = PurchaseCashDesks.Where(s => s.IsChecked).Select(s => (Guid)s.Value).ToList();

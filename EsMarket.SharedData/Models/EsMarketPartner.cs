@@ -28,6 +28,8 @@ namespace EsMarket.SharedData.Models
             get { return _address ?? string.Empty; }
             set { _address = value; }
         }
+        
+        public string SupplyAddress { get; set; }
 
         public BankAccount BankAccount
         {

@@ -20,6 +20,9 @@ using ES.Data.Models.Reports;
 using Shared.Helpers;
 using UserControls.Helpers;
 using SelectItemsManager = UserControls.Helpers.SelectItemsManager;
+using EsMarket.SharedData.Interfaces;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
+using ES.DataAccess.Models;
 
 namespace UserControls.ViewModels
 {
@@ -262,11 +265,7 @@ namespace UserControls.ViewModels
         {
             base.UpdateAsync();
             if (DteIntermediate == null) { IsLoading = false; return; }
-            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
-            {
-                _stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList();
-            });
-
+            _stocks = GetStocks();
             if (!_stocks.Any()) { IsLoading = false; return; }
 
             var invoiceItems = InvoicesManager.GetSaleInvoiceItemsByStocksForReport(DteIntermediate.Item1, DteIntermediate.Item2, _stocks.Select(s => s.Id).ToList());
@@ -417,18 +416,14 @@ namespace UserControls.ViewModels
                 case ViewInvoicesEnum.ByDetiles:
                     break;
                 case ViewInvoicesEnum.ByStock:
-                    return;
-                    DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList(); }));
+                    stocks = GetStocks();
                     reports = new List<IInvoiceReport>(UpdateByStock(stocks, DteIntermediate));
                     break;
                 case ViewInvoicesEnum.ByProvider:
                 case ViewInvoicesEnum.ByPartner:
-                    DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, new Action(() =>
-                    {
-                        partners = SelectItemsManager.SelectPartners(true);
-                    }));
+                    partners = GetPartners();
 
-                    if (partners != null && partners.Count > 0)
+                    if (partners != null && partners.Any())
                     {
                         reports = new List<IInvoiceReport>(InvoicesManager.GetSaleInvoicesReportsByPartners(DteIntermediate.Item1, DteIntermediate.Item2, ViewInvoicesEnum == ViewInvoicesEnum.ByProvider ? InvoiceType.PurchaseInvoice : InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList(), ViewInvoicesEnum));
                     }
@@ -445,19 +440,14 @@ namespace UserControls.ViewModels
                     }
                     break;
                 case ViewInvoicesEnum.ByPartnersDetiles:
-                    DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, new Action(() =>
-                    {
-                        partners = SelectItemsManager.SelectPartners(true);
-                    }));
-
-                    if (partners != null && partners.Count > 0)
+                    partners = GetPartners();
+                    if (partners != null && partners.Any())
                     {
                         reports = new List<IInvoiceReport>(InvoicesManager.GetSaleInvoicesReportsByPartnersDetiled(DteIntermediate.Item1, DteIntermediate.Item2, InvoiceType.SaleInvoice, partners.Select(s => s.Id).ToList()));
                     }
                     break;
                 case ViewInvoicesEnum.ByStocksDetiles:
-                    DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, new Action(() => { stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList(); }));
-
+                    stocks = GetStocks();
                     var invoiceItems = InvoicesManager.GetInvoiceItemsByStocks(InvoicesManager.GetInvoices(DteIntermediate.Item1, DteIntermediate.Item2).Where(s => s.InvoiceTypeId == (short)InvoiceType.SaleInvoice).Select(s => s.Id).ToList(), stocks);
 
                     reports = new List<IInvoiceReport>(invoiceItems.Select(s =>
@@ -501,7 +491,24 @@ namespace UserControls.ViewModels
             }
             DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { UpdateCompleted(); });
         }
-
+        protected virtual List<PartnerModel> GetPartners()
+        {
+            List<PartnerModel> partners = null;
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, new Action(() =>
+            {
+                partners = SelectItemsManager.SelectPartners(true);
+            }));
+            return partners;
+        }
+        protected virtual List<StockModel> GetStocks()
+        {
+            List<StockModel> stocks = null;
+            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, new Action(() =>
+            {
+                stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList();
+            }));
+            return stocks;
+        }
         protected override void UpdateCompleted(bool isSuccess = true)
         {
             base.UpdateCompleted(isSuccess);
@@ -566,6 +573,7 @@ namespace UserControls.ViewModels
 
     public class SaleInvoiceReportByPartnersDetiledViewModel : SaleInvoiceReportByPartnerViewModel
     {
+        protected List<PartnerModel> Partners { get; set; }
         #region Constructors
         public SaleInvoiceReportByPartnersDetiledViewModel(ViewInvoicesEnum viewInvoicesEnum)
             : base(viewInvoicesEnum)
@@ -579,17 +587,75 @@ namespace UserControls.ViewModels
         {
             Title = Description = "Վաճառք ըստ պատվիրատուների մանրամասն";
         }
-
+        protected override void UpdateAsync()
+        {
+            base.UpdateAsync();
+        }
+        protected override List<PartnerModel> GetPartners()
+        {
+            Partners = base.GetPartners();
+            return Partners;
+        }
         protected override void OnExport(ExportImportEnum o)
         {
+
             base.OnExport(o);
-            ExcelExportManager.ExportList(ViewList.Cast<SaleReportByPartnerDetiled>().Select(s => new { Կոդ = s.Code, Անվանում = s.Description, Քանակ = s.Quantity, Գին = s.Price, Գումար = s.Quantity * s.Price }));
-            InvoicesManager.ExportInvoiceToXmlAccDoc(new EsMarketInvoice()
+            switch (o)
             {
-                GoodsInfo = ViewList.Cast<SaleReportByPartnerDetiled>().Select(s => new EsGoodInfo { Code = s.Code, Description = s.Description, Unit = s.Mu, Quantity = s.Quantity, Price = s.Price, Total = s.Quantity * s.Price }).ToList()
-            });
+                case ExportImportEnum.Excel:
+                    ExcelExportManager.ExportList(ViewList.Cast<SaleReportByPartnerDetiled>().Select(s => new { Կոդ = s.Code, Անվանում = s.Description, Քանակ = s.Quantity, Գին = s.Price, Գումար = s.Quantity * s.Price }));
+                    break;
+                case ExportImportEnum.Xml:
+
+                    var partner = Partners != null && Partners.Count == 1 ? Partners.First() : null;
+                    var goodsInfos = ViewList.Cast<SaleReportByPartnerDetiled>().GroupBy(s => s.Code)
+                                             .Select(s => new EsGoodInfo
+                                             {
+                                                 Code = s.First().Code,
+                                                 Description = s.First().Description,
+                                                 Unit = s.First().Mu,
+                                                 Quantity = s.Sum(t => t.Quantity),
+                                                 Price = s.First().Price,
+                                                 Total = s.Sum(t => t.Quantity) * s.First().Price
+                                             }).ToList();
+
+                    var invoice = new EsMarketInvoice
+                    {
+                        InvoiceInfo = new InvoiceInfo { Type = EsMarket.SharedData.Enums.InvoiceTypeEnum.Sale },
+                        SupplierInfo = new EsMarketPartner
+                        {
+                            Name = ApplicationManager.Settings.Branch.Name,
+                            Address = ApplicationManager.Settings.Branch.Address,
+                            Tin = ApplicationManager.Settings.Branch.Tin,
+                            SupplyAddress = ApplicationManager.Settings.Branch.SupplyAddress
+                        },
+                        DeliveryInfo = new DeliveryInfo
+                        {
+                            DeliveryDate = DateTime.Today,
+                            DeliveryMethod = EsMarket.SharedData.Enums.DeliveryTypeEnum.SelfeDelivery,
+                            DeliveryLocation = new AddressModel { Address = partner != null ? partner.Address : "" }
+                        },
+                        BuyerInfo = partner != null ? new EsMarketPartner
+                        {
+                            Tin = partner.TIN,
+                            Name = partner.FullName,
+                            Address = partner.JuridicalAddress,
+                            BankAccount = new BankAccount { BankName = partner.Bank, BankAccountNumber = partner.BankAccount }
+                        } : null,
+                        GoodsInfo = goodsInfos,
+                        Notes = ""
+                    };
+
+                    InvoicesManager.ExportInvoiceToXmlAccDoc(invoice);
+                    break;
+                default: break;
+            }
+
+
+
             //InvoicesManager.ExportInvoiceToXmlAccDoc();
         }
+
         #endregion
     }
 
@@ -817,11 +883,8 @@ namespace UserControls.ViewModels
         {
             base.UpdateAsync();
             if (DteIntermediate == null) { IsLoading = false; return; }
-            DispatcherWrapper.Instance.Invoke(DispatcherPriority.Send, () =>
-            {
-                _stocks = SelectItemsManager.SelectStocks(ApplicationManager.CashManager.GetStocks, true).ToList();
-            });
 
+            _stocks = GetStocks();
             if (!_stocks.Any()) { IsLoading = false; return; }
 
             var invoiceItems = InvoicesManager.GetPurchaseInvoiceItemsByStocksForReport(DteIntermediate.Item1, DteIntermediate.Item2, _stocks.Select(s => s.Id).ToList());

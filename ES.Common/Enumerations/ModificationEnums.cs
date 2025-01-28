@@ -11,5 +11,6 @@ namespace ES.Common.Enumerations
         Added = 1,
         Modified = 2,
         Removed = 4,
+        ReCreated = 8,
     }
 }

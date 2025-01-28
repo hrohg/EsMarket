@@ -299,7 +299,6 @@ namespace ES.Business.Managers
                     }
                 }
             }
-            return true;
         }
         private static bool TryBalanceDebetCredit(AccountingRecords accountingRecords)
         {
@@ -324,7 +323,6 @@ namespace ES.Business.Managers
                     }
                 }
             }
-            return true;
         }
         private static bool TrySetCashTransfere(AccountingRecords accountingRecords, long memberId)
         {
@@ -347,11 +345,8 @@ namespace ES.Business.Managers
                     {
                         return false;
                     }
-
-
                 }
             }
-            return true;
         }
         private static bool TrySetEquityBase(AccountingRecords accountingRecords, long memberId)
         {
@@ -372,11 +367,8 @@ namespace ES.Business.Managers
                     {
                         return false;
                     }
-
-
                 }
             }
-            return true;
         }
 
         // needs review
@@ -713,13 +705,14 @@ namespace ES.Business.Managers
                 }
             }
         }
-        private static List<SubAccountingPlan> GetSubAccountingPlans(long plan, long memberId, bool? isActive)
+        private static IEnumerable<SubAccountingPlan> GetSubAccountingPlans(long plan, long memberId, bool? isActive)
         {
             using (var db = GetDataContext())
             {
                 try
                 {
-                    return db.SubAccountingPlan.Where(s => s.MemberId == memberId && (s.AccountingPlanId == plan) && (isActive == null || isActive == s.IsActive)).Distinct().ToList();
+                    List<SubAccountingPlan> subAccountingPlans = db.SubAccountingPlan.Where(s => s.MemberId == memberId && (s.AccountingPlanId == plan) && (isActive == null || isActive == s.IsActive)).ToList();
+                    return subAccountingPlans.Distinct();
                 }
                 catch (Exception)
                 {

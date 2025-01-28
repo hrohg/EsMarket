@@ -1,0 +1,41 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+                    xmlns:vm="clr-namespace:UserControls.Views.Analyze.ViewModel"
+                    xmlns:converters="clr-namespace:UserControls.Converters">
+    
+    <converters:RowIndexValueConverter  x:Key="RowIndexValueConverter"/>
+
+    <DataTemplate DataType="{x:Type vm:AnalysisProductsViewModel}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <DataGrid Grid.Row="1" ItemsSource="{Binding Items}" AutoGenerateColumns="False" SelectionUnit="Cell">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Start Date" Binding="{Binding StartDate, StringFormat={}{0:d}}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="End Date" Binding="{Binding Date, StringFormat={}{0:d}}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="PId" Binding="{Binding PId}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Code" Binding="{Binding Code}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Description" Binding="{Binding Description}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Price" Binding="{Binding Price}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Min" Binding="{Binding MinQuantity}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Existing" Binding="{Binding Existing}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Estimated" Binding="{Binding Estimated}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Periodicaly" Binding="{Binding EstimatedPeriodicaly}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Montly" Binding="{Binding EstimatedMontly}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Weekly" Binding="{Binding EstimatedWeekly}" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Provider" Binding="{Binding Provider}" IsReadOnly="True" />
+                </DataGrid.Columns>
+                <DataGrid.RowHeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow},
+                        Converter={StaticResource RowIndexValueConverter}}"/>
+                    </DataTemplate>
+                </DataGrid.RowHeaderTemplate>
+            </DataGrid>
+        </Grid>
+    </DataTemplate>
+    
+</ResourceDictionary>

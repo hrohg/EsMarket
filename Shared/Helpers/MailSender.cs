@@ -37,7 +37,7 @@ namespace Shared.Helpers
                 smtpClient.UseDefaultCredentials = false;
                 smtpClient.EnableSsl = false;
                 //smtpClient.Credentials = new NetworkCredential("easyshoplogistics@gmail.com", "easyshop@)!$");
-                smtpClient.Credentials = new NetworkCredential("support@ess.am", "Jz.DNpJhx[p&'88Q");
+                smtpClient.Credentials = new NetworkCredential("support@ess.am", "~ufyU3705");
                 smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                 try
                 {

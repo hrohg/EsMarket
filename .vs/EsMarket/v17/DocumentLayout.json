@@ -1,0 +1,2132 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\managers\\productmanagerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\managers\\productmanagerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|d:\\users\\hrayr\\vsprojects\\es solutions\\esmarket\\es.business\\managers\\cashmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\managers\\cashmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.market\\viewmodels\\shellviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|solutionrelative:es.market\\viewmodels\\shellviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\helpers\\relaycommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\helpers\\relaycommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.business\\managers\\productsmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\managers\\productsmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|d:\\users\\hrayr\\vsprojects\\es solutions\\esmarket\\usercontrols\\viewmodels\\stocktakeings\\stocktakeviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\stocktakeings\\stocktakeviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|d:\\users\\hrayr\\vsprojects\\es solutions\\esmarket\\usercontrols\\views\\documents\\stocktakingtemplate.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\documents\\stocktakingtemplate.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|d:\\users\\hrayr\\vsprojects\\es solutions\\esmarket\\es.business\\managers\\analyzemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\managers\\analyzemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\analyze\\viewmodel\\analyzeproductsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\analyze\\viewmodel\\analyzeproductsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\analyze\\view\\analyzeproducts.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\analyze\\view\\analyzeproducts.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\controlpanel\\controls\\selectmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\controlpanel\\controls\\selectmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6FF9845C-A677-453E-B7A2-94E5DEA6DB65}|UIHelper\\UIHelper.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\uihelper\\managers\\selectmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6FF9845C-A677-453E-B7A2-94E5DEA6DB65}|UIHelper\\UIHelper.csproj|solutionrelative:uihelper\\managers\\selectmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.market\\views\\reports\\view\\reports.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|solutionrelative:es.market\\views\\reports\\view\\reports.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\analyze\\view\\analysisproductsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\analyze\\view\\analysisproductsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Users\\Hrayr\\VsProjects\\Realtor\\Realtor v1.0\\Shared\\Helpers\\MailSender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\viewmodels\\base\\documentviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\viewmodels\\base\\documentviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\behaviors\\eventtocommandbehavior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\behaviors\\eventtocommandbehavior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\invoices\\invoiceviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\invoices\\invoiceviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\utilits\\screenutilits.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\utilits\\screenutilits.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\invoices\\outputorderviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\invoices\\outputorderviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\xceed.wpf.avalondock\\dockingmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|solutionrelative:xceed.wpf.avalondock\\dockingmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.market\\marketshell.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|solutionrelative:es.market\\marketshell.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\xceed.wpf.avalondock\\extendedavalondock\\controls\\extendeddockingmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|solutionrelative:xceed.wpf.avalondock\\extendedavalondock\\controls\\extendeddockingmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\xceed.wpf.avalondock\\controls\\layoutanchorableitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|solutionrelative:xceed.wpf.avalondock\\controls\\layoutanchorableitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\xceed.wpf.avalondock\\extendedavalondock\\helpers\\layoutupdatestrategy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|solutionrelative:xceed.wpf.avalondock\\extendedavalondock\\helpers\\layoutupdatestrategy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\xceed.wpf.avalondock\\extendedavalondock\\interfaces\\iextendedlayoutupdatestrategy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|solutionrelative:xceed.wpf.avalondock\\extendedavalondock\\interfaces\\iextendedlayoutupdatestrategy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\xceed.wpf.avalondock\\extendedavalondock\\controls\\extendedlayoutborders.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|solutionrelative:xceed.wpf.avalondock\\extendedavalondock\\controls\\extendedlayoutborders.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\xceed.wpf.avalondock\\themes\\generic.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|solutionrelative:xceed.wpf.avalondock\\themes\\generic.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51CE13E1-AD7E-4CBC-B907-4AF2E39B26BB}|Library\\ResourceLibrary.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\library\\resources\\avalon\\avalondockstyle.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{51CE13E1-AD7E-4CBC-B907-4AF2E39B26BB}|Library\\ResourceLibrary.csproj|solutionrelative:library\\resources\\avalon\\avalondockstyle.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\customcontrols\\saleuctrl.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\customcontrols\\saleuctrl.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.business\\models\\accountingrecordsmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\models\\accountingrecordsmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\view\\views\\packinglistforsaler.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\view\\views\\packinglistforsaler.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\windows\\saleinvoiceuserwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\windows\\saleinvoiceuserwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\accountingrecordsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\accountingrecordsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\helpers\\accountingactionmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\helpers\\accountingactionmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\accountant\\view\\viewaccountanttabletemplate.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\accountant\\view\\viewaccountanttabletemplate.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\controlpanel\\controls\\ctrlaccountingrecords.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\controlpanel\\controls\\ctrlaccountingrecords.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\controlpanel\\controls\\ctrlaccountingrecords.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\controlpanel\\controls\\ctrlaccountingrecords.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.market\\marketshell.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|solutionrelative:es.market\\marketshell.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4BC4D97D-BF4C-4290-B6C5-87927F9C72FD}|AccountingTools\\AccountingTools.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\accountingtools\\enums\\chartofaccounts.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4BC4D97D-BF4C-4290-B6C5-87927F9C72FD}|AccountingTools\\AccountingTools.csproj|solutionrelative:accountingtools\\enums\\chartofaccounts.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\settings\\settingstemplate.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\settings\\settingstemplate.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}|ES.Data\\ES.Data.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.data\\models\\cashiermodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}|ES.Data\\ES.Data.csproj|solutionrelative:es.data\\models\\cashiermodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\invoices\\saleinvoiceviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\invoices\\saleinvoiceviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\receipttickets\\views\\invoicepreview.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\receipttickets\\views\\invoicepreview.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\xceed.wpf.avalondock\\layout\\layoutroot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|solutionrelative:xceed.wpf.avalondock\\layout\\layoutroot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\xceed.wpf.avalondock\\layout\\layoutcontent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|solutionrelative:xceed.wpf.avalondock\\layout\\layoutcontent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\xceed.wpf.avalondock\\controls\\layoutanchorablepanecontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|solutionrelative:xceed.wpf.avalondock\\controls\\layoutanchorablepanecontrol.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\xceed.wpf.avalondock\\controls\\layoutitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|solutionrelative:xceed.wpf.avalondock\\controls\\layoutitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\windows\\saleinvoiceuserwindow.xaml.cs||{8B382828-6202-11D1-8870-0000F87579D2}|",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\windows\\saleinvoiceuserwindow.xaml.cs||{8B382828-6202-11D1-8870-0000F87579D2}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6FF9845C-A677-453E-B7A2-94E5DEA6DB65}|UIHelper\\UIHelper.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\uihelper\\windows\\selectwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{6FF9845C-A677-453E-B7A2-94E5DEA6DB65}|UIHelper\\UIHelper.csproj|solutionrelative:uihelper\\windows\\selectwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\settingsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\settingsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.business\\helpers\\baseclasses.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\helpers\\baseclasses.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.business\\helpers\\settingscontainer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\helpers\\settingscontainer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\reportexceptionviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\reportexceptionviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\controls\\customexceptionbox.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\controls\\customexceptionbox.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.market\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|solutionrelative:es.market\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\invoices\\packinglistviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\invoices\\packinglistviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.market\\controls\\uctrlchartline.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|solutionrelative:es.market\\controls\\uctrlchartline.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\reportdataviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\reportdataviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\models\\ecrconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\models\\ecrconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\receipttickets\\receiptticketviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\receipttickets\\receiptticketviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\receipttickets\\views\\receiptticketsmall.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\receipttickets\\views\\receiptticketsmall.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.business\\managers\\invoicesmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\managers\\invoicesmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\invoices\\invoiceviewmodelbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\invoices\\invoiceviewmodelbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A425B85D-C3EB-4BCC-B307-17DAAEE9237D}|ES.DataAccess\\ES.DataAccess.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.dataaccess\\models\\saleincash.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A425B85D-C3EB-4BCC-B307-17DAAEE9237D}|ES.DataAccess\\ES.DataAccess.csproj|solutionrelative:es.dataaccess\\models\\saleincash.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\models\\dataserver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\models\\dataserver.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\helpers\\browsefolderdialog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\helpers\\browsefolderdialog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\managers\\xmlmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\managers\\xmlmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\receipttickets\\views\\saleinvoiceview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\receipttickets\\views\\saleinvoiceview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\receipttickets\\views\\purchaseinvoicelargeview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\receipttickets\\views\\purchaseinvoicelargeview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\receipttickets\\views\\moveinvoiceview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\receipttickets\\views\\moveinvoiceview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\helpers\\printmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\helpers\\printmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\view\\views\\invoices\\saleinvoicetemplate.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\view\\views\\invoices\\saleinvoicetemplate.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\serverviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\serverviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.business\\models\\products\\productsestimatedpids.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\models\\products\\productsestimatedpids.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.business\\models\\products\\analysisproductsmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\models\\products\\analysisproductsmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}|ES.Data\\ES.Data.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.data\\models\\analysis\\analysisproductdatamodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}|ES.Data\\ES.Data.csproj|solutionrelative:es.data\\models\\analysis\\analysisproductdatamodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.business\\models\\products\\activeproductmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\models\\products\\activeproductmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\analyze\\view\\activeproductsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\analyze\\view\\activeproductsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.business\\managers\\databasemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\managers\\databasemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{930287ED-1E76-478A-B140-CA1705DE7B96}|ES.Login\\ES.Login.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.login\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{930287ED-1E76-478A-B140-CA1705DE7B96}|ES.Login\\ES.Login.csproj|solutionrelative:es.login\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.business\\helpers\\basemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\helpers\\basemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\analyze\\viewmodel\\analysisproductsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\analyze\\viewmodel\\analysisproductsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.business\\excelmanager\\excelexportmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\excelmanager\\excelexportmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.business\\helpers\\attributeshelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\helpers\\attributeshelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\editors\\manageproducts.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\editors\\manageproducts.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\view\\views\\invoices\\purchaseinvoicetemplate.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\view\\views\\invoices\\purchaseinvoicetemplate.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\invoices\\purchaseinvoiceviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\invoices\\purchaseinvoiceviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\documents\\invoicetemplates.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\documents\\invoicetemplates.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\analyze\\viewmodel\\activeproductsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\analyze\\viewmodel\\activeproductsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\helpers\\ecrmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\helpers\\ecrmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\managers\\cashdeskmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\managers\\cashdeskmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\converters\\rowindexvalueconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\converters\\rowindexvalueconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\viewmodels\\base\\notifypropertychanged.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\viewmodels\\base\\notifypropertychanged.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\viewmodels\\base\\paneviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\viewmodels\\base\\paneviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51CE13E1-AD7E-4CBC-B907-4AF2E39B26BB}|Library\\ResourceLibrary.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\library\\resources\\tabs.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{51CE13E1-AD7E-4CBC-B907-4AF2E39B26BB}|Library\\ResourceLibrary.csproj|solutionrelative:library\\resources\\tabs.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.market\\views\\reports\\viewmodels\\reportsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|solutionrelative:es.market\\views\\reports\\viewmodels\\reportsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.market\\views\\reports\\view\\reports.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|solutionrelative:es.market\\views\\reports\\view\\reports.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\controls\\waitingcover.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\controls\\waitingcover.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\controls\\waitingcover.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\controls\\waitingcover.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\documents\\startpageviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\documents\\startpageviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\documents\\startpagetemplate.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\documents\\startpagetemplate.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\analyze\\view\\analyzeproducts.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\analyze\\view\\analyzeproducts.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\managers\\managestockesviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\managers\\managestockesviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\generic.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\generic.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\viewmodels\\base\\updatabledocumentviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\viewmodels\\base\\updatabledocumentviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.market\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|solutionrelative:es.market\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Hrayr\\AppData\\Local\\Temp\\.vsdbgsrc\\e39f016d4be4f4c459ea81c90feb0e652801694953e118c3195b935e72f72475\\ProtocolHandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\xceed.wpf.avalondock\\extendedavalondock\\resource\\avalondockstyle.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}|Xceed.Wpf.AvalonDock\\Xceed.Wpf.AvalonDock.csproj|solutionrelative:xceed.wpf.avalondock\\extendedavalondock\\resource\\avalondockstyle.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.business\\helpers\\session.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\helpers\\session.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}|ES.Data\\ES.Data.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.data\\models\\esusermodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}|ES.Data\\ES.Data.csproj|solutionrelative:es.data\\models\\esusermodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\invoices\\returninvoiceviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\invoices\\returninvoiceviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51CE13E1-AD7E-4CBC-B907-4AF2E39B26BB}|Library\\ResourceLibrary.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\library\\resources\\generic.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{51CE13E1-AD7E-4CBC-B907-4AF2E39B26BB}|Library\\ResourceLibrary.csproj|solutionrelative:library\\resources\\generic.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.market\\marketshell.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|solutionrelative:es.market\\marketshell.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51CE13E1-AD7E-4CBC-B907-4AF2E39B26BB}|Library\\ResourceLibrary.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\library\\resources\\resources.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{51CE13E1-AD7E-4CBC-B907-4AF2E39B26BB}|Library\\ResourceLibrary.csproj|solutionrelative:library\\resources\\resources.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}|ES.Data\\ES.Data.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.data\\models\\products\\productmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}|ES.Data\\ES.Data.csproj|solutionrelative:es.data\\models\\products\\productmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E126DBAC-9A65-4663-AC38-C1DBBD6063FC}|DatabaseManagement\\DatabaseManagement.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\databasemanagement\\styles\\generic.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E126DBAC-9A65-4663-AC38-C1DBBD6063FC}|DatabaseManagement\\DatabaseManagement.csproj|solutionrelative:databasemanagement\\styles\\generic.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}|ES.Data\\ES.Data.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.data\\converters\\esmarketinvoiceconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}|ES.Data\\ES.Data.csproj|solutionrelative:es.data\\converters\\esmarketinvoiceconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\viewmodels\\base\\toolsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\viewmodels\\base\\toolsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\controls\\extendedlayoutdocumentpanegroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\controls\\extendedlayoutdocumentpanegroup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\controls\\extendedlayoutroot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\controls\\extendedlayoutroot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\controls\\extendedlayoutdocumentpane.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\controls\\extendedlayoutdocumentpane.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.common\\controls\\extendedlayoutpanel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7BAA5615-1224-4F30-8E69-8EC0B3C1E5AB}|ES.Common\\ES.Common.csproj|solutionrelative:es.common\\controls\\extendedlayoutpanel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.market\\views\\financereportuctrl.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|solutionrelative:es.market\\views\\financereportuctrl.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.market\\views\\packinglistuctrl.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{05AE8764-EB14-4846-95F9-1677EF72C0FC}|ES.Market\\ES.Market.csproj|solutionrelative:es.market\\views\\packinglistuctrl.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.business\\managers\\branchmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{43CED733-9E89-4270-B5AB-893846F9826D}|Es.Business\\ES.Business.csproj|solutionrelative:es.business\\managers\\branchmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}|ES.Data\\ES.Data.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.data\\models\\reports\\saleinvoicereports.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}|ES.Data\\ES.Data.csproj|solutionrelative:es.data\\models\\reports\\saleinvoicereports.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\viewmodels\\reports\\saleinvoicereports.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\viewmodels\\reports\\saleinvoicereports.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}|ES.Data\\ES.Data.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\es.data\\models\\branchmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CE538C7E-FFEE-4B16-A6E6-8B6E64F43E0F}|ES.Data\\ES.Data.csproj|solutionrelative:es.data\\models\\branchmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\uctrlviewtable.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\uctrlviewtable.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\reports\\productordertemplate.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\reports\\productordertemplate.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\usercontrols\\views\\receipttickets\\views\\invoicepreview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{FB4CAC1B-F794-454C-AB58-908E3C679685}|UserControls\\UserControls.csproj|solutionrelative:usercontrols\\views\\receipttickets\\views\\invoicepreview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 20,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "MarketShell.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\MarketShell.xaml",
+              "RelativeDocumentMoniker": "ES.Market\\MarketShell.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\MarketShell.xaml",
+              "RelativeToolTip": "ES.Market\\MarketShell.xaml",
+              "ViewState": "AQIAAGYEAAAAAAAAAAAjwHAEAABFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-09-15T12:26:26.446Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ShellViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\ViewModels\\ShellViewModel.cs",
+              "RelativeDocumentMoniker": "ES.Market\\ViewModels\\ShellViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\ViewModels\\ShellViewModel.cs",
+              "RelativeToolTip": "ES.Market\\ViewModels\\ShellViewModel.cs",
+              "ViewState": "AQIAAL0GAAAAAAAAAAAgwMsGAAAsAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-09T08:30:03.706Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AnalyzeManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Managers\\AnalyzeManager.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Managers\\AnalyzeManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Managers\\AnalyzeManager.cs",
+              "RelativeToolTip": "Es.Business\\Managers\\AnalyzeManager.cs",
+              "ViewState": "AQIAAAEBAAAAAAAAAAAQwBUBAAAVAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-15T06:13:20.747Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AnalyzeProductsViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Analyze\\ViewModel\\AnalyzeProductsViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Analyze\\ViewModel\\AnalyzeProductsViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Analyze\\ViewModel\\AnalyzeProductsViewModel.cs",
+              "RelativeToolTip": "UserControls\\Views\\Analyze\\ViewModel\\AnalyzeProductsViewModel.cs",
+              "ViewState": "AQIAAA4AAAAAAAAAAAAmwB0AAABPAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-23T04:44:39.719Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "SaleInvoiceViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Invoices\\SaleInvoiceViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\Invoices\\SaleInvoiceViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Invoices\\SaleInvoiceViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\Invoices\\SaleInvoiceViewModel.cs",
+              "ViewState": "AQIAABYBAAAAAAAAAAAlwC8BAAAjAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-31T17:12:33.44Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 61,
+              "Title": "ReceiptTicketSmall.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\ReceiptTickets\\Views\\ReceiptTicketSmall.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\ReceiptTickets\\Views\\ReceiptTicketSmall.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\ReceiptTickets\\Views\\ReceiptTicketSmall.xaml",
+              "RelativeToolTip": "UserControls\\Views\\ReceiptTickets\\Views\\ReceiptTicketSmall.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-31T17:25:51.036Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 86,
+              "Title": "PurchaseInvoiceTemplate.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\View\\Views\\Invoices\\PurchaseInvoiceTemplate.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\View\\Views\\Invoices\\PurchaseInvoiceTemplate.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\View\\Views\\Invoices\\PurchaseInvoiceTemplate.xaml",
+              "RelativeToolTip": "UserControls\\Views\\View\\Views\\Invoices\\PurchaseInvoiceTemplate.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-11-01T19:29:18.484Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 62,
+              "Title": "InvoicesManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Managers\\InvoicesManager.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Managers\\InvoicesManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Managers\\InvoicesManager.cs",
+              "RelativeToolTip": "Es.Business\\Managers\\InvoicesManager.cs",
+              "ViewState": "AQIAABEBAAAAAAAAAAAgwCIBAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-09T09:13:29.555Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 76,
+              "Title": "AnalysisProductDataModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Data\\Models\\Analysis\\AnalysisProductDataModel.cs",
+              "RelativeDocumentMoniker": "ES.Data\\Models\\Analysis\\AnalysisProductDataModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Data\\Models\\Analysis\\AnalysisProductDataModel.cs",
+              "RelativeToolTip": "ES.Data\\Models\\Analysis\\AnalysisProductDataModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-09T08:43:02.772Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 110,
+              "Title": "EsUserModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Data\\Models\\EsUserModel.cs",
+              "RelativeDocumentMoniker": "ES.Data\\Models\\EsUserModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Data\\Models\\EsUserModel.cs",
+              "RelativeToolTip": "ES.Data\\Models\\EsUserModel.cs",
+              "ViewState": "AQIAAGYAAAAAAAAAAIA9wHgAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-14T20:21:48.676Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "InvoicePreview.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\ReceiptTickets\\Views\\InvoicePreview.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\ReceiptTickets\\Views\\InvoicePreview.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\ReceiptTickets\\Views\\InvoicePreview.xaml",
+              "RelativeToolTip": "UserControls\\Views\\ReceiptTickets\\Views\\InvoicePreview.xaml",
+              "ViewState": "AQIAAIQAAAAAAAAAAAAmwJUAAAAWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-09-13T08:06:47.472Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 58,
+              "Title": "ReportDataViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\ReportDataViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\ReportDataViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\ReportDataViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\ReportDataViewModel.cs",
+              "ViewState": "AQIAAMYCAAAAAAAAAAAcwOYCAAA0AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-14T08:02:51.328Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "PackingListForSaler.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\View\\Views\\PackingListForSaler.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\View\\Views\\PackingListForSaler.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\View\\Views\\PackingListForSaler.xaml",
+              "RelativeToolTip": "UserControls\\Views\\View\\Views\\PackingListForSaler.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-09-13T08:10:09.272Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "AccountingRecordsModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Models\\AccountingRecordsModel.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Models\\AccountingRecordsModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Models\\AccountingRecordsModel.cs",
+              "RelativeToolTip": "Es.Business\\Models\\AccountingRecordsModel.cs",
+              "ViewState": "AQIAAA8AAAAAAAAAAAAwwE8AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T14:20:35.394Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "AccountingRecordsViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\AccountingRecordsViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\AccountingRecordsViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\AccountingRecordsViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\AccountingRecordsViewModel.cs",
+              "ViewState": "AQIAABUAAAAAAAAAAAAQwNUAAABAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T14:32:39.825Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "DockingManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\DockingManager.cs",
+              "RelativeDocumentMoniker": "Xceed.Wpf.AvalonDock\\DockingManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\DockingManager.cs",
+              "RelativeToolTip": "Xceed.Wpf.AvalonDock\\DockingManager.cs",
+              "ViewState": "AQIAABQBAAAAAAAAAAAjwOoAAAA5AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-20T10:07:38.285Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CashManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Managers\\CashManager.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Managers\\CashManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Managers\\CashManager.cs",
+              "RelativeToolTip": "Es.Business\\Managers\\CashManager.cs",
+              "ViewState": "AQIAADsBAAAAAAAAAAAowEwBAAAhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-22T19:47:43.343Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "SelectManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ControlPanel\\Controls\\SelectManager.cs",
+              "RelativeDocumentMoniker": "UserControls\\ControlPanel\\Controls\\SelectManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ControlPanel\\Controls\\SelectManager.cs",
+              "RelativeToolTip": "UserControls\\ControlPanel\\Controls\\SelectManager.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAgAAABMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-07T07:51:59.292Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "SelectManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UIHelper\\Managers\\SelectManager.cs",
+              "RelativeDocumentMoniker": "UIHelper\\Managers\\SelectManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UIHelper\\Managers\\SelectManager.cs",
+              "RelativeToolTip": "UIHelper\\Managers\\SelectManager.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABcAAAAfAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-07T07:51:46.171Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "EventToCommandBehavior.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Behaviors\\EventToCommandBehavior.cs",
+              "RelativeDocumentMoniker": "ES.Common\\Behaviors\\EventToCommandBehavior.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Behaviors\\EventToCommandBehavior.cs",
+              "RelativeToolTip": "ES.Common\\Behaviors\\EventToCommandBehavior.cs",
+              "ViewState": "AQIAAD4AAAAAAAAAAAAwwE0AAAAUAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-21T14:25:36.973Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ProductManagerViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Managers\\ProductManagerViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\Managers\\ProductManagerViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Managers\\ProductManagerViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\Managers\\ProductManagerViewModel.cs",
+              "ViewState": "AQIAAD4BAAAAAAAAAAAAAEgBAAAyAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-07T04:35:23.845Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "AnalysisProductsView.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Analyze\\View\\AnalysisProductsView.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Analyze\\View\\AnalysisProductsView.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Analyze\\View\\AnalysisProductsView.xaml",
+              "RelativeToolTip": "UserControls\\Views\\Analyze\\View\\AnalysisProductsView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-31T19:25:19.24Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "AnalyzeProducts.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Analyze\\View\\AnalyzeProducts.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Analyze\\View\\AnalyzeProducts.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Analyze\\View\\AnalyzeProducts.xaml",
+              "RelativeToolTip": "UserControls\\Views\\Analyze\\View\\AnalyzeProducts.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-23T04:46:37.868Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ProductsManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Managers\\ProductsManager.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Managers\\ProductsManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Managers\\ProductsManager.cs",
+              "RelativeToolTip": "Es.Business\\Managers\\ProductsManager.cs",
+              "ViewState": "AQIAACoHAAAAAAAAAAAwwDkHAAAgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-10T19:02:07.955Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "RelayCommand.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Helpers\\RelayCommand.cs",
+              "RelativeDocumentMoniker": "ES.Common\\Helpers\\RelayCommand.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Helpers\\RelayCommand.cs",
+              "RelativeToolTip": "ES.Common\\Helpers\\RelayCommand.cs",
+              "ViewState": "AQIAACwAAAAAAAAAAAAwwGoAAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-21T14:25:42.65Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "StockTakingTemplate.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Documents\\StockTakingTemplate.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Documents\\StockTakingTemplate.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Documents\\StockTakingTemplate.xaml",
+              "RelativeToolTip": "UserControls\\Views\\Documents\\StockTakingTemplate.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-01-21T19:54:09.782Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "StockTakeViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\StockTakeings\\StockTakeViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\StockTakeings\\StockTakeViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\StockTakeings\\StockTakeViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\StockTakeings\\StockTakeViewModel.cs",
+              "ViewState": "AQIAACQAAAAAAAAAAAAlwGsBAABLAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-21T19:54:20.267Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Reports.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\Views\\Reports\\View\\Reports.xaml",
+              "RelativeDocumentMoniker": "ES.Market\\Views\\Reports\\View\\Reports.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\Views\\Reports\\View\\Reports.xaml",
+              "RelativeToolTip": "ES.Market\\Views\\Reports\\View\\Reports.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-14T18:44:35.373Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "ScreenUtilits.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Utilits\\ScreenUtilits.cs",
+              "RelativeDocumentMoniker": "ES.Common\\Utilits\\ScreenUtilits.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Utilits\\ScreenUtilits.cs",
+              "RelativeToolTip": "ES.Common\\Utilits\\ScreenUtilits.cs",
+              "ViewState": "AQIAABcAAAAAAAAAAAAwwCYAAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T09:51:45.844Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "InvoiceViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Invoices\\InvoiceViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\Invoices\\InvoiceViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Invoices\\InvoiceViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\Invoices\\InvoiceViewModel.cs",
+              "ViewState": "AQIAAEUDAAAAAAAAAAAlwFkDAAAfAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-10T08:58:10.377Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "OutputOrderViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Invoices\\OutputOrderViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\Invoices\\OutputOrderViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Invoices\\OutputOrderViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\Invoices\\OutputOrderViewModel.cs",
+              "ViewState": "AQIAAEAAAAAAAAAAAAA5wE4AAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-14T07:58:17.185Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 93,
+              "Title": "NotifyPropertyChanged.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\ViewModels\\Base\\NotifyPropertyChanged.cs",
+              "RelativeDocumentMoniker": "ES.Common\\ViewModels\\Base\\NotifyPropertyChanged.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\ViewModels\\Base\\NotifyPropertyChanged.cs",
+              "RelativeToolTip": "ES.Common\\ViewModels\\Base\\NotifyPropertyChanged.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-29T10:58:25.043Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 94,
+              "Title": "PaneViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\ViewModels\\Base\\PaneViewModel.cs",
+              "RelativeDocumentMoniker": "ES.Common\\ViewModels\\Base\\PaneViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\ViewModels\\Base\\PaneViewModel.cs",
+              "RelativeToolTip": "ES.Common\\ViewModels\\Base\\PaneViewModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAA1AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-23T10:06:24.258Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 95,
+              "Title": "Tabs.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Library\\Resources\\Tabs.xaml",
+              "RelativeDocumentMoniker": "Library\\Resources\\Tabs.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Library\\Resources\\Tabs.xaml",
+              "RelativeToolTip": "Library\\Resources\\Tabs.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-23T08:37:50.274Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 97,
+              "Title": "Reports.xaml.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\Views\\Reports\\View\\Reports.xaml.cs",
+              "RelativeDocumentMoniker": "ES.Market\\Views\\Reports\\View\\Reports.xaml.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\Views\\Reports\\View\\Reports.xaml.cs",
+              "RelativeToolTip": "ES.Market\\Views\\Reports\\View\\Reports.xaml.cs",
+              "ViewState": "AQIAAFoAAAAAAAAAAAAwwHMAAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-23T08:08:33.536Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 96,
+              "Title": "ReportsViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\Views\\Reports\\ViewModels\\ReportsViewModel.cs",
+              "RelativeDocumentMoniker": "ES.Market\\Views\\Reports\\ViewModels\\ReportsViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\Views\\Reports\\ViewModels\\ReportsViewModel.cs",
+              "RelativeToolTip": "ES.Market\\Views\\Reports\\ViewModels\\ReportsViewModel.cs",
+              "ViewState": "AQIAAEkAAAAAAAAAAAAMwFkAAAATAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-13T20:42:49.76Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "DocumentViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\ViewModels\\Base\\DocumentViewModel.cs",
+              "RelativeDocumentMoniker": "ES.Common\\ViewModels\\Base\\DocumentViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\ViewModels\\Base\\DocumentViewModel.cs",
+              "RelativeToolTip": "ES.Common\\ViewModels\\Base\\DocumentViewModel.cs",
+              "ViewState": "AQIAAE4AAAAAAAAAAAAowF4AAABGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-17T05:44:26.413Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 78,
+              "Title": "ActiveProductsView.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Analyze\\View\\ActiveProductsView.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Analyze\\View\\ActiveProductsView.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Analyze\\View\\ActiveProductsView.xaml",
+              "RelativeToolTip": "UserControls\\Views\\Analyze\\View\\ActiveProductsView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-23T04:47:05.045Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 75,
+              "Title": "AnalysisProductsModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Models\\Products\\AnalysisProductsModel.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Models\\Products\\AnalysisProductsModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Models\\Products\\AnalysisProductsModel.cs",
+              "RelativeToolTip": "Es.Business\\Models\\Products\\AnalysisProductsModel.cs",
+              "ViewState": "AQIAACcAAAAAAAAAAAAEwDIAAAAmAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-31T19:29:16.882Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 77,
+              "Title": "ActiveProductModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Models\\Products\\ActiveProductModel.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Models\\Products\\ActiveProductModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Models\\Products\\ActiveProductModel.cs",
+              "RelativeToolTip": "Es.Business\\Models\\Products\\ActiveProductModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAzAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-22T14:18:35.219Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 79,
+              "Title": "DatabaseManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Managers\\DatabaseManager.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Managers\\DatabaseManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Managers\\DatabaseManager.cs",
+              "RelativeToolTip": "Es.Business\\Managers\\DatabaseManager.cs",
+              "ViewState": "AQIAAK0AAAAAAAAAAAAnwMUAAAAzAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-15T20:55:18.259Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 81,
+              "Title": "BaseManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Helpers\\BaseManager.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Helpers\\BaseManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Helpers\\BaseManager.cs",
+              "RelativeToolTip": "Es.Business\\Helpers\\BaseManager.cs",
+              "ViewState": "AQIAABQAAAAAAAAAAAAgwDMAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-15T20:18:05.818Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "SaleUctrl.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\CustomControls\\SaleUctrl.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\CustomControls\\SaleUctrl.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\CustomControls\\SaleUctrl.xaml",
+              "RelativeToolTip": "UserControls\\Views\\CustomControls\\SaleUctrl.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-11-01T19:18:33.196Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "MailSender.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Realtor\\Realtor v1.0\\Shared\\Helpers\\MailSender.cs",
+              "RelativeDocumentMoniker": "..\\..\\Realtor\\Realtor v1.0\\Shared\\Helpers\\MailSender.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Realtor\\Realtor v1.0\\Shared\\Helpers\\MailSender.cs",
+              "RelativeToolTip": "..\\..\\Realtor\\Realtor v1.0\\Shared\\Helpers\\MailSender.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAZAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-23T19:27:54.728Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 74,
+              "Title": "ProductsEstimatedPIDs.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Models\\Products\\ProductsEstimatedPIDs.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Models\\Products\\ProductsEstimatedPIDs.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Models\\Products\\ProductsEstimatedPIDs.cs",
+              "RelativeToolTip": "Es.Business\\Models\\Products\\ProductsEstimatedPIDs.cs",
+              "ViewState": "AQIAABsAAAAAAAAAAAA3wCUAAAAwAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-02T06:47:15.846Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 127,
+              "Title": "SaleInvoiceReports.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Reports\\SaleInvoiceReports.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\Reports\\SaleInvoiceReports.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Reports\\SaleInvoiceReports.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\Reports\\SaleInvoiceReports.cs",
+              "ViewState": "AQIAAI8AAAAAAAAAAAAewKEAAAAyAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-14T18:52:13.068Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 131,
+              "Title": "InvoicePreview.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\ReceiptTickets\\Views\\InvoicePreview.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\ReceiptTickets\\Views\\InvoicePreview.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\ReceiptTickets\\Views\\InvoicePreview.xaml",
+              "RelativeToolTip": "UserControls\\Views\\ReceiptTickets\\Views\\InvoicePreview.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-09-13T08:06:31.002Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 126,
+              "Title": "SaleInvoiceReports.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Data\\Models\\Reports\\SaleInvoiceReports.cs",
+              "RelativeDocumentMoniker": "ES.Data\\Models\\Reports\\SaleInvoiceReports.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Data\\Models\\Reports\\SaleInvoiceReports.cs",
+              "RelativeToolTip": "ES.Data\\Models\\Reports\\SaleInvoiceReports.cs",
+              "ViewState": "AQIAAFQAAAAAAAAAAADgv2YAAAAfAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-14T18:48:24.979Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "generic.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\Themes\\generic.xaml",
+              "RelativeDocumentMoniker": "Xceed.Wpf.AvalonDock\\Themes\\generic.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\Themes\\generic.xaml",
+              "RelativeToolTip": "Xceed.Wpf.AvalonDock\\Themes\\generic.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-12-20T10:02:07.1Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "LayoutAnchorableItem.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\Controls\\LayoutAnchorableItem.cs",
+              "RelativeDocumentMoniker": "Xceed.Wpf.AvalonDock\\Controls\\LayoutAnchorableItem.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\Controls\\LayoutAnchorableItem.cs",
+              "RelativeToolTip": "Xceed.Wpf.AvalonDock\\Controls\\LayoutAnchorableItem.cs",
+              "ViewState": "AQIAAMkAAAAAAAAAAAAmwNcAAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-20T10:02:43.632Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "LayoutUpdateStrategy.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Helpers\\LayoutUpdateStrategy.cs",
+              "RelativeDocumentMoniker": "Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Helpers\\LayoutUpdateStrategy.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Helpers\\LayoutUpdateStrategy.cs",
+              "RelativeToolTip": "Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Helpers\\LayoutUpdateStrategy.cs",
+              "ViewState": "AQIAAGIAAAAAAAAAAAAlwEoAAABnAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-20T10:07:51.486Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "ExtendedLayoutBorders.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Controls\\ExtendedLayoutBorders.cs",
+              "RelativeDocumentMoniker": "Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Controls\\ExtendedLayoutBorders.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Controls\\ExtendedLayoutBorders.cs",
+              "RelativeToolTip": "Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Controls\\ExtendedLayoutBorders.cs",
+              "ViewState": "AQIAADQAAAAAAAAAAAAawEUAAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-20T10:08:31.577Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "IExtendedLayoutUpdateStrategy.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Interfaces\\IExtendedLayoutUpdateStrategy.cs",
+              "RelativeDocumentMoniker": "Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Interfaces\\IExtendedLayoutUpdateStrategy.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Interfaces\\IExtendedLayoutUpdateStrategy.cs",
+              "RelativeToolTip": "Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Interfaces\\IExtendedLayoutUpdateStrategy.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAyAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-20T10:09:05.074Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "ExtendedDockingManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Controls\\ExtendedDockingManager.cs",
+              "RelativeDocumentMoniker": "Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Controls\\ExtendedDockingManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Controls\\ExtendedDockingManager.cs",
+              "RelativeToolTip": "Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Controls\\ExtendedDockingManager.cs",
+              "ViewState": "AQIAADMBAAAAAAAAAAAcwEABAAAXAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-20T10:10:26.44Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "ChartOfAccounts.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\AccountingTools\\Enums\\ChartOfAccounts.cs",
+              "RelativeDocumentMoniker": "AccountingTools\\Enums\\ChartOfAccounts.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\AccountingTools\\Enums\\ChartOfAccounts.cs",
+              "RelativeToolTip": "AccountingTools\\Enums\\ChartOfAccounts.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAVAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T14:17:15.618Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 116,
+              "Title": "Generic.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\DatabaseManagement\\Styles\\Generic.xaml",
+              "RelativeDocumentMoniker": "DatabaseManagement\\Styles\\Generic.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\DatabaseManagement\\Styles\\Generic.xaml",
+              "RelativeToolTip": "DatabaseManagement\\Styles\\Generic.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-13T20:30:32.101Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 119,
+              "Title": "ExtendedLayoutDocumentPaneGroup.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Controls\\ExtendedLayoutDocumentPaneGroup.cs",
+              "RelativeDocumentMoniker": "ES.Common\\Controls\\ExtendedLayoutDocumentPaneGroup.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Controls\\ExtendedLayoutDocumentPaneGroup.cs",
+              "RelativeToolTip": "ES.Common\\Controls\\ExtendedLayoutDocumentPaneGroup.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-13T20:19:43.858Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 118,
+              "Title": "ToolsViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\ViewModels\\Base\\ToolsViewModel.cs",
+              "RelativeDocumentMoniker": "ES.Common\\ViewModels\\Base\\ToolsViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\ViewModels\\Base\\ToolsViewModel.cs",
+              "RelativeToolTip": "ES.Common\\ViewModels\\Base\\ToolsViewModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAgAAAAPAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-13T20:19:24.541Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "AccountingActionManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Helpers\\AccountingActionManager.cs",
+              "RelativeDocumentMoniker": "UserControls\\Helpers\\AccountingActionManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Helpers\\AccountingActionManager.cs",
+              "RelativeToolTip": "UserControls\\Helpers\\AccountingActionManager.cs",
+              "ViewState": "AQIAAPIAAAAAAAAAAAAowAMBAABCAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T14:19:46.338Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "AvalonDockStyle.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Library\\Resources\\Avalon\\AvalonDockStyle.xaml",
+              "RelativeDocumentMoniker": "Library\\Resources\\Avalon\\AvalonDockStyle.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Library\\Resources\\Avalon\\AvalonDockStyle.xaml",
+              "RelativeToolTip": "Library\\Resources\\Avalon\\AvalonDockStyle.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-15T21:58:57.173Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "SaleInvoiceUserWindow.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Windows\\SaleInvoiceUserWindow.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Windows\\SaleInvoiceUserWindow.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Windows\\SaleInvoiceUserWindow.xaml",
+              "RelativeToolTip": "UserControls\\Views\\Windows\\SaleInvoiceUserWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-12-16T19:54:52.859Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "MarketShell.xaml.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\MarketShell.xaml.cs",
+              "RelativeDocumentMoniker": "ES.Market\\MarketShell.xaml.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\MarketShell.xaml.cs",
+              "RelativeToolTip": "ES.Market\\MarketShell.xaml.cs",
+              "ViewState": "AQIAAKcAAAAAAAAAAAAAwLYAAABGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-04T21:42:50.187Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 102,
+              "Title": "AnalyzeProducts.xaml.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Analyze\\View\\AnalyzeProducts.xaml.cs",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Analyze\\View\\AnalyzeProducts.xaml.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Analyze\\View\\AnalyzeProducts.xaml.cs",
+              "RelativeToolTip": "UserControls\\Views\\Analyze\\View\\AnalyzeProducts.xaml.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABgAAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-23T04:52:15.486Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 103,
+              "Title": "ManageStockesViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Managers\\ManageStockesViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\Managers\\ManageStockesViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Managers\\ManageStockesViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\Managers\\ManageStockesViewModel.cs",
+              "ViewState": "AQIAAFIAAAAAAAAAAAA5wGQAAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-22T14:56:12.06Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 105,
+              "Title": "UpdatableDocumentViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\ViewModels\\Base\\UpdatableDocumentViewModel.cs",
+              "RelativeDocumentMoniker": "ES.Common\\ViewModels\\Base\\UpdatableDocumentViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\ViewModels\\Base\\UpdatableDocumentViewModel.cs",
+              "RelativeToolTip": "ES.Common\\ViewModels\\Base\\UpdatableDocumentViewModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAA1AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-17T05:49:51.574Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 106,
+              "Title": "App.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\App.xaml",
+              "RelativeDocumentMoniker": "ES.Market\\App.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\App.xaml",
+              "RelativeToolTip": "ES.Market\\App.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-14T18:33:35.607Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 107,
+              "Title": "ProtocolHandler.cs",
+              "DocumentMoniker": "C:\\Users\\Hrayr\\AppData\\Local\\Temp\\.vsdbgsrc\\e39f016d4be4f4c459ea81c90feb0e652801694953e118c3195b935e72f72475\\ProtocolHandler.cs",
+              "ToolTip": "C:\\Users\\Hrayr\\AppData\\Local\\Temp\\.vsdbgsrc\\e39f016d4be4f4c459ea81c90feb0e652801694953e118c3195b935e72f72475\\ProtocolHandler.cs [Read Only]",
+              "ViewState": "AQIAABUAAAAAAAAAAAAMwCYAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-16T22:10:45.517Z",
+              "EditorCaption": " [Read Only]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "CtrlAccountingRecords.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ControlPanel\\Controls\\CtrlAccountingRecords.xaml",
+              "RelativeDocumentMoniker": "UserControls\\ControlPanel\\Controls\\CtrlAccountingRecords.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ControlPanel\\Controls\\CtrlAccountingRecords.xaml",
+              "RelativeToolTip": "UserControls\\ControlPanel\\Controls\\CtrlAccountingRecords.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-12-17T19:58:01.508Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 50,
+              "Title": "SettingsViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\SettingsViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\SettingsViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\SettingsViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\SettingsViewModel.cs",
+              "ViewState": "AQIAAMEAAAAAAAAAAAAUwM4AAAA2AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-14T16:56:05.122Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "SettingsTemplate.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Settings\\SettingsTemplate.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Settings\\SettingsTemplate.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Settings\\SettingsTemplate.xaml",
+              "RelativeToolTip": "UserControls\\Views\\Settings\\SettingsTemplate.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-09-14T16:46:59.431Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "ViewAccountantTableTemplate.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Accountant\\View\\ViewAccountantTableTemplate.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Accountant\\View\\ViewAccountantTableTemplate.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Accountant\\View\\ViewAccountantTableTemplate.xaml",
+              "RelativeToolTip": "UserControls\\Views\\Accountant\\View\\ViewAccountantTableTemplate.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-13T20:30:26.814Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "CtrlAccountingRecords.xaml.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ControlPanel\\Controls\\CtrlAccountingRecords.xaml.cs",
+              "RelativeDocumentMoniker": "UserControls\\ControlPanel\\Controls\\CtrlAccountingRecords.xaml.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ControlPanel\\Controls\\CtrlAccountingRecords.xaml.cs",
+              "RelativeToolTip": "UserControls\\ControlPanel\\Controls\\CtrlAccountingRecords.xaml.cs",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAkwB0AAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T14:57:45.577Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 120,
+              "Title": "ExtendedLayoutRoot.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Controls\\ExtendedLayoutRoot.cs",
+              "RelativeDocumentMoniker": "ES.Common\\Controls\\ExtendedLayoutRoot.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Controls\\ExtendedLayoutRoot.cs",
+              "RelativeToolTip": "ES.Common\\Controls\\ExtendedLayoutRoot.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-13T20:19:48.652Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 115,
+              "Title": "ProductModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Data\\Models\\Products\\ProductModel.cs",
+              "RelativeDocumentMoniker": "ES.Data\\Models\\Products\\ProductModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Data\\Models\\Products\\ProductModel.cs",
+              "RelativeToolTip": "ES.Data\\Models\\Products\\ProductModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAAfAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-13T20:29:56.061Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "CashierModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Data\\Models\\CashierModel.cs",
+              "RelativeDocumentMoniker": "ES.Data\\Models\\CashierModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Data\\Models\\CashierModel.cs",
+              "RelativeToolTip": "ES.Data\\Models\\CashierModel.cs",
+              "ViewState": "AQIAAGIAAAAAAAAAAAAawHEAAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-05T19:36:06.231Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 48,
+              "Title": "SaleInvoiceUserWindow.xaml.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Windows\\SaleInvoiceUserWindow.xaml.cs",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Windows\\SaleInvoiceUserWindow.xaml.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Windows\\SaleInvoiceUserWindow.xaml.cs",
+              "RelativeToolTip": "UserControls\\Views\\Windows\\SaleInvoiceUserWindow.xaml.cs",
+              "ViewState": "AQIAAAoAAAAAAAAAAAAnwBgAAABAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-16T19:55:04.067Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "LayoutRoot.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\Layout\\LayoutRoot.cs",
+              "RelativeDocumentMoniker": "Xceed.Wpf.AvalonDock\\Layout\\LayoutRoot.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\Layout\\LayoutRoot.cs",
+              "RelativeToolTip": "Xceed.Wpf.AvalonDock\\Layout\\LayoutRoot.cs",
+              "ViewState": "AQIAAPoAAAAAAAAAAAASwFgBAAAPAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T11:11:47.916Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 52,
+              "Title": "SettingsContainer.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Helpers\\SettingsContainer.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Helpers\\SettingsContainer.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Helpers\\SettingsContainer.cs",
+              "RelativeToolTip": "Es.Business\\Helpers\\SettingsContainer.cs",
+              "ViewState": "AQIAAEgBAAAAAAAAAADgv24BAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-14T16:46:30.59Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 47,
+              "Title": "LayoutItem.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\Controls\\LayoutItem.cs",
+              "RelativeDocumentMoniker": "Xceed.Wpf.AvalonDock\\Controls\\LayoutItem.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\Controls\\LayoutItem.cs",
+              "RelativeToolTip": "Xceed.Wpf.AvalonDock\\Controls\\LayoutItem.cs",
+              "ViewState": "AQIAAJABAAAAAAAAAAAhwKABAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T11:11:20.502Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
+              "Title": "LayoutAnchorablePaneControl.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\Controls\\LayoutAnchorablePaneControl.cs",
+              "RelativeDocumentMoniker": "Xceed.Wpf.AvalonDock\\Controls\\LayoutAnchorablePaneControl.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\Controls\\LayoutAnchorablePaneControl.cs",
+              "RelativeToolTip": "Xceed.Wpf.AvalonDock\\Controls\\LayoutAnchorablePaneControl.cs",
+              "ViewState": "AQIAADoAAAAAAAAAAAAhwEoAAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T11:11:30.767Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "LayoutContent.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\Layout\\LayoutContent.cs",
+              "RelativeDocumentMoniker": "Xceed.Wpf.AvalonDock\\Layout\\LayoutContent.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\Layout\\LayoutContent.cs",
+              "RelativeToolTip": "Xceed.Wpf.AvalonDock\\Layout\\LayoutContent.cs",
+              "ViewState": "AQIAAJcAAAAAAAAAAAAhwKcAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T11:11:42.614Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 49,
+              "Title": "SelectWindow.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UIHelper\\Windows\\SelectWindow.xaml",
+              "RelativeDocumentMoniker": "UIHelper\\Windows\\SelectWindow.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UIHelper\\Windows\\SelectWindow.xaml",
+              "RelativeToolTip": "UIHelper\\Windows\\SelectWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-12-17T10:46:25.214Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 53,
+              "Title": "ReportExceptionViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\ReportExceptionViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\ReportExceptionViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\ReportExceptionViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\ReportExceptionViewModel.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAhwDAAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T04:41:32.747Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 51,
+              "Title": "BaseClasses.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Helpers\\BaseClasses.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Helpers\\BaseClasses.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Helpers\\BaseClasses.cs",
+              "RelativeToolTip": "Es.Business\\Helpers\\BaseClasses.cs",
+              "ViewState": "AQIAAAcAAAAAAAAAAAApwCYAAAA5AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-16T21:50:20.473Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 54,
+              "Title": "CustomExceptionBox.xaml.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Controls\\CustomExceptionBox.xaml.cs",
+              "RelativeDocumentMoniker": "UserControls\\Controls\\CustomExceptionBox.xaml.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Controls\\CustomExceptionBox.xaml.cs",
+              "RelativeToolTip": "UserControls\\Controls\\CustomExceptionBox.xaml.cs",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAhwFAAAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T04:41:32.755Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 55,
+              "Title": "App.xaml.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\App.xaml.cs",
+              "RelativeDocumentMoniker": "ES.Market\\App.xaml.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\App.xaml.cs",
+              "RelativeToolTip": "ES.Market\\App.xaml.cs",
+              "ViewState": "AQIAAAgBAAAAAAAAAAAhwBgBAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T04:41:32.764Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 56,
+              "Title": "PackingListViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Invoices\\PackingListViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\Invoices\\PackingListViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Invoices\\PackingListViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\Invoices\\PackingListViewModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAuAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-16T20:55:51.837Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 57,
+              "Title": "UctrlChartLine.xaml.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\Controls\\UctrlChartLine.xaml.cs",
+              "RelativeDocumentMoniker": "ES.Market\\Controls\\UctrlChartLine.xaml.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\Controls\\UctrlChartLine.xaml.cs",
+              "RelativeToolTip": "ES.Market\\Controls\\UctrlChartLine.xaml.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAwwBkAAABAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-17T05:24:18.212Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 63,
+              "Title": "InvoiceViewModelBase.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Invoices\\InvoiceViewModelBase.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\Invoices\\InvoiceViewModelBase.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Invoices\\InvoiceViewModelBase.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\Invoices\\InvoiceViewModelBase.cs",
+              "ViewState": "AQIAAFEBAAAAAAAAAAASwHwBAAAlAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-14T07:58:33.208Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 60,
+              "Title": "ReceiptTicketViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\ReceiptTickets\\ReceiptTicketViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\Views\\ReceiptTickets\\ReceiptTicketViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\ReceiptTickets\\ReceiptTicketViewModel.cs",
+              "RelativeToolTip": "UserControls\\Views\\ReceiptTickets\\ReceiptTicketViewModel.cs",
+              "ViewState": "AQIAACEAAAAAAAAAAAAjwC8AAAAsAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-31T17:23:03.989Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 73,
+              "Title": "ServerViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\ServerViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\ServerViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\ServerViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\ServerViewModel.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAjwBoAAAAZAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-02T08:41:21.569Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 71,
+              "Title": "PrintManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Helpers\\PrintManager.cs",
+              "RelativeDocumentMoniker": "UserControls\\Helpers\\PrintManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Helpers\\PrintManager.cs",
+              "RelativeToolTip": "UserControls\\Helpers\\PrintManager.cs",
+              "ViewState": "AQIAABkAAAAAAAAAAAAswOUAAAAZAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-02T16:58:12.963Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 59,
+              "Title": "EcrConfig.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Models\\EcrConfig.cs",
+              "RelativeDocumentMoniker": "ES.Common\\Models\\EcrConfig.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Models\\EcrConfig.cs",
+              "RelativeToolTip": "ES.Common\\Models\\EcrConfig.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAEAAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-16T06:55:23.995Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 64,
+              "Title": "SaleInCash.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.DataAccess\\Models\\SaleInCash.cs",
+              "RelativeDocumentMoniker": "ES.DataAccess\\Models\\SaleInCash.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.DataAccess\\Models\\SaleInCash.cs",
+              "RelativeToolTip": "ES.DataAccess\\Models\\SaleInCash.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAxAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-06T10:53:45.657Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 70,
+              "Title": "MoveInvoiceView.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\ReceiptTickets\\Views\\MoveInvoiceView.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\ReceiptTickets\\Views\\MoveInvoiceView.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\ReceiptTickets\\Views\\MoveInvoiceView.xaml",
+              "RelativeToolTip": "UserControls\\Views\\ReceiptTickets\\Views\\MoveInvoiceView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-12-02T19:02:45.001Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 66,
+              "Title": "BrowseFolderDialog.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Helpers\\BrowseFolderDialog.cs",
+              "RelativeDocumentMoniker": "UserControls\\Helpers\\BrowseFolderDialog.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Helpers\\BrowseFolderDialog.cs",
+              "RelativeToolTip": "UserControls\\Helpers\\BrowseFolderDialog.cs",
+              "ViewState": "AQIAABMAAAAAAAAAAAAgwCQAAAAOAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-04T21:29:04.639Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 65,
+              "Title": "DataServer.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Models\\DataServer.cs",
+              "RelativeDocumentMoniker": "ES.Common\\Models\\DataServer.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Models\\DataServer.cs",
+              "RelativeToolTip": "ES.Common\\Models\\DataServer.cs",
+              "ViewState": "AQIAACIAAAAAAAAAAADgvzAAAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-15T20:28:43.726Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 68,
+              "Title": "SaleInvoiceView.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\ReceiptTickets\\Views\\SaleInvoiceView.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\ReceiptTickets\\Views\\SaleInvoiceView.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\ReceiptTickets\\Views\\SaleInvoiceView.xaml",
+              "RelativeToolTip": "UserControls\\Views\\ReceiptTickets\\Views\\SaleInvoiceView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-12-02T17:01:59.247Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 67,
+              "Title": "XmlManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Managers\\XmlManager.cs",
+              "RelativeDocumentMoniker": "ES.Common\\Managers\\XmlManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Managers\\XmlManager.cs",
+              "RelativeToolTip": "ES.Common\\Managers\\XmlManager.cs",
+              "ViewState": "AQIAAEIEAAAAAAAAAAAAAEEEAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-13T10:14:00.319Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 69,
+              "Title": "PurchaseInvoiceLargeView.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\ReceiptTickets\\Views\\PurchaseInvoiceLargeView.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\ReceiptTickets\\Views\\PurchaseInvoiceLargeView.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\ReceiptTickets\\Views\\PurchaseInvoiceLargeView.xaml",
+              "RelativeToolTip": "UserControls\\Views\\ReceiptTickets\\Views\\PurchaseInvoiceLargeView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-12-02T19:02:52.836Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 83,
+              "Title": "ExcelExportManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\ExcelManager\\ExcelExportManager.cs",
+              "RelativeDocumentMoniker": "Es.Business\\ExcelManager\\ExcelExportManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\ExcelManager\\ExcelExportManager.cs",
+              "RelativeToolTip": "Es.Business\\ExcelManager\\ExcelExportManager.cs",
+              "ViewState": "AQIAAOQCAAAAAAAAAAD4v/ICAAARAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-05T04:49:49.156Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 87,
+              "Title": "PurchaseInvoiceViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Invoices\\PurchaseInvoiceViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\Invoices\\PurchaseInvoiceViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Invoices\\PurchaseInvoiceViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\Invoices\\PurchaseInvoiceViewModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-01T19:28:55.391Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 88,
+              "Title": "InvoiceTemplates.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Documents\\InvoiceTemplates.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Documents\\InvoiceTemplates.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Documents\\InvoiceTemplates.xaml",
+              "RelativeToolTip": "UserControls\\Views\\Documents\\InvoiceTemplates.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-11-01T19:29:11.586Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 82,
+              "Title": "AnalysisProductsViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Analyze\\ViewModel\\AnalysisProductsViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Analyze\\ViewModel\\AnalysisProductsViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Analyze\\ViewModel\\AnalysisProductsViewModel.cs",
+              "RelativeToolTip": "UserControls\\Views\\Analyze\\ViewModel\\AnalysisProductsViewModel.cs",
+              "ViewState": "AQIAADYAAAAAAAAAAAAowD8AAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-31T19:14:11.018Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 80,
+              "Title": "LoginViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Login\\LoginViewModel.cs",
+              "RelativeDocumentMoniker": "ES.Login\\LoginViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Login\\LoginViewModel.cs",
+              "RelativeToolTip": "ES.Login\\LoginViewModel.cs",
+              "ViewState": "AQIAAJUAAAAAAAAAAAAQwKYAAABDAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-14T20:18:37.538Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 85,
+              "Title": "ManageProducts.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Editors\\ManageProducts.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Editors\\ManageProducts.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Editors\\ManageProducts.xaml",
+              "RelativeToolTip": "UserControls\\Views\\Editors\\ManageProducts.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-11-07T04:48:46.128Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 84,
+              "Title": "AttributesHelper.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Helpers\\AttributesHelper.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Helpers\\AttributesHelper.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Helpers\\AttributesHelper.cs",
+              "RelativeToolTip": "Es.Business\\Helpers\\AttributesHelper.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAVAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-08T05:09:24.209Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 128,
+              "Title": "BranchModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Data\\Models\\BranchModel.cs",
+              "RelativeDocumentMoniker": "ES.Data\\Models\\BranchModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Data\\Models\\BranchModel.cs",
+              "RelativeToolTip": "ES.Data\\Models\\BranchModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAZAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-14T16:45:24.485Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 89,
+              "Title": "ActiveProductsViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Analyze\\ViewModel\\ActiveProductsViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Analyze\\ViewModel\\ActiveProductsViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Analyze\\ViewModel\\ActiveProductsViewModel.cs",
+              "RelativeToolTip": "UserControls\\Views\\Analyze\\ViewModel\\ActiveProductsViewModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAA2AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-23T09:58:30.702Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 90,
+              "Title": "ECRManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Helpers\\ECRManager.cs",
+              "RelativeDocumentMoniker": "UserControls\\Helpers\\ECRManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Helpers\\ECRManager.cs",
+              "RelativeToolTip": "UserControls\\Helpers\\ECRManager.cs",
+              "ViewState": "AQIAANcAAAAAAAAAAAAvwJ0AAABhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-31T17:11:37.422Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 91,
+              "Title": "CashDeskManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Managers\\CashDeskManager.cs",
+              "RelativeDocumentMoniker": "UserControls\\Managers\\CashDeskManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Managers\\CashDeskManager.cs",
+              "RelativeToolTip": "UserControls\\Managers\\CashDeskManager.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAACAAAAAkAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-31T17:11:23.832Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 92,
+              "Title": "RowIndexValueConverter.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Converters\\RowIndexValueConverter.cs",
+              "RelativeDocumentMoniker": "UserControls\\Converters\\RowIndexValueConverter.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Converters\\RowIndexValueConverter.cs",
+              "RelativeToolTip": "UserControls\\Converters\\RowIndexValueConverter.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-31T05:28:52.417Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 104,
+              "Title": "Generic.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Generic.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Generic.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Generic.xaml",
+              "RelativeToolTip": "UserControls\\Views\\Generic.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-15T21:55:59.349Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 98,
+              "Title": "WaitingCover.xaml.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Controls\\WaitingCover.xaml.cs",
+              "RelativeDocumentMoniker": "UserControls\\Controls\\WaitingCover.xaml.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Controls\\WaitingCover.xaml.cs",
+              "RelativeToolTip": "UserControls\\Controls\\WaitingCover.xaml.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-23T05:54:44.784Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 99,
+              "Title": "WaitingCover.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Controls\\WaitingCover.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Controls\\WaitingCover.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Controls\\WaitingCover.xaml",
+              "RelativeToolTip": "UserControls\\Controls\\WaitingCover.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-17T05:30:19.116Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 100,
+              "Title": "StartPageViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Documents\\StartPageViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\Documents\\StartPageViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Documents\\StartPageViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\Documents\\StartPageViewModel.cs",
+              "ViewState": "AQIAABEAAAAAAAAAAAAowD0AAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-23T04:29:15.388Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 101,
+              "Title": "StartPageTemplate.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Documents\\StartPageTemplate.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Documents\\StartPageTemplate.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Documents\\StartPageTemplate.xaml",
+              "RelativeToolTip": "UserControls\\Views\\Documents\\StartPageTemplate.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-23T04:29:49.626Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 108,
+              "Title": "AvalonDockStyle.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Resource\\AvalonDockStyle.xaml",
+              "RelativeDocumentMoniker": "Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Resource\\AvalonDockStyle.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Resource\\AvalonDockStyle.xaml",
+              "RelativeToolTip": "Xceed.Wpf.AvalonDock\\ExtendedAvalonDock\\Resource\\AvalonDockStyle.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-15T21:58:23.734Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 109,
+              "Title": "Session.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Helpers\\Session.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Helpers\\Session.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Helpers\\Session.cs",
+              "RelativeToolTip": "Es.Business\\Helpers\\Session.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAQwAwAAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-14T20:44:11.812Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 111,
+              "Title": "ReturnInvoiceViewModel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Invoices\\ReturnInvoiceViewModel.cs",
+              "RelativeDocumentMoniker": "UserControls\\ViewModels\\Invoices\\ReturnInvoiceViewModel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\ViewModels\\Invoices\\ReturnInvoiceViewModel.cs",
+              "RelativeToolTip": "UserControls\\ViewModels\\Invoices\\ReturnInvoiceViewModel.cs",
+              "ViewState": "AQIAAIcAAAAAAAAAAIAwwJgAAAAlAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-14T20:30:38.097Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 112,
+              "Title": "Generic.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Library\\Resources\\Generic.xaml",
+              "RelativeDocumentMoniker": "Library\\Resources\\Generic.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Library\\Resources\\Generic.xaml",
+              "RelativeToolTip": "Library\\Resources\\Generic.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-14T18:31:47.013Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 113,
+              "Title": "MarketShell.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\MarketShell.xaml",
+              "RelativeDocumentMoniker": "ES.Market\\MarketShell.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\MarketShell.xaml",
+              "RelativeToolTip": "ES.Market\\MarketShell.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-13T20:04:40.148Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 114,
+              "Title": "Resources.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Library\\Resources\\Resources.xaml",
+              "RelativeDocumentMoniker": "Library\\Resources\\Resources.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Library\\Resources\\Resources.xaml",
+              "RelativeToolTip": "Library\\Resources\\Resources.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-14T18:32:04.862Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 121,
+              "Title": "ExtendedLayoutDocumentPane.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Controls\\ExtendedLayoutDocumentPane.cs",
+              "RelativeDocumentMoniker": "ES.Common\\Controls\\ExtendedLayoutDocumentPane.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Controls\\ExtendedLayoutDocumentPane.cs",
+              "RelativeToolTip": "ES.Common\\Controls\\ExtendedLayoutDocumentPane.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAGAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-13T20:20:05.324Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 122,
+              "Title": "ExtendedLayoutPanel.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Controls\\ExtendedLayoutPanel.cs",
+              "RelativeDocumentMoniker": "ES.Common\\Controls\\ExtendedLayoutPanel.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Common\\Controls\\ExtendedLayoutPanel.cs",
+              "RelativeToolTip": "ES.Common\\Controls\\ExtendedLayoutPanel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAnAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-13T20:03:34.452Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 117,
+              "Title": "EsMarketInvoiceConverter.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Data\\Converters\\EsMarketInvoiceConverter.cs",
+              "RelativeDocumentMoniker": "ES.Data\\Converters\\EsMarketInvoiceConverter.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Data\\Converters\\EsMarketInvoiceConverter.cs",
+              "RelativeToolTip": "ES.Data\\Converters\\EsMarketInvoiceConverter.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-13T20:29:40.769Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 123,
+              "Title": "FinanceReportUctrl.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\Views\\FinanceReportUctrl.xaml",
+              "RelativeDocumentMoniker": "ES.Market\\Views\\FinanceReportUctrl.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\Views\\FinanceReportUctrl.xaml",
+              "RelativeToolTip": "ES.Market\\Views\\FinanceReportUctrl.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-10-13T20:04:23.6Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 124,
+              "Title": "PackingListUctrl.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\Views\\PackingListUctrl.xaml",
+              "RelativeDocumentMoniker": "ES.Market\\Views\\PackingListUctrl.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\ES.Market\\Views\\PackingListUctrl.xaml",
+              "RelativeToolTip": "ES.Market\\Views\\PackingListUctrl.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-09-13T08:09:24.544Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 125,
+              "Title": "BranchManager.cs",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Managers\\BranchManager.cs",
+              "RelativeDocumentMoniker": "Es.Business\\Managers\\BranchManager.cs",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\Es.Business\\Managers\\BranchManager.cs",
+              "RelativeToolTip": "Es.Business\\Managers\\BranchManager.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-13T20:03:58.168Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 130,
+              "Title": "ProductOrderTemplate.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Reports\\ProductOrderTemplate.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\Reports\\ProductOrderTemplate.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\Reports\\ProductOrderTemplate.xaml",
+              "RelativeToolTip": "UserControls\\Views\\Reports\\ProductOrderTemplate.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-09-14T08:05:16.292Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 129,
+              "Title": "UctrlViewTable.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\UctrlViewTable.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\UctrlViewTable.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\UctrlViewTable.xaml",
+              "RelativeToolTip": "UserControls\\Views\\UctrlViewTable.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-09-14T15:10:49.223Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 72,
+              "Title": "SaleInvoiceTemplate.xaml",
+              "DocumentMoniker": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\View\\Views\\Invoices\\SaleInvoiceTemplate.xaml",
+              "RelativeDocumentMoniker": "UserControls\\Views\\View\\Views\\Invoices\\SaleInvoiceTemplate.xaml",
+              "ToolTip": "D:\\Users\\Hrayr\\VsProjects\\Es solutions\\EsMarket\\UserControls\\Views\\View\\Views\\Invoices\\SaleInvoiceTemplate.xaml",
+              "RelativeToolTip": "UserControls\\Views\\View\\Views\\Invoices\\SaleInvoiceTemplate.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2024-09-13T08:09:54.905Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

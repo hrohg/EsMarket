@@ -9,7 +9,7 @@ namespace EsMarket.SharedData.Models
 {
     [XmlInclude(typeof(BankAccount))]
     [Serializable]
-    public class BankAccount:IBankAccount
+    public class EsBankAccount:IBankAccount
     {
         private string _bankName;
         private string _bankAccountNumber;

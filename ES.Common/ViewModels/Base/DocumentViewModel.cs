@@ -1,23 +1,17 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using System.Xml.Serialization;
 using ES.Common.Helpers;
 
 namespace ES.Common.ViewModels.Base
 {
-    public class DocumentViewModel : PaneViewModel
+    public class DocumentViewModelBase : PaneViewModel
     {
-        #region Internal properties
-        private bool _isPrintPreviewMode;
-        #endregion Internal properties
-
-        #region External properties
-
-        #region Description
-
+        #region Internal fields
         private string _description;
+        #endregion Internal fields
+
+        #region External fields
         [XmlIgnore]
         public virtual string Description
         {
@@ -29,43 +23,42 @@ namespace ES.Common.ViewModels.Base
             {
                 if (value == _description) return;
                 _description = value;
-                RaisePropertyChanged("Description");
+                RaisePropertyChanged(() => Description);
             }
         }
+        #endregion External fields
 
-        #endregion Description
-
-        #region IsActive
-        [XmlIgnore]
-        public override bool IsActive
+        public DocumentViewModelBase()
         {
-            get { return base.IsActive; }
-            set
-            {
-                if (IsActive != value)
-                {
-                    base.IsActive = value;
-                    if (IsActive) OnActiveTabChanges(this);
-                }
-            }
+            IsClosable = true;
+            CanFloat = true;
         }
+    }
+    
+    public class DocumentViewModel : DocumentViewModelBase
+    {
+        #region Internal properties
+        private bool _isPrintPreviewMode;
+        #endregion Internal properties
 
-        #endregion
+        #region External properties  
+
+
+
         [XmlIgnore]
-
         public virtual int TotalRows { get; private set; }
-        [XmlIgnore]
 
+        [XmlIgnore]
         public virtual double TotalCount { get; set; }
-        [XmlIgnore]
 
+        [XmlIgnore]
         public virtual double Total { get; set; }
-        [XmlIgnore]
 
+        [XmlIgnore]
         public virtual double TotalAmount { get; set; }
 
         [XmlIgnore]
-        public bool IsPrintPreviewMode { get { return _isPrintPreviewMode; } set { _isPrintPreviewMode = value; RaisePropertyChanged("IsPrintPreviewMode"); } }
+        public bool IsPrintPreviewMode { get { return _isPrintPreviewMode; } set { _isPrintPreviewMode = value; RaisePropertyChanged(() => IsPrintPreviewMode); } }
         #endregion External properties
 
         #region Constructors
@@ -79,14 +72,8 @@ namespace ES.Common.ViewModels.Base
 
         #region Events
 
-        #region Active tab changing
+        #region Active tab changing      
 
-        public delegate void ActiveTabChanged(DocumentViewModel document, ActivityChangedEventArgs e);
-        public event ActiveTabChanged ActiveTabChangedEvent;
-        private void OnActiveTabChanges(DocumentViewModel document)
-        {
-            if (ActiveTabChangedEvent != null) ActiveTabChangedEvent(document, new ActivityChangedEventArgs(IsActive));
-        }
 
         public virtual void SetExternalText(ExternalTextImputEventArgs e)
         {
@@ -110,9 +97,10 @@ namespace ES.Common.ViewModels.Base
             );
             if (useReturnKey)
             {
-                KeyEventArgs ke = new KeyEventArgs(Keyboard.PrimaryDevice, Keyboard.PrimaryDevice.ActiveSource, 0, Key.Enter)
+                KeyEventArgs ke = new KeyEventArgs(Keyboard.PrimaryDevice, Keyboard.PrimaryDevice.ActiveSource, 50, Key.Enter)
                 {
-                    RoutedEvent = UIElement.KeyDownEvent
+                    RoutedEvent = UIElement.KeyDownEvent,
+                    Handled = true
                 };
 
                 InputManager.Current.ProcessInput(ke);
@@ -121,5 +109,24 @@ namespace ES.Common.ViewModels.Base
         }
         #endregion Internal methods
 
+        [XmlIgnore]
+        public override bool IsActive
+        {
+            get { return base.IsActive; }
+            set
+            {
+                if (IsActive != value)
+                {
+                    base.IsActive = value;
+                    if (IsActive) OnActiveTabChanges(this);
+                }
+            }
+        }
+        public delegate void ActiveTabChanged(DocumentViewModel document, ActivityChangedEventArgs e);
+        public event ActiveTabChanged ActiveTabChangedEvent;
+        private void OnActiveTabChanges(DocumentViewModel document)
+        {
+            if (ActiveTabChangedEvent != null) ActiveTabChangedEvent(document, new ActivityChangedEventArgs(IsActive));
+        }
     }
 }

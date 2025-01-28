@@ -10,7 +10,7 @@ namespace ES.Business.Helpers
 	    public Session()
 		{
 			ApplicationSettings = ApplicationSettings.Default;
-			User = new EsUserModel();
+			User = new EsUserModel(0);
 			IsClientShowingMode = false;
 
 		}

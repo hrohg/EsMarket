@@ -3,6 +3,7 @@
     public enum AccountingPlanEnum
     {
         None = 0,
+        AllPlans = 1,
         //1 Ոչ ընթացիկ ակտիվներ
         //2 Ընթացիկ ակտիվներ
         //Ապրանքներ

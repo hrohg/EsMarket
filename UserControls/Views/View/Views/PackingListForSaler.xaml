@@ -8,7 +8,106 @@
 
     <helpers1:MutiplyConverter x:Key="MutiplyConverter"/>
 
-    <DataTemplate DataType="{x:Type invoices:PackingListForSallerViewModel}">
+    <DataTemplate x:Key="OutputInvoiceUserView" DataType="{x:Type invoices:OutputOrderViewModel}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"  Name="Header"/>
+                <RowDefinition Height="Auto"  Name="Invoice"/>
+                <RowDefinition  Height="*" Name="Products"/>
+                <RowDefinition Height="Auto" x:Name="Paid"/>
+                <RowDefinition Height="Auto" x:Name="Footer"/>
+            </Grid.RowDefinitions>
+            <Grid x:Name="Invocie" Grid.Row="1" Margin="5" HorizontalAlignment="Right">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Ապրանքագիր" FontWeight="Bold" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Invoice.InvoiceNumber}" Foreground="Blue"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Ամսաթիվ" FontWeight="Bold" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Invoice.CreateDate}" Foreground="Blue"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Գանձապահ" FontWeight="Bold" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Invoice.Creator}" Foreground="Blue"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Գնորդ" FontWeight="Bold" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Invoice.RecipientName}" Foreground="Blue"/>
+            </Grid>
+            <DataGrid Grid.Row="2" CanUserAddRows="False"  CanUserSortColumns="True" CanUserDeleteRows="False" IsReadOnly="True" 
+              ItemsSource="{Binding InvoiceItems, Mode=TwoWay}" 
+              AutoGenerateColumns="False">
+                <DataGrid.Resources>
+                    <Style x:Key="CellRightAlign">
+                        <Setter Property="Control.HorizontalAlignment" Value="Right" />
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn IsReadOnly="True" Header="ՀՀ" Binding="{Binding DisplayOrder}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="Կոդ" Binding="{Binding Code}" CanUserSort="True" />
+                    <DataGridTemplateColumn  Header="Անվանում" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Description}" TextWrapping="WrapWithOverflow"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn IsReadOnly="True" Header="Չմ" Binding="{Binding Mu, Mode=OneWay}" />
+                    <DataGridTextColumn IsReadOnly="False" Header="Քանակ" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged,StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}" />
+                    <DataGridTextColumn IsReadOnly="False" Header="Գին" Binding="{Binding Path=Product.Price, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:#,0.##}}" CellStyle="{StaticResource CellRightAlign}" />
+                    <DataGridTemplateColumn  Header="Գումար">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock TextWrapping="WrapWithOverflow" HorizontalAlignment="Right">
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource MutiplyConverter}" Mode="OneWay" StringFormat="{}{0:#,0.##}">
+                                            <Binding Path="Quantity"/>
+                                            <Binding Path="Product.Price"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Grid Grid.Row="3" HorizontalAlignment="Right">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <GroupBox Grid.Column="0" Header="Գումար" FontWeight="Bold" HorizontalAlignment="Right">
+                    <TextBox Text="{Binding Invoice.Total, Mode=OneWay, StringFormat={}{0:#,0}}" IsReadOnly="True" MinWidth="200"  Height="100" FontSize="72" Foreground="Red" HorizontalContentAlignment="Right"/>
+                </GroupBox>
+                <GroupBox Grid.Column="1" Header="Զեղչ" FontWeight="Bold" HorizontalAlignment="Right">
+                    <TextBox Text="{Binding Invoice.DiscountAmount, Mode=OneWay, StringFormat={}{0:#,0}}" IsReadOnly="True" MinWidth="200"  Height="100" FontSize="72" HorizontalContentAlignment="Right"/>
+                </GroupBox>
+                <GroupBox Grid.Column="2" Header="Կանխիկ" FontWeight="Bold" HorizontalAlignment="Right">
+                    <TextBox Text="{Binding InvoicePaid.Paid, Mode=OneWay, StringFormat={}{0:#,0}}" IsReadOnly="True" MinWidth="200"  Height="100" FontSize="72" HorizontalContentAlignment="Right"/>
+                </GroupBox>
+                <GroupBox Grid.Column="3" Header="Մանր" FontWeight="Bold" HorizontalAlignment="Right">
+                    <TextBox Text="{Binding InvoicePaid.Change, Mode=OneWay, StringFormat={}{0:#,0}}" IsReadOnly="True" MinWidth="200"  Height="100" FontSize="72" Foreground="Green" HorizontalContentAlignment="Right"/>
+                </GroupBox>
+            </Grid>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PackingListForSallerViewModel" DataType="{x:Type invoices:PackingListForSallerViewModel}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -97,8 +196,11 @@
                     <TextBox Text="{Binding Invoice.Amount, Mode=OneWay,StringFormat={}{0:#,0.##}}" IsReadOnly="True"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static helpers:ExportImportEnum.Excel}" Content="Արտահանել" Width="75"/>
                     <Menu>
+                        <MenuItem Header="Արտահանել">
+                            <MenuItem Header="Ապրանքագիր Xml" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static enums:ExportImportEnum.Xml}"/>
+                            <MenuItem Header="Ապրանքագիր Excel" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static enums:ExportImportEnum.Excel}"/>
+                        </MenuItem>
                         <MenuItem Header="Տպել">
                             <MenuItem Header="Ապրանքագիր" Command="{Binding PrintInvoiceCommand, ConverterParameter=True}" CommandParameter="{x:Static helpers:PrintModeEnum.Normal}"/>
                             <Separator/>

@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Xml.Serialization;
+using ES.Business.Helpers;
 using ES.Business.Managers;
 using ES.Business.Models;
 using ES.Common.Managers;
@@ -742,17 +744,26 @@ namespace ES.Business.ExcelManager
             var indexC = 1;
             try
             {
+                // Create the headers
                 foreach (var propInfo in list.First().GetType().GetProperties())
                 {
-                    xlWSh.Cells[indexR, indexC] = propInfo.Name;
+                    object[] propAttrs = propInfo.GetCustomAttributes(true);
+                    if (propAttrs.Any(a => a is XmlIgnoreAttribute)) continue;
+                    GridHeader header = propAttrs.FirstOrDefault(a => a is GridHeader) as GridHeader;
+                    xlWSh.Cells[indexR, indexC] = header != null ? header.Title : propInfo.Name;
                     indexC++;
                 }
+
+                // Fill the columns
                 indexR++;
                 foreach (object el in list)
                 {
                     indexC = 1;
                     foreach (var propInfo in el.GetType().GetProperties())
                     {
+                        object[] propAttrs = propInfo.GetCustomAttributes(true);
+                        if (propAttrs.Any(a => a is XmlIgnoreAttribute)) continue;
+
                         var value = propInfo.GetValue(el, null);
                         xlWSh.Cells[indexR, indexC] = value != null ? value.ToString() : string.Empty;
                         indexC++;

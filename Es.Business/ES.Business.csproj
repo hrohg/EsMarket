@@ -84,6 +84,7 @@
     <Compile Include="ExcelManager\ExcelExportManager.cs" />
     <Compile Include="ExcelManager\ExcelImportManager.cs" />
     <Compile Include="Helpers\ApplicationSettingsViewModel.cs" />
+    <Compile Include="Helpers\AttributesHelper.cs" />
     <Compile Include="Helpers\BarCodeGenerator.cs" />
     <Compile Include="Helpers\BaseClasses.cs" />
     <Compile Include="Helpers\BaseManager.cs" />
@@ -98,6 +99,7 @@
     </Compile>
     <Compile Include="Helpers\SettingsContainer.cs" />
     <Compile Include="Managers\AccountingRecordsManager.cs" />
+    <Compile Include="Managers\AnalyzeManager.cs" />
     <Compile Include="Managers\ApplicationManager.cs" />
     <Compile Include="Managers\BranchManager.cs" />
     <Compile Include="Managers\CashDeskManager.cs" />
@@ -127,6 +129,9 @@
     <Compile Include="Managers\MembersManager.cs" />
     <Compile Include="Managers\ProductsManager.cs" />
     <Compile Include="Managers\UsersManager.cs" />
+    <Compile Include="Models\Products\ActiveProductModel.cs" />
+    <Compile Include="Models\Products\AnalysisProductsModel.cs" />
+    <Compile Include="Models\Products\ProductsEstimatedPIDs.cs" />
     <Compile Include="Models\ServicesModel.cs" />
     <Compile Include="Models\StockTakeModel.cs" />
     <Compile Include="Models\SubAccountingPlanModel.cs" />

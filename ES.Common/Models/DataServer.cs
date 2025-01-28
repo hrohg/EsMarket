@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Data.Entity.Core.EntityClient;
+using System.Data.SqlClient;
+using System.Xml.Serialization;
 
 namespace ES.Common.Models
 {
@@ -23,7 +26,7 @@ namespace ES.Common.Models
         public string Login { get; set; }
         public string Password { get; set; }
         public string ProviderName { get { return _providerName; } set { if (string.Equals(value, _providerName)) { return; } _providerName = value; } }
-        public string ConnectionMetadata { get { return _connectionMetadata; } set { if (string.Equals(value, _connectionMetadata)) { return; } _connectionMetadata = value; } }
+        private string ConnectionMetadata { get { return _connectionMetadata; } set { if (string.Equals(value, _connectionMetadata)) { return; } _connectionMetadata = value; } }
         public bool IntegratedSecurity { get { return _integratedSecurity; } set { if (string.Equals(value, _integratedSecurity)) { return; } _integratedSecurity = value; } }
         public bool PersistSecurityInfo { get { return _persistSecurityInfo; } set { _persistSecurityInfo = value; } }
         public bool MultipleActiveResultSets { get { return _multipleActiveResultSets; } set { _multipleActiveResultSets = value; } }
@@ -38,6 +41,12 @@ namespace ES.Common.Models
             }
         }
 
+        [XmlIgnore]
+        public bool IsValide { get; private set; }
+
+        [XmlIgnore]
+        public bool IsLocal { get; set; }
+        public string BackupDir { get; set; } = string.Empty;
         #endregion External properties
 
         #region Constructors
@@ -53,12 +62,80 @@ namespace ES.Common.Models
         }
         #endregion Constructors
 
+        #region External properties
+        public string GenerateConnectionString()
+        {
+            return GenerateConnectionString(Name, Port, Database, Login, Password);
+        }
+        #endregion External properties
+
         #region Internal methods
         private void Initialize()
         {
             _integratedSecurity = false;
             _persistSecurityInfo = true;
             _multipleActiveResultSets = true;
+        }
+        private string GenerateConnectionString(string userId, string password)
+        {
+            if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Database)) { return null; }
+            var sqlBuilder = new System.Data.SqlClient.SqlConnectionStringBuilder();
+            // Set the properties for the data source.
+            sqlBuilder.DataSource = DataSource;
+            sqlBuilder.InitialCatalog = Database;
+            sqlBuilder.IntegratedSecurity = IntegratedSecurity;
+            sqlBuilder.PersistSecurityInfo = PersistSecurityInfo;
+            sqlBuilder.MultipleActiveResultSets = MultipleActiveResultSets;
+            sqlBuilder.UserID = Login ?? string.Empty;
+            sqlBuilder.Password = Password ?? string.Empty;
+
+            // Build the SqlConnection connection string.
+            string providerString = sqlBuilder.ToString();
+            string dataSource = sqlBuilder.ToString();
+            // Initialize the EntityConnectionStringBuilder.
+            EntityConnectionStringBuilder entityBuilder = new EntityConnectionStringBuilder();
+
+            //Set the provider name.
+            entityBuilder.Provider = ProviderName;
+
+            // Set the provider-specific connection string.
+            entityBuilder.ProviderConnectionString = providerString;
+
+            // Set the Metadata location.
+            entityBuilder.Metadata = ConnectionMetadata;
+            return entityBuilder.ConnectionString;
+        }
+        private string GenerateConnectionString(string server, int? port, string database, string userId, string password)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(database)) { return null; }
+            var sqlBuilder = new SqlConnectionStringBuilder();
+            // Set the properties for the data source.
+            sqlBuilder.DataSource = string.Format("{0}{1}{2}",
+                Name,
+                !string.IsNullOrEmpty(Instance) ? string.Format(@"\{0}", Instance) : string.Empty,
+                port != null && port != 0 ? string.Format(",{0}", port.Value) : string.Empty);
+            sqlBuilder.InitialCatalog = database;
+            sqlBuilder.IntegratedSecurity = IntegratedSecurity;
+            sqlBuilder.PersistSecurityInfo = PersistSecurityInfo;
+            sqlBuilder.MultipleActiveResultSets = MultipleActiveResultSets;
+            sqlBuilder.UserID = userId ?? string.Empty;
+            sqlBuilder.Password = password ?? string.Empty;
+
+            // Build the SqlConnection connection string.
+            string providerString = sqlBuilder.ToString();
+
+            // Initialize the EntityConnectionStringBuilder.
+            EntityConnectionStringBuilder entityBuilder = new EntityConnectionStringBuilder();
+
+            //Set the provider name.
+            entityBuilder.Provider = ProviderName;
+
+            // Set the provider-specific connection string.
+            entityBuilder.ProviderConnectionString = providerString;
+
+            // Set the Metadata location.
+            entityBuilder.Metadata = ConnectionMetadata;
+            return entityBuilder.ConnectionString;
         }
         #endregion Internal methods
 
