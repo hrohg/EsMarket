@@ -269,6 +269,8 @@ namespace ES.Market.ViewModels
             #endregion Help
 
             //Tools
+            BackupServerDataCommand = new RelayCommand(OnBackupData, CanBackupData);
+            RestoreServerDataCommand = new RelayCommand(OnRestoreData, CanRestoreData);
             RedeemVaucherCommand = new RelayCommand(OnRedeemVaucher, CanRedeemVaucher);
 
             #region Settings
@@ -788,6 +790,7 @@ namespace ES.Market.ViewModels
             Thread myThread = new Thread(DatabaseManager.SyncronizeProducts);
             myThread.Start();
         }
+
         #region Data
         private void OnViewParkingLists(InvoiceTypeEnum type)
         {
@@ -864,6 +867,30 @@ namespace ES.Market.ViewModels
                 RaisePropertyChanged(() => ProcessingProgressValue);
                 RaisePropertyChanged(() => IsProcessing);
             });
+        }
+
+        private bool CanBackupData()
+        {
+            return ApplicationManager.Settings.SettingsContainer.MemberSettings.ServerSettings != null && ApplicationManager.Instance.IsServerLocal || ApplicationManager.IsInRole(UserRoleEnum.Admin);
+        }
+        private void OnBackupData()
+        {
+            string backupDir = ApplicationManager.Settings.SettingsContainer.MemberSettings.ServerSettings != null ? ApplicationManager.Settings.SettingsContainer.MemberSettings.ServerSettings.BackupDir : string.Empty;
+            bool isLocal = ApplicationManager.Settings.SettingsContainer.MemberSettings.ServerSettings != null && ApplicationManager.Settings.SettingsContainer.MemberSettings.ServerSettings.IsLocal;
+            if (!ApplicationManager.IsInRole(UserRoleEnum.Moderator) && !isLocal) return;
+
+            DatabaseManager.BackupDatabase(ApplicationManager.Instance.GetDbName(), backupDir);
+        }
+        private bool CanRestoreData()
+        {
+            return ApplicationManager.Instance.IsServerLocal || ApplicationManager.IsInRole(UserRoleEnum.Admin);
+        }
+        private void OnRestoreData()
+        {
+            string backupDir = ApplicationManager.Settings.SettingsContainer.MemberSettings.ServerSettings.BackupDir;
+            if (!ApplicationManager.Settings.SettingsContainer.MemberSettings.ServerSettings.IsLocal) return;
+
+            //DatabaseManager.RestoreDatabase(ApplicationManager.Instance.GetDbName(), backupDir);
         }
         #endregion
 
@@ -2744,6 +2771,8 @@ namespace ES.Market.ViewModels
 
         public ICommand CheckConnectionCommand { get; private set; }
 
+        public ICommand BackupServerDataCommand { get; private set; }
+        public ICommand RestoreServerDataCommand { get; private set; }
         #endregion Settings
 
         #endregion Commands

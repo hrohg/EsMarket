@@ -18,6 +18,7 @@ namespace ES.Data.Models
         public Guid ProductId { get; set; }
 
         public string Code { get; set; }
+        public string HCDCS { get; set; }
         public string Description { get; set; }
         public string Mu { get; set; }
         public decimal? MinPrice { get; set; }

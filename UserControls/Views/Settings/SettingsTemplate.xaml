@@ -1,15 +1,16 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:viewModels="clr-namespace:UserControls.ViewModels"
                     xmlns:helper="clr-namespace:CashReg.Helper;assembly=CashReg"
-                    xmlns:controls="clr-namespace:UserControls.Controls"
                     xmlns:helpers="clr-namespace:ES.Business.Helpers;assembly=ES.Business"
+                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common"
+                    xmlns:enumerations1="clr-namespace:ES.Common.Enumerations;assembly=ES.Common"
                     xmlns:models="clr-namespace:ES.Common.Models;assembly=ES.Common"
                     xmlns:models1="clr-namespace:ES.Data.Models;assembly=ES.Data"
-                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                    xmlns:behaviors="clr-namespace:ES.Common.Behaviors;assembly=ES.Common" xmlns:helpers1="clr-namespace:UserControls.Helpers"
-                    xmlns:enumerations1="clr-namespace:ES.Common.Enumerations;assembly=ES.Common"
-                    xmlns:converters="clr-namespace:UserControls.Converters">
+                    xmlns:controls="clr-namespace:UserControls.Controls"
+                    xmlns:converters="clr-namespace:UserControls.Converters"
+                    xmlns:helpers1="clr-namespace:UserControls.Helpers"
+                    xmlns:viewModels="clr-namespace:UserControls.ViewModels">
 
     <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <helpers1:IntToEnumConverter x:Key="IntToEnumConverter" />
@@ -26,64 +27,6 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TabControl Grid.Row="0">
-                    <TabItem Header="Server" x:Name="ServerTabItem"
-                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <TabItem.IsEnabled>
-                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
-                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Admin}"/>
-                            </MultiBinding>
-                        </TabItem.IsEnabled>
-                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Description"/>
-                                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Server.Description}" IsReadOnly="True"/>
-
-                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Server"/>
-                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Server.Name}" IsReadOnly="True"/>
-
-                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Port"/>
-                                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Server.Port}" HorizontalAlignment="Left" MinWidth="50" IsReadOnly="True"/>
-
-                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Instance"/>
-                                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Server.Instance}" IsReadOnly="True"/>
-
-                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Database"/>
-                                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Server.Database}" IsReadOnly="True"/>
-
-                                <TextBlock Grid.Row="5" Grid.Column="0" Text="User"/>
-                                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Server.Login}" IsReadOnly="True"/>
-
-                                <Separator Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2"/>
-
-                                <TextBlock Grid.Row="8" Grid.Column="0" Text="Backup"/>
-                                <Grid Grid.Row="8" Grid.Column="1" IsEnabled="{Binding Server.IsLocal}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBox Grid.Column="0" Text="{Binding Server.BackupDir}"/>
-                                    <Button Grid.Column="1" Content="Browse" Command="{Binding BrowseBackupPathCommand}"/>
-                                </Grid>
-                            </Grid>
-                        </ScrollViewer>
-                    </TabItem>
                     <TabItem Header="Հիմնական">
                         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                             <Grid>
@@ -729,6 +672,45 @@
                                 </DataGrid>
                             </GroupBox>
                         </Grid>
+                    </TabItem>
+                    <TabItem Header="Սերվերի կարգավորումներ" x:Name="ServerTabItem"
+                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TabItem.IsEnabled>
+                            <MultiBinding Converter="{StaticResource UserRoleToBoolMultiValueConverter}">
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Admin}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Moderator}"/>
+                                <Binding Source="{x:Static enumerations1:UserRoleEnum.Director}"/>
+                            </MultiBinding>
+                        </TabItem.IsEnabled>
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="ServerSettings"/>
+                                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ServerSettings.Description}" IsReadOnly="True"/>
+
+                                <Separator Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Backup"/>
+                                <Grid Grid.Row="2" Grid.Column="1" IsEnabled="{Binding ServerSettings.IsLocal}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" Text="{Binding ServerSettings.BackupDir}"/>
+                                    <Button Grid.Column="1" Content="Browse" Command="{Binding BrowseBackupPathCommand}"/>
+                                </Grid>
+                            </Grid>
+                        </ScrollViewer>
                     </TabItem>
                 </TabControl>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">

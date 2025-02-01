@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Data;
 using System.Data.Entity.Core.EntityClient;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Transactions;
 using ES.Business.Helpers;
 using ES.Common.Enumerations;
@@ -25,40 +27,40 @@ namespace ES.Business.Managers
         #region Connection Strings
         private static string GetServerConnectionString()
         {
-                string providerName = "System.Data.SqlClient";
-                string serverName = "bamboo.arvixe.com"; // "93.187.163.33,14033";
-                string databaseName = "EsStockDb";
+            string providerName = "System.Data.SqlClient";
+            string serverName = "bamboo.arvixe.com"; // "93.187.163.33,14033";
+            string databaseName = "EsStockDb";
 
-                // Initialize the connection string builder for the
-                // underlying provider.
-                SqlConnectionStringBuilder sqlBuilder =
-                    new SqlConnectionStringBuilder();
+            // Initialize the connection string builder for the
+            // underlying provider.
+            SqlConnectionStringBuilder sqlBuilder =
+                new SqlConnectionStringBuilder();
 
-                // Set the properties for the data source.
-                sqlBuilder.DataSource = serverName;
-                sqlBuilder.InitialCatalog = databaseName;
-                sqlBuilder.IntegratedSecurity = false;
-                sqlBuilder.PersistSecurityInfo = true;
-                sqlBuilder.MultipleActiveResultSets = true;
-                sqlBuilder.UserID = "esstockdb_user"; // "sa";
-                sqlBuilder.Password = "esstockdb@)!$"; //"academypbx569280";
+            // Set the properties for the data source.
+            sqlBuilder.DataSource = serverName;
+            sqlBuilder.InitialCatalog = databaseName;
+            sqlBuilder.IntegratedSecurity = false;
+            sqlBuilder.PersistSecurityInfo = true;
+            sqlBuilder.MultipleActiveResultSets = true;
+            sqlBuilder.UserID = "esstockdb_user"; // "sa";
+            sqlBuilder.Password = "esstockdb@)!$"; //"academypbx569280";
 
-                // Build the SqlConnection connection string.
-                string providerString = sqlBuilder.ToString();
+            // Build the SqlConnection connection string.
+            string providerString = sqlBuilder.ToString();
 
-                // Initialize the EntityConnectionStringBuilder.
-                EntityConnectionStringBuilder entityBuilder =
-                    new EntityConnectionStringBuilder();
+            // Initialize the EntityConnectionStringBuilder.
+            EntityConnectionStringBuilder entityBuilder =
+                new EntityConnectionStringBuilder();
 
-                //Set the provider name.
-                entityBuilder.Provider = providerName;
+            //Set the provider name.
+            entityBuilder.Provider = providerName;
 
-                // Set the provider-specific connection string.
-                entityBuilder.ProviderConnectionString = providerString;
+            // Set the provider-specific connection string.
+            entityBuilder.ProviderConnectionString = providerString;
 
-                // Set the Metadata location.
-                entityBuilder.Metadata = @"res://*/Models.EsStockDbModel.csdl|res://*/Models.EsStockDbModel.ssdl|res://*/Models.EsStockDbModel.msl";
-                return entityBuilder.ConnectionString;
+            // Set the Metadata location.
+            entityBuilder.Metadata = @"res://*/Models.EsStockDbModel.csdl|res://*/Models.EsStockDbModel.ssdl|res://*/Models.EsStockDbModel.msl";
+            return entityBuilder.ConnectionString;
         }
         private static string LocalhostConnectionString
         {
@@ -187,9 +189,9 @@ namespace ES.Business.Managers
                         return LocalhostConnectionString;
                         break;
                     default:
-                        if (server==null) { return serverCnnectionString; }
-                        string connectionString = server.GenerateConnectionString();
-                        return !string.IsNullOrEmpty(connectionString)? connectionString: serverCnnectionString;
+                        if (server == null) { return serverCnnectionString; }
+                        string connectionString = server.GetConnectionString();
+                        return !string.IsNullOrEmpty(connectionString) ? connectionString : serverCnnectionString;
                         break;
                 }
             }
@@ -788,7 +790,7 @@ namespace ES.Business.Managers
                 }
                 catch (Exception ex)
                 {
-                    MessageManager.OnMessage(ex.InnerException != null && ex.InnerException.InnerException != null ? ex.InnerException.InnerException.Message : ex.InnerException != null ? ex.InnerException.Message : ex.Message);
+                    //MessageManager.OnMessage(ex.InnerException != null && ex.InnerException.InnerException != null ? ex.InnerException.InnerException.Message : ex.InnerException != null ? ex.InnerException.Message : ex.Message);
                     return false;
                 }
             }
@@ -850,36 +852,58 @@ namespace ES.Business.Managers
 
             return command;
         }
-
-        public static void BackupDatabase(string connectionString, string databaseName)
+        public static void BackupDatabase(string dbName, string backupDir = null)
         {
             System.Windows.Forms.SaveFileDialog dialog = new System.Windows.Forms.SaveFileDialog
             {
                 Title = "Backup File",
                 RestoreDirectory = true,
+                InitialDirectory = backupDir,
                 Filter = "ES-Market Bakup Files (*.esm)|*.esm | SQL Bakup Files (*.bak)|*.bak",
                 AddExtension = true
             };
             string backupFilePath = string.Empty;
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                backupFilePath = dialog.FileName;
-            }
-            else
-            {
-                return;
-            }
-            if (string.IsNullOrEmpty(backupFilePath) || string.IsNullOrEmpty(databaseName)) return;
-            using (var connection = new SqlConnection(connectionString))
-            {
-                var query = String.Format("BACKUP DATABASE [{0}] TO DISK='{1}'", databaseName, backupFilePath);
+            if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
 
-                using (var command = new SqlCommand(query, connection))
+            backupFilePath = dialog.FileName;
+
+            CreateDatabaseBackupAsync(dbName, backupFilePath);
+        }
+
+        private static void CreateDatabaseBackupAsync(string dbName, string backupFilePath)
+        {
+            string connectionString = GetConnectionString();
+            if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(backupFilePath)) return;
+
+            new Thread(() =>
+            {
+                using (var connection = new SqlConnection(connectionString))
                 {
-                    connection.Open();
-                    command.ExecuteNonQuery();
+                    try
+                    {
+                        var query = $"exec dbo.BackupDatabases @dbname = N'{dbName}', @filepath = N'{backupFilePath}'"; // String.Format("BACKUP DATABASE [{0}] TO DISK='{1}'", databaseName, backupFilePath);
+                        using (var command = new SqlCommand(query, connection))
+                        {                            
+                            connection.Open();
+                            command.CommandTimeout = 180;
+                            command.ExecuteNonQuery();
+                        }
+
+                        MessageManager.OnMessage("Տվյալների կրկնօրինակի ստեղծումն իրականացել է հաջողությամբ:");
+                    }
+                    catch(Exception ex)
+                    {
+                        MessageManager.OnMessage(ex.Message);
+                    }
+                    finally
+                    {
+                        if (connection != null)
+                        {
+                            connection.Close();
+                        }
+                    }
                 }
-            }
+            }).Start();
         }
         public static bool CreateDatabaseBackup(string backupFilePath, string dbName, ref string errorMessage)
         {

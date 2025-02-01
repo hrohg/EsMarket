@@ -119,7 +119,7 @@ namespace ES.Login
         {
             Initialize();
             Login = login;
-            Logins =new ObservableCollection<string>(logins);
+            Logins = new ObservableCollection<string>(logins);
             _servers = servers;
         }
         #endregion Constructors
@@ -141,7 +141,8 @@ namespace ES.Login
             if (servers == null) return;
             DataServer dataServer = servers.FirstOrDefault();
             if (dataServer == null) return;
-            while (!ApplicationManager.Instance.CreateConnectionString(dataServer))
+            ApplicationManager.Instance.SetDataServer(dataServer);
+            while (!ApplicationManager.Instance.IsServerValid)
             {
                 var handler = OnClosed;
                 if (handler != null) handler(true);
@@ -162,7 +163,7 @@ namespace ES.Login
                 LoginMessage = "Սխալ մուտքային տվյալներ:";
                 loginedHandler(null, null);
             }
-            else if(logiHandler != null && user.UserId > 0)
+            else if (logiHandler != null && user.UserId > 0)
             {
                 loginedHandler(user.UserId > 0 ? user : null, Login);
                 //TxtPassword.Focus();

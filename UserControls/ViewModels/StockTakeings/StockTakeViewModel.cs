@@ -788,7 +788,6 @@ namespace UserControls.ViewModels.StockTakeings
 
                 var selectedItems = SelectItemsManager.SelectProductItems(productIds.Select(s => new ProductItemsByCheck
                 {
-
                     Id = s.ProductId,
                     Code = s.Product.Code,
                     Description = s.Product.Description,

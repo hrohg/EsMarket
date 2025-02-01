@@ -59,10 +59,6 @@ namespace UserControls.ViewModels
 
         #region Member settings
 
-        #region Admin tab
-        public DataServer Server { get; set; }
-        #endregion Admin tab
-
         #region General
 
         #region Barcode printer
@@ -369,6 +365,9 @@ namespace UserControls.ViewModels
         }
         #endregion ECR settings
 
+        #region Server tab
+        public DataServer Server { get; set; }
+        #endregion Server tab
         #endregion Member Settings
 
         #region General settings
@@ -389,6 +388,8 @@ namespace UserControls.ViewModels
         public bool IsLocalBranch { get { return BranchSettings != null && BranchSettings.Id == SelectedBranch.Id; } }
         public string SetAsLocalBranchButtonText { get { return IsLocalBranch ? "Ակտիվ" : "Պասիվ"; } }
         #endregion Branch properties
+
+        public ServerSettings ServerSettings { get; set; }
 
         #endregion External properties
 
@@ -415,11 +416,7 @@ namespace UserControls.ViewModels
         {
             Settings.MemberSettings = MemberSettings.GetSettings(ApplicationManager.Member.Id);
 
-            Server = new DataServer
-            {
-                IsLocal = true, //ApplicationManager.IsLocalServer,
-                BackupDir = _settings.MemberSettings.BackupDir
-            };
+
             Branches = new ObservableCollection<BranchModel>(BranchManager.GetBranches());
             //Branches.SingleOrDefault(s=>s.Id == Settings.MemberSettings.BranchId);
 
@@ -468,19 +465,20 @@ namespace UserControls.ViewModels
             }
 
             SelectedBranch = BranchSettings;
+            ServerSettings = _settings.MemberSettings.ServerSettings ?? (_settings.MemberSettings.ServerSettings = new ServerSettings());
+            ServerSettings.InitializeProperties(ApplicationManager.Instance.GetServerName(), ApplicationManager.Instance.IsServerValid, ApplicationManager.Instance.IsServerLocal);
         }
 
         private void OnBrowseBackupPath()
         {
             string dir = string.Empty;
-            BrowseFolderDialog folderBrowserDialog = new BrowseFolderDialog();
-            if (folderBrowserDialog.Show())
-            {
-                dir = folderBrowserDialog.SelectedPath;
-            }
+            BrowseFolderDialog folderBrowserDialog = new BrowseFolderDialog { InitialDirectory = ServerSettings.BackupDir };
+            if (!folderBrowserDialog.Show()) return;
 
-            Server.BackupDir = dir;
-            RaisePropertyChanged(() => Server);
+            dir = folderBrowserDialog.SelectedPath;
+
+            ServerSettings.BackupDir = dir;
+            RaisePropertyChanged(() => ServerSettings);
         }
 
         #endregion Internal methods
@@ -501,8 +499,6 @@ namespace UserControls.ViewModels
         public ICommand SaveCommand { get { return _saveCommand ?? (_saveCommand = new RelayCommand(OnSave)); } }
         private void OnSave(object obj)
         {
-            //Admin
-            _settings.MemberSettings.BackupDir = Server.BackupDir;
             //General
             _settings.MemberSettings.ActiveLablePrinter = LablePrinters.Where(s => s.IsChecked).Select(s => (string)s.Value).SingleOrDefault();
             _settings.MemberSettings.ActiveCashDeskPrinter = CashDeskPrinters.Where(s => s.IsChecked).Select(s => (string)s.Value).SingleOrDefault();
@@ -523,6 +519,10 @@ namespace UserControls.ViewModels
 
             //Branch
             _settings.MemberSettings.BranchSettings = SelectedBranch;
+
+
+            //Server
+            _settings.MemberSettings.ServerSettings = ServerSettings;
 
             if (Settings.Save())
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Core.EntityClient;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 using System.Windows.Controls;
 using ES.Business.Helpers;
 using ES.Common.Enumerations;
@@ -16,6 +17,8 @@ namespace ES.Business.Managers
 {
     public class ApplicationManager
     {
+        private readonly object _lockDataServer = new object();
+        private readonly object _lockLocalDataServer = new object();
         public delegate void OnReceivedLog(MessageModel log);
         public delegate void OnProgressChanged();
 
@@ -26,6 +29,9 @@ namespace ES.Business.Managers
         private DataServer _server;
         private readonly MessageManager _messageManager;
         private string _connectionString;
+
+        private bool _isServerValid;
+        private bool _isServerLocal;
         #endregion Internal fields
 
         #region Internal properties
@@ -115,12 +121,16 @@ namespace ES.Business.Managers
             get { return _insatance._settings ?? (_insatance._settings = new ApplicationSettingsViewModel()); }
         }
         #endregion Settings
-
+        public string GetServerName()
+        {
+            return _server != null ? _server.Description : string.Empty;
+        }
         public string GetDbName()
         {
             return _server != null ? _server.Database : string.Empty;
         }
-        public static string DataSource { get; private set; }
+        public bool IsServerValid { get { lock (_lockDataServer) return _isServerValid; } private set { lock (_lockDataServer) _isServerValid = value; } }
+        public bool IsServerLocal { get { lock (_lockLocalDataServer) return _isServerLocal; } private set { lock (_lockLocalDataServer) _isServerLocal = value; } }
         public EsMemberModel GetMember { get { return _member; } }
         public EsUserModel GetUser { get { return _esUser; } }
 
@@ -241,86 +251,6 @@ namespace ES.Business.Managers
             return entityBuilder.ConnectionString;
         }
 
-        //public static string GitunikConnectionString
-        //{
-        //    get
-        //    {
-        //        string providerName = "System.Data.SqlClient";
-        //        string serverName = "87.241.191.72";
-        //        string databaseName = "EsStockDb";
-
-        //        // Initialize the connection string builder for the
-        //        // underlying provider.
-        //        SqlConnectionStringBuilder sqlBuilder =
-        //            new SqlConnectionStringBuilder();
-
-        //        // Set the properties for the data source.
-        //        sqlBuilder.DataSource = serverName;
-        //        sqlBuilder.InitialCatalog = databaseName;
-        //        sqlBuilder.IntegratedSecurity = false;
-        //        sqlBuilder.PersistSecurityInfo = true;
-        //        sqlBuilder.MultipleActiveResultSets = true;
-        //        sqlBuilder.UserID = "sa";
-        //        sqlBuilder.Password = "kinutigkirqop";
-
-        //        // Build the SqlConnection connection string.
-        //        string providerString = sqlBuilder.ToString();
-
-        //        // Initialize the EntityConnectionStringBuilder.
-        //        EntityConnectionStringBuilder entityBuilder =
-        //            new EntityConnectionStringBuilder();
-
-        //        //Set the provider name.
-        //        entityBuilder.Provider = providerName;
-
-        //        // Set the provider-specific connection string.
-        //        entityBuilder.ProviderConnectionString = providerString;
-
-        //        // Set the Metadata location.
-        //        entityBuilder.Metadata = @"res://*/Models.EsStockDbModel.csdl|res://*/Models.EsStockDbModel.ssdl|res://*/Models.EsStockDbModel.msl";
-        //        return entityBuilder.ConnectionString;
-        //    }
-        //}
-        //public static string AramConnectionString
-        //{
-        //    get
-        //    {
-        //        string providerName = "System.Data.SqlClient";
-        //        string serverName = @"87.241.164.170\esl";
-        //        string databaseName = "EsStockDb";
-
-        //        // Initialize the connection string builder for the
-        //        // underlying provider.
-        //        SqlConnectionStringBuilder sqlBuilder =
-        //            new SqlConnectionStringBuilder();
-
-        //        // Set the properties for the data source.
-        //        sqlBuilder.DataSource = serverName;
-        //        sqlBuilder.InitialCatalog = databaseName;
-        //        sqlBuilder.IntegratedSecurity = false;
-        //        sqlBuilder.PersistSecurityInfo = true;
-        //        sqlBuilder.MultipleActiveResultSets = true;
-        //        sqlBuilder.UserID = "sa";
-        //        sqlBuilder.Password = "eslsqlserver@)!$";
-
-        //        // Build the SqlConnection connection string.
-        //        string providerString = sqlBuilder.ToString();
-
-        //        // Initialize the EntityConnectionStringBuilder.
-        //        EntityConnectionStringBuilder entityBuilder =
-        //            new EntityConnectionStringBuilder();
-
-        //        //Set the provider name.
-        //        entityBuilder.Provider = providerName;
-
-        //        // Set the provider-specific connection string.
-        //        entityBuilder.ProviderConnectionString = providerString;
-
-        //        // Set the Metadata location.
-        //        entityBuilder.Metadata = @"res://*/Models.EsStockDbModel.csdl|res://*/Models.EsStockDbModel.ssdl|res://*/Models.EsStockDbModel.msl";
-        //        return entityBuilder.ConnectionString;
-        //    }
-        //}
         public static string LocalhostConnectionString
         {
             get
@@ -365,9 +295,17 @@ namespace ES.Business.Managers
                 //return entityBuilder.ConnectionString;
             }
         }
-        public bool CreateConnectionString(DataServer server)
+        public void SetDataServer(DataServer server)
         {
-            _server = server;
+            lock (_lockDataServer) _server = server;
+            CreateConnectionString();
+            //new Thread(() => { lock (_lockDataServer) IsServerValid = _server != null ? DatabaseManager.CheckConnection(_server.GetConnectionString()) : false; }).Start();
+            new Thread(() => { lock (_lockDataServer) IsServerValid = _server != null ? DatabaseManager.CheckConnection(_connectionString) : false; }).Start();
+            new Thread(() => { lock (_lockLocalDataServer) IsServerLocal = _server != null ? DatabaseManager.CheckConnection(_server.GetLocalConnectionString()) : false; }).Start();
+        }
+        private bool CreateConnectionString()
+        {
+            DataServer server = _server;
             if (server != null)
             {
                 switch (server.Description.ToLower())
@@ -382,16 +320,12 @@ namespace ES.Business.Managers
                         break;
                     case "local":
                         _connectionString = LocalhostConnectionString;
-                        DataSource =
-                            "Data Source=localhost;Initial Catalog=EsStockDb;Integrated Security=True;Persist Security Info=True;User ID=;Password=;MultipleActiveResultSets=True";
                         IsEsServer = false;
                         break;
-                    default:
-                        _server = server;
+                    default:                        
                         IsEsServer = false;
-                        _connectionString = _server.GenerateConnectionString();
-                        if (string.IsNullOrEmpty(_connectionString)) return false;
-                        DataSource = _connectionString;
+                        _connectionString = _server.GetConnectionString();
+                        if (string.IsNullOrEmpty(_connectionString)) return false;                       
                         break;
                 }
             }
@@ -400,16 +334,7 @@ namespace ES.Business.Managers
                 _connectionString = GetServerConnectionString();
                 IsEsServer = true;
             }
-            return true;
-            //string serverName = "localhost", 
-            //int port = 1433, 
-            //string databaseName = "EsStockDb", 
-            //string userName = "sa", 
-            //string pass = "", 
-            //string providerName = "System.Data.SqlClient", 
-            //string connectionMetadata = @"res://*/Models.EsStockDbModel.csdl|res://*/Models.EsStockDbModel.ssdl|res://*/Models.EsStockDbModel.msl"
-            // Initialize the connection string builder for the
-            // underlying provider.
+            return true;            
         }
         public string GetConnectionString() { return _connectionString; }
         public CashManager CashProvider

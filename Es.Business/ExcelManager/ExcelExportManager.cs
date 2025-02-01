@@ -1,18 +1,20 @@
-﻿using System;
+﻿using ES.Business.Helpers;
+using ES.Business.Managers;
+using ES.Common.Managers;
+using ES.Data.Models;
+using Microsoft.Office.Interop.Excel;
+using System;
+using System.CodeDom;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Serialization;
-using ES.Business.Helpers;
-using ES.Business.Managers;
-using ES.Business.Models;
-using ES.Common.Managers;
-using ES.Data.Models;
-using Microsoft.Office.Interop.Excel;
 using ProductModel = ES.Data.Models.Products.ProductModel;
 using ProductOrderModel = ES.Data.Models.ProductOrderModel;
 
@@ -22,6 +24,105 @@ namespace ES.Business.ExcelManager
     {
         private const string InvoiceBlankPath = @"\Blanks\Invoice.xlsx";
         private const string TempPath = @"\Temp\";
+        public static bool ExportProducts(List<Tuple<string, string>> headerMetadatas, List<ProductOrderModel> productOrderItems)
+        {
+            if (productOrderItems == null) return false;
+            var xlApp = new ExcelDataContent(false);
+
+            var xlWSh = xlApp.GetWorksheet();
+            if (xlWSh == null) return false;
+            xlWSh.Activate();
+
+            int nextRow = 1, nextColumn = 1;
+            try
+            {
+                foreach (var headerMetadata in headerMetadatas)
+                {
+                    xlWSh.Cells[nextRow, nextColumn] = headerMetadata.Item1;
+                    nextColumn++;
+                }
+
+                foreach (var item in productOrderItems)
+                {
+                    nextColumn = 0;
+                    nextRow++;
+                    foreach (var headerMetadata in headerMetadatas)
+                    {
+                        nextColumn++;
+                        Type type = item.GetType();
+                        PropertyInfo info = type.GetProperty(headerMetadata.Item2);
+                        if (info == null) continue;
+                        var value = info.GetValue(item, null);
+                        if (value == null) continue;
+                        var valueType = value.GetType();
+                        if (value.IsObservableCollection())
+                        {
+                            IEnumerable elements = value as IEnumerable;
+                            foreach (var el in elements)
+                            {
+                                StockProducts stockProducts = el as StockProducts;
+                                if (el == null) continue;
+                                if (stockProducts.Stock.Name != headerMetadata.Item1) continue;
+                                xlWSh.Cells[nextRow, nextColumn] = stockProducts.Quantity;
+                                break;
+                                type = el.GetType();
+                                info = type.GetProperty("Quantity");
+                                if (info == null) continue;
+                                value = info.GetValue(el, null);
+                                xlWSh.Cells[nextRow, nextColumn] = value;
+                            }
+                        }
+                        else
+                        {
+                            xlWSh.Cells[nextRow, nextColumn] = value;
+                        }
+                    }
+                }
+                xlApp.Show();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                //xlApp.Dispose();
+            }
+        }
+        private static bool IsObservableCollection(this object candidate)
+        {
+            if (null == candidate) return false;
+
+            var theType = candidate.GetType();
+            bool itIs = theType.IsGenericType &&
+                !theType.IsGenericTypeDefinition &&
+                (theType.GetGenericTypeDefinition() == typeof(ObservableCollection<>));
+
+            return itIs;
+        }
+        private static Object GetPropValue(this Object obj, String name)
+        {
+            foreach (String part in name.Split('.'))
+            {
+                if (obj == null) { return null; }
+
+                Type type = obj.GetType();
+                PropertyInfo info = type.GetProperty(part);
+                if (info == null) { return null; }
+
+                obj = info.GetValue(obj, null);
+            }
+            return obj;
+        }
+        private static T GetPropValue<T>(this Object obj, String name)
+        {
+            Object retval = GetPropValue(obj, name);
+            if (retval == null) { return default(T); }
+
+            // throws InvalidCastException if types are incompatible
+            return (T)retval;
+        }
 
         public static bool ExportProducts(List<ProductOrderModel> productOrderItems)
         {
@@ -36,22 +137,24 @@ namespace ES.Business.ExcelManager
             try
             {
                 xlWSh.Cells[nextRow, 1] = "Կոդ";
-                xlWSh.Cells[nextRow, 2] = "Անվանում";
-                xlWSh.Cells[nextRow, 3] = "Չմ";
-                xlWSh.Cells[nextRow, 4] = "Առկա քանակ";
-                xlWSh.Cells[nextRow, 5] = "Գին";
-                xlWSh.Cells[nextRow, 6] = "Գումար";
-                xlWSh.Cells[nextRow, 7] = "Նշումներ";
+                xlWSh.Cells[nextRow, 2] = "ԱՏԳՏ";
+                xlWSh.Cells[nextRow, 3] = "Անվանում";
+                xlWSh.Cells[nextRow, 4] = "Չմ";
+                xlWSh.Cells[nextRow, 5] = "Առկա քանակ";
+                xlWSh.Cells[nextRow, 6] = "Գին";
+                xlWSh.Cells[nextRow, 7] = "Գումար";
+                xlWSh.Cells[nextRow, 8] = "Նշումներ";
                 nextRow++;
                 foreach (var item in productOrderItems)
                 {
                     xlWSh.Cells[nextRow, 1] = item.Code;
-                    xlWSh.Cells[nextRow, 2] = item.Description;
-                    xlWSh.Cells[nextRow, 3] = item.Mu;
-                    xlWSh.Cells[nextRow, 4] = item.ExistingQuantity;
-                    xlWSh.Cells[nextRow, 5] = item.Product != null ? item.Product.Price : 0;
-                    xlWSh.Cells[nextRow, 6] = item.Amount;
-                    xlWSh.Cells[nextRow, 7] = item.Notes;
+                    xlWSh.Cells[nextRow, 2] = item.HCDCS;
+                    xlWSh.Cells[nextRow, 3] = item.Description;
+                    xlWSh.Cells[nextRow, 4] = item.Mu;
+                    xlWSh.Cells[nextRow, 5] = item.ExistingQuantity;
+                    xlWSh.Cells[nextRow, 6] = item.Product != null ? item.Product.Price : 0;
+                    xlWSh.Cells[nextRow, 7] = item.Amount;
+                    xlWSh.Cells[nextRow, 8] = item.Notes;
                     nextRow++;
                 }
                 xlApp.Show();

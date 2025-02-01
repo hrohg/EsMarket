@@ -704,6 +704,7 @@ namespace ES.Business.Managers
                         products.Select(s => new ProductOrderModel
                         {
                             Code = s.Code,
+                            HCDCS = s.HCDCS,
                             Description = s.Description,
                             Price = s.Price,
                             MinQuantity = s.MinQuantity,

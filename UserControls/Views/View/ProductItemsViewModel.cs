@@ -1,19 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using ES.Business.ExcelManager;
+using ES.Business.Managers;
+using ES.Common.Helpers;
+using ES.Common.ViewModels.Base;
+using ES.Data.Models;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Threading;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
-using ES.Business.ExcelManager;
-using ES.Business.Managers;
-using ES.Common.Helpers;
-using ES.Common.ViewModels.Base;
-using ES.Data.Models;
 using UserControls.ControlPanel.Controls;
 using UserControls.Helpers;
 using Binding = System.Windows.Data.Binding;
@@ -81,7 +81,7 @@ namespace UserControls.Views.View
             Items.CollectionChanged += OnItemsChanged;
             ItemsView = new CollectionViewSource { Source = Items };
             ColumnHeaderMetadatas = new ObservableCollection<Controls.ProductDataGridColumnHeaderMetadata>();
-            
+
             ItemsView.View.Filter = Filter;
             Title = "Ապրանքների դիտում ըստ պահեստների";
             var tooltip = string.Empty;
@@ -138,10 +138,12 @@ namespace UserControls.Views.View
             string productKey = null;
 
             ColumnHeaderMetadatas.Add(new Controls.ProductDataGridColumnHeaderMetadata { Header = "Կոդ", BindingText = "Code", CanSort = true, SortKey = "Կոդ" });
+            ColumnHeaderMetadatas.Add(new Controls.ProductDataGridColumnHeaderMetadata { Header = "ԱՏԳԴ", BindingText = "HCDCS", CanSort = true, SortKey = "ԱՏԳԴ" });
             ColumnHeaderMetadatas.Add(new Controls.ProductDataGridColumnHeaderMetadata { Header = "Անվանում", BindingText = "Description", CanSort = true, SortKey = "Անվանում" });
             ColumnHeaderMetadatas.Add(new Controls.ProductDataGridColumnHeaderMetadata { Header = "Չմ", BindingText = "Mu", CanSort = true, SortKey = "Չմ" });
             ColumnHeaderMetadatas.Add(new Controls.ProductDataGridColumnHeaderMetadata { Header = "Գին", BindingText = "Price", CanSort = true, SortKey = "Գին" });
             ColumnHeaderMetadatas.Add(new Controls.ProductDataGridColumnHeaderMetadata { Header = "Առկա", BindingText = "ExistingQuantity", CanSort = true, SortKey = "Առկա" });
+            ColumnHeaderMetadatas.Add(new Controls.ProductDataGridColumnHeaderMetadata { Header = "Ընդամենը", BindingText = "Amount", CanSort = true, SortKey = "Ընդամենը" });
 
             foreach (var stock in Stocks)
             {
@@ -175,6 +177,7 @@ namespace UserControls.Views.View
                 {
                     Product = productItem.First().Product,
                     Code = productItem.First().Product.Code,
+                    HCDCS = productItem.First().Product.HcdCs,
                     Description = productItem.First().Product.Description,
                     Mu = productItem.First().Product.Mu,
                     CostPrice = productItem.First().CostPrice,
@@ -216,7 +219,7 @@ namespace UserControls.Views.View
         private void OnExport(object o)
         {
             if (!CanExport(o)) { return; }
-            ExcelExportManager.ExportProducts(GetViewItems());
+            ExcelExportManager.ExportProducts(ColumnHeaderMetadatas.Select(s => new Tuple<string, string>(s.Header, s.BindingText)).ToList(), GetViewItems());
         }
 
         private void OnPrint(object o)
@@ -226,6 +229,7 @@ namespace UserControls.Views.View
                              new
                              {
                                  Կոդ = item.Code,
+                                 ԱՏԳԴ = item.HCDCS,
                                  Անվանում = item.Description,
                                  Չմ = item.Mu,
                                  Քանակ = item.ExistingQuantity.ToString("# ##0.###"),
@@ -395,8 +399,10 @@ namespace UserControls.Views.View
                 {
                     Product = product,
                     Code = product.Code,
+                    HCDCS = product.HcdCs,
                     Description = product.Description,
                     Mu = product.Mu,
+                    Price = product.Price,
                     ExistingQuantity = item.Sum(s => s.Quantity)
                 } :
                     new ProductOrderModel
@@ -447,6 +453,7 @@ namespace UserControls.Views.View
                              new
                              {
                                  Կոդ = item.Code,
+                                 ԱՏԳԴ = item.HCDCS,
                                  Անվանում = item.Description,
                                  Չմ = item.Mu,
                                  Քանակ = item.ExistingQuantity.ToString("# ##0.###"),

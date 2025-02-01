@@ -56,7 +56,7 @@ namespace ES.Market
                 return _loginWindow = new LoginWindow(loginVm);
             }
         }
-        
+
         #endregion LoginWindow
 
         #region Mrket window
@@ -153,7 +153,7 @@ namespace ES.Market
             try
             {
                 _splash = new SplashScreen("Application.png");
-                ApplicationManager.Instance.CreateConnectionString(null);
+                //ApplicationManager.Instance.SetDataServer(null);
                 OnTryLogin();
                 if (Application.Current != null) Application.Current.Shutdown();
 
@@ -211,7 +211,7 @@ namespace ES.Market
                         EsExceptionBox.Instance.Company = new Reporter() { Company = ApplicationManager.Instance.GetMember.Name, User = String.Format("{0} (mobile:{1} mail:{2})", esuser.FullName, esuser.Mobile, esuser.Email) };
                         try
                         { Market.ShowDialog(); }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
                             if (Application.Current != null) DispatcherWrapper.Instance.BeginInvoke(DispatcherPriority.Send, () => { EsExceptionBox.Instance.OnException(e); });
                         }

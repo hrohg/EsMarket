@@ -170,6 +170,7 @@
     <Compile Include="Models\MessageModel.cs" />
     <Compile Include="Models\ModelBase.cs" />
     <Compile Include="Models\ProductOrderModel.cs" />
+    <Compile Include="Models\ServerSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportData.cs" />
     <Compile Include="Utilits\ScreenUtilits.cs" />

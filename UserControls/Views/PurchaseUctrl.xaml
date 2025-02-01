@@ -50,7 +50,7 @@
         </Grid.InputBindings>
         <Grid.ContextMenu>
             <ContextMenu>
-                <MenuItem Header="Հիշել" InputGestureText="Ctrl+S" Command="{Binding SaveInvoiceCommand}"></MenuItem>
+                <MenuItem Header="Հիշել" InputGestureText="Ctrl+S" Command="{Binding SaveInvoiceCommand}"/>
                 <MenuItem Header="Հաստատել" InputGestureText="F6" Command="{Binding ApproveInvoiceCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabItem}}" Tag="1"/>
                 <MenuItem Header="Հաստատել (Փակել)" InputGestureText="F5" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabItem}}" Tag="1"/>
                 <MenuItem Header="Տպել" InputGestureText="Ctrl+P" Tag="2" IsEnabled="False" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
@@ -523,6 +523,7 @@
                             </MenuItem.Header>
                             <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"/>
                             <MenuItem Header="Հաստատել" Command="{Binding ApproveInvoiceCommand}"/>
+                            <MenuItem Header="Հեռացնել" Command="{Binding RemoveInvoiceCommand}"/>
                             <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
                             <Separator/>
                             <MenuItem Header="Ներմուծել" Command="{Binding ImportInvoiceCommand}" IsEnabled="False"/>

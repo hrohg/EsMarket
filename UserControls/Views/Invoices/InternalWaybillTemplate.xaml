@@ -187,8 +187,9 @@
                             </MenuItem.Icon>
                             <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"/>
                             <MenuItem Header="Հաստատել" Command="{Binding ApproveInvoiceCommand}"/>
-                            <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}"  CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
                             <MenuItem Header="Հաստատել Ctrl+Shift+A" Command="{Binding ApproveInvoiceAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}"/>
+                            <MenuItem Header="Հեռացնել" Command="{Binding RemoveInvoiceCommand}"  />
+                            <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}"  CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
                             <Separator/>
                             <MenuItem Header="Ներմուծել" Command="{Binding ImportInvoiceCommand}"/>
                             <MenuItem Header="Արտահանել" Command="{Binding ExportInvoiceCommand}" CommandParameter="{x:Static filter:ExportImportEnum.Excel}"/>

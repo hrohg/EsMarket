@@ -364,7 +364,7 @@ namespace ES.Market
         protected void MiBackupData_Click(object sender, EventArgs e)
         {
             try
-            { DatabaseManager.BackupDatabase(ApplicationManager.DataSource, ApplicationManager.Instance.GetDbName()); }
+            { DatabaseManager.BackupDatabase(ApplicationManager.Instance.GetDbName()); }
             catch (Exception ex)
             {
                 MessageManager.OnMessage(new MessageModel(ex.Message, MessageTypeEnum.Error));
@@ -440,12 +440,7 @@ namespace ES.Market
         private void MiCostOfSales_Click(object sender, RoutedEventArgs e)
         {
 
-        }
-
-        private void MiBackupData_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
+        }        
     }
 
 

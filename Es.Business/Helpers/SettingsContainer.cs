@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Windows.Forms;
-using System.Xml.Serialization;
-using CashReg.Helper;
+﻿using CashReg.Helper;
 using ES.Business.Managers;
 using ES.Common;
 using ES.Common.Enumerations;
@@ -14,6 +6,13 @@ using ES.Common.Helpers;
 using ES.Common.Managers;
 using ES.Common.Models;
 using ES.Data.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows.Forms;
+using System.Xml.Serialization;
 
 namespace ES.Business.Helpers
 {
@@ -135,11 +134,7 @@ namespace ES.Business.Helpers
 
         #region External properties
         public int MemberId { get; set; }
-
-        #region Admin
-        public string BackupDir { get; set; }
-        #endregion Admin
-
+        
         #region General
 
         public string LastSelectedLanguage { get; set; }
@@ -258,12 +253,16 @@ namespace ES.Business.Helpers
             set { _ecrServiceSettings = value; }
         }
 
-        #endregion Ecr settings
+        #endregion Ecr settings        
 
         #region Branch settings
         public BranchModel BranchSettings { get; set; }
 
         #endregion Branch settings
+                
+        #region Server settings
+        public ServerSettings ServerSettings { get; set; }
+        #endregion Server settings
 
         #endregion External properties
 

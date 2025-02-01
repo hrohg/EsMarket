@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data.Entity.Core.EntityClient;
 using System.Data.SqlClient;
-using System.Xml.Serialization;
 
 namespace ES.Common.Models
 {
@@ -40,13 +39,6 @@ namespace ES.Common.Models
                     Port != null && Port != 0 ? string.Format(",{0}", Port) : string.Empty);
             }
         }
-
-        [XmlIgnore]
-        public bool IsValide { get; private set; }
-
-        [XmlIgnore]
-        public bool IsLocal { get; set; }
-        public string BackupDir { get; set; } = string.Empty;
         #endregion External properties
 
         #region Constructors
@@ -63,9 +55,13 @@ namespace ES.Common.Models
         #endregion Constructors
 
         #region External properties
-        public string GenerateConnectionString()
+        public string GetConnectionString()
         {
             return GenerateConnectionString(Name, Port, Database, Login, Password);
+        }
+        public string GetLocalConnectionString()
+        {
+            return GenerateConnectionString("localhost", Port, Database, Login, Password);
         }
         #endregion External properties
 
@@ -105,13 +101,15 @@ namespace ES.Common.Models
             entityBuilder.Metadata = ConnectionMetadata;
             return entityBuilder.ConnectionString;
         }
+
         private string GenerateConnectionString(string server, int? port, string database, string userId, string password)
         {
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(database)) { return null; }
+            if (string.IsNullOrEmpty(server) || string.IsNullOrEmpty(database)) { return null; }
+            if (string.IsNullOrEmpty(userId)) return null;
             var sqlBuilder = new SqlConnectionStringBuilder();
             // Set the properties for the data source.
             sqlBuilder.DataSource = string.Format("{0}{1}{2}",
-                Name,
+                server,
                 !string.IsNullOrEmpty(Instance) ? string.Format(@"\{0}", Instance) : string.Empty,
                 port != null && port != 0 ? string.Format(",{0}", port.Value) : string.Empty);
             sqlBuilder.InitialCatalog = database;
@@ -140,5 +138,4 @@ namespace ES.Common.Models
         #endregion Internal methods
 
     }
-
 }

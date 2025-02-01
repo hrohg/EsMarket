@@ -171,6 +171,7 @@
                         <MenuItem Header="...">
                             <MenuItem Header="Հիշել Ctrl+S" Command="{Binding SaveInvoiceCommand}"  />
                             <MenuItem Header="Հաստատել Ctrl+A" Command="{Binding ApproveInvoiceCommand}"  />
+                            <MenuItem Header="Հեռացնել" Command="{Binding RemoveInvoiceCommand}"  />
                             <MenuItem Header="Առկայության ստուգում" Command="{Binding CheckExistingCommand}"/>
                             <MenuItem Header="Տպել Ctrl+P" Command="{Binding PrintInvoiceCommand}" CommandParameter="{x:Static filter:PrintModeEnum.Normal}"/>
                             <Separator/>
